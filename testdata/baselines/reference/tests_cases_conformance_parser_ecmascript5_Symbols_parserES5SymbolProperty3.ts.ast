@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'unscopables'
+      StringKeyword

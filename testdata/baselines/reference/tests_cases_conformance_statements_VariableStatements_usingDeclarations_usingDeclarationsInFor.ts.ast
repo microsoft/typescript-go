@@ -1,0 +1,19 @@
+SourceFile
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        ObjectLiteralExpression
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'dispose'
+            Block
+      VariableDeclaration
+        Identifier: ' d2'
+        NullKeyword
+      VariableDeclaration
+        Identifier: ' d3'
+        Identifier: ' undefined'
+    Block

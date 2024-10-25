@@ -1,0 +1,51 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _sym'
+        CallExpression
+          Identifier: ' Symbol'
+          StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyClass'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' self'
+              ThisKeyword
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              Identifier: '
+        self'
+              Identifier: '_sym'
+            EqualsToken
+            StringLiteral
+    MethodDeclaration
+      Identifier: '
+
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' self'
+              ThisKeyword
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              Identifier: '
+        self'
+              Identifier: '_sym'
+            EqualsToken
+            StringLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ElementAccessExpression
+                Identifier: ' self'
+                Identifier: '_sym'

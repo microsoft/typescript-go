@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'isConcatSpreadable'
+            Block

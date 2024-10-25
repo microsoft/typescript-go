@@ -1,0 +1,57 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' ts'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' tsInternal'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' tsserverlibrary'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' tsserverlibraryInternal'
+    ExternalModuleReference
+      StringLiteral

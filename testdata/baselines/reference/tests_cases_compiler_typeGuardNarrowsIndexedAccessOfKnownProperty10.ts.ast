@@ -1,0 +1,38 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: ' bar'
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'id'
+              StringKeyword
+            NumberKeyword
+        ObjectLiteralExpression
+  ExpressionStatement
+    ArrowFunction
+      Parameter
+        Identifier: 'foo'
+        TypeReference
+          Identifier: ' Foo'
+      EqualsGreaterThanToken
+      Block
+        ExpressionStatement
+          PostfixUnaryExpression
+            ElementAccessExpression
+              Identifier: '
+	bar'
+              Identifier: 'id'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' id'
+              PropertyAccessExpression
+                Identifier: ' foo'
+                Identifier: 'bar'

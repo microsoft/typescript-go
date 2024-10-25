@@ -1,0 +1,17 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// function Foo (): number {
+////     1
+//// }
+
+verify'
+        Identifier: 'codeFixAvailable'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral

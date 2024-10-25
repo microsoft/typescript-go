@@ -1,0 +1,43 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' A'
+  EnumDeclaration
+    Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'b'
+      TypeReference
+        Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+  ClassDeclaration
+    Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'c'
+      TypeReference
+        Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block

@@ -1,0 +1,68 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' notAnyArray'
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberArray'
+        ArrayLiteralExpression
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' returnNotAnyArray'
+    Parameter
+      Identifier: 'arr'
+    Block
+      ReturnStatement
+        Identifier: ' arr'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' notAnyPromise'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberPromise'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' returnNotAnyPromise'
+    Parameter
+      Identifier: 'pr'
+    Block
+      ReturnStatement
+        Identifier: ' pr'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' notAnyObject'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'valueOf'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' paramedObject'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'valueOf'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' returnNotAnyObject'
+    Parameter
+      Identifier: 'obj'
+    Block
+      ReturnStatement
+        Identifier: ' obj'

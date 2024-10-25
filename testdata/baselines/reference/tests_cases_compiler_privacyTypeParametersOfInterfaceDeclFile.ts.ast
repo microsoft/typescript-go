@@ -1,0 +1,813 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' privateClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClass'
+  ClassDeclaration
+    Identifier: ' privateClassT'
+    TypeParameter
+      Identifier: 'T'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassT'
+    TypeParameter
+      Identifier: 'T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPrivateTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' privateClass'
+    MethodSignature
+      Identifier: ' // Error
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    myMethod0'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    myMethod1'
+      TypeReference
+        Identifier: ' privateClassT'
+        TypeReference
+          Identifier: 'privateClass'
+    MethodSignature
+      Identifier: ' 
+    myMethod2'
+      TypeReference
+        Identifier: ' privateClassT'
+        TypeReference
+          Identifier: 'publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod3'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'privateClass'
+    MethodSignature
+      Identifier: '
+    myMethod4'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'publicClass'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPublicTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    myMethod0'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    myMethod1'
+      TypeReference
+        Identifier: ' privateClassT'
+        TypeReference
+          Identifier: 'privateClass'
+    MethodSignature
+      Identifier: '
+    myMethod2'
+      TypeReference
+        Identifier: ' privateClassT'
+        TypeReference
+          Identifier: 'publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod3'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'privateClass'
+    MethodSignature
+      Identifier: '
+    myMethod4'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'publicClass'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPrivateTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' privateClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    myMethod0'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    myMethod1'
+      TypeReference
+        Identifier: ' privateClassT'
+        TypeReference
+          Identifier: 'privateClass'
+    MethodSignature
+      Identifier: '
+    myMethod2'
+      TypeReference
+        Identifier: ' privateClassT'
+        TypeReference
+          Identifier: 'publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod3'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'privateClass'
+    MethodSignature
+      Identifier: '
+    myMethod4'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'publicClass'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPublicTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    myMethod0'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    myMethod1'
+      TypeReference
+        Identifier: ' privateClassT'
+        TypeReference
+          Identifier: 'privateClass'
+    MethodSignature
+      Identifier: '
+    myMethod2'
+      TypeReference
+        Identifier: ' privateClassT'
+        TypeReference
+          Identifier: 'publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod3'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'privateClass'
+    MethodSignature
+      Identifier: '
+    myMethod4'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'publicClass'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPublicTypeParametersWithoutExtends'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    myMethod0'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPublicTypeParametersWithoutExtends'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    myMethod0'
+      TypeReference
+        Identifier: ' publicClassT'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPrivateModuleTypeParameterConstraints'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClassInPrivateModule'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPrivateModuleTypeParameterConstraints'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClassInPrivateModule'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' publicModule'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' privateClassInPublicModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassInPublicModule'
+      ClassDeclaration
+        Identifier: ' privateClassInPublicModuleT'
+        TypeParameter
+          Identifier: 'T'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassInPublicModuleT'
+        TypeParameter
+          Identifier: 'T'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClassInPublicModule'
+        MethodSignature
+          Identifier: ' // Error
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod1'
+          TypeReference
+            Identifier: ' privateClassInPublicModuleT'
+            TypeReference
+              Identifier: 'privateClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod2'
+          TypeReference
+            Identifier: ' privateClassInPublicModuleT'
+            TypeReference
+              Identifier: 'publicClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod3'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'privateClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod4'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'publicClassInPublicModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod1'
+          TypeReference
+            Identifier: ' privateClassInPublicModuleT'
+            TypeReference
+              Identifier: 'privateClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod2'
+          TypeReference
+            Identifier: ' privateClassInPublicModuleT'
+            TypeReference
+              Identifier: 'publicClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod3'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'privateClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod4'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'publicClassInPublicModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod1'
+          TypeReference
+            Identifier: ' privateClassInPublicModuleT'
+            TypeReference
+              Identifier: 'privateClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod2'
+          TypeReference
+            Identifier: ' privateClassInPublicModuleT'
+            TypeReference
+              Identifier: 'publicClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod3'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'privateClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod4'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'publicClassInPublicModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod1'
+          TypeReference
+            Identifier: ' privateClassInPublicModuleT'
+            TypeReference
+              Identifier: 'privateClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod2'
+          TypeReference
+            Identifier: ' privateClassInPublicModuleT'
+            TypeReference
+              Identifier: 'publicClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod3'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'privateClassInPublicModule'
+        MethodSignature
+          Identifier: '
+        myMethod4'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'publicClassInPublicModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'T'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPublicModuleT'
+            TypeReference
+              Identifier: 'T'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateModuleTypeParameterConstraints'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClassInPrivateModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateModuleTypeParameterConstraints'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClassInPrivateModule'
+  ModuleDeclaration
+    Identifier: ' privateModule'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' privateClassInPrivateModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassInPrivateModule'
+      ClassDeclaration
+        Identifier: ' privateClassInPrivateModuleT'
+        TypeParameter
+          Identifier: 'T'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassInPrivateModuleT'
+        TypeParameter
+          Identifier: 'T'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod1'
+          TypeReference
+            Identifier: ' privateClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'privateClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod2'
+          TypeReference
+            Identifier: ' privateClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'publicClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod3'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'privateClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod4'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'publicClassInPrivateModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod1'
+          TypeReference
+            Identifier: ' privateClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'privateClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod2'
+          TypeReference
+            Identifier: ' privateClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'publicClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod3'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'privateClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod4'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'publicClassInPrivateModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod1'
+          TypeReference
+            Identifier: ' privateClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'privateClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod2'
+          TypeReference
+            Identifier: ' privateClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'publicClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod3'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'privateClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod4'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'publicClassInPrivateModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod1'
+          TypeReference
+            Identifier: ' privateClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'privateClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod2'
+          TypeReference
+            Identifier: ' privateClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'publicClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod3'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'privateClassInPrivateModule'
+        MethodSignature
+          Identifier: '
+        myMethod4'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'publicClassInPrivateModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'T'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        myMethod0'
+          TypeReference
+            Identifier: ' publicClassInPrivateModuleT'
+            TypeReference
+              Identifier: 'T'

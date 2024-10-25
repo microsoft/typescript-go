@@ -1,0 +1,123 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    fooo'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    fooo'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      Block
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      Block
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' B'
+          MethodDeclaration
+            OverrideKeyword
+            Identifier: ' foo'
+            Parameter
+              Identifier: 'v'
+              StringKeyword
+            Block
+          MethodDeclaration
+            Identifier: '
+    
+        fooo'
+            Parameter
+              Identifier: 'v'
+              StringKeyword
+            Block
+          MethodDeclaration
+            OverrideKeyword
+            Identifier: ' bar'
+            Parameter
+              Identifier: 'v'
+              StringKeyword
+            Block
+  ClassDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ParenthesizedExpression
+          ClassExpression
+            MethodDeclaration
+              Identifier: '
+    foo'
+              Block
+            MethodDeclaration
+              Identifier: '
+    bar'
+              Block
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' foo'
+      Block
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    baz'
+      Block
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' bazz'
+      Block
+  FunctionDeclaration
+    Identifier: ' ff'
+    Block
+      ReturnStatement
+        ClassExpression
+          MethodDeclaration
+            OverrideKeyword
+            Identifier: ' foo'
+            Block

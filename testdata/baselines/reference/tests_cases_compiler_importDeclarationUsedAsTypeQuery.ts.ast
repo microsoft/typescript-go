@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    id'
+      NumberKeyword
+  ImportEqualsDeclaration
+    Identifier: ' a'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeQuery
+          Identifier: ' a'

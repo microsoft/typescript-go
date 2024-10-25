@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          SpreadAssignment
+            Identifier: 'o'
+          PropertyAssignment
+            Identifier: ' b'
+            NumericLiteral

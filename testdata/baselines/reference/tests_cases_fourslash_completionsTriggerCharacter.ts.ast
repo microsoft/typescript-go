@@ -1,0 +1,263 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @jsx: preserve
+
+/////** @/*tag*/ */
+//////</*comment*/
+////const x: "a" | "b" = "[|/*openQuote*/|]"/*closeQuote*/;
+////const y: 'a' | 'b' = '[|/*openSingleQuote*/|]'/*closeSingleQuote*/;
+////const z: 'a' | 'b' = `[|/*openTemplate*/|]`/*closeTemplate*/;
+////const q: "`a`" | "`b`" = "[|`/*openTemplateInQuote*/a`/*closeTemplateInQuote*/|]";
+
+////// "/*quoteInComment*/ </*lessInComment*/
+
+// @Filename: /foo/importMe.ts
+////whatever
+
+// @Filename: /a.tsx
+////declare global {
+////    namespace JSX {
+////        interface Element {}
+////        interface IntrinsicElements {
+////            div: {};
+////        }
+////    }
+////}
+////const ctr = </*openTag*/;
+////const less = 1 </*lessThan*/;
+////const closeTag = <div> foo <//*closeTag*/;
+////import something from "./foo//*path*/";
+////const divide = 1 //*divide*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ArrayLiteralExpression
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral

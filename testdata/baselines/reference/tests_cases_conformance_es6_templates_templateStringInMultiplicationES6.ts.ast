@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          NumericLiteral
+          AsteriskToken
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail

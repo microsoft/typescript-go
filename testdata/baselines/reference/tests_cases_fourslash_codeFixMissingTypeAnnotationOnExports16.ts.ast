@@ -1,0 +1,38 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+/// <reference path='fourslash.ts'/>
+
+// @isolatedDeclarations: true
+// @declaration: true
+//// function foo() {
+////     return { x: 1, y: {42: {dd: "45"}, b: 2} };
+//// }
+//// function foo3(): "42" {
+////     return "42";
+//// }
+//// export const { x: a , y: { [foo3()]: {dd: e} } } = foo();
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Extract_binding_expressions_to_variable'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

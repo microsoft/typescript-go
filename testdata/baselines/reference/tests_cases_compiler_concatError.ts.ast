@@ -1,0 +1,35 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n1'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fa'
+        ArrayType
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+fa'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' fa'
+          Identifier: 'concat'
+        ArrayLiteralExpression
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+fa'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' fa'
+          Identifier: 'concat'
+        NumericLiteral

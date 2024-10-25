@@ -1,0 +1,3592 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    __String'
+        ImportSpecifier
+          Identifier: '
+    addToSeen'
+        ImportSpecifier
+          Identifier: '
+    append'
+        ImportSpecifier
+          Identifier: '
+    arrayIsEqualTo'
+        ImportSpecifier
+          Identifier: '
+    CancellationToken'
+        ImportSpecifier
+          Identifier: '
+    consumesNodeCoreModules'
+        ImportSpecifier
+          Identifier: '
+    createMultiMap'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    ensureTrailingDirectorySeparator'
+        ImportSpecifier
+          Identifier: '
+    findIndex'
+        ImportSpecifier
+          Identifier: '
+    forEachAncestorDirectoryStoppingAtGlobalCache'
+        ImportSpecifier
+          Identifier: '
+    forEachEntry'
+        ImportSpecifier
+          Identifier: '
+    FutureSourceFile'
+        ImportSpecifier
+          Identifier: '
+    getBaseFileName'
+        ImportSpecifier
+          Identifier: '
+    GetCanonicalFileName'
+        ImportSpecifier
+          Identifier: '
+    getDefaultLikeExportNameFromDeclaration'
+        ImportSpecifier
+          Identifier: '
+    getDirectoryPath'
+        ImportSpecifier
+          Identifier: '
+    getLocalSymbolForExportDefault'
+        ImportSpecifier
+          Identifier: '
+    getNodeModulePathParts'
+        ImportSpecifier
+          Identifier: '
+    getPackageNameFromTypesPackageName'
+        ImportSpecifier
+          Identifier: '
+    getRegexFromPattern'
+        ImportSpecifier
+          Identifier: '
+    getSubPatternFromSpec'
+        ImportSpecifier
+          Identifier: '
+    getSymbolId'
+        ImportSpecifier
+          Identifier: '
+    hostGetCanonicalFileName'
+        ImportSpecifier
+          Identifier: '
+    hostUsesCaseSensitiveFileNames'
+        ImportSpecifier
+          Identifier: '
+    InternalSymbolName'
+        ImportSpecifier
+          Identifier: '
+    isExternalModuleNameRelative'
+        ImportSpecifier
+          Identifier: '
+    isExternalModuleSymbol'
+        ImportSpecifier
+          Identifier: '
+    isExternalOrCommonJsModule'
+        ImportSpecifier
+          Identifier: '
+    isKnownSymbol'
+        ImportSpecifier
+          Identifier: '
+    isNonGlobalAmbientModule'
+        ImportSpecifier
+          Identifier: '
+    isPrivateIdentifierSymbol'
+        ImportSpecifier
+          Identifier: '
+    LanguageServiceHost'
+        ImportSpecifier
+          Identifier: '
+    mapDefined'
+        ImportSpecifier
+          Identifier: '
+    ModuleSpecifierCache'
+        ImportSpecifier
+          Identifier: '
+    ModuleSpecifierResolutionHost'
+        ImportSpecifier
+          Identifier: '
+    moduleSpecifiers'
+        ImportSpecifier
+          Identifier: '
+    moduleSymbolToValidIdentifier'
+        ImportSpecifier
+          Identifier: '
+    nodeCoreModules'
+        ImportSpecifier
+          Identifier: '
+    nodeModulesPathPart'
+        ImportSpecifier
+          Identifier: '
+    PackageJsonImportFilter'
+        ImportSpecifier
+          Identifier: '
+    Path'
+        ImportSpecifier
+          Identifier: '
+    pathContainsNodeModules'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    ScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    shouldUseUriStyleNodeCoreModules'
+        ImportSpecifier
+          Identifier: '
+    skipAlias'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    startsWith'
+        ImportSpecifier
+          Identifier: '
+    Statement'
+        ImportSpecifier
+          Identifier: '
+    stripQuotes'
+        ImportSpecifier
+          Identifier: '
+    Symbol'
+        ImportSpecifier
+          Identifier: '
+    SymbolFlags'
+        ImportSpecifier
+          Identifier: '
+    timestamp'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+        ImportSpecifier
+          Identifier: '
+    unescapeLeadingUnderscores'
+        ImportSpecifier
+          Identifier: '
+    unmangleScopedPackageName'
+        ImportSpecifier
+          Identifier: '
+    UserPreferences'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' ImportKind'
+    EnumMember
+      Identifier: '
+    Named'
+    EnumMember
+      Identifier: '
+    Default'
+    EnumMember
+      Identifier: '
+    Namespace'
+    EnumMember
+      Identifier: '
+    CommonJS'
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' ExportKind'
+    EnumMember
+      Identifier: '
+    Named'
+    EnumMember
+      Identifier: '
+    Default'
+    EnumMember
+      Identifier: '
+    ExportEquals'
+    EnumMember
+      Identifier: '
+    UMD'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SymbolExportInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' moduleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    PropertySignature
+      Identifier: '
+    /** Set if `moduleSymbol` is an external module, not an ambient module */
+    moduleFileName'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    exportKind'
+      TypeReference
+        Identifier: ' ExportKind'
+    PropertySignature
+      Identifier: '
+    targetFlags'
+      TypeReference
+        Identifier: ' SymbolFlags'
+    PropertySignature
+      Identifier: '
+    /** True if export was only found via the package.json AutoImportProvider (for telemetry). */
+    isFromPackageJson'
+      BooleanKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' FutureSymbolExportInfo'
+    IntersectionType
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          Identifier: 'SymbolExportInfo'
+        LiteralType
+          StringLiteral
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' symbol'
+          QuestionToken
+          UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' CachedSymbolExportInfo'
+    PropertySignature
+      Identifier: '
+    // Used to rehydrate `symbol` and `moduleSymbol` when transient
+    id'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    symbolName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    capitalizedSymbolName'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    symbolTableKey'
+      TypeReference
+        Identifier: ' __String'
+    PropertySignature
+      Identifier: '
+    moduleName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    moduleFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    packageName'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' symbol'
+      UnionType
+        TypeReference
+          Identifier: ' Symbol'
+        UndefinedKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' moduleSymbol'
+      UnionType
+        TypeReference
+          Identifier: ' Symbol'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    moduleFileName'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    exportKind'
+      TypeReference
+        Identifier: ' ExportKind'
+    PropertySignature
+      Identifier: '
+    targetFlags'
+      TypeReference
+        Identifier: ' SymbolFlags'
+    PropertySignature
+      Identifier: '
+    isFromPackageJson'
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ExportInfoMap'
+    MethodSignature
+      Identifier: '
+    isUsableByFile'
+      Parameter
+        Identifier: 'importingFile'
+        TypeReference
+          Identifier: ' Path'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    clear'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    add'
+      Parameter
+        Identifier: 'importingFile'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' symbol'
+        TypeReference
+          Identifier: ' Symbol'
+      Parameter
+        Identifier: ' key'
+        TypeReference
+          Identifier: ' __String'
+      Parameter
+        Identifier: ' moduleSymbol'
+        TypeReference
+          Identifier: ' Symbol'
+      Parameter
+        Identifier: ' moduleFile'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' exportKind'
+        TypeReference
+          Identifier: ' ExportKind'
+      Parameter
+        Identifier: ' isFromPackageJson'
+        BooleanKeyword
+      Parameter
+        Identifier: ' checker'
+        TypeReference
+          Identifier: ' TypeChecker'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    get'
+      Parameter
+        Identifier: 'importingFile'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' key'
+        TypeReference
+          Identifier: ' ExportMapInfoKey'
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' SymbolExportInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    search'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'importingFile'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' preferCapitalized'
+        BooleanKeyword
+      Parameter
+        Identifier: ' matches'
+        FunctionType
+          Parameter
+            Identifier: 'name'
+            StringKeyword
+          Parameter
+            Identifier: ' targetFlags'
+            TypeReference
+              Identifier: ' SymbolFlags'
+          BooleanKeyword
+      Parameter
+        Identifier: ' action'
+        FunctionType
+          Parameter
+            Identifier: 'info'
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' SymbolExportInfo'
+          Parameter
+            Identifier: ' symbolName'
+            StringKeyword
+          Parameter
+            Identifier: ' isFromAmbientModule'
+            BooleanKeyword
+          Parameter
+            Identifier: ' key'
+            TypeReference
+              Identifier: ' ExportMapInfoKey'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    releaseSymbols'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    isEmpty'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    /** @returns Whether the change resulted in the cache being cleared */
+    onFileChanged'
+      Parameter
+        Identifier: 'oldSourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' newSourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' typeAcquisitionEnabled'
+        BooleanKeyword
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CacheableExportInfoMapHost'
+    MethodSignature
+      Identifier: '
+    getCurrentProgram'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getPackageJsonAutoImportProvider'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getGlobalTypingsCacheLocation'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ExportMapInfoKey'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' __exportInfoKey'
+          VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createCacheableExportInfoMap'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' CacheableExportInfoMapHost'
+    TypeReference
+      Identifier: ' ExportInfoMap'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exportInfoId'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exportInfo'
+            CallExpression
+              Identifier: ' createMultiMap'
+              TypeReference
+                Identifier: 'ExportMapInfoKey'
+              TypeReference
+                Identifier: ' CachedSymbolExportInfo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' symbols'
+            NewExpression
+              Identifier: ' Map'
+              NumberKeyword
+              TupleType
+                NamedTupleMember
+                  Identifier: 'symbol'
+                  TypeReference
+                    Identifier: ' Symbol'
+                NamedTupleMember
+                  Identifier: ' moduleSymbol'
+                  TypeReference
+                    Identifier: ' Symbol'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' packages'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' usableByFileName'
+            UnionType
+              TypeReference
+                Identifier: ' Path'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cache'
+            TypeReference
+              Identifier: ' ExportInfoMap'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        isUsableByFile'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' importingFile'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    Identifier: ' importingFile'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' usableByFileName'
+              PropertyAssignment
+                Identifier: '
+        isEmpty'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'exportInfo'
+                      Identifier: 'size'
+              PropertyAssignment
+                Identifier: '
+        clear'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            exportInfo'
+                          Identifier: 'clear'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            symbols'
+                          Identifier: 'clear'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+            usableByFileName'
+                        EqualsToken
+                        Identifier: ' undefined'
+              PropertyAssignment
+                Identifier: '
+        add'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'importingFile'
+                  Parameter
+                    Identifier: ' symbol'
+                  Parameter
+                    Identifier: ' symbolTableKey'
+                  Parameter
+                    Identifier: ' moduleSymbol'
+                  Parameter
+                    Identifier: ' moduleFile'
+                  Parameter
+                    Identifier: ' exportKind'
+                  Parameter
+                    Identifier: ' isFromPackageJson'
+                  Parameter
+                    Identifier: ' checker'
+                  EqualsGreaterThanToken
+                  Block
+                    IfStatement
+                      BinaryExpression
+                        Identifier: 'importingFile'
+                        ExclamationEqualsEqualsToken
+                        Identifier: ' usableByFileName'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                cache'
+                              Identifier: 'clear'
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                usableByFileName'
+                            EqualsToken
+                            Identifier: ' importingFile'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' packageName'
+                    IfStatement
+                      Identifier: 'moduleFile'
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' nodeModulesPathParts'
+                              CallExpression
+                                Identifier: ' getNodeModulePathParts'
+                                PropertyAccessExpression
+                                  Identifier: 'moduleFile'
+                                  Identifier: 'fileName'
+                        IfStatement
+                          Identifier: 'nodeModulesPathParts'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  ObjectBindingPattern
+                                    BindingElement
+                                      Identifier: ' topLevelNodeModulesIndex'
+                                    BindingElement
+                                      Identifier: ' topLevelPackageNameIndex'
+                                    BindingElement
+                                      Identifier: ' packageRootIndex'
+                                  Identifier: ' nodeModulesPathParts'
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                    packageName'
+                                EqualsToken
+                                CallExpression
+                                  Identifier: ' unmangleScopedPackageName'
+                                  CallExpression
+                                    Identifier: 'getPackageNameFromTypesPackageName'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'moduleFile'
+                                          Identifier: 'fileName'
+                                        Identifier: 'substring'
+                                      BinaryExpression
+                                        Identifier: 'topLevelPackageNameIndex'
+                                        PlusToken
+                                        NumericLiteral
+                                      Identifier: ' packageRootIndex'
+                            IfStatement
+                              CallExpression
+                                Identifier: 'startsWith'
+                                Identifier: 'importingFile'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' moduleFile'
+                                      Identifier: 'path'
+                                    Identifier: 'substring'
+                                  NumericLiteral
+                                  Identifier: ' topLevelNodeModulesIndex'
+                              Block
+                                VariableStatement
+                                  VariableDeclarationList
+                                    VariableDeclaration
+                                      Identifier: ' prevDeepestNodeModulesPath'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' packages'
+                                          Identifier: 'get'
+                                        Identifier: 'packageName'
+                                VariableStatement
+                                  VariableDeclarationList
+                                    VariableDeclaration
+                                      Identifier: ' nodeModulesPath'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' moduleFile'
+                                            Identifier: 'fileName'
+                                          Identifier: 'substring'
+                                        NumericLiteral
+                                        BinaryExpression
+                                          Identifier: ' topLevelPackageNameIndex'
+                                          PlusToken
+                                          NumericLiteral
+                                IfStatement
+                                  Identifier: 'prevDeepestNodeModulesPath'
+                                  Block
+                                    VariableStatement
+                                      VariableDeclarationList
+                                        VariableDeclaration
+                                          Identifier: ' prevDeepestNodeModulesIndex'
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' prevDeepestNodeModulesPath'
+                                              Identifier: 'indexOf'
+                                            Identifier: 'nodeModulesPathPart'
+                                    IfStatement
+                                      BinaryExpression
+                                        Identifier: 'topLevelNodeModulesIndex'
+                                        GreaterThanToken
+                                        Identifier: ' prevDeepestNodeModulesIndex'
+                                      Block
+                                        ExpressionStatement
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+                                packages'
+                                              Identifier: 'set'
+                                            Identifier: 'packageName'
+                                            Identifier: ' nodeModulesPath'
+                                  Block
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                            packages'
+                                          Identifier: 'set'
+                                        Identifier: 'packageName'
+                                        Identifier: ' nodeModulesPath'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' isDefault'
+                          BinaryExpression
+                            Identifier: ' exportKind'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' ExportKind'
+                              Identifier: 'Default'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' namedSymbol'
+                          BinaryExpression
+                            BinaryExpression
+                              Identifier: ' isDefault'
+                              AmpersandAmpersandToken
+                              CallExpression
+                                Identifier: ' getLocalSymbolForExportDefault'
+                                Identifier: 'symbol'
+                            BarBarToken
+                            Identifier: ' symbol'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' names'
+                          ConditionalExpression
+                            BinaryExpression
+                              BinaryExpression
+                                Identifier: ' exportKind'
+                                EqualsEqualsEqualsToken
+                                PropertyAccessExpression
+                                  Identifier: ' ExportKind'
+                                  Identifier: 'Named'
+                              BarBarToken
+                              CallExpression
+                                Identifier: ' isExternalModuleSymbol'
+                                Identifier: 'namedSymbol'
+                            QuestionToken
+                            CallExpression
+                              Identifier: ' unescapeLeadingUnderscores'
+                              Identifier: 'symbolTableKey'
+                            ColonToken
+                            CallExpression
+                              Identifier: ' getNamesForExportedSymbol'
+                              Identifier: 'namedSymbol'
+                              Identifier: ' checker'
+                              Identifier: ' /*scriptTarget*/ undefined'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' symbolName'
+                          ConditionalExpression
+                            BinaryExpression
+                              TypeOfExpression
+                                Identifier: ' names'
+                              EqualsEqualsEqualsToken
+                              StringLiteral
+                            QuestionToken
+                            Identifier: ' names'
+                            ColonToken
+                            ElementAccessExpression
+                              Identifier: ' names'
+                              NumericLiteral
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' capitalizedSymbolName'
+                          ConditionalExpression
+                            BinaryExpression
+                              TypeOfExpression
+                                Identifier: ' names'
+                              EqualsEqualsEqualsToken
+                              StringLiteral
+                            QuestionToken
+                            Identifier: ' undefined'
+                            ColonToken
+                            ElementAccessExpression
+                              Identifier: ' names'
+                              NumericLiteral
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' moduleName'
+                          CallExpression
+                            Identifier: ' stripQuotes'
+                            PropertyAccessExpression
+                              Identifier: 'moduleSymbol'
+                              Identifier: 'name'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' id'
+                          PostfixUnaryExpression
+                            Identifier: ' exportInfoId'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' target'
+                          CallExpression
+                            Identifier: ' skipAlias'
+                            Identifier: 'symbol'
+                            Identifier: ' checker'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' storedSymbol'
+                          ConditionalExpression
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: ' symbol'
+                                Identifier: 'flags'
+                              AmpersandToken
+                              PropertyAccessExpression
+                                Identifier: ' SymbolFlags'
+                                Identifier: 'Transient'
+                            QuestionToken
+                            Identifier: ' undefined'
+                            ColonToken
+                            Identifier: ' symbol'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' storedModuleSymbol'
+                          ConditionalExpression
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: ' moduleSymbol'
+                                Identifier: 'flags'
+                              AmpersandToken
+                              PropertyAccessExpression
+                                Identifier: ' SymbolFlags'
+                                Identifier: 'Transient'
+                            QuestionToken
+                            Identifier: ' undefined'
+                            ColonToken
+                            Identifier: ' moduleSymbol'
+                    IfStatement
+                      BinaryExpression
+                        PrefixUnaryExpression
+                          Identifier: 'storedSymbol'
+                        BarBarToken
+                        PrefixUnaryExpression
+                          Identifier: 'storedModuleSymbol'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' symbols'
+                            Identifier: 'set'
+                          Identifier: 'id'
+                          ArrayLiteralExpression
+                            Identifier: 'symbol'
+                            Identifier: ' moduleSymbol'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+            exportInfo'
+                          Identifier: 'add'
+                        CallExpression
+                          Identifier: 'key'
+                          Identifier: 'symbolName'
+                          Identifier: ' symbol'
+                          ConditionalExpression
+                            CallExpression
+                              Identifier: ' isExternalModuleNameRelative'
+                              Identifier: 'moduleName'
+                            QuestionToken
+                            Identifier: ' undefined'
+                            ColonToken
+                            Identifier: ' moduleName'
+                          Identifier: ' checker'
+                        ObjectLiteralExpression
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                id'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                symbolTableKey'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                symbolName'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                capitalizedSymbolName'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                moduleName'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                moduleFile'
+                          PropertyAssignment
+                            Identifier: '
+                moduleFileName'
+                            PropertyAccessExpression
+                              Identifier: ' moduleFile'
+                              QuestionDotToken
+                              Identifier: 'fileName'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                packageName'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                exportKind'
+                          PropertyAssignment
+                            Identifier: '
+                targetFlags'
+                            PropertyAccessExpression
+                              Identifier: ' target'
+                              Identifier: 'flags'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                isFromPackageJson'
+                          PropertyAssignment
+                            Identifier: '
+                symbol'
+                            Identifier: ' storedSymbol'
+                          PropertyAssignment
+                            Identifier: '
+                moduleSymbol'
+                            Identifier: ' storedModuleSymbol'
+              PropertyAssignment
+                Identifier: '
+        get'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'importingFile'
+                  Parameter
+                    Identifier: ' key'
+                  EqualsGreaterThanToken
+                  Block
+                    IfStatement
+                      BinaryExpression
+                        Identifier: 'importingFile'
+                        ExclamationEqualsEqualsToken
+                        Identifier: ' usableByFileName'
+                      ReturnStatement
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' result'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' exportInfo'
+                              Identifier: 'get'
+                            Identifier: 'key'
+                    ReturnStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' result'
+                          QuestionDotToken
+                          Identifier: 'map'
+                        Identifier: 'rehydrateCachedInfo'
+              PropertyAssignment
+                Identifier: '
+        search'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'importingFile'
+                  Parameter
+                    Identifier: ' preferCapitalized'
+                  Parameter
+                    Identifier: ' matches'
+                  Parameter
+                    Identifier: ' action'
+                  EqualsGreaterThanToken
+                  Block
+                    IfStatement
+                      BinaryExpression
+                        Identifier: 'importingFile'
+                        ExclamationEqualsEqualsToken
+                        Identifier: ' usableByFileName'
+                      ReturnStatement
+                    ReturnStatement
+                      CallExpression
+                        Identifier: ' forEachEntry'
+                        Identifier: 'exportInfo'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'info'
+                          Parameter
+                            Identifier: ' key'
+                          EqualsGreaterThanToken
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  ObjectBindingPattern
+                                    BindingElement
+                                      Identifier: ' symbolName'
+                                    BindingElement
+                                      Identifier: ' ambientModuleName'
+                                  CallExpression
+                                    Identifier: ' parseKey'
+                                    Identifier: 'key'
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' name'
+                                  BinaryExpression
+                                    BinaryExpression
+                                      Identifier: ' preferCapitalized'
+                                      AmpersandAmpersandToken
+                                      PropertyAccessExpression
+                                        ElementAccessExpression
+                                          Identifier: ' info'
+                                          NumericLiteral
+                                        Identifier: 'capitalizedSymbolName'
+                                    BarBarToken
+                                    Identifier: ' symbolName'
+                            IfStatement
+                              CallExpression
+                                Identifier: 'matches'
+                                Identifier: 'name'
+                                PropertyAccessExpression
+                                  ElementAccessExpression
+                                    Identifier: ' info'
+                                    NumericLiteral
+                                  Identifier: 'targetFlags'
+                              Block
+                                VariableStatement
+                                  VariableDeclarationList
+                                    VariableDeclaration
+                                      Identifier: ' rehydrated'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' info'
+                                          Identifier: 'map'
+                                        Identifier: 'rehydrateCachedInfo'
+                                VariableStatement
+                                  VariableDeclarationList
+                                    VariableDeclaration
+                                      Identifier: ' filtered'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' rehydrated'
+                                          Identifier: 'filter'
+                                        ArrowFunction
+                                          Parameter
+                                            Identifier: 'r'
+                                          Parameter
+                                            Identifier: ' i'
+                                          EqualsGreaterThanToken
+                                          CallExpression
+                                            Identifier: ' isNotShadowedByDeeperNodeModulesPackage'
+                                            Identifier: 'r'
+                                            PropertyAccessExpression
+                                              ElementAccessExpression
+                                                Identifier: ' info'
+                                                Identifier: 'i'
+                                              Identifier: 'packageName'
+                                IfStatement
+                                  PropertyAccessExpression
+                                    Identifier: 'filtered'
+                                    Identifier: 'length'
+                                  Block
+                                    VariableStatement
+                                      VariableDeclarationList
+                                        VariableDeclaration
+                                          Identifier: ' res'
+                                          CallExpression
+                                            Identifier: ' action'
+                                            Identifier: 'filtered'
+                                            Identifier: ' name'
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                Identifier: 'ambientModuleName'
+                                            Identifier: ' key'
+                                    IfStatement
+                                      BinaryExpression
+                                        Identifier: 'res'
+                                        ExclamationEqualsEqualsToken
+                                        Identifier: ' undefined'
+                                      ReturnStatement
+                                        Identifier: ' res'
+              PropertyAssignment
+                Identifier: '
+        releaseSymbols'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            symbols'
+                          Identifier: 'clear'
+              PropertyAssignment
+                Identifier: '
+        onFileChanged'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'oldSourceFile'
+                    TypeReference
+                      Identifier: ' SourceFile'
+                  Parameter
+                    Identifier: ' newSourceFile'
+                    TypeReference
+                      Identifier: ' SourceFile'
+                  Parameter
+                    Identifier: ' typeAcquisitionEnabled'
+                    BooleanKeyword
+                  EqualsGreaterThanToken
+                  Block
+                    IfStatement
+                      BinaryExpression
+                        CallExpression
+                          Identifier: 'fileIsGlobalOnly'
+                          Identifier: 'oldSourceFile'
+                        AmpersandAmpersandToken
+                        CallExpression
+                          Identifier: ' fileIsGlobalOnly'
+                          Identifier: 'newSourceFile'
+                      Block
+                        ReturnStatement
+                          FalseKeyword
+                    IfStatement
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            BinaryExpression
+                              Identifier: '
+                usableByFileName'
+                              AmpersandAmpersandToken
+                              BinaryExpression
+                                Identifier: ' usableByFileName'
+                                ExclamationEqualsEqualsToken
+                                PropertyAccessExpression
+                                  Identifier: ' newSourceFile'
+                                  Identifier: 'path'
+                            BarBarToken
+                            BinaryExpression
+                              Identifier: '
+                // If ATA is enabled, auto-imports uses existing imports to guess whether you want auto-imports from node.
+                // Adding or removing imports from node could change the outcome of that guess, so could change the suggestions list.
+                typeAcquisitionEnabled'
+                              AmpersandAmpersandToken
+                              BinaryExpression
+                                CallExpression
+                                  Identifier: ' consumesNodeCoreModules'
+                                  Identifier: 'oldSourceFile'
+                                ExclamationEqualsEqualsToken
+                                CallExpression
+                                  Identifier: ' consumesNodeCoreModules'
+                                  Identifier: 'newSourceFile'
+                          BarBarToken
+                          PrefixUnaryExpression
+                            CallExpression
+                              Identifier: 'arrayIsEqualTo'
+                              PropertyAccessExpression
+                                Identifier: 'oldSourceFile'
+                                Identifier: 'moduleAugmentations'
+                              PropertyAccessExpression
+                                Identifier: ' newSourceFile'
+                                Identifier: 'moduleAugmentations'
+                        BarBarToken
+                        PrefixUnaryExpression
+                          CallExpression
+                            Identifier: 'ambientModuleDeclarationsAreEqual'
+                            Identifier: 'oldSourceFile'
+                            Identifier: ' newSourceFile'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                cache'
+                              Identifier: 'clear'
+                        ReturnStatement
+                          TrueKeyword
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+            usableByFileName'
+                        EqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' newSourceFile'
+                          Identifier: 'path'
+                    ReturnStatement
+                      FalseKeyword
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'Debug'
+          Identifier: 'isDebugging'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Object'
+                Identifier: 'defineProperty'
+              Identifier: 'cache'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' value'
+                  Identifier: ' exportInfo'
+      ReturnStatement
+        Identifier: ' cache'
+      FunctionDeclaration
+        Identifier: ' rehydrateCachedInfo'
+        Parameter
+          Identifier: 'info'
+          TypeReference
+            Identifier: ' CachedSymbolExportInfo'
+        TypeReference
+          Identifier: ' SymbolExportInfo'
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'info'
+                Identifier: 'symbol'
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                Identifier: ' info'
+                Identifier: 'moduleSymbol'
+            ReturnStatement
+              AsExpression
+                Identifier: ' info'
+                TypeReference
+                  Identifier: ' SymbolExportInfo'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' id'
+                  BindingElement
+                    Identifier: ' exportKind'
+                  BindingElement
+                    Identifier: ' targetFlags'
+                  BindingElement
+                    Identifier: ' isFromPackageJson'
+                  BindingElement
+                    Identifier: ' moduleFileName'
+                Identifier: ' info'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'cachedSymbol'
+                  BindingElement
+                    Identifier: ' cachedModuleSymbol'
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbols'
+                      Identifier: 'get'
+                    Identifier: 'id'
+                  BarBarToken
+                  Identifier: ' emptyArray'
+          IfStatement
+            BinaryExpression
+              Identifier: 'cachedSymbol'
+              AmpersandAmpersandToken
+              Identifier: ' cachedModuleSymbol'
+            Block
+              ReturnStatement
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                symbol'
+                    Identifier: ' cachedSymbol'
+                  PropertyAssignment
+                    Identifier: '
+                moduleSymbol'
+                    Identifier: ' cachedModuleSymbol'
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                moduleFileName'
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                exportKind'
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                targetFlags'
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                isFromPackageJson'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' checker'
+                CallExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      ConditionalExpression
+                        Identifier: 'isFromPackageJson'
+                        QuestionToken
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' host'
+                              Identifier: 'getPackageJsonAutoImportProvider'
+                        ColonToken
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' host'
+                              Identifier: 'getCurrentProgram'
+                    Identifier: 'getTypeChecker'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' moduleSymbol'
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' info'
+                      Identifier: 'moduleSymbol'
+                    BarBarToken
+                    Identifier: ' cachedModuleSymbol'
+                  BarBarToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Debug'
+                      Identifier: 'checkDefined'
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            info'
+                        Identifier: 'moduleFile'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' checker'
+                          Identifier: 'getMergedSymbol'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'info'
+                            Identifier: 'moduleFile'
+                          Identifier: 'symbol'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' checker'
+                          Identifier: 'tryFindAmbientModule'
+                        PropertyAccessExpression
+                          Identifier: 'info'
+                          Identifier: 'moduleName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' symbol'
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' info'
+                      Identifier: 'symbol'
+                    BarBarToken
+                    Identifier: ' cachedSymbol'
+                  BarBarToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Debug'
+                      Identifier: 'checkDefined'
+                    ConditionalExpression
+                      BinaryExpression
+                        Identifier: '
+            exportKind'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' ExportKind'
+                          Identifier: 'ExportEquals'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' checker'
+                          Identifier: 'resolveExternalModuleSymbol'
+                        Identifier: 'moduleSymbol'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' checker'
+                          Identifier: 'tryGetMemberInModuleExportsAndProperties'
+                        CallExpression
+                          Identifier: 'unescapeLeadingUnderscores'
+                          PropertyAccessExpression
+                            Identifier: 'info'
+                            Identifier: 'symbolTableKey'
+                        Identifier: ' moduleSymbol'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        PropertyAccessExpression
+                          Identifier: 'info'
+                          Identifier: 'symbolName'
+                        TemplateMiddle
+                      TemplateSpan
+                        PropertyAccessExpression
+                          Identifier: 'info'
+                          Identifier: 'symbolTableKey'
+                        TemplateMiddle
+                      TemplateSpan
+                        PropertyAccessExpression
+                          Identifier: 'moduleSymbol'
+                          Identifier: 'name'
+                        TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        symbols'
+                Identifier: 'set'
+              Identifier: 'id'
+              ArrayLiteralExpression
+                Identifier: 'symbol'
+                Identifier: ' moduleSymbol'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+            symbol'
+              ShorthandPropertyAssignment
+                Identifier: '
+            moduleSymbol'
+              ShorthandPropertyAssignment
+                Identifier: '
+            moduleFileName'
+              ShorthandPropertyAssignment
+                Identifier: '
+            exportKind'
+              ShorthandPropertyAssignment
+                Identifier: '
+            targetFlags'
+              ShorthandPropertyAssignment
+                Identifier: '
+            isFromPackageJson'
+      FunctionDeclaration
+        Identifier: ' key'
+        Parameter
+          Identifier: 'importedName'
+          StringKeyword
+        Parameter
+          Identifier: ' symbol'
+          TypeReference
+            Identifier: ' Symbol'
+        Parameter
+          Identifier: ' ambientModuleName'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        Parameter
+          Identifier: ' checker'
+          TypeReference
+            Identifier: ' TypeChecker'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' moduleKey'
+                BinaryExpression
+                  Identifier: ' ambientModuleName'
+                  BarBarToken
+                  StringLiteral
+          ReturnStatement
+            AsExpression
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  PropertyAccessExpression
+                    Identifier: 'importedName'
+                    Identifier: 'length'
+                  TemplateMiddle
+                TemplateSpan
+                  CallExpression
+                    Identifier: 'getSymbolId'
+                    CallExpression
+                      Identifier: 'skipAlias'
+                      Identifier: 'symbol'
+                      Identifier: ' checker'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'importedName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'moduleKey'
+                  TemplateTail
+              TypeReference
+                Identifier: ' ExportMapInfoKey'
+      FunctionDeclaration
+        Identifier: ' parseKey'
+        Parameter
+          Identifier: 'key'
+          TypeReference
+            Identifier: ' ExportMapInfoKey'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' firstSpace'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' key'
+                    Identifier: 'indexOf'
+                  StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' secondSpace'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' key'
+                    Identifier: 'indexOf'
+                  StringLiteral
+                  BinaryExpression
+                    Identifier: ' firstSpace'
+                    PlusToken
+                    NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' symbolNameLength'
+                CallExpression
+                  Identifier: ' parseInt'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'key'
+                      Identifier: 'substring'
+                    NumericLiteral
+                    Identifier: ' firstSpace'
+                  NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' data'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' key'
+                    Identifier: 'substring'
+                  BinaryExpression
+                    Identifier: 'secondSpace'
+                    PlusToken
+                    NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' symbolName'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' data'
+                    Identifier: 'substring'
+                  NumericLiteral
+                  Identifier: ' symbolNameLength'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' moduleKey'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' data'
+                    Identifier: 'substring'
+                  BinaryExpression
+                    Identifier: 'symbolNameLength'
+                    PlusToken
+                    NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' ambientModuleName'
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' moduleKey'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  QuestionToken
+                  Identifier: ' undefined'
+                  ColonToken
+                  Identifier: ' moduleKey'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' symbolName'
+              ShorthandPropertyAssignment
+                Identifier: ' ambientModuleName'
+      FunctionDeclaration
+        Identifier: ' fileIsGlobalOnly'
+        Parameter
+          Identifier: 'file'
+          TypeReference
+            Identifier: ' SourceFile'
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'file'
+                      Identifier: 'commonJsModuleIndicator'
+                  AmpersandAmpersandToken
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'file'
+                      Identifier: 'externalModuleIndicator'
+                AmpersandAmpersandToken
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'file'
+                    Identifier: 'moduleAugmentations'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'file'
+                  Identifier: 'ambientModuleNames'
+      FunctionDeclaration
+        Identifier: ' ambientModuleDeclarationsAreEqual'
+        Parameter
+          Identifier: 'oldSourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' newSourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'arrayIsEqualTo'
+                PropertyAccessExpression
+                  Identifier: 'oldSourceFile'
+                  Identifier: 'ambientModuleNames'
+                PropertyAccessExpression
+                  Identifier: ' newSourceFile'
+                  Identifier: 'ambientModuleNames'
+            Block
+              ReturnStatement
+                FalseKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' oldFileStatementIndex'
+                PrefixUnaryExpression
+                  NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newFileStatementIndex'
+                PrefixUnaryExpression
+                  NumericLiteral
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' ambientModuleName'
+            PropertyAccessExpression
+              Identifier: ' newSourceFile'
+              Identifier: 'ambientModuleNames'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' isMatchingModuleDeclaration'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' Statement'
+                      EqualsGreaterThanToken
+                      BinaryExpression
+                        CallExpression
+                          Identifier: ' isNonGlobalAmbientModule'
+                          Identifier: 'node'
+                        AmpersandAmpersandToken
+                        BinaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' node'
+                              Identifier: 'name'
+                            Identifier: 'text'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' ambientModuleName'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            oldFileStatementIndex'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' findIndex'
+                    PropertyAccessExpression
+                      Identifier: 'oldSourceFile'
+                      Identifier: 'statements'
+                    Identifier: ' isMatchingModuleDeclaration'
+                    BinaryExpression
+                      Identifier: ' oldFileStatementIndex'
+                      PlusToken
+                      NumericLiteral
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            newFileStatementIndex'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' findIndex'
+                    PropertyAccessExpression
+                      Identifier: 'newSourceFile'
+                      Identifier: 'statements'
+                    Identifier: ' isMatchingModuleDeclaration'
+                    BinaryExpression
+                      Identifier: ' newFileStatementIndex'
+                      PlusToken
+                      NumericLiteral
+              IfStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'oldSourceFile'
+                      Identifier: 'statements'
+                    Identifier: 'oldFileStatementIndex'
+                  ExclamationEqualsEqualsToken
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' newSourceFile'
+                      Identifier: 'statements'
+                    Identifier: 'newFileStatementIndex'
+                Block
+                  ReturnStatement
+                    FalseKeyword
+          ReturnStatement
+            TrueKeyword
+      FunctionDeclaration
+        Identifier: ' isNotShadowedByDeeperNodeModulesPackage'
+        Parameter
+          Identifier: 'info'
+          TypeReference
+            Identifier: ' SymbolExportInfo'
+        Parameter
+          Identifier: ' packageName'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'packageName'
+              BarBarToken
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'info'
+                  Identifier: 'moduleFileName'
+            ReturnStatement
+              TrueKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' typingsCacheLocation'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'getGlobalTypingsCacheLocation'
+          IfStatement
+            BinaryExpression
+              Identifier: 'typingsCacheLocation'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' startsWith'
+                PropertyAccessExpression
+                  Identifier: 'info'
+                  Identifier: 'moduleFileName'
+                Identifier: ' typingsCacheLocation'
+            ReturnStatement
+              TrueKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' packageDeepestNodeModulesPath'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' packages'
+                    Identifier: 'get'
+                  Identifier: 'packageName'
+          ReturnStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'packageDeepestNodeModulesPath'
+              BarBarToken
+              CallExpression
+                Identifier: ' startsWith'
+                PropertyAccessExpression
+                  Identifier: 'info'
+                  Identifier: 'moduleFileName'
+                Identifier: ' packageDeepestNodeModulesPath'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isImportable'
+    Parameter
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: '
+    fromFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    toFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    toModule'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: '
+    packageJsonFilter'
+      UnionType
+        TypeReference
+          Identifier: ' PackageJsonImportFilter'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    moduleSpecifierResolutionHost'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: '
+    moduleSpecifierCache'
+      UnionType
+        TypeReference
+          Identifier: ' ModuleSpecifierCache'
+        UndefinedKeyword
+    BooleanKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'toFile'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' useNodePrefix'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' moduleName'
+                CallExpression
+                  Identifier: ' stripQuotes'
+                  PropertyAccessExpression
+                    Identifier: 'toModule'
+                    Identifier: 'name'
+          IfStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'nodeCoreModules'
+                  Identifier: 'has'
+                Identifier: 'moduleName'
+              AmpersandAmpersandToken
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'useNodePrefix'
+                    EqualsToken
+                    CallExpression
+                      Identifier: ' shouldUseUriStyleNodeCoreModules'
+                      Identifier: 'fromFile'
+                      Identifier: ' program'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' useNodePrefix'
+                  EqualsEqualsEqualsToken
+                  CallExpression
+                    Identifier: ' startsWith'
+                    Identifier: 'moduleName'
+                    StringLiteral
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'packageJsonFilter'
+                BarBarToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' packageJsonFilter'
+                    Identifier: 'allowsImportingAmbientModule'
+                  Identifier: 'toModule'
+                  Identifier: ' moduleSpecifierResolutionHost'
+              BarBarToken
+              CallExpression
+                Identifier: ' fileContainsPackageImport'
+                Identifier: 'fromFile'
+                Identifier: ' moduleName'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    Debug'
+            Identifier: 'assertIsDefined'
+          Identifier: 'toFile'
+      IfStatement
+        BinaryExpression
+          Identifier: 'fromFile'
+          EqualsEqualsEqualsToken
+          Identifier: ' toFile'
+        ReturnStatement
+          FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cachedResult'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' moduleSpecifierCache'
+                QuestionDotToken
+                Identifier: 'get'
+              PropertyAccessExpression
+                Identifier: 'fromFile'
+                Identifier: 'path'
+              PropertyAccessExpression
+                Identifier: ' toFile'
+                Identifier: 'path'
+              Identifier: ' preferences'
+              ObjectLiteralExpression
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'cachedResult'
+            QuestionDotToken
+            Identifier: 'isBlockedByPackageJsonDependencies'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ReturnStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'cachedResult'
+                  Identifier: 'isBlockedByPackageJsonDependencies'
+              BarBarToken
+              BinaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'cachedResult'
+                      Identifier: 'packageName'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' fileContainsPackageImport'
+                  Identifier: 'fromFile'
+                  PropertyAccessExpression
+                    Identifier: ' cachedResult'
+                    Identifier: 'packageName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' getCanonicalFileName'
+            CallExpression
+              Identifier: ' hostGetCanonicalFileName'
+              Identifier: 'moduleSpecifierResolutionHost'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' globalTypingsCache'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' moduleSpecifierResolutionHost'
+                Identifier: 'getGlobalTypingsCacheLocation'
+              QuestionDotToken
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' hasImportablePath'
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'moduleSpecifiers'
+                    Identifier: 'forEachFileNameOfModule'
+                  PropertyAccessExpression
+                    Identifier: '
+        fromFile'
+                    Identifier: 'fileName'
+                  PropertyAccessExpression
+                    Identifier: '
+        toFile'
+                    Identifier: 'fileName'
+                  Identifier: '
+        moduleSpecifierResolutionHost'
+                  FalseKeyword
+                  ArrowFunction
+                    Parameter
+                      Identifier: '
+        toPath'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' file'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' program'
+                                Identifier: 'getSourceFile'
+                              Identifier: 'toPath'
+                      ReturnStatement
+                        BinaryExpression
+                          ParenthesizedExpression
+                            BinaryExpression
+                              BinaryExpression
+                                Identifier: 'file'
+                                EqualsEqualsEqualsToken
+                                Identifier: ' toFile'
+                              BarBarToken
+                              PrefixUnaryExpression
+                                Identifier: 'file'
+                          AmpersandAmpersandToken
+                          CallExpression
+                            Identifier: '
+                isImportablePath'
+                            PropertyAccessExpression
+                              Identifier: '
+                    fromFile'
+                              Identifier: 'fileName'
+                            Identifier: '
+                    toPath'
+                            Identifier: '
+                    getCanonicalFileName'
+                            Identifier: '
+                    globalTypingsCache'
+                            Identifier: '
+                    moduleSpecifierResolutionHost'
+      IfStatement
+        Identifier: 'packageJsonFilter'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' importInfo'
+                ConditionalExpression
+                  Identifier: ' hasImportablePath'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' packageJsonFilter'
+                      Identifier: 'getSourceFileInfo'
+                    Identifier: 'toFile'
+                    Identifier: ' moduleSpecifierResolutionHost'
+                  ColonToken
+                  Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        moduleSpecifierCache'
+                QuestionDotToken
+                Identifier: 'setBlockedByPackageJsonDependencies'
+              PropertyAccessExpression
+                Identifier: 'fromFile'
+                Identifier: 'path'
+              PropertyAccessExpression
+                Identifier: ' toFile'
+                Identifier: 'path'
+              Identifier: ' preferences'
+              ObjectLiteralExpression
+              PropertyAccessExpression
+                Identifier: ' importInfo'
+                QuestionDotToken
+                Identifier: 'packageName'
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'importInfo'
+                  QuestionDotToken
+                  Identifier: 'importable'
+          ReturnStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'importInfo'
+                    QuestionDotToken
+                    Identifier: 'importable'
+              BarBarToken
+              BinaryExpression
+                BinaryExpression
+                  Identifier: ' hasImportablePath'
+                  AmpersandAmpersandToken
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'importInfo'
+                        QuestionDotToken
+                        Identifier: 'packageName'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' fileContainsPackageImport'
+                  Identifier: 'fromFile'
+                  PropertyAccessExpression
+                    Identifier: ' importInfo'
+                    Identifier: 'packageName'
+      ReturnStatement
+        Identifier: ' hasImportablePath'
+  FunctionDeclaration
+    Identifier: ' fileContainsPackageImport'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' packageName'
+      StringKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' sourceFile'
+            Identifier: 'imports'
+          AmpersandAmpersandToken
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' sourceFile'
+                Identifier: 'imports'
+              Identifier: 'some'
+            ArrowFunction
+              Parameter
+                Identifier: 'i'
+              EqualsGreaterThanToken
+              BinaryExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' i'
+                    Identifier: 'text'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' packageName'
+                BarBarToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' i'
+                      Identifier: 'text'
+                    Identifier: 'startsWith'
+                  BinaryExpression
+                    Identifier: 'packageName'
+                    PlusToken
+                    StringLiteral
+  FunctionDeclaration
+    Identifier: ' isImportablePath'
+    Parameter
+      Identifier: '
+    fromPath'
+      StringKeyword
+    Parameter
+      Identifier: '
+    toPath'
+      StringKeyword
+    Parameter
+      Identifier: '
+    getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    Parameter
+      Identifier: '
+    globalCachePath'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' toNodeModules'
+            CallExpression
+              Identifier: ' forEachAncestorDirectoryStoppingAtGlobalCache'
+              Identifier: '
+        host'
+              Identifier: '
+        toPath'
+              ArrowFunction
+                Parameter
+                  Identifier: '
+        ancestor'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: ' getBaseFileName'
+                      Identifier: 'ancestor'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  QuestionToken
+                  Identifier: ' ancestor'
+                  ColonToken
+                  Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' toNodeModulesParent'
+            BinaryExpression
+              Identifier: ' toNodeModules'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' getDirectoryPath'
+                CallExpression
+                  Identifier: 'getCanonicalFileName'
+                  Identifier: 'toNodeModules'
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: ' toNodeModulesParent'
+              EqualsEqualsEqualsToken
+              Identifier: ' undefined'
+            BarBarToken
+            CallExpression
+              Identifier: ' startsWith'
+              CallExpression
+                Identifier: 'getCanonicalFileName'
+                Identifier: 'fromPath'
+              Identifier: ' toNodeModulesParent'
+          BarBarToken
+          ParenthesizedExpression
+            BinaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'globalCachePath'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' startsWith'
+                CallExpression
+                  Identifier: 'getCanonicalFileName'
+                  Identifier: 'globalCachePath'
+                Identifier: ' toNodeModulesParent'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachExternalModuleToImportFrom'
+    Parameter
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: '
+    useAutoImportProvider'
+      BooleanKeyword
+    Parameter
+      Identifier: '
+    cb'
+      FunctionType
+        Parameter
+          Identifier: 'module'
+          TypeReference
+            Identifier: ' Symbol'
+        Parameter
+          Identifier: ' moduleFile'
+          UnionType
+            TypeReference
+              Identifier: ' SourceFile'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' program'
+          TypeReference
+            Identifier: ' Program'
+        Parameter
+          Identifier: ' isFromPackageJson'
+          BooleanKeyword
+        VoidKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' useCaseSensitiveFileNames'
+            CallExpression
+              Identifier: ' hostUsesCaseSensitiveFileNames'
+              Identifier: 'host'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' excludePatterns'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' preferences'
+                Identifier: 'autoImportFileExcludePatterns'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' getIsExcludedPatterns'
+                Identifier: 'preferences'
+                Identifier: ' useCaseSensitiveFileNames'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    forEachExternalModule'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'program'
+              Identifier: 'getTypeChecker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' program'
+              Identifier: 'getSourceFiles'
+          Identifier: ' excludePatterns'
+          Identifier: ' host'
+          ArrowFunction
+            Parameter
+              Identifier: 'module'
+            Parameter
+              Identifier: ' file'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' cb'
+              Identifier: 'module'
+              Identifier: ' file'
+              Identifier: ' program'
+              FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' autoImportProvider'
+            BinaryExpression
+              Identifier: ' useAutoImportProvider'
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' host'
+                  Identifier: 'getPackageJsonAutoImportProvider'
+                QuestionDotToken
+      IfStatement
+        Identifier: 'autoImportProvider'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' start'
+                CallExpression
+                  Identifier: ' timestamp'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' checker'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getTypeChecker'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        forEachExternalModule'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'autoImportProvider'
+                  Identifier: 'getTypeChecker'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' autoImportProvider'
+                  Identifier: 'getSourceFiles'
+              Identifier: ' excludePatterns'
+              Identifier: ' host'
+              ArrowFunction
+                Parameter
+                  Identifier: 'module'
+                Parameter
+                  Identifier: ' file'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    BinaryExpression
+                      BinaryExpression
+                        Identifier: 'file'
+                        AmpersandAmpersandToken
+                        PrefixUnaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'program'
+                              Identifier: 'getSourceFile'
+                            PropertyAccessExpression
+                              Identifier: 'file'
+                              Identifier: 'fileName'
+                      BarBarToken
+                      BinaryExpression
+                        PrefixUnaryExpression
+                          Identifier: 'file'
+                        AmpersandAmpersandToken
+                        PrefixUnaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'checker'
+                              Identifier: 'resolveName'
+                            PropertyAccessExpression
+                              Identifier: 'module'
+                              Identifier: 'name'
+                            Identifier: ' /*location*/ undefined'
+                            PropertyAccessExpression
+                              Identifier: ' SymbolFlags'
+                              Identifier: 'Module'
+                            FalseKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                // The AutoImportProvider filters files already in the main program out of its *root* files,
+                // but non-root files can still be present in both programs, and already in the export info map
+                // at this point. This doesn't create any incorrect behavior, but is a waste of time and memory,
+                // so we filter them out here.
+                cb'
+                          Identifier: 'module'
+                          Identifier: ' file'
+                          Identifier: ' autoImportProvider'
+                          TrueKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        host'
+                Identifier: 'log'
+              QuestionDotToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'timestamp'
+                    MinusToken
+                    Identifier: ' start'
+                  TemplateTail
+  FunctionDeclaration
+    Identifier: ' getIsExcludedPatterns'
+    Parameter
+      Identifier: 'preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' useCaseSensitiveFileNames'
+      BooleanKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' mapDefined'
+          PropertyAccessExpression
+            Identifier: 'preferences'
+            Identifier: 'autoImportFileExcludePatterns'
+          ArrowFunction
+            Parameter
+              Identifier: ' spec'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' pattern'
+                    CallExpression
+                      Identifier: ' getSubPatternFromSpec'
+                      Identifier: 'spec'
+                      StringLiteral
+                      StringLiteral
+              ReturnStatement
+                ConditionalExpression
+                  Identifier: ' pattern'
+                  QuestionToken
+                  CallExpression
+                    Identifier: ' getRegexFromPattern'
+                    Identifier: 'pattern'
+                    Identifier: ' useCaseSensitiveFileNames'
+                  ColonToken
+                  Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' forEachExternalModule'
+    Parameter
+      Identifier: 'checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' allSourceFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' excludePatterns'
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' RegExp'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'module'
+          TypeReference
+            Identifier: ' Symbol'
+        Parameter
+          Identifier: ' sourceFile'
+          UnionType
+            TypeReference
+              Identifier: ' SourceFile'
+            UndefinedKeyword
+        VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isExcluded'
+            BinaryExpression
+              Identifier: ' excludePatterns'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' getIsExcluded'
+                Identifier: 'excludePatterns'
+                Identifier: ' host'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ambient'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' checker'
+            Identifier: 'getAmbientModules'
+        Block
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'ambient'
+                      Identifier: 'name'
+                    Identifier: 'includes'
+                  StringLiteral
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'excludePatterns'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ambient'
+                          Identifier: 'declarations'
+                        QuestionDotToken
+                        Identifier: 'every'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'd'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          NonNullExpression
+                            Identifier: ' isExcluded'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'd'
+                              Identifier: 'getSourceFile'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            cb'
+                  Identifier: 'ambient'
+                  Identifier: ' /*sourceFile*/ undefined'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceFile'
+        Identifier: ' allSourceFiles'
+        Block
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isExternalOrCommonJsModule'
+                Identifier: 'sourceFile'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'isExcluded'
+                  QuestionDotToken
+                  Identifier: 'sourceFile'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            cb'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'checker'
+                      Identifier: 'getMergedSymbol'
+                    PropertyAccessExpression
+                      Identifier: 'sourceFile'
+                      Identifier: 'symbol'
+                  Identifier: ' sourceFile'
+  FunctionDeclaration
+    Identifier: ' getIsExcluded'
+    Parameter
+      Identifier: 'excludePatterns'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' RegExp'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' realpathsWithSymlinks'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'getSymlinkCache'
+                  QuestionDotToken
+                Identifier: 'getSymlinkedDirectoriesByRealpath'
+      ReturnStatement
+        ParenthesizedExpression
+          ArrowFunction
+            Parameter
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' fileName'
+                BindingElement
+                  Identifier: ' path'
+              TypeReference
+                Identifier: ' SourceFile'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'excludePatterns'
+                    Identifier: 'some'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'p'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' p'
+                        Identifier: 'test'
+                      Identifier: 'fileName'
+                ReturnStatement
+                  TrueKeyword
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'realpathsWithSymlinks'
+                    QuestionDotToken
+                    Identifier: 'size'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' pathContainsNodeModules'
+                    Identifier: 'fileName'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' dir'
+                        CallExpression
+                          Identifier: ' getDirectoryPath'
+                          Identifier: 'fileName'
+                  ReturnStatement
+                    BinaryExpression
+                      CallExpression
+                        Identifier: ' forEachAncestorDirectoryStoppingAtGlobalCache'
+                        Identifier: '
+                host'
+                        CallExpression
+                          Identifier: '
+                getDirectoryPath'
+                          Identifier: 'path'
+                        ArrowFunction
+                          Parameter
+                            Identifier: '
+                dirPath'
+                          EqualsGreaterThanToken
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' symlinks'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' realpathsWithSymlinks'
+                                      Identifier: 'get'
+                                    CallExpression
+                                      Identifier: 'ensureTrailingDirectorySeparator'
+                                      Identifier: 'dirPath'
+                            IfStatement
+                              Identifier: 'symlinks'
+                              Block
+                                ReturnStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' symlinks'
+                                      Identifier: 'some'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: 's'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' excludePatterns'
+                                          Identifier: 'some'
+                                        ArrowFunction
+                                          Parameter
+                                            Identifier: 'p'
+                                          EqualsGreaterThanToken
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' p'
+                                              Identifier: 'test'
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'fileName'
+                                                Identifier: 'replace'
+                                              Identifier: 'dir'
+                                              Identifier: ' s'
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                    dir'
+                                EqualsToken
+                                CallExpression
+                                  Identifier: ' getDirectoryPath'
+                                  Identifier: 'dir'
+                      QuestionQuestionToken
+                      FalseKeyword
+              ReturnStatement
+                FalseKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getIsFileExcluded'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    FunctionType
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      BooleanKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'preferences'
+            Identifier: 'autoImportFileExcludePatterns'
+        ReturnStatement
+          ArrowFunction
+            EqualsGreaterThanToken
+            FalseKeyword
+      ReturnStatement
+        CallExpression
+          Identifier: ' getIsExcluded'
+          CallExpression
+            Identifier: 'getIsExcludedPatterns'
+            Identifier: 'preferences'
+            CallExpression
+              Identifier: ' hostUsesCaseSensitiveFileNames'
+              Identifier: 'host'
+          Identifier: ' host'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getExportInfoMap'
+    Parameter
+      Identifier: 'importingFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' FutureSourceFile'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' cancellationToken'
+      UnionType
+        TypeReference
+          Identifier: ' CancellationToken'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' ExportInfoMap'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' start'
+            CallExpression
+              Identifier: ' timestamp'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    // Pulling the AutoImportProvider project will trigger its updateGraph if pending,
+    // which will invalidate the export map cache if things change, so pull it before
+    // checking the cache.
+    host'
+            Identifier: 'getPackageJsonAutoImportProvider'
+          QuestionDotToken
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cache'
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' host'
+                  Identifier: 'getCachedExportInfoMap'
+                QuestionDotToken
+              BarBarToken
+              CallExpression
+                Identifier: ' createCacheableExportInfoMap'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        getCurrentProgram'
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      Identifier: ' program'
+                  PropertyAssignment
+                    Identifier: '
+        getPackageJsonAutoImportProvider'
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' host'
+                          Identifier: 'getPackageJsonAutoImportProvider'
+                        QuestionDotToken
+                  PropertyAssignment
+                    Identifier: '
+        getGlobalTypingsCacheLocation'
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' host'
+                          Identifier: 'getGlobalTypingsCacheLocation'
+                        QuestionDotToken
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'cache'
+            Identifier: 'isUsableByFile'
+          PropertyAccessExpression
+            Identifier: 'importingFile'
+            Identifier: 'path'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        host'
+                Identifier: 'log'
+              QuestionDotToken
+              StringLiteral
+          ReturnStatement
+            Identifier: ' cache'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    host'
+            Identifier: 'log'
+          QuestionDotToken
+          StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleCount'
+            NumericLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        forEachExternalModuleToImportFrom'
+              Identifier: 'program'
+              Identifier: ' host'
+              Identifier: ' preferences'
+              TrueKeyword
+              ArrowFunction
+                Parameter
+                  Identifier: 'moduleSymbol'
+                Parameter
+                  Identifier: ' moduleFile'
+                Parameter
+                  Identifier: ' program'
+                Parameter
+                  Identifier: ' isFromPackageJson'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    BinaryExpression
+                      BinaryExpression
+                        PrefixUnaryExpression
+                          Identifier: 'moduleCount'
+                        PercentToken
+                        NumericLiteral
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' cancellationToken'
+                          QuestionDotToken
+                          Identifier: 'throwIfCancellationRequested'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' seenExports'
+                        NewExpression
+                          Identifier: ' Map'
+                          TypeReference
+                            Identifier: '__String'
+                          LiteralType
+                            TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' checker'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' program'
+                            Identifier: 'getTypeChecker'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' defaultInfo'
+                        CallExpression
+                          Identifier: ' getDefaultLikeExportInfo'
+                          Identifier: 'moduleSymbol'
+                          Identifier: ' checker'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'defaultInfo'
+                      AmpersandAmpersandToken
+                      CallExpression
+                        Identifier: ' isImportableSymbol'
+                        PropertyAccessExpression
+                          Identifier: 'defaultInfo'
+                          Identifier: 'symbol'
+                        Identifier: ' checker'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                cache'
+                            Identifier: 'add'
+                          PropertyAccessExpression
+                            Identifier: '
+                    importingFile'
+                            Identifier: 'path'
+                          PropertyAccessExpression
+                            Identifier: '
+                    defaultInfo'
+                            Identifier: 'symbol'
+                          ConditionalExpression
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    defaultInfo'
+                                Identifier: 'exportKind'
+                              EqualsEqualsEqualsToken
+                              PropertyAccessExpression
+                                Identifier: ' ExportKind'
+                                Identifier: 'Default'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: ' InternalSymbolName'
+                              Identifier: 'Default'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: ' InternalSymbolName'
+                              Identifier: 'ExportEquals'
+                          Identifier: '
+                    moduleSymbol'
+                          Identifier: '
+                    moduleFile'
+                          PropertyAccessExpression
+                            Identifier: '
+                    defaultInfo'
+                            Identifier: 'exportKind'
+                          Identifier: '
+                    isFromPackageJson'
+                          Identifier: '
+                    checker'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            checker'
+                        Identifier: 'forEachExportAndPropertyOfModule'
+                      Identifier: 'moduleSymbol'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'exported'
+                        Parameter
+                          Identifier: ' key'
+                        EqualsGreaterThanToken
+                        Block
+                          IfStatement
+                            BinaryExpression
+                              BinaryExpression
+                                BinaryExpression
+                                  Identifier: 'exported'
+                                  ExclamationEqualsEqualsToken
+                                  PropertyAccessExpression
+                                    Identifier: ' defaultInfo'
+                                    QuestionDotToken
+                                    Identifier: 'symbol'
+                                AmpersandAmpersandToken
+                                CallExpression
+                                  Identifier: ' isImportableSymbol'
+                                  Identifier: 'exported'
+                                  Identifier: ' checker'
+                              AmpersandAmpersandToken
+                              CallExpression
+                                Identifier: ' addToSeen'
+                                Identifier: 'seenExports'
+                                Identifier: ' key'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    cache'
+                                    Identifier: 'add'
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        importingFile'
+                                    Identifier: 'path'
+                                  Identifier: '
+                        exported'
+                                  Identifier: '
+                        key'
+                                  Identifier: '
+                        moduleSymbol'
+                                  Identifier: '
+                        moduleFile'
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        ExportKind'
+                                    Identifier: 'Named'
+                                  Identifier: '
+                        isFromPackageJson'
+                                  Identifier: '
+                        checker'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'err'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        // Ensure cache is reset if operation is cancelled
+        cache'
+                  Identifier: 'clear'
+            ThrowStatement
+              Identifier: ' err'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    host'
+            Identifier: 'log'
+          QuestionDotToken
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              BinaryExpression
+                CallExpression
+                  Identifier: 'timestamp'
+                MinusToken
+                Identifier: ' start'
+              TemplateTail
+      ReturnStatement
+        Identifier: ' cache'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getDefaultLikeExportInfo'
+    Parameter
+      Identifier: 'moduleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    symbol'
+          TypeReference
+            Identifier: ' Symbol'
+        PropertySignature
+          Identifier: '
+    exportKind'
+          TypeReference
+            Identifier: ' ExportKind'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exportEquals'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'resolveExternalModuleSymbol'
+              Identifier: 'moduleSymbol'
+      IfStatement
+        BinaryExpression
+          Identifier: 'exportEquals'
+          ExclamationEqualsEqualsToken
+          Identifier: ' moduleSymbol'
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' symbol'
+              Identifier: ' exportEquals'
+            PropertyAssignment
+              Identifier: ' exportKind'
+              PropertyAccessExpression
+                Identifier: ' ExportKind'
+                Identifier: 'ExportEquals'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' defaultExport'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'tryGetMemberInModuleExports'
+              PropertyAccessExpression
+                Identifier: 'InternalSymbolName'
+                Identifier: 'Default'
+              Identifier: ' moduleSymbol'
+      IfStatement
+        Identifier: 'defaultExport'
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' symbol'
+              Identifier: ' defaultExport'
+            PropertyAssignment
+              Identifier: ' exportKind'
+              PropertyAccessExpression
+                Identifier: ' ExportKind'
+                Identifier: 'Default'
+  FunctionDeclaration
+    Identifier: ' isImportableSymbol'
+    Parameter
+      Identifier: 'symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              PrefixUnaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'checker'
+                    Identifier: 'isUndefinedSymbol'
+                  Identifier: 'symbol'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'checker'
+                    Identifier: 'isUnknownSymbol'
+                  Identifier: 'symbol'
+            AmpersandAmpersandToken
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'isKnownSymbol'
+                Identifier: 'symbol'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isPrivateIdentifierSymbol'
+              Identifier: 'symbol'
+  FunctionDeclaration
+    Identifier: ' getNamesForExportedSymbol'
+    Parameter
+      Identifier: 'defaultExport'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' scriptTarget'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptTarget'
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' names'
+            UnionType
+              StringKeyword
+              ArrayType
+                StringKeyword
+              UndefinedKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachNameOfDefaultExport'
+          Identifier: 'defaultExport'
+          Identifier: ' checker'
+          Identifier: ' scriptTarget'
+          ArrowFunction
+            Parameter
+              Identifier: 'name'
+            Parameter
+              Identifier: ' capitalizedName'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+        names'
+                  EqualsToken
+                  ConditionalExpression
+                    Identifier: ' capitalizedName'
+                    QuestionToken
+                    ArrayLiteralExpression
+                      Identifier: 'name'
+                      Identifier: ' capitalizedName'
+                    ColonToken
+                    Identifier: ' name'
+              ReturnStatement
+                TrueKeyword
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Debug'
+            Identifier: 'checkDefined'
+          Identifier: 'names'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachNameOfDefaultExport'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'defaultExport'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' scriptTarget'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptTarget'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'name'
+          StringKeyword
+        Parameter
+          Identifier: ' capitalizedName'
+          QuestionToken
+          StringKeyword
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' chain'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Symbol'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' current'
+            UnionType
+              TypeReference
+                Identifier: ' Symbol'
+              UndefinedKeyword
+            Identifier: ' defaultExport'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' seen'
+            NewExpression
+              Identifier: ' Map'
+              TypeReference
+                Identifier: 'Symbol'
+              LiteralType
+                TrueKeyword
+      WhileStatement
+        Identifier: 'current'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' fromDeclaration'
+                CallExpression
+                  Identifier: ' getDefaultLikeExportNameFromDeclaration'
+                  Identifier: 'current'
+          IfStatement
+            Identifier: 'fromDeclaration'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' final'
+                    CallExpression
+                      Identifier: ' cb'
+                      Identifier: 'fromDeclaration'
+              IfStatement
+                Identifier: 'final'
+                ReturnStatement
+                  Identifier: ' final'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'current'
+                  Identifier: 'escapedName'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' InternalSymbolName'
+                  Identifier: 'Default'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' current'
+                  Identifier: 'escapedName'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' InternalSymbolName'
+                  Identifier: 'ExportEquals'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' final'
+                    CallExpression
+                      Identifier: ' cb'
+                      PropertyAccessExpression
+                        Identifier: 'current'
+                        Identifier: 'name'
+              IfStatement
+                Identifier: 'final'
+                ReturnStatement
+                  Identifier: ' final'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+        chain'
+              EqualsToken
+              CallExpression
+                Identifier: ' append'
+                Identifier: 'chain'
+                Identifier: ' current'
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'addToSeen'
+                Identifier: 'seen'
+                Identifier: ' current'
+            BreakStatement
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        current'
+              EqualsToken
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' current'
+                    Identifier: 'flags'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' SymbolFlags'
+                    Identifier: 'Alias'
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' checker'
+                    Identifier: 'getImmediateAliasedSymbol'
+                  Identifier: 'current'
+                ColonToken
+                Identifier: ' undefined'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' symbol'
+        BinaryExpression
+          Identifier: ' chain'
+          QuestionQuestionToken
+          Identifier: ' emptyArray'
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'symbol'
+                Identifier: 'parent'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isExternalModuleSymbol'
+                PropertyAccessExpression
+                  Identifier: 'symbol'
+                  Identifier: 'parent'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' final'
+                    CallExpression
+                      Identifier: ' cb'
+                      CallExpression
+                        Identifier: '
+                moduleSymbolToValidIdentifier'
+                        PropertyAccessExpression
+                          Identifier: 'symbol'
+                          Identifier: 'parent'
+                        Identifier: ' scriptTarget'
+                        FalseKeyword
+                      CallExpression
+                        Identifier: '
+                moduleSymbolToValidIdentifier'
+                        PropertyAccessExpression
+                          Identifier: 'symbol'
+                          Identifier: 'parent'
+                        Identifier: ' scriptTarget'
+                        TrueKeyword
+              IfStatement
+                Identifier: 'final'
+                ReturnStatement
+                  Identifier: ' final'

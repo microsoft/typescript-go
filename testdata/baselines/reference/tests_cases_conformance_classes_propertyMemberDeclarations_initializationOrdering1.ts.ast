@@ -1,0 +1,43 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Helper'
+    MethodDeclaration
+      Identifier: '
+    create'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          TrueKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Broken'
+    Constructor
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' facade'
+        TypeReference
+          Identifier: ' Helper'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'bug'
+    PropertyDeclaration
+      Identifier: '
+    bug'
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'facade'
+          Identifier: 'create'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Broken'
+      NewExpression
+        Identifier: ' Helper'

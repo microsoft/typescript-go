@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /a.ts
+////const a = 1;
+////const b = 2;
+////const foo = require(`foo${a}${b}`);
+
+verify'
+          Identifier: 'not'
+        Identifier: 'codeFixAvailable'

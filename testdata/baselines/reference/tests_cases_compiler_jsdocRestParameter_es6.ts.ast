@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      DotDotDotToken
+      Identifier: 'a'
+    Block
+      ExpressionStatement
+        Identifier: '
+    a'

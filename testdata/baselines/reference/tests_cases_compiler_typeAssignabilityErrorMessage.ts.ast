@@ -1,0 +1,137 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ThroughStream'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' ReadStream'
+    PropertySignature
+      Identifier: '
+    f'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    g'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    h'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    i'
+      TypeReference
+        Identifier: ' BigInt'
+    PropertySignature
+      Identifier: '
+    j'
+      SymbolKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeReference
+      Identifier: ' ReadStream'
+    Block
+      ReturnStatement
+        AsExpression
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+          TypeReference
+            Identifier: ' ThroughStream'
+  FunctionDeclaration
+    Identifier: ' bar'
+    TypeReference
+      Identifier: ' ReadStream'
+    Block
+      ReturnStatement
+        AsExpression
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+          TypeReference
+            Identifier: ' ThroughStream'
+  TypeAliasDeclaration
+    Identifier: ' Wrap'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    someProp'
+        TypeReference
+          Identifier: ' Bar'
+          NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' OtherWrap'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    someProp'
+        TypeReference
+          Identifier: ' Foo'
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    foo'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' what'
+            TypeReference
+              Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    foo'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' what'
+              TypeReference
+                Identifier: ' T'
+      BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' fun'
+    Parameter
+      Identifier: 'param'
+      TypeReference
+        Identifier: ' Wrap'
+    VoidKeyword
+    Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooStr'
+        TypeReference
+          Identifier: ' Foo'
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' otherWrap'
+        TypeReference
+          Identifier: ' OtherWrap'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' Bar'
+          NumberKeyword
+        Identifier: ' fooStr'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+fun'
+      Identifier: 'otherWrap'

@@ -1,0 +1,128 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' simpleExample'
+        ClassExpression
+          MethodDeclaration
+            StaticKeyword
+            Identifier: ' getTags'
+            Block
+          MethodDeclaration
+            Identifier: '
+    tags'
+            Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' circularReference'
+        ClassExpression
+          Identifier: ' C'
+          MethodDeclaration
+            StaticKeyword
+            Identifier: ' getTags'
+            Parameter
+              Identifier: 'c'
+              TypeReference
+                Identifier: ' C'
+            TypeReference
+              Identifier: ' C'
+            Block
+              ReturnStatement
+                Identifier: ' c'
+          MethodDeclaration
+            Identifier: '
+    tags'
+            Parameter
+              Identifier: 'c'
+              TypeReference
+                Identifier: ' C'
+            TypeReference
+              Identifier: ' C'
+            Block
+              ReturnStatement
+                Identifier: ' c'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' FooItem'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      VoidKeyword
+      Block
+    PropertyDeclaration
+      Identifier: '
+    name'
+      QuestionToken
+      StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'T'
+    ConstructorType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' WithTags'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Constructor'
+        TypeReference
+          Identifier: 'FooItem'
+    Parameter
+      Identifier: 'Base'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' Base'
+          MethodDeclaration
+            StaticKeyword
+            Identifier: ' getTags'
+            VoidKeyword
+            Block
+          MethodDeclaration
+            Identifier: '
+        tags'
+            VoidKeyword
+            Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Test'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' WithTags'
+          Identifier: 'FooItem'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        NewExpression
+          Identifier: ' Test'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Test'
+        Identifier: 'getTags'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+test'
+        Identifier: 'tags'

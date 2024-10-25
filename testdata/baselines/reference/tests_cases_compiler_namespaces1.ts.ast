@@ -1,0 +1,32 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Y'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' Z'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' X'
+              Identifier: 'Y'
+            Identifier: 'Z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeReference
+          QualifiedName
+            Identifier: ' X'
+            Identifier: 'Y'

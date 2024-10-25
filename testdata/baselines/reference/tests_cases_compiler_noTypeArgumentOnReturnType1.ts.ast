@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+ 
+ foo'
+      TypeReference
+        Identifier: ' A'
+      Block
+        ReturnStatement
+          NullKeyword

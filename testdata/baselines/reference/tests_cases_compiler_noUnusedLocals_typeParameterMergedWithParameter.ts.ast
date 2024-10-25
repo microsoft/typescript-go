@@ -1,0 +1,39 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' useNone'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'T'
+      NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' useParam'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'T'
+      NumberKeyword
+    Block
+      ReturnStatement
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' useTypeParam'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+    Block
+  FunctionDeclaration
+    Identifier: ' useBoth'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' T'

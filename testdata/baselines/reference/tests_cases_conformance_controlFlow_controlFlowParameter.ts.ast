@@ -1,0 +1,108 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: '
+  required'
+      UnknownKeyword
+      CallExpression
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ThrowStatement
+                NewExpression
+                  Identifier: ' Error'
+                  StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  console'
+            Identifier: 'log'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: '
+  a'
+      UnionType
+        NumberKeyword
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+  required'
+      UnknownKeyword
+      CallExpression
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+    a'
+                  EqualsToken
+                  NumericLiteral
+    Block
+      ExpressionStatement
+        Identifier: '
+  a'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: '
+  a'
+      UnionType
+        NumberKeyword
+        StringKeyword
+        UndefinedKeyword
+      NumericLiteral
+    Parameter
+      Identifier: '
+  required'
+      UnknownKeyword
+      CallExpression
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+    a'
+                  EqualsToken
+                  StringLiteral
+    Block
+      ExpressionStatement
+        Identifier: '
+  a'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: '
+  a'
+      UnionType
+        NumberKeyword
+        StringKeyword
+        UndefinedKeyword
+      NumericLiteral
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          ComputedPropertyName
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'a'
+                EqualsToken
+                StringLiteral
+          Identifier: ' b'
+      AsExpression
+        ObjectLiteralExpression
+        AnyKeyword
+    Block
+      ExpressionStatement
+        Identifier: '
+  a'

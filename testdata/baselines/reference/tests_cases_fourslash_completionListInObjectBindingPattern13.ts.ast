@@ -1,0 +1,30 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////interface I {
+////    x: number;
+////    y: string;
+////    z: boolean;
+////}
+////
+////interface J {
+////    x: string;
+////    y: string;
+////}
+////
+////let { /**/ }: I | J = { x: 10 };
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral

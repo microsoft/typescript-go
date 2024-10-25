@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Palette'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    white'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' r'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' g'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' b'
+                  NumericLiteral
+            PropertyAssignment
+              Identifier: '
+    black'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' r'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' g'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' d'
+                  NumericLiteral
+            PropertyAssignment
+              Identifier: ' // <- oops! 'd' in place of 'b'
+    blue'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' r'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' g'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' b'
+                  NumericLiteral

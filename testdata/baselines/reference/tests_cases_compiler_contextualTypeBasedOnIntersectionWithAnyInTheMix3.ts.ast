@@ -1,0 +1,196 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' TypeMap'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  str'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      PropertySignature
+        Identifier: '
+  num'
+        UnionType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test1'
+    TypeParameter
+      Identifier: '
+  T'
+      IntersectionType
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' TypeMap'
+          ArrayType
+            IndexedAccessType
+              TypeReference
+                Identifier: ' TypeMap'
+              TypeReference
+                Identifier: 'K'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'k'
+              StringKeyword
+            ArrayType
+              AnyKeyword
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        CallExpression
+          Identifier: ' test1'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  num'
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+            PropertyAssignment
+              Identifier: '
+  str'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+  bool'
+              ArrayLiteralExpression
+                TrueKeyword
+                FalseKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test2'
+    Parameter
+      Identifier: 'a'
+      IntersectionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' type'
+            UnionType
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' type'
+            AnyKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' type'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' ml'
+              AnyKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' ml'
+              LiteralType
+                StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' ml'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        IntersectionType
+          TupleType
+            AnyKeyword
+          TupleType
+            LiteralType
+              NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        IntersectionType
+          ArrayType
+            AnyKeyword
+          ArrayType
+            LiteralType
+              NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              AnyKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        IntersectionType
+          ParenthesizedType
+            FunctionType
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  LiteralType
+                    NumericLiteral
+          ParenthesizedType
+            FunctionType
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  AnyKeyword
+        ArrowFunction
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+  a'
+                NumericLiteral

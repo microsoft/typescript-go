@@ -1,0 +1,130 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' StringContains'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    TypeParameter
+      Identifier: ' L'
+      StringKeyword
+    IndexedAccessType
+      ParenthesizedType
+        IntersectionType
+          MappedType
+            TypeParameter
+              Identifier: 'K'
+              TypeReference
+                Identifier: ' S'
+            LiteralType
+              StringLiteral
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'key'
+                StringKeyword
+              LiteralType
+                StringLiteral
+      TypeReference
+        Identifier: 'L'
+  TypeAliasDeclaration
+    Identifier: ' ObjectHasKey'
+    TypeParameter
+      Identifier: 'O'
+    TypeParameter
+      Identifier: ' L'
+      StringKeyword
+    TypeReference
+      Identifier: ' StringContains'
+      TypeReference
+        Identifier: 'Extract'
+        TypeOperator
+          TypeReference
+            Identifier: ' O'
+        StringKeyword
+      TypeReference
+        Identifier: ' L'
+  TypeAliasDeclaration
+    Identifier: ' First'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' ObjectHasKey'
+      TypeReference
+        Identifier: 'T'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeReference
+      Identifier: ' ObjectHasKey'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeReference
+      Identifier: ' ObjectHasKey'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'A'
+      StringKeyword
+    TypeParameter
+      Identifier: ' B'
+      StringKeyword
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'A'
+      StringKeyword
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' f1'
+          Identifier: 'a'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' f2'
+          Identifier: 'x'

@@ -1,0 +1,20 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' data'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringKeyword
+        Identifier: ' data'
+  Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' val'
+        StringKeyword
+  ExportAssignment
+    Identifier: ' val'

@@ -1,0 +1,214 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' P1'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        UnknownKeyword
+      TypePredicate
+        Identifier: ' x'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' P2'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        UnknownKeyword
+      TypePredicate
+        Identifier: ' x'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' F1'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        UnknownKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' F2'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        UnknownKeyword
+      BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' F3'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        UnknownKeyword
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Parameter
+      Identifier: ' p'
+      UnionType
+        TypeReference
+          Identifier: ' P1'
+        TypeReference
+          Identifier: ' P2'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'p'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Parameter
+      Identifier: ' p'
+      UnionType
+        TypeReference
+          Identifier: ' P1'
+        TypeReference
+          Identifier: ' P2'
+        TypeReference
+          Identifier: ' F1'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'p'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Parameter
+      Identifier: ' p'
+      UnionType
+        TypeReference
+          Identifier: ' P1'
+        TypeReference
+          Identifier: ' P2'
+        TypeReference
+          Identifier: ' F2'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'p'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Parameter
+      Identifier: ' p'
+      UnionType
+        TypeReference
+          Identifier: ' P1'
+        TypeReference
+          Identifier: ' P2'
+        TypeReference
+          Identifier: ' F3'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'p'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  TypeAliasDeclaration
+    Identifier: ' HasAttribute'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      TypeReference
+        Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' attribute'
+          NumberKeyword
+  ClassDeclaration
+    Identifier: ' Type1'
+    PropertyDeclaration
+      Identifier: '
+    attribute'
+      UnionType
+        NumberKeyword
+        LiteralType
+          NullKeyword
+      NullKeyword
+    MethodDeclaration
+      Identifier: '
+    predicate'
+      TypePredicate
+        ThisType
+        TypeReference
+          Identifier: ' HasAttribute'
+          TypeReference
+            Identifier: 'Type1'
+      Block
+        ReturnStatement
+          TrueKeyword
+  ClassDeclaration
+    Identifier: ' Type2'
+    PropertyDeclaration
+      Identifier: '
+    attribute'
+      UnionType
+        NumberKeyword
+        LiteralType
+          NullKeyword
+      NullKeyword
+    MethodDeclaration
+      Identifier: '
+    predicate'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          TrueKeyword
+  FunctionDeclaration
+    Identifier: ' assertType'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: '_val'
+      TypeReference
+        Identifier: ' T'
+    Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' val'
+        UnionType
+          TypeReference
+            Identifier: ' Type1'
+          TypeReference
+            Identifier: ' Type2'
+  IfStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'val'
+        Identifier: 'predicate'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    assertType'
+          NumberKeyword
+          PropertyAccessExpression
+            Identifier: 'val'
+            Identifier: 'attribute'

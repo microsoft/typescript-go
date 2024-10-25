@@ -1,0 +1,127 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          InstanceOfKeyword
+          Identifier: ' C'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' v1'
+                TypeReference
+                  Identifier: ' T'
+                Identifier: ' x'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' v2'
+                TypeReference
+                  Identifier: ' C'
+                Identifier: ' x'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        x'
+              Identifier: 'prop'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' v1'
+                TypeReference
+                  Identifier: ' T'
+                Identifier: ' x'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' v2'
+                StringKeyword
+                Identifier: ' x'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        x'
+              Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' fun'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'item'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' strings'
+            ArrayType
+              StringKeyword
+            ArrayLiteralExpression
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' key'
+        Identifier: ' item'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' value'
+                ElementAccessExpression
+                  Identifier: ' item'
+                  Identifier: 'key'
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' value'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            strings'
+                    Identifier: 'push'
+                  Identifier: 'value'

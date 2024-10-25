@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Parameter
+        Identifier: 'x'
+      AnyKeyword
+      Block

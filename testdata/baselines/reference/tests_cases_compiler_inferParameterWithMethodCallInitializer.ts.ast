@@ -1,0 +1,63 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' getNumber'
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' Example'
+    MethodDeclaration
+      Identifier: '
+    getNumber'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    doSomething'
+      Parameter
+        Identifier: 'a'
+        CallExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'getNumber'
+      TypeQuery
+        Identifier: ' a'
+      Block
+        ReturnStatement
+          Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' weird'
+    Parameter
+      Identifier: 'this'
+      TypeReference
+        Identifier: ' Example'
+    Parameter
+      Identifier: ' a'
+      CallExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'getNumber'
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' Weird'
+    MethodDeclaration
+      Identifier: '
+    doSomething'
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' Example'
+      Parameter
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'getNumber'
+      Block
+        ReturnStatement
+          Identifier: ' a'

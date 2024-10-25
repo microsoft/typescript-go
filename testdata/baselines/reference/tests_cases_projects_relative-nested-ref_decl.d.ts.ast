@@ -1,0 +1,8 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' call'

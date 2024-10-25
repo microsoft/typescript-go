@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+    Block
+      ExpressionStatement
+        Identifier: '
+  arguments'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral

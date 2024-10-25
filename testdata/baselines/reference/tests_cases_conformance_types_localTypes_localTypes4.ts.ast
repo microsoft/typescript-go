@@ -1,0 +1,98 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      FunctionDeclaration
+        Identifier: ' f'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      FunctionDeclaration
+        Identifier: ' f'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+        Block
+          InterfaceDeclaration
+            Identifier: ' T'
+          ReturnStatement
+            Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      FunctionDeclaration
+        Identifier: ' f'
+        TypeParameter
+          Identifier: 'T'
+        Block
+          InterfaceDeclaration
+            Identifier: ' T'
+          ReturnStatement
+            Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      InterfaceDeclaration
+        Identifier: ' T'
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            TypeReference
+              Identifier: ' T'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    v'
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+      IfStatement
+        TrueKeyword
+        Block
+          InterfaceDeclaration
+            Identifier: ' T'
+            PropertySignature
+              Identifier: ' x'
+              StringKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' v'
+                TypeReference
+                  Identifier: ' T'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        v'
+                Identifier: 'x'
+              EqualsToken
+              StringLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        v'
+                Identifier: 'x'
+              EqualsToken
+              NumericLiteral

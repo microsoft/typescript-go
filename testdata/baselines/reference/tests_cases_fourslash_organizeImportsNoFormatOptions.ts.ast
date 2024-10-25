@@ -1,0 +1,30 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// #38548
+
+////import {
+////  stat,
+////  statSync,
+////} from "fs";
+////export function fakeFn() {
+////  stat;
+////  statSync;
+////}
+
+format'
+        Identifier: 'setFormatOptions'
+      ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Default newline is carriage return.
+// See `getNewLineOrDefaultFromHost()` in services/utilities.ts.
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral

@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// class foo {
+////     get getterOnly() {
+////         return undefined;
+////     }
+////     set setterOnly() { }
+//// }
+//// var obj = new foo();
+//// obj.setterOnly = obj./**/getterOnly;
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoExists'

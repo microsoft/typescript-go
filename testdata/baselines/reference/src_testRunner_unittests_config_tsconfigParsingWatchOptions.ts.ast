@@ -1,0 +1,493 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' fakes'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vfs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' baselineParseConfig'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          InterfaceDeclaration
+            Identifier: ' VerifyWatchOptions'
+            PropertySignature
+              Identifier: '
+        json'
+              ObjectKeyword
+            PropertySignature
+              Identifier: '
+        additionalFiles'
+              QuestionToken
+              TypeReference
+                QualifiedName
+                  Identifier: ' vfs'
+                  Identifier: 'FileSet'
+            PropertySignature
+              Identifier: '
+        existingWatchOptions'
+              QuestionToken
+              UnionType
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'WatchOptions'
+                UndefinedKeyword
+          FunctionDeclaration
+            Identifier: ' verifyWatchOptions'
+            Parameter
+              Identifier: 'subScenario'
+              StringKeyword
+            Parameter
+              Identifier: ' scenario'
+              FunctionType
+                ArrayType
+                  TypeReference
+                    Identifier: ' VerifyWatchOptions'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        baselineParseConfig'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            scenario'
+                      StringLiteral
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            subScenario'
+                    PropertyAssignment
+                      Identifier: '
+            input'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              Identifier: '
+                scenario'
+                            Identifier: 'map'
+                          ArrowFunction
+                            Parameter
+                              ObjectBindingPattern
+                                BindingElement
+                                  Identifier: ' json'
+                                BindingElement
+                                  Identifier: ' additionalFiles'
+                                BindingElement
+                                  Identifier: ' existingWatchOptions'
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' jsonText'
+                                    CallExpression
+                                      Identifier: ' jsonToReadableText'
+                                      Identifier: 'json'
+                              ReturnStatement
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        createHost'
+                                    ArrowFunction
+                                      EqualsGreaterThanToken
+                                      NewExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' fakes'
+                                          Identifier: 'ParseConfigHost'
+                                        NewExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' vfs'
+                                            Identifier: 'FileSystem'
+                                          FalseKeyword
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: '
+                                        cwd'
+                                              StringLiteral
+                                            PropertyAssignment
+                                              Identifier: '
+                                        files'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  StringLiteral
+                                                  StringLiteral
+                                                SpreadAssignment
+                                                  Identifier: 'additionalFiles'
+                                                PropertyAssignment
+                                                  StringLiteral
+                                                  Identifier: ' jsonText'
+                                  ShorthandPropertyAssignment
+                                    Identifier: '
+                        jsonText'
+                                  PropertyAssignment
+                                    Identifier: '
+                        configFileName'
+                                    StringLiteral
+                                  ShorthandPropertyAssignment
+                                    Identifier: '
+                        existingWatchOptions'
+                                  PropertyAssignment
+                                    Identifier: '
+                        baselineParsed'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: 'baseline'
+                                      Parameter
+                                        Identifier: ' parsed'
+                                      EqualsGreaterThanToken
+                                      Block
+                                        ExpressionStatement
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+                            baseline'
+                                              Identifier: 'push'
+                                            NoSubstitutionTemplateLiteral
+                                        ExpressionStatement
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+                            baseline'
+                                              Identifier: 'push'
+                                            CallExpression
+                                              Identifier: 'jsonToReadableText'
+                                              PropertyAccessExpression
+                                                Identifier: 'parsed'
+                                                Identifier: 'watchOptions'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyWatchOptions'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+        json'
+                      ObjectLiteralExpression
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyWatchOptions'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+        json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' watchOptions'
+                          ObjectLiteralExpression
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyWatchOptions'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                extends'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' watchFile'
+                              StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            additionalFiles'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' extends'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            additionalFiles'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyWatchOptions'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                extends'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    watchFile'
+                              StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            additionalFiles'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    watchOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        watchFile'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        watchDirectory'
+                                    StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                extends'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            additionalFiles'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    watchOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        watchFile'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        watchDirectory'
+                                    StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                extends'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            additionalFiles'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    watchOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        excludeFiles'
+                                    ArrayLiteralExpression
+                                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyWatchOptions'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' watchFile'
+                              StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' watchDirectory'
+                              StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' fallbackPolling'
+                              StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' synchronousWatchDirectory'
+                              TrueKeyword
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' excludeDirectories'
+                              ArrayLiteralExpression
+                                StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' excludeFiles'
+                              ArrayLiteralExpression
+                                StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' excludeDirectories'
+                              ArrayLiteralExpression
+                                StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' excludeFiles'
+                              ArrayLiteralExpression
+                                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyWatchOptions'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' watchOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' watchFile'
+                              StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            json'
+                      ObjectLiteralExpression

@@ -1,0 +1,69 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      Identifier: ' x'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r'
+              ThisKeyword
+        ReturnStatement
+          NumericLiteral
+    GetAccessor
+      StaticKeyword
+      Identifier: ' y'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r2'
+              ThisKeyword
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' T'
+    GetAccessor
+      Identifier: ' x'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r'
+              ThisKeyword
+        ReturnStatement
+          NumericLiteral
+    GetAccessor
+      StaticKeyword
+      Identifier: ' y'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r2'
+              ThisKeyword
+        ReturnStatement
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          GetAccessor
+            Identifier: ' a'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' r3'
+                    ThisKeyword
+              ReturnStatement
+                NumericLiteral

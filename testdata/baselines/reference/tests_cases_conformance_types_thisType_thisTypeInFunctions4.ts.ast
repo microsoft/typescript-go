@@ -1,0 +1,71 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' WrongObject'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'value'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' CorrectObject'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'name'
+        StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isCorrect'
+    Parameter
+      Identifier: 'obj'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' obj'
+      TypeReference
+        Identifier: ' CorrectObject'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' callsCallback'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        Parameter
+          Identifier: 'name'
+          StringKeyword
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' problemFunction'
+    Parameter
+      Identifier: 'this'
+      UnionType
+        TypeReference
+          Identifier: ' CorrectObject'
+        TypeReference
+          Identifier: ' WrongObject'
+    VoidKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isCorrect'
+            ThisKeyword
+        ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    callsCallback'
+          ArrowFunction
+            Parameter
+              Identifier: 'name'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'name'
+                  EqualsToken
+                  Identifier: ' name'
+              TypeAliasDeclaration
+                Identifier: ' T'
+                TypeQuery
+                  Identifier: ' this'

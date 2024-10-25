@@ -1,0 +1,104 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      StringKeyword
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' y'
+      Block
+        ReturnStatement
+          NullKeyword
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' y'
+      Parameter
+        Identifier: 'x'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Block
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' a'
+      StringKeyword
+    GetAccessor
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' b'
+      Block
+        ReturnStatement
+          NullKeyword
+    SetAccessor
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' b'
+      Parameter
+        Identifier: 'x'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+// all errors
+c'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+c'
+      Identifier: 'y'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'y'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+C'
+      Identifier: 'a'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+C'
+        Identifier: 'b'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+C'
+        Identifier: 'b'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+C'
+        Identifier: 'foo'

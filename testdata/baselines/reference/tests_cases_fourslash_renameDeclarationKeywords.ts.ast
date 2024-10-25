@@ -1,0 +1,196 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: '
+    baseDecl'
+          BindingElement
+            Identifier: '
+    baseDecl_name'
+          BindingElement
+            Identifier: '
+
+    implemented1Decl'
+          BindingElement
+            Identifier: '
+    implemented1Decl_name'
+          BindingElement
+            Identifier: '
+
+    classDecl1'
+          BindingElement
+            Identifier: '
+    classDecl1_classKeyword'
+          BindingElement
+            Identifier: '
+    classDecl1_name'
+          BindingElement
+            Identifier: '
+    classDecl1_extendsKeyword'
+          BindingElement
+            Identifier: '
+    classDecl1_extendsName'
+          BindingElement
+            Identifier: '
+    classDecl1_implementsKeyword'
+          BindingElement
+            Identifier: '
+    classDecl1_implementsName'
+          BindingElement
+            Identifier: '
+
+    getDecl'
+          BindingElement
+            Identifier: '
+    getDecl_getKeyword'
+          BindingElement
+            Identifier: '
+    getDecl_name'
+          BindingElement
+            Identifier: '
+
+    setDecl'
+          BindingElement
+            Identifier: '
+    setDecl_setKeyword'
+          BindingElement
+            Identifier: '
+    setDecl_name'
+          BindingElement
+            Identifier: '
+
+    interfaceDecl1'
+          BindingElement
+            Identifier: '
+    interfaceDecl1_interfaceKeyword'
+          BindingElement
+            Identifier: '
+    interfaceDecl1_name'
+          BindingElement
+            Identifier: '
+    interfaceDecl1_extendsKeyword'
+          BindingElement
+            Identifier: '
+    interfaceDecl1_extendsName'
+          BindingElement
+            Identifier: '
+
+    typeDecl'
+          BindingElement
+            Identifier: '
+    typeDecl_typeKeyword'
+          BindingElement
+            Identifier: '
+    typeDecl_name'
+          BindingElement
+            Identifier: '
+
+    enumDecl'
+          BindingElement
+            Identifier: '
+    enumDecl_enumKeyword'
+          BindingElement
+            Identifier: '
+    enumDecl_name'
+          BindingElement
+            Identifier: '
+
+    namespaceDecl'
+          BindingElement
+            Identifier: '
+    namespaceDecl_namespaceKeyword'
+          BindingElement
+            Identifier: '
+    namespaceDecl_name'
+          BindingElement
+            Identifier: '
+
+    moduleDecl'
+          BindingElement
+            Identifier: '
+    moduleDecl_moduleKeyword'
+          BindingElement
+            Identifier: '
+    moduleDecl_name'
+          BindingElement
+            Identifier: '
+
+    functionDecl'
+          BindingElement
+            Identifier: '
+    functionDecl_functionKeyword'
+          BindingElement
+            Identifier: '
+    functionDecl_name'
+          BindingElement
+            Identifier: '
+
+    varDecl'
+          BindingElement
+            Identifier: '
+    varDecl_varKeyword'
+          BindingElement
+            Identifier: '
+    varDecl_name'
+          BindingElement
+            Identifier: '
+
+    letDecl'
+          BindingElement
+            Identifier: '
+    letDecl_letKeyword'
+          BindingElement
+            Identifier: '
+    letDecl_name'
+          BindingElement
+            Identifier: '
+
+    constDecl'
+          BindingElement
+            Identifier: '
+    constDecl_constKeyword'
+          BindingElement
+            Identifier: '
+    constDecl_name'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      ArrayLiteralExpression
+        Identifier: '
+    classDecl1_classKeyword'
+        Identifier: '
+    classDecl1_extendsKeyword'
+        Identifier: '
+    classDecl1_implementsKeyword'
+        Identifier: '
+    getDecl_getKeyword'
+        Identifier: ' setDecl_setKeyword'
+        Identifier: '
+    interfaceDecl1_interfaceKeyword'
+        Identifier: '
+    interfaceDecl1_extendsKeyword'
+        Identifier: '
+    typeDecl_typeKeyword'
+        Identifier: '
+    enumDecl_enumKeyword'
+        Identifier: '
+    namespaceDecl_namespaceKeyword'
+        Identifier: '
+    moduleDecl_moduleKeyword'
+        Identifier: '
+    functionDecl_functionKeyword'
+        Identifier: '
+    varDecl_varKeyword'
+        Identifier: '
+    letDecl_letKeyword'
+        Identifier: '
+    constDecl_constKeyword'

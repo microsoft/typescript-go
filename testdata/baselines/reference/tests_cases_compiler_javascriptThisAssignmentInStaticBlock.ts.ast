@@ -1,0 +1,62 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Thing'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'doSomething'
+            EqualsToken
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Thing'
+        Identifier: 'doSomething'
+  ClassDeclaration
+    Identifier: ' ElementsArray'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+    ClassStaticBlockDeclaration
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' superisArray'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'isArray'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' customIsArray'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' superisArray'
+                  Identifier: 'arg'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'isArray'
+            EqualsToken
+            Identifier: ' customIsArray'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+ElementsArray'
+        Identifier: 'isArray'
+      NewExpression
+        Identifier: ' ElementsArray'

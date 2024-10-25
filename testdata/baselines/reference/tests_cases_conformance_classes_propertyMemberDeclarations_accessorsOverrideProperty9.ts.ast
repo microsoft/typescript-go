@@ -1,0 +1,147 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    ConstructorType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PropertiesOf'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+  InterfaceDeclaration
+    Identifier: ' IApiItemConstructor'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Constructor'
+        TypeReference
+          Identifier: 'ApiItem'
+      ExpressionWithTypeArguments
+        Identifier: ' PropertiesOf'
+        TypeQuery
+          Identifier: ' ApiItem'
+  ClassDeclaration
+    Identifier: ' ApiItem'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' members'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        TypeReference
+          Identifier: 'ApiItem'
+      Block
+        ReturnStatement
+          ArrayLiteralExpression
+  ClassDeclaration
+    Identifier: ' ApiEnumMember'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ApiItem'
+  InterfaceDeclaration
+    Identifier: ' ApiItemContainerMixin'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ApiItem'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' members'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        TypeReference
+          Identifier: 'ApiItem'
+  FunctionDeclaration
+    Identifier: ' ApiItemContainerMixin'
+    TypeParameter
+      Identifier: 'TBaseClass'
+      TypeReference
+        Identifier: ' IApiItemConstructor'
+    Parameter
+      Identifier: '
+  baseClass'
+      TypeReference
+        Identifier: ' TBaseClass'
+    IntersectionType
+      TypeReference
+        Identifier: ' TBaseClass'
+      ParenthesizedType
+        ConstructorType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          TypeReference
+            Identifier: ' ApiItemContainerMixin'
+    Block
+      ClassDeclaration
+        AbstractKeyword
+        Identifier: ' MixedClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' baseClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' ApiItemContainerMixin'
+        Constructor
+          PublicKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                SpreadElement
+                  Identifier: 'args'
+        GetAccessor
+          PublicKeyword
+          Identifier: ' members'
+          TypeReference
+            Identifier: ' ReadonlyArray'
+            TypeReference
+              Identifier: 'ApiItem'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+      ReturnStatement
+        Identifier: ' MixedClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ApiEnum'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' ApiItemContainerMixin'
+          Identifier: 'ApiItem'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' members'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        TypeReference
+          Identifier: 'ApiEnumMember'
+      Block
+        ReturnStatement
+          ArrayLiteralExpression

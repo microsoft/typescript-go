@@ -1,0 +1,164 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NumericLiteral
+        Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NumericLiteral
+        Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        NumericLiteral
+      PlusToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumberKeyword
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test2'
+        CallExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test3'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test4'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test5'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test6'
+        CallExpression
+          ElementAccessExpression
+            NumericLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test7'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test8'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' Number'
+              NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test9'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test10'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test11'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test12'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test13'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test14'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test15'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test16'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test17'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'

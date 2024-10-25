@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'a'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            TrueKeyword

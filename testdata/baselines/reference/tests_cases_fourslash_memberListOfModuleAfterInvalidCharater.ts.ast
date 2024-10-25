@@ -1,0 +1,27 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////module testModule {
+////    export var foo = 1;
+////}
+////@
+////testModule./**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral

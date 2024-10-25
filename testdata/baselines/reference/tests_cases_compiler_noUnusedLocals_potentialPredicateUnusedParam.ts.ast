@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' potentialPredicateUnusedParam'
+    Parameter
+      Identifier: 'a'
+      UnknownKeyword
+    Block
+      ReturnStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Math'
+                Identifier: 'random'

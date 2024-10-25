@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Bar'

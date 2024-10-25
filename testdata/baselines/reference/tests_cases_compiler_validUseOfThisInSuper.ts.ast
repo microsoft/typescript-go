@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' Base'
+      Block
+  ClassDeclaration
+    Identifier: ' Super'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            CallExpression
+              ParenthesizedExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ThisKeyword

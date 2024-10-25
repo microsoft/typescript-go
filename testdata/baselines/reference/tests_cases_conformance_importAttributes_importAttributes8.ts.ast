@@ -1,0 +1,25 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: '
+    a'
+        StringLiteral
+      PropertyAssignment
+        Identifier: '
+    b'
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' a'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' a'
+        StringLiteral
+      PropertyAssignment
+        StringLiteral
+        StringLiteral
+    EmptyStatement

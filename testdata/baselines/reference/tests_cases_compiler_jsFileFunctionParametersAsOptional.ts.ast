@@ -1,0 +1,35 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Parameter
+      Identifier: ' c'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+
+// @filename: bar.ts
+f'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral

@@ -1,0 +1,36 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      FunctionType
+        Parameter
+          Identifier: 'p'
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+        LiteralType
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ArrowFunction
+        Parameter
+          Identifier: 'y'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+                BinaryExpression
+                  Identifier: ' y'
+                  EqualsToken
+                  StringLiteral
+          ReturnStatement
+            Identifier: ' z'

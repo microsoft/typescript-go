@@ -1,0 +1,1096 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    SymLink'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' packageJson'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aTs'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bTs'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cTs'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bSymlink'
+        TypeReference
+          Identifier: ' SymLink'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    symLink'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tsconfig'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ambientDeclaration'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mobxPackageJson'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            CallExpression
+              Identifier: ' jsonToReadableText'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' version'
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mobxDts'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' moduleSpecifierCache'
+                        CallExpression
+                          Identifier: ' setup'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'logger'
+                        Identifier: 'info'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'moduleSpecifierCache'
+                                Identifier: 'get'
+                              AsExpression
+                                PropertyAccessExpression
+                                  Identifier: 'bTs'
+                                  Identifier: 'path'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'Path'
+                              AsExpression
+                                PropertyAccessExpression
+                                  Identifier: ' aTs'
+                                  Identifier: 'path'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'Path'
+                              ObjectLiteralExpression
+                              ObjectLiteralExpression
+                            QuestionDotToken
+                            Identifier: 'isBlockedByPackageJsonDependencies'
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' moduleSpecifierCache'
+                          BindingElement
+                            Identifier: ' triggerCompletions'
+                        CallExpression
+                          Identifier: ' setup'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        // Completion at an import statement will calculate and cache module specifiers
+        triggerCompletions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' file'
+                          PropertyAccessExpression
+                            Identifier: ' cTs'
+                            Identifier: 'path'
+                        PropertyAssignment
+                          Identifier: ' line'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' offset'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' cTs'
+                                Identifier: 'content'
+                              Identifier: 'length'
+                            PlusToken
+                            NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'logger'
+                        Identifier: 'info'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          CallExpression
+                            Identifier: 'jsonToReadableText'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'moduleSpecifierCache'
+                                Identifier: 'get'
+                              AsExpression
+                                PropertyAccessExpression
+                                  Identifier: 'cTs'
+                                  Identifier: 'path'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'Path'
+                              AsExpression
+                                PropertyAccessExpression
+                                  Identifier: ' mobxDts'
+                                  Identifier: 'path'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'Path'
+                              ObjectLiteralExpression
+                              ObjectLiteralExpression
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' host'
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' moduleSpecifierCache'
+                          BindingElement
+                            Identifier: ' triggerCompletions'
+                        CallExpression
+                          Identifier: ' setup'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        // Completion at an import statement will calculate and cache module specifiers
+        triggerCompletions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' file'
+                          PropertyAccessExpression
+                            Identifier: ' cTs'
+                            Identifier: 'path'
+                        PropertyAssignment
+                          Identifier: ' line'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' offset'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' cTs'
+                                Identifier: 'content'
+                              Identifier: 'length'
+                            PlusToken
+                            NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'writeFile'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'moduleSpecifierCache'
+                          Identifier: 'count'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' host'
+                          BindingElement
+                            Identifier: ' moduleSpecifierCache'
+                        CallExpression
+                          Identifier: ' setup'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'writeFile'
+                      StringLiteral
+                      PropertyAccessExpression
+                        Identifier: ' aTs'
+                        Identifier: 'content'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'logger'
+                        Identifier: 'info'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'moduleSpecifierCache'
+                                Identifier: 'get'
+                              AsExpression
+                                PropertyAccessExpression
+                                  Identifier: 'bTs'
+                                  Identifier: 'path'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'Path'
+                              AsExpression
+                                PropertyAccessExpression
+                                  Identifier: ' aTs'
+                                  Identifier: 'path'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'Path'
+                              ObjectLiteralExpression
+                              ObjectLiteralExpression
+                            QuestionDotToken
+                            Identifier: 'isBlockedByPackageJsonDependencies'
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' host'
+                          BindingElement
+                            Identifier: ' moduleSpecifierCache'
+                        CallExpression
+                          Identifier: ' setup'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'renameFile'
+                      PropertyAccessExpression
+                        Identifier: 'bSymlink'
+                        Identifier: 'path'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'logger'
+                        Identifier: 'info'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'moduleSpecifierCache'
+                              Identifier: 'count'
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' host'
+                          BindingElement
+                            Identifier: ' moduleSpecifierCache'
+                        CallExpression
+                          Identifier: ' setup'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'writeFile'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'logger'
+                        Identifier: 'info'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'moduleSpecifierCache'
+                              Identifier: 'count'
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' host'
+                          BindingElement
+                            Identifier: ' moduleSpecifierCache'
+                        CallExpression
+                          Identifier: ' setup'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'writeFile'
+                      PropertyAccessExpression
+                        Identifier: 'tsconfig'
+                        Identifier: 'path'
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'logger'
+                        Identifier: 'info'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'moduleSpecifierCache'
+                              Identifier: 'count'
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' moduleSpecifierCache'
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' triggerCompletions'
+                        CallExpression
+                          Identifier: ' setup'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' preferences'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'UserPreferences'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' importModuleSpecifierPreference'
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        getWithPreferences'
+                      ObjectLiteralExpression
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'ConfigureRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'Configure'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: ' preferences'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        // Nothing changes yet
+        getWithPreferences'
+                      ObjectLiteralExpression
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        getWithPreferences'
+                      Identifier: 'preferences'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        // Completions will request (getting nothing) and set the cache with new preferences
+        triggerCompletions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' file'
+                          PropertyAccessExpression
+                            Identifier: ' bTs'
+                            Identifier: 'path'
+                        PropertyAssignment
+                          Identifier: ' line'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' offset'
+                          NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        getWithPreferences'
+                      ObjectLiteralExpression
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        getWithPreferences'
+                      Identifier: 'preferences'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Test other affecting preference
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'ConfigureRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'Configure'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' preferences'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' importModuleSpecifierEnding'
+                                  StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        triggerCompletions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' file'
+                          PropertyAccessExpression
+                            Identifier: ' bTs'
+                            Identifier: 'path'
+                        PropertyAssignment
+                          Identifier: ' line'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' offset'
+                          NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        getWithPreferences'
+                      Identifier: 'preferences'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+                  FunctionDeclaration
+                    Identifier: ' getWithPreferences'
+                    Parameter
+                      Identifier: 'preferences'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' ts'
+                          Identifier: 'UserPreferences'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            session'
+                              Identifier: 'logger'
+                            Identifier: 'info'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              CallExpression
+                                Identifier: 'jsonToReadableText'
+                                Identifier: 'preferences'
+                              TemplateMiddle
+                            TemplateSpan
+                              PropertyAccessExpression
+                                Identifier: 'bTs'
+                                Identifier: 'path'
+                              TemplateMiddle
+                            TemplateSpan
+                              PropertyAccessExpression
+                                Identifier: 'aTs'
+                                Identifier: 'path'
+                              TemplateMiddle
+                            TemplateSpan
+                              CallExpression
+                                Identifier: 'jsonToReadableText'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'moduleSpecifierCache'
+                                    Identifier: 'get'
+                                  AsExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'bTs'
+                                      Identifier: 'path'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'Path'
+                                  AsExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' aTs'
+                                      Identifier: 'path'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'Path'
+                                  Identifier: ' preferences'
+                                  ObjectLiteralExpression
+                              TemplateTail
+  FunctionDeclaration
+    Identifier: ' setup'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' TestServerHost'
+                Identifier: 'createServerHost'
+              ArrayLiteralExpression
+                Identifier: 'aTs'
+                Identifier: ' bTs'
+                Identifier: ' cTs'
+                Identifier: ' bSymlink'
+                Identifier: ' ambientDeclaration'
+                Identifier: ' tsconfig'
+                Identifier: ' packageJson'
+                Identifier: ' mobxPackageJson'
+                Identifier: ' mobxDts'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' session'
+            NewExpression
+              Identifier: ' TestSession'
+              Identifier: 'host'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    openFilesForSession'
+          ArrayLiteralExpression
+            Identifier: 'aTs'
+            Identifier: ' bTs'
+            Identifier: ' cTs'
+          Identifier: ' session'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' project'
+            NonNullExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' session'
+                        Identifier: 'getProjectService'
+                    Identifier: 'configuredProjects'
+                  Identifier: 'get'
+                PropertyAccessExpression
+                  Identifier: 'tsconfig'
+                  Identifier: 'path'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    session'
+            Identifier: 'executeCommandSeq'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'server'
+                Identifier: 'protocol'
+              Identifier: 'ConfigureRequest'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        command'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'server'
+                    Identifier: 'protocol'
+                  Identifier: 'CommandTypes'
+                Identifier: 'Configure'
+            PropertyAssignment
+              Identifier: '
+        arguments'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            preferences'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                includeCompletionsForImportStatements'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+                includeCompletionsForModuleExports'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+                includeCompletionsWithInsertText'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+                includeCompletionsWithSnippetText'
+                      TrueKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    triggerCompletions'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' file'
+              PropertyAccessExpression
+                Identifier: ' bTs'
+                Identifier: 'path'
+            PropertyAssignment
+              Identifier: ' line'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' offset'
+              NumericLiteral
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' host'
+          ShorthandPropertyAssignment
+            Identifier: ' project'
+          ShorthandPropertyAssignment
+            Identifier: ' session'
+          PropertyAssignment
+            Identifier: ' moduleSpecifierCache'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' project'
+                Identifier: 'getModuleSpecifierCache'
+          ShorthandPropertyAssignment
+            Identifier: ' triggerCompletions'
+      FunctionDeclaration
+        Identifier: ' triggerCompletions'
+        Parameter
+          Identifier: 'requestLocation'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'server'
+                Identifier: 'protocol'
+              Identifier: 'FileLocationRequestArgs'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        session'
+                Identifier: 'executeCommandSeq'
+              TypeReference
+                QualifiedName
+                  QualifiedName
+                    QualifiedName
+                      Identifier: 'ts'
+                      Identifier: 'server'
+                    Identifier: 'protocol'
+                  Identifier: 'CompletionsRequest'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'CompletionInfo'
+                PropertyAssignment
+                  Identifier: '
+            arguments'
+                  Identifier: ' requestLocation'

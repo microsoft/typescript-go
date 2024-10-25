@@ -1,0 +1,69 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Inner'
+        FunctionExpression
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Inner'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    m'
+          Block
+        PropertyAssignment
+          Identifier: '
+    i'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+// incremental assignments still work
+Inner'
+          Identifier: 'prototype'
+        Identifier: 'j'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+/** @type {string} */
+Inner'
+        Identifier: 'prototype'
+      Identifier: 'k'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inner'
+        NewExpression
+          Identifier: ' Inner'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+inner'
+        Identifier: 'm'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+inner'
+      Identifier: 'i'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+inner'
+      Identifier: 'j'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+inner'
+      Identifier: 'k'

@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ArrayType
+          AnyKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      CallExpression
+        Identifier: ' bar'
+    Block
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'a'
+      CallExpression
+        Identifier: ' foo'
+    Block

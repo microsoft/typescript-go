@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' C'
+            NumericLiteral
+      ClassDeclaration
+        Identifier: ' D'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' C'
+        PropertyDeclaration
+          Identifier: ' // error, C must evaluate to constructor function
+        bar'
+          StringKeyword

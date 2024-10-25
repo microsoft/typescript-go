@@ -1,0 +1,134 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' good1'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Parameter
+      Identifier: ' x'
+    Block
+  FunctionDeclaration
+    Identifier: ' good2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'c'
+        BindingElement
+          Identifier: ' d'
+    Block
+  FunctionDeclaration
+    Identifier: ' good3'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Parameter
+      Identifier: ' y'
+    Block
+  FunctionDeclaration
+    Identifier: ' good4'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Block
+  FunctionDeclaration
+    Identifier: ' good5'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Parameter
+      Identifier: ' x'
+    Block
+  FunctionDeclaration
+    Identifier: ' good6'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'c'
+        BindingElement
+          Identifier: ' d'
+    Block
+  FunctionDeclaration
+    Identifier: ' good7'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Parameter
+      Identifier: ' y'
+    Block
+  FunctionDeclaration
+    Identifier: ' good8'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Block
+  FunctionDeclaration
+    Identifier: ' good9'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' a'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'arguments'
+          Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' bad1'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Block
+  FunctionDeclaration
+    Identifier: ' bad2'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Block

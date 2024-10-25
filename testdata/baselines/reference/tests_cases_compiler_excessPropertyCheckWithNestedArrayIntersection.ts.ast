@@ -1,0 +1,72 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ValueOnlyFields'
+    PropertySignature
+      Identifier: '
+    fields'
+      TypeReference
+        Identifier: ' Array'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        value'
+            UnionType
+              NumberKeyword
+              LiteralType
+                NullKeyword
+  InterfaceDeclaration
+    Identifier: ' ValueAndKeyFields'
+    PropertySignature
+      Identifier: '
+    fields'
+      TypeReference
+        Identifier: ' Array'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        key'
+            UnionType
+              StringKeyword
+              LiteralType
+                NullKeyword
+          PropertySignature
+            Identifier: '
+        value'
+            UnionType
+              NumberKeyword
+              LiteralType
+                NullKeyword
+  InterfaceDeclaration
+    Identifier: ' BugRepro'
+    PropertySignature
+      Identifier: '
+  dataType'
+      IntersectionType
+        TypeReference
+          Identifier: ' ValueAndKeyFields'
+        TypeReference
+          Identifier: ' ValueOnlyFields'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' repro'
+        TypeReference
+          Identifier: ' BugRepro'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  dataType'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    fields'
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+      key'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' // should be OK: Not excess
+      value'
+                      NullKeyword

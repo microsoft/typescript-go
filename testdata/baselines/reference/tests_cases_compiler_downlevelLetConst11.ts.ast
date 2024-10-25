@@ -1,0 +1,6 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+let'

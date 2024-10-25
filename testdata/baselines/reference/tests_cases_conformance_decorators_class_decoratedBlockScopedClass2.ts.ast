@@ -1,0 +1,44 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' decorator'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'target'
+            ConstructorType
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                ArrayType
+                  AnyKeyword
+              AnyKeyword
+          EqualsGreaterThanToken
+          Block
+  TryStatement
+    Block
+      ClassDeclaration
+        Decorator
+          CallExpression
+            Identifier: 'decorator'
+        Identifier: ' Foo'
+        MethodDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' func'
+          TypeReference
+            Identifier: ' Foo'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' Foo'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Foo'
+            Identifier: 'func'
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block

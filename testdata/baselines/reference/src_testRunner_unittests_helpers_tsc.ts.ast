@@ -1,0 +1,2760 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Baseline'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    applyEdit'
+        ImportSpecifier
+          Identifier: '
+    baselineAfterTscCompile'
+          Identifier: ' baseline_baselineAfterTscCompile'
+        ImportSpecifier
+          Identifier: '
+    BaselineBase'
+        ImportSpecifier
+          Identifier: '
+    CommandLineCallbacks'
+        ImportSpecifier
+          Identifier: '
+    commandLineCallbacks'
+        ImportSpecifier
+          Identifier: '
+    CommandLineProgram'
+        ImportSpecifier
+          Identifier: '
+    createBaseline'
+        ImportSpecifier
+          Identifier: '
+    isReadableIncrementalBuildInfo'
+        ImportSpecifier
+          Identifier: '
+    isReadableIncrementalBundleEmitBuildInfo'
+        ImportSpecifier
+          Identifier: '
+    isReadableIncrementalMultiFileEmitBuildInfo'
+        ImportSpecifier
+          Identifier: '
+    isWatch'
+        ImportSpecifier
+          Identifier: '
+    ReadableBuildInfo'
+        ImportSpecifier
+          Identifier: '
+    ReadableIncrementalBuildInfo'
+        ImportSpecifier
+          Identifier: '
+    ReadableIncrementalBuildInfoFileInfo'
+        ImportSpecifier
+          Identifier: '
+    ReadableIncrementalBundleEmitBuildInfo'
+        ImportSpecifier
+          Identifier: '
+    ReadableIncrementalMultiFileEmitBuildInfo'
+        ImportSpecifier
+          Identifier: '
+    toPathWithSystem'
+        ImportSpecifier
+          Identifier: '
+    tscBaselineName'
+        ImportSpecifier
+          Identifier: '
+    TscWatchSystem'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    isFsFile'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+        ImportSpecifier
+          Identifier: '
+    TestServerHostSnapshot'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noChangeRun'
+        TypeReference
+          Identifier: ' TestTscEdit'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    caption'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    edit'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'noop'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noChangeOnlyRuns'
+        ArrayType
+          TypeReference
+            Identifier: ' TestTscEdit'
+        ArrayLiteralExpression
+          Identifier: 'noChangeRun'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TestTscCompile'
+    PropertySignature
+      Identifier: '
+    commandLineArgs'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    sys'
+      FunctionType
+        TypeReference
+          Identifier: ' TestServerHost'
+    PropertySignature
+      Identifier: '
+    modifySystem'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'fs'
+          TypeReference
+            Identifier: ' TestServerHost'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    computeDtsSignatures'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    getWrittenFiles'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    baselineSourceMap'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    baselineReadFileCalls'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    baselinePrograms'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    baselineDependencies'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    compile'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'sys'
+          TypeReference
+            Identifier: ' TscWatchSystem'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' CommandLineCallbacks'
+          LiteralType
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' initialTestTscCompile'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' TestTscCompile'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' sys'
+              BindingElement
+                Identifier: ' baseline'
+            CallExpression
+              Identifier: ' createBaseline'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'input'
+                  Identifier: 'sys'
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'modifySystem'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'exit'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' exitCode'
+            EqualsGreaterThanToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' sys'
+                Identifier: 'exitCode'
+              EqualsToken
+              Identifier: ' exitCode'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    ts'
+              Identifier: 'Debug'
+            Identifier: 'assert'
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isWatch'
+              PropertyAccessExpression
+                Identifier: 'input'
+                Identifier: 'commandLineArgs'
+          StringLiteral
+      ReturnStatement
+        CallExpression
+          Identifier: ' testTscCompileWith'
+          Identifier: 'sys'
+          Identifier: ' baseline'
+          Identifier: ' input'
+  FunctionDeclaration
+    Identifier: ' testTscCompileWith'
+    Parameter
+      Identifier: '
+    sys'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' BaselineBase'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: '
+    baseline'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' BaselineBase'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: '
+    input'
+      IntersectionType
+        TypeReference
+          Identifier: ' TestTscCompileBaselineInput'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'TestTscCompile'
+          LiteralType
+            StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' actualReadFileMap'
+            UnionType
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'MapLike'
+                NumberKeyword
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' getPrograms'
+            UnionType
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' CommandLineCallbacks'
+                LiteralType
+                  StringLiteral
+              UndefinedKeyword
+      IfStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'input'
+            Identifier: 'compile'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        actualReadFileMap'
+              EqualsToken
+              ObjectLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' originalReadFile'
+                PropertyAccessExpression
+                  Identifier: ' sys'
+                  Identifier: 'readFile'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'input'
+              Identifier: 'baselineReadFileCalls'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            sys'
+                    Identifier: 'readFile'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' path'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        PrefixUnaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'path'
+                              Identifier: 'startsWith'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'ts'
+                                Identifier: 'getDirectoryPath'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'sys'
+                                  Identifier: 'getExecutingFilePath'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              ElementAccessExpression
+                                NonNullExpression
+                                  Identifier: '
+                    actualReadFileMap'
+                                Identifier: 'path'
+                              EqualsToken
+                              BinaryExpression
+                                ParenthesizedExpression
+                                  BinaryExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'getProperty'
+                                      NonNullExpression
+                                        Identifier: 'actualReadFileMap'
+                                      Identifier: ' path'
+                                    BarBarToken
+                                    NumericLiteral
+                                PlusToken
+                                NumericLiteral
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' originalReadFile'
+                            Identifier: 'call'
+                          Identifier: 'sys'
+                          Identifier: ' path'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' commandLineCallbacks'
+                  Identifier: 'sys'
+                  Identifier: ' originalReadFile'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        ts'
+                Identifier: 'executeCommandLine'
+              Identifier: '
+            sys'
+              PropertyAccessExpression
+                Identifier: '
+            result'
+                Identifier: 'cb'
+              PropertyAccessExpression
+                Identifier: '
+            input'
+                Identifier: 'commandLineArgs'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        sys'
+                Identifier: 'readFile'
+              EqualsToken
+              Identifier: ' originalReadFile'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        getPrograms'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' result'
+                Identifier: 'getPrograms'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        getPrograms'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' input'
+                  Identifier: 'compile'
+                Identifier: 'sys'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' dtsSignatures'
+              BindingElement
+                Identifier: ' writtenFiles'
+            CallExpression
+              Identifier: ' baselineAfterTscCompile'
+              Identifier: 'sys'
+              Identifier: ' baseline'
+              Identifier: ' input'
+              Identifier: ' getPrograms'
+              Identifier: ' actualReadFileMap'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' sys'
+          ShorthandPropertyAssignment
+            Identifier: ' baseline'
+          ShorthandPropertyAssignment
+            Identifier: ' dtsSignatures'
+          ShorthandPropertyAssignment
+            Identifier: ' writtenFiles'
+  TypeAliasDeclaration
+    Identifier: ' TestTscCompileBaselineInput'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: '
+    TestTscCompile'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' baselineAfterTscCompile'
+    Parameter
+      Identifier: '
+    sys'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' BaselineBase'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: '
+    baseline'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' BaselineBase'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: '
+    input'
+      TypeReference
+        Identifier: ' TestTscCompileBaselineInput'
+    Parameter
+      Identifier: '
+    getPrograms'
+      FunctionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' CommandLineProgram'
+    Parameter
+      Identifier: '
+    actualReadFileMap'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'MapLike'
+          NumberKeyword
+        UndefinedKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    baseline'
+            Identifier: 'push'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'sys'
+                  Identifier: 'getExecutingFilePath'
+              TemplateMiddle
+            TemplateSpan
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'input'
+                    Identifier: 'commandLineArgs'
+                  Identifier: 'join'
+                StringLiteral
+              TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' writtenFiles'
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'getWrittenFiles'
+              QuestionToken
+              NewExpression
+                Identifier: ' Set'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'sys'
+                      Identifier: 'writtenFiles'
+                    Identifier: 'keys'
+              ColonToken
+              Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' programs'
+            CallExpression
+              Identifier: ' baseline_baselineAfterTscCompile'
+              Identifier: '
+        sys'
+              Identifier: '
+        baseline'
+              Identifier: '
+        getPrograms'
+              PropertyAccessExpression
+                Identifier: '
+        ts'
+                Identifier: 'emptyArray'
+              PropertyAccessExpression
+                Identifier: '
+        input'
+                Identifier: 'baselineSourceMap'
+              PropertyAccessExpression
+                Identifier: '
+        input'
+                Identifier: 'baselinePrograms'
+              PropertyAccessExpression
+                Identifier: '
+        input'
+                Identifier: 'baselineDependencies'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' dtsSignatures'
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'computeDtsSignatures'
+              QuestionToken
+              CallExpression
+                Identifier: ' storeDtsSignatures'
+                Identifier: 'sys'
+                Identifier: ' programs'
+              ColonToken
+              Identifier: ' undefined'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'input'
+          Identifier: 'baselineReadFileCalls'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baseline'
+                Identifier: 'push'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  CallExpression
+                    Identifier: 'jsonToReadableText'
+                    Identifier: 'actualReadFileMap'
+                  TemplateTail
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    actualReadFileMap'
+          EqualsToken
+          Identifier: ' undefined'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' dtsSignatures'
+          ShorthandPropertyAssignment
+            Identifier: ' writtenFiles'
+  FunctionDeclaration
+    Identifier: ' storeDtsSignatures'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        Identifier: ' TscWatchSystem'
+    Parameter
+      Identifier: ' programs'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' CommandLineProgram'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' dtsSignatures'
+            UnionType
+              TypeReference
+                Identifier: ' Map'
+                TypeReference
+                  QualifiedName
+                    Identifier: 'ts'
+                    Identifier: 'Path'
+                TypeReference
+                  Identifier: ' Map'
+                  StringKeyword
+                  StringKeyword
+              UndefinedKeyword
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'program'
+              BindingElement
+                Identifier: ' builderProgram'
+        Identifier: ' programs'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'builderProgram'
+            ContinueStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' buildInfoPath'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'getTsBuildInfoEmitOutputFilePath'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'program'
+                      Identifier: 'getCompilerOptions'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'buildInfoPath'
+            ContinueStatement
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        dtsSignatures'
+              QuestionQuestionEqualsToken
+              NewExpression
+                Identifier: ' Map'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' dtsSignatureData'
+                NewExpression
+                  Identifier: ' Map'
+                  StringKeyword
+                  StringKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        dtsSignatures'
+                Identifier: 'set'
+              AsExpression
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    CallExpression
+                      Identifier: 'toPathWithSystem'
+                      Identifier: 'sys'
+                      Identifier: ' buildInfoPath'
+                    TemplateTail
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'Path'
+              Identifier: ' dtsSignatureData'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        builderProgram'
+                    Identifier: 'state'
+                  Identifier: 'hasCalledUpdateShapeSignature'
+                QuestionDotToken
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'resolvedPath'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' program'
+                            Identifier: 'getSourceFileByPath'
+                          Identifier: 'resolvedPath'
+                  IfStatement
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        Identifier: 'file'
+                      BarBarToken
+                      PropertyAccessExpression
+                        Identifier: ' file'
+                        Identifier: 'isDeclarationFile'
+                    ReturnStatement
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            // Compute dts and exported map and store it
+            ts'
+                          Identifier: 'BuilderState'
+                        Identifier: 'computeDtsSignature'
+                      Identifier: '
+                program'
+                      Identifier: '
+                file'
+                      Identifier: '
+                /*cancellationToken*/ undefined'
+                      Identifier: '
+                sys'
+                      ArrowFunction
+                        Parameter
+                          Identifier: '
+                signature'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' dtsSignatureData'
+                            Identifier: 'set'
+                          CallExpression
+                            Identifier: 'relativeToBuildInfo'
+                            Identifier: 'resolvedPath'
+                          Identifier: ' signature'
+          FunctionDeclaration
+            Identifier: ' relativeToBuildInfo'
+            Parameter
+              Identifier: 'path'
+              StringKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' currentDirectory'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' program'
+                        Identifier: 'getCurrentDirectory'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' getCanonicalFileName'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'createGetCanonicalFileName'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'program'
+                          Identifier: 'useCaseSensitiveFileNames'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' buildInfoDirectory'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getDirectoryPath'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'getNormalizedAbsolutePath'
+                        NonNullExpression
+                          Identifier: 'buildInfoPath'
+                        Identifier: ' currentDirectory'
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'ensurePathIsNonModuleName'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'ts'
+                      Identifier: 'getRelativePathFromDirectory'
+                    Identifier: 'buildInfoDirectory'
+                    Identifier: ' path'
+                    Identifier: ' getCanonicalFileName'
+      ReturnStatement
+        Identifier: ' dtsSignatures'
+  FunctionDeclaration
+    Identifier: ' verifyTscEditDiscrepancies'
+    Parameter
+      Identifier: '
+    input'
+      TypeReference
+        Identifier: ' VerifyTscWithEditsInput'
+    Parameter
+      Identifier: '
+    index'
+      NumberKeyword
+    Parameter
+      Identifier: '
+    snaps'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' TestServerHostSnapshot'
+    Parameter
+      Identifier: '
+    baselines'
+      UnionType
+        ArrayType
+          StringKeyword
+        UndefinedKeyword
+    UnionType
+      ArrayType
+        StringKeyword
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            CallExpression
+              Identifier: ' initialTestTscCompile'
+              ObjectLiteralExpression
+                SpreadAssignment
+                  Identifier: 'input'
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' fs'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            input'
+                            Identifier: 'modifySystem'
+                          QuestionDotToken
+                          Identifier: 'fs'
+                      ForStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' i'
+                            NumericLiteral
+                        BinaryExpression
+                          Identifier: ' i'
+                          LessThanEqualsToken
+                          Identifier: ' index'
+                        PostfixUnaryExpression
+                          Identifier: ' i'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                ElementAccessExpression
+                                  NonNullExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                input'
+                                      Identifier: 'edits'
+                                  Identifier: 'i'
+                                Identifier: 'edit'
+                              AsExpression
+                                Identifier: 'fs'
+                                TypeReference
+                                  Identifier: ' TscWatchSystem'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ElementAccessExpression
+                        NonNullExpression
+                          PropertyAccessExpression
+                            Identifier: ' input'
+                            Identifier: 'edits'
+                        Identifier: 'index'
+                      Identifier: 'commandLineArgs'
+                    QuestionQuestionToken
+                    PropertyAccessExpression
+                      Identifier: ' input'
+                      Identifier: 'commandLineArgs'
+                PropertyAssignment
+                  Identifier: '
+        computeDtsSignatures'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        getWrittenFiles'
+                  TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' headerAdded'
+            FalseKeyword
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' outputFile'
+        CallExpression
+          PropertyAccessExpression
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: ' result'
+                Identifier: 'writtenFiles'
+            Identifier: 'keys'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' cleanBuildText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' result'
+                      Identifier: 'sys'
+                    Identifier: 'readFile'
+                  Identifier: 'outputFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' incrementalFsEntry'
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: ' snaps'
+                      Identifier: 'index'
+                    Identifier: 'get'
+                  Identifier: 'outputFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' incrementalBuildText'
+                ConditionalExpression
+                  CallExpression
+                    Identifier: ' isFsFile'
+                    Identifier: 'incrementalFsEntry'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' incrementalFsEntry'
+                    Identifier: 'content'
+                  ColonToken
+                  Identifier: ' undefined'
+          IfStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'isBuildInfoFile'
+              Identifier: 'outputFile'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'result'
+                        Identifier: 'sys'
+                      Identifier: 'fileExists'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'outputFile'
+                        TemplateTail
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' addBaseline'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'outputFile'
+                        TemplateTail
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isFsFile'
+                    CallExpression
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: 'snaps'
+                          Identifier: 'index'
+                        Identifier: 'get'
+                      AsExpression
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            Identifier: 'outputFile'
+                            TemplateTail
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'Path'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' addBaseline'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'outputFile'
+                        TemplateTail
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            verifyPresenceAbsence'
+                  Identifier: 'incrementalBuildText'
+                  Identifier: ' cleanBuildText'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'outputFile'
+                      TemplateTail
+            IfStatement
+              PrefixUnaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'fileExtensionIs'
+                  Identifier: 'outputFile'
+                  StringLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+            verifyTextEqual'
+                    Identifier: 'incrementalBuildText'
+                    Identifier: ' cleanBuildText'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'outputFile'
+                        TemplateTail
+              IfStatement
+                BinaryExpression
+                  Identifier: 'incrementalBuildText'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' cleanBuildText'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' buildInfo'
+                            Identifier: ' incrementalBuildInfo'
+                          BindingElement
+                            Identifier: ' readableBuildInfo'
+                            Identifier: ' incrementalReadableBuildInfo'
+                        CallExpression
+                          Identifier: ' getBuildInfoForIncrementalCorrectnessCheck'
+                          Identifier: 'incrementalBuildText'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' buildInfo'
+                            Identifier: ' cleanBuildInfo'
+                          BindingElement
+                            Identifier: ' readableBuildInfo'
+                            Identifier: ' cleanReadableBuildInfo'
+                        CallExpression
+                          Identifier: ' getBuildInfoForIncrementalCorrectnessCheck'
+                          Identifier: 'cleanBuildText'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' dtsSignatures'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' result'
+                              Identifier: 'dtsSignatures'
+                            QuestionDotToken
+                            Identifier: 'get'
+                          Identifier: 'outputFile'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            verifyTextEqual'
+                      Identifier: 'incrementalBuildInfo'
+                      Identifier: ' cleanBuildInfo'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'outputFile'
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            // Verify file info sigantures
+            verifyMapLike'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'incrementalReadableBuildInfo'
+                            TypeReference
+                              Identifier: ' ReadableIncrementalMultiFileEmitBuildInfo'
+                        QuestionDotToken
+                        Identifier: 'fileInfos'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'cleanReadableBuildInfo'
+                            TypeReference
+                              Identifier: ' ReadableIncrementalMultiFileEmitBuildInfo'
+                        QuestionDotToken
+                        Identifier: 'fileInfos'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'key'
+                        Parameter
+                          Identifier: ' incrementalFileInfo'
+                        Parameter
+                          Identifier: ' cleanFileInfo'
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dtsForKey'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' dtsSignatures'
+                                    QuestionDotToken
+                                    Identifier: 'get'
+                                  Identifier: 'key'
+                          IfStatement
+                            BinaryExpression
+                              BinaryExpression
+                                PrefixUnaryExpression
+                                  Identifier: 'incrementalFileInfo'
+                                BarBarToken
+                                PrefixUnaryExpression
+                                  Identifier: 'cleanFileInfo'
+                              BarBarToken
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        incrementalFileInfo'
+                                      Identifier: 'signature'
+                                    ExclamationEqualsEqualsToken
+                                    PropertyAccessExpression
+                                      Identifier: ' cleanFileInfo'
+                                      Identifier: 'signature'
+                                  AmpersandAmpersandToken
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            incrementalFileInfo'
+                                      Identifier: 'signature'
+                                    ExclamationEqualsEqualsToken
+                                    PropertyAccessExpression
+                                      Identifier: ' cleanFileInfo'
+                                      Identifier: 'version'
+                                AmpersandAmpersandToken
+                                ParenthesizedExpression
+                                  BinaryExpression
+                                    BinaryExpression
+                                      Identifier: 'dtsForKey'
+                                      EqualsEqualsEqualsToken
+                                      Identifier: ' undefined'
+                                    BarBarToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' incrementalFileInfo'
+                                        Identifier: 'signature'
+                                      ExclamationEqualsEqualsToken
+                                      Identifier: ' dtsForKey'
+                            Block
+                              ReturnStatement
+                                ArrayLiteralExpression
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'key'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      CallExpression
+                                        Identifier: 'jsonToReadableText'
+                                        Identifier: 'incrementalFileInfo'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      CallExpression
+                                        Identifier: 'jsonToReadableText'
+                                        Identifier: 'cleanFileInfo'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      CallExpression
+                                        Identifier: 'jsonToReadableText'
+                                        Identifier: 'dtsForKey'
+                                      TemplateTail
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'outputFile'
+                          TemplateTail
+                  IfStatement
+                    CallExpression
+                      Identifier: 'isReadableIncrementalMultiFileEmitBuildInfo'
+                      Identifier: 'incrementalReadableBuildInfo'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'Debug'
+                            Identifier: 'assert'
+                          PrefixUnaryExpression
+                            CallExpression
+                              Identifier: 'isReadableIncrementalBundleEmitBuildInfo'
+                              Identifier: 'cleanReadableBuildInfo'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                // Verify that incrementally pending affected file emit are in clean build since clean build can contain more files compared to incremental depending of noEmitOnError option
+                incrementalReadableBuildInfo'
+                              Identifier: 'affectedFilesPendingEmit'
+                            QuestionDotToken
+                            Identifier: 'forEach'
+                          ArrowFunction
+                            Parameter
+                              ArrayBindingPattern
+                                BindingElement
+                                  Identifier: 'actualFileOrArray'
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' actualFile'
+                                    ConditionalExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'isString'
+                                        Identifier: 'actualFileOrArray'
+                                      QuestionToken
+                                      Identifier: ' actualFileOrArray'
+                                      ColonToken
+                                      ElementAccessExpression
+                                        Identifier: ' actualFileOrArray'
+                                        NumericLiteral
+                              IfStatement
+                                PrefixUnaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'find'
+                                    PropertyAccessExpression
+                                      ParenthesizedExpression
+                                        AsExpression
+                                          Identifier: 'cleanReadableBuildInfo'
+                                          TypeReference
+                                            Identifier: ' ReadableIncrementalMultiFileEmitBuildInfo'
+                                      QuestionDotToken
+                                      Identifier: 'affectedFilesPendingEmit'
+                                    ArrowFunction
+                                      Parameter
+                                        ArrayBindingPattern
+                                          BindingElement
+                                            Identifier: 'expectedFileOrArray'
+                                      EqualsGreaterThanToken
+                                      BinaryExpression
+                                        Identifier: ' actualFile'
+                                        EqualsEqualsEqualsToken
+                                        ParenthesizedExpression
+                                          ConditionalExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'ts'
+                                                Identifier: 'isString'
+                                              Identifier: 'expectedFileOrArray'
+                                            QuestionToken
+                                            Identifier: ' expectedFileOrArray'
+                                            ColonToken
+                                            ElementAccessExpression
+                                              Identifier: ' expectedFileOrArray'
+                                              NumericLiteral
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      Identifier: '
+                        addBaseline'
+                                      TemplateExpression
+                                        TemplateHead
+                                        TemplateSpan
+                                          Identifier: 'actualFile'
+                                          TemplateMiddle
+                                        TemplateSpan
+                                          Identifier: 'outputFile'
+                                          TemplateTail
+                                      TemplateExpression
+                                        TemplateHead
+                                        TemplateSpan
+                                          Identifier: 'incrementalBuildText'
+                                          TemplateTail
+                                      TemplateExpression
+                                        TemplateHead
+                                        TemplateSpan
+                                          Identifier: 'cleanBuildText'
+                                          TemplateTail
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'Debug'
+                            Identifier: 'assert'
+                          PrefixUnaryExpression
+                            CallExpression
+                              Identifier: 'isReadableIncrementalMultiFileEmitBuildInfo'
+                              Identifier: 'cleanReadableBuildInfo'
+                      IfStatement
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            AsExpression
+                              Identifier: 'incrementalReadableBuildInfo'
+                              TypeReference
+                                Identifier: ' ReadableIncrementalBundleEmitBuildInfo'
+                          QuestionDotToken
+                          Identifier: 'pendingEmit'
+                        Block
+                          IfStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                ParenthesizedExpression
+                                  AsExpression
+                                    Identifier: 'cleanReadableBuildInfo'
+                                    TypeReference
+                                      Identifier: ' ReadableIncrementalBundleEmitBuildInfo'
+                                QuestionDotToken
+                                Identifier: 'pendingEmit'
+                              EqualsEqualsEqualsToken
+                              Identifier: ' undefined'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                        addBaseline'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'outputFile'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'incrementalBuildText'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'cleanBuildText'
+                                      TemplateTail
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' readableIncrementalBuildInfo'
+                        AsExpression
+                          Identifier: ' incrementalReadableBuildInfo'
+                          UnionType
+                            TypeReference
+                              Identifier: ' ReadableIncrementalBuildInfo'
+                            UndefinedKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' readableCleanBuildInfo'
+                        AsExpression
+                          Identifier: ' cleanReadableBuildInfo'
+                          UnionType
+                            TypeReference
+                              Identifier: ' ReadableIncrementalBuildInfo'
+                            UndefinedKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            readableIncrementalBuildInfo'
+                          QuestionDotToken
+                          Identifier: 'changeFileSet'
+                        QuestionDotToken
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'actualFile'
+                        EqualsGreaterThanToken
+                        Block
+                          IfStatement
+                            PrefixUnaryExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'find'
+                                PropertyAccessExpression
+                                  Identifier: '
+                        readableCleanBuildInfo'
+                                  QuestionDotToken
+                                  Identifier: 'changeFileSet'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: '
+                        expectedFile'
+                                  EqualsGreaterThanToken
+                                  BinaryExpression
+                                    Identifier: ' actualFile'
+                                    EqualsEqualsEqualsToken
+                                    Identifier: ' expectedFile'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                    addBaseline'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'actualFile'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'outputFile'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'incrementalBuildText'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'cleanBuildText'
+                                      TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            readableIncrementalBuildInfo'
+                          QuestionDotToken
+                          Identifier: 'semanticDiagnosticsPerFile'
+                        QuestionDotToken
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          ArrayBindingPattern
+                            BindingElement
+                              Identifier: 'actualFile'
+                            BindingElement
+                              Identifier: ' notCachedORDiagnostics'
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' cleanFileDiagnostics'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'find'
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    readableCleanBuildInfo'
+                                    QuestionDotToken
+                                    Identifier: 'semanticDiagnosticsPerFile'
+                                  ArrowFunction
+                                    Parameter
+                                      ArrayBindingPattern
+                                        BindingElement
+                                          Identifier: 'expectedFile'
+                                    EqualsGreaterThanToken
+                                    BinaryExpression
+                                      Identifier: ' actualFile'
+                                      EqualsEqualsEqualsToken
+                                      Identifier: ' expectedFile'
+                          IfStatement
+                            BinaryExpression
+                              Identifier: '
+                    cleanFileDiagnostics'
+                              AmpersandAmpersandToken
+                              BinaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    JSON'
+                                    Identifier: 'stringify'
+                                  Identifier: 'notCachedORDiagnostics'
+                                EqualsEqualsEqualsToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' JSON'
+                                    Identifier: 'stringify'
+                                  ElementAccessExpression
+                                    Identifier: 'cleanFileDiagnostics'
+                                    NumericLiteral
+                            ReturnStatement
+                          IfStatement
+                            BinaryExpression
+                              BinaryExpression
+                                PrefixUnaryExpression
+                                  Identifier: 'cleanFileDiagnostics'
+                                AmpersandAmpersandToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    ts'
+                                    Identifier: 'isString'
+                                  Identifier: 'notCachedORDiagnostics'
+                              AmpersandAmpersandToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    ts'
+                                  Identifier: 'contains'
+                                PropertyAccessExpression
+                                  Identifier: 'readableCleanBuildInfo'
+                                  QuestionDotToken
+                                  Identifier: 'changeFileSet'
+                                Identifier: ' actualFile'
+                            ReturnStatement
+                          IfStatement
+                            BinaryExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    ts'
+                                  Identifier: 'isString'
+                                ElementAccessExpression
+                                  Identifier: 'cleanFileDiagnostics'
+                                  QuestionDotToken
+                                  NumericLiteral
+                              AmpersandAmpersandToken
+                              PrefixUnaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'isString'
+                                  Identifier: 'notCachedORDiagnostics'
+                            ReturnStatement
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                addBaseline'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'actualFile'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  ConditionalExpression
+                                    PrefixUnaryExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'isString'
+                                        Identifier: 'notCachedORDiagnostics'
+                                    QuestionToken
+                                    StringLiteral
+                                    ColonToken
+                                    StringLiteral
+                                  TemplateMiddle
+                                TemplateSpan
+                                  Identifier: 'outputFile'
+                                  TemplateTail
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'incrementalBuildText'
+                                  TemplateTail
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'cleanBuildText'
+                                  TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            readableCleanBuildInfo'
+                          QuestionDotToken
+                          Identifier: 'semanticDiagnosticsPerFile'
+                        QuestionDotToken
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          ArrayBindingPattern
+                            BindingElement
+                              Identifier: 'expectedFile'
+                            BindingElement
+                              Identifier: ' cleanFileDiagnostics'
+                        EqualsGreaterThanToken
+                        Block
+                          IfStatement
+                            BinaryExpression
+                              PrefixUnaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'isString'
+                                  ElementAccessExpression
+                                    Identifier: 'cleanFileDiagnostics'
+                                    QuestionDotToken
+                                    NumericLiteral
+                              AmpersandAmpersandToken
+                              PrefixUnaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'find'
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        readableIncrementalBuildInfo'
+                                    QuestionDotToken
+                                    Identifier: 'semanticDiagnosticsPerFile'
+                                  ArrowFunction
+                                    Parameter
+                                      ArrayBindingPattern
+                                        BindingElement
+                                          Identifier: 'actualFile'
+                                    EqualsGreaterThanToken
+                                    BinaryExpression
+                                      Identifier: ' actualFile'
+                                      EqualsEqualsEqualsToken
+                                      Identifier: ' expectedFile'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                    addBaseline'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'expectedFile'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'outputFile'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'incrementalBuildText'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'cleanBuildText'
+                                      TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            readableIncrementalBuildInfo'
+                          QuestionDotToken
+                          Identifier: 'emitDiagnosticsPerFile'
+                        QuestionDotToken
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          ArrayBindingPattern
+                            BindingElement
+                              Identifier: 'actualFile'
+                        EqualsGreaterThanToken
+                        Block
+                          IfStatement
+                            BinaryExpression
+                              BinaryExpression
+                                PrefixUnaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'find'
+                                    PropertyAccessExpression
+                                      NonNullExpression
+                                        Identifier: '
+                        readableCleanBuildInfo'
+                                      Identifier: 'emitDiagnosticsPerFile'
+                                    ArrowFunction
+                                      Parameter
+                                        ArrayBindingPattern
+                                          BindingElement
+                                            Identifier: 'expectedFile'
+                                      EqualsGreaterThanToken
+                                      BinaryExpression
+                                        Identifier: ' actualFile'
+                                        EqualsEqualsEqualsToken
+                                        Identifier: ' expectedFile'
+                                AmpersandAmpersandToken
+                                ParenthesizedExpression
+                                  PrefixUnaryExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'find'
+                                      PropertyAccessExpression
+                                        ParenthesizedExpression
+                                          AsExpression
+                                            Identifier: 'readableCleanBuildInfo'
+                                            TypeReference
+                                              Identifier: ' ReadableIncrementalMultiFileEmitBuildInfo'
+                                        Identifier: 'affectedFilesPendingEmit'
+                                      ArrowFunction
+                                        Parameter
+                                          ArrayBindingPattern
+                                            BindingElement
+                                              Identifier: 'expectedFileOrArray'
+                                        EqualsGreaterThanToken
+                                        BinaryExpression
+                                          Identifier: ' actualFile'
+                                          EqualsEqualsEqualsToken
+                                          ParenthesizedExpression
+                                            ConditionalExpression
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: 'ts'
+                                                  Identifier: 'isString'
+                                                Identifier: 'expectedFileOrArray'
+                                              QuestionToken
+                                              Identifier: ' expectedFileOrArray'
+                                              ColonToken
+                                              ElementAccessExpression
+                                                Identifier: ' expectedFileOrArray'
+                                                NumericLiteral
+                              AmpersandAmpersandToken
+                              PrefixUnaryExpression
+                                PropertyAccessExpression
+                                  ParenthesizedExpression
+                                    AsExpression
+                                      Identifier: 'readableCleanBuildInfo'
+                                      TypeReference
+                                        Identifier: ' ReadableIncrementalBundleEmitBuildInfo'
+                                  Identifier: 'pendingEmit'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                    addBaseline'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'actualFile'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'outputFile'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'incrementalBuildText'
+                                      TemplateTail
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'cleanBuildText'
+                                      TemplateTail
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'headerAdded'
+          AmpersandAmpersandToken
+          PropertyAccessExpression
+            ElementAccessExpression
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: ' input'
+                  Identifier: 'edits'
+              Identifier: 'index'
+            Identifier: 'discrepancyExplanation'
+        ExpressionStatement
+          CallExpression
+            Identifier: ' addBaseline'
+            StringLiteral
+      ReturnStatement
+        Identifier: ' baselines'
+      FunctionDeclaration
+        Identifier: ' verifyTextEqual'
+        Parameter
+          Identifier: 'incrementalText'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        Parameter
+          Identifier: ' cleanText'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        Parameter
+          Identifier: ' message'
+          StringKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'incrementalText'
+              ExclamationEqualsEqualsToken
+              Identifier: ' cleanText'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' writeNotEqual'
+                Identifier: 'incrementalText'
+                Identifier: ' cleanText'
+                Identifier: ' message'
+      FunctionDeclaration
+        Identifier: ' verifyMapLike'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: '
+        incremental'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'MapLike'
+              TypeReference
+                Identifier: 'T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        clean'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'MapLike'
+              TypeReference
+                Identifier: 'T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        verifyValue'
+          FunctionType
+            Parameter
+              Identifier: 'key'
+              StringKeyword
+            Parameter
+              Identifier: ' incrementalValue'
+              UnionType
+                TypeReference
+                  Identifier: ' T'
+                UndefinedKeyword
+            Parameter
+              Identifier: ' cleanValue'
+              UnionType
+                TypeReference
+                  Identifier: ' T'
+                UndefinedKeyword
+            UnionType
+              ArrayType
+                StringKeyword
+              UndefinedKeyword
+        Parameter
+          Identifier: '
+        message'
+          StringKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyPresenceAbsence'
+              Identifier: 'incremental'
+              Identifier: ' clean'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'message'
+                  TemplateTail
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'incremental'
+              BarBarToken
+              PrefixUnaryExpression
+                Identifier: 'clean'
+            ReturnStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' incrementalMap'
+                NewExpression
+                  Identifier: ' Map'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'Object'
+                      Identifier: 'entries'
+                    Identifier: 'incremental'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' cleanMap'
+                NewExpression
+                  Identifier: ' Map'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'Object'
+                      Identifier: 'entries'
+                    Identifier: 'clean'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        cleanMap'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'cleanValue'
+                Parameter
+                  Identifier: ' key'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          Identifier: ' verifyValue'
+                          Identifier: 'key'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' incrementalMap'
+                              Identifier: 'get'
+                            Identifier: 'key'
+                          Identifier: ' cleanValue'
+                  IfStatement
+                    Identifier: 'result'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' addBaseline'
+                        SpreadElement
+                          Identifier: 'result'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        incrementalMap'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'incremetnalValue'
+                Parameter
+                  Identifier: ' key'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'cleanMap'
+                        Identifier: 'has'
+                      Identifier: 'key'
+                    ReturnStatement
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          Identifier: ' verifyValue'
+                          Identifier: 'key'
+                          Identifier: ' incremetnalValue'
+                          Identifier: ' /*cleanValue*/ undefined'
+                  IfStatement
+                    Identifier: 'result'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' addBaseline'
+                        SpreadElement
+                          Identifier: 'result'
+      FunctionDeclaration
+        Identifier: ' verifyPresenceAbsence'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'actual'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' expected'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' message'
+          StringKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'expected'
+              EqualsEqualsEqualsToken
+              Identifier: ' undefined'
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'actual'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' undefined'
+                ReturnStatement
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'actual'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                ReturnStatement
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        writeNotEqual'
+              Identifier: 'actual'
+              Identifier: ' expected'
+              Identifier: ' message'
+      FunctionDeclaration
+        Identifier: ' writeNotEqual'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'actual'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' expected'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' message'
+          StringKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addBaseline'
+              Identifier: '
+            message'
+              StringLiteral
+              ConditionalExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            ts'
+                    Identifier: 'isString'
+                  Identifier: 'expected'
+                QuestionToken
+                Identifier: ' expected'
+                ColonToken
+                CallExpression
+                  Identifier: ' jsonToReadableText'
+                  Identifier: 'expected'
+              StringLiteral
+              ConditionalExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            ts'
+                    Identifier: 'isString'
+                  Identifier: 'actual'
+                QuestionToken
+                Identifier: ' actual'
+                ColonToken
+                CallExpression
+                  Identifier: ' jsonToReadableText'
+                  Identifier: 'actual'
+      FunctionDeclaration
+        Identifier: ' addBaseline'
+        Parameter
+          DotDotDotToken
+          Identifier: 'text'
+          ArrayType
+            StringKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'baselines'
+              BarBarToken
+              PrefixUnaryExpression
+                Identifier: 'headerAdded'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      BinaryExpression
+                        Identifier: 'baselines'
+                        BarBarEqualsToken
+                        ArrayLiteralExpression
+                    Identifier: 'push'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'index'
+                      TemplateMiddle
+                    TemplateSpan
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          NonNullExpression
+                            PropertyAccessExpression
+                              Identifier: 'input'
+                              Identifier: 'edits'
+                          Identifier: 'index'
+                        Identifier: 'caption'
+                      TemplateTail
+                  SpreadElement
+                    ParenthesizedExpression
+                      BinaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              NonNullExpression
+                                PropertyAccessExpression
+                                  Identifier: 'input'
+                                  Identifier: 'edits'
+                              Identifier: 'index'
+                            Identifier: 'discrepancyExplanation'
+                          QuestionDotToken
+                        BarBarToken
+                        ArrayLiteralExpression
+                          StringLiteral
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            headerAdded'
+                  EqualsToken
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baselines'
+                Identifier: 'push'
+              SpreadElement
+                Identifier: 'text'
+  FunctionDeclaration
+    Identifier: ' getBuildInfoForIncrementalCorrectnessCheck'
+    Parameter
+      Identifier: 'text'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    buildInfo'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      PropertySignature
+        Identifier: '
+    readableBuildInfo'
+        QuestionToken
+        TypeReference
+          Identifier: ' ReadableBuildInfo'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'text'
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' buildInfo'
+              Identifier: ' text'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' readableBuildInfo'
+            AsExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' JSON'
+                  Identifier: 'parse'
+                Identifier: 'text'
+              TypeReference
+                Identifier: ' ReadableBuildInfo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sanitizedFileInfos'
+            UnionType
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'MapLike'
+                UnionType
+                  StringKeyword
+                  IntersectionType
+                    TypeReference
+                      Identifier: ' Omit'
+                      UnionType
+                        TypeReference
+                          Identifier: 'ReadableIncrementalBuildInfoFileInfo'
+                          TypeReference
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'IncrementalMultiFileEmitBuildInfoFileInfo'
+                        TypeReference
+                          Identifier: ' ReadableIncrementalBuildInfoFileInfo'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                Identifier: 'ts'
+                                Identifier: 'BuilderState'
+                              Identifier: 'FileInfo'
+                      UnionType
+                        LiteralType
+                          StringLiteral
+                        LiteralType
+                          StringLiteral
+                    TypeLiteral
+                      PropertySignature
+                        Identifier: ' signature'
+                        UndefinedKeyword
+                      PropertySignature
+                        Identifier: ' original'
+                        UndefinedKeyword
+              UndefinedKeyword
+      IfStatement
+        CallExpression
+          Identifier: 'isReadableIncrementalBuildInfo'
+          Identifier: 'readableBuildInfo'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        sanitizedFileInfos'
+              EqualsToken
+              ObjectLiteralExpression
+          ForInStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' id'
+            PropertyAccessExpression
+              Identifier: ' readableBuildInfo'
+              Identifier: 'fileInfos'
+            Block
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'hasProperty'
+                  PropertyAccessExpression
+                    Identifier: 'readableBuildInfo'
+                    Identifier: 'fileInfos'
+                  Identifier: ' id'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' info'
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' readableBuildInfo'
+                            Identifier: 'fileInfos'
+                          Identifier: 'id'
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+                sanitizedFileInfos'
+                        Identifier: 'id'
+                      EqualsToken
+                      ConditionalExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'isString'
+                          Identifier: 'info'
+                        QuestionToken
+                        Identifier: ' info'
+                        ColonToken
+                        ObjectLiteralExpression
+                          SpreadAssignment
+                            Identifier: 'info'
+                          PropertyAssignment
+                            Identifier: ' signature'
+                            Identifier: ' undefined'
+                          PropertyAssignment
+                            Identifier: ' original'
+                            Identifier: ' undefined'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        buildInfo'
+            CallExpression
+              Identifier: ' jsonToReadableText'
+              ObjectLiteralExpression
+                SpreadAssignment
+                  Identifier: 'readableBuildInfo'
+                SpreadAssignment
+                  ParenthesizedExpression
+                    ConditionalExpression
+                      CallExpression
+                        Identifier: 'isReadableIncrementalBuildInfo'
+                        Identifier: 'readableBuildInfo'
+                      QuestionToken
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    fileNames'
+                          Identifier: ' undefined'
+                        PropertyAssignment
+                          Identifier: '
+                    fileIdsList'
+                          Identifier: ' undefined'
+                        PropertyAssignment
+                          Identifier: '
+                    fileInfos'
+                          Identifier: ' sanitizedFileInfos'
+                        PropertyAssignment
+                          Identifier: '
+                    // Ignore noEmit since that shouldnt be reason to emit the tsbuild info and presence of it in the buildinfo file does not matter
+                    options'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' readableBuildInfo'
+                              Identifier: 'options'
+                            AmpersandAmpersandToken
+                            ObjectLiteralExpression
+                              SpreadAssignment
+                                PropertyAccessExpression
+                                  Identifier: 'readableBuildInfo'
+                                  Identifier: 'options'
+                              PropertyAssignment
+                                Identifier: '
+                        noEmit'
+                                Identifier: ' undefined'
+                        PropertyAssignment
+                          Identifier: '
+                    affectedFilesPendingEmit'
+                          Identifier: ' undefined'
+                        PropertyAssignment
+                          Identifier: '
+                    pendingEmit'
+                          Identifier: ' undefined'
+                        PropertyAssignment
+                          Identifier: '
+                    emitDiagnosticsPerFile'
+                          Identifier: ' undefined'
+                        PropertyAssignment
+                          Identifier: '
+                    latestChangedDtsFile'
+                          ConditionalExpression
+                            PropertyAccessExpression
+                              Identifier: ' readableBuildInfo'
+                              Identifier: 'latestChangedDtsFile'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            Identifier: ' undefined'
+                        PropertyAssignment
+                          Identifier: '
+                    semanticDiagnosticsPerFile'
+                          Identifier: ' undefined'
+                        PropertyAssignment
+                          Identifier: '
+                    changeFileSet'
+                          Identifier: ' undefined'
+                      ColonToken
+                      Identifier: ' undefined'
+                PropertyAssignment
+                  Identifier: '
+            size'
+                  Identifier: ' undefined'
+          ShorthandPropertyAssignment
+            Identifier: '
+        readableBuildInfo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TestTscEdit'
+    PropertySignature
+      Identifier: '
+    edit'
+      FunctionType
+        Parameter
+          Identifier: 'sys'
+          TypeReference
+            Identifier: ' TscWatchSystem'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    caption'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    commandLineArgs'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    /** An array of lines to be printed in order when a discrepancy is detected */
+    discrepancyExplanation'
+      QuestionToken
+      FunctionType
+        TypeOperator
+          ArrayType
+            StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' VerifyTscWithEditsInput'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Omit'
+        TypeReference
+          Identifier: 'TestTscCompile'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+    PropertySignature
+      Identifier: '
+    scenario'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    subScenario'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    edits'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' TestTscEdit'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' verifyTsc'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' VerifyTscWithEditsInput'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    describe'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'input'
+                    Identifier: 'commandLineArgs'
+                  Identifier: 'join'
+                StringLiteral
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'input'
+                Identifier: 'scenario'
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'input'
+                Identifier: 'subScenario'
+              TemplateTail
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' snaps'
+                    UnionType
+                      ArrayType
+                        TypeReference
+                          Identifier: ' TestServerHostSnapshot'
+                      UndefinedKeyword
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        after'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+            snaps'
+                          EqualsToken
+                          Identifier: ' undefined'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        it'
+                  StringLiteral
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' sys'
+                              BindingElement
+                                Identifier: ' baseline'
+                            CallExpression
+                              Identifier: ' initialTestTscCompile'
+                              Identifier: 'input'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            input'
+                              Identifier: 'edits'
+                            QuestionDotToken
+                            Identifier: 'forEach'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'edit'
+                            EqualsGreaterThanToken
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                applyEdit'
+                                  Identifier: 'sys'
+                                  Identifier: ' baseline'
+                                  PropertyAccessExpression
+                                    Identifier: ' edit'
+                                    Identifier: 'edit'
+                                  PropertyAccessExpression
+                                    Identifier: ' edit'
+                                    Identifier: 'caption'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                testTscCompileWith'
+                                  Identifier: 'sys'
+                                  Identifier: ' baseline'
+                                  ObjectLiteralExpression
+                                    SpreadAssignment
+                                      Identifier: 'input'
+                                    PropertyAssignment
+                                      Identifier: '
+                    commandLineArgs'
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' edit'
+                                          Identifier: 'commandLineArgs'
+                                        QuestionQuestionToken
+                                        PropertyAccessExpression
+                                          Identifier: ' input'
+                                          Identifier: 'commandLineArgs'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    ParenthesizedExpression
+                                      BinaryExpression
+                                        Identifier: 'snaps'
+                                        QuestionQuestionEqualsToken
+                                        ArrayLiteralExpression
+                                    Identifier: 'push'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'sys'
+                                      Identifier: 'getSnap'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            Baseline'
+                            Identifier: 'runBaseline'
+                          CallExpression
+                            Identifier: '
+                tscBaselineName'
+                            PropertyAccessExpression
+                              Identifier: 'input'
+                              Identifier: 'scenario'
+                            PropertyAccessExpression
+                              Identifier: ' input'
+                              Identifier: 'subScenario'
+                            PropertyAccessExpression
+                              Identifier: ' input'
+                              Identifier: 'commandLineArgs'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                baseline'
+                              Identifier: 'join'
+                            StringLiteral
+              IfStatement
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'input'
+                    Identifier: 'edits'
+                  QuestionDotToken
+                  Identifier: 'length'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' baselines'
+                                UnionType
+                                  ArrayType
+                                    StringKeyword
+                                  UndefinedKeyword
+                          ForStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' index'
+                                NumericLiteral
+                            BinaryExpression
+                              Identifier: ' index'
+                              LessThanToken
+                              PropertyAccessExpression
+                                NonNullExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' input'
+                                    Identifier: 'edits'
+                                Identifier: 'length'
+                            PostfixUnaryExpression
+                              Identifier: ' index'
+                            Block
+                              ExpressionStatement
+                                BinaryExpression
+                                  Identifier: '
+                    baselines'
+                                  EqualsToken
+                                  CallExpression
+                                    Identifier: ' verifyTscEditDiscrepancies'
+                                    Identifier: '
+                        input'
+                                    Identifier: '
+                        index'
+                                    NonNullExpression
+                                      Identifier: '
+                        snaps'
+                                    Identifier: '
+                        baselines'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                Baseline'
+                                Identifier: 'runBaseline'
+                              CallExpression
+                                Identifier: '
+                    tscBaselineName'
+                                PropertyAccessExpression
+                                  Identifier: 'input'
+                                  Identifier: 'scenario'
+                                PropertyAccessExpression
+                                  Identifier: ' input'
+                                  Identifier: 'subScenario'
+                                PropertyAccessExpression
+                                  Identifier: ' input'
+                                  Identifier: 'commandLineArgs'
+                                StringLiteral
+                              ConditionalExpression
+                                Identifier: '
+                    baselines'
+                                QuestionToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' baselines'
+                                    Identifier: 'join'
+                                  StringLiteral
+                                ColonToken
+                                NullKeyword

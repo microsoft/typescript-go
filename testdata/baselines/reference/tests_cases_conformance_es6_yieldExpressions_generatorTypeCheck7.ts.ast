@@ -1,0 +1,17 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' WeirdIter'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IterableIterator'
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    hello'
+      StringKeyword
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g1'
+    TypeReference
+      Identifier: ' WeirdIter'
+    Block

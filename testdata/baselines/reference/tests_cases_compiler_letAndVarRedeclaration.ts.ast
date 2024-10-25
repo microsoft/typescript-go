@@ -1,0 +1,105 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e0'
+  FunctionDeclaration
+    Identifier: ' e0'
+    Block
+  FunctionDeclaration
+    Identifier: ' f0'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+      FunctionDeclaration
+        Identifier: ' x1'
+        Block
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+      Block
+        FunctionDeclaration
+          Identifier: ' x'
+          Block
+  ModuleDeclaration
+    Identifier: ' M0'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+      FunctionDeclaration
+        Identifier: ' x2'
+        Block
+  ModuleDeclaration
+    Identifier: ' M1'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x2'
+      Block
+        FunctionDeclaration
+          Identifier: ' x2'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x11'
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x11'
+        Block
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x11'
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x11'
+        Block

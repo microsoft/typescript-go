@@ -1,0 +1,65 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' MyComp'
+    TypeParameter
+      Identifier: 'P'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'P'
+        TypeLiteral
+    PropertyDeclaration
+      Identifier: '
+    internalProp'
+      TypeReference
+        Identifier: ' P'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Prop'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      StringKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyComp'
+        ImportSpecifier
+          Identifier: ' Prop'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        JsxSelfClosingElement
+          Identifier: 'MyComp'
+          TypeReference
+            Identifier: 'Prop'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral

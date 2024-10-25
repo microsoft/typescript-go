@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' A'
+    GetAccessor
+      Identifier: ' length'
+      NumberKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    GetAccessor
+      Identifier: ' length'
+      Block
+        ReturnStatement
+          NumericLiteral

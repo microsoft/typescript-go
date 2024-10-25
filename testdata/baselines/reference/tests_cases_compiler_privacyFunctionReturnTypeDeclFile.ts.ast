@@ -1,0 +1,3147 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' privateClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClass'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPrivateParmeterTypes'
+    ConstructSignature
+      TypeReference
+        Identifier: ' privateClass'
+    CallSignature
+      TypeReference
+        Identifier: ' privateClass'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' privateClass'
+    MethodSignature
+      Identifier: ' // Error
+    myMethod'
+      TypeReference
+        Identifier: ' privateClass'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPublicParmeterTypes'
+    ConstructSignature
+      TypeReference
+        Identifier: ' publicClass'
+    CallSignature
+      TypeReference
+        Identifier: ' publicClass'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeReference
+        Identifier: ' publicClass'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPrivateParmeterTypes'
+    ConstructSignature
+      TypeReference
+        Identifier: ' privateClass'
+    CallSignature
+      TypeReference
+        Identifier: ' privateClass'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' privateClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeReference
+        Identifier: ' privateClass'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPublicParmeterTypes'
+    ConstructSignature
+      TypeReference
+        Identifier: ' publicClass'
+    CallSignature
+      TypeReference
+        Identifier: ' publicClass'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeReference
+        Identifier: ' publicClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithWithPrivateParmeterTypes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeReference
+        Identifier: ' privateClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeReference
+        Identifier: ' privateClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeReference
+        Identifier: ' privateClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeReference
+        Identifier: ' privateClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' privateClass'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' privateClass'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' privateClass'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' privateClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithWithPublicParmeterTypes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeReference
+        Identifier: ' publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeReference
+        Identifier: ' publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeReference
+        Identifier: ' publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeReference
+        Identifier: ' publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClass'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClass'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClass'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClass'
+  ClassDeclaration
+    Identifier: ' privateClassWithWithPrivateParmeterTypes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeReference
+        Identifier: ' privateClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeReference
+        Identifier: ' privateClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeReference
+        Identifier: ' privateClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeReference
+        Identifier: ' privateClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' privateClass'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' privateClass'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' privateClass'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' privateClass'
+  ClassDeclaration
+    Identifier: ' privateClassWithWithPublicParmeterTypes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeReference
+        Identifier: ' publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeReference
+        Identifier: ' publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeReference
+        Identifier: ' publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeReference
+        Identifier: ' publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClass'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClass'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClass'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClass'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPrivateParmeterTypes'
+    TypeReference
+      Identifier: ' privateClass'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPublicParmeterTypes'
+    TypeReference
+      Identifier: ' publicClass'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPrivateParmeterTypes'
+    TypeReference
+      Identifier: ' privateClass'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPublicParmeterTypes'
+    TypeReference
+      Identifier: ' publicClass'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPrivateParmeterTypes1'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' privateClass'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPublicParmeterTypes1'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' publicClass'
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPrivateParmeterTypes1'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' privateClass'
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPublicParmeterTypes1'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' publicClass'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' publicAmbientFunctionWithPrivateParmeterTypes'
+    TypeReference
+      Identifier: ' privateClass'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' publicAmbientFunctionWithPublicParmeterTypes'
+    TypeReference
+      Identifier: ' publicClass'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' privateAmbientFunctionWithPrivateParmeterTypes'
+    TypeReference
+      Identifier: ' privateClass'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' privateAmbientFunctionWithPublicParmeterTypes'
+    TypeReference
+      Identifier: ' publicClass'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPrivateModuleParameterTypes'
+    ConstructSignature
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    CallSignature
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    MethodSignature
+      Identifier: ' // Error
+    myMethod'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithPrivateModuleParameterTypes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPrivateModuleParameterTypes'
+    TypeReference
+      QualifiedName
+        Identifier: ' privateModule'
+        Identifier: 'publicClass'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPrivateModuleParameterTypes1'
+    Block
+      ReturnStatement
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' publicAmbientFunctionWithPrivateModuleParameterTypes'
+    TypeReference
+      QualifiedName
+        Identifier: ' privateModule'
+        Identifier: 'publicClass'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPrivateModuleParameterTypes'
+    ConstructSignature
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    CallSignature
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+  ClassDeclaration
+    Identifier: ' privateClassWithPrivateModuleParameterTypes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPrivateModuleParameterTypes'
+    TypeReference
+      QualifiedName
+        Identifier: ' privateModule'
+        Identifier: 'publicClass'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPrivateModuleParameterTypes1'
+    Block
+      ReturnStatement
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' privateAmbientFunctionWithPrivateModuleParameterTypes'
+    TypeReference
+      QualifiedName
+        Identifier: ' privateModule'
+        Identifier: 'publicClass'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' publicModule'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' privateClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' privateClass'
+        CallSignature
+          TypeReference
+            Identifier: ' privateClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' privateClass'
+        MethodSignature
+          Identifier: ' // Error
+        myMethod'
+          TypeReference
+            Identifier: ' privateClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeReference
+            Identifier: ' publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            Identifier: ' publicClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' privateClass'
+        CallSignature
+          TypeReference
+            Identifier: ' privateClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' privateClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            Identifier: ' privateClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeReference
+            Identifier: ' publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            Identifier: ' publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPrivateParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPublicParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPrivateParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPublicParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' privateClass'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPublicParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' publicClass'
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' privateClass'
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPublicParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' publicAmbientFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' publicAmbientFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' privateAmbientFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' privateAmbientFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateModuleParameterTypes'
+        ConstructSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        CallSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        MethodSignature
+          Identifier: ' // Error
+        myMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithPrivateModuleParameterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateModuleParameterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' publicAmbientFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateModuleParameterTypes'
+        ConstructSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        CallSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+      ClassDeclaration
+        Identifier: ' privateClassWithPrivateModuleParameterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateModuleParameterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' privateAmbientFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+  ModuleDeclaration
+    Identifier: ' privateModule'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' privateClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' privateClass'
+        CallSignature
+          TypeReference
+            Identifier: ' privateClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' privateClass'
+        MethodSignature
+          Identifier: ' 
+        myMethod'
+          TypeReference
+            Identifier: ' privateClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeReference
+            Identifier: ' publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            Identifier: ' publicClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' privateClass'
+        CallSignature
+          TypeReference
+            Identifier: ' privateClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' privateClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            Identifier: ' privateClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeReference
+            Identifier: ' publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            Identifier: ' publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPrivateParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPublicParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPrivateParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPublicParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' privateClass'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPublicParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' publicClass'
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' privateClass'
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPublicParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' publicAmbientFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' publicAmbientFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' privateAmbientFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' privateAmbientFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateModuleParameterTypes'
+        ConstructSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        CallSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithPrivateModuleParameterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateModuleParameterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' publicAmbientFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateModuleParameterTypes'
+        ConstructSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        CallSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+      ClassDeclaration
+        Identifier: ' privateClassWithPrivateModuleParameterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateModuleParameterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' privateAmbientFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+  ClassDeclaration
+    Identifier: ' publicClassInGlobal'
+  InterfaceDeclaration
+    Identifier: ' publicInterfaceWithPublicParmeterTypesInGlobal'
+    ConstructSignature
+      TypeReference
+        Identifier: ' publicClassInGlobal'
+    CallSignature
+      TypeReference
+        Identifier: ' publicClassInGlobal'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' publicClassInGlobal'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeReference
+        Identifier: ' publicClassInGlobal'
+  ClassDeclaration
+    Identifier: ' publicClassWithWithPublicParmeterTypesInGlobal'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeReference
+        Identifier: ' publicClassInGlobal'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeReference
+        Identifier: ' publicClassInGlobal'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeReference
+        Identifier: ' publicClassInGlobal'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeReference
+        Identifier: ' publicClassInGlobal'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClassInGlobal'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClassInGlobal'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClassInGlobal'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' publicClassInGlobal'
+  FunctionDeclaration
+    Identifier: ' publicFunctionWithPublicParmeterTypesInGlobal'
+    TypeReference
+      Identifier: ' publicClassInGlobal'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' publicFunctionWithPublicParmeterTypesInGlobal1'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' publicClassInGlobal'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' publicAmbientFunctionWithPublicParmeterTypesInGlobal'
+    TypeReference
+      Identifier: ' publicClassInGlobal'
+  ModuleDeclaration
+    Identifier: ' publicModuleInGlobal'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' privateClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClass'
+      ModuleDeclaration
+        Identifier: ' privateModule'
+        ModuleBlock
+          ClassDeclaration
+            Identifier: ' privateClass'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' publicClass'
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' publicInterfaceWithPrivateParmeterTypes'
+            ConstructSignature
+              TypeReference
+                Identifier: ' privateClass'
+            CallSignature
+              TypeReference
+                Identifier: ' privateClass'
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              TypeReference
+                Identifier: ' privateClass'
+            MethodSignature
+              Identifier: '
+            myMethod'
+              TypeReference
+                Identifier: ' privateClass'
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' publicInterfaceWithPublicParmeterTypes'
+            ConstructSignature
+              TypeReference
+                Identifier: ' publicClass'
+            CallSignature
+              TypeReference
+                Identifier: ' publicClass'
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              TypeReference
+                Identifier: ' publicClass'
+            MethodSignature
+              Identifier: '
+            myMethod'
+              TypeReference
+                Identifier: ' publicClass'
+          InterfaceDeclaration
+            Identifier: ' privateInterfaceWithPrivateParmeterTypes'
+            ConstructSignature
+              TypeReference
+                Identifier: ' privateClass'
+            CallSignature
+              TypeReference
+                Identifier: ' privateClass'
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              TypeReference
+                Identifier: ' privateClass'
+            MethodSignature
+              Identifier: '
+            myMethod'
+              TypeReference
+                Identifier: ' privateClass'
+          InterfaceDeclaration
+            Identifier: ' privateInterfaceWithPublicParmeterTypes'
+            ConstructSignature
+              TypeReference
+                Identifier: ' publicClass'
+            CallSignature
+              TypeReference
+                Identifier: ' publicClass'
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              TypeReference
+                Identifier: ' publicClass'
+            MethodSignature
+              Identifier: '
+            myMethod'
+              TypeReference
+                Identifier: ' publicClass'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' publicClassWithWithPrivateParmeterTypes'
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod'
+              TypeReference
+                Identifier: ' privateClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              PrivateKeyword
+              StaticKeyword
+              Identifier: ' myPrivateStaticMethod'
+              TypeReference
+                Identifier: ' privateClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod'
+              TypeReference
+                Identifier: ' privateClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              PrivateKeyword
+              Identifier: ' myPrivateMethod'
+              TypeReference
+                Identifier: ' privateClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' privateClass'
+            MethodDeclaration
+              PrivateKeyword
+              StaticKeyword
+              Identifier: ' myPrivateStaticMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' privateClass'
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' privateClass'
+            MethodDeclaration
+              PrivateKeyword
+              Identifier: ' myPrivateMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' privateClass'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' publicClassWithWithPublicParmeterTypes'
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod'
+              TypeReference
+                Identifier: ' publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              PrivateKeyword
+              StaticKeyword
+              Identifier: ' myPrivateStaticMethod'
+              TypeReference
+                Identifier: ' publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod'
+              TypeReference
+                Identifier: ' publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              PrivateKeyword
+              Identifier: ' myPrivateMethod'
+              TypeReference
+                Identifier: ' publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' publicClass'
+            MethodDeclaration
+              PrivateKeyword
+              StaticKeyword
+              Identifier: ' myPrivateStaticMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' publicClass'
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' publicClass'
+            MethodDeclaration
+              PrivateKeyword
+              Identifier: ' myPrivateMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' publicClass'
+          ClassDeclaration
+            Identifier: ' privateClassWithWithPrivateParmeterTypes'
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod'
+              TypeReference
+                Identifier: ' privateClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              PrivateKeyword
+              StaticKeyword
+              Identifier: ' myPrivateStaticMethod'
+              TypeReference
+                Identifier: ' privateClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod'
+              TypeReference
+                Identifier: ' privateClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              PrivateKeyword
+              Identifier: ' myPrivateMethod'
+              TypeReference
+                Identifier: ' privateClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' privateClass'
+            MethodDeclaration
+              PrivateKeyword
+              StaticKeyword
+              Identifier: ' myPrivateStaticMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' privateClass'
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' privateClass'
+            MethodDeclaration
+              PrivateKeyword
+              Identifier: ' myPrivateMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' privateClass'
+          ClassDeclaration
+            Identifier: ' privateClassWithWithPublicParmeterTypes'
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod'
+              TypeReference
+                Identifier: ' publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              PrivateKeyword
+              StaticKeyword
+              Identifier: ' myPrivateStaticMethod'
+              TypeReference
+                Identifier: ' publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod'
+              TypeReference
+                Identifier: ' publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              PrivateKeyword
+              Identifier: ' myPrivateMethod'
+              TypeReference
+                Identifier: ' publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' publicClass'
+            MethodDeclaration
+              PrivateKeyword
+              StaticKeyword
+              Identifier: ' myPrivateStaticMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' publicClass'
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' publicClass'
+            MethodDeclaration
+              PrivateKeyword
+              Identifier: ' myPrivateMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' publicClass'
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' publicFunctionWithPrivateParmeterTypes'
+            TypeReference
+              Identifier: ' privateClass'
+            Block
+              ReturnStatement
+                NullKeyword
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' publicFunctionWithPublicParmeterTypes'
+            TypeReference
+              Identifier: ' publicClass'
+            Block
+              ReturnStatement
+                NullKeyword
+          FunctionDeclaration
+            Identifier: ' privateFunctionWithPrivateParmeterTypes'
+            TypeReference
+              Identifier: ' privateClass'
+            Block
+              ReturnStatement
+                NullKeyword
+          FunctionDeclaration
+            Identifier: ' privateFunctionWithPublicParmeterTypes'
+            TypeReference
+              Identifier: ' publicClass'
+            Block
+              ReturnStatement
+                NullKeyword
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' publicFunctionWithPrivateParmeterTypes1'
+            Block
+              ReturnStatement
+                NewExpression
+                  Identifier: ' privateClass'
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' publicFunctionWithPublicParmeterTypes1'
+            Block
+              ReturnStatement
+                NewExpression
+                  Identifier: ' publicClass'
+          FunctionDeclaration
+            Identifier: ' privateFunctionWithPrivateParmeterTypes1'
+            Block
+              ReturnStatement
+                NewExpression
+                  Identifier: ' privateClass'
+          FunctionDeclaration
+            Identifier: ' privateFunctionWithPublicParmeterTypes1'
+            Block
+              ReturnStatement
+                NewExpression
+                  Identifier: ' publicClass'
+          FunctionDeclaration
+            ExportKeyword
+            DeclareKeyword
+            Identifier: ' publicAmbientFunctionWithPrivateParmeterTypes'
+            TypeReference
+              Identifier: ' privateClass'
+          FunctionDeclaration
+            ExportKeyword
+            DeclareKeyword
+            Identifier: ' publicAmbientFunctionWithPublicParmeterTypes'
+            TypeReference
+              Identifier: ' publicClass'
+          FunctionDeclaration
+            DeclareKeyword
+            Identifier: ' privateAmbientFunctionWithPrivateParmeterTypes'
+            TypeReference
+              Identifier: ' privateClass'
+          FunctionDeclaration
+            DeclareKeyword
+            Identifier: ' privateAmbientFunctionWithPublicParmeterTypes'
+            TypeReference
+              Identifier: ' publicClass'
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' publicInterfaceWithPrivateModuleParameterTypes'
+            ConstructSignature
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+            CallSignature
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+            MethodSignature
+              Identifier: '
+            myMethod'
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' publicClassWithPrivateModuleParameterTypes'
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod'
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod'
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    PropertyAccessExpression
+                      Identifier: ' privateModule'
+                      Identifier: 'publicClass'
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    PropertyAccessExpression
+                      Identifier: ' privateModule'
+                      Identifier: 'publicClass'
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' publicFunctionWithPrivateModuleParameterTypes'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+            Block
+              ReturnStatement
+                NullKeyword
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' publicFunctionWithPrivateModuleParameterTypes1'
+            Block
+              ReturnStatement
+                NewExpression
+                  PropertyAccessExpression
+                    Identifier: ' privateModule'
+                    Identifier: 'publicClass'
+          FunctionDeclaration
+            ExportKeyword
+            DeclareKeyword
+            Identifier: ' publicAmbientFunctionWithPrivateModuleParameterTypes'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          InterfaceDeclaration
+            Identifier: ' privateInterfaceWithPrivateModuleParameterTypes'
+            ConstructSignature
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+            CallSignature
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+            MethodSignature
+              Identifier: '
+            myMethod'
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+          ClassDeclaration
+            Identifier: ' privateClassWithPrivateModuleParameterTypes'
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod'
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod'
+              TypeReference
+                QualifiedName
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' myPublicStaticMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    PropertyAccessExpression
+                      Identifier: ' privateModule'
+                      Identifier: 'publicClass'
+            MethodDeclaration
+              Identifier: '
+            myPublicMethod1'
+              Block
+                ReturnStatement
+                  NewExpression
+                    PropertyAccessExpression
+                      Identifier: ' privateModule'
+                      Identifier: 'publicClass'
+          FunctionDeclaration
+            Identifier: ' privateFunctionWithPrivateModuleParameterTypes'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+            Block
+              ReturnStatement
+                NullKeyword
+          FunctionDeclaration
+            Identifier: ' privateFunctionWithPrivateModuleParameterTypes1'
+            Block
+              ReturnStatement
+                NewExpression
+                  PropertyAccessExpression
+                    Identifier: ' privateModule'
+                    Identifier: 'publicClass'
+          FunctionDeclaration
+            DeclareKeyword
+            Identifier: ' privateAmbientFunctionWithPrivateModuleParameterTypes'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' privateClass'
+        CallSignature
+          TypeReference
+            Identifier: ' privateClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' privateClass'
+        MethodSignature
+          Identifier: ' // Error
+        myMethod'
+          TypeReference
+            Identifier: ' privateClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeReference
+            Identifier: ' publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            Identifier: ' publicClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' privateClass'
+        CallSignature
+          TypeReference
+            Identifier: ' privateClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' privateClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            Identifier: ' privateClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicParmeterTypes'
+        ConstructSignature
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeReference
+            Identifier: ' publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            Identifier: ' publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPrivateParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPublicParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPrivateParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' privateClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' privateClass'
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPublicParmeterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeReference
+            Identifier: ' publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' privateClass'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPublicParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' publicClass'
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' privateClass'
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPublicParmeterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' publicAmbientFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' publicAmbientFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' privateAmbientFunctionWithPrivateParmeterTypes'
+        TypeReference
+          Identifier: ' privateClass'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' privateAmbientFunctionWithPublicParmeterTypes'
+        TypeReference
+          Identifier: ' publicClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateModuleParameterTypes'
+        ConstructSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        CallSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        MethodSignature
+          Identifier: ' // Error
+        myMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithPrivateModuleParameterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateModuleParameterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' publicAmbientFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateModuleParameterTypes'
+        ConstructSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        CallSignature
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+      ClassDeclaration
+        Identifier: ' privateClassWithPrivateModuleParameterTypes'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+          Block
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod1'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' privateModule'
+                  Identifier: 'publicClass'
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateModuleParameterTypes1'
+        Block
+          ReturnStatement
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' privateAmbientFunctionWithPrivateModuleParameterTypes'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'

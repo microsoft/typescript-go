@@ -1,0 +1,126 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' s'
+              Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' b'
+            Identifier: 'reduce'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            Parameter
+              Identifier: ' y'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' b'
+            Identifier: 'reduceRight'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            Parameter
+              Identifier: ' y'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+n1'
+        Identifier: 'x'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '       // should error, as 'n1' should be type 'number', not 'any'.
+n1'
+        Identifier: 'toExponential'
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // should not error if 'n1' is correctly number.
+n2'
+        Identifier: 'x'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '       // should error, as 'n2' should be type 'number', not 'any'.
+n2'
+        Identifier: 'toExponential'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' b'
+            Identifier: 'reduce'
+          StringKeyword
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            Parameter
+              Identifier: ' y'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // Initial value is of type string
+n3'
+        Identifier: 'toExponential'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // should error if 'n3' is correctly type 'string'
+n3'
+        Identifier: 'charAt'
+      NumericLiteral

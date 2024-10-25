@@ -1,0 +1,29 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'template'
+      AnyKeyword
+    Parameter
+      Identifier: ' val'
+      SymbolKeyword
+    NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ExclamationToken
+        SymbolKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        NumberKeyword
+        TaggedTemplateExpression
+          Identifier: ' foo'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'x'
+              TemplateTail

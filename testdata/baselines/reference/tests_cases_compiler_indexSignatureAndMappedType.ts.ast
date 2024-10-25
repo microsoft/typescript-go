@@ -1,0 +1,145 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'K'
+        TypeReference
+          Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'K'
+        TypeReference
+          Identifier: ' U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    y'
+          EqualsToken
+          Identifier: ' x'
+  TypeAliasDeclaration
+    Identifier: ' Dictionary'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 'key'
+          StringKeyword
+        StringKeyword
+  InterfaceDeclaration
+    Identifier: ' IBaseEntity'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    properties'
+      TypeReference
+        Identifier: ' Dictionary'
+  InterfaceDeclaration
+    Identifier: ' IEntity'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IBaseEntity'
+    PropertySignature
+      Identifier: '
+    properties'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'T'
+        StringKeyword

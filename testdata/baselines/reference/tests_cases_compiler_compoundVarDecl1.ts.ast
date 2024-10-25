@@ -1,0 +1,28 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+          VariableDeclaration
+            Identifier: ' b'
+            NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' a'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' b'
+            PlusToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' bar'
+        NumericLiteral

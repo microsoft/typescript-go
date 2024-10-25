@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+C'
+          Identifier: 'prototype'
+        Identifier: 'x'
+      Identifier: 'boo'

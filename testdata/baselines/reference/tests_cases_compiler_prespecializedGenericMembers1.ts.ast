@@ -1,0 +1,51 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IKitty'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Cat'
+    TypeParameter
+      Identifier: 'CatType'
+      TypeReference
+        Identifier: ' IKitty'
+    Constructor
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' CatBag'
+    Constructor
+      Parameter
+        Identifier: 'cats'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' barry'
+            TypeReference
+              Identifier: ' Cat'
+              TypeReference
+                Identifier: 'IKitty'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cat'
+        NewExpression
+          Identifier: ' Cat'
+          TypeReference
+            Identifier: 'IKitty'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' catThing'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    barry'
+            Identifier: ' cat'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' catBag'
+        NewExpression
+          Identifier: ' CatBag'
+          Identifier: 'catThing'

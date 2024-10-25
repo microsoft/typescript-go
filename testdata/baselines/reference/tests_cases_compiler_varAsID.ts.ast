@@ -1,0 +1,31 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    var'
+    PropertyDeclaration
+      Identifier: ' // ok
+    x'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        NewExpression
+          Identifier: ' Foo'
+  ClassDeclaration
+    Identifier: ' Foo2'
+    PropertyDeclaration
+      Identifier: '
+    var'
+    PropertyDeclaration
+      Identifier: ' // not an error, because of ASI.
+    x'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        NewExpression
+          Identifier: ' Foo2'

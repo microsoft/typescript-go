@@ -1,0 +1,63 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' TypeA'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    param'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' TypeB'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    param'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' ValidType'
+    UnionType
+      TypeReference
+        Identifier: ' TypeA'
+      TypeReference
+        Identifier: ' TypeB'
+  InterfaceDeclaration
+    Identifier: ' Wrapper'
+    PropertySignature
+      Identifier: '
+    types'
+      ArrayType
+        TypeReference
+          Identifier: ' ValidType'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ArrayType
+          TypeReference
+            Identifier: ' Wrapper'
+        ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+foo'
+        Identifier: 'push'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    types'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        type'
+                StringLiteral

@@ -1,0 +1,71 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyClass'
+    PropertyDeclaration
+      ComputedPropertyName
+        BinaryExpression
+          Identifier: ''
+          BarBarToken
+          Identifier: ''
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    baz'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// === INCOMING CHANGES ===
+
+quux'
+  Block
+    ReturnStatement
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' MyClass'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    baz'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    quux'
+      Block
+        ReturnStatement
+          NumericLiteral

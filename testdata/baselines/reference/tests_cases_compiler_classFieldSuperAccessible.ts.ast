@@ -1,0 +1,74 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ClassExpression
+          Identifier: ' Expr'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'name'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Number'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'EPSILON'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'length'
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' b'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ClassDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'b'

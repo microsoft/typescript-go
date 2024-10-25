@@ -1,0 +1,319 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn1'
+        ArrowFunction
+          Parameter
+            Identifier: 's'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                LiteralType
+                  TrueKeyword
+          EqualsGreaterThanToken
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn1'
+      SatisfiesExpression
+        ObjectLiteralExpression
+        UnknownKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn1'
+      SatisfiesExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+        UnknownKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn1'
+      SatisfiesExpression
+        Identifier: 'obj1'
+        UnknownKeyword
+  ClassDeclaration
+    Identifier: ' Cls1'
+    Constructor
+      Parameter
+        Identifier: 'p'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            LiteralType
+              TrueKeyword
+      Block
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Cls1'
+      SatisfiesExpression
+        ObjectLiteralExpression
+        UnknownKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Cls1'
+      SatisfiesExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+        UnknownKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Cls1'
+      SatisfiesExpression
+        Identifier: 'obj1'
+        UnknownKeyword
+  FunctionDeclaration
+    Identifier: ' fn2'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            LiteralType
+              TrueKeyword
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f'
+          SatisfiesExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                TrueKeyword
+            UnknownKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                AsExpression
+                  TrueKeyword
+                  TypeReference
+                    Identifier: ' const'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f'
+          SatisfiesExpression
+            Identifier: 'o'
+            UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tuple1'
+        TupleType
+          BooleanKeyword
+          BooleanKeyword
+        ArrayLiteralExpression
+          TrueKeyword
+          SatisfiesExpression
+            NumericLiteral
+            UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              TrueKeyword
+          TypeReference
+            Identifier: ' Record'
+            StringKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' literal1'
+        SatisfiesExpression
+          NumericLiteral
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' literal2'
+        LiteralType
+          TrueKeyword
+        SatisfiesExpression
+          NumericLiteral
+          NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn3'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        UnknownKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn3'
+      NumericLiteral
+      SpreadElement
+        ParenthesizedExpression
+          SatisfiesExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+            ArrayType
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tuple2'
+        AsExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+          TypeReference
+            Identifier: ' const'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn3'
+      NumericLiteral
+      SpreadElement
+        ParenthesizedExpression
+          SatisfiesExpression
+            Identifier: 'tuple2'
+            ArrayType
+              NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn4'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn4'
+      NumericLiteral
+      SpreadElement
+        ParenthesizedExpression
+          SatisfiesExpression
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+            TypeOperator
+              ArrayType
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tuple3'
+        AsExpression
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+          TypeReference
+            Identifier: ' const'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn4'
+      NumericLiteral
+      SpreadElement
+        ParenthesizedExpression
+          SatisfiesExpression
+            Identifier: 'tuple3'
+            TypeOperator
+              ArrayType
+                StringKeyword
+  FunctionDeclaration
+    Identifier: ' fn5'
+    NumberKeyword
+    Block
+      ReturnStatement
+        SatisfiesExpression
+          StringLiteral
+          UnknownKeyword
+  FunctionDeclaration
+    Identifier: ' fn6'
+    NumberKeyword
+    Block
+      ReturnStatement
+        SatisfiesExpression
+          StringLiteral
+          NumberKeyword
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                TrueKeyword
+          EqualsGreaterThanToken
+          SatisfiesExpression
+            ParenthesizedExpression
+              ObjectLiteralExpression
+            UnknownKeyword
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                TrueKeyword
+          EqualsGreaterThanToken
+          SatisfiesExpression
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' a'
+                  NumericLiteral
+            UnknownKeyword
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                TrueKeyword
+          EqualsGreaterThanToken
+          SatisfiesExpression
+            Identifier: ' obj1'
+            UnknownKeyword

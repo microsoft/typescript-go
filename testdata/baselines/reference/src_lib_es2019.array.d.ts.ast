@@ -1,0 +1,277 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' FlatArray'
+    TypeParameter
+      Identifier: 'Arr'
+    TypeParameter
+      Identifier: ' Depth'
+      NumberKeyword
+    IndexedAccessType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    done'
+          TypeReference
+            Identifier: ' Arr'
+        PropertySignature
+          Identifier: '
+    recur'
+          ConditionalType
+            TypeReference
+              Identifier: ' Arr'
+            TypeReference
+              Identifier: ' ReadonlyArray'
+              InferType
+                TypeParameter
+                  Identifier: ' InnerArr'
+            TypeReference
+              Identifier: ' FlatArray'
+              TypeReference
+                Identifier: 'InnerArr'
+              IndexedAccessType
+                TupleType
+                  LiteralType
+                    PrefixUnaryExpression
+                      NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                TypeReference
+                  Identifier: 'Depth'
+            TypeReference
+              Identifier: ' Arr'
+      ConditionalType
+        TypeReference
+          Identifier: 'Depth'
+        LiteralType
+          PrefixUnaryExpression
+            NumericLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ReadonlyArray'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    /**
+     * Calls a defined callback function on each element of an array. Then, flattens the result into
+     * a new array.
+     * This is identical to a map followed by flat with depth 1.
+     *
+     * @param callback A function that accepts up to three arguments. The flatMap method calls the
+     * callback function one time for each element in the array.
+     * @param thisArg An object to which the this keyword can refer in the callback function. If
+     * thisArg is omitted, undefined is used as the this value.
+     */
+    flatMap'
+      TypeParameter
+        Identifier: 'U'
+      TypeParameter
+        Identifier: ' This'
+        UndefinedKeyword
+      Parameter
+        Identifier: '
+        callback'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            TypeReference
+              Identifier: ' This'
+          Parameter
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          UnionType
+            TypeReference
+              Identifier: ' U'
+            TypeReference
+              Identifier: ' ReadonlyArray'
+              TypeReference
+                Identifier: 'U'
+      Parameter
+        Identifier: '
+        thisArg'
+        QuestionToken
+        TypeReference
+          Identifier: ' This'
+      ArrayType
+        TypeReference
+          Identifier: ' U'
+    MethodSignature
+      Identifier: '
+
+    /**
+     * Returns a new array with all sub-array elements concatenated into it recursively up to the
+     * specified depth.
+     *
+     * @param depth The maximum recursion depth
+     */
+    flat'
+      TypeParameter
+        Identifier: 'A'
+      TypeParameter
+        Identifier: ' D'
+        NumberKeyword
+        LiteralType
+          NumericLiteral
+      Parameter
+        Identifier: '
+        this'
+        TypeReference
+          Identifier: ' A'
+      Parameter
+        Identifier: '
+        depth'
+        QuestionToken
+        TypeReference
+          Identifier: ' D'
+      ArrayType
+        TypeReference
+          Identifier: ' FlatArray'
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' D'
+  InterfaceDeclaration
+    Identifier: ' Array'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    /**
+     * Calls a defined callback function on each element of an array. Then, flattens the result into
+     * a new array.
+     * This is identical to a map followed by flat with depth 1.
+     *
+     * @param callback A function that accepts up to three arguments. The flatMap method calls the
+     * callback function one time for each element in the array.
+     * @param thisArg An object to which the this keyword can refer in the callback function. If
+     * thisArg is omitted, undefined is used as the this value.
+     */
+    flatMap'
+      TypeParameter
+        Identifier: 'U'
+      TypeParameter
+        Identifier: ' This'
+        UndefinedKeyword
+      Parameter
+        Identifier: '
+        callback'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            TypeReference
+              Identifier: ' This'
+          Parameter
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          UnionType
+            TypeReference
+              Identifier: ' U'
+            TypeReference
+              Identifier: ' ReadonlyArray'
+              TypeReference
+                Identifier: 'U'
+      Parameter
+        Identifier: '
+        thisArg'
+        QuestionToken
+        TypeReference
+          Identifier: ' This'
+      ArrayType
+        TypeReference
+          Identifier: ' U'
+    MethodSignature
+      Identifier: '
+
+    /**
+     * Returns a new array with all sub-array elements concatenated into it recursively up to the
+     * specified depth.
+     *
+     * @param depth The maximum recursion depth
+     */
+    flat'
+      TypeParameter
+        Identifier: 'A'
+      TypeParameter
+        Identifier: ' D'
+        NumberKeyword
+        LiteralType
+          NumericLiteral
+      Parameter
+        Identifier: '
+        this'
+        TypeReference
+          Identifier: ' A'
+      Parameter
+        Identifier: '
+        depth'
+        QuestionToken
+        TypeReference
+          Identifier: ' D'
+      ArrayType
+        TypeReference
+          Identifier: ' FlatArray'
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' D'

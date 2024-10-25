@@ -1,0 +1,82 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @jsx: preserve
+
+// @Filename: /a.tsx
+////declare namespace JSX {
+////    interface Element {}
+////    interface IntrinsicElements {
+////        div: {
+////            /** Doc */
+////            foo: string
+////            /** Label docs */
+////            "aria-label": string
+////        }
+////    }
+////}
+////class Foo {
+////    render() {
+////        <div /*1*/ ></div>;
+////        <div  /*2*/ />
+////    }
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            documentation'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            kindModifiers'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            documentation'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            kindModifiers'
+                StringLiteral

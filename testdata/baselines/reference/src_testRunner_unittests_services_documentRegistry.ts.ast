@@ -1,0 +1,496 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' documentRegistry'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createDocumentRegistry'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' defaultCompilerOptions'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'getDefaultCompilerOptions'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f1'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' documentRegistry'
+                            Identifier: 'acquireDocument'
+                          StringLiteral
+                          Identifier: ' defaultCompilerOptions'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptSnapshot'
+                              Identifier: 'fromString'
+                            StringLiteral
+                          StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f2'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' documentRegistry'
+                            Identifier: 'acquireDocument'
+                          StringLiteral
+                          Identifier: ' defaultCompilerOptions'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptSnapshot'
+                              Identifier: 'fromString'
+                            StringLiteral
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assert'
+                      BinaryExpression
+                        Identifier: 'f1'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' f2'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' documentRegistry'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createDocumentRegistry'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' compilerOptions'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'CompilerOptions'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' target'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES5'
+                          PropertyAssignment
+                            Identifier: ' module'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ModuleKind'
+                              Identifier: 'AMD'
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // change compilation setting that doesn't affect parsing - should have the same document
+        compilerOptions'
+                        Identifier: 'declaration'
+                      EqualsToken
+                      TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f1'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' documentRegistry'
+                            Identifier: 'acquireDocument'
+                          StringLiteral
+                          Identifier: ' compilerOptions'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptSnapshot'
+                              Identifier: 'fromString'
+                            StringLiteral
+                          StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        compilerOptions'
+                        Identifier: 'declaration'
+                      EqualsToken
+                      FalseKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f2'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' documentRegistry'
+                            Identifier: 'acquireDocument'
+                          StringLiteral
+                          Identifier: ' compilerOptions'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptSnapshot'
+                              Identifier: 'fromString'
+                            StringLiteral
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assert'
+                      BinaryExpression
+                        Identifier: 'f1'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' f2'
+                      StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // change value of compilation setting that is used during production of AST - new document is required
+        compilerOptions'
+                        Identifier: 'target'
+                      EqualsToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'ScriptTarget'
+                        Identifier: 'ESNext'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f3'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' documentRegistry'
+                            Identifier: 'acquireDocument'
+                          StringLiteral
+                          Identifier: ' compilerOptions'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptSnapshot'
+                              Identifier: 'fromString'
+                            StringLiteral
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assert'
+                      BinaryExpression
+                        Identifier: 'f1'
+                        ExclamationEqualsEqualsToken
+                        Identifier: ' f3'
+                      StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        compilerOptions'
+                        Identifier: 'preserveConstEnums'
+                      EqualsToken
+                      TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f4'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' documentRegistry'
+                            Identifier: 'acquireDocument'
+                          StringLiteral
+                          Identifier: ' compilerOptions'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptSnapshot'
+                              Identifier: 'fromString'
+                            StringLiteral
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assert'
+                      BinaryExpression
+                        Identifier: 'f3'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' f4'
+                      StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        compilerOptions'
+                        Identifier: 'module'
+                      EqualsToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'ModuleKind'
+                        Identifier: 'System'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f5'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' documentRegistry'
+                            Identifier: 'acquireDocument'
+                          StringLiteral
+                          Identifier: ' compilerOptions'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptSnapshot'
+                              Identifier: 'fromString'
+                            StringLiteral
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assert'
+                      BinaryExpression
+                        Identifier: 'f4'
+                        ExclamationEqualsEqualsToken
+                        Identifier: ' f5'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' documentRegistry'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createDocumentRegistry'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' defaultCompilerOptions'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'getDefaultCompilerOptions'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Simulate one LS getting the document.
+        documentRegistry'
+                        Identifier: 'acquireDocument'
+                      StringLiteral
+                      Identifier: ' defaultCompilerOptions'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'ScriptSnapshot'
+                          Identifier: 'fromString'
+                        StringLiteral
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f2'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' documentRegistry'
+                            Identifier: 'acquireDocument'
+                          StringLiteral
+                          Identifier: ' defaultCompilerOptions'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptSnapshot'
+                              Identifier: 'fromString'
+                            StringLiteral
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assert'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'f2'
+                          Identifier: 'version'
+                        EqualsEqualsEqualsToken
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' documentRegistry'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createDocumentRegistry'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' defaultCompilerOptions'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'getDefaultCompilerOptions'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' contents'
+                        StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' snapshot'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptSnapshot'
+                            Identifier: 'fromString'
+                          Identifier: 'contents'
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Always treat any change as a full change.
+        snapshot'
+                        Identifier: 'getChangeRange'
+                      EqualsToken
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createTextChangeRange'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'createTextSpan'
+                            NumericLiteral
+                            PropertyAccessExpression
+                              Identifier: ' contents'
+                              Identifier: 'length'
+                          PropertyAccessExpression
+                            Identifier: ' contents'
+                            Identifier: 'length'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Simulate one LS getting the document.
+        documentRegistry'
+                        Identifier: 'acquireDocument'
+                      StringLiteral
+                      Identifier: ' defaultCompilerOptions'
+                      Identifier: ' snapshot'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Simulate another LS getting that document.
+        documentRegistry'
+                        Identifier: 'acquireDocument'
+                      StringLiteral
+                      Identifier: ' defaultCompilerOptions'
+                      Identifier: ' snapshot'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Now LS1 updates their document.
+        documentRegistry'
+                        Identifier: 'updateDocument'
+                      StringLiteral
+                      Identifier: ' defaultCompilerOptions'
+                      Identifier: ' snapshot'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Now LS2 tries to update their document.
+        documentRegistry'
+                        Identifier: 'updateDocument'
+                      StringLiteral
+                      Identifier: ' defaultCompilerOptions'
+                      Identifier: ' snapshot'
+                      StringLiteral

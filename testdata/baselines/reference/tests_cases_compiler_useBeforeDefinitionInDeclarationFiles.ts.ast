@@ -1,0 +1,38 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ClassWithSymbols'
+    PropertyDeclaration
+      PublicKeyword
+      ReadonlyKeyword
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Namespace'
+          Identifier: 'locallyExportedCustomSymbol'
+      StringKeyword
+    MethodDeclaration
+      PublicKeyword
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Namespace'
+          Identifier: 'fullyExportedCustomSymbol'
+      VoidKeyword
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Namespace'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' locallyExportedCustomSymbol'
+            TypeOperator
+              SymbolKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fullyExportedCustomSymbol'
+            TypeOperator
+              SymbolKeyword

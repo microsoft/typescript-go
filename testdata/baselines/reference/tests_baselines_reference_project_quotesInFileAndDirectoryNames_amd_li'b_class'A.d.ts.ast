@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' ClassA'
+        MethodDeclaration
+          Identifier: '
+        method'
+          VoidKeyword

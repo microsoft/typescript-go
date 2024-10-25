@@ -1,0 +1,24 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' key'
+    Identifier: ' obj'
+    ExpressionStatement
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    console'
+          Identifier: 'log'
+        ElementAccessExpression
+          Identifier: 'obj'
+          Identifier: 'key'

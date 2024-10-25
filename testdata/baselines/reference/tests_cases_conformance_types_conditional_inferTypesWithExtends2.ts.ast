@@ -1,0 +1,52 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' X1'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              NumberKeyword
+      TypeReference
+        Identifier: ' U'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X2'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+        PropertySignature
+          Identifier: ' b'
+          InferType
+            TypeParameter
+              Identifier: ' V'
+              TypeReference
+                Identifier: ' U'
+      TupleType
+        TypeReference
+          Identifier: 'U'
+        TypeReference
+          Identifier: ' V'
+      NeverKeyword

@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m2_a1'
+        NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' m2_c1'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' m2_c1_p1'
+      NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m2_instance1'
+        NewExpression
+          Identifier: ' m2_c1'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' m2_f1'
+    Block
+      ReturnStatement
+        Identifier: ' m2_instance1'

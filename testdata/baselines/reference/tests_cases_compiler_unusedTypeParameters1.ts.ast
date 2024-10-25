@@ -1,0 +1,5 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' greeter'
+    TypeParameter
+      Identifier: 'typeparameter1'

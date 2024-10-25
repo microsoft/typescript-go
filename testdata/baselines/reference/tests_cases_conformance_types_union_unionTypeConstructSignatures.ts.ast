@@ -1,0 +1,601 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numOrDate'
+        UnionType
+          NumberKeyword
+          TypeReference
+            Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrBoolean'
+        UnionType
+          StringKeyword
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNum'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfDifferentReturnType'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              NumberKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              TypeReference
+                Identifier: ' Date'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+numOrDate'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionOfDifferentReturnType'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrBoolean'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionOfDifferentReturnType'
+        StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionOfDifferentReturnType1'
+      TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfDifferentReturnType1'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              NumberKeyword
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              StringKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              TypeReference
+                Identifier: ' Date'
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              BooleanKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+numOrDate'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionOfDifferentReturnType1'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrBoolean'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionOfDifferentReturnType1'
+        StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionOfDifferentReturnType1'
+      TrueKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionOfDifferentReturnType1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfDifferentParameterTypes'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              NumberKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              TypeReference
+                Identifier: ' Date'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionOfDifferentParameterTypes'
+      NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionOfDifferentParameterTypes'
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionOfDifferentParameterTypes'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfDifferentNumberOfSignatures'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              NumberKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              TypeReference
+                Identifier: ' Date'
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              BooleanKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionOfDifferentNumberOfSignatures'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionOfDifferentNumberOfSignatures'
+      NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionOfDifferentNumberOfSignatures'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithDifferentParameterCount'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              StringKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionWithDifferentParameterCount'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionWithDifferentParameterCount'
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionWithDifferentParameterCount'
+      StringLiteral
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithOptionalParameter1'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                QuestionToken
+                NumberKeyword
+              StringKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                QuestionToken
+                NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter1'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter1'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter1'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error in parameter type
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithOptionalParameter2'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                QuestionToken
+                NumberKeyword
+              StringKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter2'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter2'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter2'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithOptionalParameter3'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                QuestionToken
+                NumberKeyword
+              StringKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter3'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter3'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter3'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // wrong type
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithOptionalParameter3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithRestParameter1'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'b'
+                ArrayType
+                  NumberKeyword
+              StringKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'b'
+                ArrayType
+                  NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter1'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter1'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter1'
+        StringLiteral
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter1'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error in parameter type
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithRestParameter2'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'b'
+                ArrayType
+                  NumberKeyword
+              StringKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter2'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter2'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter2'
+        StringLiteral
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter2'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithRestParameter3'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'b'
+                ArrayType
+                  NumberKeyword
+              StringKeyword
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter3'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter3'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter3'
+        StringLiteral
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter3'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // wrong type
+strOrNum'
+      EqualsToken
+      NewExpression
+        Identifier: ' unionWithRestParameter3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithAbstractSignature'
+        UnionType
+          ParenthesizedType
+            ConstructorType
+              AbstractKeyword
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              StringKeyword
+          ParenthesizedType
+            ConstructorType
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              StringKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' unionWithAbstractSignature'
+      StringLiteral

@@ -1,0 +1,202 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Write'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' dummy'
+      TypeReference
+        Identifier: ' Write'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Col'
+    TypeParameter
+      Identifier: 's'
+    TypeParameter
+      Identifier: ' a'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' dummy'
+      TupleType
+        TypeReference
+          Identifier: 'Col'
+          TypeReference
+            Identifier: 's'
+          TypeReference
+            Identifier: ' a'
+        TypeReference
+          Identifier: ' s'
+        TypeReference
+          Identifier: ' a'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Table'
+    TypeParameter
+      Identifier: 'Req'
+    TypeParameter
+      Identifier: ' Def'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' dummy'
+      TupleType
+        TypeReference
+          Identifier: 'Table'
+          TypeReference
+            Identifier: 'Req'
+          TypeReference
+            Identifier: ' Def'
+        TypeReference
+          Identifier: ' Req'
+        TypeReference
+          Identifier: ' Def'
+  TypeAliasDeclaration
+    Identifier: ' MakeTable'
+    TypeParameter
+      Identifier: 'T1'
+      ObjectKeyword
+    TypeParameter
+      Identifier: ' T2'
+      ObjectKeyword
+    IntersectionType
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T1'
+        TypeReference
+          Identifier: ' Col'
+          TypeReference
+            Identifier: 'Write'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T1'
+            TypeReference
+              Identifier: 'P'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T2'
+        TypeReference
+          Identifier: ' Col'
+          TypeReference
+            Identifier: 'Write'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T2'
+            TypeReference
+              Identifier: 'P'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' ConflictTarget'
+    TypeParameter
+      Identifier: 'Cols'
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' tableColumns'
+      TypeParameter
+        Identifier: 'Cols'
+      Parameter
+        Identifier: 'cols'
+        ArrayType
+          ParenthesizedType
+            TypeOperator
+              TypeReference
+                Identifier: ' Cols'
+      TypeReference
+        Identifier: ' ConflictTarget'
+        TypeReference
+          Identifier: 'Cols'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' dummy'
+      TupleType
+        TypeReference
+          Identifier: 'ConflictTarget'
+          TypeReference
+            Identifier: 'Cols'
+        TypeReference
+          Identifier: ' Cols'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bookTable'
+        TypeReference
+          Identifier: ' Table'
+          TypeReference
+            Identifier: 'BookReq'
+          TypeReference
+            Identifier: ' BookDef'
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' BookReq'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' title'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' serial'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' BookDef'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' author'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' numPages'
+      UnionType
+        NumberKeyword
+        LiteralType
+          NullKeyword
+  FunctionDeclaration
+    Identifier: ' insertOnConflictDoNothing'
+    TypeParameter
+      Identifier: 'Req'
+      ObjectKeyword
+    TypeParameter
+      Identifier: ' Def'
+      ObjectKeyword
+    Parameter
+      Identifier: '_table'
+      TypeReference
+        Identifier: ' Table'
+        TypeReference
+          Identifier: 'Req'
+        TypeReference
+          Identifier: ' Def'
+    Parameter
+      Identifier: ' _conflictTarget'
+      TypeReference
+        Identifier: ' ConflictTarget'
+        IntersectionType
+          TypeReference
+            Identifier: 'Req'
+          TypeReference
+            Identifier: ' Def'
+    BooleanKeyword
+    Block
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    insertOnConflictDoNothing'
+          Identifier: 'bookTable'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' ConflictTarget'
+              Identifier: 'tableColumns'
+            ArrayLiteralExpression
+              StringLiteral

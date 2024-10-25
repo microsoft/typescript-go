@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' blob'
+  ExpressionStatement
+    Identifier: '
+bob'
+  ExpressionStatement
+    Identifier: ' bob'
+  ExpressionStatement
+    Identifier: ' bob'
+  ExpressionStatement
+    Identifier: ' bob'
+  ExpressionStatement
+    Identifier: ' bob'
+  ExpressionStatement
+    Identifier: ' bob'
+  ExpressionStatement
+    Identifier: ' bob'
+  ExpressionStatement
+    Identifier: ' bob'
+  ExpressionStatement
+    Identifier: ' bob'
+  ExpressionStatement
+    Identifier: ' bob'
+  ExpressionStatement
+    Identifier: '
+bob'
+  ExpressionStatement
+    Identifier: ' bob'

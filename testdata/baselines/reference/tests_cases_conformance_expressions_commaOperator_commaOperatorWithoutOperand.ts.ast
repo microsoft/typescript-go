@@ -1,0 +1,93 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BOOLEAN'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NUMBER'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' STRING'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' OBJECT'
+        TypeReference
+          Identifier: ' Object'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: 'ANY'
+        CommaToken
+        Identifier: ''
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: 'BOOLEAN'
+        CommaToken
+        Identifier: ''
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: 'NUMBER'
+        CommaToken
+        Identifier: ''
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: 'STRING'
+        CommaToken
+        Identifier: ''
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: 'OBJECT'
+        CommaToken
+        Identifier: ''
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: ''
+        CommaToken
+        Identifier: ' ANY'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: ''
+        CommaToken
+        Identifier: ' BOOLEAN'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: ''
+        CommaToken
+        Identifier: ' NUMBER'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: ''
+        CommaToken
+        Identifier: ' STRING'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: ''
+        CommaToken
+        Identifier: ' OBJECT'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: ''
+        CommaToken
+        Identifier: ''

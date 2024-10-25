@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportDeclaration
+        ImportClause
+          NamedImports
+            ImportSpecifier
+              Identifier: 'x'
+        StringLiteral

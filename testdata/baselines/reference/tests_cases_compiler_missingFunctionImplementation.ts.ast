@@ -1,0 +1,178 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C1'
+    MethodDeclaration
+      Identifier: '
+  m'
+      VoidKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C2'
+    MethodDeclaration
+      Identifier: '
+  m'
+      VoidKeyword
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' C2'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' C3'
+    MethodDeclaration
+      Identifier: '
+  m'
+      Parameter
+        Identifier: 'a'
+      Parameter
+        Identifier: ' b'
+    MethodDeclaration
+      Identifier: '
+  m'
+      Parameter
+        Identifier: 'a'
+  ModuleDeclaration
+    Identifier: ' C3'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' C4'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      Parameter
+        Identifier: 'a'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' C5'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      Parameter
+        Identifier: 'a'
+      VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' C6'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      VoidKeyword
+  ModuleDeclaration
+    Identifier: ' C6'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' C7'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      Parameter
+        Identifier: 'a'
+      VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      VoidKeyword
+  ModuleDeclaration
+    Identifier: ' C7'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' C8'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      Parameter
+        Identifier: 'a'
+      VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      Parameter
+        Identifier: 'a'
+      Parameter
+        Identifier: ' b'
+      VoidKeyword
+  ModuleDeclaration
+    Identifier: ' C8'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' m'
+        Parameter
+          Identifier: 'a'
+          QuestionToken
+        Parameter
+          Identifier: ' b'
+          QuestionToken
+        VoidKeyword
+        Block
+  ClassDeclaration
+    Identifier: ' C9'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      Parameter
+        Identifier: 'a'
+      VoidKeyword
+      Block
+  ModuleDeclaration
+    Identifier: ' C9'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' m'
+        Parameter
+          Identifier: 'a'
+        VoidKeyword
+  ModuleDeclaration
+    Identifier: ' N10'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' m'
+        Parameter
+          Identifier: 'a'
+        VoidKeyword
+  ModuleDeclaration
+    Identifier: ' N10'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' m'
+        Parameter
+          Identifier: 'a'
+        VoidKeyword
+        Block
+  ModuleDeclaration
+    Identifier: ' N12'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' m'
+        Parameter
+          Identifier: 'a'
+        VoidKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' m'
+        VoidKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' m'
+        Parameter
+          Identifier: 'a'
+          QuestionToken
+        VoidKeyword
+        Block
+  ModuleDeclaration
+    Identifier: ' N12'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' m'
+        Parameter
+          Identifier: 'a'
+        VoidKeyword
+        Block

@@ -1,0 +1,158 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PlaceType'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Before'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    model'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      PropertySignature
+        ComputedPropertyName
+          BinaryExpression
+            Identifier: 'placeType'
+            InKeyword
+            Identifier: ' PlaceType'
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' After'
+    MappedType
+      TypeParameter
+        Identifier: 'placeType'
+        TypeReference
+          Identifier: ' PlaceType'
+      VoidKeyword
+      PropertySignature
+        Identifier: '
+    model'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' AfterQuestion'
+    MappedType
+      TypeParameter
+        Identifier: 'placeType'
+        TypeReference
+          Identifier: ' PlaceType'
+      QuestionToken
+      VoidKeyword
+      PropertySignature
+        Identifier: '
+    model'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' AfterMethod'
+    MappedType
+      TypeParameter
+        Identifier: 'placeType'
+        TypeReference
+          Identifier: ' PlaceType'
+      QuestionToken
+      VoidKeyword
+      MethodSignature
+        Identifier: '
+    model'
+        Parameter
+          Identifier: 'duration'
+          NumberKeyword
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' AfterImplicit'
+    MappedType
+      TypeParameter
+        Identifier: 'placeType'
+        TypeReference
+          Identifier: ' PlaceType'
+      PropertySignature
+        Identifier: '
+    model'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' AfterImplicitQ'
+    MappedType
+      TypeParameter
+        Identifier: 'placeType'
+        TypeReference
+          Identifier: ' PlaceType'
+      QuestionToken
+      PropertySignature
+        Identifier: '
+    model'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      ComputedPropertyName
+        BinaryExpression
+          Identifier: 'P'
+          InKeyword
+          Identifier: ' PlaceType'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      ComputedPropertyName
+        BinaryExpression
+          Identifier: 'P'
+          InKeyword
+          Identifier: ' PlaceType'
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' D'
+        ClassExpression
+          PropertyDeclaration
+            ComputedPropertyName
+              BinaryExpression
+                Identifier: 'P'
+                InKeyword
+                Identifier: ' PlaceType'
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' E'
+        ClassExpression
+          PropertyDeclaration
+            ComputedPropertyName
+              BinaryExpression
+                BinaryExpression
+                  Identifier: 'P'
+                  InKeyword
+                  StringLiteral
+                BarToken
+                StringLiteral
+            AnyKeyword

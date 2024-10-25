@@ -1,0 +1,266 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Handler'
+    TypeParameter
+      Identifier: 'TEvent'
+      AnyKeyword
+    TypeParameter
+      Identifier: ' TResult'
+      AnyKeyword
+    FunctionType
+      Parameter
+        Identifier: '
+    event'
+        TypeReference
+          Identifier: ' TEvent'
+      Parameter
+        Identifier: '
+    context'
+        TypeLiteral
+      Parameter
+        Identifier: '
+    callback'
+        TypeReference
+          Identifier: ' Callback'
+          TypeReference
+            Identifier: 'TResult'
+      UnionType
+        VoidKeyword
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'TResult'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Callback'
+    TypeParameter
+      Identifier: 'TResult'
+      AnyKeyword
+    FunctionType
+      Parameter
+        Identifier: 'error'
+        QuestionToken
+        UnionType
+          TypeReference
+            Identifier: ' Error'
+          StringKeyword
+          LiteralType
+            NullKeyword
+      Parameter
+        Identifier: ' result'
+        QuestionToken
+        TypeReference
+          Identifier: ' TResult'
+      VoidKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Handler'
+        ImportSpecifier
+          Identifier: ' Callback'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' lambdaTester'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' HandlerEvent'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Handler'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' Handler'
+            InferType
+              TypeParameter
+                Identifier: ' TEvent'
+          TypeReference
+            Identifier: ' TEvent'
+          NeverKeyword
+      TypeAliasDeclaration
+        Identifier: ' HandlerResult'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Handler'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' Handler'
+            AnyKeyword
+            InferType
+              TypeParameter
+                Identifier: ' TResult'
+          TypeReference
+            Identifier: ' TResult'
+          NeverKeyword
+      TypeAliasDeclaration
+        Identifier: ' HandlerError'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Handler'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' Handler'
+            AnyKeyword
+            InferType
+              TypeParameter
+                Identifier: ' TResult'
+          TypeReference
+            Identifier: ' NonNullable'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'Parameters'
+                TypeReference
+                  Identifier: 'Callback'
+                  TypeReference
+                    Identifier: 'TResult'
+              LiteralType
+                StringLiteral
+          NeverKeyword
+      InterfaceDeclaration
+        Identifier: ' VerifierFn'
+        TypeParameter
+          Identifier: 'S'
+        CallSignature
+          Parameter
+            Identifier: 'result'
+            TypeReference
+              Identifier: ' S'
+          Parameter
+            Identifier: ' additional'
+            QuestionToken
+            AnyKeyword
+          UnionType
+            VoidKeyword
+            TypeReference
+              Identifier: ' Promise'
+              VoidKeyword
+        CallSignature
+          Parameter
+            Identifier: 'result'
+            TypeReference
+              Identifier: ' S'
+          Parameter
+            Identifier: ' additional'
+            QuestionToken
+            AnyKeyword
+          Parameter
+            Identifier: ' done'
+            QuestionToken
+            FunctionType
+              TypeLiteral
+          VoidKeyword
+      TypeAliasDeclaration
+        Identifier: ' Verifier'
+        TypeParameter
+          Identifier: 'S'
+        ConditionalType
+          TypeReference
+            Identifier: ' S'
+          TypeReference
+            Identifier: ' HandlerError'
+            TypeReference
+              Identifier: 'Handler'
+          ConditionalType
+            TypeReference
+              Identifier: ' S'
+            StringKeyword
+            TypeReference
+              Identifier: ' VerifierFn'
+              StringKeyword
+            ConditionalType
+              TypeReference
+                Identifier: ' S'
+              TypeReference
+                Identifier: ' Error'
+              TypeReference
+                Identifier: ' VerifierFn'
+                TypeReference
+                  Identifier: 'Error'
+              NeverKeyword
+          TypeReference
+            Identifier: ' VerifierFn'
+            TypeReference
+              Identifier: 'S'
+      ClassDeclaration
+        Identifier: ' LambdaTester'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Handler'
+        MethodDeclaration
+          Identifier: '
+        event'
+          Parameter
+            Identifier: 'event'
+            TypeReference
+              Identifier: ' HandlerEvent'
+              TypeReference
+                Identifier: 'T'
+          ThisType
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' lambdaTester'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Handler'
+    Parameter
+      Identifier: 'handler'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      QualifiedName
+        Identifier: ' lambdaTester'
+        Identifier: 'LambdaTester'
+      TypeReference
+        Identifier: 'T'
+  ExportAssignment
+    Identifier: ' lambdaTester'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' lambdaTester'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Handler'
+    StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Actual'
+    TypeReference
+      QualifiedName
+        Identifier: ' lambdaTester'
+        Identifier: 'Verifier'
+      TypeReference
+        QualifiedName
+          Identifier: 'lambdaTester'
+          Identifier: 'HandlerResult'
+        TypeReference
+          Identifier: 'Handler'
+  TypeAliasDeclaration
+    Identifier: ' Expected'
+    TypeReference
+      QualifiedName
+        Identifier: ' lambdaTester'
+        Identifier: 'Verifier'
+      TypeReference
+        QualifiedName
+          Identifier: 'lambdaTester'
+          Identifier: 'HandlerResult'
+        TypeReference
+          Identifier: 'Handler'
+          AnyKeyword
+          AnyKeyword

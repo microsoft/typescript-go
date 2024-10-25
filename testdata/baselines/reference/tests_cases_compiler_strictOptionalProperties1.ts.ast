@@ -1,0 +1,1168 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'obj'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          QuestionToken
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            PropertyAccessExpression
+              Identifier: ' obj'
+              Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            PropertyAccessExpression
+              Identifier: ' obj'
+              Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '  // string | undefined
+    obj'
+            Identifier: 'a'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'b'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'a'
+          EqualsToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '  // Error
+    obj'
+            Identifier: 'b'
+          EqualsToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'obj'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          QuestionToken
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    obj'
+          EqualsToken
+          Identifier: ' obj'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'a'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' obj'
+            Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '  // Error
+    obj'
+            Identifier: 'b'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' obj'
+            Identifier: 'b'
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' obj'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' obj'
+                Identifier: 'a'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' obj'
+                Identifier: 'a'
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'hasOwnProperty'
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' obj'
+                Identifier: 'a'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' obj'
+                Identifier: 'a'
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' obj'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'b'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'b'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' obj'
+                Identifier: 'b'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'b'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'b'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' obj'
+                Identifier: 'b'
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'hasOwnProperty'
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'b'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'b'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' obj'
+                Identifier: 'b'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'b'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'b'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' obj'
+                Identifier: 'b'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Partial'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            PropertyAccessExpression
+              Identifier: ' obj'
+              Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            PropertyAccessExpression
+              Identifier: ' obj'
+              Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '  // string | undefined
+    obj'
+            Identifier: 'a'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'b'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'a'
+          EqualsToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '  // Error
+    obj'
+            Identifier: 'b'
+          EqualsToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 't'
+      TupleType
+        OptionalType
+          StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ElementAccessExpression
+              Identifier: ' t'
+              NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '  // string | undefined
+    t'
+            NumericLiteral
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    t'
+            NumericLiteral
+          EqualsToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f4a'
+    Parameter
+      Identifier: 't1'
+      TupleType
+        NumberKeyword
+        OptionalType
+          StringKeyword
+    Parameter
+      Identifier: ' t2'
+      TupleType
+        NumberKeyword
+        OptionalType
+          StringKeyword
+        OptionalType
+          StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t1'
+          EqualsToken
+          Identifier: ' t2'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 't'
+      TupleType
+        NumberKeyword
+        OptionalType
+          StringKeyword
+        OptionalType
+          BooleanKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          ArrayLiteralExpression
+            NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+            TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          ArrayLiteralExpression
+            NumericLiteral
+            OmittedExpression
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          ArrayLiteralExpression
+            NumericLiteral
+            OmittedExpression
+            OmittedExpression
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          ArrayLiteralExpression
+            NumericLiteral
+            OmittedExpression
+            OmittedExpression
+            OmittedExpression
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    t'
+          EqualsToken
+          ArrayLiteralExpression
+            OmittedExpression
+            OmittedExpression
+            TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    t'
+          EqualsToken
+          ArrayLiteralExpression
+            NumericLiteral
+            Identifier: ' undefined'
+            TrueKeyword
+  FunctionDeclaration
+    Identifier: ' f6'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t1'
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+              TypeReference
+                Identifier: ' const'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t2'
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+                OmittedExpression
+              TypeReference
+                Identifier: ' const'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t3'
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+                OmittedExpression
+                OmittedExpression
+              TypeReference
+                Identifier: ' const'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t4'
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                OmittedExpression
+                NumericLiteral
+              TypeReference
+                Identifier: ' const'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t5'
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                OmittedExpression
+                OmittedExpression
+                NumericLiteral
+              TypeReference
+                Identifier: ' const'
+  TypeAliasDeclaration
+    Identifier: ' Props'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    foo'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    bar'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' InputProps'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    foo'
+        QuestionToken
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    bar'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' defaultProps'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'Props'
+          LiteralType
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inputProps'
+        TypeReference
+          Identifier: ' InputProps'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            Identifier: ' undefined'
+          PropertyAssignment
+            Identifier: ' bar'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' completeProps'
+        TypeReference
+          Identifier: ' Props'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'defaultProps'
+          SpreadAssignment
+            Identifier: 'inputProps'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        TupleType
+          NumberKeyword
+          OptionalType
+            StringKeyword
+          OptionalType
+            BooleanKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TupleType
+          NumberKeyword
+          OptionalType
+            StringKeyword
+          OptionalType
+            BooleanKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        TupleType
+          NumberKeyword
+          OptionalType
+            StringKeyword
+          OptionalType
+            BooleanKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        TupleType
+          NumberKeyword
+          OptionalType
+            StringKeyword
+          OptionalType
+            BooleanKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          Identifier: ' undefined'
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            QuestionToken
+            NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            NumericLiteral
+          SpreadAssignment
+            Identifier: 'x'
+  InterfaceDeclaration
+    Identifier: ' Test'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '  // Should be ok
+    bar'
+      QuestionToken
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ox1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' p'
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ox2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' p'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ox3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' p'
+            QuestionToken
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ox4'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' p'
+            QuestionToken
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tx1'
+        TupleType
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tx2'
+        TupleType
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tx3'
+        TupleType
+          OptionalType
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tx4'
+        TupleType
+          OptionalType
+            ParenthesizedType
+              UnionType
+                StringKeyword
+                UndefinedKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f11'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' p'
+          QuestionToken
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f11'
+      Identifier: 'ox1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // string
+f11'
+      Identifier: 'ox2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // string | undefined
+f11'
+      Identifier: 'ox3'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // string
+f11'
+      Identifier: 'ox4'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f12'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TupleType
+        OptionalType
+          TypeReference
+            Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f12'
+      Identifier: 'tx1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // string
+f12'
+      Identifier: 'tx2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // string | undefined
+f12'
+      Identifier: 'tx3'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // string
+f12'
+      Identifier: 'tx4'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f13'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f13'
+      Identifier: 'ox1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // { p: string }
+f13'
+      Identifier: 'ox2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // { p: string | undefined }
+f13'
+      Identifier: 'ox3'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // { p: string }
+f13'
+      Identifier: 'ox4'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // { p: string | undefined }
+
+f13'
+      Identifier: 'tx1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // [string]
+f13'
+      Identifier: 'tx2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // [string | undefined]
+f13'
+      Identifier: 'tx3'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // [string]
+f13'
+      Identifier: 'tx4'
+  TypeAliasDeclaration
+    Identifier: ' Undefinable'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' expectNotUndefined'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' Undefinable'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' TypeError'
+              StringLiteral
+      ReturnStatement
+        Identifier: ' value'
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+    bar'
+      QuestionToken
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' aa'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' Bar'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' notUndefinedVal'
+            CallExpression
+              Identifier: ' expectNotUndefined'
+              PropertyAccessExpression
+                Identifier: 'input'
+                Identifier: 'bar'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    bb'
+          Identifier: 'notUndefinedVal'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' bb'
+    Parameter
+      Identifier: 'input'
+      NumberKeyword
+    VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' U1'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    email'
+      QuestionToken
+      UnionType
+        StringKeyword
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' U2'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    email'
+      QuestionToken
+      UnionType
+        StringKeyword
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        UnionType
+          StringKeyword
+          BooleanKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u1'
+        TypeReference
+          Identifier: ' U1'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u2'
+        TypeReference
+          Identifier: ' U2'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+u1'
+        Identifier: 'email'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // error, but only because boolean isn't in email's type
+u2'
+        Identifier: 'email'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error, and suggest adding undefined
+u2'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    email'
+          Identifier: ' undefined'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            UnionType
+              NumberKeyword
+              StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+a'
+      EqualsToken
+      Identifier: ' e'
+  InterfaceDeclaration
+    Identifier: ' PropsFromReact'
+    PropertySignature
+      Identifier: '
+    onClick'
+      QuestionToken
+      FunctionType
+        VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' PropsFromMaterialUI'
+    PropertySignature
+      Identifier: '
+    onClick'
+      QuestionToken
+      UnionType
+        ParenthesizedType
+          FunctionType
+            VoidKeyword
+        UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' TheTypeFromMaterialUI'
+    IntersectionType
+      TypeReference
+        Identifier: ' PropsFromReact'
+      TypeReference
+        Identifier: ' PropsFromMaterialUI'
+  InterfaceDeclaration
+    Identifier: ' NavBottomListItem'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' TheTypeFromMaterialUI'
+    PropertySignature
+      Identifier: '
+    value'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' UA'
+    UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' UB'
+    IndexedAccessType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          QuestionToken
+          NeverKeyword
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' UC'
+    IntersectionType
+      TypeReference
+        Identifier: ' UA'
+      TypeReference
+        Identifier: ' UB'

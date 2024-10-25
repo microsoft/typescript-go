@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' regexes'
+        ArrayType
+          TypeReference
+            Identifier: ' RegExp'
+        ArrayLiteralExpression
+          RegularExpressionLiteral
+          RegularExpressionLiteral
+          RegularExpressionLiteral
+          RegularExpressionLiteral
+          RegularExpressionLiteral
+          RegularExpressionLiteral
+          RegularExpressionLiteral
+          RegularExpressionLiteral
+          RegularExpressionLiteral

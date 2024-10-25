@@ -1,0 +1,45 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertySignature
+      Identifier: ' // error
+    x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    y'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'x'

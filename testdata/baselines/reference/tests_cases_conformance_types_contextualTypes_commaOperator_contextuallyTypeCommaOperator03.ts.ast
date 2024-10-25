@@ -1,0 +1,29 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            StringKeyword
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            Identifier: ' a'
+          CommaToken
+          ArrowFunction
+            Parameter
+              Identifier: ' b'
+            EqualsGreaterThanToken
+            Identifier: ' b'

@@ -1,0 +1,35 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// class base { constructor (public n: number, public y: string) { } }
+//// (new base(/**/
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' parameterName'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' parameterName'
+          StringLiteral

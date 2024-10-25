@@ -1,0 +1,97 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /a.tsx
+////function f(this: { p: number; "a b": number }, x: number): void {
+////    <div foo=/**/ />;
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' insertText'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'SuggestedClassMembers'
+              PropertyAssignment
+                Identifier: ' source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'ThisProperty'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'SuggestedClassMembers'
+              PropertyAssignment
+                Identifier: ' source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'ThisProperty'
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeInsertTextCompletions'
+              TrueKeyword

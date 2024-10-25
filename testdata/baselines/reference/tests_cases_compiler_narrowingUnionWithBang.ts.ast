@@ -1,0 +1,393 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' WorkingType'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    thing'
+        QuestionToken
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' id'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' working'
+        TypeReference
+          Identifier: ' WorkingType'
+        AsExpression
+          AsExpression
+            NullKeyword
+            UnknownKeyword
+          TypeReference
+            Identifier: ' WorkingType'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        NonNullExpression
+          PropertyAccessExpression
+            Identifier: 'working'
+            Identifier: 'thing'
+        Identifier: 'name'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: 'working'
+                Identifier: 'thing'
+            Identifier: 'message'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: 'working'
+                Identifier: 'thing'
+            Identifier: 'id'
+  TypeAliasDeclaration
+    Identifier: ' BorkedType'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    thing'
+        QuestionToken
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' id'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' borked'
+        TypeReference
+          Identifier: ' BorkedType'
+        AsExpression
+          AsExpression
+            NullKeyword
+            UnknownKeyword
+          TypeReference
+            Identifier: ' BorkedType'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        NonNullExpression
+          PropertyAccessExpression
+            Identifier: 'borked'
+            Identifier: 'thing'
+        Identifier: 'name'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: 'borked'
+                Identifier: 'thing'
+            Identifier: 'message'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: 'borked'
+                Identifier: 'thing'
+            Identifier: 'id'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' FixedType'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    thing'
+        QuestionToken
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' message'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' id'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixed'
+        TypeReference
+          Identifier: ' FixedType'
+        AsExpression
+          AsExpression
+            NullKeyword
+            UnknownKeyword
+          TypeReference
+            Identifier: ' FixedType'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: 'fixed'
+          Identifier: 'thing'
+        QuestionDotToken
+        Identifier: 'name'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: 'fixed'
+                Identifier: 'thing'
+            Identifier: 'message'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'fixed'
+              Identifier: 'thing'
+            Identifier: 'id'

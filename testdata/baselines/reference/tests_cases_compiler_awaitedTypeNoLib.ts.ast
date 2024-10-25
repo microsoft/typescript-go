@@ -1,0 +1,108 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' NotPromise'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' Thenable'
+        UnknownKeyword
+      TypeReference
+        Identifier: ' T'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' PromiseLike'
+          UnknownKeyword
+        NeverKeyword
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Receiver'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' NotPromise'
+          TypeReference
+            Identifier: 'T'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' Thenable'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+  then'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' Receiver'
+          TypeReference
+            Identifier: 'T'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' handleResolve'
+      TypeParameter
+        Identifier: 'TResult'
+      Parameter
+        Identifier: '
+    result'
+        UnionType
+          TypeReference
+            Identifier: ' NotPromise'
+            TypeReference
+              Identifier: 'TResult'
+          TypeReference
+            Identifier: ' Thenable'
+            TypeReference
+              Identifier: 'NotPromise'
+              TypeReference
+                Identifier: 'TResult'
+      Parameter
+        Identifier: '
+    resolve'
+        TypeReference
+          Identifier: ' Receiver'
+          TypeReference
+            Identifier: 'TResult'
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'result'
+            InstanceOfKeyword
+            Identifier: ' Thenable'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'resolvePromise'
+                Identifier: 'result'
+                Identifier: ' resolve'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' resolvePromise'
+      TypeParameter
+        Identifier: 'TResult'
+      Parameter
+        Identifier: '
+    result'
+        TypeReference
+          Identifier: ' Thenable'
+          TypeReference
+            Identifier: 'TResult'
+      Parameter
+        Identifier: '
+    resolve'
+        TypeReference
+          Identifier: ' Receiver'
+          TypeReference
+            Identifier: 'TResult'
+      Block

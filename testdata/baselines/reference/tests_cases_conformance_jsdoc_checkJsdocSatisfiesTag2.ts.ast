@@ -1,0 +1,35 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    isEven'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' n'
+                    PercentToken
+                    NumericLiteral
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+            PropertyAssignment
+              Identifier: '
+    isOdd'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' n'
+                    PercentToken
+                    NumericLiteral
+                  EqualsEqualsEqualsToken
+                  NumericLiteral

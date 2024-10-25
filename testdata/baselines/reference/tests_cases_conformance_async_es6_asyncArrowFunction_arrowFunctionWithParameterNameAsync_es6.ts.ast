@@ -1,0 +1,10 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrowFunction
+          Parameter
+            Identifier: ' async'
+          EqualsGreaterThanToken
+          Identifier: ' async'

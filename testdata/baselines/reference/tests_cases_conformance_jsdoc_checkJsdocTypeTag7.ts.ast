@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    /** @type {Foo} */
+    foo'
+      Parameter
+        Identifier: 'a'
+      Parameter
+        Identifier: ' b'
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    /** @type {(optional?) => void} */
+    methodWithOptionalParameters'
+      Block

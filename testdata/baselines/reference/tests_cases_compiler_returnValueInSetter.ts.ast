@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' f'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'value'
+      Block
+        ReturnStatement
+          NullKeyword

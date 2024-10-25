@@ -1,0 +1,65 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' d'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' b'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' c'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          Identifier: '
+a'
+          PlusToken
+          Identifier: ' b'
+        PlusToken
+        Identifier: ' c'
+      PlusToken
+      Identifier: ' d'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' b'
+        ImportSpecifier
+          Identifier: ' d'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+        ImportSpecifier
+          Identifier: ' c'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          Identifier: '
+a'
+          PlusToken
+          Identifier: ' b'
+        PlusToken
+        Identifier: ' c'
+      PlusToken
+      Identifier: ' d'

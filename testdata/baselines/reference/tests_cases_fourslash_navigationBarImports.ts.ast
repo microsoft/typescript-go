@@ -1,0 +1,96 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////import a, {b} from "m";
+////import c = require("m");
+////import * as d from "m";
+
+verify'
+        Identifier: 'navigationTree'
+      ObjectLiteralExpression
+        PropertyAssignment
+          StringLiteral
+          StringLiteral
+        PropertyAssignment
+          StringLiteral
+          StringLiteral
+        PropertyAssignment
+          StringLiteral
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'navigationBar'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral

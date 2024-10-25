@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      StringLiteral
+      Block
+        ReturnStatement
+          NumericLiteral

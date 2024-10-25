@@ -1,0 +1,74 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /a.ts
+//// export class A {}
+//// export class B {}
+//// export class C {}
+//// export class D {}
+//// export class E {}
+//// export class F {}
+//// export class G {}
+
+// @Filename: /b.ts
+//// import type { A, C, D, E, G } from './a';
+//// type Z = B | A;
+//// new F;
+
+// @Filename: /c.ts
+//// import type { A, C, D, E, G } from './a';
+//// type Z = B | A;
+//// type Y = F;
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  fixAllDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  fixAllDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

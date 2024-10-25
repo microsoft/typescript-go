@@ -1,0 +1,186 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BOOLEAN'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NUMBER'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' STRING'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' OBJECT'
+        TypeReference
+          Identifier: ' Object'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: '
+
+//Expected: work well
+ANY'
+        CommaToken
+        Identifier: ' BOOLEAN'
+      CommaToken
+      Identifier: ' NUMBER'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: '
+BOOLEAN'
+        CommaToken
+        Identifier: ' NUMBER'
+      CommaToken
+      Identifier: ' STRING'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: '
+NUMBER'
+        CommaToken
+        Identifier: ' STRING'
+      CommaToken
+      Identifier: ' OBJECT'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: '
+STRING'
+        CommaToken
+        Identifier: ' OBJECT'
+      CommaToken
+      Identifier: ' ANY'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: '
+OBJECT'
+        CommaToken
+        Identifier: ' ANY'
+      CommaToken
+      Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsAny1'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'STRING'
+              CommaToken
+              Identifier: ' OBJECT'
+            CommaToken
+            Identifier: ' ANY'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean1'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'OBJECT'
+              CommaToken
+              Identifier: ' ANY'
+            CommaToken
+            Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsNumber1'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'ANY'
+              CommaToken
+              Identifier: ' BOOLEAN'
+            CommaToken
+            Identifier: ' NUMBER'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsString1'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'BOOLEAN'
+              CommaToken
+              Identifier: ' NUMBER'
+            CommaToken
+            Identifier: ' STRING'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsObject1'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'NUMBER'
+              CommaToken
+              Identifier: ' STRING'
+            CommaToken
+            Identifier: ' OBJECT'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NullKeyword
+        CommaToken
+        TrueKeyword
+      CommaToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        PrefixUnaryExpression
+          Identifier: 'NUMBER'
+        CommaToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' STRING'
+            Identifier: 'charAt'
+          NumericLiteral
+      CommaToken
+      NewExpression
+        Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsNumber2'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              NullKeyword
+              CommaToken
+              TrueKeyword
+            CommaToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsObject2'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'NUMBER'
+              CommaToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' STRING'
+                  Identifier: 'charAt'
+                NumericLiteral
+            CommaToken
+            NewExpression
+              Identifier: ' Object'

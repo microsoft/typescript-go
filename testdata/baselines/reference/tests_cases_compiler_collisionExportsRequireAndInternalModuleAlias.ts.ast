@@ -1,0 +1,64 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c'
+  ImportEqualsDeclaration
+    Identifier: ' exports'
+    QualifiedName
+      Identifier: ' m'
+      Identifier: 'c'
+  ImportEqualsDeclaration
+    Identifier: ' require'
+    QualifiedName
+      Identifier: ' m'
+      Identifier: 'c'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' exports'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' require'
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' exports'
+        QualifiedName
+          Identifier: ' m'
+          Identifier: 'c'
+      ImportEqualsDeclaration
+        Identifier: ' require'
+        QualifiedName
+          Identifier: ' m'
+          Identifier: 'c'
+      ExpressionStatement
+        NewExpression
+          Identifier: ' exports'
+      ExpressionStatement
+        NewExpression
+          Identifier: ' require'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' exports'
+        QualifiedName
+          Identifier: ' m'
+          Identifier: 'c'
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' require'
+        QualifiedName
+          Identifier: ' m'
+          Identifier: 'c'
+      ExpressionStatement
+        NewExpression
+          Identifier: ' exports'
+      ExpressionStatement
+        NewExpression
+          Identifier: ' require'

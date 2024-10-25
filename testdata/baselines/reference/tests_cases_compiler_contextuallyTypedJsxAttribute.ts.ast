@@ -1,0 +1,120 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Elements'
+    PropertySignature
+      Identifier: '
+  foo'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' callback'
+          QuestionToken
+          FunctionType
+            Parameter
+              Identifier: 'value'
+              NumberKeyword
+            VoidKeyword
+    PropertySignature
+      Identifier: '
+  bar'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' callback'
+          QuestionToken
+          FunctionType
+            Parameter
+              Identifier: 'value'
+              StringKeyword
+            VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Props'
+    TypeParameter
+      Identifier: 'C'
+      TypeOperator
+        TypeReference
+          Identifier: ' Elements'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' as'
+          QuestionToken
+          TypeReference
+            Identifier: ' C'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Elements'
+        TypeReference
+          Identifier: 'C'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Test'
+    TypeParameter
+      Identifier: 'C'
+      TypeOperator
+        TypeReference
+          Identifier: ' Elements'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' Props'
+        TypeReference
+          Identifier: 'C'
+    LiteralType
+      NullKeyword
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: 'Test'
+      Identifier: '
+  as'
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+  callback'
+      EqualsToken
+      CallExpression
+        ObjectLiteralExpression
+        Identifier: 'value'
+  Block
+  ExpressionStatement
+    RegularExpressionLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+Test'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  as'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  callback'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            EqualsGreaterThanToken
+            Block
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: 'Test'
+        LiteralType
+          StringLiteral
+      Identifier: '
+  as'
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+  callback'
+      EqualsToken
+      CallExpression
+        ObjectLiteralExpression
+        Identifier: 'value'
+  Block
+  ExpressionStatement
+    RegularExpressionLiteral

@@ -1,0 +1,64 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFooFrom'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: 'v'
+      TypeReference
+        Identifier: ' T'
+    ImportType
+      TypeReference
+        Identifier: 'T'
+      Identifier: 'Foo'
+    Block
+      ReturnStatement
+        AsExpression
+          Identifier: ' undefined'
+          AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFooValueFrom'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: 'v'
+      TypeReference
+        Identifier: ' T'
+    IndexedAccessType
+      ImportType
+        TypeReference
+          Identifier: 'T'
+        Identifier: 'Foo'
+      LiteralType
+        StringLiteral
+    Block
+      ReturnStatement
+        AsExpression
+          Identifier: ' undefined'
+          AnyKeyword

@@ -1,0 +1,32 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+   x'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'B'
+          TypeReference
+            Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+   x'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'A'
+          TypeReference
+            Identifier: 'T'

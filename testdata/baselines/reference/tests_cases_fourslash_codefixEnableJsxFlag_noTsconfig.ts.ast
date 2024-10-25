@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /dir/a.tsx
+////export const Component = () => <></>
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'codeFixAvailable'

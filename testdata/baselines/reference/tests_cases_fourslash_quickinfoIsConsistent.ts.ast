@@ -1,0 +1,21 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' val'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'quickInfoAt'
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            Identifier: ' val'
+          StringLiteral

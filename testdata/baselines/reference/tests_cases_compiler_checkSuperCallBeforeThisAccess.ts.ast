@@ -1,0 +1,311 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a1'
+              ThisKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a2'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a3'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a4'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ThisKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a5'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a6'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'x'
+        IfStatement
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              TrueKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' b1'
+                  ThisKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' b2'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'x'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' b3'
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'x'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' c1'
+                  ThisKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' c2'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'x'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' c3'
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'x'
+        IfStatement
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              TrueKeyword
+          Block
+            SwitchStatement
+              Identifier: 'n'
+              CaseBlock
+                CaseClause
+                  NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      SuperKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' d1'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'x'
+                CaseClause
+                  NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' d2'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'x'
+                DefaultClause
+                  ExpressionStatement
+                    CallExpression
+                      SuperKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' d3'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'x'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' d4'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'x'
+        IfStatement
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              TrueKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' e1'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' w'
+                      ConditionalExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            TrueKeyword
+                        QuestionToken
+                        CallExpression
+                          SuperKeyword
+                        ColonToken
+                        NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' e2'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'x'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' e3'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' w'
+                      ConditionalExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            TrueKeyword
+                        QuestionToken
+                        CallExpression
+                          SuperKeyword
+                        ColonToken
+                        CallExpression
+                          SuperKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' e4'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f1'
+              ThisKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f2'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f3'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'x'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    Constructor
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' BarCorrectlyFails'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    Constructor
+      Parameter
+        Identifier: 'something'
+        BooleanKeyword
+      Block
+        IfStatement
+          PrefixUnaryExpression
+            Identifier: 'something'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' value'
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'bar'
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                Identifier: 'value'
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    bar'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' BarIncorrectlyWorks'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    Constructor
+      Parameter
+        Identifier: 'something'
+        BooleanKeyword
+      Block
+        IfStatement
+          Identifier: 'something'
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                NumericLiteral
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' value'
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'bar'
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                Identifier: 'value'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral

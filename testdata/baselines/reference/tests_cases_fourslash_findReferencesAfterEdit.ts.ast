@@ -1,0 +1,44 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @Filename: a.ts
+////interface A {
+////    /*1*/foo: string;
+////}
+
+// @Filename: b.ts
+///////<reference path='a.ts'/>
+/////**/
+////function foo(x: A) {
+////    x./*2*/foo
+////}
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral

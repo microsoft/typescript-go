@@ -1,0 +1,35 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////class Test {
+////    foo() {}
+////
+////    bar() {
+////        this.baz(this, "/*1*/");
+////
+////        const t = new Test()
+////        this.baz(t, "/*2*/");
+////    }
+////
+////    baz<T>(a: T, k: keyof T) {}
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral

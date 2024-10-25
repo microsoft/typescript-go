@@ -1,0 +1,61 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Y'
+    ModuleBlock
+      VariableStatement
+        PublicKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumberKeyword
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Y2'
+    ModuleBlock
+      FunctionDeclaration
+        PublicKeyword
+        Identifier: ' fn'
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        Block
+  ModuleDeclaration
+    Identifier: ' Y4'
+    ModuleBlock
+      VariableStatement
+        StaticKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumberKeyword
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' YY'
+    ModuleBlock
+      FunctionDeclaration
+        StaticKeyword
+        Identifier: ' fn'
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        Block
+  ModuleDeclaration
+    Identifier: ' YY2'
+    ModuleBlock
+      VariableStatement
+        PrivateKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumberKeyword
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' YY3'
+    ModuleBlock
+      FunctionDeclaration
+        PrivateKeyword
+        Identifier: ' fn'
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        Block

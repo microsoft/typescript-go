@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f1'
+      Block
+        ReturnStatement
+          ArrowFunction
+            Parameter
+              Identifier: 'X'
+            EqualsGreaterThanToken
+            Block

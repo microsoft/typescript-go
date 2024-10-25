@@ -1,0 +1,153 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// should be a syntax error
+a'
+      QuestionQuestionToken
+      BinaryExpression
+        Identifier: ' b'
+        BarBarToken
+        Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: '
+
+// should be a syntax error
+a'
+        BarBarToken
+        Identifier: ' b'
+      QuestionQuestionToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// should be a syntax error
+a'
+      QuestionQuestionToken
+      BinaryExpression
+        Identifier: ' b'
+        AmpersandAmpersandToken
+        Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: '
+
+// should be a syntax error
+a'
+        AmpersandAmpersandToken
+        Identifier: ' b'
+      QuestionQuestionToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Valid according to spec
+a'
+      QuestionQuestionToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'b'
+          BarBarToken
+          Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'a'
+          QuestionQuestionToken
+          Identifier: ' b'
+      BarBarToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'a'
+          BarBarToken
+          Identifier: ' b'
+      QuestionQuestionToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Valid according to spec
+a'
+      BarBarToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'b'
+          QuestionQuestionToken
+          Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Valid according to spec
+a'
+      QuestionQuestionToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'b'
+          AmpersandAmpersandToken
+          Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'a'
+          QuestionQuestionToken
+          Identifier: ' b'
+      AmpersandAmpersandToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'a'
+          AmpersandAmpersandToken
+          Identifier: ' b'
+      QuestionQuestionToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Valid according to spec
+a'
+      AmpersandAmpersandToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'b'
+          QuestionQuestionToken
+          Identifier: ' c'

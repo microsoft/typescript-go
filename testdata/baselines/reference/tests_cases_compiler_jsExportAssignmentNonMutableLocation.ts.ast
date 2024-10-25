@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' customSymbol'
+        CallExpression
+          Identifier: ' Symbol'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// This is a common pattern in Node’s built-in modules:
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    customSymbol'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+exports'
+        Identifier: 'customSymbol2'
+      EqualsToken
+      CallExpression
+        Identifier: ' Symbol'
+        StringLiteral

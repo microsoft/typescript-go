@@ -1,0 +1,36 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    iObj'
+      TypeLiteral
+    PropertySignature
+      Identifier: '
+    iNum'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    iAny'
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    iFn'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' C5'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I1'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' iNum'
+      NumberKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' iAny'
+      AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' iFn'
+      Block

@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Calculator'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Calculator'
+    StringLiteral

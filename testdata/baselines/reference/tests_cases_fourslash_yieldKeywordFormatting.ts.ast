@@ -1,0 +1,67 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////function* g3() {
+/////*1*/    yield   ;
+/////*2*/    g3().next(  yield   );
+/////*3*/    yield     new Bar;
+/////*4*/    yield   *      new Bar;
+/////*5*/    yield  *   [new Bar];
+/////*6*/    yield+ 1;
+/////*7*/    yield++ 1;
+////}
+
+format'
+        Identifier: 'document'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' expected'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      PropertyAccessExpression
+        Identifier: ' expected'
+        Identifier: 'length'
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'marker'
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'i'
+                PlusToken
+                NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'currentLineContentIs'
+          ElementAccessExpression
+            Identifier: 'expected'
+            Identifier: 'i'

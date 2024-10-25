@@ -1,0 +1,60 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'foo'
+        ObjectLiteralExpression
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' key'
+              StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+            EqualsToken
+            Identifier: ' foo'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arguments'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'arguments'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'bar'
+            EqualsToken
+            PropertyAccessExpression
+              Identifier: ' arguments'
+              Identifier: 'bar'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'baz'
+            EqualsToken
+            ElementAccessExpression
+              Identifier: ' arguments'
+              Identifier: 'key'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'options'
+            EqualsToken
+            Identifier: ' arguments'
+    GetAccessor
+      Identifier: ' arguments'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' bar'
+              ObjectLiteralExpression

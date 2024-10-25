@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    /**@param {string} x */
+    m'
+      ArrowFunction
+        Parameter
+          Identifier: ' x'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'toLowerCase'

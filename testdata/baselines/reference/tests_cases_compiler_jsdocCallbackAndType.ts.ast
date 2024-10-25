@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+b'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+b'
+      NumericLiteral

@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _this'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+_this'
+      EqualsToken
+      NumericLiteral

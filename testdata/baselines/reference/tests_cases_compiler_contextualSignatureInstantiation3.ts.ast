@@ -1,0 +1,109 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' map'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'items'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    ArrayType
+      TypeReference
+        Identifier: ' U'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' items'
+            Identifier: 'map'
+          Identifier: 'f'
+  FunctionDeclaration
+    Identifier: ' identity'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' singleton'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xs'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' xs'
+            Identifier: 'map'
+          Identifier: 'identity'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        CallExpression
+          Identifier: ' map'
+          Identifier: 'xs'
+          Identifier: ' identity'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        ArrayType
+          ArrayType
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' xs'
+            Identifier: 'map'
+          Identifier: 'singleton'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        CallExpression
+          Identifier: ' map'
+          Identifier: 'xs'
+          Identifier: ' singleton'

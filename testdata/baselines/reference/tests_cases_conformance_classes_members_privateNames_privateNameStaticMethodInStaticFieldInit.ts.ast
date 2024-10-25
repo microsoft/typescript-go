@@ -1,0 +1,26 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' C'
+          PrivateIdentifier
+    MethodDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      PropertyAccessExpression
+        Identifier: 'C'
+        Identifier: 's'

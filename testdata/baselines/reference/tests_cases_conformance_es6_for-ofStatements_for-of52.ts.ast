@@ -1,0 +1,12 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'v'
+          BindingElement
+            Identifier: ' v'
+    ArrayLiteralExpression
+      ArrayLiteralExpression
+    Block

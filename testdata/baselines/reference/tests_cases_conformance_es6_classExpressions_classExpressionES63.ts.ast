@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              ClassExpression
+                HeritageClause
+                  ExpressionWithTypeArguments
+                    ClassExpression
+                      PropertyDeclaration
+                        Identifier: ' a'
+                        NumericLiteral
+                PropertyDeclaration
+                  Identifier: ' b'
+                  NumericLiteral
+          PropertyDeclaration
+            Identifier: ' c'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+c'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+c'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+c'
+      Identifier: 'c'

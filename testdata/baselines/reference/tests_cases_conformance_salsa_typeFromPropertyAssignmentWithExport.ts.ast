@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Adapter'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Adapter'
+        Identifier: 'prop'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// comment this out, and it works
+Adapter'
+        Identifier: 'asyncMethod'
+      EqualsToken
+      FunctionExpression
+        Block

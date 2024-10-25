@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            Identifier: ''
+          PropertyAssignment
+            Identifier: ' 
+return'
+            Identifier: ''

@@ -1,0 +1,27 @@
+SourceFile
+  ExportAssignment
+    NumericLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' a'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' a'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  ExportAssignment
+    Identifier: ' x'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' j'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' j'
+    StringLiteral

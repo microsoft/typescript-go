@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' person'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' name'
+            StringLiteral

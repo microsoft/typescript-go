@@ -1,0 +1,224 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' unbox'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'box'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' value'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' su'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnu'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              NumberKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' osu'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              StringKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ofnu'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              FunctionType
+                NumberKeyword
+          UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' value'
+            PropertyAccessExpression
+              Identifier: ' su'
+              QuestionDotToken
+              Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        NumberKeyword
+        CallExpression
+          Identifier: ' unbox'
+          Identifier: 'b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' value'
+            AsExpression
+              PropertyAccessExpression
+                Identifier: ' su'
+                QuestionDotToken
+                Identifier: 'length'
+              UnionType
+                NumberKeyword
+                UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        NumberKeyword
+        CallExpression
+          Identifier: ' unbox'
+          Identifier: 'b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' value'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' value'
+            PropertyAccessExpression
+              Identifier: ' su'
+              QuestionDotToken
+              Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        NumberKeyword
+        CallExpression
+          Identifier: ' unbox'
+          Identifier: 'b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' value'
+            CallExpression
+              Identifier: ' fnu'
+              QuestionDotToken
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        NumberKeyword
+        CallExpression
+          Identifier: ' unbox'
+          Identifier: 'b4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b5'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' value'
+            ElementAccessExpression
+              Identifier: ' su'
+              QuestionDotToken
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v5'
+        NumberKeyword
+        CallExpression
+          Identifier: ' unbox'
+          Identifier: 'b5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b6'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' value'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' osu'
+                QuestionDotToken
+                Identifier: 'prop'
+              Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v6'
+        NumberKeyword
+        CallExpression
+          Identifier: ' unbox'
+          Identifier: 'b6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b7'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' value'
+            ElementAccessExpression
+              PropertyAccessExpression
+                Identifier: ' osu'
+                QuestionDotToken
+                Identifier: 'prop'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v7'
+        NumberKeyword
+        CallExpression
+          Identifier: ' unbox'
+          Identifier: 'b7'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b8'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' value'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ofnu'
+                QuestionDotToken
+                Identifier: 'prop'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v8'
+        NumberKeyword
+        CallExpression
+          Identifier: ' unbox'
+          Identifier: 'b8'

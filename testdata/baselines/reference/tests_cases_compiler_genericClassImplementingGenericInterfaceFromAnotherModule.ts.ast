@@ -1,0 +1,24 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IFoo'
+        TypeParameter
+          Identifier: 'T'
+  ModuleDeclaration
+    Identifier: ' bar'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Foo'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' foo'
+              Identifier: 'IFoo'
+            TypeReference
+              Identifier: 'T'

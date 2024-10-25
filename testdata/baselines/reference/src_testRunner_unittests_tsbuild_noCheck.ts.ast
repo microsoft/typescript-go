@@ -1,0 +1,21 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' forEachTscScenarioWithNoCheck'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    forEachTscScenarioWithNoCheck'
+              StringLiteral

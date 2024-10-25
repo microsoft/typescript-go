@@ -1,0 +1,27 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' ns'
+        ModuleBlock
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' eval'
+            VoidKeyword
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' arguments'
+            VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' eval'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' arguments'
+    VoidKeyword
+  ExportDeclaration
+    NamedExports

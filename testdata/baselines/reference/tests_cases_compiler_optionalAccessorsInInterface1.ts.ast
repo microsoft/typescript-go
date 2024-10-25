@@ -1,0 +1,87 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' MyPropertyDescriptor'
+    MethodSignature
+      Identifier: '
+    get'
+      QuestionToken
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    set'
+      QuestionToken
+      Parameter
+        Identifier: 'v'
+        AnyKeyword
+      VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' defineMyProperty'
+    Parameter
+      Identifier: 'o'
+      AnyKeyword
+    Parameter
+      Identifier: ' p'
+      StringKeyword
+    Parameter
+      Identifier: ' attributes'
+      TypeReference
+        Identifier: ' MyPropertyDescriptor'
+    AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+defineMyProperty'
+      ObjectLiteralExpression
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' get'
+          FunctionExpression
+            Block
+              ReturnStatement
+                NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' MyPropertyDescriptor2'
+    PropertySignature
+      Identifier: '
+    get'
+      QuestionToken
+      FunctionType
+        AnyKeyword
+    PropertySignature
+      Identifier: '
+    set'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'v'
+          AnyKeyword
+        VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' defineMyProperty2'
+    Parameter
+      Identifier: 'o'
+      AnyKeyword
+    Parameter
+      Identifier: ' p'
+      StringKeyword
+    Parameter
+      Identifier: ' attributes'
+      TypeReference
+        Identifier: ' MyPropertyDescriptor2'
+    AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+defineMyProperty2'
+      ObjectLiteralExpression
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' get'
+          FunctionExpression
+            Block
+              ReturnStatement
+                NumericLiteral

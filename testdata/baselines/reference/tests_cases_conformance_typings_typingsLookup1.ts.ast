@@ -1,0 +1,23 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' $'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            AnyKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// @filename: /a.ts
+/// <reference types="jquery" />
+$'
+      Identifier: 'x'

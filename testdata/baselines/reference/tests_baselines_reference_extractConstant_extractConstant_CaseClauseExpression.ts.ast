@@ -1,0 +1,18 @@
+SourceFile
+  SwitchStatement
+    NumericLiteral
+    CaseBlock
+      CaseClause
+        NumericLiteral
+        BreakStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newLocal'
+        NumericLiteral
+  SwitchStatement
+    NumericLiteral
+    CaseBlock
+      CaseClause
+        Identifier: ' /*RENAME*/newLocal'
+        BreakStatement

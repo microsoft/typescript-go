@@ -1,0 +1,78 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Mup'
+    TypeParameter
+      Identifier: 'K'
+    TypeParameter
+      Identifier: ' V'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' size'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' MupConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' Mup'
+        AnyKeyword
+        AnyKeyword
+    ConstructSignature
+      TypeParameter
+        Identifier: 'K'
+      TypeParameter
+        Identifier: ' V'
+      Parameter
+        Identifier: 'entries'
+        QuestionToken
+        UnionType
+          TypeOperator
+            ArrayType
+              ParenthesizedType
+                TypeOperator
+                  TupleType
+                    TypeReference
+                      Identifier: 'K'
+                    TypeReference
+                      Identifier: ' V'
+          LiteralType
+            NullKeyword
+      TypeReference
+        Identifier: ' Mup'
+        TypeReference
+          Identifier: 'K'
+        TypeReference
+          Identifier: ' V'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' prototype'
+      TypeReference
+        Identifier: ' Mup'
+        AnyKeyword
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Mup'
+        TypeReference
+          Identifier: ' MupConstructor'
+  ClassDeclaration
+    Identifier: ' Sizz'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Mup'
+    GetAccessor
+      Identifier: ' size'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' Kasizz'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Mup'
+    PropertyDeclaration
+      Identifier: '
+    size'
+      PrefixUnaryExpression
+        NumericLiteral

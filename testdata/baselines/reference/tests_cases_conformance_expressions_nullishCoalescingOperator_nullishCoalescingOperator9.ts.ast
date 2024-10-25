@@ -1,0 +1,53 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        UnionType
+          LiteralType
+            NullKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        BinaryExpression
+          Identifier: ' f'
+          BarBarToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'abc'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  VoidExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' abc'
+                        Identifier: 'toLowerCase'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' gg'
+        BinaryExpression
+          Identifier: ' f'
+          QuestionQuestionToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'abc'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  VoidExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' abc'
+                        Identifier: 'toLowerCase'

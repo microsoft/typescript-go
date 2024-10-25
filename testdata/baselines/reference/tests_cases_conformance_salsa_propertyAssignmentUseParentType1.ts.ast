@@ -1,0 +1,68 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' N'
+    CallSignature
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    num'
+      LiteralType
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' interfaced'
+        TypeReference
+          Identifier: ' N'
+        ArrowFunction
+          EqualsGreaterThanToken
+          TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+interfaced'
+        Identifier: 'num'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inlined'
+        TypeLiteral
+          CallSignature
+            BooleanKeyword
+          PropertySignature
+            Identifier: ' nun'
+            LiteralType
+              NumericLiteral
+        ArrowFunction
+          EqualsGreaterThanToken
+          TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+inlined'
+        Identifier: 'nun'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ignoreJsdoc'
+        ArrowFunction
+          EqualsGreaterThanToken
+          TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+/** @type {string} make sure to ignore jsdoc! */
+ignoreJsdoc'
+        Identifier: 'extra'
+      EqualsToken
+      NumericLiteral

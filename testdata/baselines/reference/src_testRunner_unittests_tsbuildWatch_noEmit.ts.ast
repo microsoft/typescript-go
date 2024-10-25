@@ -1,0 +1,203 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' forEachNoEmitTscWatch'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTscWatch'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' verify'
+            Parameter
+              Identifier: 'outFile'
+              QuestionToken
+              ObjectKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        verifyTscWatch'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            scenario'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            subScenario'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          ConditionalExpression
+                            Identifier: 'outFile'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            StringLiteral
+                          TemplateTail
+                    PropertyAssignment
+                      Identifier: '
+            commandLineArgs'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            sys'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                TestServerHost'
+                            Identifier: 'createWatchedSystem'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              StringLiteral
+                              StringLiteral
+                            PropertyAssignment
+                              StringLiteral
+                              StringLiteral
+                            PropertyAssignment
+                              StringLiteral
+                              CallExpression
+                                Identifier: ' jsonToReadableText'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        compilerOptions'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                            allowJs'
+                                        TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                            noEmit'
+                                        TrueKeyword
+                                      SpreadAssignment
+                                        Identifier: 'outFile'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' currentDirectory'
+                              StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            edits'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    caption'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    edit'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' sys'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'writeFile'
+                                NoSubstitutionTemplateLiteral
+                                NonNullExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'readFile'
+                                    NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    // build project
+                    timeouts'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' sys'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'runQueuedTimeoutCallbacks'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    caption'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    edit'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' sys'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'writeFile'
+                                NoSubstitutionTemplateLiteral
+                                StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    // build project
+                    timeouts'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' sys'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'runQueuedTimeoutCallbacks'
+                    PropertyAssignment
+                      Identifier: '
+            baselineIncremental'
+                      TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verify'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verify'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' outFile'
+                  StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    forEachNoEmitTscWatch'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral

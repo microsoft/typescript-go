@@ -1,0 +1,97 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'n'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' m'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' m'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' foo'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        CallExpression
+          Identifier: ' foo'
+          NumberKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        CallExpression
+          Identifier: ' foo'
+          StringKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        CallExpression
+          Identifier: ' foo'
+          NumberKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        CallExpression
+          Identifier: ' foo'
+          StringKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+          StringLiteral

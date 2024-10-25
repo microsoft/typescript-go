@@ -1,0 +1,19 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' I'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    p'
+            NullKeyword

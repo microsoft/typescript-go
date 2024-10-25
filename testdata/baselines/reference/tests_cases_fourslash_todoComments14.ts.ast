@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '//// BAR // [|TODO|]
+
+verify'
+        Identifier: 'todoCommentsInCurrentFile'
+      ArrayLiteralExpression
+        StringLiteral

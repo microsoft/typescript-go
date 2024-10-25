@@ -1,0 +1,73 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      Identifier: ' x'
+    PropertyDeclaration
+      Identifier: ' // error
+    b'
+      TypeQuery
+        Identifier: ' x'
+    Constructor
+      Parameter
+        Identifier: 'x'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      Identifier: ' x'
+    PropertyDeclaration
+      Identifier: ' // error
+    b'
+      TypeQuery
+        Identifier: ' x'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+      Block
+  ClassDeclaration
+    Identifier: ' E'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'x'
+    PropertyDeclaration
+      Identifier: ' // ok
+    b'
+      TypeQuery
+        QualifiedName
+          Identifier: ' this'
+          Identifier: 'x'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+      Block
+  ClassDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'x'
+    PropertyDeclaration
+      Identifier: ' // ok
+    b'
+      Identifier: ' x'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'
+      Block

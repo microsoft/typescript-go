@@ -1,0 +1,336 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IEnumerable'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+
+    zip'
+      TypeParameter
+        Identifier: 'TResult'
+      Parameter
+        Identifier: 'second'
+        TypeReference
+          Identifier: ' IEnumerable'
+          TypeReference
+            Identifier: 'T'
+      Parameter
+        Identifier: ' resultSelector'
+        FunctionType
+          Parameter
+            Identifier: 'first'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' second'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          TypeReference
+            Identifier: ' TResult'
+      TypeReference
+        Identifier: ' IEnumerable'
+        TypeReference
+          Identifier: 'TResult'
+    MethodSignature
+      Identifier: '
+    zip'
+      TypeParameter
+        Identifier: 'TResult'
+      Parameter
+        Identifier: 'second'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      Parameter
+        Identifier: ' resultSelector'
+        FunctionType
+          Parameter
+            Identifier: 'first'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' second'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          TypeReference
+            Identifier: ' TResult'
+      TypeReference
+        Identifier: ' IEnumerable'
+        TypeReference
+          Identifier: 'TResult'
+    MethodSignature
+      Identifier: '
+    zip'
+      TypeParameter
+        Identifier: 'TResult'
+      Parameter
+        DotDotDotToken
+        Identifier: 'params'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' IEnumerable'
+        TypeReference
+          Identifier: 'TResult'
+    MethodSignature
+      Identifier: ' // last one is selector
+
+    merge'
+      TypeParameter
+        Identifier: 'TResult'
+      Parameter
+        DotDotDotToken
+        Identifier: 'params'
+        ArrayType
+          TypeReference
+            Identifier: ' IEnumerable'
+            TypeReference
+              Identifier: 'T'
+      TypeReference
+        Identifier: ' IEnumerable'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    merge'
+      TypeParameter
+        Identifier: 'TResult'
+      Parameter
+        DotDotDotToken
+        Identifier: 'params'
+        ArrayType
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+      TypeReference
+        Identifier: ' IEnumerable'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+
+
+    concat'
+      Parameter
+        DotDotDotToken
+        Identifier: 'sequences'
+        ArrayType
+          TypeReference
+            Identifier: ' IEnumerable'
+            TypeReference
+              Identifier: 'T'
+      TypeReference
+        Identifier: ' IEnumerable'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    concat'
+      Parameter
+        DotDotDotToken
+        Identifier: 'sequences'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' IEnumerable'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+
+    insert'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      Parameter
+        Identifier: ' second'
+        TypeReference
+          Identifier: ' IEnumerable'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' IEnumerable'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+
+    sequenceEqual'
+      Parameter
+        Identifier: 'second'
+        TypeReference
+          Identifier: ' IEnumerable'
+          TypeReference
+            Identifier: 'T'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    sequenceEqual'
+      TypeParameter
+        Identifier: 'TCompare'
+      Parameter
+        Identifier: 'second'
+        TypeReference
+          Identifier: ' IEnumerable'
+          TypeReference
+            Identifier: 'T'
+      Parameter
+        Identifier: ' compareSelector'
+        FunctionType
+          Parameter
+            Identifier: 'element'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' TCompare'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    sequenceEqual'
+      Parameter
+        Identifier: 'second'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    sequenceEqual'
+      TypeParameter
+        Identifier: 'TCompare'
+      Parameter
+        Identifier: 'second'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      Parameter
+        Identifier: ' compareSelector'
+        FunctionType
+          Parameter
+            Identifier: 'element'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' TCompare'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '   
+    
+    toDictionary'
+      TypeParameter
+        Identifier: 'TKey'
+      Parameter
+        Identifier: 'keySelector'
+        FunctionType
+          Parameter
+            Identifier: 'element'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' TKey'
+      TypeReference
+        Identifier: ' IDictionary'
+        TypeReference
+          Identifier: 'TKey'
+        AnyKeyword
+    MethodSignature
+      Identifier: '
+    toDictionary'
+      TypeParameter
+        Identifier: 'TKey'
+      TypeParameter
+        Identifier: ' TValue'
+      Parameter
+        Identifier: 'keySelector'
+        FunctionType
+          Parameter
+            Identifier: 'element'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' TKey'
+      Parameter
+        Identifier: ' elementSelector'
+        FunctionType
+          Parameter
+            Identifier: 'element'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' TValue'
+      TypeReference
+        Identifier: ' IDictionary'
+        TypeReference
+          Identifier: 'TKey'
+        TypeReference
+          Identifier: ' TValue'
+    MethodSignature
+      Identifier: '
+    toDictionary'
+      TypeParameter
+        Identifier: 'TKey'
+      TypeParameter
+        Identifier: ' TValue'
+      TypeParameter
+        Identifier: ' TCompare'
+      Parameter
+        Identifier: 'keySelector'
+        FunctionType
+          Parameter
+            Identifier: 'element'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' TKey'
+      Parameter
+        Identifier: ' elementSelector'
+        FunctionType
+          Parameter
+            Identifier: 'element'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' TValue'
+      Parameter
+        Identifier: ' compareSelector'
+        FunctionType
+          Parameter
+            Identifier: 'key'
+            TypeReference
+              Identifier: ' TKey'
+          TypeReference
+            Identifier: ' TCompare'
+      TypeReference
+        Identifier: ' IDictionary'
+        TypeReference
+          Identifier: 'TKey'
+        TypeReference
+          Identifier: ' TValue'
+  InterfaceDeclaration
+    Identifier: ' IDictionary'
+    TypeParameter
+      Identifier: 'TKey'
+    TypeParameter
+      Identifier: ' TValue'
+    MethodSignature
+      Identifier: '
+    toEnumerable'
+      TypeReference
+        Identifier: ' IEnumerable'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' key'
+            TypeReference
+              Identifier: ' TKey'
+          PropertySignature
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' TValue'

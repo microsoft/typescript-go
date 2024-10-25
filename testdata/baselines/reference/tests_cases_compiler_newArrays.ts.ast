@@ -1,0 +1,44 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Foo'
+      ClassDeclaration
+        Identifier: ' Gar'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' fa'
+          ArrayType
+            TypeReference
+              Identifier: ' Foo'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' x'
+          NumericLiteral
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' y'
+          NumericLiteral
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' m'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'fa'
+                EqualsToken
+                NewExpression
+                  Identifier: ' Array'
+                  TypeReference
+                    Identifier: 'Foo'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'x'
+                    AsteriskToken
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'y'

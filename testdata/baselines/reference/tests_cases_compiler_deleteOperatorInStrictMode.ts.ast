@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+  ExpressionStatement
+    DeleteExpression
+      Identifier: ' a'

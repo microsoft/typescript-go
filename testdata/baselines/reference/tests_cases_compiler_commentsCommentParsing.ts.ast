@@ -1,0 +1,236 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' simple'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+simple'
+  FunctionDeclaration
+    Identifier: ' multiLine'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+multiLine'
+  FunctionDeclaration
+    Identifier: ' jsDocSingleLine'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+jsDocSingleLine'
+  FunctionDeclaration
+    Identifier: ' jsDocMultiLine'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+jsDocMultiLine'
+  FunctionDeclaration
+    Identifier: ' jsDocMultiLineMerge'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+jsDocMultiLineMerge'
+  FunctionDeclaration
+    Identifier: ' jsDocMixedComments1'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+jsDocMixedComments1'
+  FunctionDeclaration
+    Identifier: ' jsDocMixedComments2'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+jsDocMixedComments2'
+  FunctionDeclaration
+    Identifier: ' jsDocMixedComments3'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+jsDocMixedComments3'
+  FunctionDeclaration
+    Identifier: ' jsDocMixedComments4'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+jsDocMixedComments4'
+  FunctionDeclaration
+    Identifier: ' jsDocMixedComments5'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+jsDocMixedComments5'
+  FunctionDeclaration
+    Identifier: ' jsDocMixedComments6'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+jsDocMixedComments6'
+  FunctionDeclaration
+    Identifier: ' noHelpComment1'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+noHelpComment1'
+  FunctionDeclaration
+    Identifier: ' noHelpComment2'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+noHelpComment2'
+  FunctionDeclaration
+    Identifier: ' noHelpComment3'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+noHelpComment3'
+  FunctionDeclaration
+    Identifier: ' sum'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' b'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+sum'
+      NumericLiteral
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' multiply'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    Parameter
+      Identifier: ' c'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' d'
+      QuestionToken
+    Parameter
+      Identifier: ' e'
+      QuestionToken
+    Block
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'b'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'aOrb'
+    Parameter
+      Identifier: ' opt'
+      QuestionToken
+    Block
+      ReturnStatement
+        Identifier: ' aOrb'
+  FunctionDeclaration
+    Identifier: ' subtract'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    Parameter
+      Identifier: ' c'
+      QuestionToken
+      FunctionType
+        StringKeyword
+    Parameter
+      Identifier: ' d'
+      QuestionToken
+      FunctionType
+        StringKeyword
+    Parameter
+      Identifier: ' e'
+      QuestionToken
+      FunctionType
+        StringKeyword
+    Parameter
+      Identifier: ' f'
+      QuestionToken
+      FunctionType
+        StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' square'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          AsteriskToken
+          Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' divide'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' jsDocParamTest'
+    Parameter
+      Identifier: '/** this is inline comment for a */a'
+      NumberKeyword
+    Parameter
+      Identifier: ' /** this is inline comment for b*/ b'
+      NumberKeyword
+    Parameter
+      Identifier: ' c'
+      NumberKeyword
+    Parameter
+      Identifier: ' d'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: ' a'
+              PlusToken
+              Identifier: ' b'
+            PlusToken
+            Identifier: ' c'
+          PlusToken
+          Identifier: ' d'
+  ClassDeclaration
+    Identifier: ' NoQuickInfoClass'

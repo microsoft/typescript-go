@@ -1,0 +1,10 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' C'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    Constructor
+      Block

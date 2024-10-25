@@ -1,0 +1,1216 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    compareStringsCaseSensitive'
+        ImportSpecifier
+          Identifier: '
+    Comparison'
+        ImportSpecifier
+          Identifier: '
+    createTextSpan'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticMessage'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    endsWith'
+        ImportSpecifier
+          Identifier: '
+    every'
+        ImportSpecifier
+          Identifier: '
+    Extension'
+        ImportSpecifier
+          Identifier: '
+    fileExtensionIs'
+        ImportSpecifier
+          Identifier: '
+    find'
+        ImportSpecifier
+          Identifier: '
+    getAdjustedRenameLocation'
+        ImportSpecifier
+          Identifier: '
+    getContextualTypeFromParentOrAncestorTypeNode'
+        ImportSpecifier
+          Identifier: '
+    getLocaleSpecificMessage'
+        ImportSpecifier
+          Identifier: '
+    getPathComponents'
+        ImportSpecifier
+          Identifier: '
+    getTextOfIdentifierOrLiteral'
+        ImportSpecifier
+          Identifier: '
+    getTextOfNode'
+        ImportSpecifier
+          Identifier: '
+    getTouchingPropertyName'
+        ImportSpecifier
+          Identifier: '
+    isExternalModuleNameRelative'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isImportOrExportSpecifierName'
+        ImportSpecifier
+          Identifier: '
+    isImportSpecifier'
+        ImportSpecifier
+          Identifier: '
+    isInsideNodeModules'
+        ImportSpecifier
+          Identifier: '
+    isLabelName'
+        ImportSpecifier
+          Identifier: '
+    isLiteralNameOfPropertyDeclarationOrIndexAccess'
+        ImportSpecifier
+          Identifier: '
+    isSourceFile'
+        ImportSpecifier
+          Identifier: '
+    isStringLiteralLike'
+        ImportSpecifier
+          Identifier: '
+    isStringOrNumericLiteralLike'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NumericLiteral'
+        ImportSpecifier
+          Identifier: '
+    Path'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    removeFileExtension'
+        ImportSpecifier
+          Identifier: '
+    RenameInfo'
+        ImportSpecifier
+          Identifier: '
+    RenameInfoFailure'
+        ImportSpecifier
+          Identifier: '
+    RenameInfoSuccess'
+        ImportSpecifier
+          Identifier: '
+    ScriptElementKind'
+        ImportSpecifier
+          Identifier: '
+    ScriptElementKindModifier'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    StringLiteralLike'
+        ImportSpecifier
+          Identifier: '
+    stripQuotes'
+        ImportSpecifier
+          Identifier: '
+    Symbol'
+        ImportSpecifier
+          Identifier: '
+    SymbolDisplay'
+        ImportSpecifier
+          Identifier: '
+    SymbolFlags'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    tryGetImportFromModuleSpecifier'
+        ImportSpecifier
+          Identifier: '
+    tryRemoveSuffix'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+        ImportSpecifier
+          Identifier: '
+    TypeFlags'
+        ImportSpecifier
+          Identifier: '
+    UnionType'
+        ImportSpecifier
+          Identifier: '
+    UserPreferences'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getRenameInfo'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    TypeReference
+      Identifier: ' RenameInfo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            CallExpression
+              Identifier: ' getAdjustedRenameLocation'
+              CallExpression
+                Identifier: 'getTouchingPropertyName'
+                Identifier: 'sourceFile'
+                Identifier: ' position'
+      IfStatement
+        CallExpression
+          Identifier: 'nodeIsEligibleForRename'
+          Identifier: 'node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' renameInfo'
+                CallExpression
+                  Identifier: ' getRenameInfoForNode'
+                  Identifier: 'node'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' program'
+                      Identifier: 'getTypeChecker'
+                  Identifier: ' sourceFile'
+                  Identifier: ' program'
+                  Identifier: ' preferences'
+          IfStatement
+            Identifier: 'renameInfo'
+            Block
+              ReturnStatement
+                Identifier: ' renameInfo'
+      ReturnStatement
+        CallExpression
+          Identifier: ' getRenameInfoError'
+          PropertyAccessExpression
+            Identifier: 'Diagnostics'
+            Identifier: 'You_cannot_rename_this_element'
+  FunctionDeclaration
+    Identifier: ' getRenameInfoForNode'
+    Parameter
+      Identifier: '
+    node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: '
+    typeChecker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    UnionType
+      TypeReference
+        Identifier: ' RenameInfo'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' symbol'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' typeChecker'
+                Identifier: 'getSymbolAtLocation'
+              Identifier: 'node'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'symbol'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isStringLiteralLike'
+              Identifier: 'node'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' type'
+                    CallExpression
+                      Identifier: ' getContextualTypeFromParentOrAncestorTypeNode'
+                      Identifier: 'node'
+                      Identifier: ' typeChecker'
+              IfStatement
+                BinaryExpression
+                  Identifier: '
+                type'
+                  AmpersandAmpersandToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      ParenthesizedExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'type'
+                            Identifier: 'flags'
+                          AmpersandToken
+                          PropertyAccessExpression
+                            Identifier: ' TypeFlags'
+                            Identifier: 'StringLiteral'
+                      BarBarToken
+                      ParenthesizedExpression
+                        BinaryExpression
+                          ParenthesizedExpression
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: 'type'
+                                Identifier: 'flags'
+                              AmpersandToken
+                              PropertyAccessExpression
+                                Identifier: ' TypeFlags'
+                                Identifier: 'Union'
+                          AmpersandAmpersandToken
+                          CallExpression
+                            Identifier: ' every'
+                            PropertyAccessExpression
+                              ParenthesizedExpression
+                                AsExpression
+                                  Identifier: 'type'
+                                  TypeReference
+                                    Identifier: ' UnionType'
+                              Identifier: 'types'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' type'
+                              EqualsGreaterThanToken
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  ParenthesizedExpression
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'type'
+                                        Identifier: 'flags'
+                                      AmpersandToken
+                                      PropertyAccessExpression
+                                        Identifier: ' TypeFlags'
+                                        Identifier: 'StringLiteral'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' getRenameInfoSuccess'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'text'
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'text'
+                      PropertyAccessExpression
+                        Identifier: ' ScriptElementKind'
+                        Identifier: 'string'
+                      StringLiteral
+                      Identifier: ' node'
+                      Identifier: ' sourceFile'
+            IfStatement
+              CallExpression
+                Identifier: 'isLabelName'
+                Identifier: 'node'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' name'
+                      CallExpression
+                        Identifier: ' getTextOfNode'
+                        Identifier: 'node'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getRenameInfoSuccess'
+                    Identifier: 'name'
+                    Identifier: ' name'
+                    PropertyAccessExpression
+                      Identifier: ' ScriptElementKind'
+                      Identifier: 'label'
+                    PropertyAccessExpression
+                      Identifier: ' ScriptElementKindModifier'
+                      Identifier: 'none'
+                    Identifier: ' node'
+                    Identifier: ' sourceFile'
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' declarations'
+            Identifier: ' symbol'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'declarations'
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' declarations'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+        ReturnStatement
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'declarations'
+            Identifier: 'some'
+          ArrowFunction
+            Parameter
+              Identifier: 'declaration'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' isDefinedInLibraryFile'
+              Identifier: 'program'
+              Identifier: ' declaration'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' getRenameInfoError'
+              PropertyAccessExpression
+                Identifier: 'Diagnostics'
+                Identifier: 'You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              CallExpression
+                Identifier: 'isIdentifier'
+                Identifier: 'node'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'escapedText'
+                EqualsEqualsEqualsToken
+                StringLiteral
+            AmpersandAmpersandToken
+            PropertyAccessExpression
+              Identifier: ' symbol'
+              Identifier: 'parent'
+          AmpersandAmpersandToken
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' symbol'
+                Identifier: 'parent'
+              Identifier: 'flags'
+            AmpersandToken
+            PropertyAccessExpression
+              Identifier: ' SymbolFlags'
+              Identifier: 'Module'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isStringLiteralLike'
+            Identifier: 'node'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' tryGetImportFromModuleSpecifier'
+            Identifier: 'node'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' preferences'
+                Identifier: 'allowRenameOfImportPath'
+              QuestionToken
+              CallExpression
+                Identifier: ' getRenameInfoForModule'
+                Identifier: 'node'
+                Identifier: ' sourceFile'
+                Identifier: ' symbol'
+              ColonToken
+              Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' wouldRenameNodeModules'
+            CallExpression
+              Identifier: ' wouldRenameInOtherNodeModules'
+              Identifier: 'sourceFile'
+              Identifier: ' symbol'
+              Identifier: ' typeChecker'
+              Identifier: ' preferences'
+      IfStatement
+        Identifier: 'wouldRenameNodeModules'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' getRenameInfoError'
+              Identifier: 'wouldRenameNodeModules'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' kind'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' SymbolDisplay'
+                Identifier: 'getSymbolKind'
+              Identifier: 'typeChecker'
+              Identifier: ' symbol'
+              Identifier: ' node'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' specifierName'
+            ConditionalExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'isImportOrExportSpecifierName'
+                    Identifier: 'node'
+                  BarBarToken
+                  BinaryExpression
+                    CallExpression
+                      Identifier: ' isStringOrNumericLiteralLike'
+                      Identifier: 'node'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' node'
+                          Identifier: 'parent'
+                        Identifier: 'kind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'ComputedPropertyName'
+              QuestionToken
+              CallExpression
+                Identifier: ' stripQuotes'
+                CallExpression
+                  Identifier: 'getTextOfIdentifierOrLiteral'
+                  Identifier: 'node'
+              ColonToken
+              Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' displayName'
+            BinaryExpression
+              Identifier: ' specifierName'
+              BarBarToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' typeChecker'
+                  Identifier: 'symbolToString'
+                Identifier: 'symbol'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fullDisplayName'
+            BinaryExpression
+              Identifier: ' specifierName'
+              BarBarToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' typeChecker'
+                  Identifier: 'getFullyQualifiedName'
+                Identifier: 'symbol'
+      ReturnStatement
+        CallExpression
+          Identifier: ' getRenameInfoSuccess'
+          Identifier: 'displayName'
+          Identifier: ' fullDisplayName'
+          Identifier: ' kind'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' SymbolDisplay'
+              Identifier: 'getSymbolModifiers'
+            Identifier: 'typeChecker'
+            Identifier: ' symbol'
+          Identifier: ' node'
+          Identifier: ' sourceFile'
+  FunctionDeclaration
+    Identifier: ' isDefinedInLibraryFile'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' declaration'
+      TypeReference
+        Identifier: ' Node'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceFile'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' declaration'
+                Identifier: 'getSourceFile'
+      ReturnStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' program'
+              Identifier: 'isSourceFileDefaultLibrary'
+            Identifier: 'sourceFile'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' fileExtensionIs'
+            PropertyAccessExpression
+              Identifier: 'sourceFile'
+              Identifier: 'fileName'
+            PropertyAccessExpression
+              Identifier: ' Extension'
+              Identifier: 'Dts'
+  FunctionDeclaration
+    Identifier: ' wouldRenameInOtherNodeModules'
+    Parameter
+      Identifier: '
+    originalFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: '
+    checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    UnionType
+      TypeReference
+        Identifier: ' DiagnosticMessage'
+      UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'preferences'
+              Identifier: 'providePrefixAndSuffixTextForRename'
+          AmpersandAmpersandToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' symbol'
+              Identifier: 'flags'
+            AmpersandToken
+            PropertyAccessExpression
+              Identifier: ' SymbolFlags'
+              Identifier: 'Alias'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' importSpecifier'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' symbol'
+                    Identifier: 'declarations'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' find'
+                    PropertyAccessExpression
+                      Identifier: 'symbol'
+                      Identifier: 'declarations'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' decl'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' isImportSpecifier'
+                        Identifier: 'decl'
+          IfStatement
+            BinaryExpression
+              Identifier: 'importSpecifier'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'importSpecifier'
+                  Identifier: 'propertyName'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            symbol'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' checker'
+                      Identifier: 'getAliasedSymbol'
+                    Identifier: 'symbol'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' declarations'
+            Identifier: ' symbol'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'declarations'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' originalPackage'
+            CallExpression
+              Identifier: ' getPackagePathComponents'
+              PropertyAccessExpression
+                Identifier: 'originalFile'
+                Identifier: 'path'
+      IfStatement
+        BinaryExpression
+          Identifier: 'originalPackage'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'some'
+              Identifier: 'declarations'
+              ArrowFunction
+                Parameter
+                  Identifier: ' declaration'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' isInsideNodeModules'
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'declaration'
+                        Identifier: 'getSourceFile'
+                    Identifier: 'path'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' Diagnostics'
+                  Identifier: 'You_cannot_rename_elements_that_are_defined_in_a_node_modules_folder'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' declaration'
+        Identifier: ' declarations'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' declPackage'
+                CallExpression
+                  Identifier: ' getPackagePathComponents'
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'declaration'
+                        Identifier: 'getSourceFile'
+                    Identifier: 'path'
+          IfStatement
+            Identifier: 'declPackage'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' length'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Math'
+                        Identifier: 'min'
+                      PropertyAccessExpression
+                        Identifier: 'originalPackage'
+                        Identifier: 'length'
+                      PropertyAccessExpression
+                        Identifier: ' declPackage'
+                        Identifier: 'length'
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' i'
+                    NumericLiteral
+                BinaryExpression
+                  Identifier: ' i'
+                  LessThanEqualsToken
+                  Identifier: ' length'
+                PostfixUnaryExpression
+                  Identifier: ' i'
+                Block
+                  IfStatement
+                    BinaryExpression
+                      CallExpression
+                        Identifier: 'compareStringsCaseSensitive'
+                        ElementAccessExpression
+                          Identifier: 'originalPackage'
+                          Identifier: 'i'
+                        ElementAccessExpression
+                          Identifier: ' declPackage'
+                          Identifier: 'i'
+                      ExclamationEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' Comparison'
+                        Identifier: 'EqualTo'
+                    Block
+                      ReturnStatement
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'You_cannot_rename_elements_that_are_defined_in_another_node_modules_folder'
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' getPackagePathComponents'
+    Parameter
+      Identifier: 'filePath'
+      TypeReference
+        Identifier: ' Path'
+    UnionType
+      ArrayType
+        StringKeyword
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' components'
+            AsExpression
+              CallExpression
+                Identifier: ' getPathComponents'
+                Identifier: 'filePath'
+              ArrayType
+                StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nodeModulesIdx'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' components'
+                Identifier: 'lastIndexOf'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'nodeModulesIdx'
+          EqualsEqualsEqualsToken
+          PrefixUnaryExpression
+            NumericLiteral
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' components'
+            Identifier: 'slice'
+          NumericLiteral
+          BinaryExpression
+            Identifier: ' nodeModulesIdx'
+            PlusToken
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' getRenameInfoForModule'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' moduleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    UnionType
+      TypeReference
+        Identifier: ' RenameInfo'
+      UndefinedKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isExternalModuleNameRelative'
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'text'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' getRenameInfoError'
+              PropertyAccessExpression
+                Identifier: 'Diagnostics'
+                Identifier: 'You_cannot_rename_a_module_via_a_global_import'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleSourceFile'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' moduleSymbol'
+                Identifier: 'declarations'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' find'
+                PropertyAccessExpression
+                  Identifier: 'moduleSymbol'
+                  Identifier: 'declarations'
+                Identifier: ' isSourceFile'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'moduleSourceFile'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' withoutIndex'
+            ConditionalExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: ' endsWith'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'text'
+                  StringLiteral
+                BarBarToken
+                CallExpression
+                  Identifier: ' endsWith'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'text'
+                  StringLiteral
+              QuestionToken
+              Identifier: ' undefined'
+              ColonToken
+              CallExpression
+                Identifier: ' tryRemoveSuffix'
+                CallExpression
+                  Identifier: 'removeFileExtension'
+                  PropertyAccessExpression
+                    Identifier: 'moduleSourceFile'
+                    Identifier: 'fileName'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fileName'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' withoutIndex'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' moduleSourceFile'
+                Identifier: 'fileName'
+              ColonToken
+              Identifier: ' withoutIndex'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' kind'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' withoutIndex'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' ScriptElementKind'
+                Identifier: 'moduleElement'
+              ColonToken
+              PropertyAccessExpression
+                Identifier: ' ScriptElementKind'
+                Identifier: 'directory'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' indexAfterLastSlash'
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'text'
+                  Identifier: 'lastIndexOf'
+                StringLiteral
+              PlusToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' triggerSpan'
+            CallExpression
+              Identifier: ' createTextSpan'
+              BinaryExpression
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'getStart'
+                    Identifier: 'sourceFile'
+                  PlusToken
+                  NumericLiteral
+                PlusToken
+                Identifier: ' indexAfterLastSlash'
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'text'
+                  Identifier: 'length'
+                MinusToken
+                Identifier: ' indexAfterLastSlash'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        canRename'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: '
+        fileToRename'
+            Identifier: ' fileName'
+          ShorthandPropertyAssignment
+            Identifier: '
+        kind'
+          PropertyAssignment
+            Identifier: '
+        displayName'
+            Identifier: ' fileName'
+          PropertyAssignment
+            Identifier: '
+        fullDisplayName'
+            PropertyAccessExpression
+              Identifier: ' node'
+              Identifier: 'text'
+          PropertyAssignment
+            Identifier: '
+        kindModifiers'
+            PropertyAccessExpression
+              Identifier: ' ScriptElementKindModifier'
+              Identifier: 'none'
+          ShorthandPropertyAssignment
+            Identifier: '
+        triggerSpan'
+  FunctionDeclaration
+    Identifier: ' getRenameInfoSuccess'
+    Parameter
+      Identifier: 'displayName'
+      StringKeyword
+    Parameter
+      Identifier: ' fullDisplayName'
+      StringKeyword
+    Parameter
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    Parameter
+      Identifier: ' kindModifiers'
+      StringKeyword
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    TypeReference
+      Identifier: ' RenameInfoSuccess'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        canRename'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: '
+        fileToRename'
+            Identifier: ' undefined'
+          ShorthandPropertyAssignment
+            Identifier: '
+        kind'
+          ShorthandPropertyAssignment
+            Identifier: '
+        displayName'
+          ShorthandPropertyAssignment
+            Identifier: '
+        fullDisplayName'
+          ShorthandPropertyAssignment
+            Identifier: '
+        kindModifiers'
+          PropertyAssignment
+            Identifier: '
+        triggerSpan'
+            CallExpression
+              Identifier: ' createTriggerSpanForNode'
+              Identifier: 'node'
+              Identifier: ' sourceFile'
+  FunctionDeclaration
+    Identifier: ' getRenameInfoError'
+    Parameter
+      Identifier: 'diagnostic'
+      TypeReference
+        Identifier: ' DiagnosticMessage'
+    TypeReference
+      Identifier: ' RenameInfoFailure'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' canRename'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: ' localizedErrorMessage'
+            CallExpression
+              Identifier: ' getLocaleSpecificMessage'
+              Identifier: 'diagnostic'
+  FunctionDeclaration
+    Identifier: ' createTriggerSpanForNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' start'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'getStart'
+              Identifier: 'sourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' width'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'getWidth'
+              Identifier: 'sourceFile'
+      IfStatement
+        CallExpression
+          Identifier: 'isStringLiteralLike'
+          Identifier: 'node'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        // Exclude the quotes
+        start'
+              PlusEqualsToken
+              NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        width'
+              MinusEqualsToken
+              NumericLiteral
+      ReturnStatement
+        CallExpression
+          Identifier: ' createTextSpan'
+          Identifier: 'start'
+          Identifier: ' width'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' nodeIsEligibleForRename'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'node'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Identifier'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'PrivateIdentifier'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'StringLiteral'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'NoSubstitutionTemplateLiteral'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ThisKeyword'
+            ReturnStatement
+              TrueKeyword
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'NumericLiteral'
+            ReturnStatement
+              CallExpression
+                Identifier: ' isLiteralNameOfPropertyDeclarationOrIndexAccess'
+                AsExpression
+                  Identifier: 'node'
+                  TypeReference
+                    Identifier: ' NumericLiteral'
+          DefaultClause
+            ReturnStatement
+              FalseKeyword

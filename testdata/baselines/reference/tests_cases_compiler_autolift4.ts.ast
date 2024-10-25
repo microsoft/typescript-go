@@ -1,0 +1,110 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Point'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' y'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    getDist'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Math'
+              Identifier: 'sqrt'
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+                AsteriskToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+              PlusToken
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+                AsteriskToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' origin'
+      NewExpression
+        Identifier: ' Point'
+        NumericLiteral
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' Point3D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Point'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' z'
+        NumberKeyword
+      Parameter
+        Identifier: ' m'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'x'
+            Identifier: ' y'
+    MethodDeclaration
+      Identifier: '
+    
+    getDist'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Math'
+              Identifier: 'sqrt'
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'x'
+                  AsteriskToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'x'
+                PlusToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'y'
+                  AsteriskToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'y'
+              PlusToken
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'z'
+                AsteriskToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'm'

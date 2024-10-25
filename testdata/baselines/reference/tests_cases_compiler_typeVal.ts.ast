@@ -1,0 +1,25 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    I'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' I'
+        TypeReference
+          Identifier: 'I'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' I'
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+I'
+        Identifier: 'I'
+      EqualsToken
+      NumericLiteral

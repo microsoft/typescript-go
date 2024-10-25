@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f'
+    Block
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'f'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f'
+    Block

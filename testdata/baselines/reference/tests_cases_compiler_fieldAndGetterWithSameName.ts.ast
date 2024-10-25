@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    GetAccessor
+      Identifier: ' x'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral

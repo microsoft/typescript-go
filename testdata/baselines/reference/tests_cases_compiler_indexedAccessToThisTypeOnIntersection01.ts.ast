@@ -1,0 +1,27 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+  a'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  getA'
+      IndexedAccessType
+        ThisType
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T'
+    IndexedAccessType
+      ParenthesizedType
+        IntersectionType
+          TypeReference
+            Identifier: 'A'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+      LiteralType
+        StringLiteral

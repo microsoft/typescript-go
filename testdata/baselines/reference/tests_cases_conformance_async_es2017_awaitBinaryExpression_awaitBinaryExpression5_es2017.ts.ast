@@ -1,0 +1,55 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Promise'
+          BooleanKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' before'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' after'
+    VoidKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' func'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    before'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    o'
+            Identifier: 'a'
+          EqualsToken
+          AwaitExpression
+            Identifier: ' p'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    after'

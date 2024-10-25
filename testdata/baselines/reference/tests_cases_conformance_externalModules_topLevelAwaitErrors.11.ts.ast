@@ -1,0 +1,22 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' require'
+        AnyKeyword
+  ImportEqualsDeclaration
+    Identifier: ' await'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _await'
+        AnyKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' _await'
+        Identifier: ' await'

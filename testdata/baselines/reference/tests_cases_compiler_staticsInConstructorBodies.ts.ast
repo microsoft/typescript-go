@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m1'
+      Block

@@ -1,0 +1,125 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Lower'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' appendToOptionalArray'
+    TypeParameter
+      Identifier: '
+  K'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        SymbolKeyword
+    TypeParameter
+      Identifier: '
+  T'
+    Parameter
+      Identifier: '
+  object'
+      MappedType
+        TypeParameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' K'
+        QuestionToken
+        ArrayType
+          TypeReference
+            Identifier: ' Lower'
+            TypeReference
+              Identifier: 'T'
+    Parameter
+      Identifier: '
+  key'
+      TypeReference
+        Identifier: ' K'
+    Parameter
+      Identifier: '
+  value'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' array'
+            ElementAccessExpression
+              Identifier: ' object'
+              Identifier: 'key'
+      IfStatement
+        Identifier: 'array'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    array'
+                Identifier: 'push'
+              Identifier: 'value'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+    object'
+                Identifier: 'key'
+              EqualsToken
+              ArrayLiteralExpression
+                Identifier: 'value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'x'
+            QuestionToken
+            ArrayType
+              NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            QuestionToken
+            ArrayType
+              StringKeyword
+        ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+appendToOptionalArray'
+      Identifier: 'foo'
+      StringLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '   // ok
+appendToOptionalArray'
+      Identifier: 'foo'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // ok
+appendToOptionalArray'
+      Identifier: 'foo'
+      StringLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '    // should fail
+appendToOptionalArray'
+      Identifier: 'foo'
+      StringLiteral
+      StringLiteral

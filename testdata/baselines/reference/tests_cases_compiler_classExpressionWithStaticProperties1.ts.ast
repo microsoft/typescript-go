@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ClassExpression
+          Identifier: ' C'
+          PropertyDeclaration
+            StaticKeyword
+            Identifier: ' a'
+            NumericLiteral
+          PropertyDeclaration
+            StaticKeyword
+            Identifier: ' b'
+            NumericLiteral
+          PropertyDeclaration
+            StaticKeyword
+            Identifier: ' c'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' C'
+                Identifier: 'a'
+              PlusToken
+              PropertyAccessExpression
+                Identifier: ' C'
+                Identifier: 'b'

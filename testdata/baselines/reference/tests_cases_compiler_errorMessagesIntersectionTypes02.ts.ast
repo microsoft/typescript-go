@@ -1,0 +1,51 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    fooProp'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+    barProp'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' FooBar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+      ExpressionWithTypeArguments
+        Identifier: ' Bar'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' mixBar'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    IntersectionType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' Bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooBar'
+        TypeReference
+          Identifier: ' FooBar'
+        CallExpression
+          Identifier: ' mixBar'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    fooProp'
+              StringLiteral

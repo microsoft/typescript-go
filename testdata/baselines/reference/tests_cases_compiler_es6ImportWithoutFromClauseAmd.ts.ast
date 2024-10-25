@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _a'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _b'
+        NumericLiteral

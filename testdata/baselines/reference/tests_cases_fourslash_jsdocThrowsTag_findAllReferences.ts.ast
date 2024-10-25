@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////class /**/E extends Error {}
+/////**
+//// * @throws {E}
+//// */
+////function f() {}
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral

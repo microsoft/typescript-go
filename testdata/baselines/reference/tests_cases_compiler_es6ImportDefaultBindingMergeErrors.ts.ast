@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ExportAssignment
+    Identifier: ' a'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' defaultBinding'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        Identifier: ' defaultBinding'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding2'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' defaultBinding2'
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding3'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding3'
+    StringLiteral

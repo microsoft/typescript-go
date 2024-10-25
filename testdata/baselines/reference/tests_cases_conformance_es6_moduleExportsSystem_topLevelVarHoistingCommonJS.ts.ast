@@ -1,0 +1,181 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _'
+        AnyKeyword
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          Identifier: ' _'
+  IfStatement
+    Identifier: '_'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            Identifier: ' _'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            Identifier: ' _'
+  SwitchStatement
+    Identifier: '_'
+    CaseBlock
+      CaseClause
+        Identifier: ' _'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              Identifier: ' _'
+      DefaultClause
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' e'
+              Identifier: ' _'
+  WhileStatement
+    Identifier: '_'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            Identifier: ' _'
+  DoStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            Identifier: ' _'
+    Identifier: '_'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        Identifier: ' _'
+    Block
+      BreakStatement
+  ForStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' m'
+            Identifier: ' _'
+      BreakStatement
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+    Identifier: ' _'
+    BreakStatement
+  ForInStatement
+    Identifier: '_'
+    Identifier: ' _'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o'
+            Identifier: ' _'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+    Identifier: ' _'
+    BreakStatement
+  ForOfStatement
+    Identifier: '_'
+    Identifier: ' _'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' u'
+            Identifier: ' _'
+  TryStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            Identifier: ' _'
+    CatchClause
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' w'
+              Identifier: ' _'
+  LabeledStatement
+    Identifier: '
+
+label'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            Identifier: ' _'
+      BreakStatement
+        Identifier: ' label'
+  WithStatement
+    Identifier: '_'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            Identifier: ' _'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        Identifier: ' _'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+      ExportSpecifier
+        Identifier: ' b'
+      ExportSpecifier
+        Identifier: ' c'
+      ExportSpecifier
+        Identifier: ' d'
+      ExportSpecifier
+        Identifier: ' e'
+      ExportSpecifier
+        Identifier: ' f'
+      ExportSpecifier
+        Identifier: ' g'
+      ExportSpecifier
+        Identifier: ' h'
+      ExportSpecifier
+        Identifier: ' m'
+      ExportSpecifier
+        Identifier: ' n'
+      ExportSpecifier
+        Identifier: ' o'
+      ExportSpecifier
+        Identifier: ' p'
+      ExportSpecifier
+        Identifier: ' u'
+      ExportSpecifier
+        Identifier: ' v'
+      ExportSpecifier
+        Identifier: ' w'
+      ExportSpecifier
+        Identifier: ' x'
+      ExportSpecifier
+        Identifier: ' y'
+      ExportSpecifier
+        Identifier: ' z'

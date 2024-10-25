@@ -1,0 +1,76 @@
+SourceFile
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' ClassDecorator'
+    FunctionType
+      TypeParameter
+        Identifier: 'TFunction'
+        TypeReference
+          Identifier: ' Function'
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' TFunction'
+      UnionType
+        TypeReference
+          Identifier: ' TFunction'
+        VoidKeyword
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' PropertyDecorator'
+    FunctionType
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' Object'
+      Parameter
+        Identifier: ' propertyKey'
+        UnionType
+          StringKeyword
+          SymbolKeyword
+      VoidKeyword
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' MethodDecorator'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' Object'
+      Parameter
+        Identifier: ' propertyKey'
+        UnionType
+          StringKeyword
+          SymbolKeyword
+      Parameter
+        Identifier: ' descriptor'
+        TypeReference
+          Identifier: ' TypedPropertyDescriptor'
+          TypeReference
+            Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' TypedPropertyDescriptor'
+          TypeReference
+            Identifier: 'T'
+        VoidKeyword
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' ParameterDecorator'
+    FunctionType
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' Object'
+      Parameter
+        Identifier: ' propertyKey'
+        UnionType
+          StringKeyword
+          SymbolKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' parameterIndex'
+        NumberKeyword
+      VoidKeyword

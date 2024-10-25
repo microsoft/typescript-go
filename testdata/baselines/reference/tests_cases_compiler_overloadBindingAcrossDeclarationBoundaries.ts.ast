@@ -1,0 +1,154 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Opt1'
+    PropertySignature
+      Identifier: '
+    p'
+      QuestionToken
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Opt2'
+    PropertySignature
+      Identifier: '
+    q'
+      QuestionToken
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Opt3'
+    PropertySignature
+      Identifier: '
+    r'
+      QuestionToken
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Opt4'
+    PropertySignature
+      Identifier: '
+    s'
+      QuestionToken
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    MethodSignature
+      Identifier: '
+    a'
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt1'
+      TypeReference
+        Identifier: ' Opt1'
+    MethodSignature
+      Identifier: '
+    a'
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt2'
+      TypeReference
+        Identifier: ' Opt2'
+    CallSignature
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt1'
+      TypeReference
+        Identifier: ' Opt1'
+    CallSignature
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt2'
+      TypeReference
+        Identifier: ' Opt2'
+    ConstructSignature
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt1'
+      TypeReference
+        Identifier: ' Opt1'
+    ConstructSignature
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt2'
+      TypeReference
+        Identifier: ' Opt2'
+  InterfaceDeclaration
+    Identifier: ' A'
+    MethodSignature
+      Identifier: '
+    a'
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt3'
+      TypeReference
+        Identifier: ' Opt3'
+    MethodSignature
+      Identifier: '
+    a'
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt4'
+      TypeReference
+        Identifier: ' Opt4'
+    CallSignature
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt3'
+      TypeReference
+        Identifier: ' Opt3'
+    CallSignature
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt4'
+      TypeReference
+        Identifier: ' Opt4'
+    ConstructSignature
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt3'
+      TypeReference
+        Identifier: ' Opt3'
+    ConstructSignature
+      Parameter
+        Identifier: 'o'
+        TypeReference
+          Identifier: ' Opt4'
+      TypeReference
+        Identifier: ' Opt4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'a'
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        CallExpression
+          Identifier: ' a'
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        NewExpression
+          Identifier: ' a'
+          ObjectLiteralExpression

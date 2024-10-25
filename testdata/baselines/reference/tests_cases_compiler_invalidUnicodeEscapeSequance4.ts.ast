@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: 'u0031'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: 'u0031a'

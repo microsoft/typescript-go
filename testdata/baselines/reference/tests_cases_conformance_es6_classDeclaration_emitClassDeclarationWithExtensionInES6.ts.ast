@@ -1,0 +1,71 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    baz'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        Identifier: ' y'
+        NumericLiteral
+      Block
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+    MethodDeclaration
+      Identifier: '
+    baz'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        Identifier: ' y'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'baz'
+            Identifier: 'a'
+            Identifier: ' y'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    MethodDeclaration
+      Identifier: '
+
+    foo'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'foo'
+    MethodDeclaration
+      Identifier: '
+
+    baz'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'baz'
+            StringLiteral
+            NumericLiteral

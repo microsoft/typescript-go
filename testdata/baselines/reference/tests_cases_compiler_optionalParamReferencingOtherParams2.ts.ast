@@ -1,0 +1,22 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' strange'
+    Parameter
+      Identifier: 'x'
+      Identifier: ' a'
+    Parameter
+      Identifier: ' y'
+      Identifier: ' b'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            StringLiteral
+      ReturnStatement
+        Identifier: ' y'

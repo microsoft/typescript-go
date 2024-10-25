@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  YieldExpression
+                    NumericLiteral
+                NumericLiteral

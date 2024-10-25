@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn1'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+      ConditionalExpression
+        BinaryExpression
+          Identifier: ' x'
+          GreaterThanToken
+          NumericLiteral
+        QuestionToken
+        Identifier: ' x'
+        ColonToken
+        NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' fn2'
+    Parameter
+      Identifier: 'x'
+      QuestionToken
+      StringKeyword
+      ConditionalExpression
+        Identifier: ' someCondition'
+        QuestionToken
+        StringLiteral
+        ColonToken
+        Identifier: ' x'
+    Block

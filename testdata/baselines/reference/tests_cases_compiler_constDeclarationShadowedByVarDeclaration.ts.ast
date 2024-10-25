@@ -1,0 +1,45 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' y'
+          NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' z'
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' z'
+          NumericLiteral

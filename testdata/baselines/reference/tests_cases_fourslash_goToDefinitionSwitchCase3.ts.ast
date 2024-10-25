@@ -1,0 +1,18 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////switch (null) {
+////  [|/*start1*/default|]: {
+////    switch (null) {
+////      [|/*start2*/default|]: break;
+////    }
+////  };
+////}
+
+verify'
+        Identifier: 'baselineGoToDefinition'
+      StringLiteral
+      StringLiteral

@@ -1,0 +1,96 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+  prop'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        UnknownKeyword
+        LiteralType
+          TrueKeyword
+        LiteralType
+          FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' prop'
+              TrueKeyword
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Foo'
+          LiteralType
+            NumericLiteral
+        Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Foo'
+          NumberKeyword
+        Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' Foo'
+          NumberKeyword
+        Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' instance'
+      ArrayType
+        TypeReference
+          Identifier: ' Bar'
+          StringKeyword
+      ArrayLiteralExpression
+    MethodDeclaration
+      Identifier: '
+
+  cast'
+      Parameter
+        Identifier: '_name'
+        ParenthesizedType
+          ConditionalType
+            TupleType
+              TypeReference
+                Identifier: 'T'
+            TupleType
+              StringKeyword
+            StringKeyword
+            StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+  
+  pushThis'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+    Bar'
+                Identifier: 'instance'
+              Identifier: 'push'
+            ThisKeyword

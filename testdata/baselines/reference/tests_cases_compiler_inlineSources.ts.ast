@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'b'

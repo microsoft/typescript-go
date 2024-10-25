@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' call'
+    Block
+      ReturnStatement
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral

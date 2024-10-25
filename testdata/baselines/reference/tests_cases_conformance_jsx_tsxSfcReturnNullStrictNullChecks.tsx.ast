@@ -1,0 +1,41 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        ArrowFunction
+          Parameter
+            Identifier: 'props'
+            AnyKeyword
+          EqualsGreaterThanToken
+          NullKeyword
+  FunctionDeclaration
+    Identifier: ' Greet'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'name'
+          QuestionToken
+          StringKeyword
+    Block
+      ReturnStatement
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        JsxSelfClosingElement
+          Identifier: 'Foo'
+          JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' G'
+        JsxSelfClosingElement
+          Identifier: 'Greet'
+          JsxAttributes

@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyClass'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' myMethod'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'

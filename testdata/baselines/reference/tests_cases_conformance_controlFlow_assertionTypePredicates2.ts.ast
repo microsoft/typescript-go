@@ -1,0 +1,44 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    Identifier: 'a'
+                  Identifier: 'y'
+                ExclamationEqualsEqualsToken
+                NumericLiteral
+              ThrowStatement
+                CallExpression
+                  Identifier: ' TypeError'
+            ReturnStatement
+              Identifier: ' undefined'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' main'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' a'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' x'
+                      NumericLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+    foo'
+                Identifier: 'a'

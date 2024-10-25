@@ -1,0 +1,177 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' b'
+      FunctionType
+        TypeParameter
+          Identifier: 'U'
+        TypeOperator
+          TypeReference
+            Identifier: ' U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+    Parameter
+      Identifier: ' b'
+      FunctionType
+        TypeParameter
+          Identifier: 'U'
+        TypeParameter
+          Identifier: ' L'
+          TypeOperator
+            TypeReference
+              Identifier: ' U'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' U'
+          TypeReference
+            Identifier: 'L'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'K'
+    Parameter
+      Identifier: ' b'
+      FunctionType
+        TypeParameter
+          Identifier: 'U'
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' U'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' U'
+            TypeReference
+              Identifier: 'K'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' IdMapped'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' IdMapped'
+            TypeReference
+              Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionType
+          TypeParameter
+            Identifier: 'U'
+          MappedType
+            TypeParameter
+              Identifier: 'K'
+              TypeOperator
+                TypeReference
+                  Identifier: ' U'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' U'
+              TypeReference
+                Identifier: 'K'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        TypeQuery
+          Identifier: ' g'
+        Identifier: ' f'

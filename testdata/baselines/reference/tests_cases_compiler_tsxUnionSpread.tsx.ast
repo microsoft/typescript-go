@@ -1,0 +1,101 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Element'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' CatInfo'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' type'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' subType'
+        StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' DogInfo'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' type'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' AnimalInfo'
+    UnionType
+      TypeReference
+        Identifier: ' CatInfo'
+      TypeReference
+        Identifier: ' DogInfo'
+  FunctionDeclaration
+    Identifier: ' AnimalComponent'
+    Parameter
+      Identifier: 'info'
+      TypeReference
+        Identifier: ' AnimalInfo'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+    Block
+      ReturnStatement
+        AsExpression
+          Identifier: ' undefined'
+          AnyKeyword
+  FunctionDeclaration
+    Identifier: ' getProps'
+    TypeReference
+      Identifier: ' AnimalInfo'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' type'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' subType'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' props'
+        TypeReference
+          Identifier: 'AnimalInfo'
+        CallExpression
+          Identifier: ' getProps'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' component'
+        JsxSelfClosingElement
+          Identifier: 'AnimalComponent'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'props'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' props2'
+        TypeReference
+          Identifier: 'AnimalInfo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' type'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' subType'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' component2'
+        JsxSelfClosingElement
+          Identifier: 'AnimalComponent'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'props2'

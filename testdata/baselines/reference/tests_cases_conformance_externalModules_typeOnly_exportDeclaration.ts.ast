@@ -1,0 +1,39 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' A'

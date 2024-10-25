@@ -1,0 +1,111 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Primitive'
+    UnionType
+      NumberKeyword
+      StringKeyword
+      BooleanKeyword
+      TypeReference
+        Identifier: ' Date'
+  InterfaceDeclaration
+    Identifier: ' Numeric'
+    MethodSignature
+      Identifier: '
+    valueOf'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' NumCoercible'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+            EqualsToken
+            Identifier: ' a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' valueOf'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' extent'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Numeric'
+    Parameter
+      Identifier: 'array'
+      TypeReference
+        Identifier: ' Array'
+        UnionType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' Primitive'
+    UnionType
+      TupleType
+        UnionType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' Primitive'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' Primitive'
+      TupleType
+        UndefinedKeyword
+        UndefinedKeyword
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'undefined'
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' extentMixed'
+        UnionType
+          TupleType
+            UnionType
+              TypeReference
+                Identifier: 'Primitive'
+              TypeReference
+                Identifier: ' NumCoercible'
+            UnionType
+              TypeReference
+                Identifier: ' Primitive'
+              TypeReference
+                Identifier: ' NumCoercible'
+          TupleType
+            UndefinedKeyword
+            UndefinedKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+extentMixed'
+      EqualsToken
+      CallExpression
+        Identifier: ' extent'
+        ArrayLiteralExpression
+          NewExpression
+            Identifier: ' NumCoercible'
+            NumericLiteral
+          NumericLiteral
+          StringLiteral
+          TrueKeyword

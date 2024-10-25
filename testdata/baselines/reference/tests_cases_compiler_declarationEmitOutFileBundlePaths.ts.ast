@@ -1,0 +1,18 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        StringLiteral
+        StringLiteral
+      PropertyAssignment
+        StringLiteral
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' versions'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: '
+    versions'

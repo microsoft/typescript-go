@@ -1,0 +1,46 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' props'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: '
+    children'
+          BindingElement
+            Identifier: ' // here!
+    active'
+            Identifier: ' _a'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest'
+        Identifier: ' props'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: '
+        children'
+              BindingElement
+                Identifier: '
+        active'
+                Identifier: ' _a'
+              BindingElement
+                DotDotDotToken
+                Identifier: 'rest'
+            Identifier: ' props'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' asdf'
+        NumericLiteral

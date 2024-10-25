@@ -1,0 +1,109 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' PromiseFulfilledResult'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    status'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    value'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' PromiseRejectedResult'
+    PropertySignature
+      Identifier: '
+    status'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    reason'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' PromiseSettledResult'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' PromiseFulfilledResult'
+        TypeReference
+          Identifier: 'T'
+      TypeReference
+        Identifier: ' PromiseRejectedResult'
+  InterfaceDeclaration
+    Identifier: ' PromiseConstructor'
+    MethodSignature
+      Identifier: '
+    /**
+     * Creates a Promise that is resolved with an array of results when all
+     * of the provided Promises resolve or reject.
+     * @param values An array of Promises.
+     * @returns A new Promise.
+     */
+    allSettled'
+      TypeParameter
+        Identifier: 'T'
+        UnionType
+          TypeOperator
+            ArrayType
+              UnknownKeyword
+          TupleType
+      Parameter
+        Identifier: 'values'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' Promise'
+        MappedType
+          MinusToken
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' PromiseSettledResult'
+            TypeReference
+              Identifier: 'Awaited'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: 'P'
+    MethodSignature
+      Identifier: '
+
+    /**
+     * Creates a Promise that is resolved with an array of results when all
+     * of the provided Promises resolve or reject.
+     * @param values An array of Promises.
+     * @returns A new Promise.
+     */
+    allSettled'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'values'
+        TypeReference
+          Identifier: ' Iterable'
+          UnionType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' PromiseLike'
+              TypeReference
+                Identifier: 'T'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'PromiseSettledResult'
+            TypeReference
+              Identifier: 'Awaited'
+              TypeReference
+                Identifier: 'T'

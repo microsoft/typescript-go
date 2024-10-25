@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// interface Foo {
+////     extend<T>(...objs: any[]): T;
+////     extend<T>(deep, target: T): T;
+//// }
+//// var $: Foo;
+//// $.extend({ /**/foo: 0 }, "");
+//// 
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoExists'

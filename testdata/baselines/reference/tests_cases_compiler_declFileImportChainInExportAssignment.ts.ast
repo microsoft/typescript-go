@@ -1,0 +1,21 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' c'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' c'
+  ImportEqualsDeclaration
+    Identifier: ' a'
+    QualifiedName
+      Identifier: ' m'
+      Identifier: 'c'
+  ImportEqualsDeclaration
+    Identifier: ' b'
+    Identifier: ' a'
+  ExportAssignment
+    Identifier: ' b'

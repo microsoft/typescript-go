@@ -1,0 +1,283 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Object'
+        Identifier: 'defineProperty'
+      Identifier: 'x'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' value'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' writable'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Object'
+        Identifier: 'defineProperty'
+      Identifier: 'x'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' value'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Object'
+        Identifier: 'defineProperty'
+      Identifier: 'x'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' value'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' writable'
+          FalseKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Object'
+        Identifier: 'defineProperty'
+      Identifier: 'x'
+      StringLiteral
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: ' get'
+          Block
+            ReturnStatement
+              NumericLiteral
+        MethodDeclaration
+          Identifier: ' set'
+          Parameter
+            Identifier: '_'
+          Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Object'
+        Identifier: 'defineProperty'
+      Identifier: 'x'
+      StringLiteral
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: ' get'
+          Block
+            ReturnStatement
+              NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Object'
+        Identifier: 'defineProperty'
+      Identifier: 'x'
+      StringLiteral
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    /** @param {string} str */
+    set'
+          Parameter
+            Identifier: 'str'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'zip'
+                EqualsToken
+                CallExpression
+                  Identifier: ' Number'
+                  Identifier: 'str'
+  FunctionDeclaration
+    Identifier: ' takeName'
+    Parameter
+      Identifier: 'named'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' named'
+          Identifier: 'name'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+takeName'
+      Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'zip'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'houseNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' returnExemplar'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' needsExemplar'
+        ArrowFunction
+          Parameter
+            Identifier: '_'
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          VoidExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' expected'
+        ParenthesizedExpression
+          ParenthesizedExpression
+            NullKeyword
+  FunctionDeclaration
+    Identifier: ' match'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+match'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Identifier: ' expected'
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          Identifier: ' expected'
+        EqualsGreaterThanToken
+        VoidExpression
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' x'
+  ImportEqualsDeclaration
+    Identifier: ' x'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'name'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'middleInit'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'lastName'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'zip'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'houseNumber'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'zipStr'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+x'
+        Identifier: 'name'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x'
+        Identifier: 'zip'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x'
+        Identifier: 'zipStr'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+x'
+        Identifier: 'lastName'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x'
+        Identifier: 'houseNumber'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // should also fail
+x'
+        Identifier: 'zipStr'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // should fail
+x'
+        Identifier: 'middleInit'
+      EqualsToken
+      StringLiteral

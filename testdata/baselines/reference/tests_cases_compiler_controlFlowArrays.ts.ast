@@ -1,0 +1,645 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' cond'
+    BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    x'
+            NumericLiteral
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    x'
+            NumericLiteral
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    x'
+            NumericLiteral
+          EqualsToken
+          TrueKeyword
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          TrueKeyword
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          NumericLiteral
+          StringLiteral
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      IfStatement
+        CallExpression
+          Identifier: 'cond'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'push'
+              NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'push'
+              StringLiteral
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      IfStatement
+        CallExpression
+          Identifier: 'cond'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'push'
+              NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'push'
+              StringLiteral
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      IfStatement
+        CallExpression
+          Identifier: 'cond'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'push'
+              StringLiteral
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f7'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NullKeyword
+      IfStatement
+        CallExpression
+          Identifier: 'cond'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              ArrayLiteralExpression
+          WhileStatement
+            CallExpression
+              Identifier: 'cond'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            x'
+                    Identifier: 'push'
+                  StringLiteral
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f8'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          NumericLiteral
+      IfStatement
+        CallExpression
+          Identifier: 'cond'
+        ReturnStatement
+          Identifier: ' x'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '  // number[]
+    x'
+            Identifier: 'push'
+          StringLiteral
+      IfStatement
+        CallExpression
+          Identifier: 'cond'
+        ReturnStatement
+          Identifier: ' x'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '  // (string | number)[]
+    x'
+            Identifier: 'push'
+          TrueKeyword
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f9'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      IfStatement
+        CallExpression
+          Identifier: 'cond'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'push'
+              NumericLiteral
+          ReturnStatement
+            Identifier: ' x'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'push'
+              StringLiteral
+          ReturnStatement
+            Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f10'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      IfStatement
+        CallExpression
+          Identifier: 'cond'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'push'
+              TrueKeyword
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'push'
+              NumericLiteral
+          ExpressionStatement
+            Identifier: '
+        x'
+          WhileStatement
+            CallExpression
+              Identifier: 'cond'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            x'
+                    Identifier: 'push'
+                  StringLiteral
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          NumericLiteral
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f11'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '  // x.length ok on implicit any[]
+        x'
+                Identifier: 'push'
+              StringLiteral
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f12'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ArrayLiteralExpression
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '  // x.length ok on implicit any[]
+        x'
+                Identifier: 'push'
+              StringLiteral
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f13'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          TrueKeyword
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f14'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          TrueKeyword
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f15'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      WhileStatement
+        CallExpression
+          Identifier: 'cond'
+        Block
+          WhileStatement
+            CallExpression
+              Identifier: 'cond'
+            Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'push'
+              StringLiteral
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f16'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                BinaryExpression
+                  Identifier: 'x'
+                  EqualsToken
+                  ArrayLiteralExpression
+                CommaToken
+                Identifier: ' x'
+            Identifier: 'push'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'x'
+                    Identifier: 'push'
+                  StringLiteral
+                CommaToken
+                Identifier: ' x'
+            Identifier: 'push'
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            ParenthesizedExpression
+              ParenthesizedExpression
+                Identifier: 'x'
+            NumericLiteral
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f17'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'unshift'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'unshift'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'unshift'
+          TrueKeyword
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f18'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'unshift'
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    x'
+            NumericLiteral
+          EqualsToken
+          TrueKeyword
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'arg'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' val'
+            NumberKeyword
+    VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+arr'
+        Identifier: 'push'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' val'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' bar'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'arr'

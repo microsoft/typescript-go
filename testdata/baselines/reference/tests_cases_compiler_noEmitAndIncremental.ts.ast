@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        TrueKeyword

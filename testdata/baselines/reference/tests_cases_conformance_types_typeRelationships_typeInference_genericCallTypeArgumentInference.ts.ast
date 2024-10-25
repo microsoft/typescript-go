@@ -1,0 +1,511 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' t'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' foo'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ReturnStatement
+        Identifier: ' u'
+  FunctionDeclaration
+    Identifier: ' foo2b'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+      ReturnStatement
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' foo2'
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' foo2b'
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' t'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        PublicKeyword
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    foo'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' t'
+    MethodDeclaration
+      Identifier: '
+
+    foo2'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' u'
+    MethodDeclaration
+      Identifier: '
+
+    foo3'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' t'
+    MethodDeclaration
+      Identifier: '
+
+    foo4'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' t'
+    MethodDeclaration
+      Identifier: '
+
+    foo5'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' t'
+    MethodDeclaration
+      Identifier: '
+
+    foo6'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' T'
+        ReturnStatement
+          Identifier: ' x'
+    MethodDeclaration
+      Identifier: '
+
+    foo7'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' T'
+        ReturnStatement
+          Identifier: ' x'
+    MethodDeclaration
+      Identifier: '
+
+    foo8'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' T'
+        ReturnStatement
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo'
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo2'
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo3'
+          TrueKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo4'
+          StringLiteral
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo5'
+          TrueKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo7'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo8'
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    ConstructSignature
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo2'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+    MethodSignature
+      Identifier: '
+    foo3'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo4'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo5'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo6'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo7'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo8'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo'
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo2'
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo3'
+          TrueKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo4'
+          StringLiteral
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo5'
+          TrueKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo7'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo8'

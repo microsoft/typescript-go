@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' a'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' global'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' b'
+    Block
+      ClassDeclaration
+        Identifier: ' global'
+  ModuleDeclaration
+    Identifier: ' global'
+    ModuleBlock
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'global'
+      NumberKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    global'
+            StringLiteral

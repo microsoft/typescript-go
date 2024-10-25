@@ -1,0 +1,796 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CancellationToken'
+        ImportSpecifier
+          Identifier: ' CodeAction'
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' CompletionEntry'
+        ImportSpecifier
+          Identifier: ' CompletionEntryData'
+        ImportSpecifier
+          Identifier: ' CompletionEntryDetails'
+        ImportSpecifier
+          Identifier: ' CompletionInfo'
+        ImportSpecifier
+          Identifier: ' CompletionsTriggerCharacter'
+        ImportSpecifier
+          Identifier: ' CompletionTriggerKind'
+        ImportSpecifier
+          Identifier: ' formatting'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' JSDocTagInfo'
+        ImportSpecifier
+          Identifier: ' JsxAttributes'
+        ImportSpecifier
+          Identifier: ' LanguageServiceHost'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' ObjectLiteralExpression'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' PropertyAccessExpression'
+        ImportSpecifier
+          Identifier: ' ScriptElementKind'
+        ImportSpecifier
+          Identifier: ' ScriptTarget'
+        ImportSpecifier
+          Identifier: ' SortedArray'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' SymbolDisplayPart'
+        ImportSpecifier
+          Identifier: ' TextSpan'
+        ImportSpecifier
+          Identifier: ' TokenSyntaxKind'
+        ImportSpecifier
+          Identifier: ' Type'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+        ImportSpecifier
+          Identifier: ' UserPreferences'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' moduleSpecifierResolutionLimit'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' moduleSpecifierResolutionCacheAttemptLimit'
+        NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Log'
+    FunctionType
+      Parameter
+        Identifier: 'message'
+        StringKeyword
+      VoidKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SortText'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    __sortText'
+          AnyKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SortText'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    LocalDeclarationPriority'
+            TypeReference
+              Identifier: ' SortText'
+          PropertySignature
+            Identifier: '
+    LocationPriority'
+            TypeReference
+              Identifier: ' SortText'
+          PropertySignature
+            Identifier: '
+    OptionalMember'
+            TypeReference
+              Identifier: ' SortText'
+          PropertySignature
+            Identifier: '
+    MemberDeclaredBySpreadAssignment'
+            TypeReference
+              Identifier: ' SortText'
+          PropertySignature
+            Identifier: '
+    SuggestedClassMembers'
+            TypeReference
+              Identifier: ' SortText'
+          PropertySignature
+            Identifier: '
+    GlobalsOrKeywords'
+            TypeReference
+              Identifier: ' SortText'
+          PropertySignature
+            Identifier: '
+    AutoImportSuggestions'
+            TypeReference
+              Identifier: ' SortText'
+          PropertySignature
+            Identifier: '
+    ClassMemberSnippets'
+            TypeReference
+              Identifier: ' SortText'
+          PropertySignature
+            Identifier: '
+    JavascriptIdentifiers'
+            TypeReference
+              Identifier: ' SortText'
+          MethodSignature
+            Identifier: '
+    Deprecated'
+            Parameter
+              Identifier: 'sortText'
+              TypeReference
+                Identifier: ' SortText'
+            TypeReference
+              Identifier: ' SortText'
+          MethodSignature
+            Identifier: '
+    ObjectLiteralProperty'
+            Parameter
+              Identifier: 'presetSortText'
+              TypeReference
+                Identifier: ' SortText'
+            Parameter
+              Identifier: ' symbolDisplayName'
+              StringKeyword
+            TypeReference
+              Identifier: ' SortText'
+          MethodSignature
+            Identifier: '
+    SortBelow'
+            Parameter
+              Identifier: 'sortText'
+              TypeReference
+                Identifier: ' SortText'
+            TypeReference
+              Identifier: ' SortText'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' CompletionSource'
+    EnumMember
+      Identifier: '
+    /** Completions that require `this.` insertion text */
+    ThisProperty'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Auto-import that comes attached to a class member snippet */
+    ClassMemberSnippet'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** A type-only import that needs to be promoted in order to be used at the completion location */
+    TypeOnlyAlias'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Auto-import that comes attached to an object literal method snippet */
+    ObjectLiteralMethodSnippet'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Case completions for switch statements */
+    SwitchCases'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Completions for an Object literal expression */
+    ObjectLiteralMemberWithComma'
+      StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' SymbolOriginInfoKind'
+    EnumMember
+      Identifier: '
+    ThisType'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    SymbolMember'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Export'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Promise'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Nullable'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ResolvedExport'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    TypeOnlyAlias'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ObjectLiteralMethod'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Ignore'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ComputedPropertyName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    SymbolMemberNoExport'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    SymbolMemberExport'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SymbolOriginInfo'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' SymbolOriginInfoKind'
+    PropertySignature
+      Identifier: '
+    isDefaultExport'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    isFromPackageJson'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    fileName'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' UniqueNameSet'
+    MethodSignature
+      Identifier: '
+    add'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    has'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      BooleanKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SymbolOriginInfoMap'
+    TypeReference
+      Identifier: ' Record'
+      NumberKeyword
+      TypeReference
+        Identifier: ' SymbolOriginInfo'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SymbolSortTextMap'
+    ArrayType
+      ParenthesizedType
+        UnionType
+          TypeReference
+            Identifier: 'SortText'
+          UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDefaultCommitCharacters'
+    Parameter
+      Identifier: 'isNewIdentifierLocation'
+      BooleanKeyword
+    ArrayType
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getCompletionsAtPosition'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' log'
+      TypeReference
+        Identifier: ' Log'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' triggerCharacter'
+      UnionType
+        TypeReference
+          Identifier: ' CompletionsTriggerCharacter'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' completionKind'
+      UnionType
+        TypeReference
+          Identifier: ' CompletionTriggerKind'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: ' formatContext'
+      QuestionToken
+      TypeReference
+        QualifiedName
+          Identifier: ' formatting'
+          Identifier: 'FormatContext'
+    Parameter
+      Identifier: ' includeSymbol'
+      QuestionToken
+      BooleanKeyword
+    UnionType
+      TypeReference
+        Identifier: ' CompletionInfo'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getCompletionEntriesFromSymbols'
+    Parameter
+      Identifier: 'symbols'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Symbol'
+    Parameter
+      Identifier: ' entries'
+      TypeReference
+        Identifier: ' SortedArray'
+        TypeReference
+          Identifier: 'CompletionEntry'
+    Parameter
+      Identifier: ' replacementToken'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' contextToken'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' location'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' target'
+      TypeReference
+        Identifier: ' ScriptTarget'
+    Parameter
+      Identifier: ' log'
+      TypeReference
+        Identifier: ' Log'
+    Parameter
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' CompletionKind'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' formatContext'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' formatting'
+            Identifier: 'FormatContext'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' isTypeOnlyLocation'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' propertyAccessToConvert'
+      QuestionToken
+      TypeReference
+        Identifier: ' PropertyAccessExpression'
+    Parameter
+      Identifier: ' jsxIdentifierExpected'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' isJsxInitializer'
+      QuestionToken
+      TypeReference
+        Identifier: ' IsJsxInitializer'
+    Parameter
+      Identifier: ' importStatementCompletion'
+      QuestionToken
+      TypeReference
+        Identifier: ' ImportStatementCompletionInfo'
+    Parameter
+      Identifier: ' recommendedCompletion'
+      QuestionToken
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' symbolToOriginInfoMap'
+      QuestionToken
+      TypeReference
+        Identifier: ' SymbolOriginInfoMap'
+    Parameter
+      Identifier: ' symbolToSortTextMap'
+      QuestionToken
+      TypeReference
+        Identifier: ' SymbolSortTextMap'
+    Parameter
+      Identifier: ' isJsxIdentifierExpected'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' isRightOfOpenTag'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' includeSymbol'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' UniqueNameSet'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CompletionEntryIdentifier'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    source'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    data'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompletionEntryData'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getCompletionEntryDetails'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' log'
+      TypeReference
+        Identifier: ' Log'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' entryId'
+      TypeReference
+        Identifier: ' CompletionEntryIdentifier'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' formatContext'
+      TypeReference
+        QualifiedName
+          Identifier: ' formatting'
+          Identifier: 'FormatContext'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    UnionType
+      TypeReference
+        Identifier: ' CompletionEntryDetails'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createCompletionDetailsForSymbol'
+    Parameter
+      Identifier: 'symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' name'
+      StringKeyword
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' location'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: ' codeActions'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' CodeAction'
+    Parameter
+      Identifier: ' sourceDisplay'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    TypeReference
+      Identifier: ' CompletionEntryDetails'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createCompletionDetails'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' kindModifiers'
+      StringKeyword
+    Parameter
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    Parameter
+      Identifier: ' displayParts'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    Parameter
+      Identifier: ' documentation'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    Parameter
+      Identifier: ' tags'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocTagInfo'
+    Parameter
+      Identifier: ' codeActions'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' CodeAction'
+    Parameter
+      Identifier: ' source'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    TypeReference
+      Identifier: ' CompletionEntryDetails'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getCompletionEntrySymbol'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' log'
+      TypeReference
+        Identifier: ' Log'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' entryId'
+      TypeReference
+        Identifier: ' CompletionEntryIdentifier'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    UnionType
+      TypeReference
+        Identifier: ' Symbol'
+      UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' IsJsxInitializer'
+    UnionType
+      BooleanKeyword
+      TypeReference
+        Identifier: ' Identifier'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' CompletionKind'
+    EnumMember
+      Identifier: '
+    ObjectPropertyDeclaration'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Global'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    PropertyAccess'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    MemberLike'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    String'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getPropertiesForObjectExpression'
+    Parameter
+      Identifier: 'contextualType'
+      TypeReference
+        Identifier: ' Type'
+    Parameter
+      Identifier: ' completionsType'
+      UnionType
+        TypeReference
+          Identifier: ' Type'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' obj'
+      UnionType
+        TypeReference
+          Identifier: ' ObjectLiteralExpression'
+        TypeReference
+          Identifier: ' JsxAttributes'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    ArrayType
+      TypeReference
+        Identifier: ' Symbol'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ImportStatementCompletionInfo'
+    PropertySignature
+      Identifier: '
+    isKeywordOnlyCompletion'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    keywordCompletion'
+      UnionType
+        TypeReference
+          Identifier: ' TokenSyntaxKind'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    isNewIdentifierLocation'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    isTopLevelTypeOnly'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    couldBeTypeOnlyImportSpecifier'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    replacementSpan'
+      UnionType
+        TypeReference
+          Identifier: ' TextSpan'
+        UndefinedKeyword

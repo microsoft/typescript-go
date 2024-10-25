@@ -1,0 +1,9 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            PrivateIdentifier
+            NumericLiteral

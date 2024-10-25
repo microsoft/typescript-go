@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' chrome'
+        ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Object'
+        Identifier: 'defineProperty'
+      Identifier: 'chrome'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' value'
+          ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' enumerable'
+          TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+chrome'
+          Identifier: 'devtools'
+        Identifier: 'inspectedWindow'
+      EqualsToken
+      ObjectLiteralExpression

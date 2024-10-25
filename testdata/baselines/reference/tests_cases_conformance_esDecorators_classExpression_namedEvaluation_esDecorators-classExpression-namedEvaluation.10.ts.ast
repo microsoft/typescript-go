@@ -1,0 +1,194 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' f'
+        AnyKeyword
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        Identifier: ' x'
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        StringLiteral
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        NumericLiteral
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        ComputedPropertyName
+          StringLiteral
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        ComputedPropertyName
+          NumericLiteral
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        ComputedPropertyName
+          CallExpression
+            Identifier: 'f'
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        Identifier: ' __proto__'
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        StringLiteral
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        Identifier: ' x'
+        ClassExpression
+          PropertyDeclaration
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' y'
+            AnyKeyword
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        StringLiteral
+        ClassExpression
+          PropertyDeclaration
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' y'
+            AnyKeyword
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        NumericLiteral
+        ClassExpression
+          PropertyDeclaration
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' y'
+            AnyKeyword
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        ComputedPropertyName
+          StringLiteral
+        ClassExpression
+          PropertyDeclaration
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' y'
+            AnyKeyword
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        ComputedPropertyName
+          NumericLiteral
+        ClassExpression
+          PropertyDeclaration
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' y'
+            AnyKeyword
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        ComputedPropertyName
+          CallExpression
+            Identifier: 'f'
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        Identifier: ' __proto__'
+        ClassExpression
+          PropertyDeclaration
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' y'
+            AnyKeyword
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        StaticKeyword
+        StringLiteral
+        ClassExpression
+          PropertyDeclaration
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' y'
+            AnyKeyword
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      PropertyDeclaration
+        Decorator
+          Identifier: 'dec'
+        StaticKeyword
+        Identifier: ' x'
+        ClassExpression
+          Decorator
+            Identifier: 'dec'

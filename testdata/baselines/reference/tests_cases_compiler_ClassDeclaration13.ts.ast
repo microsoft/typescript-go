@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+   foo'
+    MethodDeclaration
+      Identifier: '
+   bar'
+      Block

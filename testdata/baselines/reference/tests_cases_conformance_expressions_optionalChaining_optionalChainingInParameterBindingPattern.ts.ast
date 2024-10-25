@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrowFunction
+          UnionType
+            TypeLiteral
+              PropertySignature
+                Identifier: ' d'
+                StringKeyword
+            UndefinedKeyword
+          EqualsGreaterThanToken
+          Identifier: ' undefined'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: 'a'
+                    QuestionDotToken
+                    Identifier: 'd'
+                Identifier: ' c'
+                StringLiteral
+          EqualsGreaterThanToken
+          Block

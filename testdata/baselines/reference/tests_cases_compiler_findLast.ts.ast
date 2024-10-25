@@ -1,0 +1,393 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' itemNumber'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              NumericLiteral
+            Identifier: 'findLast'
+          ArrowFunction
+            Parameter
+              Identifier: 'item'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' item'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' itemString'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              StringLiteral
+            Identifier: 'findLast'
+          ArrowFunction
+            Parameter
+              Identifier: 'item'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' item'
+              EqualsEqualsEqualsToken
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Int8Array'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Uint8Array'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Uint8ClampedArray'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Int16Array'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Uint16Array'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Int32Array'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Uint32Array'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Float32Array'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Float64Array'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' BigInt64Array'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          CallExpression
+            Identifier: ' BigInt'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' BigUint64Array'
+        Identifier: 'findLast'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          CallExpression
+            Identifier: ' BigInt'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' indexNumber'
+        NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              NumericLiteral
+            Identifier: 'findLastIndex'
+          ArrowFunction
+            Parameter
+              Identifier: 'item'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' item'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' indexString'
+        NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              StringLiteral
+            Identifier: 'findLastIndex'
+          ArrowFunction
+            Parameter
+              Identifier: 'item'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' item'
+              EqualsEqualsEqualsToken
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Int8Array'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Uint8Array'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Uint8ClampedArray'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Int16Array'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Uint16Array'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Int32Array'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Uint32Array'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Float32Array'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Float64Array'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' BigInt64Array'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          CallExpression
+            Identifier: ' BigInt'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' BigUint64Array'
+        Identifier: 'findLastIndex'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' item'
+          EqualsEqualsEqualsToken
+          CallExpression
+            Identifier: ' BigInt'
+            NumericLiteral

@@ -1,0 +1,34 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//@Filename: /bar.ts
+////const q = "test";
+
+// @Filename: /a.ts
+////const z = 1;
+////[|const y = z + 2;|]
+////const t = y + 1;
+
+verify'
+        Identifier: 'moveToFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    interactiveRefactorArguments'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' targetFile'
+              StringLiteral

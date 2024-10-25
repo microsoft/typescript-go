@@ -1,0 +1,75 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo2'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m1'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo3'
+        Block
+      FunctionDeclaration
+        Identifier: ' foo4'
+        Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo2'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo3'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo4'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo3'
+        Block
+      FunctionDeclaration
+        Identifier: ' foo4'
+        Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo2'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo3'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo4'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    m1'
+            Identifier: 'foo3'

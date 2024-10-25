@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exports'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+exports'
+      EqualsToken
+      StringLiteral

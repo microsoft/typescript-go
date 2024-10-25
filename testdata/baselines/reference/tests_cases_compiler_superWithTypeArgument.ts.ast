@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

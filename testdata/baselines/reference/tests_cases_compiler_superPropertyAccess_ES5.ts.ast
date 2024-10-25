@@ -1,0 +1,101 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyBase'
+    MethodDeclaration
+      Identifier: '
+  getValue'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    GetAccessor
+      Identifier: ' value'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' MyDerived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' MyBase'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f1'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'getValue'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f2'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' MyDerived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        PropertyAccessExpression
+          Identifier: ' d'
+          Identifier: 'value'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _property'
+      StringKeyword
+    GetAccessor
+      Identifier: ' property'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: '_property'
+    SetAccessor
+      Identifier: ' property'
+      Parameter
+        Identifier: 'value'
+        StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_property'
+            EqualsToken
+            Identifier: ' value'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    SetAccessor
+      Identifier: ' property'
+      Parameter
+        Identifier: 'value'
+        StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'property'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' value'
+              PlusToken
+              StringLiteral

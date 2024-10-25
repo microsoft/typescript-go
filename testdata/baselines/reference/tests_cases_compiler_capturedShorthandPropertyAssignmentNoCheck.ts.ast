@@ -1,0 +1,48 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fns'
+        ArrayLiteralExpression
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    fns'
+            Identifier: 'push'
+          ArrowFunction
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' fns'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'fn'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' fn'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'result'

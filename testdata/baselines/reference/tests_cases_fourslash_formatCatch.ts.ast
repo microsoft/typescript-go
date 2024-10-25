@@ -1,0 +1,39 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////try {
+////} /*0*/catch        {
+////}
+////
+////try {
+////} /*1*/catch{
+////}
+
+format'
+        Identifier: 'document'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' marker'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' test'
+        Identifier: 'markers'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'marker'
+          Identifier: 'marker'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'currentLineContentIs'
+          StringLiteral

@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elem'
+        TypeReference
+          Identifier: ' HTMLElement'
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elem'
+        TypeReference
+          Identifier: ' HTMLElement'

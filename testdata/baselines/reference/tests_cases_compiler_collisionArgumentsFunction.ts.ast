@@ -1,0 +1,214 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'arguments'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'restParameters'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arguments'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f12'
+    Parameter
+      Identifier: 'i'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'arguments'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arguments'
+            ArrayType
+              AnyKeyword
+  FunctionDeclaration
+    Identifier: ' f1NoError'
+    Parameter
+      Identifier: 'arguments'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arguments'
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'i'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'arguments'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f21'
+    Parameter
+      Identifier: 'arguments'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2NoError'
+    Parameter
+      Identifier: 'arguments'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      DotDotDotToken
+      Identifier: 'restParameters'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arguments'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3NoError'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arguments'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'arguments'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'arguments'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'arguments'
+      AnyKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arguments'
+            AnyKeyword
+  FunctionDeclaration
+    Identifier: ' f42'
+    Parameter
+      Identifier: 'i'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'arguments'
+  FunctionDeclaration
+    Identifier: ' f42'
+    Parameter
+      Identifier: 'i'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'arguments'
+  FunctionDeclaration
+    Identifier: ' f42'
+    Parameter
+      Identifier: 'i'
+      AnyKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'arguments'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arguments'
+            ArrayType
+              AnyKeyword
+  FunctionDeclaration
+    Identifier: ' f4NoError'
+    Parameter
+      Identifier: 'arguments'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f4NoError'
+    Parameter
+      Identifier: 'arguments'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' f4NoError'
+    Parameter
+      Identifier: 'arguments'
+      AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arguments'
+            AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'arguments'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'arguments'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f52'
+    Parameter
+      Identifier: 'i'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'arguments'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f52'
+    Parameter
+      Identifier: 'i'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'arguments'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'arguments'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'arguments'
+      StringKeyword

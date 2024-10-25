@@ -1,0 +1,88 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' x'
+        NumberKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'x'
+        Identifier: ' y'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' x'
+        NumberKeyword
+      Block
+  ExportDeclaration
+    NamedExports

@@ -1,0 +1,72 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' size'
+      NumberKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' t'
+      TypeReference
+        Identifier: ' T'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'size'
+            EqualsToken
+            Identifier: ' x'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' clone'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' Bar'
+            TypeReference
+              Identifier: 'T'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'size'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' Bar'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' b'
+            Identifier: 'clone'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        TypeReference
+          Identifier: ' Bar'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' b2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' b3'

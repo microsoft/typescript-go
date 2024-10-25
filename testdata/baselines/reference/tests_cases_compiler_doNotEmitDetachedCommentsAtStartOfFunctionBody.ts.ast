@@ -1,0 +1,21 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Block
+      ReturnStatement
+        NumericLiteral

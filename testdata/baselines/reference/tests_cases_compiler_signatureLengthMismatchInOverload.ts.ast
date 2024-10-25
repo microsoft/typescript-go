@@ -1,0 +1,44 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'callback'
+      FunctionType
+        Parameter
+          Identifier: 'arg'
+          StringKeyword
+        Parameter
+          Identifier: ' arg2'
+          StringKeyword
+        VoidKeyword
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'callback'
+      FunctionType
+        Parameter
+          Identifier: 'arg'
+          NumberKeyword
+        VoidKeyword
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'callback'
+      UnknownKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ArrowFunction
+        Parameter
+          Identifier: 'arg'
+          NumberKeyword
+        Parameter
+          Identifier: ' arg2'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Block

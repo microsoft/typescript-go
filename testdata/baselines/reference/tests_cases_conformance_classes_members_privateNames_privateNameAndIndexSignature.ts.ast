@@ -1,0 +1,36 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'k'
+        StringKeyword
+      AnyKeyword
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      ElementAccessExpression
+        ThisKeyword
+        StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'message'
+        StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              ThisKeyword
+              StringLiteral
+            EqualsToken
+            NumericLiteral

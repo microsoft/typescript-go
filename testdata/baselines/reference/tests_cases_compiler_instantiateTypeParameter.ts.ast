@@ -1,0 +1,11 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'

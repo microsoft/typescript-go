@@ -1,0 +1,22 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' $'
+    PropertySignature
+      Identifier: ' x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' $'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    x'
+      FunctionType
+        TypeReference
+          Identifier: ' $'

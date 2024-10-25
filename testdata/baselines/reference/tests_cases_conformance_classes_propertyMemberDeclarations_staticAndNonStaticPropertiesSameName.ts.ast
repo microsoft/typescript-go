@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+
+    f'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' f'
+      Block

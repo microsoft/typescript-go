@@ -1,0 +1,45 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="./fourslash.ts" />
+
+//// declare module "foo";  
+//// declare module "foo";
+
+verify'
+        Identifier: 'navigationBar'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral

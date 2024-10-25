@@ -1,0 +1,147 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @strictNullChecks: true
+
+////function foo(strOrNum: string | number) {
+////    if (typeof /*1*/strOrNum === "number") {
+////        return /*2*/strOrNum;
+////    }
+////    else {
+////        return /*3*/strOrNum.length;
+////    }
+////}
+
+////function bar() {
+////   let s: string | undefined;
+////   /*4*/s;
+////   /*5*/s = "abc";
+////   /*6*/s;
+////}
+
+////class Foo {
+////    #privateProperty: string[] | null;
+////    constructor() {
+////        this.#privateProperty = null;
+////    }
+////    testMethod() {
+////        if (this.#privateProperty === null)
+////            return;
+////        this./*7*/#privateProperty;
+////    }
+////}
+
+verify'
+        Identifier: 'quickInfos'
+      ObjectLiteralExpression
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral

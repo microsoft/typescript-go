@@ -1,0 +1,155 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNum'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' pp1'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    pp2'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    GetAccessor
+      Identifier: ' pp3'
+      Block
+        ReturnStatement
+          Identifier: ' strOrNum'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        strOrNum'
+            EqualsToken
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'pp1'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pp1'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' // string | number
+        strOrNum'
+            EqualsToken
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'pp2'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pp2'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' // string | number
+        strOrNum'
+            EqualsToken
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'pp3'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pp3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        TypeReference
+          Identifier: ' C1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      BinaryExpression
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' c1'
+              Identifier: 'pp2'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          Identifier: ' c1'
+          Identifier: 'pp2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // string | number
+strOrNum'
+      EqualsToken
+      BinaryExpression
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' c1'
+              Identifier: 'pp3'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          Identifier: ' c1'
+          Identifier: 'pp3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      BinaryExpression
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' obj1'
+              Identifier: 'x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          Identifier: ' obj1'
+          Identifier: 'x'

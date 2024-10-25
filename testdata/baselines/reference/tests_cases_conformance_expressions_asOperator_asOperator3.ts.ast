@@ -1,0 +1,106 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' tag'
+    Parameter
+      DotDotDotToken
+      Identifier: 'x'
+      ArrayType
+        AnyKeyword
+    AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            AsExpression
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+              NumberKeyword
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            AsExpression
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+              NumberKeyword
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            AsExpression
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+              NumberKeyword
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        AsExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        AsExpression
+          NoSubstitutionTemplateLiteral
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        AsExpression
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                NumericLiteral
+                TemplateTail
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        AsExpression
+          TaggedTemplateExpression
+            Identifier: ' tag'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                NumericLiteral
+                TemplateTail
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        AsExpression
+          TaggedTemplateExpression
+            Identifier: ' tag'
+            NoSubstitutionTemplateLiteral
+          StringKeyword

@@ -1,0 +1,102 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'n'
+      TypeQuery
+        Identifier: ' f'
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'n'
+      TypeQuery
+        Identifier: ' g'
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 'n'
+      TypeQuery
+        Identifier: ' g'
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 'n'
+      TypeQuery
+        Identifier: ' f'
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' g'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        FunctionType
+          TypeQuery
+            Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' b1'
+    Block
+      ReturnStatement
+        Identifier: ' b1'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeQuery
+      Identifier: ' foo'
+    Block
+      ReturnStatement
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo1'
+        TypeQuery
+          Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo2'
+        Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo3'
+        FunctionExpression
+          Block
+            ReturnStatement
+              Identifier: ' foo3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      FunctionDeclaration
+        Identifier: ' bar'
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Block
+          ReturnStatement
+            Identifier: ' x'
+      ReturnStatement
+        Identifier: ' bar'

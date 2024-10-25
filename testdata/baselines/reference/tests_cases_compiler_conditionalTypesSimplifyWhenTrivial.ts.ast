@@ -1,0 +1,398 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'Params'
+          Parameter
+            Identifier: '
+    params'
+            TypeReference
+              Identifier: ' Pick'
+              TypeReference
+                Identifier: 'Params'
+              TypeReference
+                Identifier: ' Exclude'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+                NeverKeyword
+          TypeReference
+            Identifier: ' Params'
+          EqualsGreaterThanToken
+          Identifier: ' params'
+  FunctionDeclaration
+    Identifier: ' fn2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Exclude'
+        TypeReference
+          Identifier: 'T'
+        NeverKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+            Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn3'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'Params'
+          Parameter
+            Identifier: '
+    params'
+            TypeReference
+              Identifier: ' Pick'
+              TypeReference
+                Identifier: 'Params'
+              TypeReference
+                Identifier: ' Extract'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+          TypeReference
+            Identifier: ' Params'
+          EqualsGreaterThanToken
+          Identifier: ' params'
+  FunctionDeclaration
+    Identifier: ' fn4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Extract'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+            Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Extract'
+          UnionType
+            NumberKeyword
+            StringKeyword
+          AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' ExtractWithDefault'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' D'
+      NeverKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' D'
+  TypeAliasDeclaration
+    Identifier: ' ExcludeWithDefault'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' D'
+      NeverKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+      TypeReference
+        Identifier: ' D'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn5'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'Params'
+          Parameter
+            Identifier: '
+    params'
+            TypeReference
+              Identifier: ' Pick'
+              TypeReference
+                Identifier: 'Params'
+              TypeReference
+                Identifier: ' ExcludeWithDefault'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+                NeverKeyword
+          TypeReference
+            Identifier: ' Params'
+          EqualsGreaterThanToken
+          Identifier: ' params'
+  FunctionDeclaration
+    Identifier: ' fn6'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' ExcludeWithDefault'
+        TypeReference
+          Identifier: 'T'
+        NeverKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+            Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn7'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'Params'
+          Parameter
+            Identifier: '
+    params'
+            TypeReference
+              Identifier: ' Pick'
+              TypeReference
+                Identifier: 'Params'
+              TypeReference
+                Identifier: ' ExtractWithDefault'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+          TypeReference
+            Identifier: ' Params'
+          EqualsGreaterThanToken
+          Identifier: ' params'
+  FunctionDeclaration
+    Identifier: ' fn8'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' ExtractWithDefault'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+            Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  TypeAliasDeclaration
+    Identifier: ' TemplatedConditional'
+    TypeParameter
+      Identifier: 'TCheck'
+    TypeParameter
+      Identifier: ' TExtends'
+    TypeParameter
+      Identifier: ' TTrue'
+    TypeParameter
+      Identifier: ' TFalse'
+    ConditionalType
+      TypeReference
+        Identifier: ' TCheck'
+      TypeReference
+        Identifier: ' TExtends'
+      TypeReference
+        Identifier: ' TTrue'
+      TypeReference
+        Identifier: ' TFalse'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn9'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'Params'
+          Parameter
+            Identifier: '
+    params'
+            TypeReference
+              Identifier: ' Pick'
+              TypeReference
+                Identifier: 'Params'
+              TypeReference
+                Identifier: ' TemplatedConditional'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+                NeverKeyword
+                NeverKeyword
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+          TypeReference
+            Identifier: ' Params'
+          EqualsGreaterThanToken
+          Identifier: ' params'
+  FunctionDeclaration
+    Identifier: ' fn10'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' TemplatedConditional'
+        TypeReference
+          Identifier: 'T'
+        NeverKeyword
+        NeverKeyword
+        TypeReference
+          Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+            Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn11'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'Params'
+          Parameter
+            Identifier: '
+    params'
+            TypeReference
+              Identifier: ' Pick'
+              TypeReference
+                Identifier: 'Params'
+              TypeReference
+                Identifier: ' TemplatedConditional'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Params'
+                NeverKeyword
+          TypeReference
+            Identifier: ' Params'
+          EqualsGreaterThanToken
+          Identifier: ' params'
+  FunctionDeclaration
+    Identifier: ' fn12'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' TemplatedConditional'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+        NeverKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+            Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zee'
+        NonNullExpression
+          NonNullExpression
+            NonNullExpression
+              Identifier: ' z'

@@ -1,0 +1,28 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Hmm'
+    ConditionalType
+      TupleType
+        LiteralType
+          NumericLiteral
+      TupleType
+        InferType
+          TypeParameter
+            Identifier: ' T'
+        OptionalType
+          AnyKeyword
+      TupleType
+        TypeReference
+          Identifier: 'T'
+        ConditionalType
+          TupleType
+            LiteralType
+              NumericLiteral
+          TupleType
+            TypeReference
+              Identifier: 'T'
+          LiteralType
+            TrueKeyword
+          LiteralType
+            FalseKeyword
+      NeverKeyword

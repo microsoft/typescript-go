@@ -1,0 +1,55 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Import'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Require'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f1'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f2'
+    Block
+      ReturnStatement
+        NumericLiteral

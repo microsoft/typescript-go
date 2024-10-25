@@ -1,0 +1,94 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' D'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' D'
+        ModuleBlock
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' f'
+            Block
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        ModuleBlock
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' f'
+            Block
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        ModuleBlock
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' f'
+            Block
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleDeclaration
+      Identifier: 'P'
+      ModuleBlock
+        ClassDeclaration
+          ExportKeyword
+          Identifier: ' C'
+          MethodDeclaration
+            StaticKeyword
+            Identifier: ' f'
+            Block
+        ClassDeclaration
+          ExportKeyword
+          Identifier: ' E'
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' C'
+        EnumDeclaration
+          ExportKeyword
+          Identifier: ' D'
+          EnumMember
+            Identifier: '
+        f'
+        VariableStatement
+          ExportKeyword
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' v'
+              TypeReference
+                QualifiedName
+                  Identifier: ' M'
+                  Identifier: 'D'
+        VariableStatement
+          ExportKeyword
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' w'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' M'
+                  Identifier: 'D'
+                Identifier: 'f'
+        VariableStatement
+          ExportKeyword
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' M'
+                  Identifier: 'C'
+                Identifier: 'f'
+        VariableStatement
+          ExportKeyword
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' M'
+                  Identifier: 'E'
+                Identifier: 'f'

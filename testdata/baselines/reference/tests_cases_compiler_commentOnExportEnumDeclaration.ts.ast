@@ -1,0 +1,11 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Color'
+    EnumMember
+      Identifier: '
+    r'
+    EnumMember
+      Identifier: ' g'
+    EnumMember
+      Identifier: ' b'

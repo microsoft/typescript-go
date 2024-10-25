@@ -1,0 +1,47 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// module multiM { }
+//// 
+//// module multiM {
+////     /*1*/export class c { }
+//// }
+//// 
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'deleteAtCaret'
+      PropertyAccessExpression
+        StringLiteral
+        Identifier: 'length'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'eof'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'numberOfErrorsInCurrentFile'
+      NumericLiteral

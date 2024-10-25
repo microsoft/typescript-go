@@ -1,0 +1,185 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' obj'
+    Parameter
+      Identifier: 'x'
+      ObjectKeyword
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'x'
+        Block
+          ReturnStatement
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        obj'
+              Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        Block
+          ReturnStatement
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        obj'
+              Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsToken
+          NullKeyword
+        Block
+          ReturnStatement
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        obj'
+              Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ReturnStatement
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        obj'
+              Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            TrueKeyword
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'x'
+            Block
+              ReturnStatement
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'x'
+              EqualsEqualsEqualsToken
+              NullKeyword
+            Block
+              ReturnStatement
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        obj'
+              Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' x'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            obj'
+                  Identifier: 'x'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        obj'
+              Identifier: 'x'

@@ -1,0 +1,77 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Zet'
+    Parameter
+      Identifier: 't'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'u'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 't'
+          EqualsToken
+          Identifier: ' t'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/**
+ * @param {T} v
+ * @param {Id<T>} id
+ */
+Zet'
+          Identifier: 'prototype'
+        Identifier: 'add'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'v'
+        Parameter
+          Identifier: ' id'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'u'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' v'
+                BarBarToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 't'
+          ReturnStatement
+            CallExpression
+              Identifier: ' id'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'u'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        NewExpression
+          Identifier: ' Zet'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+z'
+        Identifier: 't'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+z'
+        Identifier: 'u'
+      EqualsToken
+      FalseKeyword

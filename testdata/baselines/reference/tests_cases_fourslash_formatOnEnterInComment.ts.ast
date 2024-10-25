@@ -1,0 +1,27 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////   /**
+////    * /*1*/
+////    */
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insertLine'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'currentFileContentIs'
+      NoSubstitutionTemplateLiteral

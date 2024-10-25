@@ -1,0 +1,510 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' varInit'
+        Identifier: ' varInit'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pInit'
+        AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'pInit'
+      Identifier: ' pInit'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' pInit'
+            AnyKeyword
+  ClassDeclaration
+    Identifier: ' InitClass'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'x'
+    MethodDeclaration
+      Identifier: '
+    fn'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fnReturn1'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' fnReturn1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' fnReturn1'
+  FunctionDeclaration
+    Identifier: ' fnReturn2'
+    Block
+      ReturnStatement
+        Identifier: ' fnReturn2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnr2'
+        FunctionType
+          AnyKeyword
+        CallExpression
+          Identifier: ' fnReturn2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' co1'
+        ParenthesizedExpression
+          BinaryExpression
+            Identifier: 'co1'
+            CommaToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' co1'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' co2'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              NumericLiteral
+              CommaToken
+              NumericLiteral
+            CommaToken
+            Identifier: ' co2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' co2'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' co3'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'co1'
+                CommaToken
+                Identifier: ' co2'
+              CommaToken
+              Identifier: ' co3'
+            CommaToken
+            Identifier: ' co1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' co3'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' as1'
+        ParenthesizedExpression
+          BinaryExpression
+            Identifier: 'as1'
+            EqualsToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' as1'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' as2'
+        ParenthesizedExpression
+          BinaryExpression
+            Identifier: 'as2'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' as2'
+              EqualsToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' as2'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cnd1'
+        ConditionalExpression
+          Identifier: ' cnd1'
+          QuestionToken
+          NumericLiteral
+          ColonToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cnd1'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cnd2'
+        ConditionalExpression
+          Identifier: ' cnd1'
+          QuestionToken
+          ConditionalExpression
+            Identifier: ' cnd1'
+            QuestionToken
+            StringLiteral
+            ColonToken
+            StringLiteral
+          ColonToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cnd2'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' or1'
+        BinaryExpression
+          Identifier: ' or1'
+          BarBarToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' or1'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' or2'
+        BinaryExpression
+          StringLiteral
+          BarBarToken
+          Identifier: ' or2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' or2'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' or3'
+        BinaryExpression
+          Identifier: ' or3'
+          BarBarToken
+          Identifier: ' or3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' or3'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' and1'
+        BinaryExpression
+          Identifier: ' and1'
+          AmpersandAmpersandToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' and1'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' and2'
+        BinaryExpression
+          StringLiteral
+          AmpersandAmpersandToken
+          Identifier: ' and2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' and2'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' and3'
+        BinaryExpression
+          Identifier: ' and3'
+          AmpersandAmpersandToken
+          Identifier: ' and3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' and3'
+        AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fnCall'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' fnCall'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnCallResult'
+        CallExpression
+          Identifier: ' fnCall'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnCallResult'
+        AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fnArg1'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' fnArg1'
+    Parameter
+      Identifier: ' y'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            FunctionType
+              Parameter
+                Identifier: 'n'
+                TypeQuery
+                  Identifier: ' fnArg1'
+              Parameter
+                Identifier: ' m'
+                NumberKeyword
+              VoidKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    fnArg1'
+          Identifier: 'fnArg1'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' overload1'
+    Parameter
+      Identifier: 'x'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' overload1'
+    Parameter
+      Identifier: 'x'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' overload1'
+    Parameter
+      Identifier: 'x'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          AnyKeyword
+        AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    Identifier: ' overload1'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  EmptyStatement
+  FunctionDeclaration
+    Identifier: ' fnArg2'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' overload1'
+          Identifier: 'fnArg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        CallExpression
+          Identifier: ' fnArg2'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    fn1'
+      Block
+        ReturnStatement
+          NewExpression
+            ParenthesizedExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'fn1'
+    MethodDeclaration
+      Identifier: '
+    fn2'
+      Block
+        ReturnStatement
+          NewExpression
+            ParenthesizedExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'fn2'
+    MethodDeclaration
+      Identifier: '
+    fn3'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              ConstructorType
+                Parameter
+                  Identifier: 'x'
+                NumberKeyword
+        ReturnStatement
+          NewExpression
+            Identifier: ' a'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fn3'
+  FunctionDeclaration
+    Identifier: ' fn5'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ConstructorType
+              Parameter
+                Identifier: 'x'
+              NumberKeyword
+      ReturnStatement
+        NewExpression
+          Identifier: ' a'
+          Identifier: 'fn5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn5r'
+        CallExpression
+          Identifier: ' fn5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' propAcc1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    m'
+            PropertyAccessExpression
+              Identifier: ' propAcc1'
+              Identifier: 'm'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' propAcc1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' m'
+            AnyKeyword
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              Identifier: ' M2'
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2inst'
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' C2'
+          Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2inst'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' q'
+      PropertyAccessExpression
+        Identifier: ' C3'
+        Identifier: 'q'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qq'
+        PropertyAccessExpression
+          Identifier: ' C3'
+          Identifier: 'q'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qq'
+        AnyKeyword

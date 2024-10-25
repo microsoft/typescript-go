@@ -1,0 +1,44 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' doThing'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' n'
+          StringKeyword
+    Block
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' n'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    p'
+      CallExpression
+        Identifier: ' doThing'
+        Identifier: 'A'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    p1'
+      CallExpression
+        Identifier: ' doThing'
+        Identifier: 'A'
+    PropertyDeclaration
+      Identifier: ' // OK
+    p2'
+      CallExpression
+        Identifier: ' doThing'
+        Identifier: 'B'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+doThing'
+      Identifier: 'B'

@@ -1,0 +1,20 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' outer'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' inner'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' local'
+                NumericLiteral
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                Identifier: ' local'

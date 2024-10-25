@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    u'
+          EqualsToken
+          Identifier: ' t'

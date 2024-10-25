@@ -1,0 +1,40 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+  client'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    getThing'
+          ArrowFunction
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+              StringLiteral
+    MethodDeclaration
+      Identifier: '
+
+  foo'
+      TypeReference
+        Identifier: ' Promise'
+        VoidKeyword
+      Block
+        ReturnStatement
+          ParenthesizedExpression
+            AsExpression
+              AsExpression
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'client'
+                    Identifier: 'getThing'
+                UnknownKeyword
+              TypeReference
+                Identifier: ' Promise'
+                VoidKeyword

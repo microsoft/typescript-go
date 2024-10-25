@@ -1,0 +1,35 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'v'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          GetAccessor
+            Identifier: ' a'
+            Block
+              ReturnStatement
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ObjectLiteralExpression
+          SetAccessor
+            Identifier: ' b'
+            Parameter
+              Identifier: 'v'
+            Block

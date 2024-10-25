@@ -1,0 +1,693 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' DocumentPositionMapper'
+        ImportSpecifier
+          Identifier: ' DocumentRegistryBucketKeyWithMode'
+        ImportSpecifier
+          Identifier: ' FileWatcher'
+        ImportSpecifier
+          Identifier: ' FormatCodeSettings'
+        ImportSpecifier
+          Identifier: ' IScriptSnapshot'
+        ImportSpecifier
+          Identifier: ' LineInfo'
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' ScriptKind'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' SourceFileLike'
+        ImportSpecifier
+          Identifier: ' TextSpan'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' AbsolutePositionAndLineText'
+        ImportSpecifier
+          Identifier: ' NormalizedPath'
+        ImportSpecifier
+          Identifier: ' Project'
+        ImportSpecifier
+          Identifier: ' ScriptVersionCache'
+        ImportSpecifier
+          Identifier: ' ServerHost'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' protocol'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' TextStorage'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' host'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' info'
+    PropertyDeclaration
+      Identifier: '
+    version'
+      NumberKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' svc'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' text'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' textSnapshot'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' lineMap'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fileSize'
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * True if the text is for the file thats open in the editor
+     */
+    isOpen'
+      BooleanKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' ownFileText'
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * True when reloading contents of file from the disk is pending
+     */
+    pendingReloadFromDisk'
+      BooleanKeyword
+    Constructor
+      Parameter
+        Identifier: 'host'
+        TypeReference
+          Identifier: ' ServerHost'
+      Parameter
+        Identifier: ' info'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      Parameter
+        Identifier: ' initialVersion'
+        QuestionToken
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    getVersion'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    hasScriptVersionCache_TestOnly'
+      BooleanKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' resetSourceMapInfo'
+    MethodDeclaration
+      Identifier: '
+    /** Public for testing */
+    useText'
+      Parameter
+        Identifier: 'newText'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    edit'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        NumberKeyword
+      Parameter
+        Identifier: ' newText'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Set the contents as newText
+     * returns true if text changed
+     */
+    reload'
+      Parameter
+        Identifier: 'newText'
+        StringKeyword
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Reads the contents from tempFile(if supplied) or own file and sets it as contents
+     * returns true if text changed
+     */
+    reloadWithFileText'
+      Parameter
+        Identifier: 'tempFileName'
+        QuestionToken
+        StringKeyword
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Schedule reload from the disk if its not already scheduled and its not own text
+     * returns true when scheduling reload
+     */
+    scheduleReloadIfNeeded'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    delayReloadFromFileIntoText'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * For telemetry purposes, we would like to be able to report the size of the file.
+     * However, we do not want telemetry to require extra file I/O so we report a size
+     * that may be stale (e.g. may not reflect change made on disk since the last reload).
+     * NB: Will read from disk if the file contents have never been loaded because
+     * telemetry falsely indicating size 0 would be counter-productive.
+     */
+    getTelemetryFileSize'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    getSnapshot'
+      TypeReference
+        Identifier: ' IScriptSnapshot'
+    MethodDeclaration
+      Identifier: '
+    getAbsolutePositionAndLineText'
+      Parameter
+        Identifier: 'oneBasedLine'
+        NumberKeyword
+      TypeReference
+        Identifier: ' AbsolutePositionAndLineText'
+    MethodDeclaration
+      Identifier: '
+    /**
+     *  @param line 0 based index
+     */
+    lineToTextSpan'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      TypeReference
+        Identifier: ' TextSpan'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * @param line 1 based index
+     * @param offset 1 based index
+     */
+    lineOffsetToPosition'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      Parameter
+        Identifier: ' offset'
+        NumberKeyword
+      Parameter
+        Identifier: ' allowEdits'
+        QuestionToken
+        LiteralType
+          TrueKeyword
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    positionToLineOffset'
+      Parameter
+        Identifier: 'position'
+        NumberKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Location'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFileTextAndSize'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    switchToScriptVersionCache'
+      TypeReference
+        Identifier: ' ScriptVersionCache'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' tryUseScriptVersionCache'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getOrLoadText'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getLineMap'
+    MethodDeclaration
+      Identifier: '
+    getLineInfo'
+      TypeReference
+        Identifier: ' LineInfo'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isDynamicFileName'
+    Parameter
+      Identifier: 'fileName'
+      TypeReference
+        Identifier: ' NormalizedPath'
+    BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DocumentRegistrySourceFileCache'
+    PropertySignature
+      Identifier: '
+    key'
+      TypeReference
+        Identifier: ' DocumentRegistryBucketKeyWithMode'
+    PropertySignature
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SourceMapFileWatcher'
+    PropertySignature
+      Identifier: '
+    watcher'
+      TypeReference
+        Identifier: ' FileWatcher'
+    PropertySignature
+      Identifier: '
+    sourceInfos'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'Path'
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ScriptInfo'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' host'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' fileName'
+      TypeReference
+        Identifier: ' NormalizedPath'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' scriptKind'
+      TypeReference
+        Identifier: ' ScriptKind'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' hasMixedContent'
+      BooleanKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' path'
+      TypeReference
+        Identifier: ' Path'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' containingProjects'
+      ArrayType
+        TypeReference
+          Identifier: ' Project'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' formatSettings'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' preferences'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    fileWatcher'
+      UnionType
+        TypeReference
+          Identifier: ' FileWatcher'
+        UndefinedKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' textStorage'
+      TypeReference
+        Identifier: ' TextStorage'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' isDynamic'
+      BooleanKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' realpath'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    cacheSourceFile'
+      UnionType
+        TypeReference
+          Identifier: ' DocumentRegistrySourceFileCache'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    mTime'
+      QuestionToken
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    sourceFileLike'
+      QuestionToken
+      TypeReference
+        Identifier: ' SourceFileLike'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    sourceMapFilePath'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' Path'
+        TypeReference
+          Identifier: ' SourceMapFileWatcher'
+        LiteralType
+          FalseKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    declarationInfoPath'
+      QuestionToken
+      TypeReference
+        Identifier: ' Path'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    sourceInfos'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'Path'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    documentPositionMapper'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' DocumentPositionMapper'
+        LiteralType
+          FalseKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    deferredDelete'
+      QuestionToken
+      BooleanKeyword
+    Constructor
+      Parameter
+        Identifier: 'host'
+        TypeReference
+          Identifier: ' ServerHost'
+      Parameter
+        Identifier: ' fileName'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      Parameter
+        Identifier: ' scriptKind'
+        TypeReference
+          Identifier: ' ScriptKind'
+      Parameter
+        Identifier: ' hasMixedContent'
+        BooleanKeyword
+      Parameter
+        Identifier: ' path'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' initialVersion'
+        QuestionToken
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    isDynamicOrHasMixedContent'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    isScriptOpen'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    open'
+      Parameter
+        Identifier: 'newText'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    close'
+      Parameter
+        Identifier: 'fileExists'
+        QuestionToken
+        BooleanKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    getSnapshot'
+      TypeReference
+        Identifier: ' IScriptSnapshot'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' ensureRealPath'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getRealpathIfDifferent'
+      UnionType
+        TypeReference
+          Identifier: ' Path'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * @internal
+     * Does not compute realpath; uses precomputed result. Use `ensureRealPath`
+     * first if a definite result is needed.
+     */
+    isSymlink'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    getFormatCodeSettings'
+      UnionType
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    getPreferences'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' protocol'
+            Identifier: 'UserPreferences'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    attachToProject'
+      Parameter
+        Identifier: 'project'
+        TypeReference
+          Identifier: ' Project'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    isAttached'
+      Parameter
+        Identifier: 'project'
+        TypeReference
+          Identifier: ' Project'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    detachFromProject'
+      Parameter
+        Identifier: 'project'
+        TypeReference
+          Identifier: ' Project'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    detachAllProjects'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    getDefaultProject'
+      TypeReference
+        Identifier: ' Project'
+    MethodDeclaration
+      Identifier: '
+    registerFileUpdate'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    setOptions'
+      Parameter
+        Identifier: 'formatSettings'
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      Parameter
+        Identifier: ' preferences'
+        UnionType
+          TypeReference
+            QualifiedName
+              Identifier: ' protocol'
+              Identifier: 'UserPreferences'
+          UndefinedKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    getLatestVersion'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    saveTo'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    delayReloadNonMixedContentFile'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    reloadFromFile'
+      Parameter
+        Identifier: 'tempFileName'
+        QuestionToken
+        TypeReference
+          Identifier: ' NormalizedPath'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    editContent'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        NumberKeyword
+      Parameter
+        Identifier: ' newText'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    markContainingProjectsAsDirty'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    isOrphan'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     *  @param line 1 based index
+     */
+    lineToTextSpan'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      TypeReference
+        Identifier: ' TextSpan'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * @param line 1 based index
+     * @param offset 1 based index
+     */
+    lineOffsetToPosition'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      Parameter
+        Identifier: ' offset'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    lineOffsetToPosition'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      Parameter
+        Identifier: ' offset'
+        NumberKeyword
+      Parameter
+        Identifier: ' allowEdits'
+        QuestionToken
+        LiteralType
+          TrueKeyword
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    positionToLineOffset'
+      Parameter
+        Identifier: 'position'
+        NumberKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Location'
+    MethodDeclaration
+      Identifier: '
+    isJavaScript'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    closeSourceMapFileWatcher'
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' scriptInfoIsContainedByBackgroundProject'
+    Parameter
+      Identifier: 'info'
+      TypeReference
+        Identifier: ' ScriptInfo'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' scriptInfoIsContainedByDeferredClosedProject'
+    Parameter
+      Identifier: 'info'
+      TypeReference
+        Identifier: ' ScriptInfo'
+    BooleanKeyword

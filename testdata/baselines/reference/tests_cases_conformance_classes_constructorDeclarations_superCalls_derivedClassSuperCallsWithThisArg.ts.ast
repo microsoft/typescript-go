@@ -1,0 +1,72 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'a'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ThisKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ThisKeyword
+  ClassDeclaration
+    Identifier: ' Derived3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ArrowFunction
+              EqualsGreaterThanToken
+              ThisKeyword
+  ClassDeclaration
+    Identifier: ' Derived4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            FunctionExpression
+              Block
+                ReturnStatement
+                  ThisKeyword

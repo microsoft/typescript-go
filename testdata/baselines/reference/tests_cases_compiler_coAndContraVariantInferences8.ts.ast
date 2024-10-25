@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              VoidKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        AnyKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+fn'
+        Identifier: 'call'
+      NullKeyword
+      Identifier: ' x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+fn'
+        Identifier: 'call'
+      NullKeyword
+      Identifier: ' y'
+  ExportDeclaration
+    NamedExports

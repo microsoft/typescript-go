@@ -1,0 +1,33 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' Promise'
+        NumberKeyword
+    AnyKeyword
+    Block
+      ClassDeclaration
+        Identifier: ' Class'
+        MethodDeclaration
+          AsyncKeyword
+          Identifier: ' method'
+          Parameter
+            Decorator
+              CallExpression
+                Identifier: 'dec'
+                AwaitExpression
+                  Identifier: ' value'
+            Identifier: ' arg'
+            NumberKeyword
+          Block
+      ReturnStatement
+        Identifier: ' Class'

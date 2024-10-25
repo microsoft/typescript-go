@@ -1,0 +1,70 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts" />
+
+// @Filename: /home/src/workspaces/project/a.ts
+//// function foo() {
+////    const p = 1;
+////    [|console.log("yes");|]
+//// }
+//// class bar {
+////     constructor() {
+////         function a() {
+////             [|console.log("have a good day");|]
+////         }
+////         a();
+////         function b() {
+////            function c() {
+////                const test = [|1 + 2|] + 3;
+////            }  
+////         }
+////         b();
+////     }
+////     c() {
+////         console.log("hello again");
+////         [|function k() {
+////             const happy = banana + avocados;
+////         }|]
+////     }
+//// }
+
+// @Filename: /home/src/workspaces/project/b.ts
+//// export const juice = 1;
+//// export const sauce = 2;
+//// export const fig = 3;
+//// export const tomato = 4;
+
+// @Filename: /home/src/workspaces/project/tsconfig.json
+////{ "files": ["a.ts", "b.ts"] }
+
+verify'
+        Identifier: 'pasteEdits'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    args'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        pastedText'
+              ArrayLiteralExpression
+                NoSubstitutionTemplateLiteral
+                NoSubstitutionTemplateLiteral
+                NoSubstitutionTemplateLiteral
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              Identifier: '
+        pasteLocations'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' test'
+                  Identifier: 'ranges'
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral

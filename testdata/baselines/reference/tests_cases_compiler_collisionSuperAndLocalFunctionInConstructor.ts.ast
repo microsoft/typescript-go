@@ -1,0 +1,44 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' _super'
+    Block
+  ClassDeclaration
+    Identifier: ' Foo'
+    Constructor
+      Block
+        FunctionDeclaration
+          Identifier: ' _super'
+          Block
+  ClassDeclaration
+    Identifier: ' b'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        FunctionDeclaration
+          Identifier: ' _super'
+          Block
+  ClassDeclaration
+    Identifier: ' c'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  FunctionDeclaration
+                    Identifier: ' _super'
+                    Block

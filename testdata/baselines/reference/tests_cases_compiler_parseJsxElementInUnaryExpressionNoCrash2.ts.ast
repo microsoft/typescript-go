@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    PrefixUnaryExpression
+      TypeAssertionExpression
+        TypeReference
+          Identifier: ''
+        TypeAssertionExpression
+          TypeReference
+            Identifier: ''
+          RegularExpressionLiteral

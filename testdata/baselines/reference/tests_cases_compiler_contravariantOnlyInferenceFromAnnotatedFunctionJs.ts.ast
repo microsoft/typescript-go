@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'fns'
+    Block
+      ReturnStatement
+        ParenthesizedExpression
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        CallExpression
+          Identifier: ' foo'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  bar'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    fn'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'a'
+                    EqualsGreaterThanToken
+                    Block
+                PropertyAssignment
+                  Identifier: '
+    thing'
+                  StringLiteral

@@ -1,0 +1,53 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      StringLiteral
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' myFn'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Block
+  ClassDeclaration
+    Identifier: ' myCls'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        myFn'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+            myFn'
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' x'
+                              ThisKeyword

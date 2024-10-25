@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////enum E {
+////}
+////E.a
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

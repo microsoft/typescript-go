@@ -1,0 +1,1358 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    verifyProgramStructure'
+        ImportSpecifier
+          Identifier: '
+    verifyResolutionCache'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Baseline'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    applyEdit'
+        ImportSpecifier
+          Identifier: '
+    baselineAfterTscCompile'
+        ImportSpecifier
+          Identifier: '
+    BaselineBase'
+        ImportSpecifier
+          Identifier: '
+    commandLineCallbacks'
+        ImportSpecifier
+          Identifier: '
+    CommandLineProgram'
+        ImportSpecifier
+          Identifier: '
+    createBaseline'
+        ImportSpecifier
+          Identifier: '
+    isWatch'
+        ImportSpecifier
+          Identifier: '
+    tscBaselineName'
+        ImportSpecifier
+          Identifier: '
+    TscWatchSystem'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' WatchOrSolution'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuilderProgram'
+    UnionType
+      VoidKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'SolutionBuilder'
+        TypeReference
+          Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'WatchOfConfigFile'
+        TypeReference
+          Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'WatchOfFilesAndCompilerOptions'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TscWatchCompileChange'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuilderProgram'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+    PropertySignature
+      Identifier: '
+    caption'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    edit'
+      FunctionType
+        Parameter
+          Identifier: 'sys'
+          TypeReference
+            Identifier: ' TscWatchSystem'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    timeouts'
+      FunctionType
+        Parameter
+          Identifier: '
+        sys'
+          TypeReference
+            Identifier: ' TscWatchSystem'
+        Parameter
+          Identifier: '
+        programs'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' CommandLineProgram'
+        Parameter
+          Identifier: '
+        watchOrSolution'
+          TypeReference
+            Identifier: ' WatchOrSolution'
+            TypeReference
+              Identifier: 'T'
+        VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TscWatchCheckOptions'
+    PropertySignature
+      Identifier: '
+    baselineSourceMap'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    baselineDependencies'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TscWatchCompileBase'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuilderProgram'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' TscWatchCheckOptions'
+    PropertySignature
+      Identifier: '
+    scenario'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    subScenario'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    commandLineArgs'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    edits'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' TscWatchCompileChange'
+            TypeReference
+              Identifier: 'T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TscWatchCompile'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' TscWatchCompileBase'
+    PropertySignature
+      Identifier: '
+    sys'
+      FunctionType
+        TypeReference
+          Identifier: ' TestServerHost'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noopChange'
+        TypeReference
+          Identifier: ' TscWatchCompileChange'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    caption'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    edit'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'noop'
+          PropertyAssignment
+            Identifier: '
+    timeouts'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'noop'
+  FunctionDeclaration
+    Identifier: ' tscWatchCompile'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' TscWatchCompile'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    it'
+          StringLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' sys'
+                      BindingElement
+                        Identifier: ' baseline'
+                    CallExpression
+                      Identifier: ' createBaseline'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'input'
+                          Identifier: 'sys'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: '
+            scenario'
+                      BindingElement
+                        Identifier: '
+            subScenario'
+                      BindingElement
+                        Identifier: '
+            commandLineArgs'
+                      BindingElement
+                        Identifier: '
+            edits'
+                      BindingElement
+                        Identifier: '
+            baselineSourceMap'
+                      BindingElement
+                        Identifier: '
+            baselineDependencies'
+                    Identifier: ' input'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        ts'
+                      Identifier: 'Debug'
+                    Identifier: 'assert'
+                  CallExpression
+                    Identifier: 'isWatch'
+                    Identifier: 'commandLineArgs'
+                  StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' cb'
+                      BindingElement
+                        Identifier: ' getPrograms'
+                    CallExpression
+                      Identifier: ' commandLineCallbacks'
+                      Identifier: 'sys'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' watchOrSolution'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'executeCommandLine'
+                      Identifier: '
+            sys'
+                      Identifier: '
+            cb'
+                      Identifier: '
+            commandLineArgs'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        runWatchBaseline'
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            scenario'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            subScenario'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            commandLineArgs'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            sys'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            baseline'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            getPrograms'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            baselineSourceMap'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            baselineDependencies'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            edits'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            watchOrSolution'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createSolutionBuilderWithWatchHostForBaseline'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        Identifier: ' TestServerHost'
+    Parameter
+      Identifier: ' cb'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ExecuteCommandLineCallbacks'
+    TypeReference
+      QualifiedName
+        Identifier: ' ts'
+        Identifier: 'SolutionBuilderWithWatchHost'
+      TypeReference
+        QualifiedName
+          Identifier: 'ts'
+          Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createSolutionBuilderWithWatchHost'
+              Identifier: 'sys'
+              Identifier: ' /*createProgram*/ undefined'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'createDiagnosticReporter'
+                Identifier: 'sys'
+                TrueKeyword
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'createBuilderStatusReporter'
+                Identifier: 'sys'
+                TrueKeyword
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'createWatchStatusReporter'
+                Identifier: 'sys'
+                TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'afterProgramEmitAndDiagnostics'
+          EqualsToken
+          Identifier: ' cb'
+      ReturnStatement
+        Identifier: ' host'
+  InterfaceDeclaration
+    Identifier: ' CreateWatchCompilerHostOfConfigFileForBaseline'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuilderProgram'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' ts'
+          Identifier: 'CreateWatchCompilerHostOfConfigFileInput'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    system'
+      TypeReference
+        Identifier: ' TestServerHost'
+    PropertySignature
+      Identifier: '
+    cb'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ExecuteCommandLineCallbacks'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createWatchCompilerHostOfConfigFileForBaseline'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuilderProgram'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+    Parameter
+      Identifier: '
+    input'
+      TypeReference
+        Identifier: ' CreateWatchCompilerHostOfConfigFileForBaseline'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      QualifiedName
+        Identifier: ' ts'
+        Identifier: 'WatchCompilerHostOfConfigFile'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createWatchCompilerHostOfConfigFile'
+              ObjectLiteralExpression
+                SpreadAssignment
+                  Identifier: 'input'
+                PropertyAssignment
+                  Identifier: '
+        reportDiagnostic'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'createDiagnosticReporter'
+                    PropertyAccessExpression
+                      Identifier: 'input'
+                      Identifier: 'system'
+                    TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        reportWatchStatus'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'createWatchStatusReporter'
+                    PropertyAccessExpression
+                      Identifier: 'input'
+                      Identifier: 'system'
+                    TrueKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    updateWatchHostForBaseline'
+          Identifier: 'host'
+          PropertyAccessExpression
+            Identifier: ' input'
+            Identifier: 'cb'
+      ReturnStatement
+        Identifier: ' host'
+  InterfaceDeclaration
+    Identifier: ' CreateWatchCompilerHostOfFilesAndCompilerOptionsForBaseline'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuilderProgram'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' ts'
+          Identifier: 'CreateWatchCompilerHostOfFilesAndCompilerOptionsInput'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    system'
+      TypeReference
+        Identifier: ' TestServerHost'
+    PropertySignature
+      Identifier: '
+    cb'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ExecuteCommandLineCallbacks'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createWatchCompilerHostOfFilesAndCompilerOptionsForBaseline'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuilderProgram'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+    Parameter
+      Identifier: '
+    input'
+      TypeReference
+        Identifier: ' CreateWatchCompilerHostOfFilesAndCompilerOptionsForBaseline'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      QualifiedName
+        Identifier: ' ts'
+        Identifier: 'WatchCompilerHostOfFilesAndCompilerOptions'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createWatchCompilerHostOfFilesAndCompilerOptions'
+              ObjectLiteralExpression
+                SpreadAssignment
+                  Identifier: 'input'
+                PropertyAssignment
+                  Identifier: '
+        reportDiagnostic'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'createDiagnosticReporter'
+                    PropertyAccessExpression
+                      Identifier: 'input'
+                      Identifier: 'system'
+                    TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        reportWatchStatus'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'createWatchStatusReporter'
+                    PropertyAccessExpression
+                      Identifier: 'input'
+                      Identifier: 'system'
+                    TrueKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    updateWatchHostForBaseline'
+          Identifier: 'host'
+          PropertyAccessExpression
+            Identifier: ' input'
+            Identifier: 'cb'
+      ReturnStatement
+        Identifier: ' host'
+  FunctionDeclaration
+    Identifier: ' updateWatchHostForBaseline'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuilderProgram'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'WatchCompilerHost'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' cb'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ExecuteCommandLineCallbacks'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' emitFilesAndReportErrors'
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: ' host'
+                Identifier: 'afterProgramCreate'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'afterProgramCreate'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' builderProgram'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        emitFilesAndReportErrors'
+                    Identifier: 'call'
+                  Identifier: 'host'
+                  Identifier: ' builderProgram'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        cb'
+                  Identifier: 'builderProgram'
+      ReturnStatement
+        Identifier: ' host'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RunWatchBaseline'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuilderProgram'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BaselineBase'
+      ExpressionWithTypeArguments
+        Identifier: ' TscWatchCompileBase'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    sys'
+      TypeReference
+        Identifier: ' TscWatchSystem'
+    PropertySignature
+      Identifier: '
+    getPrograms'
+      FunctionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' CommandLineProgram'
+    PropertySignature
+      Identifier: '
+    watchOrSolution'
+      TypeReference
+        Identifier: ' WatchOrSolution'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    useSourceOfProjectReferenceRedirect'
+      QuestionToken
+      FunctionType
+        BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' runWatchBaseline'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuilderProgram'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '
+    scenario'
+        BindingElement
+          Identifier: '
+    subScenario'
+        BindingElement
+          Identifier: '
+    commandLineArgs'
+        BindingElement
+          Identifier: '
+    getPrograms'
+        BindingElement
+          Identifier: '
+    sys'
+        BindingElement
+          Identifier: '
+    baseline'
+        BindingElement
+          Identifier: '
+    baselineSourceMap'
+        BindingElement
+          Identifier: '
+    baselineDependencies'
+        BindingElement
+          Identifier: '
+    edits'
+        BindingElement
+          Identifier: '
+    watchOrSolution'
+        BindingElement
+          Identifier: '
+    useSourceOfProjectReferenceRedirect'
+      TypeReference
+        Identifier: ' RunWatchBaseline'
+        TypeReference
+          Identifier: 'T'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    baseline'
+            Identifier: 'push'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'sys'
+                  Identifier: 'getExecutingFilePath'
+              TemplateMiddle
+            TemplateSpan
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'commandLineArgs'
+                  Identifier: 'join'
+                StringLiteral
+              TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' programs'
+            CallExpression
+              Identifier: ' watchBaseline'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+        baseline'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        getPrograms'
+                PropertyAssignment
+                  Identifier: '
+        oldPrograms'
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'emptyArray'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        sys'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        baselineSourceMap'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        baselineDependencies'
+      IfStatement
+        Identifier: 'edits'
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' caption'
+                  BindingElement
+                    Identifier: ' edit'
+                  BindingElement
+                    Identifier: ' timeouts'
+            Identifier: ' edits'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            applyEdit'
+                  Identifier: 'sys'
+                  Identifier: ' baseline'
+                  Identifier: ' edit'
+                  Identifier: ' caption'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            timeouts'
+                  Identifier: 'sys'
+                  Identifier: ' programs'
+                  Identifier: ' watchOrSolution'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            programs'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' watchBaseline'
+                    ObjectLiteralExpression
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                baseline'
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                getPrograms'
+                      PropertyAssignment
+                        Identifier: '
+                oldPrograms'
+                        Identifier: ' programs'
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                sys'
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                baselineSourceMap'
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                baselineDependencies'
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                caption'
+                      PropertyAssignment
+                        Identifier: '
+                resolutionCache'
+                        CallExpression
+                          PropertyAccessExpression
+                            ParenthesizedExpression
+                              AsExpression
+                                Identifier: 'watchOrSolution'
+                                UnionType
+                                  TypeReference
+                                    QualifiedName
+                                      Identifier: ' ts'
+                                      Identifier: 'WatchOfConfigFile'
+                                    TypeReference
+                                      Identifier: 'T'
+                                  UndefinedKeyword
+                            QuestionDotToken
+                            Identifier: 'getResolutionCache'
+                          QuestionDotToken
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                useSourceOfProjectReferenceRedirect'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Baseline'
+            Identifier: 'runBaseline'
+          CallExpression
+            Identifier: 'tscBaselineName'
+            Identifier: 'scenario'
+            Identifier: ' subScenario'
+            Identifier: ' commandLineArgs'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' baseline'
+              Identifier: 'join'
+            StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' WatchBaseline'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BaselineBase'
+      ExpressionWithTypeArguments
+        Identifier: ' TscWatchCheckOptions'
+    PropertySignature
+      Identifier: '
+    oldPrograms'
+      TypeOperator
+        ArrayType
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'CommandLineProgram'
+              UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    getPrograms'
+      FunctionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' CommandLineProgram'
+    PropertySignature
+      Identifier: '
+    caption'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    resolutionCache'
+      QuestionToken
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ResolutionCache'
+    PropertySignature
+      Identifier: '
+    useSourceOfProjectReferenceRedirect'
+      QuestionToken
+      FunctionType
+        BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' watchBaseline'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '
+    baseline'
+        BindingElement
+          Identifier: '
+    getPrograms'
+        BindingElement
+          Identifier: '
+    oldPrograms'
+        BindingElement
+          Identifier: '
+    sys'
+        BindingElement
+          Identifier: '
+    baselineSourceMap'
+        BindingElement
+          Identifier: '
+    baselineDependencies'
+        BindingElement
+          Identifier: '
+    caption'
+        BindingElement
+          Identifier: '
+    resolutionCache'
+        BindingElement
+          Identifier: '
+    useSourceOfProjectReferenceRedirect'
+      TypeReference
+        Identifier: ' WatchBaseline'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' CommandLineProgram'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' programs'
+            CallExpression
+              Identifier: ' baselineAfterTscCompile'
+              Identifier: '
+        sys'
+              Identifier: '
+        baseline'
+              Identifier: '
+        getPrograms'
+              Identifier: '
+        oldPrograms'
+              Identifier: '
+        baselineSourceMap'
+              TrueKeyword
+              Identifier: '
+        baselineDependencies'
+      IfStatement
+        BinaryExpression
+          Identifier: 'resolutionCache'
+          AmpersandAmpersandToken
+          PropertyAccessExpression
+            Identifier: ' programs'
+            Identifier: 'length'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'programs'
+                  Identifier: 'length'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyProgramStructureAndResolutionCache'
+              NonNullExpression
+                Identifier: '
+            caption'
+              Identifier: '
+            sys'
+              ElementAccessExpression
+                ElementAccessExpression
+                  Identifier: '
+            programs'
+                  NumericLiteral
+                NumericLiteral
+              Identifier: '
+            resolutionCache'
+              Identifier: '
+            useSourceOfProjectReferenceRedirect'
+      ReturnStatement
+        Identifier: ' programs'
+  FunctionDeclaration
+    Identifier: ' verifyProgramStructureAndResolutionCache'
+    Parameter
+      Identifier: '
+    caption'
+      StringKeyword
+    Parameter
+      Identifier: '
+    sys'
+      TypeReference
+        Identifier: ' TscWatchSystem'
+    Parameter
+      Identifier: '
+    program'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Program'
+    Parameter
+      Identifier: '
+    resolutionCache'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ResolutionCache'
+    Parameter
+      Identifier: '
+    useSourceOfProjectReferenceRedirect'
+      QuestionToken
+      FunctionType
+        BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' options'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getCompilerOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' compilerHost'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createCompilerHostWorker'
+              Identifier: 'options'
+              Identifier: ' /*setParentNodes*/ undefined'
+              Identifier: ' sys'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'trace'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'noop'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'writeFile'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'notImplemented'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'useSourceOfProjectReferenceRedirect'
+          EqualsToken
+          Identifier: ' useSourceOfProjectReferenceRedirect'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyProgramStructure'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        ts'
+              Identifier: 'createProgram'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            rootNames'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getRootFileNames'
+              ShorthandPropertyAssignment
+                Identifier: '
+            options'
+              PropertyAssignment
+                Identifier: '
+            projectReferences'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getProjectReferences'
+              PropertyAssignment
+                Identifier: '
+            host'
+                Identifier: ' compilerHost'
+          Identifier: '
+        program'
+          Identifier: '
+        caption'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyResolutionCache'
+          Identifier: 'resolutionCache'
+          Identifier: ' program'
+          ObjectLiteralExpression
+            SpreadAssignment
+              Identifier: 'compilerHost'
+            PropertyAssignment
+              Identifier: '
+
+        getCompilerHost'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' compilerHost'
+            PropertyAssignment
+              Identifier: '
+        toPath'
+              ArrowFunction
+                Parameter
+                  Identifier: ' fileName'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' sys'
+                    Identifier: 'toPath'
+                  Identifier: 'fileName'
+            PropertyAssignment
+              Identifier: '
+        getCompilationSettings'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' options'
+            PropertyAssignment
+              Identifier: '
+        fileIsOpen'
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'returnFalse'
+            PropertyAssignment
+              Identifier: '
+        getCurrentProgram'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' program'
+            PropertyAssignment
+              Identifier: '
+        preferNonRecursiveWatch'
+              PropertyAccessExpression
+                Identifier: ' sys'
+                Identifier: 'preferNonRecursiveWatch'
+            PropertyAssignment
+              Identifier: '
+
+        watchDirectoryOfFailedLookupLocation'
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'returnNoopFileWatcher'
+            PropertyAssignment
+              Identifier: '
+        watchAffectingFileLocation'
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'returnNoopFileWatcher'
+            PropertyAssignment
+              Identifier: '
+        onInvalidatedResolution'
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'noop'
+            PropertyAssignment
+              Identifier: '
+        watchTypeRootsDirectory'
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'returnNoopFileWatcher'
+            PropertyAssignment
+              Identifier: '
+        onChangedAutomaticTypeDirectiveNames'
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'noop'
+            PropertyAssignment
+              Identifier: '
+        scheduleInvalidateResolutionsOfFailedLookupLocations'
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'noop'
+            PropertyAssignment
+              Identifier: '
+        getCachedDirectoryStructureHost'
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'returnUndefined'
+            PropertyAssignment
+              Identifier: '
+        writeLog'
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'noop'
+          Identifier: ' caption'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' VerifyTscWatch'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' TscWatchCompile'
+    PropertySignature
+      Identifier: '
+    baselineIncremental'
+      QuestionToken
+      BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' verifyTscWatch'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' VerifyTscWatch'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    describe'
+          PropertyAccessExpression
+            Identifier: 'input'
+            Identifier: 'scenario'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        describe'
+                  PropertyAccessExpression
+                    Identifier: 'input'
+                    Identifier: 'subScenario'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            tscWatchCompile'
+                          Identifier: 'input'
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'input'
+                  Identifier: 'baselineIncremental'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            describe'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          PropertyAccessExpression
+                            Identifier: 'input'
+                            Identifier: 'subScenario'
+                          TemplateTail
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                tscWatchCompile'
+                              ObjectLiteralExpression
+                                SpreadAssignment
+                                  Identifier: 'input'
+                                PropertyAssignment
+                                  Identifier: '
+                    subScenario'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      PropertyAccessExpression
+                                        Identifier: 'input'
+                                        Identifier: 'subScenario'
+                                      TemplateTail
+                                PropertyAssignment
+                                  Identifier: '
+                    commandLineArgs'
+                                  ArrayLiteralExpression
+                                    SpreadElement
+                                      PropertyAccessExpression
+                                        Identifier: 'input'
+                                        Identifier: 'commandLineArgs'
+                                    StringLiteral

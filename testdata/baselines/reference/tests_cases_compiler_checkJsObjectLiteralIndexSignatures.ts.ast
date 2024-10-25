@@ -1,0 +1,52 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Math'
+            Identifier: 'random'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            Identifier: 'n'
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numericIndex'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'n'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ElementAccessExpression
+          Identifier: '
+numericIndex'
+          Identifier: 'n'
+        Identifier: 'toFixed'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' stringIndex'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 's'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ElementAccessExpression
+          Identifier: '
+stringIndex'
+          Identifier: 's'
+        Identifier: 'toFixed'

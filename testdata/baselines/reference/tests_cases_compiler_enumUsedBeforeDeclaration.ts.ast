@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeReference
+          Identifier: ' Color'
+        PropertyAccessExpression
+          Identifier: ' Color'
+          Identifier: 'Green'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        TypeReference
+          Identifier: ' ConstColor'
+        PropertyAccessExpression
+          Identifier: ' ConstColor'
+          Identifier: 'Green'
+  EnumDeclaration
+    Identifier: ' Color'
+    EnumMember
+      Identifier: ' Red'
+    EnumMember
+      Identifier: ' Green'
+    EnumMember
+      Identifier: ' Blue'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' ConstColor'
+    EnumMember
+      Identifier: ' Red'
+    EnumMember
+      Identifier: ' Green'
+    EnumMember
+      Identifier: ' Blue'

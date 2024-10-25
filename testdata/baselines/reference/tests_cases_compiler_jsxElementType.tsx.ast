@@ -1,0 +1,456 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' React18ReactFragment'
+    TypeReference
+      Identifier: ' ReadonlyArray'
+      TypeReference
+        Identifier: 'React18ReactNode'
+  TypeAliasDeclaration
+    Identifier: ' React18ReactNode'
+    UnionType
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ReactElement'
+        AnyKeyword
+      StringKeyword
+      NumberKeyword
+      TypeReference
+        Identifier: ' React18ReactFragment'
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ReactPortal'
+      BooleanKeyword
+      LiteralType
+        NullKeyword
+      UndefinedKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'React18ReactNode'
+  TypeAliasDeclaration
+    Identifier: ' NewReactJSXElementConstructor'
+    TypeParameter
+      Identifier: 'P'
+    UnionType
+      ParenthesizedType
+        FunctionType
+          Parameter
+            Identifier: 'props'
+            TypeReference
+              Identifier: ' P'
+          TypeReference
+            Identifier: ' React18ReactNode'
+      ParenthesizedType
+        ConstructorType
+          Parameter
+            Identifier: 'props'
+            TypeReference
+              Identifier: ' P'
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'Component'
+            TypeReference
+              Identifier: 'P'
+            AnyKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' JSX'
+        ModuleBlock
+          TypeAliasDeclaration
+            Identifier: ' ElementType'
+            UnionType
+              StringKeyword
+              TypeReference
+                Identifier: ' NewReactJSXElementConstructor'
+                AnyKeyword
+          InterfaceDeclaration
+            Identifier: ' IntrinsicElements'
+            PropertySignature
+              ComputedPropertyName
+                StringLiteral
+              TypeReference
+                QualifiedName
+                  Identifier: ' React'
+                  Identifier: 'DOMAttributes'
+                UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Component'
+        TypeReference
+          Identifier: ' NewReactJSXElementConstructor'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' title'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' RenderElement'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' title'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' title'
+                StringKeyword
+          EqualsGreaterThanToken
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxExpression
+              Identifier: 'title'
+            JsxClosingElement
+              Identifier: 'div'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+Component'
+      EqualsToken
+      Identifier: ' RenderElement'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderElement'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderElement'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' title'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderElement'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' excessProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' RenderString'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' title'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' title'
+                StringKeyword
+          EqualsGreaterThanToken
+          Identifier: ' title'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+Component'
+      EqualsToken
+      Identifier: ' RenderString'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderString'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderString'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' title'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderString'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' excessProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' RenderNumber'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' title'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' title'
+                StringKeyword
+          EqualsGreaterThanToken
+          PropertyAccessExpression
+            Identifier: ' title'
+            Identifier: 'length'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+Component'
+      EqualsToken
+      Identifier: ' RenderNumber'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderNumber'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderNumber'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' title'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderNumber'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' excessProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' RenderArray'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' title'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' title'
+                StringKeyword
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'title'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+Component'
+      EqualsToken
+      Identifier: ' RenderArray'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderArray'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderArray'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' title'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderArray'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' excessProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' RenderPromise'
+        ArrowFunction
+          AsyncKeyword
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' title'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' title'
+                StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+Component'
+      EqualsToken
+      Identifier: ' RenderPromise'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderPromise'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderPromise'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' title'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderPromise'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' excessProp'
+  ClassDeclaration
+    Identifier: ' RenderStringClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' title'
+            StringKeyword
+    MethodDeclaration
+      Identifier: '
+  render'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'props'
+            Identifier: 'title'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+Component'
+      EqualsToken
+      Identifier: ' RenderStringClass'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderStringClass'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderStringClass'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' title'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'RenderStringClass'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' excessProp'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'div'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'my-custom-element'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'boop'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'my-undeclared-custom-element'
+      JsxAttributes
+  InterfaceDeclaration
+    Identifier: ' ReactNativeFlatListProps'
+    TypeParameter
+      Identifier: 'Item'
+  FunctionDeclaration
+    Identifier: ' ReactNativeFlatList'
+    Parameter
+      Identifier: '
+  props'
+      TypeLiteral
+    Parameter
+      Identifier: '
+  ref'
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ForwardedRef'
+        TypeQuery
+          Identifier: ' ReactNativeFlatList'
+    Block
+      ReturnStatement
+        NullKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'ReactNativeFlatList'
+      JsxAttributes
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+      FunctionType
+        Parameter
+          Identifier: 'props'
+          TypeLiteral
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ReactElement'
+          AnyKeyword
+    Parameter
+      Identifier: 'Component'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        JsxSelfClosingElement
+          Identifier: 'Component'
+          JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Unresolved'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Unresolved'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' foo'
+          StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' JSX'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' IntrinsicElements'
+            PropertySignature
+              ComputedPropertyName
+                StringLiteral
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  StringKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a:b'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' a'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a:b'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' b'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a:b'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' a'
+          StringLiteral
+        JsxAttribute
+          Identifier: ' b'
+          StringLiteral

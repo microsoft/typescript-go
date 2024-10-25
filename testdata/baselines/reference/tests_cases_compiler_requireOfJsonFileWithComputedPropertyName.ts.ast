@@ -1,0 +1,29 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' b1'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        Identifier: ' b1'
+  ImportEqualsDeclaration
+    Identifier: ' b2'
+    ExternalModuleReference
+      StringLiteral
+  IfStatement
+    Identifier: 'x'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' b2'
+  Block
+    ExpressionStatement
+      ArrayLiteralExpression
+        Identifier: 'a'
+    ExpressionStatement
+      NumericLiteral

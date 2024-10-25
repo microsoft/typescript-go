@@ -1,0 +1,91 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo1'
+        ConditionalExpression
+          Identifier: ' a'
+          QuestionToken
+          NumericLiteral
+          ColonToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo2'
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' a'
+            QuestionQuestionToken
+            StringLiteral
+          QuestionToken
+          NumericLiteral
+          ColonToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo3'
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' a'
+            QuestionQuestionToken
+            StringLiteral
+          QuestionToken
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'b'
+              QuestionQuestionToken
+              StringLiteral
+          ColonToken
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'c'
+              QuestionQuestionToken
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo4'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' a'
+                QuestionQuestionToken
+                StringLiteral
+              QuestionToken
+              BinaryExpression
+                Identifier: ' b'
+                QuestionQuestionToken
+                StringLiteral
+              ColonToken
+              BinaryExpression
+                Identifier: ' c'
+                QuestionQuestionToken
+                StringLiteral

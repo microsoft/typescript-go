@@ -1,0 +1,161 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        StringKeyword
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        UnionType
+          StringKeyword
+          ArrayType
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        UnionType
+          ArrayType
+            StringKeyword
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        UnionType
+          StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        UnionType
+          NumberKeyword
+          StringKeyword
+          BooleanKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      Identifier: 'a1'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // string
+f1'
+      Identifier: 'b1'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // string[]
+f1'
+      Identifier: 'c1'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // string[]
+f1'
+      Identifier: 'd1'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // { name: string }
+f1'
+      Identifier: 'e1'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            StringKeyword
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        IntersectionType
+          StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+          ArrayType
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        IntersectionType
+          StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        IntersectionType
+          StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+          NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      Identifier: 'a2'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // string
+f2'
+      Identifier: 'b2'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // string[]
+f2'
+      Identifier: 'c2'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // never
+f2'
+      Identifier: 'd2'

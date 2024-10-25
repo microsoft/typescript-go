@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  SwitchStatement
+    Identifier: 'x'
+    CaseBlock
+      CaseClause
+        NumericLiteral
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        x'
+        BreakStatement
+      CaseClause
+        NumericLiteral
+        Block
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+            x'
+          BreakStatement
+      DefaultClause
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        x'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' x'
+              AsteriskToken
+              NumericLiteral
+  SwitchStatement
+    Identifier: 'x'
+    CaseBlock
+      CaseClause
+        NumericLiteral
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        x'
+        BreakStatement
+      CaseClause
+        NumericLiteral
+        Block
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+            x'
+          BreakStatement
+      DefaultClause
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+            x'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' x'
+                AsteriskToken
+                NumericLiteral

@@ -1,0 +1,43 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' X'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Y'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' y'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        IntersectionType
+          ArrayType
+            TypeReference
+              Identifier: ' X'
+          ArrayType
+            TypeReference
+              Identifier: ' Y'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' item'
+    Identifier: ' arr'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    item'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    item'
+          Identifier: 'y'

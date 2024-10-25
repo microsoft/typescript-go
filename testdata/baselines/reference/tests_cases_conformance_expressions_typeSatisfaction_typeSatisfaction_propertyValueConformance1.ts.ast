@@ -1,0 +1,88 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Facts'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 'key'
+          StringKeyword
+        BooleanKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' checkTruths'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Facts'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' checkM'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' m'
+          BooleanKeyword
+    VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    m'
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Should be OK
+checkTruths'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// Should be OK
+checkM'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+// Should fail under --noPropertyAccessFromIndexSignature
+console'
+        Identifier: 'log'
+      PropertyAccessExpression
+        Identifier: 'x'
+        Identifier: 'z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        BooleanKeyword
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'm'
+  TypeAliasDeclaration
+    Identifier: ' M'
+    TypeOperator
+      TypeQuery
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    m'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    s'
+              StringLiteral
+          TypeReference
+            Identifier: ' Facts'

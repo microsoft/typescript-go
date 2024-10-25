@@ -1,0 +1,60 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayType
+          ParenthesizedType
+            FunctionType
+              TypeReference
+                Identifier: ' c'
+        ArrayLiteralExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            NewExpression
+              Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ArrayLiteralExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            NewExpression
+              Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              TypeReference
+                Identifier: ' c'
+          StringKeyword
+        BinaryExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              NewExpression
+                Identifier: ' c'
+          BarBarToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        BinaryExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              NewExpression
+                Identifier: ' c'
+          BarBarToken
+          StringLiteral

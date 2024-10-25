@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' foo'
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' test'
+  ClassDeclaration
+    Identifier: ' bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' foo'
+    MethodDeclaration
+      Identifier: '
+    test'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' bar'

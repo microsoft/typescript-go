@@ -1,0 +1,75 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IArguments'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' RegExp'
+        Parameter
+          Identifier: 'pattern'
+          StringKeyword
+        TypeReference
+          Identifier: ' RegExp'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' RegExp'
+        Parameter
+          Identifier: 'pattern'
+          StringKeyword
+        Parameter
+          Identifier: ' flags'
+          StringKeyword
+        TypeReference
+          Identifier: ' RegExp'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' RegExp'
+        Constructor
+          Parameter
+            Identifier: 'pattern'
+            StringKeyword
+        Constructor
+          Parameter
+            Identifier: 'pattern'
+            StringKeyword
+          Parameter
+            Identifier: ' flags'
+            StringKeyword
+        MethodDeclaration
+          Identifier: '
+        exec'
+          Parameter
+            Identifier: 'string'
+            StringKeyword
+          ArrayType
+            StringKeyword
+        MethodDeclaration
+          Identifier: '
+        test'
+          Parameter
+            Identifier: 'string'
+            StringKeyword
+          BooleanKeyword
+        PropertyDeclaration
+          Identifier: '
+        source'
+          StringKeyword
+        PropertyDeclaration
+          Identifier: '
+        global'
+          BooleanKeyword
+        PropertyDeclaration
+          Identifier: '
+        ignoreCase'
+          BooleanKeyword
+        PropertyDeclaration
+          Identifier: '
+        multiline'
+          BooleanKeyword
+        PropertyDeclaration
+          Identifier: '
+        lastIndex'
+          BooleanKeyword

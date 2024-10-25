@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  ModuleDeclaration
+    Identifier: ' M1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' X'
+            NumberKeyword
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' X'
+        QualifiedName
+          Identifier: ' M1'
+          Identifier: 'X'

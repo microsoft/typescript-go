@@ -1,0 +1,24 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// const arrow = /*a*//*b*/() => 1;
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'refactorKindAvailable'
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+        StringLiteral
+        StringLiteral

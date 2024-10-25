@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '// ==ORIGINAL==
+/*[#|*/x'
+          Identifier: 'if'
+        Identifier: 'z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newLocal'
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'if'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+/*RENAME*/newLocal'
+        Identifier: 'z'

@@ -1,0 +1,19 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    MethodSignature
+      Identifier: '
+    doThing'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cls'
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' Foo'
+          MethodDeclaration
+            Identifier: '
+    doThing'
+            Block

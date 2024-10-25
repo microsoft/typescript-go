@@ -1,0 +1,29 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+/////*1*/interface /*2*/Numbers {
+////    p: number;
+////}
+/////*3*/interface /*4*/Numbers {
+////    m: number;
+////}
+/////*5*/class /*6*/Numbers {
+////    f(n: number) {
+////        return this.p + this.m + n;
+////    }
+////}
+////let i: /*7*/Numbers = new /*8*/Numbers();
+////let x = i.f(i.p + i.m);
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral

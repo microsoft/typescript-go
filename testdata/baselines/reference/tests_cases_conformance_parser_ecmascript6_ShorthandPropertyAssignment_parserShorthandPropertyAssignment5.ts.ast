@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' greet'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' greet'
+            QuestionToken

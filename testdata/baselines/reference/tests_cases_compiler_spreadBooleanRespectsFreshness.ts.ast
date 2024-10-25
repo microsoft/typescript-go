@@ -1,0 +1,51 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    UnionType
+      TypeReference
+        Identifier: ' FooBase'
+      TypeReference
+        Identifier: ' FooArray'
+  TypeAliasDeclaration
+    Identifier: ' FooBase'
+    UnionType
+      StringKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' FooArray'
+    ArrayType
+      TypeReference
+        Identifier: ' FooBase'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo1'
+        TypeReference
+          Identifier: ' Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo2'
+        TypeReference
+          Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+foo1'
+      EqualsToken
+      ArrayLiteralExpression
+        SpreadElement
+          ConditionalExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Array'
+                Identifier: 'isArray'
+              Identifier: 'foo2'
+            QuestionToken
+            Identifier: ' foo2'
+            ColonToken
+            ArrayLiteralExpression
+              Identifier: 'foo2'

@@ -1,0 +1,155 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Inner'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+      ExpressionStatement
+        Identifier: '
+    let'
+      VariableStatement
+        VariableDeclarationList
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            StringKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            NumberKeyword
+      ClassDeclaration
+        Identifier: ' A'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            TypeReference
+              Identifier: ' A'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            TypeReference
+              Identifier: ' A'
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                NumericLiteral
+              VariableDeclaration
+                Identifier: ' b'
+              VariableDeclaration
+                Identifier: ' c'
+                NumericLiteral
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+              VariableDeclaration
+                Identifier: ' y'
+              VariableDeclaration
+                Identifier: ' z'
+      ModuleDeclaration
+        Identifier: ' C'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                NumericLiteral
+              VariableDeclaration
+                Identifier: ' b'
+              VariableDeclaration
+                Identifier: ' c'
+                NumericLiteral
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+              VariableDeclaration
+                Identifier: ' y'
+              VariableDeclaration
+                Identifier: ' z'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a1'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b1'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            StringKeyword
+            StringLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d1'
+            NumberKeyword
+            NumericLiteral
+      ClassDeclaration
+        Identifier: ' D'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e1'
+            NewExpression
+              Identifier: ' D'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f1'
+            NewExpression
+              Identifier: ' D'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g1'
+            TypeReference
+              Identifier: ' D'
+            NewExpression
+              Identifier: ' D'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' h1'
+            TypeReference
+              Identifier: ' D'
+            NewExpression
+              Identifier: ' D'

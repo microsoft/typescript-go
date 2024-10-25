@@ -1,0 +1,212 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ac'
+        TypeReference
+          Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ai'
+        TypeReference
+          Identifier: ' I'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ae'
+        TypeReference
+          Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumberKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        StringKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        BooleanKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' Date'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        AnyKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        VoidKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        TypeReference
+          Identifier: ' Object'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeLiteral
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        FunctionType
+          TypeLiteral
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        TypeReference
+          Identifier: ' Function'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          StringKeyword
+        NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ac'
+      EqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ai'
+      EqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ae'
+      EqualsToken
+      NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        ArrayType
+          NumberKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            StringKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Number'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q'
+        TypeReference
+          Identifier: ' String'
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' V'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          NullKeyword

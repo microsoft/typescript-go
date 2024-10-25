@@ -1,0 +1,7 @@
+SourceFile
+  LabeledStatement
+    Identifier: 'foo'
+    ForStatement
+      Block
+        ContinueStatement
+          Identifier: ' /*2*/ foo'

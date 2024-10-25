@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' z'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' y2'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' z2'
+        NumericLiteral

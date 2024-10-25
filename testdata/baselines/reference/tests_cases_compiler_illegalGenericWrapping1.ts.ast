@@ -1,0 +1,77 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Sequence'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    each'
+      Parameter
+        Identifier: 'iterator'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    map'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'iterator'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' Sequence'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    filter'
+      Parameter
+        Identifier: 'iterator'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          BooleanKeyword
+      TypeReference
+        Identifier: ' Sequence'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    groupBy'
+      TypeParameter
+        Identifier: 'K'
+      Parameter
+        Identifier: 'keySelector'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' K'
+      TypeReference
+        Identifier: ' Sequence'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' key'
+            TypeReference
+              Identifier: ' K'
+          PropertySignature
+            Identifier: ' items'
+            TypeReference
+              Identifier: ' Sequence'
+              TypeReference
+                Identifier: 'T'

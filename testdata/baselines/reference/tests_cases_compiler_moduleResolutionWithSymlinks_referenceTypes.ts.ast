@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' MyClass'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      NumberKeyword
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        ArrayLiteralExpression

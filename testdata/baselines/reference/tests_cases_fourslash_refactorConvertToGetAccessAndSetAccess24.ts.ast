@@ -1,0 +1,40 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// class A {
+////     /*a*/public a: number = 1;/*b*/
+////     public _a: string = "foo";
+////     public _a_1: string = "bar";
+////     public _a_2: string = "baz";
+//// }
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newContent'
+          NoSubstitutionTemplateLiteral

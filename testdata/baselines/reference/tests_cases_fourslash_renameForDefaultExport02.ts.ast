@@ -1,0 +1,45 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ranges'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' test'
+                Identifier: 'rangesByText'
+            Identifier: 'get'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'ranges'
+          Identifier: 'filter'
+        ArrowFunction
+          Parameter
+            Identifier: 'r'
+          EqualsGreaterThanToken
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'r'
+                  Identifier: 'marker'
+                AmpersandAmpersandToken
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' r'
+                      Identifier: 'marker'
+                    Identifier: 'data'
+                  Identifier: 'inComment'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' findInComments'
+          TrueKeyword

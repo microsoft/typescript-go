@@ -1,0 +1,76 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Generic'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        TypeParameter
+          Identifier: 'T'
+        GetAccessor
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              AsExpression
+                NumericLiteral
+                NeverKeyword
+        SetAccessor
+          Identifier: ' y'
+          Parameter
+            Identifier: 'v'
+          Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NewExpression
+              Identifier: ' C'
+              NumberKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    c'
+            Identifier: 'y'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'y'
+      ClassDeclaration
+        Identifier: ' Box'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          PrivateIdentifier
+          ExclamationToken
+          TypeReference
+            Identifier: ' T'
+        GetAccessor
+          Identifier: ' value'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+        SetAccessor
+          Identifier: ' value'
+          Parameter
+            Identifier: 'value'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+                EqualsToken
+                Identifier: ' value'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' Box'
+              NumberKeyword
+            Identifier: 'value'
+          EqualsToken
+          NumericLiteral

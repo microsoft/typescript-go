@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      ReturnStatement
+        BinaryExpression
+          NumericLiteral
+          BarBarToken
+          TrueKeyword

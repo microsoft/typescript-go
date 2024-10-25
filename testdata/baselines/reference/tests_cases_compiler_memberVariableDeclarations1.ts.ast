@@ -1,0 +1,100 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Employee'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' name'
+      StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' address'
+      StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' retired'
+      FalseKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' manager'
+      TypeReference
+        Identifier: ' Employee'
+      NullKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' reports'
+      ArrayType
+        TypeReference
+          Identifier: ' Employee'
+      ArrayLiteralExpression
+  ClassDeclaration
+    Identifier: ' Employee2'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' name'
+      StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' address'
+      StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' retired'
+      BooleanKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' manager'
+      TypeReference
+        Identifier: ' Employee'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' reports'
+      ArrayType
+        TypeReference
+          Identifier: ' Employee'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'retired'
+            EqualsToken
+            FalseKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'manager'
+            EqualsToken
+            NullKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'reports'
+            EqualsToken
+            ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        TypeReference
+          Identifier: ' Employee'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        TypeReference
+          Identifier: ' Employee2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e1'
+      EqualsToken
+      Identifier: ' e2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e2'
+      EqualsToken
+      Identifier: ' e1'

@@ -1,0 +1,66 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Bluebird'
+    StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' a'
+    TypeReference
+      Identifier: ' Bluebird'
+      VoidKeyword
+    Block
+      TryStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+                FunctionExpression
+                  AsyncKeyword
+                  Identifier: ' b'
+                  TypeReference
+                    Identifier: ' Bluebird'
+                    VoidKeyword
+                  Block
+                    TryStatement
+                      Block
+                        ExpressionStatement
+                          AwaitExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' Bluebird'
+                                Identifier: 'resolve'
+                      CatchClause
+                        VariableDeclaration
+                          Identifier: 'error'
+                        Block
+          ExpressionStatement
+            AwaitExpression
+              CallExpression
+                Identifier: ' b'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'error'
+          Block
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' Bluebird'
+        TypeParameter
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Bluebird'
+            TypeQuery
+              Identifier: ' Promise'
+      ExportAssignment
+        Identifier: ' Bluebird'

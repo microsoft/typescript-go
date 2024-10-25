@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' interface'
+        NumberKeyword
+      VariableDeclaration
+        Identifier: ' I'
+        StringKeyword
+  ModuleDeclaration
+    Identifier: ' n'
+    ModuleBlock
+      ExpressionStatement
+        Identifier: '
+    interface'
+      ExpressionStatement
+        Identifier: '   // This should be the identifier 'interface'
+    I'
+      Block

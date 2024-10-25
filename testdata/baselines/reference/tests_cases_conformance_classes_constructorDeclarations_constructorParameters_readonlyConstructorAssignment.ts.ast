@@ -1,0 +1,97 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    Constructor
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+    Constructor
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral

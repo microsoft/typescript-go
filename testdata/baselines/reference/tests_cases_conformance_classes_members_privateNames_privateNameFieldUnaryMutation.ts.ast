@@ -1,0 +1,476 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumberKeyword
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+        ExpressionStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+        ExpressionStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c'
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+        ForStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            LessThanToken
+            NumericLiteral
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+          Block
+        ForStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            LessThanToken
+            NumericLiteral
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+          Block
+        ExpressionStatement
+          PostfixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+        ExpressionStatement
+          PostfixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+        ExpressionStatement
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+        ExpressionStatement
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' e'
+              PostfixUnaryExpression
+                ParenthesizedExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f'
+              PostfixUnaryExpression
+                ParenthesizedExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' g'
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' h'
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+        ForStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            LessThanToken
+            NumericLiteral
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+          Block
+        ForStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            LessThanToken
+            NumericLiteral
+          PostfixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+          Block
+    MethodDeclaration
+      Identifier: '
+    test'
+      Block
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+        ExpressionStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+        ExpressionStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'getInstance'
+                  PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'getInstance'
+                  PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c'
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'getInstance'
+                  PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'getInstance'
+                  PrivateIdentifier
+        ForStatement
+          BinaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+          BinaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+            LessThanToken
+            NumericLiteral
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+          Block
+        ForStatement
+          BinaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+          BinaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+            LessThanToken
+            NumericLiteral
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+          Block
+        ExpressionStatement
+          PostfixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'getInstance'
+                PrivateIdentifier
+        ExpressionStatement
+          PostfixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'getInstance'
+                PrivateIdentifier
+        ExpressionStatement
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'getInstance'
+                PrivateIdentifier
+        ExpressionStatement
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'getInstance'
+                PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' e'
+              PostfixUnaryExpression
+                ParenthesizedExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'getInstance'
+                    PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f'
+              PostfixUnaryExpression
+                ParenthesizedExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'getInstance'
+                    PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' g'
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'getInstance'
+                    PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' h'
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'getInstance'
+                    PrivateIdentifier
+        ForStatement
+          BinaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+          BinaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+            LessThanToken
+            NumericLiteral
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'getInstance'
+                PrivateIdentifier
+          Block
+        ForStatement
+          BinaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+          BinaryExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+            LessThanToken
+            NumericLiteral
+          PostfixUnaryExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'getInstance'
+                PrivateIdentifier
+          Block
+    MethodDeclaration
+      Identifier: '
+    getInstance'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' C'

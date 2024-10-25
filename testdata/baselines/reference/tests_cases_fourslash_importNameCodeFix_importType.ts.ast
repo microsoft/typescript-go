@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowJs: true
+// @checkJs: true
+
+// @Filename: /a.js
+////export {};
+/////** @typedef {number} T */
+
+// @Filename: /b.js
+/////** @type {T} */
+////const x = 0;
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral

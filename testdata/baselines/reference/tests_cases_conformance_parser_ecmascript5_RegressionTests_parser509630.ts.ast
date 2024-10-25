@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Type'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' examples'
+      ArrayLiteralExpression
+  ClassDeclaration
+    Identifier: ' Any'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Type'

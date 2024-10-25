@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' alert'
+      Identifier: 'a'

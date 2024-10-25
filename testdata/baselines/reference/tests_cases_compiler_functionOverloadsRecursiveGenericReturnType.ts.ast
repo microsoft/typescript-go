@@ -1,0 +1,68 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'V'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' id'
+      TypeReference
+        Identifier: ' V'
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'U'
+    PropertyDeclaration
+      Identifier: '
+    GetEnumerator'
+      FunctionType
+        TypeReference
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'U'
+  FunctionDeclaration
+    Identifier: ' Choice'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'args'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' A'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' Choice'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      DotDotDotToken
+      Identifier: 'v_args'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' A'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' Choice'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      DotDotDotToken
+      Identifier: 'v_args'
+      ArrayType
+        AnyKeyword
+    TypeReference
+      Identifier: ' A'
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'T'

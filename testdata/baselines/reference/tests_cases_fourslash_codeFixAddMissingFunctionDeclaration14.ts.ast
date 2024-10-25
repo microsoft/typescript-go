@@ -1,0 +1,46 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @filename: /test.ts
+////export const x = 1;
+
+// @filename: /foo.ts
+////import * as test from "./test";
+////const foo: string = test.foo();
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Add_missing_function_declaration_0'
+              Identifier: 'message'
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral

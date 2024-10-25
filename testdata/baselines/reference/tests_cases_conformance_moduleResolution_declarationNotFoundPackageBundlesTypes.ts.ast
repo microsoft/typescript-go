@@ -1,0 +1,52 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        AnyKeyword
+  ExportAssignment
+    Identifier: ' foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @filename: node_modules/foo/other.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Foo'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Other'
+    StringLiteral

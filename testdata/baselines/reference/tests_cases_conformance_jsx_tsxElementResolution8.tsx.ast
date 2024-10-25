@@ -1,0 +1,80 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Div'
+        NumericLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Div'
+      JsxAttributes
+  FunctionDeclaration
+    Identifier: ' Fact'
+    AnyKeyword
+    Block
+      ReturnStatement
+        NullKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Fact'
+      JsxAttributes
+  FunctionDeclaration
+    Identifier: ' Fnum'
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Fnum'
+      JsxAttributes
+  InterfaceDeclaration
+    Identifier: ' Obj1'
+    ConstructSignature
+      TypeLiteral
+    CallSignature
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Obj1'
+        TypeReference
+          Identifier: ' Obj1'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Obj1'
+      JsxAttributes
+  InterfaceDeclaration
+    Identifier: ' Obj2'
+    CallSignature
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Obj2'
+        TypeReference
+          Identifier: ' Obj2'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Obj2'
+      JsxAttributes
+  InterfaceDeclaration
+    Identifier: ' Obj3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Obj3'
+        TypeReference
+          Identifier: ' Obj3'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Obj3'
+      JsxAttributes

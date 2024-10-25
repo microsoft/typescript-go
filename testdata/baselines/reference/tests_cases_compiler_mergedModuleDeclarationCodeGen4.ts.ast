@@ -1,0 +1,48 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' superContain'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' contain'
+        ModuleBlock
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' my'
+            ModuleDeclaration
+              Identifier: 'buz'
+              ModuleBlock
+                ModuleDeclaration
+                  ExportKeyword
+                  Identifier: ' data'
+                  ModuleBlock
+                    FunctionDeclaration
+                      ExportKeyword
+                      Identifier: ' foo'
+                      Block
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' my'
+            ModuleDeclaration
+              Identifier: 'buz'
+              ModuleBlock
+                ModuleDeclaration
+                  ExportKeyword
+                  Identifier: ' data'
+                  ModuleBlock
+                    FunctionDeclaration
+                      ExportKeyword
+                      Identifier: ' bar'
+                      Parameter
+                        Identifier: 'contain'
+                      Parameter
+                        Identifier: ' my'
+                      Parameter
+                        Identifier: ' buz'
+                      Parameter
+                        Identifier: ' data'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                    foo'

@@ -1,0 +1,26 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' A'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' X'
+        ModuleBlock
+  ClassDeclaration
+    Identifier: ' X'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' X'
+      Identifier: ' X'
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Y'
+    ModuleBlock
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Y'

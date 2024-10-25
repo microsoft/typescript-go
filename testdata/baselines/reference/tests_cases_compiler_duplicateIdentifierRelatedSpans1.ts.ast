@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Bar'
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    NumberKeyword
+  ClassDeclaration
+    Identifier: ' Bar'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    LiteralType
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Bar'
+        NumericLiteral

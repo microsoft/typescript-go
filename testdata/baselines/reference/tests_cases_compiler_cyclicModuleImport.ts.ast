@@ -1,0 +1,46 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' MainModule'
+        ExternalModuleReference
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' SubModule'
+        PropertyDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' StaticVar'
+          NumberKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' InstanceVar'
+          NumberKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' main'
+          TypeReference
+            Identifier: ' MainModule'
+        Constructor
+      ExportAssignment
+        Identifier: ' SubModule'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' SubModule'
+        ExternalModuleReference
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' MainModule'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' SubModule'
+          TypeReference
+            Identifier: ' SubModule'
+        Constructor
+      ExportAssignment
+        Identifier: ' MainModule'

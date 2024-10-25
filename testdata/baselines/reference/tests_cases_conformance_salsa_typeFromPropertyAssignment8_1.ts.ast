@@ -1,0 +1,105 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' my'
+        BinaryExpression
+          Identifier: ' my'
+          QuestionQuestionToken
+          ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+my'
+        Identifier: 'app'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' my'
+          Identifier: 'app'
+        QuestionQuestionToken
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+my'
+          Identifier: 'app'
+        Identifier: 'Application'
+      EqualsToken
+      CallExpression
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' Application'
+                    FunctionExpression
+                      Block
+              ReturnStatement
+                Identifier: ' Application'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+my'
+          Identifier: 'app'
+        Identifier: 'Application'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' min'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' window'
+            Identifier: 'min'
+          QuestionQuestionToken
+          ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+min'
+        Identifier: 'app'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' min'
+          Identifier: 'app'
+        QuestionQuestionToken
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+min'
+          Identifier: 'app'
+        Identifier: 'Application'
+      EqualsToken
+      CallExpression
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' Application'
+                    FunctionExpression
+                      Block
+              ReturnStatement
+                Identifier: ' Application'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+min'
+          Identifier: 'app'
+        Identifier: 'Application'

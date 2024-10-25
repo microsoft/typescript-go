@@ -1,0 +1,16 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' PromiseAlias'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    TypeReference
+      Identifier: ' PromiseAlias'
+      VoidKeyword
+    Block

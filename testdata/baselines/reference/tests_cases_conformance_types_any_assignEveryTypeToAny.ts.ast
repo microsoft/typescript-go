@@ -1,0 +1,213 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' d'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' e'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        TypeQuery
+          Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' e2'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' f'
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        TypeReference
+          Identifier: ' I'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' g'
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        TypeReference
+          Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' h'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeLiteral
+          CallSignature
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' i'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: ' f'
+          Block
+            ReturnStatement
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: ' f'
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' j'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' a'

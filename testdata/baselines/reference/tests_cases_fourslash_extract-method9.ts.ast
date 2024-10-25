@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// function f() {
+////     /*a*/function q() { }
+////     q();/*b*/
+////     q();
+//// }
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'refactorAvailable'
+      StringLiteral

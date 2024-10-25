@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        CallExpression
+          SuperKeyword
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' String'
+              Identifier: 'value'

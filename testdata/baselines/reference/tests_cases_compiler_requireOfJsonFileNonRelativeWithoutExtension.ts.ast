@@ -1,0 +1,39 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' d'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' e'
+    ExternalModuleReference
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral

@@ -1,0 +1,86 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' TestNull'
+    CallSignature
+      VoidKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' prop'
+      LiteralType
+        NullKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' testNull'
+    TypeReference
+      Identifier: ' TestNull'
+    Block
+      FunctionDeclaration
+        Identifier: ' inner'
+        Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+  inner'
+            Identifier: 'prop'
+          EqualsToken
+          NullKeyword
+      ReturnStatement
+        Identifier: ' inner'
+  InterfaceDeclaration
+    Identifier: ' TestNull2'
+    CallSignature
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+  prop'
+      UnionType
+        StringKeyword
+        LiteralType
+          NullKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' testNull2'
+    TypeReference
+      Identifier: ' TestNull2'
+    Block
+      FunctionDeclaration
+        Identifier: ' inner'
+        Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+  inner'
+            Identifier: 'prop'
+          EqualsToken
+          NullKeyword
+      ReturnStatement
+        Identifier: ' inner'
+  InterfaceDeclaration
+    Identifier: ' TestUndefined'
+    CallSignature
+      VoidKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' prop'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' testUndefined'
+    TypeReference
+      Identifier: ' TestUndefined'
+    Block
+      FunctionDeclaration
+        Identifier: ' inner'
+        Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+  inner'
+            Identifier: 'prop'
+          EqualsToken
+          Identifier: ' undefined'
+      ReturnStatement
+        Identifier: ' inner'

@@ -1,0 +1,34 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 's'
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'n'
+          PlusToken
+          PropertyAccessExpression
+            Identifier: ' s'
+            Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+    f'
+          PropertyAssignment
+            Identifier: '
+    n'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o'
+        Identifier: 'f'
+      StringLiteral

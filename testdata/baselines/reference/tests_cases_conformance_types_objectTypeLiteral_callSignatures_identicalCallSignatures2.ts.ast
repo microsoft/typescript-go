@@ -1,0 +1,30 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        StringKeyword
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        StringKeyword
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        NumberKeyword

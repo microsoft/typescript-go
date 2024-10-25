@@ -1,0 +1,678 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    noop'
+        ImportSpecifier
+          Identifier: '
+    Performance'
+        ImportSpecifier
+          Identifier: '
+    PerformanceHooks'
+        ImportSpecifier
+          Identifier: '
+    sys'
+        ImportSpecifier
+          Identifier: '
+    System'
+        ImportSpecifier
+          Identifier: '
+    timestamp'
+        ImportSpecifier
+          Identifier: '
+    tryGetNativePerformanceHooks'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' onProfilerEvent'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'eventName'
+                StringKeyword
+              VoidKeyword
+          UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' perfHooks'
+        UnionType
+          TypeReference
+            Identifier: ' PerformanceHooks'
+          UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' performanceImpl'
+        UnionType
+          TypeReference
+            Identifier: ' Performance'
+          UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Timer'
+    MethodSignature
+      Identifier: '
+    enter'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    exit'
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createTimerIf'
+    Parameter
+      Identifier: 'condition'
+      BooleanKeyword
+    Parameter
+      Identifier: ' measureName'
+      StringKeyword
+    Parameter
+      Identifier: ' startMarkName'
+      StringKeyword
+    Parameter
+      Identifier: ' endMarkName'
+      StringKeyword
+    TypeReference
+      Identifier: ' Timer'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' condition'
+          QuestionToken
+          CallExpression
+            Identifier: ' createTimer'
+            Identifier: 'measureName'
+            Identifier: ' startMarkName'
+            Identifier: ' endMarkName'
+          ColonToken
+          Identifier: ' nullTimer'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createTimer'
+    Parameter
+      Identifier: 'measureName'
+      StringKeyword
+    Parameter
+      Identifier: ' startMarkName'
+      StringKeyword
+    Parameter
+      Identifier: ' endMarkName'
+      StringKeyword
+    TypeReference
+      Identifier: ' Timer'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' enterCount'
+            NumericLiteral
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        enter'
+          ShorthandPropertyAssignment
+            Identifier: '
+        exit'
+      FunctionDeclaration
+        Identifier: ' enter'
+        Block
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'enterCount'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            mark'
+                  Identifier: 'startMarkName'
+      FunctionDeclaration
+        Identifier: ' exit'
+        Block
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'enterCount'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            mark'
+                  Identifier: 'endMarkName'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            measure'
+                  Identifier: 'measureName'
+                  Identifier: ' startMarkName'
+                  Identifier: ' endMarkName'
+            IfStatement
+              BinaryExpression
+                Identifier: 'enterCount'
+                LessThanToken
+                NumericLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            Debug'
+                      Identifier: 'fail'
+                    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullTimer'
+        TypeReference
+          Identifier: ' Timer'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' enter'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: ' exit'
+            Identifier: ' noop'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' enabled'
+        FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' timeorigin'
+        CallExpression
+          Identifier: ' timestamp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' marks'
+        NewExpression
+          Identifier: ' Map'
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' counts'
+        NewExpression
+          Identifier: ' Map'
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' durations'
+        NewExpression
+          Identifier: ' Map'
+          StringKeyword
+          NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' mark'
+    Parameter
+      Identifier: 'markName'
+      StringKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        Identifier: 'enabled'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' count'
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' counts'
+                      Identifier: 'get'
+                    Identifier: 'markName'
+                  QuestionQuestionToken
+                  NumericLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        counts'
+                Identifier: 'set'
+              Identifier: 'markName'
+              BinaryExpression
+                Identifier: ' count'
+                PlusToken
+                NumericLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        marks'
+                Identifier: 'set'
+              Identifier: 'markName'
+              CallExpression
+                Identifier: ' timestamp'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        performanceImpl'
+                QuestionDotToken
+                Identifier: 'mark'
+              Identifier: 'markName'
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' onProfilerEvent'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            onProfilerEvent'
+                  Identifier: 'markName'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' measure'
+    Parameter
+      Identifier: 'measureName'
+      StringKeyword
+    Parameter
+      Identifier: ' startMarkName'
+      QuestionToken
+      StringKeyword
+    Parameter
+      Identifier: ' endMarkName'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        Identifier: 'enabled'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' end'
+                BinaryExpression
+                  ParenthesizedExpression
+                    ConditionalExpression
+                      BinaryExpression
+                        Identifier: 'endMarkName'
+                        ExclamationEqualsEqualsToken
+                        Identifier: ' undefined'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' marks'
+                          Identifier: 'get'
+                        Identifier: 'endMarkName'
+                      ColonToken
+                      Identifier: ' undefined'
+                  QuestionQuestionToken
+                  CallExpression
+                    Identifier: ' timestamp'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' start'
+                BinaryExpression
+                  ParenthesizedExpression
+                    ConditionalExpression
+                      BinaryExpression
+                        Identifier: 'startMarkName'
+                        ExclamationEqualsEqualsToken
+                        Identifier: ' undefined'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' marks'
+                          Identifier: 'get'
+                        Identifier: 'startMarkName'
+                      ColonToken
+                      Identifier: ' undefined'
+                  QuestionQuestionToken
+                  Identifier: ' timeorigin'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' previousDuration'
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' durations'
+                      Identifier: 'get'
+                    Identifier: 'measureName'
+                  BarBarToken
+                  NumericLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        durations'
+                Identifier: 'set'
+              Identifier: 'measureName'
+              BinaryExpression
+                Identifier: ' previousDuration'
+                PlusToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'end'
+                    MinusToken
+                    Identifier: ' start'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        performanceImpl'
+                QuestionDotToken
+                Identifier: 'measure'
+              Identifier: 'measureName'
+              Identifier: ' startMarkName'
+              Identifier: ' endMarkName'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getCount'
+    Parameter
+      Identifier: 'markName'
+      StringKeyword
+    NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' counts'
+              Identifier: 'get'
+            Identifier: 'markName'
+          BarBarToken
+          NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getDuration'
+    Parameter
+      Identifier: 'measureName'
+      StringKeyword
+    NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' durations'
+              Identifier: 'get'
+            Identifier: 'measureName'
+          BarBarToken
+          NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachMeasure'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        Parameter
+          Identifier: 'measureName'
+          StringKeyword
+        Parameter
+          Identifier: ' duration'
+          NumberKeyword
+        VoidKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    durations'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'duration'
+            Parameter
+              Identifier: ' measureName'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' cb'
+              Identifier: 'measureName'
+              Identifier: ' duration'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachMark'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        Parameter
+          Identifier: 'markName'
+          StringKeyword
+        VoidKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    marks'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: '_time'
+            Parameter
+              Identifier: ' markName'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' cb'
+              Identifier: 'markName'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' clearMeasures'
+    Parameter
+      Identifier: 'name'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'name'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' durations'
+              Identifier: 'delete'
+            Identifier: 'name'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' durations'
+              Identifier: 'clear'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    performanceImpl'
+            QuestionDotToken
+            Identifier: 'clearMeasures'
+          Identifier: 'name'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' clearMarks'
+    Parameter
+      Identifier: 'name'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'name'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        counts'
+                Identifier: 'delete'
+              Identifier: 'name'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        marks'
+                Identifier: 'delete'
+              Identifier: 'name'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        counts'
+                Identifier: 'clear'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        marks'
+                Identifier: 'clear'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    performanceImpl'
+            QuestionDotToken
+            Identifier: 'clearMarks'
+          Identifier: 'name'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isEnabled'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        Identifier: ' enabled'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' enable'
+    Parameter
+      Identifier: 'system'
+      TypeReference
+        Identifier: ' System'
+      Identifier: ' sys'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'enabled'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        enabled'
+              EqualsToken
+              TrueKeyword
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        perfHooks'
+              BarBarEqualsToken
+              CallExpression
+                Identifier: ' tryGetNativePerformanceHooks'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'perfHooks'
+              QuestionDotToken
+              Identifier: 'performance'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            timeorigin'
+                  EqualsToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' perfHooks'
+                      Identifier: 'performance'
+                    Identifier: 'timeOrigin'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'perfHooks'
+                      Identifier: 'shouldWriteNativeEvents'
+                    BarBarToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' system'
+                        QuestionDotToken
+                        Identifier: 'cpuProfilingEnabled'
+                      QuestionDotToken
+                  BarBarToken
+                  PropertyAccessExpression
+                    Identifier: ' system'
+                    QuestionDotToken
+                    Identifier: 'debugMode'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                performanceImpl'
+                      EqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' perfHooks'
+                        Identifier: 'performance'
+      ReturnStatement
+        TrueKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' disable'
+    VoidKeyword
+    Block
+      IfStatement
+        Identifier: 'enabled'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        marks'
+                Identifier: 'clear'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        counts'
+                Identifier: 'clear'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        durations'
+                Identifier: 'clear'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        performanceImpl'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        enabled'
+              EqualsToken
+              FalseKeyword

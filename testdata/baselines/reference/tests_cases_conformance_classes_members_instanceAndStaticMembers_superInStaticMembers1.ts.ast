@@ -1,0 +1,1519 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Reflect'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Bar'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' _'
+        UnknownKeyword
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' Baz'
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+  EmptyStatement
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      ArrayLiteralExpression
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' Reflect'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      ObjectBindingPattern
+                        BindingElement
+                          Identifier: ' Reflect'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' Reflect'
+                          NullKeyword
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      ArrayBindingPattern
+                        BindingElement
+                          Identifier: 'Reflect'
+                      ArrayLiteralExpression
+                        NullKeyword
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ClassDeclaration
+                  Identifier: ' Reflect'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                FunctionDeclaration
+                  Identifier: ' Reflect'
+                  Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                EnumDeclaration
+                  Identifier: ' Reflect'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                EnumDeclaration
+                  ConstKeyword
+                  Identifier: ' Reflect'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                TypeAliasDeclaration
+                  Identifier: ' Reflect'
+                  UnknownKeyword
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                InterfaceDeclaration
+                  Identifier: ' Reflect'
+                EmptyStatement
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  ParenthesizedExpression
+                    ClassExpression
+                      Identifier: ' Reflect'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  ParenthesizedExpression
+                    FunctionExpression
+                      Identifier: ' Reflect'
+                      Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' Reflect'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' Reflect'
+                  NullKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ArrayBindingPattern
+                BindingElement
+                  Identifier: 'Reflect'
+              ArrayLiteralExpression
+                NullKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' Reflect'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        ClassDeclaration
+          Identifier: ' Reflect'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        FunctionDeclaration
+          Identifier: ' Reflect'
+          Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        EnumDeclaration
+          Identifier: ' Reflect'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        EnumDeclaration
+          ConstKeyword
+          Identifier: ' Reflect'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        TypeAliasDeclaration
+          Identifier: ' Reflect'
+          UnknownKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        InterfaceDeclaration
+          Identifier: ' Reflect'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            ClassExpression
+              Identifier: ' Reflect'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            FunctionExpression
+              Identifier: ' Reflect'
+              Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Reflect'
+        NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' Reflect'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' Reflect'
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'Reflect'
+        ArrayLiteralExpression
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Reflect'
+        NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' Reflect'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' Reflect'
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'Reflect'
+        ArrayLiteralExpression
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Reflect'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Reflect'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' Reflect'
+    Block
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' Reflect'
+    Block
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ModuleDeclaration
+    Identifier: ' Reflect'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ModuleDeclaration
+    Identifier: ' Reflect'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  EnumDeclaration
+    Identifier: ' Reflect'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  EnumDeclaration
+    Identifier: ' Reflect'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' Reflect'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' Reflect'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Foo'
+          Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Foo'
+          Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Bar'
+          Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Bar'
+          Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Baz'
+          Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Baz'
+          Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Reflect'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' Reflect'
+    UnknownKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' Reflect'
+    UnknownKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Reflect'
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Reflect'
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Reflect'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' _'
+        UnknownKeyword
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Reflect'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' _'
+        UnknownKeyword
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      ClassExpression
+        Identifier: ' Reflect'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      ClassExpression
+        Identifier: ' Reflect'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      ClassExpression
+        Identifier: ' Reflect'
+        ClassStaticBlockDeclaration
+          Block
+            ClassDeclaration
+              Identifier: ' C'
+              HeritageClause
+                ExpressionWithTypeArguments
+                  Identifier: ' B'
+              PropertyDeclaration
+                StaticKeyword
+                Identifier: ' _'
+                CallExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      ClassExpression
+        Identifier: ' Reflect'
+        ClassStaticBlockDeclaration
+          Block
+            ClassDeclaration
+              Identifier: ' C'
+              HeritageClause
+                ExpressionWithTypeArguments
+                  Identifier: ' B'
+              ClassStaticBlockDeclaration
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Identifier: ' Reflect'
+        Block
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Identifier: ' Reflect'
+        Block
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Identifier: ' Reflect'
+        Block
+          ClassDeclaration
+            Identifier: ' C'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' B'
+            PropertyDeclaration
+              StaticKeyword
+              Identifier: ' _'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'w'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' w'
+      NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Identifier: ' Reflect'
+        Block
+          ClassDeclaration
+            Identifier: ' C'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' B'
+            ClassStaticBlockDeclaration
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'w'

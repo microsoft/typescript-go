@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+a'

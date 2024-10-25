@@ -1,0 +1,206 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  ImportDeclaration
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    ImportDeclaration
+      ImportClause
+        NamedImports
+          ImportSpecifier
+            Identifier: ' a'
+          ImportSpecifier
+            Identifier: ' b'
+      StringLiteral
+      ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        StringLiteral
+        StringLiteral
+    ImportDeclaration
+      ImportClause
+        NamespaceImport
+          Identifier: ' foo'
+      StringLiteral
+      ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    ExpressionStatement
+      Identifier: '
+a'
+  ExpressionStatement
+    Identifier: '
+b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+foo'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+foo'
+      Identifier: 'b'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+        ImportSpecifier
+          Identifier: ' b'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+    ImportDeclaration
+      ImportClause
+        NamedImports
+          ImportSpecifier
+            Identifier: ' a'
+            Identifier: ' c'
+          ImportSpecifier
+            Identifier: ' b'
+            Identifier: ' d'
+      StringLiteral
+      ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' a'
+        StringLiteral
+      PropertyAssignment
+        Identifier: ' b'
+        StringLiteral
+      PropertyAssignment
+        Identifier: ' c'
+        StringLiteral
+    ExpressionStatement
+      Identifier: '
+a'
+  ExpressionStatement
+    Identifier: '
+b'
+  ExpressionStatement
+    Identifier: '
+c'
+  ExpressionStatement
+    Identifier: '
+d'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' with'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' type'
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' with'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' type'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' ttype'
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' with'
+              ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dd'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          ObjectLiteralExpression
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          CallExpression
+            Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        CallExpression
+          ImportKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          ObjectLiteralExpression
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' with'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' type'
+                  StringLiteral

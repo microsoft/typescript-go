@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' gg'
+        BinaryExpression
+          CallExpression
+            Identifier: ' f'
+          QuestionQuestionToken
+          StringLiteral

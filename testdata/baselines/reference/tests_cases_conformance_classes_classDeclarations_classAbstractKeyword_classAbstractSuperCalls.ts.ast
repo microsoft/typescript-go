@@ -1,0 +1,95 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'foo'
+    MethodDeclaration
+      Identifier: '
+    baz'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'foo'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    qux'
+      Block
+        ReturnStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'foo'
+            BarBarToken
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'foo'
+    MethodDeclaration
+      Identifier: ' // 2 errors, foo is abstract
+    norf'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'bar'
+  ClassDeclaration
+    Identifier: ' AA'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' BB'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AA'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'

@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noUnusedParameters: true
+////[|class greeter<T> |] {
+////}
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newRangeContent'
+          StringLiteral

@@ -1,0 +1,368 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IProperties'
+    PropertySignature
+      Identifier: '
+    foo'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        aaa'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        bbb'
+          StringKeyword
+  FunctionDeclaration
+    Identifier: ' init'
+    Parameter
+      Identifier: 'properties'
+      TypeReference
+        Identifier: ' IProperties'
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'properties'
+          Identifier: 'foo'
+        Block
+          TypeAliasDeclaration
+            Identifier: ' FooOK'
+            TypeQuery
+              QualifiedName
+                Identifier: ' properties'
+                Identifier: 'foo'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        properties'
+              Identifier: 'foo'
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+          properties'
+                  Identifier: 'foo'
+              TypeAliasDeclaration
+                Identifier: ' FooOrUndefined'
+                TypeQuery
+                  QualifiedName
+                    Identifier: ' properties'
+                    Identifier: 'foo'
+  InterfaceDeclaration
+    Identifier: ' DeepOptional'
+    PropertySignature
+      Identifier: '
+    a'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        b'
+          QuestionToken
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+            c'
+              QuestionToken
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' init2'
+    Parameter
+      Identifier: 'foo'
+      TypeReference
+        Identifier: ' DeepOptional'
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'foo'
+          Identifier: 'a'
+        Block
+          TypeAliasDeclaration
+            Identifier: ' A'
+            TypeQuery
+              QualifiedName
+                Identifier: ' foo'
+                Identifier: 'a'
+          TypeAliasDeclaration
+            Identifier: ' B'
+            TypeQuery
+              QualifiedName
+                QualifiedName
+                  Identifier: ' foo'
+                  Identifier: 'a'
+                Identifier: 'b'
+          TypeAliasDeclaration
+            Identifier: ' C'
+            TypeQuery
+              QualifiedName
+                QualifiedName
+                  QualifiedName
+                    Identifier: ' foo'
+                    Identifier: 'a'
+                  Identifier: 'b'
+                Identifier: 'c'
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' _'
+            ArrayLiteralExpression
+              NumericLiteral
+            Block
+              TypeAliasDeclaration
+                Identifier: ' A'
+                TypeQuery
+                  QualifiedName
+                    Identifier: ' foo'
+                    Identifier: 'a'
+              TypeAliasDeclaration
+                Identifier: ' B'
+                TypeQuery
+                  QualifiedName
+                    QualifiedName
+                      Identifier: ' foo'
+                      Identifier: 'a'
+                    Identifier: 'b'
+              TypeAliasDeclaration
+                Identifier: ' C'
+                TypeQuery
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' foo'
+                        Identifier: 'a'
+                      Identifier: 'b'
+                    Identifier: 'c'
+              IfStatement
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'foo'
+                    Identifier: 'a'
+                  Identifier: 'b'
+                Block
+                  TypeAliasDeclaration
+                    Identifier: ' A'
+                    TypeQuery
+                      QualifiedName
+                        Identifier: ' foo'
+                        Identifier: 'a'
+                  TypeAliasDeclaration
+                    Identifier: ' B'
+                    TypeQuery
+                      QualifiedName
+                        QualifiedName
+                          Identifier: ' foo'
+                          Identifier: 'a'
+                        Identifier: 'b'
+                  TypeAliasDeclaration
+                    Identifier: ' C'
+                    TypeQuery
+                      QualifiedName
+                        QualifiedName
+                          QualifiedName
+                            Identifier: ' foo'
+                            Identifier: 'a'
+                          Identifier: 'b'
+                        Identifier: 'c'
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' _'
+                    ArrayLiteralExpression
+                      NumericLiteral
+                    Block
+                      TypeAliasDeclaration
+                        Identifier: ' A'
+                        TypeQuery
+                          QualifiedName
+                            Identifier: ' foo'
+                            Identifier: 'a'
+                      TypeAliasDeclaration
+                        Identifier: ' B'
+                        TypeQuery
+                          QualifiedName
+                            QualifiedName
+                              Identifier: ' foo'
+                              Identifier: 'a'
+                            Identifier: 'b'
+                      TypeAliasDeclaration
+                        Identifier: ' C'
+                        TypeQuery
+                          QualifiedName
+                            QualifiedName
+                              QualifiedName
+                                Identifier: ' foo'
+                                Identifier: 'a'
+                              Identifier: 'b'
+                            Identifier: 'c'
+                      IfStatement
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'foo'
+                              Identifier: 'a'
+                            Identifier: 'b'
+                          Identifier: 'c'
+                        Block
+                          TypeAliasDeclaration
+                            Identifier: ' A'
+                            TypeQuery
+                              QualifiedName
+                                Identifier: ' foo'
+                                Identifier: 'a'
+                          TypeAliasDeclaration
+                            Identifier: ' B'
+                            TypeQuery
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' foo'
+                                  Identifier: 'a'
+                                Identifier: 'b'
+                          TypeAliasDeclaration
+                            Identifier: ' C'
+                            TypeQuery
+                              QualifiedName
+                                QualifiedName
+                                  QualifiedName
+                                    Identifier: ' foo'
+                                    Identifier: 'a'
+                                  Identifier: 'b'
+                                Identifier: 'c'
+                          ForOfStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' _'
+                            ArrayLiteralExpression
+                              NumericLiteral
+                            Block
+                              TypeAliasDeclaration
+                                Identifier: ' A'
+                                TypeQuery
+                                  QualifiedName
+                                    Identifier: ' foo'
+                                    Identifier: 'a'
+                              TypeAliasDeclaration
+                                Identifier: ' B'
+                                TypeQuery
+                                  QualifiedName
+                                    QualifiedName
+                                      Identifier: ' foo'
+                                      Identifier: 'a'
+                                    Identifier: 'b'
+                              TypeAliasDeclaration
+                                Identifier: ' C'
+                                TypeQuery
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' foo'
+                                        Identifier: 'a'
+                                      Identifier: 'b'
+                                    Identifier: 'c'
+  TypeAliasDeclaration
+    Identifier: ' Fish'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' type'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' hasFins'
+        LiteralType
+          TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' Dog'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' type'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' saysWoof'
+        LiteralType
+          TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' Pet'
+    UnionType
+      TypeReference
+        Identifier: ' Fish'
+      TypeReference
+        Identifier: ' Dog'
+  FunctionDeclaration
+    Identifier: ' handleDogBroken'
+    TypeParameter
+      Identifier: 'PetType'
+      TypeReference
+        Identifier: ' Pet'
+    Parameter
+      Identifier: 'pet'
+      TypeReference
+        Identifier: ' PetType'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'pet'
+            Identifier: 'type'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' _okay1'
+                PropertyAccessExpression
+                  Identifier: ' pet'
+                  Identifier: 'saysWoof'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' _okay2'
+                TypeQuery
+                  QualifiedName
+                    Identifier: ' pet'
+                    Identifier: 'saysWoof'
+                PropertyAccessExpression
+                  Identifier: ' pet'
+                  Identifier: 'saysWoof'
+  FunctionDeclaration
+    Identifier: ' handleDogWorking'
+    Parameter
+      Identifier: 'pet'
+      TypeReference
+        Identifier: ' Pet'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'pet'
+            Identifier: 'type'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' _okay1'
+                PropertyAccessExpression
+                  Identifier: ' pet'
+                  Identifier: 'saysWoof'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' _okay2'
+                TypeQuery
+                  QualifiedName
+                    Identifier: ' pet'
+                    Identifier: 'saysWoof'
+                PropertyAccessExpression
+                  Identifier: ' pet'
+                  Identifier: 'saysWoof'

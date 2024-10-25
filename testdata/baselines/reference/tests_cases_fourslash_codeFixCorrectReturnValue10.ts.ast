@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// const a: ((() => number) | (() => undefined)) = () => { 1 }
+
+verify'
+        Identifier: 'codeFixAvailable'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Add_a_return_statement'
+              Identifier: 'message'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Remove_braces_from_arrow_function_body'
+              Identifier: 'message'

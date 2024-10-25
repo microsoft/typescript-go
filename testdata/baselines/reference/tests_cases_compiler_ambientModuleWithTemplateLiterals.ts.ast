@@ -1,0 +1,81 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    ModuleBlock
+      EnumDeclaration
+        Identifier: ' Bar'
+        EnumMember
+          Identifier: '
+        a'
+          NoSubstitutionTemplateLiteral
+        EnumMember
+          Identifier: '
+        b'
+          StringLiteral
+        EnumMember
+          Identifier: '
+        c'
+          StringLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            StringLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NoSubstitutionTemplateLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            PropertyAccessExpression
+              Identifier: ' Bar'
+              Identifier: 'a'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            ElementAccessExpression
+              Identifier: ' Bar'
+              StringLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            ElementAccessExpression
+              Identifier: ' Bar'
+              NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+Foo'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+Foo'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+Foo'
+      Identifier: 'c'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+Foo'
+      Identifier: 'd'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+Foo'
+      Identifier: 'e'

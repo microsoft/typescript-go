@@ -1,0 +1,42 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' lf'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' Order'
+        EnumMember
+          Identifier: ' ASC'
+        EnumMember
+          Identifier: ' DESC'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: enums.js
+lf'
+        Identifier: 'Order'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+lf'
+          Identifier: 'Order'
+        Identifier: 'DESC'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+lf'
+          Identifier: 'Order'
+        Identifier: 'ASC'
+      EqualsToken
+      NumericLiteral

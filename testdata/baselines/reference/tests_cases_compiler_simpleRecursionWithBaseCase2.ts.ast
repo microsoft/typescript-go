@@ -1,0 +1,147 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' rec1'
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          LessThanToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' rec1'
+        Block
+          ReturnStatement
+            StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' rec2'
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          LessThanToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            AwaitExpression
+              CallExpression
+                Identifier: ' rec2'
+        Block
+          ReturnStatement
+            StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' rec3'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' rec3'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' rec4'
+    Block
+      ReturnStatement
+        AwaitExpression
+          CallExpression
+            Identifier: ' rec4'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' rec5'
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          LessThanToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            ParenthesizedExpression
+              ParenthesizedExpression
+                CallExpression
+                  Identifier: 'rec1'
+        Block
+          ReturnStatement
+            StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' rec6'
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          LessThanToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            AwaitExpression
+              ParenthesizedExpression
+                ParenthesizedExpression
+                  CallExpression
+                    Identifier: 'rec1'
+        Block
+          ReturnStatement
+            StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ps'
+        UnionType
+          TypeReference
+            Identifier: ' Promise'
+            StringKeyword
+          NumberKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo1'
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          GreaterThanToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            Identifier: ' ps'
+        Block
+          ReturnStatement
+            AwaitExpression
+              CallExpression
+                Identifier: ' foo1'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo2'
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          GreaterThanToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            Identifier: ' ps'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' foo2'

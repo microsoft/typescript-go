@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo1'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        CallSignature
+          StringKeyword
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' f'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        ConstructSignature
+          StringKeyword
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' f'

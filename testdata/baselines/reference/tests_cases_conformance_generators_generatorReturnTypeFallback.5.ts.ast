@@ -1,0 +1,11 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' f'
+    TypeReference
+      Identifier: ' IterableIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral

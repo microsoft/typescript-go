@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// class C {
+////     set foo(value) { }
+////     /**/
+//// }
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral

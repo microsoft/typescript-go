@@ -1,0 +1,48 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' b1'
+    Parameter
+      Identifier: 'b1'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+   b1'
+            Identifier: 'toPrecision'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // should not error
+   b1'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+   b'
+            FunctionExpression
+              Identifier: ' b'
+              Parameter
+                Identifier: 'b'
+                NumberKeyword
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+      b'
+                      Identifier: 'toPrecision'
+                    NumericLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' // should not error
+      b'
+                      Identifier: 'apply'
+                    NullKeyword
+                    NullKeyword

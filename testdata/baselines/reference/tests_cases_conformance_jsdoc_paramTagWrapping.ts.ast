@@ -1,0 +1,35 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' good'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      Identifier: ' y'
+    Parameter
+      Identifier: ' z'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+good'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' bad'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      Identifier: ' y'
+    Parameter
+      Identifier: ' z'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+bad'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral

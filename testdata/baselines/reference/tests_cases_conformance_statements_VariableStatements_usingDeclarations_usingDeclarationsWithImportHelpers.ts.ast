@@ -1,0 +1,9 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          NullKeyword

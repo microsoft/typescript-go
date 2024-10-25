@@ -1,0 +1,58 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Common'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' test'
+          LiteralType
+            TrueKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' test'
+          LiteralType
+            FalseKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    IntersectionType
+      TypeReference
+        Identifier: ' Common'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    IntersectionType
+      TypeReference
+        Identifier: ' Common'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' bar'
+          LiteralType
+            NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+b'
+      EqualsToken
+      Identifier: ' a'

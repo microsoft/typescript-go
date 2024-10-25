@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' wrapper'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+wrapper'
+      ArrowFunction
+        Parameter
+          Identifier: 'array'
+          TupleType
+            AnyKeyword
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            BinaryExpression
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'test'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'test1'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'test2'
+              EqualsToken
+              Identifier: ' array'

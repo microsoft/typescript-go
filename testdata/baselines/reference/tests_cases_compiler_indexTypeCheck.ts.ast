@@ -1,0 +1,203 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Red'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Blue'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      AnyKeyword
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Yellow'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Red'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      TypeReference
+        Identifier: ' Red'
+  InterfaceDeclaration
+    Identifier: ' Orange'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Green'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Orange'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      TypeReference
+        Identifier: ' Yellow'
+  InterfaceDeclaration
+    Identifier: ' Cyan'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Purple'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      Parameter
+        Identifier: ' s'
+        StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Magenta'
+    IndexSignature
+      Parameter
+        Identifier: 'p'
+        TypeReference
+          Identifier: 'Purple'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' yellow'
+        TypeReference
+          Identifier: ' Yellow'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' blue'
+        TypeReference
+          Identifier: ' Blue'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+
+yellow'
+      NumericLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: ' // ok
+yellow'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: ' // ok
+yellow'
+      TypeAssertionExpression
+        AnyKeyword
+        ObjectLiteralExpression
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: ' // ok
+
+s'
+      NumericLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: ' // error
+s'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: ' // ok
+s'
+      TypeAssertionExpression
+        AnyKeyword
+        ObjectLiteralExpression
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: ' // ok
+
+yellow'
+      Identifier: 'blue'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayType
+          NumberKeyword
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' Benchmark'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' results'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          AnyKeyword
+      TypeAssertionExpression
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            AnyKeyword
+        ObjectLiteralExpression
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' addTimingFor'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Parameter
+        Identifier: ' timing'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'results'
+              Identifier: 'name'
+            EqualsToken
+            ElementAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'results'
+              Identifier: 'name'

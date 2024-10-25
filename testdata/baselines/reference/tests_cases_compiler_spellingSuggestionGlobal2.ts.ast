@@ -1,0 +1,25 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' globals'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            TrueKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+global'
+      Identifier: 'x'

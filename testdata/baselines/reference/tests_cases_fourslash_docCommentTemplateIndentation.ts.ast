@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' singleLineComment'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      Identifier: ' singleLineComment'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      Identifier: ' singleLineComment'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      Identifier: ' singleLineComment'

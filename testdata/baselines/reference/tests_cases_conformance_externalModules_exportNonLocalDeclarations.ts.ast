@@ -1,0 +1,9 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' string'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' number'

@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        Identifier: ' any'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        Identifier: ' number'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        Identifier: ' boolean'

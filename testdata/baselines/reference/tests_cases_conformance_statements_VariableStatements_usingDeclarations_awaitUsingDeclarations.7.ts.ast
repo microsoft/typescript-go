@@ -1,0 +1,16 @@
+SourceFile
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          NullKeyword
+        VariableDeclaration
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'b'
+          NullKeyword
+        VariableDeclaration
+          Identifier: '
+                c'
+          NullKeyword

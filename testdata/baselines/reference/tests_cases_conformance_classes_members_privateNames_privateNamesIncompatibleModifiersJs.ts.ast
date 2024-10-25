@@ -1,0 +1,57 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    GetAccessor
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'value'
+      Block
+    GetAccessor
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'value'
+      Block
+    GetAccessor
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'value'
+      Block

@@ -1,0 +1,46 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+  InterfaceDeclaration
+    Identifier: ' i'
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' uninstantiated'
+    ModuleBlock
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' c'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' c'
+        Identifier: ' c2'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' i'
+      ExportSpecifier
+        Identifier: ' m'
+        Identifier: ' instantiatedModule'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' uninstantiated'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' x'

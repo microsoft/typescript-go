@@ -1,0 +1,81 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'V'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' V'
+      TypeReference
+        Identifier: ' Foo'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'V'
+          TypeReference
+            Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'V'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' V'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' V'
+          TypeReference
+            Identifier: 'K'
+        ObjectKeyword
+        TypeReference
+          Identifier: ' Bar'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'V'
+            TypeReference
+              Identifier: 'K'
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'V'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'V'
+    TypeReference
+      Identifier: ' V'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  console'
+            Identifier: 'log'
+          Identifier: 'value'
+      ReturnStatement
+        AsExpression
+          Identifier: ' undefined'
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        TypeReference
+          Identifier: ' Bar'
+          AnyKeyword
+        ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      Identifier: 'bar'

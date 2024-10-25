@@ -1,0 +1,167 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ElChildren'
+    UnionType
+      TypeReference
+        QualifiedName
+          Identifier: ' ElChildren'
+          Identifier: 'Void'
+      TypeReference
+        QualifiedName
+          Identifier: ' ElChildren'
+          Identifier: 'Text'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' ElChildren'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' Void'
+        UndefinedKeyword
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' Text'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Relax'
+    TypeParameter
+      Identifier: 'C'
+      TypeReference
+        Identifier: ' ElChildren'
+    ConditionalType
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        QualifiedName
+          Identifier: ' ElChildren'
+          Identifier: 'Text'
+      TypeReference
+        QualifiedName
+          Identifier: ' ElChildren'
+          Identifier: 'Text'
+      TypeReference
+        Identifier: ' C'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Elem'
+    TypeParameter
+      Identifier: '
+  C'
+      TypeReference
+        Identifier: ' ElChildren'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' children_'
+        TypeReference
+          Identifier: ' Relax'
+          TypeReference
+            Identifier: 'C'
+      Block
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Elem'
+      AsExpression
+        Identifier: 'undefined'
+        TypeReference
+          QualifiedName
+            Identifier: ' ElChildren'
+            Identifier: 'Void'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Elem'
+      AsExpression
+        StringLiteral
+        TypeReference
+          QualifiedName
+            Identifier: ' ElChildren'
+            Identifier: 'Text'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Elem'
+      AsExpression
+        StringLiteral
+        UnionType
+          TypeReference
+            QualifiedName
+              Identifier: ' ElChildren'
+              Identifier: 'Void'
+          TypeReference
+            QualifiedName
+              Identifier: ' ElChildren'
+              Identifier: 'Text'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Elem'
+      AsExpression
+        StringLiteral
+        TypeReference
+          Identifier: ' ElChildren'
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: ' a'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' DeepPartial'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      ObjectKeyword
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        QuestionToken
+        TypeReference
+          Identifier: ' DeepPartial'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: 'K'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' partial'
+      TypeReference
+        Identifier: ' DeepPartial'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 'p1'
+      TypeReference
+        Identifier: ' I'
+    Parameter
+      Identifier: ' p2'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'I'
+    TypeReference
+      Identifier: ' I'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' f'
+          Identifier: 'p1'
+          Identifier: ' p2'

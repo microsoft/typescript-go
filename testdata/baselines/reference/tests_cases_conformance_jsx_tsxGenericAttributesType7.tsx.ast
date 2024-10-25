@@ -1,0 +1,61 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Component'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator'
+        FunctionExpression
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'props'
+            TypeReference
+              Identifier: ' U'
+          Block
+            ReturnStatement
+              JsxSelfClosingElement
+                Identifier: 'Component'
+                JsxAttributes
+                  JsxAttribute
+                    Identifier: 'props'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator1'
+        FunctionExpression
+          TypeParameter
+            Identifier: 'U'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'x'
+                StringKeyword
+          Parameter
+            Identifier: 'props'
+            TypeReference
+              Identifier: ' U'
+          Block
+            ReturnStatement
+              JsxSelfClosingElement
+                Identifier: 'Component'
+                JsxAttributes
+                  JsxAttribute
+                    Identifier: 'props'
+                  JsxAttribute
+                    Identifier: ' x'
+                    StringLiteral

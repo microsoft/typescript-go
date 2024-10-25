@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// [|import d, * as ns from "./module"   ;
+//// f1/*0*/();|]
+
+// @Filename: module.ts
+//// export function f1() {}
+//// export var v1 = 5;
+//// export default var d1 = 6;
+
+// Test with some extra spaces before the semicolon
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral
+        NoSubstitutionTemplateLiteral

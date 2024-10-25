@@ -1,0 +1,44 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Callable'
+    TypeParameter
+      Identifier: 'Name'
+      StringKeyword
+    CallSignature
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Name'
+          TemplateTail
+    CallSignature
+      Parameter
+        Identifier: 'id'
+        NumberKeyword
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Name'
+          TemplateTail
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        UnionType
+          TypeReference
+            Identifier: ' Callable'
+            LiteralType
+              StringLiteral
+          TypeReference
+            Identifier: ' Callable'
+            LiteralType
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        CallExpression
+          Identifier: ' f'
+          NumericLiteral

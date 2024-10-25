@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    bar'
+            NumberKeyword
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Bar'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    bar'
+            NumberKeyword
+            NumericLiteral

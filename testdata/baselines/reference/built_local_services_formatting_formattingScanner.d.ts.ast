@@ -1,0 +1,120 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TextRangeWithKind'
+        ImportSpecifier
+          Identifier: ' TokenInfo'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' LanguageVariant'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' NodeArray'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FormattingScanner'
+    MethodSignature
+      Identifier: '
+    advance'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getTokenFullStart'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** @deprecated use {@link getTokenFullStart} */
+    getStartPos'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    isOnToken'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    isOnEOF'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    readTokenInfo'
+      Parameter
+        Identifier: 'n'
+        TypeReference
+          Identifier: ' Node'
+      TypeReference
+        Identifier: ' TokenInfo'
+    MethodSignature
+      Identifier: '
+    readEOFTokenRange'
+      TypeReference
+        Identifier: ' TextRangeWithKind'
+    MethodSignature
+      Identifier: '
+    getCurrentLeadingTrivia'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    lastTrailingTriviaWasNewLine'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    skipToEndOf'
+      Parameter
+        Identifier: 'node'
+        UnionType
+          TypeReference
+            Identifier: ' Node'
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    skipToStartOf'
+      Parameter
+        Identifier: 'node'
+        TypeReference
+          Identifier: ' Node'
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getFormattingScanner'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' languageVariant'
+      TypeReference
+        Identifier: ' LanguageVariant'
+    Parameter
+      Identifier: ' startPos'
+      NumberKeyword
+    Parameter
+      Identifier: ' endPos'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'scanner'
+          TypeReference
+            Identifier: ' FormattingScanner'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'

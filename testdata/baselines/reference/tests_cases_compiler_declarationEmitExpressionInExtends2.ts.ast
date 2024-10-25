@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' U'
+  FunctionDeclaration
+    Identifier: ' getClass'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'c'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' MyClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' getClass'
+          NumericLiteral
+        StringKeyword
+        NumberKeyword

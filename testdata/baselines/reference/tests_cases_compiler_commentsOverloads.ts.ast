@@ -1,0 +1,574 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: '/**param a*/a'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'b'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'aOrb'
+      AnyKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'b'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'aOrb'
+      AnyKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'b'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'aOrb'
+      AnyKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f3'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f3'
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: '/**param a*/a'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'b'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'aOrb'
+      AnyKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f4'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f4'
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' i1'
+    CallSignature
+      Parameter
+        Identifier: '/**param a*/ a'
+        NumberKeyword
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** foo 1*/
+    foo'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** foo 2*/
+    foo'
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    // foo 3
+    foo'
+      Parameter
+        Identifier: 'arr'
+        ArrayType
+          NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** foo 4 */
+    foo'
+      Parameter
+        Identifier: 'arr'
+        ArrayType
+          StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    foo2'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** foo2 2*/
+    foo2'
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    foo3'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    foo3'
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** foo4 1*/
+    foo4'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    foo4'
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** foo4 any */
+    foo4'
+      Parameter
+        Identifier: 'c'
+        AnyKeyword
+      AnyKeyword
+    ConstructSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+    ConstructSignature
+      Parameter
+        Identifier: 'b'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i1_i'
+        TypeReference
+          Identifier: ' i1'
+  InterfaceDeclaration
+    Identifier: ' i2'
+    ConstructSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+    ConstructSignature
+      Parameter
+        Identifier: 'b'
+        NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i'
+        TypeReference
+          Identifier: ' i2'
+  InterfaceDeclaration
+    Identifier: ' i3'
+    ConstructSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+    ConstructSignature
+      Parameter
+        Identifier: 'b'
+        NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i3_i'
+        TypeReference
+          Identifier: ' i3'
+  InterfaceDeclaration
+    Identifier: ' i4'
+    ConstructSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+    ConstructSignature
+      Parameter
+        Identifier: 'b'
+        NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' c'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 'aorb'
+        AnyKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 'aorb'
+        AnyKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop3'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop3'
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop3'
+      Parameter
+        Identifier: 'aorb'
+        AnyKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop4'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop4'
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop4'
+      Parameter
+        Identifier: 'aorb'
+        AnyKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop5'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop5'
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop5'
+      Parameter
+        Identifier: 'aorb'
+        AnyKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' c1'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'aorb'
+        AnyKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' c2'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'aorb'
+        AnyKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' c3'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'aorb'
+        AnyKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' c4'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'aorb'
+        AnyKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' c5'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'aorb'
+        AnyKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c_i'
+        NewExpression
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1_i_1'
+        NewExpression
+          Identifier: ' c1'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1_i_2'
+        NewExpression
+          Identifier: ' c1'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2_i_1'
+        NewExpression
+          Identifier: ' c2'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2_i_2'
+        NewExpression
+          Identifier: ' c2'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3_i_1'
+        NewExpression
+          Identifier: ' c3'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3_i_2'
+        NewExpression
+          Identifier: ' c3'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4_i_1'
+        NewExpression
+          Identifier: ' c4'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4_i_2'
+        NewExpression
+          Identifier: ' c4'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5_i_1'
+        NewExpression
+          Identifier: ' c5'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5_i_2'
+        NewExpression
+          Identifier: ' c5'
+          StringLiteral

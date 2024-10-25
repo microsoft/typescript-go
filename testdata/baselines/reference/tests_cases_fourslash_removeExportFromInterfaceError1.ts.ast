@@ -1,0 +1,32 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// module M {
+//// export class C1 { }
+////     /*1*/export interface I { n: number; }
+//// }
+//// module M {
+//// function f(): I { return null; } }
+//// 
+
+edit'
+        Identifier: 'disableFormatting'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'deleteAtCaret'
+      NumericLiteral

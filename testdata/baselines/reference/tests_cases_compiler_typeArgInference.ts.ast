@@ -1,0 +1,186 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    f'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'a1'
+        ArrayType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' T'
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' U'
+      Parameter
+        Identifier: ' a2'
+        ArrayType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' T'
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' U'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' c'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: ' d'
+          TypeReference
+            Identifier: ' U'
+    MethodSignature
+      Identifier: '
+    g'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        DotDotDotToken
+        Identifier: 'arg'
+        ArrayType
+          ArrayType
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' U'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' c'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: ' d'
+          TypeReference
+            Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'f'
+          ArrayLiteralExpression
+            Identifier: 'o'
+          ArrayLiteralExpression
+            Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' c'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' d'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'f'
+          NumberKeyword
+          StringKeyword
+          ArrayLiteralExpression
+            Identifier: 'o'
+          ArrayLiteralExpression
+            Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' c'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' d'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'g'
+          ArrayLiteralExpression
+            Identifier: 'o'
+          ArrayLiteralExpression
+            Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' c'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' d'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'g'
+          NumberKeyword
+          StringKeyword
+          ArrayLiteralExpression
+            Identifier: 'o'
+          ArrayLiteralExpression
+            Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' c'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' d'
+            StringKeyword

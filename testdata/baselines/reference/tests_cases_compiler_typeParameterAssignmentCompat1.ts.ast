@@ -1,0 +1,87 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    frobble'
+      Parameter
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeReference
+      Identifier: ' Foo'
+      TypeReference
+        Identifier: 'U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' Foo'
+              TypeReference
+                Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' Foo'
+              TypeReference
+                Identifier: 'U'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ReturnStatement
+        Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    f'
+      TypeParameter
+        Identifier: 'U'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'U'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'T'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'U'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        x'
+            EqualsToken
+            Identifier: ' y'
+        ReturnStatement
+          Identifier: ' x'

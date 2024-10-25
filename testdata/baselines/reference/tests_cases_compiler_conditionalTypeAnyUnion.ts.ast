@@ -1,0 +1,21 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Spec'
+    ConditionalType
+      AnyKeyword
+      ObjectKeyword
+      AnyKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' WithSpec'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' R'
+    TypeReference
+      Identifier: ' WithSpec'
+      TypeReference
+        Identifier: 'Spec'

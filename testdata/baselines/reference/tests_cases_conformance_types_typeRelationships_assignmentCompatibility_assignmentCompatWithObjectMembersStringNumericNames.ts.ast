@@ -1,0 +1,433 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' JustStrings'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' S'
+        PropertyDeclaration
+          StringLiteral
+          StringKeyword
+      ClassDeclaration
+        Identifier: ' T'
+        PropertyDeclaration
+          StringLiteral
+          StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            TypeReference
+              Identifier: ' S'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' S2'
+        PropertySignature
+          StringLiteral
+          StringKeyword
+        PropertySignature
+          Identifier: ' bar'
+          QuestionToken
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' T2'
+        PropertySignature
+          StringLiteral
+          StringKeyword
+        PropertySignature
+          Identifier: ' baz'
+          QuestionToken
+          StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s2'
+            TypeReference
+              Identifier: ' S2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t2'
+            TypeReference
+              Identifier: ' T2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeLiteral
+              PropertySignature
+                StringLiteral
+                StringKeyword
+              PropertySignature
+                Identifier: ' bar'
+                QuestionToken
+                StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            TypeLiteral
+              PropertySignature
+                StringLiteral
+                StringKeyword
+              PropertySignature
+                Identifier: ' baz'
+                QuestionToken
+                StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    s'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' s'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsToken
+          Identifier: ' s2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    s'
+          EqualsToken
+          Identifier: ' a2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    s2'
+          EqualsToken
+          Identifier: ' t2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t2'
+          EqualsToken
+          Identifier: ' s2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s2'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s2'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s2'
+          EqualsToken
+          Identifier: ' a2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' s'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' s2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' a2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    a2'
+          EqualsToken
+          Identifier: ' b2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b2'
+          EqualsToken
+          Identifier: ' a2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a2'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    a2'
+          EqualsToken
+          Identifier: ' t2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    a2'
+          EqualsToken
+          Identifier: ' t'
+  ModuleDeclaration
+    Identifier: ' NumbersAndStrings'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' S'
+        PropertyDeclaration
+          StringLiteral
+          StringKeyword
+      ClassDeclaration
+        Identifier: ' T'
+        PropertyDeclaration
+          NumericLiteral
+          StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            TypeReference
+              Identifier: ' S'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' S2'
+        PropertySignature
+          StringLiteral
+          StringKeyword
+        PropertySignature
+          Identifier: ' bar'
+          QuestionToken
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' T2'
+        PropertySignature
+          NumericLiteral
+          StringKeyword
+        PropertySignature
+          Identifier: ' baz'
+          QuestionToken
+          StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s2'
+            TypeReference
+              Identifier: ' S2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t2'
+            TypeReference
+              Identifier: ' T2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeLiteral
+              PropertySignature
+                StringLiteral
+                StringKeyword
+              PropertySignature
+                Identifier: ' bar'
+                QuestionToken
+                StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            TypeLiteral
+              PropertySignature
+                NumericLiteral
+                StringKeyword
+              PropertySignature
+                Identifier: ' baz'
+                QuestionToken
+                StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                NumericLiteral
+                StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    s'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    t'
+          EqualsToken
+          Identifier: ' s'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    s'
+          EqualsToken
+          Identifier: ' s2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    s'
+          EqualsToken
+          Identifier: ' a2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+
+    s2'
+          EqualsToken
+          Identifier: ' t2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    t2'
+          EqualsToken
+          Identifier: ' s2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    s2'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // ok
+    s2'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    s2'
+          EqualsToken
+          Identifier: ' a2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    b'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    a'
+          EqualsToken
+          Identifier: ' s'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    a'
+          EqualsToken
+          Identifier: ' s2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    a'
+          EqualsToken
+          Identifier: ' a2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    a'
+          EqualsToken
+          Identifier: ' b2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+
+    a2'
+          EqualsToken
+          Identifier: ' b2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    b2'
+          EqualsToken
+          Identifier: ' a2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    a2'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    a2'
+          EqualsToken
+          Identifier: ' t2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    a2'
+          EqualsToken
+          Identifier: ' t'

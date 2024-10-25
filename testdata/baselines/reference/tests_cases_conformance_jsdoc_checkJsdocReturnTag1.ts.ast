@@ -1,0 +1,19 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      ReturnStatement
+        BinaryExpression
+          NumericLiteral
+          BarBarToken
+          StringLiteral

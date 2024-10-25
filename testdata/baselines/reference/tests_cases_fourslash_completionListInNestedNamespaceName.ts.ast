@@ -1,0 +1,70 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' marker'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' test'
+        Identifier: 'markers'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'marker'
+          Identifier: 'marker'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    edit'
+            Identifier: 'insert'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' exact'
+              ArrayLiteralExpression
+                StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    edit'
+            Identifier: 'insert'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' exact'
+              ArrayLiteralExpression
+                StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    edit'
+            Identifier: 'insert'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' exact'
+              Identifier: ' undefined'

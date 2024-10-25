@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' func'
+        FunctionExpression
+          Block
+            ReturnStatement
+              StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+func'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            StringLiteral

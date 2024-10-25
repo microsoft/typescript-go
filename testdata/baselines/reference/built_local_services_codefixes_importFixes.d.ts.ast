@@ -1,0 +1,415 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' AnyImportOrRequireStatement'
+        ImportSpecifier
+          Identifier: ' BindingElement'
+        ImportSpecifier
+          Identifier: ' CancellationToken'
+        ImportSpecifier
+          Identifier: ' CodeAction'
+        ImportSpecifier
+          Identifier: ' CodeFixContextBase'
+        ImportSpecifier
+          Identifier: ' DiagnosticWithLocation'
+        ImportSpecifier
+          Identifier: ' ExportKind'
+        ImportSpecifier
+          Identifier: ' ExportMapInfoKey'
+        ImportSpecifier
+          Identifier: ' formatting'
+        ImportSpecifier
+          Identifier: ' FutureSourceFile'
+        ImportSpecifier
+          Identifier: ' FutureSymbolExportInfo'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' ImportClause'
+        ImportSpecifier
+          Identifier: ' ImportEqualsDeclaration'
+        ImportSpecifier
+          Identifier: ' ImportKind'
+        ImportSpecifier
+          Identifier: ' ImportSpecifier'
+        ImportSpecifier
+          Identifier: ' LanguageServiceHost'
+        ImportSpecifier
+          Identifier: ' NamespaceImport'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' QuotePreference'
+        ImportSpecifier
+          Identifier: ' RequireOrImportCall'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' SymbolExportInfo'
+        ImportSpecifier
+          Identifier: ' SymbolFlags'
+        ImportSpecifier
+          Identifier: ' textChanges'
+        ImportSpecifier
+          Identifier: ' UserPreferences'
+        ImportSpecifier
+          Identifier: ' VariableDeclarationInitializedTo'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' importFixName'
+        StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ImportOrRequireAliasDeclaration'
+    UnionType
+      TypeReference
+        Identifier: ' ImportEqualsDeclaration'
+      TypeReference
+        Identifier: ' ImportClause'
+      TypeReference
+        Identifier: ' ImportSpecifier'
+      TypeReference
+        Identifier: ' NamespaceImport'
+      TypeReference
+        Identifier: ' VariableDeclarationInitializedTo'
+        TypeReference
+          Identifier: 'RequireOrImportCall'
+      TypeReference
+        Identifier: ' BindingElement'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ImportAdder'
+    MethodSignature
+      Identifier: '
+    hasFixes'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    addImportFromDiagnostic'
+      FunctionType
+        Parameter
+          Identifier: 'diagnostic'
+          TypeReference
+            Identifier: ' DiagnosticWithLocation'
+        Parameter
+          Identifier: ' context'
+          TypeReference
+            Identifier: ' CodeFixContextBase'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    addImportFromExportedSymbol'
+      FunctionType
+        Parameter
+          Identifier: 'exportedSymbol'
+          TypeReference
+            Identifier: ' Symbol'
+        Parameter
+          Identifier: ' isValidTypeOnlyUseSite'
+          QuestionToken
+          BooleanKeyword
+        Parameter
+          Identifier: ' referenceImport'
+          QuestionToken
+          TypeReference
+            Identifier: ' ImportOrRequireAliasDeclaration'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    addImportForNonExistentExport'
+      FunctionType
+        Parameter
+          Identifier: 'exportName'
+          StringKeyword
+        Parameter
+          Identifier: ' exportingFileName'
+          StringKeyword
+        Parameter
+          Identifier: ' exportKind'
+          TypeReference
+            Identifier: ' ExportKind'
+        Parameter
+          Identifier: ' exportedMeanings'
+          TypeReference
+            Identifier: ' SymbolFlags'
+        Parameter
+          Identifier: ' isImportUsageValidAsTypeOnly'
+          BooleanKeyword
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    addImportForUnresolvedIdentifier'
+      FunctionType
+        Parameter
+          Identifier: 'context'
+          TypeReference
+            Identifier: ' CodeFixContextBase'
+        Parameter
+          Identifier: ' symbolToken'
+          TypeReference
+            Identifier: ' Identifier'
+        Parameter
+          Identifier: ' useAutoImportProvider'
+          BooleanKeyword
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    addVerbatimImport'
+      FunctionType
+        Parameter
+          Identifier: 'declaration'
+          UnionType
+            TypeReference
+              Identifier: ' AnyImportOrRequireStatement'
+            TypeReference
+              Identifier: ' ImportOrRequireAliasDeclaration'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    removeExistingImport'
+      FunctionType
+        Parameter
+          Identifier: 'declaration'
+          TypeReference
+            Identifier: ' ImportOrRequireAliasDeclaration'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    writeFixes'
+      FunctionType
+        Parameter
+          Identifier: 'changeTracker'
+          TypeReference
+            QualifiedName
+              Identifier: ' textChanges'
+              Identifier: 'ChangeTracker'
+        Parameter
+          Identifier: ' oldFileQuotePreference'
+          QuestionToken
+          TypeReference
+            Identifier: ' QuotePreference'
+        VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createImportAdder'
+    Parameter
+      Identifier: 'sourceFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' FutureSourceFile'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' cancellationToken'
+      QuestionToken
+      TypeReference
+        Identifier: ' CancellationToken'
+    TypeReference
+      Identifier: ' ImportAdder'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ImportSpecifierResolver'
+    MethodSignature
+      Identifier: '
+    getModuleSpecifierForBestExportInfo'
+      Parameter
+        Identifier: 'exportInfo'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' SymbolExportInfo'
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' isValidTypeOnlyUseSite'
+        BooleanKeyword
+      Parameter
+        Identifier: ' fromCacheOnly'
+        QuestionToken
+        BooleanKeyword
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        exportInfo'
+            QuestionToken
+            UnionType
+              TypeReference
+                Identifier: ' SymbolExportInfo'
+              TypeReference
+                Identifier: ' FutureSymbolExportInfo'
+          PropertySignature
+            Identifier: '
+        moduleSpecifier'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+        computedWithoutCacheCount'
+            NumberKeyword
+        UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createImportSpecifierResolver'
+    Parameter
+      Identifier: 'importingFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    TypeReference
+      Identifier: ' ImportSpecifierResolver'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getImportCompletionAction'
+    Parameter
+      Identifier: 'targetSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' moduleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' exportMapKey'
+      UnionType
+        TypeReference
+          Identifier: ' ExportMapInfoKey'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' symbolName'
+      StringKeyword
+    Parameter
+      Identifier: ' isJsxTagName'
+      BooleanKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' formatContext'
+      TypeReference
+        QualifiedName
+          Identifier: ' formatting'
+          Identifier: 'FormatContext'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    TypeLiteral
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' moduleSpecifier'
+        StringKeyword
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' codeAction'
+        TypeReference
+          Identifier: ' CodeAction'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getPromoteTypeOnlyCompletionAction'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' symbolToken'
+      TypeReference
+        Identifier: ' Identifier'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' formatContext'
+      TypeReference
+        QualifiedName
+          Identifier: ' formatting'
+          Identifier: 'FormatContext'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    UnionType
+      TypeReference
+        Identifier: ' CodeAction'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getImportKind'
+    Parameter
+      Identifier: 'importingFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' FutureSourceFile'
+    Parameter
+      Identifier: ' exportKind'
+      TypeReference
+        Identifier: ' ExportKind'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' forceImportKeyword'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' ImportKind'

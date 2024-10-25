@@ -1,0 +1,38 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+  ClassDeclaration
+    Identifier: ' FooIterator'
+    MethodDeclaration
+      Identifier: '
+    next'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            value'
+              NewExpression
+                Identifier: ' Foo'
+            PropertyAssignment
+              Identifier: '
+            done'
+              FalseKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Block
+        ReturnStatement
+          ThisKeyword
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+    NewExpression
+      Identifier: ' FooIterator'
+    Block
+      ExpressionStatement
+        Identifier: '
+    v'

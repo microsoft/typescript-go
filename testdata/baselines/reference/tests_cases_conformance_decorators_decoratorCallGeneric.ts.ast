@@ -1,0 +1,39 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    prototype'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    m'
+      FunctionType
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' dec'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'c'
+      TypeReference
+        Identifier: ' I'
+        TypeReference
+          Identifier: 'T'
+    Block
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    _brand'
+      AnyKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      Block

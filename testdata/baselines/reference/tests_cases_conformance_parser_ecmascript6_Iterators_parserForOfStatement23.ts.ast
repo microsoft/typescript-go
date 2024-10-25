@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' async'
+      ForOfStatement
+        AwaitKeyword
+        Identifier: 'async'
+        Identifier: ' x'
+        Block

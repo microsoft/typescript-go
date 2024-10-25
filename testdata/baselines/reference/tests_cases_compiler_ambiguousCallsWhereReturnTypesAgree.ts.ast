@@ -1,0 +1,111 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' TestClass'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        ArrayType
+          StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      VoidKeyword
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        ArrayType
+          StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'bar'
+            Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' TestClass2'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        ArrayType
+          StringKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        ArrayType
+          StringKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'bar'
+            Identifier: 'x'

@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: ' m1'
+      Block
+  InterfaceDeclaration
+    Identifier: ' C'
+    MethodSignature
+      Identifier: ' m2'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' Sub'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    m3'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'm2'

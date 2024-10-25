@@ -1,0 +1,35 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noImplicitAny: true
+////function existing<T>(value: T) {
+////  if (typeof value === "number") {
+////    added/*1*/(value);
+////  }
+////}
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

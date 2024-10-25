@@ -1,0 +1,48 @@
+SourceFile
+  ExportAssignment
+    NumericLiteral
+  ExportAssignment
+    NumericLiteral
+  ExportAssignment
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mod'
+        CallExpression
+          CallExpression
+            Identifier: ' await'
+            ArrowFunction
+              AsyncKeyword
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' x'
+                      NumberKeyword
+                      NumericLiteral
+                SwitchStatement
+                  Identifier: 'x'
+                  CaseBlock
+                    CaseClause
+                      NumericLiteral
+                      ReturnStatement
+                        AwaitExpression
+                          CallExpression
+                            ImportKeyword
+                            StringLiteral
+                    CaseClause
+                      NumericLiteral
+                      ReturnStatement
+                        AwaitExpression
+                          CallExpression
+                            ImportKeyword
+                            StringLiteral
+                    DefaultClause
+                      ReturnStatement
+                        AwaitExpression
+                          CallExpression
+                            ImportKeyword
+                            StringLiteral

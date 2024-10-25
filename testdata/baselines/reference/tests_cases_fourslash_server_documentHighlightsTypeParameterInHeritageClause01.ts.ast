@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts" />
+
+////interface I<[|T|]> extends I<[|T|]>, [|T|] {
+////}
+
+verify'
+        Identifier: 'baselineDocumentHighlights'

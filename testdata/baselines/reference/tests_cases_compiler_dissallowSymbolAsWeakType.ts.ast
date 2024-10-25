@@ -1,0 +1,114 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        SymbolKeyword
+        CallExpression
+          Identifier: ' Symbol'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ws'
+        NewExpression
+          Identifier: ' WeakSet'
+          ArrayLiteralExpression
+            Identifier: 's'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+ws'
+        Identifier: 'add'
+      Identifier: 's'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+ws'
+        Identifier: 'has'
+      Identifier: 's'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+ws'
+        Identifier: 'delete'
+      Identifier: 's'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wm'
+        NewExpression
+          Identifier: ' WeakMap'
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              Identifier: 's'
+              FalseKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+wm'
+        Identifier: 'set'
+      Identifier: 's'
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+wm'
+        Identifier: 'has'
+      Identifier: 's'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+wm'
+        Identifier: 'get'
+      Identifier: 's'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+wm'
+        Identifier: 'delete'
+      Identifier: 's'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wr'
+        NewExpression
+          Identifier: ' WeakRef'
+          Identifier: 's'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+wr'
+        Identifier: 'deref'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        NewExpression
+          Identifier: ' FinalizationRegistry'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+f'
+        Identifier: 'register'
+      Identifier: 's'
+      NullKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+f'
+        Identifier: 'unregister'
+      Identifier: 's'

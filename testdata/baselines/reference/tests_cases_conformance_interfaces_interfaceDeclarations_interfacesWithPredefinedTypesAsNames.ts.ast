@@ -1,0 +1,19 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' any'
+  InterfaceDeclaration
+    Identifier: ' number'
+  InterfaceDeclaration
+    Identifier: ' string'
+  InterfaceDeclaration
+    Identifier: ' boolean'
+  ExpressionStatement
+    Identifier: '
+interface'
+  ExpressionStatement
+    VoidExpression
+      ObjectLiteralExpression
+  InterfaceDeclaration
+    Identifier: ' unknown'
+  InterfaceDeclaration
+    Identifier: ' never'

@@ -1,0 +1,220 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' OuterMod'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' someExportedOuterFunc'
+        Block
+          ReturnStatement
+            PrefixUnaryExpression
+              NumericLiteral
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' OuterInnerMod'
+        ModuleBlock
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' someExportedOuterInnerFunc'
+            Block
+              ReturnStatement
+                StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' OuterInnerAlias'
+    QualifiedName
+      Identifier: ' OuterMod'
+      Identifier: 'OuterInnerMod'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' InnerMod'
+        ModuleBlock
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' someExportedInnerFunc'
+            Block
+              ReturnStatement
+                PrefixUnaryExpression
+                  NumericLiteral
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+		A'
+        EnumMember
+          Identifier: '
+		B'
+        EnumMember
+          Identifier: '
+		C'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exported_var'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' x'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        MethodSignature
+          Identifier: '
+		someMethod'
+          NumberKeyword
+      ClassDeclaration
+        Identifier: ' B'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' b'
+          NumericLiteral
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' I'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' someMethodThatCallsAnOuterMethod'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' OuterInnerAlias'
+                  Identifier: 'someExportedOuterInnerFunc'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' someMethodThatCallsAnInnerMethod'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' InnerMod'
+                  Identifier: 'someExportedInnerFunc'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' someMethodThatCallsAnOuterInnerMethod'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' OuterMod'
+                  Identifier: 'someExportedOuterFunc'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' someMethod'
+          Block
+            ReturnStatement
+              NumericLiteral
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' someProp'
+          NumericLiteral
+        Constructor
+          Block
+            FunctionDeclaration
+              Identifier: ' someInnerFunc'
+              Block
+                ReturnStatement
+                  NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' someInnerVar'
+                  NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' someModuleVar'
+            NumericLiteral
+      FunctionDeclaration
+        Identifier: ' someModuleFunction'
+        Block
+          ReturnStatement
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            Identifier: ' x'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' meb'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' M'
+                Identifier: 'E'
+              Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cprime'
+        TypeReference
+          QualifiedName
+            Identifier: ' M'
+            Identifier: 'I'
+        TypeAssertionExpression
+          TypeReference
+            QualifiedName
+              Identifier: 'M'
+              Identifier: 'I'
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' alpha'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'E'
+          Identifier: 'A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' omega'
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'exported_var'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'someMethodThatCallsAnOuterMethod'

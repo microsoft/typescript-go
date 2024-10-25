@@ -1,0 +1,43 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' EntityPrototype'
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' WorkspacePrototype'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    serialize'
+            FunctionExpression
+              AnyKeyword
+              Block
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+WorkspacePrototype'
+        StringLiteral
+      EqualsToken
+      Identifier: ' EntityPrototype'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StringLiteral
+      NumericLiteral

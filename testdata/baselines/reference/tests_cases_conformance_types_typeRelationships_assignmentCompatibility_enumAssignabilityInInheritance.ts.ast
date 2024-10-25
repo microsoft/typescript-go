@@ -1,0 +1,564 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+  InterfaceDeclaration
+    Identifier: ' I0'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' E'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' E'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' foo'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' foo'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' foo'
+          TypeAssertionExpression
+            AnyKeyword
+            NullKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo2'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      BooleanKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo3'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Date'
+    TypeReference
+      Identifier: ' Date'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo4'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' RegExp'
+    TypeReference
+      Identifier: ' RegExp'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo5'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' bar'
+          NumberKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: ' bar'
+        NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo6'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'x'
+      ArrayType
+        NumberKeyword
+    ArrayType
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo7'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  InterfaceDeclaration
+    Identifier: ' I8'
+    PropertySignature
+      Identifier: ' foo'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo8'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I8'
+    TypeReference
+      Identifier: ' I8'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo8'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo8'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' foo'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo9'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+    TypeReference
+      Identifier: ' A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo9'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo9'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  ClassDeclaration
+    Identifier: ' A2'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: ' foo'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo10'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A2'
+        NumberKeyword
+    TypeReference
+      Identifier: ' A2'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo10'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo10'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo11'
+    Parameter
+      Identifier: 'x'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+        NumberKeyword
+    FunctionType
+      Parameter
+        Identifier: 'x'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo11'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo11'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo12'
+    Parameter
+      Identifier: 'x'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo12'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo12'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  EnumDeclaration
+    Identifier: ' E2'
+    EnumMember
+      Identifier: ' A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo13'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E2'
+    TypeReference
+      Identifier: ' E2'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo13'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo13'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+  ModuleDeclaration
+    Identifier: ' f'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo14'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' f'
+    TypeQuery
+      Identifier: ' f'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo14'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo14'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  ClassDeclaration
+    Identifier: ' CC'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' CC'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo15'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' CC'
+    TypeReference
+      Identifier: ' CC'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo15'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo15'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo16'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Object'
+    TypeReference
+      Identifier: ' Object'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo16'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo16'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo17'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+    TypeLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo17'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+    TypeReference
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo16'
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'A'

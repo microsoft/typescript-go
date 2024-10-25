@@ -1,0 +1,9 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Logger'
+    PropertyDeclaration
+      Identifier: ' 
+     public'

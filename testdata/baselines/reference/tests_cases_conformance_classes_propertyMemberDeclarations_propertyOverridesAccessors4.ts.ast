@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Animal'
+    GetAccessor
+      Identifier: ' sound'
+      StringKeyword
+    SetAccessor
+      Identifier: ' sound'
+      Parameter
+        Identifier: 'val'
+        StringKeyword
+  ClassDeclaration
+    Identifier: ' Lion'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Animal'
+    PropertyDeclaration
+      Identifier: '
+    sound'
+      StringLiteral

@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a'
+          BindingElement
+            Identifier: ' b'
+        TupleType
+          NumberKeyword
+          AnyKeyword
+        ArrayLiteralExpression
+          Identifier: 'undefined'
+          Identifier: ' undefined'

@@ -1,0 +1,63 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' forConfigDirExtendsSysScenario'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTscWatch'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    forConfigDirExtendsSysScenario'
+              FalseKeyword
+              ArrowFunction
+                Parameter
+                  Identifier: 'subScenario'
+                Parameter
+                  Identifier: ' sys'
+                Parameter
+                  Identifier: ' edits'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: '
+            verifyTscWatch'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                scenario'
+                      StringLiteral
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                subScenario'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                sys'
+                    PropertyAssignment
+                      Identifier: '
+                commandLineArgs'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+                edits'
+                      CallExpression
+                        Identifier: ' edits'

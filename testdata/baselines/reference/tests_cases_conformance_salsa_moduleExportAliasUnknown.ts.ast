@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @noEmit: true
+// @checkJs: true
+// @Filename: bug27025.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' window'
+        Identifier: 'nonprop'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'foo'
+      EqualsToken
+      Identifier: ' bar'

@@ -1,0 +1,987 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            UnionType
+              NumberKeyword
+              LiteralType
+                NullKeyword
+            NullKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        a'
+              EqualsToken
+              NumericLiteral
+          ReturnStatement
+            Identifier: ' a'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ThrowStatement
+              Identifier: ' e'
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'a'
+                ExclamationEqualsToken
+                NullKeyword
+              AmpersandAmpersandToken
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' a'
+                    Identifier: 'toFixed'
+                  NumericLiteral
+                EqualsEqualsToken
+                StringLiteral
+            Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        x'
+                EqualsToken
+                NumericLiteral
+            ThrowStatement
+              Identifier: ' e'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        x'
+                EqualsToken
+                NumericLiteral
+            ReturnStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        x'
+                EqualsToken
+                NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+          ReturnStatement
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        x'
+                EqualsToken
+                NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        x'
+                EqualsToken
+                NumericLiteral
+            ReturnStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f7'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+          ReturnStatement
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        x'
+                EqualsToken
+                NumericLiteral
+            ReturnStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f8'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                TryStatement
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+            x'
+                        EqualsToken
+                        NumericLiteral
+                    ReturnStatement
+                  Block
+                    ExpressionStatement
+                      Identifier: '
+            x'
+                ExpressionStatement
+                  Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f9'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                TryStatement
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          TrueKeyword
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                x'
+                            EqualsToken
+                            NumericLiteral
+                        ReturnStatement
+                  Block
+                    ExpressionStatement
+                      Identifier: '
+            x'
+                ExpressionStatement
+                  Identifier: '
+        x'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '  // 0
+        x'
+                    EqualsToken
+                    NumericLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f10'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                TryStatement
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+            x'
+                        EqualsToken
+                        NumericLiteral
+                    ReturnStatement
+                  CatchClause
+                    VariableDeclaration
+                      Identifier: 'e'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+            x'
+                          EqualsToken
+                          NumericLiteral
+                  Block
+                    ExpressionStatement
+                      Identifier: '
+            x'
+                ExpressionStatement
+                  Identifier: '
+        x'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '  // 2
+        x'
+                    EqualsToken
+                    NumericLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f11'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                TryStatement
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          TrueKeyword
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                x'
+                            EqualsToken
+                            NumericLiteral
+                        ReturnStatement
+                    IfStatement
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          TrueKeyword
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                x'
+                            EqualsToken
+                            NumericLiteral
+                        ThrowStatement
+                          NumericLiteral
+                  CatchClause
+                    VariableDeclaration
+                      Identifier: 'e'
+                    Block
+                      ExpressionStatement
+                        Identifier: '
+            x'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '  // 0 | 1 | 2
+            x'
+                          EqualsToken
+                          NumericLiteral
+                  Block
+                    ExpressionStatement
+                      Identifier: '
+            x'
+                    IfStatement
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          TrueKeyword
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                x'
+                            EqualsToken
+                            NumericLiteral
+                ExpressionStatement
+                  Identifier: '
+        x'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '  // 0 | 3 | 4
+        x'
+                    EqualsToken
+                    NumericLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f12'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                TryStatement
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          TrueKeyword
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                x'
+                            EqualsToken
+                            NumericLiteral
+                        ReturnStatement
+                    IfStatement
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          TrueKeyword
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                x'
+                            EqualsToken
+                            NumericLiteral
+                        ThrowStatement
+                          NumericLiteral
+                  CatchClause
+                    VariableDeclaration
+                      Identifier: 'e'
+                    Block
+                      ExpressionStatement
+                        Identifier: '
+            x'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '  // 0 | 1 | 2
+            x'
+                          EqualsToken
+                          NumericLiteral
+                  Block
+                    ExpressionStatement
+                      Identifier: '
+            x'
+                    IfStatement
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          TrueKeyword
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                x'
+                            EqualsToken
+                            NumericLiteral
+                        ReturnStatement
+                    IfStatement
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          TrueKeyword
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                x'
+                            EqualsToken
+                            NumericLiteral
+                        ReturnStatement
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+            x'
+                        EqualsToken
+                        NumericLiteral
+                    ReturnStatement
+                    ExpressionStatement
+                      Identifier: '
+            x'
+                ExpressionStatement
+                  Identifier: '
+        x'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: ' // unreachable
+        x'
+                    EqualsToken
+                    NumericLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' main'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' hoge'
+                  UnionType
+                    StringKeyword
+                    UndefinedKeyword
+                  Identifier: ' undefined'
+            TryStatement
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+        hoge'
+                    EqualsToken
+                    StringLiteral
+                ReturnStatement
+              CatchClause
+                Block
+                  ReturnStatement
+              Block
+                IfStatement
+                  Identifier: 'hoge'
+                  Block
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        Identifier: '
+            hoge'
+                        Identifier: 'length'
+                ReturnStatement
+  FunctionDeclaration
+    Identifier: ' t1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              ParenthesizedExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    TryStatement
+                      Block
+                        ReturnStatement
+                          StringLiteral
+                      CatchClause
+                        VariableDeclaration
+                          Identifier: 'e'
+                        Block
+                          ReturnStatement
+                            NullKeyword
+                    ExpressionStatement
+                      Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  TypeAliasDeclaration
+    Identifier: ' State'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' tag'
+          LiteralType
+            StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' tag'
+          LiteralType
+            StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' tag'
+          LiteralType
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' notallowed'
+    Parameter
+      Identifier: 'arg'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' state'
+            TypeReference
+              Identifier: ' State'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' tag'
+                StringLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        state'
+              EqualsToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' tag'
+                  StringLiteral
+          TryStatement
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            state'
+                  EqualsToken
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' tag'
+                      StringLiteral
+            Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'err'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+        state'
+                Identifier: 'tag'
+            IfStatement
+              BinaryExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'state'
+                    Identifier: 'tag'
+                  ExclamationEqualsEqualsToken
+                  StringLiteral
+                AmpersandAmpersandToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' state'
+                    Identifier: 'tag'
+                  ExclamationEqualsEqualsToken
+                  StringLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            console'
+                      Identifier: 'log'
+                    PropertyAccessExpression
+                      Identifier: 'state'
+                      Identifier: 'tag'
+  FunctionDeclaration
+    Identifier: ' f20'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+          TryStatement
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            x'
+                  EqualsToken
+                  NumericLiteral
+              TryStatement
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                x'
+                      EqualsToken
+                      NumericLiteral
+                Block
+                  IfStatement
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        TrueKeyword
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: ' x'
+                        EqualsToken
+                        NumericLiteral
+              ExpressionStatement
+                Identifier: '
+            x'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    TrueKeyword
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: ' x'
+                    EqualsToken
+                    NumericLiteral
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                TrueKeyword
+            ExpressionStatement
+              BinaryExpression
+                Identifier: ' x'
+                EqualsToken
+                NumericLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f21'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+          TryStatement
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            x'
+                  EqualsToken
+                  NumericLiteral
+              TryStatement
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                x'
+                      EqualsToken
+                      NumericLiteral
+                Block
+                  IfStatement
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        TrueKeyword
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: ' x'
+                        EqualsToken
+                        NumericLiteral
+              ExpressionStatement
+                Identifier: '
+            x'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    TrueKeyword
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: ' x'
+                    EqualsToken
+                    NumericLiteral
+          ExpressionStatement
+            Identifier: '
+        x'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              Identifier: '
+        x'

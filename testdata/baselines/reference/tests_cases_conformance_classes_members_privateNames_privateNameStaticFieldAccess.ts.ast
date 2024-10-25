@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      StringLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              Identifier: 'A'
+              PrivateIdentifier
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' //Ok
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier

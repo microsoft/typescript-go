@@ -1,0 +1,138 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateTail

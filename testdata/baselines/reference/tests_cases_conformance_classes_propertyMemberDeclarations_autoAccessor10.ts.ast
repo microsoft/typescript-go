@@ -1,0 +1,51 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' a0'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' a1'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    ClassStaticBlockDeclaration
+      Block
+        ClassDeclaration
+          Identifier: ' C3_Inner'
+          PropertyDeclaration
+            AccessorKeyword
+            Identifier: ' a2'
+            NumericLiteral
+          ClassStaticBlockDeclaration
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PrivateIdentifier
+                  InKeyword
+                  Identifier: ' C3'
+  ClassDeclaration
+    Identifier: ' C4_1'
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' a3'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C4_2'
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' a3'
+      NumericLiteral

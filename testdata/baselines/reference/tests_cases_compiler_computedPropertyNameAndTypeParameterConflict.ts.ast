@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' O'
+        TypeOperator
+          SymbolKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'O'
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'O'
+      NumberKeyword

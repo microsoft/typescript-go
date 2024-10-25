@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' commentedParameters'
+    Parameter
+      Identifier: '
+a'
+    Parameter
+      Identifier: ' 
+b'
+    Block

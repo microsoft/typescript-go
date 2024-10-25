@@ -1,0 +1,27 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' range'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' test'
+        Identifier: 'ranges'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'selectRange'
+          Identifier: 'range'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    verify'
+              Identifier: 'not'
+            Identifier: 'refactorAvailable'
+          StringLiteral
+          StringLiteral

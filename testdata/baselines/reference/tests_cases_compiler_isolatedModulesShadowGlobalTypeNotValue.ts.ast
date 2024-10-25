@@ -1,0 +1,172 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Date'
+    PropertySignature
+      Identifier: '
+    day'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    month'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    year'
+      NumberKeyword
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Event'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' T'
+        AnyKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: '
+    global'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' Console'
+            PropertySignature
+              Identifier: '
+            Console'
+              TypeReference
+                QualifiedName
+                  Identifier: ' console'
+                  Identifier: 'ConsoleConstructor'
+          ModuleDeclaration
+            Identifier: ' console'
+            ModuleBlock
+              InterfaceDeclaration
+                Identifier: ' ConsoleConstructor'
+                PropertySignature
+                  Identifier: '
+                prototype'
+                  TypeReference
+                    Identifier: ' Console'
+                ConstructSignature
+                  TypeReference
+                    Identifier: ' Console'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' console'
+                TypeReference
+                  Identifier: ' Console'
+      ExportAssignment
+        PropertyAccessExpression
+          Identifier: ' globalThis'
+          Identifier: 'console'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Date'
+        ImportSpecifier
+          Identifier: ' Event'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' Date'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NewExpression
+              Identifier: ' Date'
+              PropertyAccessExpression
+                Identifier: 'a'
+                Identifier: 'year'
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'month'
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'day'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' b'
+            Identifier: 'getTime'
+  FunctionDeclaration
+    Identifier: ' bar'
+    Block
+      ReturnStatement
+        AsExpression
+          NewExpression
+            Identifier: ' Event'
+            StringLiteral
+          TypeReference
+            QualifiedName
+              Identifier: ' Event'
+              Identifier: 'T'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Date'
+        ImportSpecifier
+          Identifier: ' Event'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Console'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' Date'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NewExpression
+              Identifier: ' Date'
+              PropertyAccessExpression
+                Identifier: 'a'
+                Identifier: 'year'
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'month'
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'day'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' b'
+            Identifier: 'getTime'
+  FunctionDeclaration
+    Identifier: ' bar'
+    Block
+      ReturnStatement
+        AsExpression
+          NewExpression
+            Identifier: ' Event'
+            StringLiteral
+          TypeReference
+            QualifiedName
+              Identifier: ' Event'
+              Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' baz'
+        TypeReference
+          Identifier: ' Console'
+        NewExpression
+          Identifier: ' Console'

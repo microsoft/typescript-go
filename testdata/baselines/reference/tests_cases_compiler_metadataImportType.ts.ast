@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'test'
+      Identifier: '
+    b'
+      ImportType
+        LiteralType
+          StringLiteral
+        Identifier: 'B'

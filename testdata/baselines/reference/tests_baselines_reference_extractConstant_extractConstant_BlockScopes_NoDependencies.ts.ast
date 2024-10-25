@@ -1,0 +1,64 @@
+SourceFile
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' j'
+          LessThanToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' j'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' j'
+          LessThanToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' j'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newLocal'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                Identifier: ' /*RENAME*/newLocal'

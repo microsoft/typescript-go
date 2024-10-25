@@ -1,0 +1,35 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' C'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' f'
+                NumberKeyword
+      ClassDeclaration
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: '
+        foo'
+          VoidKeyword
+      ImportEqualsDeclaration
+        Identifier: ' X'
+        Identifier: ' C'
+      ExportAssignment
+        Identifier: ' X'
+  ImportEqualsDeclaration
+    Identifier: ' A'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' A'

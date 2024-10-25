@@ -1,0 +1,73 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Meta'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' A'
+    MappedType
+      ReadonlyKeyword
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        value'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P'
+        PropertySignature
+          Identifier: '
+        also'
+          TypeReference
+            Identifier: ' A'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' children'
+          TypeReference
+            Identifier: ' Meta'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: 'P'
+            TypeReference
+              Identifier: ' A'
+  InterfaceDeclaration
+    Identifier: ' Input'
+    PropertySignature
+      Identifier: '
+    x'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    y'
+      NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' output'
+        TypeReference
+          Identifier: ' Meta'
+          TypeReference
+            Identifier: 'Input'
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shouldFail'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' important'
+            BooleanKeyword
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' output'
+            Identifier: 'x'
+          Identifier: 'children'

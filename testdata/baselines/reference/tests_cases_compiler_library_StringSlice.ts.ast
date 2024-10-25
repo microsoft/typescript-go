@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '// String.prototype.slice can have zero, one, or two arguments
+String'
+          Identifier: 'prototype'
+        Identifier: 'slice'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+String'
+          Identifier: 'prototype'
+        Identifier: 'slice'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+String'
+          Identifier: 'prototype'
+        Identifier: 'slice'
+      NumericLiteral
+      NumericLiteral

@@ -1,0 +1,110 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' Iterator'
+          StringKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' io'
+        TypeReference
+          Identifier: ' IteratorObject'
+          StringKeyword
+          UndefinedKeyword
+          UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        TypeReference
+          Identifier: ' Generator'
+          StringKeyword
+          VoidKeyword
+  ClassDeclaration
+    Identifier: ' MyIterator'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Iterator'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    next'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' done'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' value'
+              Identifier: ' undefined'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it0'
+            Identifier: ' io'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it1'
+            Identifier: ' g'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it2'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Iterator'
+                Identifier: 'from'
+              Identifier: 'i'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it3'
+            NewExpression
+              Identifier: ' MyIterator'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it4'
+            CallExpression
+              PropertyAccessExpression
+                ArrayLiteralExpression
+                Identifier: 'values'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it5'
+            CallExpression
+              PropertyAccessExpression
+                NewExpression
+                  Identifier: ' Map'
+                  StringKeyword
+                  StringKeyword
+                Identifier: 'entries'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it6'
+            CallExpression
+              PropertyAccessExpression
+                NewExpression
+                  Identifier: ' Set'
+                  StringKeyword
+                Identifier: 'keys'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it7'
+            Identifier: ' i'

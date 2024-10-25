@@ -1,0 +1,130 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Number'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' String'
+    MethodSignature
+      Identifier: '
+    foo'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Array'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+
+    bar'
+      Parameter
+        Identifier: 'x'
+      Block
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Parameter
+        Identifier: 'x'
+      Block
+    PropertyDeclaration
+      Identifier: '
+
+    baz'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+    PropertyDeclaration
+      Identifier: '
+    baz'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    foo'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    foo'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+
+    bar'
+            FunctionType
+              TypeLiteral
+          PropertySignature
+            Identifier: '
+    bar'
+            FunctionType
+              TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    foo'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    foo'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    bar'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+          PropertyAssignment
+            Identifier: '
+    bar'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block

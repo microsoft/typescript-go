@@ -1,0 +1,92 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'ctor'
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p1'
+      NumberKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p2'
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'element'
+        AnyKeyword
+      Parameter
+        Identifier: ' url'
+        StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'element'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'p1'
+            EqualsToken
+            Identifier: ' element'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'p2'
+            EqualsToken
+            Identifier: ' url'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I1'
+    MethodSignature
+      Identifier: '
+    register'
+      Parameter
+        Identifier: 'inputClass'
+        ConstructorType
+          Parameter
+            DotDotDotToken
+            Identifier: 'params'
+            ArrayType
+              AnyKeyword
+          TypeReference
+            Identifier: ' A'
+    MethodSignature
+      Identifier: '
+    register'
+      Parameter
+        Identifier: 'inputClass'
+        ArrayType
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                DotDotDotToken
+                Identifier: 'params'
+                ArrayType
+                  AnyKeyword
+              TypeReference
+                Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' reg'
+        TypeReference
+          Identifier: ' I1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+reg'
+        Identifier: 'register'
+      Identifier: 'B'

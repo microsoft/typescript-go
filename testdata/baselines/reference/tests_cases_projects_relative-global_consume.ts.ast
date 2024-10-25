@@ -1,0 +1,26 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' decl'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' decl'
+            Identifier: 'call'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fail'
+  IfStatement
+    BinaryExpression
+      Identifier: 'str'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    fail'

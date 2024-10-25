@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    StringKeyword
+    Block
+      ReturnStatement
+        StringLiteral

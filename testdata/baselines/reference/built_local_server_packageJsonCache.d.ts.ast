@@ -1,0 +1,88 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' ProjectPackageJsonInfo'
+        ImportSpecifier
+          Identifier: ' Ternary'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Project'
+        ImportSpecifier
+          Identifier: ' ProjectService'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PackageJsonCache'
+    MethodSignature
+      Identifier: '
+    addOrUpdate'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' path'
+        TypeReference
+          Identifier: ' Path'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    invalidate'
+      Parameter
+        Identifier: 'path'
+        TypeReference
+          Identifier: ' Path'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    delete'
+      Parameter
+        Identifier: 'fileName'
+        TypeReference
+          Identifier: ' Path'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getInDirectory'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' ProjectPackageJsonInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    directoryHasPackageJson'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      TypeReference
+        Identifier: ' Ternary'
+    MethodSignature
+      Identifier: '
+    searchDirectoryAndAncestors'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      Parameter
+        Identifier: ' project'
+        TypeReference
+          Identifier: ' Project'
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createPackageJsonCache'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' ProjectService'
+    TypeReference
+      Identifier: ' PackageJsonCache'

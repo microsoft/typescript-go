@@ -1,0 +1,26 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Outer'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' self'
+            ThisKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    self'
+            Identifier: 'y'
+          EqualsToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ok'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+ok'
+      Identifier: 'y'

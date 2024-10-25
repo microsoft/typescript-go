@@ -1,0 +1,318 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' missingArrowsWithCurly'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrowFunction
+              VoidKeyword
+              EqualsGreaterThanToken
+              Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              Parameter
+                Identifier: ' y'
+                StringKeyword
+              EqualsGreaterThanToken
+              Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              Parameter
+                Identifier: ' y'
+                StringKeyword
+              VoidKeyword
+              EqualsGreaterThanToken
+              Block
+  ModuleDeclaration
+    Identifier: ' missingCurliesWithArrow'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' withStatement'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' k'
+                          NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+                ArrowFunction
+                  VoidKeyword
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' k'
+                          NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' c'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' k'
+                          NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' d'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                    NumberKeyword
+                  Parameter
+                    Identifier: ' y'
+                    StringKeyword
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' k'
+                          NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' e'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                    NumberKeyword
+                  Parameter
+                    Identifier: ' y'
+                    StringKeyword
+                  VoidKeyword
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' k'
+                          NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' f'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' k'
+                          NumericLiteral
+      ModuleDeclaration
+        Identifier: ' withoutStatement'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ''
+      EmptyStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrowFunction
+              VoidKeyword
+              EqualsGreaterThanToken
+              Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          EqualsGreaterThanToken
+          Identifier: ''
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            StringKeyword
+          EqualsGreaterThanToken
+          Identifier: ''
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            StringKeyword
+          VoidKeyword
+          EqualsGreaterThanToken
+          Identifier: ''
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Identifier: ''
+  ModuleDeclaration
+    Identifier: ' ce_nEst_pas_une_arrow_function'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ParenthesizedExpression
+              Identifier: ''
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrowFunction
+              VoidKeyword
+              EqualsGreaterThanToken
+              Identifier: ''
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            ParenthesizedExpression
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              Parameter
+                Identifier: ' y'
+                StringKeyword
+              EqualsGreaterThanToken
+              Identifier: ''
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              Parameter
+                Identifier: ' y'
+                StringKeyword
+              VoidKeyword
+              EqualsGreaterThanToken
+              Identifier: ''
+  ModuleDeclaration
+    Identifier: ' okay'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrowFunction
+              VoidKeyword
+              EqualsGreaterThanToken
+              Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              Parameter
+                Identifier: ' y'
+                StringKeyword
+              EqualsGreaterThanToken
+              Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              Parameter
+                Identifier: ' y'
+                StringKeyword
+              VoidKeyword
+              EqualsGreaterThanToken
+              Block

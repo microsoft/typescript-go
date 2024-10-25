@@ -1,0 +1,497 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Mapped1'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          TypeReference
+            Identifier: ' P'
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Mapped1'
+        TypeReference
+          Identifier: 'K'
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' K'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' K'
+            ElementAccessExpression
+              Identifier: ' obj'
+              Identifier: 'key'
+  TypeAliasDeclaration
+    Identifier: ' Mapped2'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'P'
+          TemplateTail
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          TypeReference
+            Identifier: ' P'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Mapped2'
+        TypeReference
+          Identifier: 'K'
+    Parameter
+      Identifier: ' key'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'K'
+          TemplateTail
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' K'
+            ElementAccessExpression
+              Identifier: ' obj'
+              Identifier: 'key'
+  TypeAliasDeclaration
+    Identifier: ' Mapped3'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      TypeReference
+        Identifier: ' Uppercase'
+        TypeReference
+          Identifier: 'P'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          TypeReference
+            Identifier: ' P'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Mapped3'
+        TypeReference
+          Identifier: 'K'
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' Uppercase'
+        TypeReference
+          Identifier: 'K'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' K'
+            ElementAccessExpression
+              Identifier: ' obj'
+              Identifier: 'key'
+  TypeAliasDeclaration
+    Identifier: ' Mapped4'
+    TypeParameter
+      Identifier: 'K'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          StringKeyword
+          TemplateTail
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      TypeReference
+        Identifier: ' P'
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'K'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          StringKeyword
+          TemplateTail
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Mapped4'
+        TypeReference
+          Identifier: 'K'
+    Parameter
+      Identifier: ' key'
+      TypeOperator
+        TypeReference
+          Identifier: ' Mapped4'
+          TypeReference
+            Identifier: 'K'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+            ElementAccessExpression
+              Identifier: ' obj'
+              Identifier: 'key'
+  TypeAliasDeclaration
+    Identifier: ' Mapped5'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      ConditionalType
+        TypeReference
+          Identifier: ' P'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            StringKeyword
+            TemplateTail
+        TypeReference
+          Identifier: ' P'
+        NeverKeyword
+      TypeReference
+        Identifier: ' P'
+  FunctionDeclaration
+    Identifier: ' f5'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Mapped5'
+        TypeReference
+          Identifier: 'K'
+    Parameter
+      Identifier: ' key'
+      TypeOperator
+        TypeReference
+          Identifier: ' Mapped5'
+          TypeReference
+            Identifier: 'K'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+            ElementAccessExpression
+              Identifier: ' obj'
+              Identifier: 'key'
+  TypeAliasDeclaration
+    Identifier: ' Mapped6'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'P'
+          TemplateTail
+      TypeReference
+        Identifier: ' P'
+  FunctionDeclaration
+    Identifier: ' f6'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Mapped6'
+        TypeReference
+          Identifier: 'K'
+    Parameter
+      Identifier: ' key'
+      TypeOperator
+        TypeReference
+          Identifier: ' Mapped6'
+          TypeReference
+            Identifier: 'K'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+            ElementAccessExpression
+              Identifier: ' obj'
+              Identifier: 'key'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'RemappedT'
+        TypeReference
+          Identifier: ' T'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'RemappedT'
+          TemplateTail
+      TypeReference
+        Identifier: ' RemappedT'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' get'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            StringKeyword
+          Parameter
+            Identifier: 't'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' foo'
+            TypeReference
+              Identifier: ' Foo'
+              TypeReference
+                Identifier: 'T'
+          TypeReference
+            Identifier: ' T'
+          EqualsGreaterThanToken
+          ElementAccessExpression
+            Identifier: ' foo'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 't'
+                TemplateTail
+  InterfaceDeclaration
+    Identifier: ' Bounds'
+    PropertySignature
+      Identifier: '
+    min'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    max'
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' NumericBoundsOf'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+        TypeReference
+          Identifier: ' K'
+        NeverKeyword
+      TypeReference
+        Identifier: ' Bounds'
+  FunctionDeclaration
+    Identifier: ' validate'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' bounds'
+      TypeReference
+        Identifier: ' NumericBoundsOf'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'key'
+              BindingElement
+                Identifier: ' val'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'entries'
+          Identifier: 'obj'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' boundsForKey'
+                ElementAccessExpression
+                  Identifier: ' bounds'
+                  AsExpression
+                    Identifier: 'key'
+                    TypeOperator
+                      TypeReference
+                        Identifier: ' NumericBoundsOf'
+                        TypeReference
+                          Identifier: 'T'
+          IfStatement
+            Identifier: 'boundsForKey'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' min'
+                      BindingElement
+                        Identifier: ' max'
+                    Identifier: ' boundsForKey'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: 'min'
+                    GreaterThanToken
+                    Identifier: ' val'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' max'
+                    LessThanToken
+                    Identifier: ' val'
+                ReturnStatement
+                  FalseKeyword
+      ReturnStatement
+        TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' ObjectWithUnderscoredKeys'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'k'
+        TypeReference
+          Identifier: ' K'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'k'
+          TemplateTail
+      LiteralType
+        TrueKeyword
+  FunctionDeclaration
+    Identifier: ' genericTest'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'objectWithUnderscoredKeys'
+      TypeReference
+        Identifier: ' ObjectWithUnderscoredKeys'
+        TypeReference
+          Identifier: 'K'
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' K'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' shouldBeTrue'
+            LiteralType
+              TrueKeyword
+            ElementAccessExpression
+              Identifier: ' objectWithUnderscoredKeys'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'key'
+                  TemplateTail

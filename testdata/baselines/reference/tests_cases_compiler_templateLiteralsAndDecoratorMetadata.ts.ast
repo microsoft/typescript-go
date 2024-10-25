@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' format'
+        AnyKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Greeter'
+    PropertyDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'format'
+          StringLiteral
+      Identifier: '
+  greeting'
+      UnionType
+        LiteralType
+          NoSubstitutionTemplateLiteral
+        LiteralType
+          NoSubstitutionTemplateLiteral
+      NoSubstitutionTemplateLiteral

@@ -1,0 +1,78 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' method3'
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      StaticKeyword
+      Identifier: ' method1'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      StaticKeyword
+      Identifier: ' method1'
+      Parameter
+        Identifier: 'value'
+      Block
+    GetAccessor
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      StaticKeyword
+      ComputedPropertyName
+        StringLiteral
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      StaticKeyword
+      ComputedPropertyName
+        StringLiteral
+      Parameter
+        Identifier: 'value'
+      Block
+    GetAccessor
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'method3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'method3'
+      Parameter
+        Identifier: 'value'
+      Block

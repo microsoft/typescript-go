@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' I'

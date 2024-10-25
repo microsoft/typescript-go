@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' bye'
+            StringLiteral
+  ExpressionStatement
+    Identifier: '
+y'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+y'
+        Identifier: 'ignoreMe'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+y'
+        StringLiteral
+      EqualsToken
+      StringLiteral

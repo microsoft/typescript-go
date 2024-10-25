@@ -1,0 +1,35 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+   foo'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ 
+x'
+      EqualsToken
+      ObjectLiteralExpression
+        GetAccessor
+          Identifier: ' foo'
+          Block
+            ReturnStatement
+              ArrowFunction
+                Parameter
+                  Identifier: 'n'
+                EqualsGreaterThanToken
+                Identifier: 'n'
+        SetAccessor
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'x'
+          Block

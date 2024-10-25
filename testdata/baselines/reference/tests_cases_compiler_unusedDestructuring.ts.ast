@@ -1,0 +1,79 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+          BindingElement
+            Identifier: ' b'
+        Identifier: ' o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' c'
+          BindingElement
+            Identifier: ' d'
+        Identifier: ' o'
+  ExpressionStatement
+    Identifier: '
+d'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' e'
+        Identifier: ' o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' f'
+            Identifier: ' g'
+        Identifier: ' o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' h'
+        Identifier: ' o'
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' i'
+        Identifier: ' o'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' a'
+        BindingElement
+          Identifier: ' b'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' c'
+        BindingElement
+          Identifier: ' d'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' e'
+    Block
+      ExpressionStatement
+        Identifier: '
+    d'

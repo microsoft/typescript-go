@@ -1,0 +1,122 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        NewExpression
+          Identifier: ' c2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_c'
+        Identifier: ' c2'
+  ClassDeclaration
+    Identifier: ' c3'
+    Constructor
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i3'
+        NewExpression
+          Identifier: ' c3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i3_c'
+        Identifier: ' c3'
+  ClassDeclaration
+    Identifier: ' c4'
+    Constructor
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i4'
+        NewExpression
+          Identifier: ' c4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i4_c'
+        Identifier: ' c4'
+  ClassDeclaration
+    Identifier: ' c5'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s1'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i5'
+        NewExpression
+          Identifier: ' c5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i5_c'
+        Identifier: ' c5'
+  ClassDeclaration
+    Identifier: ' c6'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s1'
+      NumberKeyword
+    Constructor
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i6'
+        NewExpression
+          Identifier: ' c6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i6_c'
+        Identifier: ' c6'
+  ClassDeclaration
+    Identifier: ' c7'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s1'
+      NumberKeyword
+    Constructor
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i7'
+        NewExpression
+          Identifier: ' c7'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i7_c'
+        Identifier: ' c7'
+  ClassDeclaration
+    Identifier: ' c8'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s1'
+      NumberKeyword
+    Constructor
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i8'
+        NewExpression
+          Identifier: ' c8'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i8_c'
+        Identifier: ' c8'
+  ClassDeclaration
+    Identifier: ' c9'
+    Constructor
+      Block

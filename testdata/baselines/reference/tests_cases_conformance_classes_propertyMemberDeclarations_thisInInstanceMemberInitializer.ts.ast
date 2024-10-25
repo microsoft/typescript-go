@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      ThisKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' T'

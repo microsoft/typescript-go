@@ -1,0 +1,22 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' A'
+        Constructor
+          Parameter
+            Identifier: 'val'
+            StringKeyword
+          Block
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' A'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NewExpression
+              Identifier: ' A'

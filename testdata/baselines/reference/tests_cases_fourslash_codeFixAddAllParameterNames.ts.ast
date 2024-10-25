@@ -1,0 +1,24 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+////interface I { i: number }
+////class C { a = 1 }
+////var x: { (boolean, undefined, I, C): string };
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixAllDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

@@ -1,0 +1,335 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m1'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m1a'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m1a'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m1b'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m1b'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m1c'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        MethodSignature
+          Identifier: ' foo'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m1c'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m1d'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        MethodDeclaration
+          Identifier: ' foo'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m1d'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+  FunctionDeclaration
+    Identifier: ' m2'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2a'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' m2a'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2b'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' m2b'
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    Identifier: ' m2c'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2c'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m2d'
+    ModuleBlock
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' m2d'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' m2e'
+    VoidKeyword
+  ModuleDeclaration
+    Identifier: ' m2e'
+    ModuleBlock
+  FunctionDeclaration
+    Identifier: ' m2f'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2f'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        MethodSignature
+          Identifier: ' foo'
+          VoidKeyword
+  FunctionDeclaration
+    Identifier: ' m2g'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2g'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: ' foo'
+          Block
+  ModuleDeclaration
+    Identifier: ' m3'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' m3'
+  ModuleDeclaration
+    Identifier: ' m3a'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' m3a'
+    MethodDeclaration
+      Identifier: ' foo'
+      Block
+  ClassDeclaration
+    Identifier: ' m3b'
+    MethodDeclaration
+      Identifier: ' foo'
+      Block
+  ModuleDeclaration
+    Identifier: ' m3b'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' m3c'
+    MethodDeclaration
+      Identifier: ' foo'
+      Block
+  ModuleDeclaration
+    Identifier: ' m3c'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' m3d'
+    MethodDeclaration
+      Identifier: ' foo'
+      VoidKeyword
+  ModuleDeclaration
+    Identifier: ' m3d'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m3e'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' m3e'
+    MethodDeclaration
+      Identifier: ' foo'
+      VoidKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' m3f'
+    MethodDeclaration
+      Identifier: ' foo'
+      VoidKeyword
+  ModuleDeclaration
+    Identifier: ' m3f'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        MethodSignature
+          Identifier: ' foo'
+          VoidKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' m3g'
+    MethodDeclaration
+      Identifier: ' foo'
+      VoidKeyword
+  ModuleDeclaration
+    Identifier: ' m3g'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: ' foo'
+          Block
+  ModuleDeclaration
+    Identifier: ' m4'
+    ModuleBlock
+  EnumDeclaration
+    Identifier: ' m4'
+  ModuleDeclaration
+    Identifier: ' m4a'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  EnumDeclaration
+    Identifier: ' m4a'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' m4b'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  EnumDeclaration
+    Identifier: ' m4b'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' m4c'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' I'
+        MethodSignature
+          Identifier: ' foo'
+          VoidKeyword
+  EnumDeclaration
+    Identifier: ' m4c'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' m4d'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: ' foo'
+          Block
+  EnumDeclaration
+    Identifier: ' m4d'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' m5'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m5'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        MethodSignature
+          Identifier: ' foo'
+          VoidKeyword
+  ModuleDeclaration
+    Identifier: ' m6'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral

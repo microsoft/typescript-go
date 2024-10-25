@@ -1,0 +1,98 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' MyComp2'
+    Parameter
+      Identifier: 'props'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' className'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: ' htmlFor'
+          QuestionToken
+          StringKeyword
+    Block
+      ReturnStatement
+        NonNullExpression
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' MyComp'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' className'
+            QuestionToken
+            StringKeyword
+          PropertySignature
+            Identifier: ' htmlFor'
+            QuestionToken
+            StringKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' class'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' for'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'label'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' for'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'label'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' for'
+          StringLiteral
+        JsxAttribute
+          Identifier: ' class'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'MyComp'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' class'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'MyComp2'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' class'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'MyComp'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' for'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'MyComp2'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' for'
+          StringLiteral

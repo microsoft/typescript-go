@@ -1,0 +1,112 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringKeyword
+  ModuleDeclaration
+    Identifier: ' M1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            Identifier: ' s'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            NumberKeyword
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            Identifier: ' s'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            NumberKeyword
+  FunctionDeclaration
+    Identifier: ' fn'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            BooleanKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            Identifier: ' s'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            BooleanKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    s'
+      TypeReference
+        Identifier: ' Date'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 's'
+    MethodDeclaration
+      Identifier: '
+    x'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' p'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'n'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' p'
+              TypeReference
+                Identifier: ' Date'
+  ModuleDeclaration
+    Identifier: ' M3'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            AnyKeyword
+      ModuleDeclaration
+        Identifier: ' M4'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                Identifier: ' s'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                AnyKeyword

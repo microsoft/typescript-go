@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+////module MemoryAnalyzer {
+////    export module Foo.Charting { }
+////    /**/
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'indentationIs'
+      NumericLiteral

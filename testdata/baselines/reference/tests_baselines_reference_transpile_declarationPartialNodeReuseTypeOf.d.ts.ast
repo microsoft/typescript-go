@@ -1,0 +1,400 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nImported'
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nNotImported'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nPrivate'
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ArrowFunction
+          Parameter
+            Identifier: 'p1'
+            TypeQuery
+              Identifier: ' nImported'
+          Parameter
+            Identifier: ' p2'
+            TypeQuery
+              Identifier: ' nNotImported'
+          Parameter
+            Identifier: ' p3'
+            TypeQuery
+              Identifier: ' nPrivate'
+          EqualsGreaterThanToken
+          AsExpression
+            NonNullExpression
+              NullKeyword
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeQuery
+                  Identifier: ' nImported'
+              PropertySignature
+                Identifier: ' bar'
+                TypeQuery
+                  Identifier: ' nPrivate'
+              PropertySignature
+                Identifier: ' baz'
+                TypeQuery
+                  Identifier: ' nNotImported'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' o'
+        ImportSpecifier
+          Identifier: ' nImported'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        Identifier: ' o'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'nImported'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'o'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nImported'
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nNotImported'
+        StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nPrivate'
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        FunctionType
+          Parameter
+            Identifier: 'p1'
+            TypeQuery
+              Identifier: ' nImported'
+          Parameter
+            Identifier: ' p2'
+            TypeQuery
+              Identifier: ' nNotImported'
+          Parameter
+            Identifier: ' p3'
+            TypeQuery
+              Identifier: ' nPrivate'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    foo'
+              TypeQuery
+                Identifier: ' nImported'
+            PropertySignature
+              Identifier: '
+    bar'
+              TypeQuery
+                Identifier: ' nPrivate'
+            PropertySignature
+              Identifier: '
+    baz'
+              TypeQuery
+                Identifier: ' nNotImported'
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        AnyKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+//// [Diagnostics reported]
+b'
+        Identifier: 'ts'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9010'
+    ExpressionStatement
+      Identifier: ' Variable'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' with'
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+      EqualsEqualsEqualsToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' b'
+          Identifier: 'ts'
+        NumericLiteral
+        Identifier: ' errors'
+      EqualsEqualsEqualsToken
+      Identifier: ''
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' o'
+        ImportSpecifier
+          Identifier: ' nImported'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        Identifier: ' o'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9010'
+    ExpressionStatement
+      Identifier: ' Variable'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' with'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' b'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' g'
+          Identifier: '
+    console'
+        Identifier: 'log'
+      Identifier: 'nImported'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        AnyKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+//// [Diagnostics reported]
+c'
+        Identifier: 'ts'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9010'
+    ExpressionStatement
+      Identifier: ' Variable'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' with'
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+      EqualsEqualsEqualsToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' c'
+          Identifier: 'ts'
+        NumericLiteral
+        Identifier: ' errors'
+      EqualsEqualsEqualsToken
+      Identifier: ''
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'o'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9010'
+    ExpressionStatement
+      Identifier: ' Variable'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' with'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' c'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' g'
+      Identifier: ''

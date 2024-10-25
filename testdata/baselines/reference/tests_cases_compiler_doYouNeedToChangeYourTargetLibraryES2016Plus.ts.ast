@@ -1,0 +1,311 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testIncludes'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              StringLiteral
+            Identifier: 'includes'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testStringPadStart'
+        CallExpression
+          PropertyAccessExpression
+            StringLiteral
+            Identifier: 'padStart'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testStringPadEnd'
+        CallExpression
+          PropertyAccessExpression
+            StringLiteral
+            Identifier: 'padEnd'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testObjectConstructorValues'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'values'
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testObjectConstructorEntries'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'entries'
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testObjectConstructorGetOwnPropertyDescriptors'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'getOwnPropertyDescriptors'
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testIntlFormatToParts'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'DateTimeFormat'
+              StringLiteral
+            Identifier: 'formatToParts'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testAtomics'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Atomics'
+            Identifier: 'add'
+          NewExpression
+            Identifier: ' Uint8Array'
+            NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testSharedArrayBuffer'
+        NewExpression
+          Identifier: ' SharedArrayBuffer'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testPromiseFinally'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' Promise'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+            Identifier: 'finally'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testRegExpMatchArrayGroups'
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              StringLiteral
+              Identifier: 'match'
+            RegularExpressionLiteral
+          Identifier: 'groups'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testRegExpExecArrayGroups'
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              RegularExpressionLiteral
+              Identifier: 'exec'
+            StringLiteral
+          Identifier: 'groups'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testRegExpDotAll'
+        PropertyAccessExpression
+          RegularExpressionLiteral
+          Identifier: 'dotAll'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testIntlPluralRules'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'PluralRules'
+              StringLiteral
+            Identifier: 'select'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testAsyncGenerator'
+        TypeReference
+          Identifier: ' AsyncGenerator'
+          AnyKeyword
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testAsyncGeneratorFunction'
+        TypeReference
+          Identifier: ' AsyncGeneratorFunction'
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testAsyncIterable'
+        TypeReference
+          Identifier: ' AsyncIterable'
+          AnyKeyword
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testAsyncIterableIterator'
+        TypeReference
+          Identifier: ' AsyncIterableIterator'
+          AnyKeyword
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testNumberFormatFormatToParts'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'NumberFormat'
+              StringLiteral
+            Identifier: 'formatToParts'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testArrayFlat'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+            Identifier: 'flat'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testArrayFlatMap'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+            Identifier: 'flatMap'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testObjectConstructorFromEntries'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'fromEntries'
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testStringTrimStart'
+        CallExpression
+          PropertyAccessExpression
+            StringLiteral
+            Identifier: 'trimStart'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testStringTrimEnd'
+        CallExpression
+          PropertyAccessExpression
+            StringLiteral
+            Identifier: 'trimEnd'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testStringTrimLeft'
+        CallExpression
+          PropertyAccessExpression
+            StringLiteral
+            Identifier: 'trimLeft'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testStringTrimRight'
+        CallExpression
+          PropertyAccessExpression
+            StringLiteral
+            Identifier: 'trimRight'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testSymbolDescription'
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' Symbol'
+            StringLiteral
+          Identifier: 'description'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testPromiseAllSettled'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'allSettled'
+          ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testStringMatchAll'
+        CallExpression
+          PropertyAccessExpression
+            StringLiteral
+            Identifier: 'matchAll'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testRegExpMatchAll'
+        CallExpression
+          ElementAccessExpression
+            RegularExpressionLiteral
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'matchAll'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testBigInt'
+        CallExpression
+          Identifier: ' BigInt'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testPromiseAny'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'any'
+          ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testStringReplaceAll'
+        CallExpression
+          PropertyAccessExpression
+            StringLiteral
+            Identifier: 'replaceAll'

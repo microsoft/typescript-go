@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T'

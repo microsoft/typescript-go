@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        BinaryExpression
+          TypeOfExpression
+            ClassExpression
+          EqualsEqualsEqualsToken
+          StringLiteral

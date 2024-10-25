@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cat'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+  ExportAssignment
+    Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' cat'

@@ -1,0 +1,321 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra1'
+        BinaryExpression
+          NullKeyword
+          AsteriskToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra2'
+        BinaryExpression
+          NullKeyword
+          AsteriskToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra3'
+        BinaryExpression
+          Identifier: ' undefined'
+          AsteriskToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra4'
+        BinaryExpression
+          Identifier: ' undefined'
+          AsteriskToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb1'
+        BinaryExpression
+          NullKeyword
+          SlashToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb2'
+        BinaryExpression
+          NullKeyword
+          SlashToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb3'
+        BinaryExpression
+          Identifier: ' undefined'
+          SlashToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb4'
+        BinaryExpression
+          Identifier: ' undefined'
+          SlashToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rc1'
+        BinaryExpression
+          NullKeyword
+          PercentToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rc2'
+        BinaryExpression
+          NullKeyword
+          PercentToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rc3'
+        BinaryExpression
+          Identifier: ' undefined'
+          PercentToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rc4'
+        BinaryExpression
+          Identifier: ' undefined'
+          PercentToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rd1'
+        BinaryExpression
+          NullKeyword
+          MinusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rd2'
+        BinaryExpression
+          NullKeyword
+          MinusToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rd3'
+        BinaryExpression
+          Identifier: ' undefined'
+          MinusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rd4'
+        BinaryExpression
+          Identifier: ' undefined'
+          MinusToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' re1'
+        BinaryExpression
+          NullKeyword
+          LessThanLessThanToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' re2'
+        BinaryExpression
+          NullKeyword
+          LessThanLessThanToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' re3'
+        BinaryExpression
+          Identifier: ' undefined'
+          LessThanLessThanToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' re4'
+        BinaryExpression
+          Identifier: ' undefined'
+          LessThanLessThanToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rf1'
+        BinaryExpression
+          NullKeyword
+          GreaterThanGreaterThanToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rf2'
+        BinaryExpression
+          NullKeyword
+          GreaterThanGreaterThanToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rf3'
+        BinaryExpression
+          Identifier: ' undefined'
+          GreaterThanGreaterThanToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rf4'
+        BinaryExpression
+          Identifier: ' undefined'
+          GreaterThanGreaterThanToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rg1'
+        BinaryExpression
+          NullKeyword
+          GreaterThanGreaterThanGreaterThanToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rg2'
+        BinaryExpression
+          NullKeyword
+          GreaterThanGreaterThanGreaterThanToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rg3'
+        BinaryExpression
+          Identifier: ' undefined'
+          GreaterThanGreaterThanGreaterThanToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rg4'
+        BinaryExpression
+          Identifier: ' undefined'
+          GreaterThanGreaterThanGreaterThanToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rh1'
+        BinaryExpression
+          NullKeyword
+          AmpersandToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rh2'
+        BinaryExpression
+          NullKeyword
+          AmpersandToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rh3'
+        BinaryExpression
+          Identifier: ' undefined'
+          AmpersandToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rh4'
+        BinaryExpression
+          Identifier: ' undefined'
+          AmpersandToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ri1'
+        BinaryExpression
+          NullKeyword
+          CaretToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ri2'
+        BinaryExpression
+          NullKeyword
+          CaretToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ri3'
+        BinaryExpression
+          Identifier: ' undefined'
+          CaretToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ri4'
+        BinaryExpression
+          Identifier: ' undefined'
+          CaretToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rj1'
+        BinaryExpression
+          NullKeyword
+          BarToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rj2'
+        BinaryExpression
+          NullKeyword
+          BarToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rj3'
+        BinaryExpression
+          Identifier: ' undefined'
+          BarToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rj4'
+        BinaryExpression
+          Identifier: ' undefined'
+          BarToken
+          Identifier: ' undefined'

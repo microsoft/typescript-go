@@ -1,0 +1,36 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' salt'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          QualifiedName
+            Identifier: 'M'
+            Identifier: 'C'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'C'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+c'
+        Identifier: 'salt'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '	// cool
+c'
+        Identifier: 'saltbar'

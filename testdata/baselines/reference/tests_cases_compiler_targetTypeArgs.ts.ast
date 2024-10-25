@@ -1,0 +1,123 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'callback'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    callback'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      FunctionExpression
+        Parameter
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: ' x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          NumericLiteral
+        Identifier: 'forEach'
+      FunctionExpression
+        Parameter
+          Identifier: 'v'
+        Parameter
+          Identifier: 'i'
+        Parameter
+          Identifier: 'a'
+        Block
+          ExpressionStatement
+            Identifier: ' v'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          StringLiteral
+        Identifier: 'every'
+      FunctionExpression
+        Parameter
+          Identifier: 'v'
+        Parameter
+          Identifier: 'i'
+        Parameter
+          Identifier: 'a'
+        Block
+          ReturnStatement
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          NumericLiteral
+        Identifier: 'every'
+      FunctionExpression
+        Parameter
+          Identifier: 'v'
+        Parameter
+          Identifier: 'i'
+        Parameter
+          Identifier: 'a'
+        Block
+          ReturnStatement
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          NumericLiteral
+        Identifier: 'every'
+      FunctionExpression
+        Parameter
+          Identifier: 'v'
+        Parameter
+          Identifier: 'i'
+        Parameter
+          Identifier: 'a'
+        Block
+          ReturnStatement
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          StringLiteral
+        Identifier: 'every'
+      FunctionExpression
+        Parameter
+          Identifier: 'v'
+        Parameter
+          Identifier: 'i'
+        Parameter
+          Identifier: 'a'
+        Block
+          ReturnStatement
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          StringLiteral
+        Identifier: 'forEach'
+      FunctionExpression
+        Parameter
+          Identifier: 'v'
+        Parameter
+          Identifier: 'i'
+        Parameter
+          Identifier: 'a'
+        Block
+          ExpressionStatement
+            Identifier: ' v'

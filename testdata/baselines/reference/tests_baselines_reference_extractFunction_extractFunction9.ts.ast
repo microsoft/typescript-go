@@ -1,0 +1,192 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+      EmptyStatement
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          FunctionDeclaration
+            Identifier: ' a'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' a1'
+                    TypeReference
+                      Identifier: ' I'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' x'
+                        NumericLiteral
+              ReturnStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' a1'
+                    Identifier: 'x'
+                  PlusToken
+                  NumericLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+      EmptyStatement
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          FunctionDeclaration
+            Identifier: ' a'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' /*RENAME*/newFunction'
+              FunctionDeclaration
+                Identifier: ' newFunction'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a1'
+                        TypeReference
+                          Identifier: ' I'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' x'
+                            NumericLiteral
+                  ReturnStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' a1'
+                        Identifier: 'x'
+                      PlusToken
+                      NumericLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+      EmptyStatement
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          FunctionDeclaration
+            Identifier: ' a'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' /*RENAME*/newFunction'
+          FunctionDeclaration
+            Identifier: ' newFunction'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' a1'
+                    TypeReference
+                      Identifier: ' I'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' x'
+                        NumericLiteral
+              ReturnStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' a1'
+                    Identifier: 'x'
+                  PlusToken
+                  NumericLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+      EmptyStatement
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          FunctionDeclaration
+            Identifier: ' a'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' /*RENAME*/newFunction'
+      FunctionDeclaration
+        Identifier: ' newFunction'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a1'
+                TypeReference
+                  Identifier: ' I'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' x'
+                    NumericLiteral
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' a1'
+                Identifier: 'x'
+              PlusToken
+              NumericLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+      EmptyStatement
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          FunctionDeclaration
+            Identifier: ' a'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' /*RENAME*/newFunction'
+  FunctionDeclaration
+    Identifier: ' newFunction'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a1'
+            TypeReference
+              QualifiedName
+                Identifier: ' A'
+                Identifier: 'I'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' a1'
+            Identifier: 'x'
+          PlusToken
+          NumericLiteral

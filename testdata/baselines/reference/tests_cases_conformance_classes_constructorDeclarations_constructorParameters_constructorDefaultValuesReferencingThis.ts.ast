@@ -1,0 +1,46 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' baseProp'
+      NumericLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        ThisKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        ThisKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' E'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        ThisKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' F'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'y'
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'baseProp'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

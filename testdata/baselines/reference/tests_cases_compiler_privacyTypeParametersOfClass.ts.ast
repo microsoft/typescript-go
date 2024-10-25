@@ -1,0 +1,113 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' privateClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithPrivateTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' privateClass'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithPublicTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    Identifier: ' privateClassWithPrivateTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' privateClass'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    Identifier: ' privateClassWithPublicTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithPublicTypeParametersWithoutExtends'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    Identifier: ' privateClassWithPublicTypeParametersWithoutExtends'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'

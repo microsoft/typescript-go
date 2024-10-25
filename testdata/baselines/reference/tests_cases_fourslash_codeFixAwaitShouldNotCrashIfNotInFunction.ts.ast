@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '/// <reference path='fourslash.ts' />
+
+////await a
+
+verify'
+          Identifier: 'not'
+        Identifier: 'codeFixAvailable'
+      StringLiteral

@@ -1,0 +1,128 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BOOLEAN'
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        TrueKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      BooleanKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          FalseKeyword
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objA'
+        NewExpression
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny1'
+        VoidExpression
+          Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny2'
+        VoidExpression
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny3'
+        VoidExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' y'
+              FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny4'
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' objA'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny5'
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny6'
+        VoidExpression
+          CallExpression
+            Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny7'
+        VoidExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' A'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny8'
+        VoidExpression
+          VoidExpression
+            Identifier: ' BOOLEAN'
+  ExpressionStatement
+    VoidExpression
+      TrueKeyword
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' BOOLEAN'
+  ExpressionStatement
+    VoidExpression
+      CallExpression
+        Identifier: ' foo'
+  ExpressionStatement
+    BinaryExpression
+      VoidExpression
+        TrueKeyword
+      CommaToken
+      FalseKeyword
+  ExpressionStatement
+    VoidExpression
+      PropertyAccessExpression
+        Identifier: ' objA'
+        Identifier: 'a'
+  ExpressionStatement
+    VoidExpression
+      PropertyAccessExpression
+        Identifier: ' M'
+        Identifier: 'n'

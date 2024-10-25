@@ -1,0 +1,120 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @esModuleInterop: true
+
+// @Filename: /process.d.ts
+//// declare module "process" {
+////   interface Process {
+////     pid: number;
+////     addListener(event: string, listener: (...args: any[]) => void): void;
+////   }
+////   var process: Process;
+////   export = process;
+//// }
+
+// @Filename: /url.d.ts
+//// declare module "url" {
+////   export function parse(urlStr: string): any;
+//// }
+
+// @Filename: /index.ts
+//// [|import { pid, addListener } from "process";|]
+//// addListener("message", (m) => {
+////   console.log(pid);
+//// });
+
+// @Filename: /a.ts
+//// [|import { parse } from "url";|]
+//// parse("https://www.typescriptlang.org");
+
+goTo'
+        Identifier: 'selectRange'
+      ElementAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'test'
+            Identifier: 'ranges'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'refactorAvailable'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'selectRange'
+      ElementAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'test'
+            Identifier: 'ranges'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'refactorAvailable'
+      StringLiteral
+      StringLiteral

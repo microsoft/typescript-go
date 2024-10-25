@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'T'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' x'
+        ExternalModuleReference
+          StringLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            TypeReference
+              Identifier: ' List'
+              TypeReference
+                QualifiedName
+                  Identifier: 'x'
+                  Identifier: 'Foo'

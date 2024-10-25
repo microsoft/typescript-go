@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' server'
+        TypeLiteral
+          CallSignature
+            AnyKeyword
+  ExportAssignment
+    Identifier: ' server'
+  ImportEqualsDeclaration
+    Identifier: ' connect'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+connect'

@@ -1,0 +1,166 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        UnionType
+          LiteralType
+            StringLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        UnionType
+          LiteralType
+            StringLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        UnionType
+          LiteralType
+            NumericLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        UnionType
+          LiteralType
+            NumericLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        UnionType
+          LiteralType
+            TrueKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        UnionType
+          LiteralType
+            FalseKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a7'
+        UnionType
+          UnknownKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a8'
+        UnionType
+          NeverKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9'
+        UnionType
+          AnyKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa1'
+        BinaryExpression
+          Identifier: ' a1'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa2'
+        BinaryExpression
+          Identifier: ' a2'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa3'
+        BinaryExpression
+          Identifier: ' a3'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa4'
+        BinaryExpression
+          Identifier: ' a4'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa5'
+        BinaryExpression
+          Identifier: ' a5'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa6'
+        BinaryExpression
+          Identifier: ' a6'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa7'
+        BinaryExpression
+          Identifier: ' a7'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa8'
+        BinaryExpression
+          Identifier: ' a8'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa9'
+        BinaryExpression
+          Identifier: ' a9'
+          QuestionQuestionToken
+          StringLiteral

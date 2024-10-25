@@ -1,0 +1,86 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Animal'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    kind'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    age'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    location'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    owner'
+      ObjectKeyword
+  FunctionDeclaration
+    Identifier: ' clonePet'
+    Parameter
+      Identifier: 'pet'
+      TypeReference
+        Identifier: ' Animal'
+    Parameter
+      Identifier: ' fullCopy'
+      QuestionToken
+      BooleanKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        name'
+            PropertyAccessExpression
+              Identifier: ' pet'
+              Identifier: 'name'
+          PropertyAssignment
+            Identifier: '
+        kind'
+            PropertyAccessExpression
+              Identifier: ' pet'
+              Identifier: 'kind'
+          SpreadAssignment
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'fullCopy'
+                AmpersandAmpersandToken
+                Identifier: ' pet'
+  InterfaceDeclaration
+    Identifier: ' Animal2'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    owner'
+      QuestionToken
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' billOwner'
+    Parameter
+      Identifier: 'pet'
+      TypeReference
+        Identifier: ' Animal2'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          SpreadAssignment
+            ParenthesizedExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'pet'
+                  Identifier: 'owner'
+                AmpersandAmpersandToken
+                Identifier: ' pet'
+          PropertyAssignment
+            Identifier: '
+        paid'
+            FalseKeyword

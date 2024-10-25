@@ -1,0 +1,21 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Position'
+    EnumMember
+      Identifier: ' 
+    IgnoreRulesSpecific'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          Identifier: ' IgnoreRulesSpecific'
+          Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        PropertyAccessExpression
+          Identifier: ' Position'
+          Identifier: 'IgnoreRulesSpecific'

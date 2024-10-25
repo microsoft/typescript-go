@@ -1,0 +1,15 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: '
+  foo'
+        ArrayLiteralExpression
+      PropertyAssignment
+        Identifier: '
+  bar'
+        Identifier: ' undefined'
+      PropertyAssignment
+        Identifier: '
+  baz'
+        NullKeyword

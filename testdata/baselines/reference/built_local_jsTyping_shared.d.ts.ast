@@ -1,0 +1,184 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ActionSet'
+    LiteralType
+      StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ActionInvalidate'
+    LiteralType
+      StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ActionPackageInstalled'
+    LiteralType
+      StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' EventTypesRegistry'
+    LiteralType
+      StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' EventBeginInstallTypes'
+    LiteralType
+      StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' EventEndInstallTypes'
+    LiteralType
+      StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' EventInitializationFailed'
+    LiteralType
+      StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ActionWatchTypingLocations'
+    LiteralType
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ActionSet'
+        TypeReference
+          Identifier: ' ActionSet'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ActionInvalidate'
+        TypeReference
+          Identifier: ' ActionInvalidate'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ActionPackageInstalled'
+        TypeReference
+          Identifier: ' ActionPackageInstalled'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' EventTypesRegistry'
+        TypeReference
+          Identifier: ' EventTypesRegistry'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' EventBeginInstallTypes'
+        TypeReference
+          Identifier: ' EventBeginInstallTypes'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' EventEndInstallTypes'
+        TypeReference
+          Identifier: ' EventEndInstallTypes'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' EventInitializationFailed'
+        TypeReference
+          Identifier: ' EventInitializationFailed'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ActionWatchTypingLocations'
+        TypeReference
+          Identifier: ' ActionWatchTypingLocations'
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Arguments'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' GlobalCacheLocation'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' LogFile'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' EnableTelemetry'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' TypingSafeListLocation'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' TypesMapLocation'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' NpmLocation'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ValidateDefaultNpmLocation'
+            StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasArgument'
+    Parameter
+      Identifier: 'argumentName'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' findArgument'
+    Parameter
+      Identifier: 'argumentName'
+      StringKeyword
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' nowString'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' indent'
+    Parameter
+      Identifier: 'str'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' stringifyIndented'
+    Parameter
+      Identifier: 'json'
+      TypeLiteral
+    StringKeyword

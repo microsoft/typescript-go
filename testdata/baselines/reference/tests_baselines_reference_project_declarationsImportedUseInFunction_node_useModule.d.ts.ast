@@ -1,0 +1,15 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' fncOnly_m4'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' useFncOnly_m4_f4'
+        TypeReference
+          QualifiedName
+            Identifier: ' fncOnly_m4'
+            Identifier: 'd'

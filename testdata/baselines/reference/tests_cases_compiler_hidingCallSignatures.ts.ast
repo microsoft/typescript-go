@@ -1,0 +1,72 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' C'
+    ConstructSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' E'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      TypeLiteral
+  InterfaceDeclaration
+    Identifier: ' F'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' E'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' D'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d'
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' d'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' F'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' E'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+e'
+      StringLiteral

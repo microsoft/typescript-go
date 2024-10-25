@@ -1,0 +1,157 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+          TypeReference
+            Identifier: ' RegExp'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'x'
+      EqualsToken
+      ArrayLiteralExpression
+        TrueKeyword
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        BinaryExpression
+          Identifier: 'x'
+          EqualsToken
+          StringLiteral
+      EqualsToken
+      ArrayLiteralExpression
+        NumericLiteral
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: 'x'
+        EqualsToken
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'x'
+            TrueKeyword
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'y'
+            Identifier: ' x'
+        EqualsToken
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'y'
+            NumericLiteral
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: 'x'
+            EqualsToken
+            StringLiteral
+        EqualsToken
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'x'
+            TrueKeyword
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'y'
+            BinaryExpression
+              Identifier: ' x'
+              EqualsToken
+              RegularExpressionLiteral
+        EqualsToken
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'y'
+            NumericLiteral
+  ExpressionStatement
+    Identifier: '
+x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrayType
+          StringKeyword
+  ForOfStatement
+    Identifier: 'x'
+    Identifier: ' a'
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+  TypeAliasDeclaration
+    Identifier: ' AOrArrA'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        TypeReference
+          Identifier: ' AOrArrA'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'x'
+              QuestionToken
+              LiteralType
+                StringLiteral
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // weak type
+arr'
+        Identifier: 'push'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral

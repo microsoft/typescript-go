@@ -1,0 +1,76 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' fs'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+fs'
+      Identifier: 'readFile'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' fs2'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' fs'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+fs'
+      Identifier: 'readFile'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' fs2'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' __require'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _createRequire'
+        NullKeyword
+  ImportEqualsDeclaration
+    Identifier: ' fs'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+fs'
+      Identifier: 'readFile'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' fs2'
+    ExternalModuleReference
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral

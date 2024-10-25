@@ -1,0 +1,69 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Base'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    someProp'
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      Identifier: '
+    method'
+      TypeParameter
+        Identifier: 'U'
+        ArrayType
+          UnknownKeyword
+      Parameter
+        Identifier: 'x'
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' U'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' U'
+            TypeReference
+              Identifier: 'K'
+      TypeReference
+        Identifier: ' Base'
+        TypeReference
+          Identifier: 'U'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Derived'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    method'
+      TypeParameter
+        Identifier: 'V'
+        ArrayType
+          UnknownKeyword
+      Parameter
+        Identifier: 'x'
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' V'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' V'
+            TypeReference
+              Identifier: 'K'
+      TypeReference
+        Identifier: ' Base'
+        TypeReference
+          Identifier: 'V'

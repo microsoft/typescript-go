@@ -1,0 +1,37 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @checkJs: true
+// @strict: true
+// @outDir: out
+// @declaration: true
+// @filename: node_modules/untyped/index.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+u'
+          Identifier: 'assignment'
+        Identifier: 'nested'
+      EqualsToken
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+u'
+        Identifier: 'noError'

@@ -1,0 +1,86 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /tsconfig.json
+//// {
+////     "compilerOptions": {
+////         "module": "preserve",
+////         "paths": {
+////             "@app/*": ["./src/*"]
+////         }
+////     }
+//// }
+
+// @Filename: /src/utils.ts
+//// export function add(a: number, b: number) {}
+
+// @Filename: /src/index.ts
+//// add/**/
+
+verify'
+        Identifier: 'importFixModuleSpecifiers'
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixModuleSpecifiers'
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' autoImportSpecifierExcludeRegexes'
+          ArrayLiteralExpression
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'importFixModuleSpecifiers'
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' importModuleSpecifierPreference'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixModuleSpecifiers'
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' importModuleSpecifierPreference'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' autoImportSpecifierExcludeRegexes'
+          ArrayLiteralExpression
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'importFixModuleSpecifiers'
+      StringLiteral
+      ArrayLiteralExpression
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' autoImportSpecifierExcludeRegexes'
+          ArrayLiteralExpression
+            StringLiteral

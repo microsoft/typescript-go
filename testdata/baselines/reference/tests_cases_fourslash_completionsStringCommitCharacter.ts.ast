@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: file1.ts
+//// const a: "aa" | "bb" = "/**/"
+
+verify'
+        Identifier: 'baselineCompletions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    includeInsertTextCompletions'
+          TrueKeyword

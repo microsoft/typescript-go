@@ -1,0 +1,633 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' c'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assertUsageError'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        Identifier: 'a'
+                        Identifier: ' b'
+                        Identifier: ' c'
+                      Identifier: ' c'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' c'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assertUsageError'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        Identifier: 'a'
+                        Identifier: ' b'
+                        Identifier: ' c'
+                      Identifier: ' c'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' c'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assertUsageError'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        Identifier: 'a'
+                        Identifier: ' b'
+                        Identifier: ' c'
+                      Identifier: ' c'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' c'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assertUsageError'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        Identifier: 'a'
+                        Identifier: ' b'
+                        Identifier: ' c'
+                      Identifier: ' c'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' c'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assertUsageError'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        Identifier: 'a'
+                        Identifier: ' b'
+                        Identifier: ' c'
+                      Identifier: ' c'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' c'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' d'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assertUsageError'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        Identifier: 'a'
+                        Identifier: ' b'
+                        Identifier: ' c'
+                        Identifier: ' d'
+                      Identifier: ' d'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' c'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' d'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assertUsageError'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        Identifier: 'a'
+                        Identifier: ' b'
+                        Identifier: ' c'
+                        Identifier: ' d'
+                      Identifier: ' d'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' c'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' d'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assertUsageError'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        Identifier: 'a'
+                        Identifier: ' b'
+                        Identifier: ' c'
+                        Identifier: ' d'
+                      Identifier: ' d'
+  FunctionDeclaration
+    Identifier: ' assertUsageError'
+    Parameter
+      Identifier: 'subScenario'
+      StringKeyword
+    Parameter
+      Identifier: ' files'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' File'
+    Parameter
+      Identifier: ' openFile'
+      TypeReference
+        Identifier: ' File'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' TestServerHost'
+                Identifier: 'createServerHost'
+              Identifier: 'files'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' session'
+            NewExpression
+              Identifier: ' TestSession'
+              Identifier: 'host'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    openFilesForSession'
+          ArrayLiteralExpression
+            Identifier: 'openFile'
+          Identifier: ' session'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    session'
+            Identifier: 'executeCommandSeq'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'server'
+                Identifier: 'protocol'
+              Identifier: 'SemanticDiagnosticsSyncRequest'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        command'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'server'
+                    Identifier: 'protocol'
+                  Identifier: 'CommandTypes'
+                Identifier: 'SemanticDiagnosticsSync'
+            PropertyAssignment
+              Identifier: '
+        arguments'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' file'
+                  PropertyAccessExpression
+                    Identifier: ' openFile'
+                    Identifier: 'path'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    baselineTsserverLogs'
+          StringLiteral
+          Identifier: ' subScenario'
+          Identifier: ' session'

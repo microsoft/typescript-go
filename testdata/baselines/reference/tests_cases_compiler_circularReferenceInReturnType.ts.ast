@@ -1,0 +1,103 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        TypeReference
+          Identifier: ' T'
+    StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res1'
+        CallExpression
+          Identifier: ' fn1'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' res1'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn2'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'cb'
+        FunctionType
+          AnyKeyword
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res2'
+        CallExpression
+          CallExpression
+            Identifier: ' fn2'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' res2'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn3'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      TypeParameter
+        Identifier: 'T2'
+      Parameter
+        Identifier: 'cb'
+        FunctionType
+          Parameter
+            Identifier: 'arg'
+            TypeReference
+              Identifier: ' T2'
+          AnyKeyword
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res3'
+        CallExpression
+          CallExpression
+            Identifier: ' fn3'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' res3'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'arg'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Parameters'
+          TypeQuery
+            Identifier: ' bar'
+        LiteralType
+          NumericLiteral
+    Block
+      ReturnStatement
+        Identifier: ' arg'
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'arg'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'arg'

@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      ArrayBindingPattern
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+          VariableDeclaration
+            Identifier: ' y'
+          VariableDeclaration
+            Identifier: ' z'

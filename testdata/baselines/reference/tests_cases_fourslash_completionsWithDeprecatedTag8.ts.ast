@@ -1,0 +1,76 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////class C {
+////    /** @deprecated */
+////    p: number;
+////    m() {
+////        return (/**/)
+////    }
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        kindModifiers'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'Deprecated'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'completion'
+                      Identifier: 'SortText'
+                    Identifier: 'SuggestedClassMembers'
+              PropertyAssignment
+                Identifier: '
+        source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'ThisProperty'
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeInsertTextCompletions'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    isNewIdentifierLocation'
+          TrueKeyword

@@ -1,0 +1,30 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////let a = {
+////    b: () => {
+////        return {
+////            c: () => {
+////                return { d: 0 };
+////            }
+////        };
+////    }
+////}
+/////*a*/a && a.b() && a.b.c;/*b*/
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'refactorAvailable'
+      StringLiteral

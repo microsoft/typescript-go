@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' f'
+    Block
+      ExpressionStatement
+        TypeAssertionExpression
+          NumberKeyword
+          ParenthesizedExpression
+            YieldExpression
+              NumericLiteral
+      ExpressionStatement
+        TypeAssertionExpression
+          NumberKeyword
+          Identifier: ''
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral

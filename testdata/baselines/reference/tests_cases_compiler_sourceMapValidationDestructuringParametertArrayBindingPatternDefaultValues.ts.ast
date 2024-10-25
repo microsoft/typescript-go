@@ -1,0 +1,187 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              AnyKeyword
+            VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Robot'
+    TupleType
+      NumberKeyword
+      StringKeyword
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robotA'
+        TypeReference
+          Identifier: ' Robot'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      ArrayBindingPattern
+        OmittedExpression
+        BindingElement
+          Identifier: ' nameA'
+          StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+      ArrayLiteralExpression
+        PrefixUnaryExpression
+          NumericLiteral
+        StringLiteral
+        StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'numberB'
+          PrefixUnaryExpression
+            NumericLiteral
+      TypeReference
+        Identifier: ' Robot'
+      ArrayLiteralExpression
+        PrefixUnaryExpression
+          NumericLiteral
+        StringLiteral
+        StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberB'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'numberA2'
+          PrefixUnaryExpression
+            NumericLiteral
+        BindingElement
+          Identifier: ' nameA2'
+          StringLiteral
+        BindingElement
+          Identifier: ' skillA2'
+          StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+      ArrayLiteralExpression
+        PrefixUnaryExpression
+          NumericLiteral
+        StringLiteral
+        StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA2'
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'numberA3'
+          PrefixUnaryExpression
+            NumericLiteral
+        BindingElement
+          DotDotDotToken
+          Identifier: 'robotAInfo'
+      TypeReference
+        Identifier: ' Robot'
+      ArrayLiteralExpression
+        PrefixUnaryExpression
+          NumericLiteral
+        StringLiteral
+        StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'robotAInfo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo1'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo1'
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo2'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo2'
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo3'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo3'
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo4'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo4'
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+        StringLiteral

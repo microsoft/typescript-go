@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+        Identifier: 'map'
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'length'

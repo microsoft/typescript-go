@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////interface /*1*/i {
+////}
+////var /*2*/iInstance: /*3*/i;
+
+verify'
+        Identifier: 'baselineQuickInfo'

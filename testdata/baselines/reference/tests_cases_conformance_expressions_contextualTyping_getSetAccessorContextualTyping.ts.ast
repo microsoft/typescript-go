@@ -1,0 +1,46 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    SetAccessor
+      Identifier: ' X'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+    GetAccessor
+      Identifier: ' X'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' Y'
+      Parameter
+        Identifier: 'y'
+      Block
+    GetAccessor
+      Identifier: ' Y'
+      Block
+        ReturnStatement
+          TrueKeyword
+    SetAccessor
+      Identifier: ' W'
+      Parameter
+        Identifier: 'w'
+      Block
+    GetAccessor
+      Identifier: ' W'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          TrueKeyword
+    SetAccessor
+      Identifier: ' Z'
+      Parameter
+        Identifier: 'z'
+        NumberKeyword
+      Block
+    GetAccessor
+      Identifier: ' Z'
+      Block
+        ReturnStatement
+          NumericLiteral

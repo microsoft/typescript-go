@@ -1,0 +1,71 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Decl'
+    Block
+      ReturnStatement
+        NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Decl'
+    PropertySignature
+      Identifier: '
+    p1'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    p2'
+      NumberKeyword
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Decl'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+      InterfaceDeclaration
+        Identifier: ' I'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Entity'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+Entity'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Entity'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          QualifiedName
+            Identifier: ' Entity'
+            Identifier: 'I'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+Entity'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+Entity'
+      Identifier: 'y'

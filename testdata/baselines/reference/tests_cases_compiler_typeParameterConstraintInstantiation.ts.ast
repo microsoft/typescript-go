@@ -1,0 +1,49 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Mapper'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    map'
+      TypeParameter
+        Identifier: 'U'
+        TypeReference
+          Identifier: ' T'
+      TypeParameter
+        Identifier: ' V'
+        ArrayType
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        TypeReference
+          Identifier: ' Mapper'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' m'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            EqualsGreaterThanToken
+            Identifier: ' x'

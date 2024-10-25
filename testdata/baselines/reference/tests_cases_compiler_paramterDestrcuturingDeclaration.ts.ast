@@ -1,0 +1,17 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' C'
+    CallSignature
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'p'
+            Identifier: ' name'
+      AnyKeyword
+    ConstructSignature
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'p'
+            Identifier: ' boolean'
+      AnyKeyword

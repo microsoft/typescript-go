@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noUnusedLocals: true
+// @Filename: /a.ts
+////// leading trivia
+////import a, { b } from "mod"; // trailing trivia
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

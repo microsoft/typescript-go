@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+//// export = (state, messages) => {
+////    export/*1*/ default/*2*/ {
+////    }
+//// }
+verify'
+        Identifier: 'baselineQuickInfo'

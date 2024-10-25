@@ -1,0 +1,85 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    TypeLiteral
+      ConstructSignature
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+            ConstructSignature
+              TypeParameter
+                Identifier: 'T'
+                TypeReference
+                  Identifier: ' Derived'
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+            ConstructSignature
+              TypeParameter
+                Identifier: 'T'
+                TypeReference
+                  Identifier: ' Base'
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+        ArrayType
+          AnyKeyword
+      ConstructSignature
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+            ConstructSignature
+              TypeParameter
+                Identifier: 'T'
+                TypeReference
+                  Identifier: ' Derived2'
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+            ConstructSignature
+              TypeParameter
+                Identifier: 'T'
+                TypeReference
+                  Identifier: ' Base'
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+        ArrayType
+          AnyKeyword

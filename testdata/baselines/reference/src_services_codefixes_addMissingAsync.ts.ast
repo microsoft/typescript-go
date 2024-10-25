@@ -1,0 +1,717 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ArrowFunction'
+        ImportSpecifier
+          Identifier: '
+    CodeFixAllContext'
+        ImportSpecifier
+          Identifier: '
+    CodeFixContext'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromNode'
+        ImportSpecifier
+          Identifier: '
+    Diagnostic'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    FileTextChanges'
+        ImportSpecifier
+          Identifier: '
+    find'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    FunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    FunctionExpression'
+        ImportSpecifier
+          Identifier: '
+    getNodeId'
+        ImportSpecifier
+          Identifier: '
+    getSyntacticModifierFlags'
+        ImportSpecifier
+          Identifier: '
+    getSynthesizedDeepClone'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isArrowFunction'
+        ImportSpecifier
+          Identifier: '
+    isFunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isFunctionExpression'
+        ImportSpecifier
+          Identifier: '
+    isMethodDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isNumber'
+        ImportSpecifier
+          Identifier: '
+    MethodDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ModifierFlags'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TextSpan'
+        ImportSpecifier
+          Identifier: '
+    textSpanEnd'
+        ImportSpecifier
+          Identifier: '
+    textSpansEqual'
+    StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' ContextualTrackChangesFunction'
+    FunctionType
+      Parameter
+        Identifier: 'cb'
+        FunctionType
+          Parameter
+            Identifier: 'changeTracker'
+            TypeReference
+              QualifiedName
+                Identifier: ' textChanges'
+                Identifier: 'ChangeTracker'
+          VoidKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Argument_of_type_0_is_not_assignable_to_parameter_of_type_1'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Type_0_is_not_assignable_to_type_1'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Type_0_is_not_comparable_to_type_1'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToAddMissingAsync'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' sourceFile'
+                      BindingElement
+                        Identifier: ' errorCode'
+                      BindingElement
+                        Identifier: ' cancellationToken'
+                      BindingElement
+                        Identifier: ' program'
+                      BindingElement
+                        Identifier: ' span'
+                    Identifier: ' context'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' diagnostic'
+                    CallExpression
+                      Identifier: ' find'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'program'
+                              Identifier: 'getTypeChecker'
+                          Identifier: 'getDiagnostics'
+                        Identifier: 'sourceFile'
+                        Identifier: ' cancellationToken'
+                      CallExpression
+                        Identifier: ' getIsMatchingAsyncError'
+                        Identifier: 'span'
+                        Identifier: ' errorCode'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' directSpan'
+                    BinaryExpression
+                      BinaryExpression
+                        Identifier: ' diagnostic'
+                        AmpersandAmpersandToken
+                        PropertyAccessExpression
+                          Identifier: ' diagnostic'
+                          Identifier: 'relatedInformation'
+                      AmpersandAmpersandToken
+                      AsExpression
+                        CallExpression
+                          Identifier: ' find'
+                          PropertyAccessExpression
+                            Identifier: 'diagnostic'
+                            Identifier: 'relatedInformation'
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' r'
+                            EqualsGreaterThanToken
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: ' r'
+                                Identifier: 'code'
+                              EqualsEqualsEqualsToken
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' Diagnostics'
+                                  Identifier: 'Did_you_mean_to_mark_this_function_as_async'
+                                Identifier: 'code'
+                        UnionType
+                          TypeReference
+                            Identifier: ' TextSpan'
+                          UndefinedKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' decl'
+                    CallExpression
+                      Identifier: ' getFixableErrorSpanDeclaration'
+                      Identifier: 'sourceFile'
+                      Identifier: ' directSpan'
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'decl'
+                Block
+                  ReturnStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' trackChanges'
+                    TypeReference
+                      Identifier: ' ContextualTrackChangesFunction'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' cb'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' textChanges'
+                            Identifier: 'ChangeTracker'
+                          Identifier: 'with'
+                        Identifier: 'context'
+                        Identifier: ' cb'
+              ReturnStatement
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'getFix'
+                    Identifier: 'context'
+                    Identifier: ' decl'
+                    Identifier: ' trackChanges'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' sourceFile'
+                    Identifier: ' context'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' fixedDeclarations'
+                    NewExpression
+                      Identifier: ' Set'
+                      NumberKeyword
+              ReturnStatement
+                CallExpression
+                  Identifier: ' codeFixAll'
+                  Identifier: 'context'
+                  Identifier: ' errorCodes'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 't'
+                    Parameter
+                      Identifier: ' diagnostic'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' span'
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: ' diagnostic'
+                                Identifier: 'relatedInformation'
+                              AmpersandAmpersandToken
+                              AsExpression
+                                CallExpression
+                                  Identifier: ' find'
+                                  PropertyAccessExpression
+                                    Identifier: 'diagnostic'
+                                    Identifier: 'relatedInformation'
+                                  ArrowFunction
+                                    Parameter
+                                      Identifier: ' r'
+                                    EqualsGreaterThanToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' r'
+                                        Identifier: 'code'
+                                      EqualsEqualsEqualsToken
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' Diagnostics'
+                                          Identifier: 'Did_you_mean_to_mark_this_function_as_async'
+                                        Identifier: 'code'
+                                UnionType
+                                  TypeReference
+                                    Identifier: ' TextSpan'
+                                  UndefinedKeyword
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' decl'
+                            CallExpression
+                              Identifier: ' getFixableErrorSpanDeclaration'
+                              Identifier: 'sourceFile'
+                              Identifier: ' span'
+                      IfStatement
+                        PrefixUnaryExpression
+                          Identifier: 'decl'
+                        Block
+                          ReturnStatement
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' trackChanges'
+                            TypeReference
+                              Identifier: ' ContextualTrackChangesFunction'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' cb'
+                              EqualsGreaterThanToken
+                              ParenthesizedExpression
+                                BinaryExpression
+                                  CallExpression
+                                    Identifier: 'cb'
+                                    Identifier: 't'
+                                  CommaToken
+                                  ArrayLiteralExpression
+                      ReturnStatement
+                        CallExpression
+                          Identifier: ' getFix'
+                          Identifier: 'context'
+                          Identifier: ' decl'
+                          Identifier: ' trackChanges'
+                          Identifier: ' fixedDeclarations'
+  TypeAliasDeclaration
+    Identifier: ' FixableDeclaration'
+    UnionType
+      TypeReference
+        Identifier: ' ArrowFunction'
+      TypeReference
+        Identifier: ' FunctionDeclaration'
+      TypeReference
+        Identifier: ' FunctionExpression'
+      TypeReference
+        Identifier: ' MethodDeclaration'
+  FunctionDeclaration
+    Identifier: ' getFix'
+    Parameter
+      Identifier: 'context'
+      UnionType
+        TypeReference
+          Identifier: ' CodeFixContext'
+        TypeReference
+          Identifier: ' CodeFixAllContext'
+    Parameter
+      Identifier: ' decl'
+      TypeReference
+        Identifier: ' FixableDeclaration'
+    Parameter
+      Identifier: ' trackChanges'
+      TypeReference
+        Identifier: ' ContextualTrackChangesFunction'
+    Parameter
+      Identifier: ' fixedDeclarations'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' changes'
+            CallExpression
+              Identifier: ' trackChanges'
+              ArrowFunction
+                Parameter
+                  Identifier: 't'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' makeChange'
+                  Identifier: 't'
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'sourceFile'
+                  Identifier: ' decl'
+                  Identifier: ' fixedDeclarations'
+      ReturnStatement
+        CallExpression
+          Identifier: ' createCodeFixAction'
+          Identifier: 'fixId'
+          Identifier: ' changes'
+          PropertyAccessExpression
+            Identifier: ' Diagnostics'
+            Identifier: 'Add_async_modifier_to_containing_function'
+          Identifier: ' fixId'
+          PropertyAccessExpression
+            Identifier: ' Diagnostics'
+            Identifier: 'Add_all_missing_async_modifiers'
+  FunctionDeclaration
+    Identifier: ' makeChange'
+    Parameter
+      Identifier: 'changeTracker'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' insertionSite'
+      TypeReference
+        Identifier: ' FixableDeclaration'
+    Parameter
+      Identifier: ' fixedDeclarations'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        NumberKeyword
+    Block
+      IfStatement
+        Identifier: 'fixedDeclarations'
+        Block
+          IfStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'fixedDeclarations'
+                Identifier: 'has'
+              CallExpression
+                Identifier: 'getNodeId'
+                Identifier: 'insertionSite'
+            Block
+              ReturnStatement
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    fixedDeclarations'
+            QuestionDotToken
+            Identifier: 'add'
+          CallExpression
+            Identifier: 'getNodeId'
+            Identifier: 'insertionSite'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cloneWithModifier'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'replaceModifiers'
+              CallExpression
+                Identifier: '
+        getSynthesizedDeepClone'
+                Identifier: 'insertionSite'
+                TrueKeyword
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        factory'
+                  Identifier: 'createNodeArray'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'factory'
+                    Identifier: 'createModifiersFromModifierFlags'
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'getSyntacticModifierFlags'
+                      Identifier: 'insertionSite'
+                    BarToken
+                    PropertyAccessExpression
+                      Identifier: ' ModifierFlags'
+                      Identifier: 'Async'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changeTracker'
+            Identifier: 'replaceNode'
+          Identifier: '
+        sourceFile'
+          Identifier: '
+        insertionSite'
+          Identifier: '
+        cloneWithModifier'
+  FunctionDeclaration
+    Identifier: ' getFixableErrorSpanDeclaration'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' span'
+      UnionType
+        TypeReference
+          Identifier: ' TextSpan'
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' FixableDeclaration'
+      UndefinedKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'span'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              PropertyAccessExpression
+                Identifier: ' span'
+                Identifier: 'start'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' decl'
+            AsExpression
+              CallExpression
+                Identifier: ' findAncestor'
+                Identifier: 'token'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' node'
+                  EqualsGreaterThanToken
+                  Block
+                    IfStatement
+                      BinaryExpression
+                        BinaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'node'
+                              Identifier: 'getStart'
+                            Identifier: 'sourceFile'
+                          LessThanToken
+                          PropertyAccessExpression
+                            Identifier: ' span'
+                            Identifier: 'start'
+                        BarBarToken
+                        BinaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' node'
+                              Identifier: 'getEnd'
+                          GreaterThanToken
+                          CallExpression
+                            Identifier: ' textSpanEnd'
+                            Identifier: 'span'
+                      Block
+                        ReturnStatement
+                          StringLiteral
+                    ReturnStatement
+                      BinaryExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                CallExpression
+                                  Identifier: 'isArrowFunction'
+                                  Identifier: 'node'
+                                BarBarToken
+                                CallExpression
+                                  Identifier: ' isMethodDeclaration'
+                                  Identifier: 'node'
+                              BarBarToken
+                              CallExpression
+                                Identifier: ' isFunctionExpression'
+                                Identifier: 'node'
+                            BarBarToken
+                            CallExpression
+                              Identifier: ' isFunctionDeclaration'
+                              Identifier: 'node'
+                        AmpersandAmpersandToken
+                        CallExpression
+                          Identifier: ' textSpansEqual'
+                          Identifier: 'span'
+                          CallExpression
+                            Identifier: ' createTextSpanFromNode'
+                            Identifier: 'node'
+                            Identifier: ' sourceFile'
+              UnionType
+                TypeReference
+                  Identifier: ' FixableDeclaration'
+                UndefinedKeyword
+      ReturnStatement
+        Identifier: ' decl'
+  FunctionDeclaration
+    Identifier: ' getIsMatchingAsyncError'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' errorCode'
+      NumberKeyword
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' start'
+              BindingElement
+                Identifier: ' length'
+              BindingElement
+                Identifier: ' relatedInformation'
+              BindingElement
+                Identifier: ' code'
+            TypeReference
+              Identifier: ' Diagnostic'
+          EqualsGreaterThanToken
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: '
+        isNumber'
+                      Identifier: 'start'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: ' isNumber'
+                      Identifier: 'length'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' textSpansEqual'
+                    ObjectLiteralExpression
+                      ShorthandPropertyAssignment
+                        Identifier: ' start'
+                      ShorthandPropertyAssignment
+                        Identifier: ' length'
+                    Identifier: ' span'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  Identifier: '
+        code'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' errorCode'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'relatedInformation'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: '
+        some'
+              Identifier: 'relatedInformation'
+              ArrowFunction
+                Parameter
+                  Identifier: ' related'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' related'
+                    Identifier: 'code'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Did_you_mean_to_mark_this_function_as_async'
+                    Identifier: 'code'

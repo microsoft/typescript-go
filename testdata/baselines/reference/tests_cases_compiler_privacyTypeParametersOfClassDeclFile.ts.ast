@@ -1,0 +1,426 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' privateClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithPrivateTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' privateClass'
+    MethodDeclaration
+      Identifier: ' // Error
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithPublicTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    Identifier: ' privateClassWithPrivateTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' privateClass'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    Identifier: ' privateClassWithPublicTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithPublicTypeParametersWithoutExtends'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    Identifier: ' privateClassWithPublicTypeParametersWithoutExtends'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithTypeParametersFromPrivateModule'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClassInPrivateModule'
+    MethodDeclaration
+      Identifier: ' // Error
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ClassDeclaration
+    Identifier: ' privateClassWithTypeParametersFromPrivateModule'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClassInPrivateModule'
+    MethodDeclaration
+      Identifier: '
+    myMethod'
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' val'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' publicModule'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' privateClassInPublicModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassInPublicModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClassInPublicModule'
+        MethodDeclaration
+          Identifier: ' // Error
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClassInPublicModule'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        Identifier: ' privateClassWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClassInPublicModule'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        Identifier: ' privateClassWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClassInPublicModule'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        Identifier: ' privateClassWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithTypeParametersFromPrivateModule'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClassInPrivateModule'
+        MethodDeclaration
+          Identifier: ' // Error
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        Identifier: ' privateClassWithTypeParametersFromPrivateModule'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClassInPrivateModule'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+  ModuleDeclaration
+    Identifier: ' privateModule'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' privateClassInPrivateModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassInPrivateModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClassInPrivateModule'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClassInPrivateModule'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        Identifier: ' privateClassWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClassInPrivateModule'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        Identifier: ' privateClassWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClassInPrivateModule'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'
+      ClassDeclaration
+        Identifier: ' privateClassWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        MethodDeclaration
+          Identifier: '
+        myMethod'
+          Parameter
+            Identifier: 'val'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ReturnStatement
+              Identifier: ' val'

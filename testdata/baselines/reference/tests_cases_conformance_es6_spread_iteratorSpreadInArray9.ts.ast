@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' SymbolIterator'
+    MethodDeclaration
+      Identifier: '
+    next'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            value'
+              CallExpression
+                Identifier: ' Symbol'
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Block
+        ReturnStatement
+          ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array'
+        ArrayLiteralExpression
+          SpreadElement
+            NewExpression
+              Identifier: ' SymbolIterator'

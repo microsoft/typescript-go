@@ -1,0 +1,80 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ProgressCallback'
+    CallSignature
+      Parameter
+        Identifier: 'progress'
+        AnyKeyword
+      AnyKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' TPromise'
+    TypeParameter
+      Identifier: 'V'
+    Constructor
+      Parameter
+        Identifier: 'init'
+        FunctionType
+          Parameter
+            Identifier: 'complete'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: 'V'
+              VoidKeyword
+          Parameter
+            Identifier: ' error'
+            FunctionType
+              Parameter
+                Identifier: 'err'
+                AnyKeyword
+              VoidKeyword
+          Parameter
+            Identifier: ' progress'
+            TypeReference
+              Identifier: 'ProgressCallback'
+          VoidKeyword
+      Parameter
+        Identifier: ' oncancel'
+        QuestionToken
+        AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: 'V'
+          TypeReference
+            Identifier: 'TPromise'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'err'
+            AnyKeyword
+          TypeReference
+            Identifier: 'TPromise'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        TypeReference
+          Identifier: 'ProgressCallback'
+      TypeReference
+        Identifier: ' TPromise'
+        TypeReference
+          Identifier: 'U'

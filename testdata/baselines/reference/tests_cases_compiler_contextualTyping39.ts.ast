@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeAssertionExpression
+          TypeLiteral
+            CallSignature
+              NumberKeyword
+          FunctionExpression
+            Block
+              ReturnStatement
+                StringLiteral

@@ -1,0 +1,43 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' E'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+  EnumDeclaration
+    Identifier: ' E'
+  EnumDeclaration
+    Identifier: ' F'
+  ModuleDeclaration
+    Identifier: ' F'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o'
+  EnumDeclaration
+    Identifier: ' A'
+    EnumMember
+      Identifier: '
+    b'
+  EnumDeclaration
+    Identifier: ' A'
+    EnumMember
+      Identifier: '
+    c'
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'

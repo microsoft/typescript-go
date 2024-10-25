@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' key'
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'a'
+          Identifier: 'key'
+      StringKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              ThisKeyword
+              PropertyAccessExpression
+                Identifier: 'a'
+                Identifier: 'key'
+            EqualsToken
+            StringLiteral

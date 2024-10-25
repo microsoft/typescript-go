@@ -1,0 +1,78 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' FirstInterface'
+    PropertySignature
+      Identifier: '
+    commonProperty'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' SecondInterface'
+    PropertySignature
+      Identifier: '
+    commonProperty'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myFirstFunction'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            UnionType
+              TypeReference
+                Identifier: ' FirstInterface'
+              TypeReference
+                Identifier: ' SecondInterface'
+          Parameter
+            Identifier: 'param1'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' newParam'
+                  IntersectionType
+                    TypeReference
+                      Identifier: ' T'
+                    TypeLiteral
+                      PropertySignature
+                        Identifier: ' otherProperty'
+                        NumberKeyword
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Object'
+                      Identifier: 'assign'
+                    Identifier: 'param1'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' otherProperty'
+                        NumericLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+    mySecondFunction'
+                Identifier: 'newParam'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mySecondFunction'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' commonProperty'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' otherProperty'
+                NumberKeyword
+          Parameter
+            Identifier: 'newParam'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              Identifier: ' newParam'

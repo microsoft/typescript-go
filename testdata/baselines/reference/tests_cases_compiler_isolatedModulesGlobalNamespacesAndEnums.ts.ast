@@ -1,0 +1,83 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Instantiated'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Uninstantiated'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' T'
+        NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Ambient'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumberKeyword
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Instantiated'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  EnumDeclaration
+    Identifier: ' Enum'
+    EnumMember
+      Identifier: ' A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      Identifier: ' C'
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' Enum'
+    EnumMember
+      Identifier: ' X'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        StringLiteral
+  EnumDeclaration
+    Identifier: ' Enum'
+    EnumMember
+      Identifier: '
+    D'
+      Identifier: ' d'
+    EnumMember
+      Identifier: '
+    E'
+      Identifier: ' A'
+    EnumMember
+      Identifier: ' // error
+    Y'
+      Identifier: ' X'
+    EnumMember
+      Identifier: ' // error
+    Z'
+      PropertyAccessExpression
+        Identifier: ' Enum'
+        Identifier: 'A'
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' Enum'
+    EnumMember
+      Identifier: '
+    F'
+      Identifier: ' A'

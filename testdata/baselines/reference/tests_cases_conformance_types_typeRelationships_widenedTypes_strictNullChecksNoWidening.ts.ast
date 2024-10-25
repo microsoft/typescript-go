@@ -1,0 +1,81 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        VoidExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        ArrayLiteralExpression
+          OmittedExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        ArrayLiteralExpression
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+          ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b5'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+          ArrayLiteralExpression
+            OmittedExpression
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        CallExpression
+          Identifier: ' f'
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        CallExpression
+          Identifier: ' f'
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        CallExpression
+          Identifier: ' f'
+          ArrayLiteralExpression

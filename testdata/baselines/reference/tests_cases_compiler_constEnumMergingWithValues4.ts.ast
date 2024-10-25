@@ -1,0 +1,19 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: ' X'
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ExportAssignment
+    Identifier: ' foo'

@@ -1,0 +1,271 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' e1'
+    EnumMember
+      Identifier: ' e2'
+  InterfaceDeclaration
+    Identifier: ' I8'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      ArrayType
+        NumberKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' foo'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' A2'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: ' foo'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+  ModuleDeclaration
+    Identifier: ' f'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' c'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' c'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I1'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      AnyKeyword
+    PropertySignature
+      Identifier: ' // ok
+    foo2'
+      StringKeyword
+    PropertySignature
+      Identifier: ' // ok
+    foo3'
+      NumberKeyword
+    PropertySignature
+      Identifier: ' // ok
+    foo4'
+      BooleanKeyword
+    PropertySignature
+      Identifier: ' // error 
+    foo5'
+      TypeReference
+        Identifier: ' E'
+    PropertySignature
+      Identifier: ' // ok - subtype of number 
+    foo6'
+      TypeReference
+        Identifier: ' Date'
+    PropertySignature
+      Identifier: ' // error
+    foo7'
+      TypeReference
+        Identifier: ' RegExp'
+    PropertySignature
+      Identifier: ' // error
+    foo8'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' bar'
+          NumberKeyword
+    PropertySignature
+      Identifier: ' // error
+    foo9'
+      TypeReference
+        Identifier: ' I8'
+    PropertySignature
+      Identifier: ' // error
+    foo10'
+      TypeReference
+        Identifier: ' A'
+    PropertySignature
+      Identifier: ' // error
+    foo11'
+      TypeReference
+        Identifier: ' A2'
+        NumberKeyword
+    PropertySignature
+      Identifier: ' // error
+    foo12'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+        NumberKeyword
+    PropertySignature
+      Identifier: ' //error
+    foo13'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    PropertySignature
+      Identifier: ' // error
+    foo14'
+      TypeQuery
+        Identifier: ' f'
+    PropertySignature
+      Identifier: ' // error
+    foo15'
+      TypeQuery
+        Identifier: ' c'
+    PropertySignature
+      Identifier: ' // error
+    foo16'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: ' // error
+    foo17'
+      TypeReference
+        Identifier: ' Object'
+    PropertySignature
+      Identifier: ' // error
+    foo18'
+      TypeLiteral
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' E'
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      AnyKeyword
+    PropertySignature
+      Identifier: ' // ok
+    foo2'
+      StringKeyword
+    PropertySignature
+      Identifier: ' // error
+    foo3'
+      NumberKeyword
+    PropertySignature
+      Identifier: ' // ok
+    foo4'
+      BooleanKeyword
+    PropertySignature
+      Identifier: ' // error 
+    foo5'
+      TypeReference
+        Identifier: ' E'
+    PropertySignature
+      Identifier: ' // ok
+    foo6'
+      TypeReference
+        Identifier: ' Date'
+    PropertySignature
+      Identifier: ' // error
+    foo7'
+      TypeReference
+        Identifier: ' RegExp'
+    PropertySignature
+      Identifier: ' // error
+    foo8'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' bar'
+          NumberKeyword
+    PropertySignature
+      Identifier: ' // error
+    foo9'
+      TypeReference
+        Identifier: ' I8'
+    PropertySignature
+      Identifier: ' // error
+    foo10'
+      TypeReference
+        Identifier: ' A'
+    PropertySignature
+      Identifier: ' // error
+    foo11'
+      TypeReference
+        Identifier: ' A2'
+        NumberKeyword
+    PropertySignature
+      Identifier: ' // error
+    foo12'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+        NumberKeyword
+    PropertySignature
+      Identifier: ' //error
+    foo13'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    PropertySignature
+      Identifier: ' // error
+    foo14'
+      TypeQuery
+        Identifier: ' f'
+    PropertySignature
+      Identifier: ' // error
+    foo15'
+      TypeQuery
+        Identifier: ' c'
+    PropertySignature
+      Identifier: ' // error
+    foo16'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: ' // error
+    foo17'
+      TypeReference
+        Identifier: ' Object'
+    PropertySignature
+      Identifier: ' // error
+    foo18'
+      TypeLiteral

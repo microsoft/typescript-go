@@ -1,0 +1,30 @@
+SourceFile
+  ExportAssignment
+    Identifier: ' Widget1'
+  InterfaceDeclaration
+    Identifier: ' Widget1'
+    PropertySignature
+      Identifier: ' name'
+      StringKeyword
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' w'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' e'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' w'
+    TypeReference
+      QualifiedName
+        Identifier: ' e'
+        Identifier: 'w'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'name'
+            StringLiteral

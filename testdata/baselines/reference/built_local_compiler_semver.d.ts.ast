@@ -1,0 +1,192 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Comparison'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Version'
+    PropertyDeclaration
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' zero'
+      TypeReference
+        Identifier: ' Version'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' major'
+      NumberKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' minor'
+      NumberKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' patch'
+      NumberKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' prerelease'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' build'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'major'
+        NumberKeyword
+      Parameter
+        Identifier: ' minor'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' patch'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' prerelease'
+        QuestionToken
+        UnionType
+          StringKeyword
+          TypeOperator
+            ArrayType
+              StringKeyword
+      Parameter
+        Identifier: ' build'
+        QuestionToken
+        UnionType
+          StringKeyword
+          TypeOperator
+            ArrayType
+              StringKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' tryParse'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    compareTo'
+      Parameter
+        Identifier: 'other'
+        UnionType
+          TypeReference
+            Identifier: ' Version'
+          UndefinedKeyword
+      TypeReference
+        Identifier: ' Comparison'
+    MethodDeclaration
+      Identifier: '
+    increment'
+      Parameter
+        Identifier: 'field'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeReference
+        Identifier: ' Version'
+    MethodDeclaration
+      Identifier: '
+    with'
+      Parameter
+        Identifier: 'fields'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        major'
+            QuestionToken
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+        minor'
+            QuestionToken
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+        patch'
+            QuestionToken
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+        prerelease'
+            QuestionToken
+            UnionType
+              StringKeyword
+              TypeOperator
+                ArrayType
+                  StringKeyword
+          PropertySignature
+            Identifier: '
+        build'
+            QuestionToken
+            UnionType
+              StringKeyword
+              TypeOperator
+                ArrayType
+                  StringKeyword
+      TypeReference
+        Identifier: ' Version'
+    MethodDeclaration
+      Identifier: '
+    toString'
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' VersionRange'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _alternatives'
+    Constructor
+      Parameter
+        Identifier: 'spec'
+        StringKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' tryParse'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' VersionRange'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Tests whether a version matches the range. This is equivalent to `satisfies(version, range, { includePrerelease: true })`.
+     * in `node-semver`.
+     */
+    test'
+      Parameter
+        Identifier: 'version'
+        UnionType
+          TypeReference
+            Identifier: ' Version'
+          StringKeyword
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    toString'
+      StringKeyword

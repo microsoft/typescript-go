@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Decorator
+        Identifier: 'dec'
+      PrivateIdentifier
+      Block

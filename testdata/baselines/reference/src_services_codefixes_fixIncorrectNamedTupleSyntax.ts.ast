@@ -1,0 +1,372 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    NamedTupleMember'
+        ImportSpecifier
+          Identifier: '
+    OptionalTypeNode'
+        ImportSpecifier
+          Identifier: '
+    ParenthesizedTypeNode'
+        ImportSpecifier
+          Identifier: '
+    RestTypeNode'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'A_labeled_tuple_element_is_declared_as_optional_with_a_question_mark_after_the_name_and_before_the_colon_rather_than_after_the_type'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'A_labeled_tuple_element_is_declared_as_rest_with_a_before_the_name_rather_than_before_the_type'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToFixIncorrectNamedTupleSyntax'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' sourceFile'
+                      BindingElement
+                        Identifier: ' span'
+                    Identifier: ' context'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' namedTupleMember'
+                    CallExpression
+                      Identifier: ' getNamedTupleMember'
+                      Identifier: 'sourceFile'
+                      PropertyAccessExpression
+                        Identifier: ' span'
+                        Identifier: 'start'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' changes'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'ChangeTracker'
+                        Identifier: 'with'
+                      Identifier: 'context'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' t'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' doChange'
+                          Identifier: 't'
+                          Identifier: ' sourceFile'
+                          Identifier: ' namedTupleMember'
+              ReturnStatement
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'createCodeFixAction'
+                    Identifier: 'fixId'
+                    Identifier: ' changes'
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Move_labeled_tuple_element_modifiers_to_labels'
+                    Identifier: ' fixId'
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Move_labeled_tuple_element_modifiers_to_labels'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+  FunctionDeclaration
+    Identifier: ' getNamedTupleMember'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      ReturnStatement
+        AsExpression
+          CallExpression
+            Identifier: ' findAncestor'
+            Identifier: 'token'
+            ArrowFunction
+              Parameter
+                Identifier: ' t'
+              EqualsGreaterThanToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' t'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'NamedTupleMember'
+          UnionType
+            TypeReference
+              Identifier: ' NamedTupleMember'
+            UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' namedTupleMember'
+      QuestionToken
+      TypeReference
+        Identifier: ' NamedTupleMember'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'namedTupleMember'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unwrappedType'
+            PropertyAccessExpression
+              Identifier: ' namedTupleMember'
+              Identifier: 'type'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sawOptional'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sawRest'
+            FalseKeyword
+      WhileStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'unwrappedType'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'OptionalType'
+            BarBarToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' unwrappedType'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'RestType'
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' unwrappedType'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ParenthesizedType'
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'unwrappedType'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'OptionalType'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            sawOptional'
+                  EqualsToken
+                  TrueKeyword
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'unwrappedType'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'RestType'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            sawRest'
+                    EqualsToken
+                    TrueKeyword
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        unwrappedType'
+              EqualsToken
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  AsExpression
+                    Identifier: 'unwrappedType'
+                    UnionType
+                      TypeReference
+                        Identifier: ' OptionalTypeNode'
+                      TypeReference
+                        Identifier: ' RestTypeNode'
+                      TypeReference
+                        Identifier: ' ParenthesizedTypeNode'
+                Identifier: 'type'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' updated'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'updateNamedTupleMember'
+              Identifier: '
+        namedTupleMember'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+        namedTupleMember'
+                  Identifier: 'dotDotDotToken'
+                BarBarToken
+                ParenthesizedExpression
+                  ConditionalExpression
+                    Identifier: 'sawRest'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createToken'
+                      PropertyAccessExpression
+                        Identifier: 'SyntaxKind'
+                        Identifier: 'DotDotDotToken'
+                    ColonToken
+                    Identifier: ' undefined'
+              PropertyAccessExpression
+                Identifier: '
+        namedTupleMember'
+                Identifier: 'name'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+        namedTupleMember'
+                  Identifier: 'questionToken'
+                BarBarToken
+                ParenthesizedExpression
+                  ConditionalExpression
+                    Identifier: 'sawOptional'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createToken'
+                      PropertyAccessExpression
+                        Identifier: 'SyntaxKind'
+                        Identifier: 'QuestionToken'
+                    ColonToken
+                    Identifier: ' undefined'
+              Identifier: '
+        unwrappedType'
+      IfStatement
+        BinaryExpression
+          Identifier: 'updated'
+          EqualsEqualsEqualsToken
+          Identifier: ' namedTupleMember'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          Identifier: 'sourceFile'
+          Identifier: ' namedTupleMember'
+          Identifier: ' updated'

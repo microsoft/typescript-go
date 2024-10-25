@@ -1,0 +1,4 @@
+SourceFile
+  WithStatement
+    Identifier: 'foo'
+    Block

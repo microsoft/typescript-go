@@ -1,0 +1,54 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AA'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' BB'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AA'
+  ClassDeclaration
+    Identifier: ' CC'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AA'
+  ClassDeclaration
+    Identifier: ' DD'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BB'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' EE'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BB'
+  ClassDeclaration
+    Identifier: ' FF'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CC'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' GG'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CC'

@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' el'
+        NullKeyword
+  ExportAssignment
+    Identifier: ' A'

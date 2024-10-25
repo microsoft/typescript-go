@@ -1,0 +1,12 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: '
+    getInstance'
+        FunctionExpression
+          Block
+            ReturnStatement
+              CallExpression
+                ImportKeyword
+                StringLiteral

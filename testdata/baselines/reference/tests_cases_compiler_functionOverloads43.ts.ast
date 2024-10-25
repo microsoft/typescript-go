@@ -1,0 +1,69 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            UnionType
+              NumberKeyword
+              StringKeyword
+    UnionType
+      StringKeyword
+      NumberKeyword
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'a'
+      ReturnStatement
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' foo'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'a'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          Identifier: ' foo'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'a'
+                NumericLiteral

@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'B'
+            Identifier: ' B'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          ParenthesizedExpression
+            CallExpression
+              Identifier: 'foo'
+          Identifier: 'B'

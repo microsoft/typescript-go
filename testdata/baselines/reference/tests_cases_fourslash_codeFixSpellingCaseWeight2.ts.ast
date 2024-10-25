@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////let ABCDEFGHI = 1;
+////let abcdefghij = 1;
+////[|abcdefghi|]
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      StringLiteral

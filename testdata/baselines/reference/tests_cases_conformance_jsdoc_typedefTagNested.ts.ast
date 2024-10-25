@@ -1,0 +1,64 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ex'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' app'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    icons'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        image32'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        image64'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' intercessor'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mistake'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sala'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' not'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' nested'
+            StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+sala'
+      Identifier: 'name'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+sala'
+      Identifier: 'not'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+sala'
+      Identifier: 'nested'

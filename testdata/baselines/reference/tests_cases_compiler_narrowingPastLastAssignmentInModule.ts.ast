@@ -1,0 +1,130 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' action'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' Function'
+    Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+action'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            Identifier: ' x1'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' x2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+action'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            Identifier: ' x2'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' x3'
+        Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+action'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            Identifier: ' x3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+action'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            Identifier: ' x4'
+  ExportAssignment
+    Identifier: ' x4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x5'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+action'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            Identifier: ' x5'

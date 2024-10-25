@@ -1,0 +1,173 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' bar'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' bat'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' bam'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' bork'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' bar'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' baz'
+                    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        TupleType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+          TupleType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            TupleType
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'def'
+                  LiteralType
+                    StringLiteral
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'sec'
+                  LiteralType
+                    StringLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'def'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'sec'
+                  StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' foo'
+      ExportSpecifier
+        Identifier: ' arr'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' foo'
+        ImportSpecifier
+          Identifier: ' arr'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' foo'
+      ExportSpecifier
+        Identifier: ' arr'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' bar'
+            Identifier: ' baz'
+          BindingElement
+            Identifier: ' bat'
+          BindingElement
+            Identifier: ' bam'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' bork'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' bar'
+                    Identifier: ' ibar'
+                  BindingElement
+                    Identifier: ' baz'
+                    Identifier: ' ibaz'
+        Identifier: ' foo'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' baz'
+      ExportSpecifier
+        Identifier: ' ibaz'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          BindingElement
+            Identifier: ' one'
+          OmittedExpression
+          BindingElement
+            ArrayBindingPattern
+              OmittedExpression
+              BindingElement
+                Identifier: ' bee'
+              OmittedExpression
+              BindingElement
+                ArrayBindingPattern
+                  OmittedExpression
+                  BindingElement
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: 'sec'
+        Identifier: ' arr'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' one'
+      ExportSpecifier
+        Identifier: ' bee'
+      ExportSpecifier
+        Identifier: ' sec'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' getFoo'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    foo'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' foo'
+            Identifier: ' foo2'
+        CallExpression
+          Identifier: ' getFoo'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' foo2'

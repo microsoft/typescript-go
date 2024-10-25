@@ -1,0 +1,697 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    createImportAdder'
+        ImportSpecifier
+          Identifier: '
+    createMissingMemberNodes'
+        ImportSpecifier
+          Identifier: '
+    getNoopSymbolTrackerWithResolver'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+        ImportSpecifier
+          Identifier: '
+    TypeConstructionContext'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addToSeen'
+        ImportSpecifier
+          Identifier: '
+    and'
+        ImportSpecifier
+          Identifier: '
+    ClassElement'
+        ImportSpecifier
+          Identifier: '
+    ClassLikeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    CodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    createSymbolTable'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    ExpressionWithTypeArguments'
+        ImportSpecifier
+          Identifier: '
+    find'
+        ImportSpecifier
+          Identifier: '
+    getContainingClass'
+        ImportSpecifier
+          Identifier: '
+    getEffectiveBaseTypeNode'
+        ImportSpecifier
+          Identifier: '
+    getEffectiveImplementsTypeNodes'
+        ImportSpecifier
+          Identifier: '
+    getEffectiveModifierFlags'
+        ImportSpecifier
+          Identifier: '
+    getNodeId'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    IndexKind'
+        ImportSpecifier
+          Identifier: '
+    InterfaceDeclaration'
+        ImportSpecifier
+          Identifier: '
+    InterfaceType'
+        ImportSpecifier
+          Identifier: '
+    isConstructorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    mapDefined'
+        ImportSpecifier
+          Identifier: '
+    ModifierFlags'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    Symbol'
+        ImportSpecifier
+          Identifier: '
+    SymbolTable'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+        ImportSpecifier
+          Identifier: '
+    UserPreferences'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Class_0_incorrectly_implements_interface_1'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass'
+            Identifier: 'code'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // TODO: share a group with fixClassDoesntImplementInheritedAbstractMember?
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                    BindingElement
+                      Identifier: ' span'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' classDeclaration'
+                  CallExpression
+                    Identifier: ' getClass'
+                    Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      Identifier: ' span'
+                      Identifier: 'start'
+            ReturnStatement
+              CallExpression
+                Identifier: ' mapDefined'
+                TypeReference
+                  Identifier: 'ExpressionWithTypeArguments'
+                TypeReference
+                  Identifier: ' CodeFixAction'
+                CallExpression
+                  Identifier: 'getEffectiveImplementsTypeNodes'
+                  Identifier: 'classDeclaration'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' implementedTypeNode'
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' changes'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' textChanges'
+                                Identifier: 'ChangeTracker'
+                              Identifier: 'with'
+                            Identifier: 'context'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' t'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                Identifier: ' addMissingDeclarations'
+                                Identifier: 'context'
+                                Identifier: ' implementedTypeNode'
+                                Identifier: ' sourceFile'
+                                Identifier: ' classDeclaration'
+                                Identifier: ' t'
+                                PropertyAccessExpression
+                                  Identifier: ' context'
+                                  Identifier: 'preferences'
+                    ReturnStatement
+                      ConditionalExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' changes'
+                            Identifier: 'length'
+                          EqualsEqualsEqualsToken
+                          NumericLiteral
+                        QuestionToken
+                        Identifier: ' undefined'
+                        ColonToken
+                        CallExpression
+                          Identifier: ' createCodeFixAction'
+                          Identifier: 'fixId'
+                          Identifier: ' changes'
+                          ArrayLiteralExpression
+                            PropertyAccessExpression
+                              Identifier: 'Diagnostics'
+                              Identifier: 'Implement_interface_0'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' implementedTypeNode'
+                                Identifier: 'getText'
+                              Identifier: 'sourceFile'
+                          Identifier: ' fixId'
+                          PropertyAccessExpression
+                            Identifier: ' Diagnostics'
+                            Identifier: 'Implement_all_unimplemented_interfaces'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        MethodDeclaration
+          Identifier: '
+    getAllCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' seenClassDeclarations'
+                  NewExpression
+                    Identifier: ' Map'
+                    NumberKeyword
+                    LiteralType
+                      TrueKeyword
+            ReturnStatement
+              CallExpression
+                Identifier: ' codeFixAll'
+                Identifier: 'context'
+                Identifier: ' errorCodes'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'changes'
+                  Parameter
+                    Identifier: ' diag'
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' classDeclaration'
+                          CallExpression
+                            Identifier: ' getClass'
+                            PropertyAccessExpression
+                              Identifier: 'diag'
+                              Identifier: 'file'
+                            PropertyAccessExpression
+                              Identifier: ' diag'
+                              Identifier: 'start'
+                    IfStatement
+                      CallExpression
+                        Identifier: 'addToSeen'
+                        Identifier: 'seenClassDeclarations'
+                        CallExpression
+                          Identifier: ' getNodeId'
+                          Identifier: 'classDeclaration'
+                      Block
+                        ForOfStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' implementedTypeNode'
+                          NonNullExpression
+                            CallExpression
+                              Identifier: ' getEffectiveImplementsTypeNodes'
+                              Identifier: 'classDeclaration'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: '
+                    addMissingDeclarations'
+                                Identifier: 'context'
+                                Identifier: ' implementedTypeNode'
+                                PropertyAccessExpression
+                                  Identifier: ' diag'
+                                  Identifier: 'file'
+                                Identifier: ' classDeclaration'
+                                Identifier: ' changes'
+                                PropertyAccessExpression
+                                  Identifier: ' context'
+                                  Identifier: 'preferences'
+  FunctionDeclaration
+    Identifier: ' getClass'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    TypeReference
+      Identifier: ' ClassLikeDeclaration'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Debug'
+            Identifier: 'checkDefined'
+          CallExpression
+            Identifier: 'getContainingClass'
+            CallExpression
+              Identifier: 'getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' symbolPointsToNonPrivateMember'
+    Parameter
+      Identifier: 'symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Block
+      ReturnStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'symbol'
+              Identifier: 'valueDeclaration'
+          BarBarToken
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: 'getEffectiveModifierFlags'
+                  PropertyAccessExpression
+                    Identifier: 'symbol'
+                    Identifier: 'valueDeclaration'
+                AmpersandToken
+                PropertyAccessExpression
+                  Identifier: ' ModifierFlags'
+                  Identifier: 'Private'
+  FunctionDeclaration
+    Identifier: ' addMissingDeclarations'
+    Parameter
+      Identifier: '
+    context'
+      TypeReference
+        Identifier: ' TypeConstructionContext'
+    Parameter
+      Identifier: '
+    implementedTypeNode'
+      TypeReference
+        Identifier: ' ExpressionWithTypeArguments'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    classDeclaration'
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+    Parameter
+      Identifier: '
+    changeTracker'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' checker'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'program'
+                Identifier: 'getTypeChecker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' maybeHeritageClauseSymbol'
+            CallExpression
+              Identifier: ' getHeritageClauseSymbolTable'
+              Identifier: 'classDeclaration'
+              Identifier: ' checker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' implementedType'
+            AsExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' checker'
+                  Identifier: 'getTypeAtLocation'
+                Identifier: 'implementedTypeNode'
+              TypeReference
+                Identifier: ' InterfaceType'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' implementedTypeSymbols'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getPropertiesOfType'
+              Identifier: 'implementedType'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nonPrivateAndNotExistedInHeritageClauseMembers'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' implementedTypeSymbols'
+                Identifier: 'filter'
+              CallExpression
+                Identifier: 'and'
+                Identifier: 'symbolPointsToNonPrivateMember'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' symbol'
+                  EqualsGreaterThanToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'maybeHeritageClauseSymbol'
+                        Identifier: 'has'
+                      PropertyAccessExpression
+                        Identifier: 'symbol'
+                        Identifier: 'escapedName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' classType'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getTypeAtLocation'
+              Identifier: 'classDeclaration'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' constructor'
+            CallExpression
+              Identifier: ' find'
+              PropertyAccessExpression
+                Identifier: 'classDeclaration'
+                Identifier: 'members'
+              ArrowFunction
+                Parameter
+                  Identifier: ' m'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' isConstructorDeclaration'
+                  Identifier: 'm'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'classType'
+              Identifier: 'getNumberIndexType'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        createMissingIndexSignatureDeclaration'
+              Identifier: 'implementedType'
+              PropertyAccessExpression
+                Identifier: ' IndexKind'
+                Identifier: 'Number'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'classType'
+              Identifier: 'getStringIndexType'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        createMissingIndexSignatureDeclaration'
+              Identifier: 'implementedType'
+              PropertyAccessExpression
+                Identifier: ' IndexKind'
+                Identifier: 'String'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importAdder'
+            CallExpression
+              Identifier: ' createImportAdder'
+              Identifier: 'sourceFile'
+              PropertyAccessExpression
+                Identifier: ' context'
+                Identifier: 'program'
+              Identifier: ' preferences'
+              PropertyAccessExpression
+                Identifier: ' context'
+                Identifier: 'host'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    createMissingMemberNodes'
+          Identifier: 'classDeclaration'
+          Identifier: ' nonPrivateAndNotExistedInHeritageClauseMembers'
+          Identifier: ' sourceFile'
+          Identifier: ' context'
+          Identifier: ' preferences'
+          Identifier: ' importAdder'
+          ArrowFunction
+            Parameter
+              Identifier: ' member'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' insertInterfaceMemberNode'
+              Identifier: 'sourceFile'
+              Identifier: ' classDeclaration'
+              AsExpression
+                Identifier: ' member'
+                TypeReference
+                  Identifier: ' ClassElement'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    importAdder'
+            Identifier: 'writeFixes'
+          Identifier: 'changeTracker'
+      FunctionDeclaration
+        Identifier: ' createMissingIndexSignatureDeclaration'
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' InterfaceType'
+        Parameter
+          Identifier: ' kind'
+          TypeReference
+            Identifier: ' IndexKind'
+        VoidKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' indexInfoOfKind'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' checker'
+                    Identifier: 'getIndexInfoOfType'
+                  Identifier: 'type'
+                  Identifier: ' kind'
+          IfStatement
+            Identifier: 'indexInfoOfKind'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            insertInterfaceMemberNode'
+                  Identifier: 'sourceFile'
+                  Identifier: ' classDeclaration'
+                  NonNullExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' checker'
+                        Identifier: 'indexInfoToIndexSignatureDeclaration'
+                      Identifier: 'indexInfoOfKind'
+                      Identifier: ' classDeclaration'
+                      Identifier: ' /*flags*/ undefined'
+                      Identifier: ' /*internalFlags*/ undefined'
+                      CallExpression
+                        Identifier: ' getNoopSymbolTrackerWithResolver'
+                        Identifier: 'context'
+      FunctionDeclaration
+        Identifier: ' insertInterfaceMemberNode'
+        Parameter
+          Identifier: 'sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' cls'
+          UnionType
+            TypeReference
+              Identifier: ' ClassLikeDeclaration'
+            TypeReference
+              Identifier: ' InterfaceDeclaration'
+        Parameter
+          Identifier: ' newElement'
+          TypeReference
+            Identifier: ' ClassElement'
+        VoidKeyword
+        Block
+          IfStatement
+            Identifier: 'constructor'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            changeTracker'
+                    Identifier: 'insertNodeAfter'
+                  Identifier: 'sourceFile'
+                  Identifier: ' constructor'
+                  Identifier: ' newElement'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            changeTracker'
+                    Identifier: 'insertMemberAtStart'
+                  Identifier: 'sourceFile'
+                  Identifier: ' cls'
+                  Identifier: ' newElement'
+  FunctionDeclaration
+    Identifier: ' getHeritageClauseSymbolTable'
+    Parameter
+      Identifier: 'classDeclaration'
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    TypeReference
+      Identifier: ' SymbolTable'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' heritageClauseNode'
+            CallExpression
+              Identifier: ' getEffectiveBaseTypeNode'
+              Identifier: 'classDeclaration'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'heritageClauseNode'
+        ReturnStatement
+          CallExpression
+            Identifier: ' createSymbolTable'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' heritageClauseType'
+            AsExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' checker'
+                  Identifier: 'getTypeAtLocation'
+                Identifier: 'heritageClauseNode'
+              TypeReference
+                Identifier: ' InterfaceType'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' heritageClauseTypeSymbols'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getPropertiesOfType'
+              Identifier: 'heritageClauseType'
+      ReturnStatement
+        CallExpression
+          Identifier: ' createSymbolTable'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'heritageClauseTypeSymbols'
+              Identifier: 'filter'
+            Identifier: 'symbolPointsToNonPrivateMember'

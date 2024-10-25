@@ -1,0 +1,785 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    protocolTextSpanFromSubstring'
+        ImportSpecifier
+          Identifier: '
+    protocolTextSpanToFileRange'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+        ImportSpecifier
+          Identifier: '
+    verifyGetErrRequest'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file1'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            TaggedTemplateExpression
+                              Identifier: ' dedent'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'file1'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: ' host'
+                            PropertyAssignment
+                              Identifier: ' regionDiagLineCountThreshold'
+                              NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'file1'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            session'
+                        PropertyAssignment
+                          Identifier: '
+            files'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                file'
+                                PropertyAccessExpression
+                                  Identifier: ' file1'
+                                  Identifier: 'path'
+                              PropertyAssignment
+                                Identifier: '
+                ranges'
+                                ArrayLiteralExpression
+                                  CallExpression
+                                    Identifier: 'protocolTextSpanToFileRange'
+                                    CallExpression
+                                      Identifier: 'protocolTextSpanFromSubstring'
+                                      PropertyAccessExpression
+                                        Identifier: 'file1'
+                                        Identifier: 'content'
+                                      StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            skip'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' regionSemantic'
+                                FalseKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file1'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            TaggedTemplateExpression
+                              Identifier: ' dedent'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file2'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            TaggedTemplateExpression
+                              Identifier: ' dedent'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file3'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            TaggedTemplateExpression
+                              Identifier: ' dedent'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file4'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            TaggedTemplateExpression
+                              Identifier: ' dedent'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' files'
+                        ArrayLiteralExpression
+                          Identifier: 'file1'
+                          Identifier: ' file2'
+                          Identifier: ' file3'
+                          Identifier: ' file4'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          Identifier: 'files'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: ' host'
+                            PropertyAssignment
+                              Identifier: ' regionDiagLineCountThreshold'
+                              NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      Identifier: 'files'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            session'
+                        PropertyAssignment
+                          Identifier: '
+            files'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    file'
+                                PropertyAccessExpression
+                                  Identifier: ' file1'
+                                  Identifier: 'path'
+                              PropertyAssignment
+                                Identifier: '
+                    ranges'
+                                ArrayLiteralExpression
+                                  CallExpression
+                                    Identifier: 'protocolTextSpanToFileRange'
+                                    CallExpression
+                                      Identifier: 'protocolTextSpanFromSubstring'
+                                      PropertyAccessExpression
+                                        Identifier: 'file1'
+                                        Identifier: 'content'
+                                      StringLiteral
+                            PropertyAccessExpression
+                              Identifier: '
+                file2'
+                              Identifier: 'path'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    file'
+                                PropertyAccessExpression
+                                  Identifier: ' file3'
+                                  Identifier: 'path'
+                              PropertyAssignment
+                                Identifier: '
+                    ranges'
+                                ArrayLiteralExpression
+                                  CallExpression
+                                    Identifier: 'protocolTextSpanToFileRange'
+                                    CallExpression
+                                      Identifier: 'protocolTextSpanFromSubstring'
+                                      PropertyAccessExpression
+                                        Identifier: 'file3'
+                                        Identifier: 'content'
+                                      StringLiteral
+                            PropertyAccessExpression
+                              Identifier: '
+                file4'
+                              Identifier: 'path'
+                        PropertyAssignment
+                          Identifier: '
+            skip'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' regionSemantic'
+                                FalseKeyword
+                            Identifier: '
+                undefined'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' regionSemantic'
+                                FalseKeyword
+                            Identifier: '
+                undefined'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' config'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            CallExpression
+                              Identifier: ' jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                compilerOptions'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    allowSyntheticDefaultImports'
+                                      TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' indexFile'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            TaggedTemplateExpression
+                              Identifier: ' dedent'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' otherFile'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            TaggedTemplateExpression
+                              Identifier: ' dedent'
+                              NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' host'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHost'
+                                    Identifier: 'createServerHost'
+                                  ArrayLiteralExpression
+                                    Identifier: 'config'
+                                    Identifier: ' indexFile'
+                                    Identifier: ' otherFile'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' session'
+                                NewExpression
+                                  Identifier: ' TestSession'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: ' host'
+                                    PropertyAssignment
+                                      Identifier: ' regionDiagLineCountThreshold'
+                                      NumericLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            openFilesForSession'
+                              ArrayLiteralExpression
+                                Identifier: 'indexFile'
+                              Identifier: ' session'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            verifyGetErrRequest'
+                              ObjectLiteralExpression
+                                ShorthandPropertyAssignment
+                                  Identifier: '
+                session'
+                                PropertyAssignment
+                                  Identifier: '
+                files'
+                                  ArrayLiteralExpression
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                        file'
+                                        PropertyAccessExpression
+                                          Identifier: ' indexFile'
+                                          Identifier: 'path'
+                                      PropertyAssignment
+                                        Identifier: '
+                        ranges'
+                                        ArrayLiteralExpression
+                                          CallExpression
+                                            Identifier: '
+                            protocolTextSpanToFileRange'
+                                            CallExpression
+                                              Identifier: '
+                                protocolTextSpanFromSubstring'
+                                              PropertyAccessExpression
+                                                Identifier: '
+                                    indexFile'
+                                                Identifier: 'content'
+                                              StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                skip'
+                                  ArrayLiteralExpression
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' regionSemantic'
+                                        FalseKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            baselineTsserverLogs'
+                              StringLiteral
+                              StringLiteral
+                              Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' host'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHost'
+                                    Identifier: 'createServerHost'
+                                  ArrayLiteralExpression
+                                    Identifier: 'config'
+                                    Identifier: ' indexFile'
+                                    Identifier: ' otherFile'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' session'
+                                NewExpression
+                                  Identifier: ' TestSession'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: ' host'
+                                    PropertyAssignment
+                                      Identifier: ' regionDiagLineCountThreshold'
+                                      NumericLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            openFilesForSession'
+                              ArrayLiteralExpression
+                                Identifier: 'indexFile'
+                              Identifier: ' session'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            verifyGetErrRequest'
+                              ObjectLiteralExpression
+                                ShorthandPropertyAssignment
+                                  Identifier: '
+                session'
+                                PropertyAssignment
+                                  Identifier: '
+                files'
+                                  ArrayLiteralExpression
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                        file'
+                                        PropertyAccessExpression
+                                          Identifier: ' indexFile'
+                                          Identifier: 'path'
+                                      PropertyAssignment
+                                        Identifier: '
+                        ranges'
+                                        ArrayLiteralExpression
+                                          CallExpression
+                                            Identifier: '
+                            protocolTextSpanToFileRange'
+                                            CallExpression
+                                              Identifier: '
+                                protocolTextSpanFromSubstring'
+                                              PropertyAccessExpression
+                                                Identifier: '
+                                    indexFile'
+                                                Identifier: 'content'
+                                              StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                skip'
+                                  ArrayLiteralExpression
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' regionSemantic'
+                                        FalseKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            baselineTsserverLogs'
+                              StringLiteral
+                              StringLiteral
+                              Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file1'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            TaggedTemplateExpression
+                              Identifier: ' dedent'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'file1'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'file1'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            session'
+                        PropertyAssignment
+                          Identifier: '
+            files'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                file'
+                                PropertyAccessExpression
+                                  Identifier: ' file1'
+                                  Identifier: 'path'
+                              PropertyAssignment
+                                Identifier: '
+                ranges'
+                                ArrayLiteralExpression
+                                  CallExpression
+                                    Identifier: 'protocolTextSpanToFileRange'
+                                    CallExpression
+                                      Identifier: 'protocolTextSpanFromSubstring'
+                                      PropertyAccessExpression
+                                        Identifier: 'file1'
+                                        Identifier: 'content'
+                                      StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            skip'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' regionSemantic'
+                                FalseKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file1'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            TaggedTemplateExpression
+                              Identifier: ' dedent'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'file1'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: ' host'
+                            PropertyAssignment
+                              Identifier: ' regionDiagLineCountThreshold'
+                              NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'file1'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            session'
+                        PropertyAssignment
+                          Identifier: '
+            files'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                file'
+                                PropertyAccessExpression
+                                  Identifier: ' file1'
+                                  Identifier: 'path'
+                              PropertyAssignment
+                                Identifier: '
+                ranges'
+                                ArrayLiteralExpression
+                                  CallExpression
+                                    Identifier: 'protocolTextSpanToFileRange'
+                                    CallExpression
+                                      Identifier: 'protocolTextSpanFromSubstring'
+                                      PropertyAccessExpression
+                                        Identifier: 'file1'
+                                        Identifier: 'content'
+                                      StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            skip'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' regionSemantic'
+                                FalseKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'

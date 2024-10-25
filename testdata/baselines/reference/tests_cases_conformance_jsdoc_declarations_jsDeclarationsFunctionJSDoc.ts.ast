@@ -1,0 +1,40 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Aleph'
+    Constructor
+      Parameter
+        Identifier: 'a'
+      Parameter
+        Identifier: ' b'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'field'
+            EqualsToken
+            Identifier: ' b'
+    MethodDeclaration
+      Identifier: '
+
+    /**
+     * Doesn't actually do anything
+     * @returns {void}
+     */
+    doIt'
+      Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NumericLiteral

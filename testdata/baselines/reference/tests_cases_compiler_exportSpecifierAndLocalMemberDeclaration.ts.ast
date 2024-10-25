@@ -1,0 +1,33 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' X'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' I'
+      FunctionDeclaration
+        Identifier: ' Y'
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' Y'
+            Identifier: ' X'
+      FunctionDeclaration
+        Identifier: ' Z'
+        TypeReference
+          QualifiedName
+            Identifier: ' X'
+            Identifier: 'I'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' Z2'
+        TypeReference
+          QualifiedName
+            Identifier: ' X'
+            Identifier: 'I'

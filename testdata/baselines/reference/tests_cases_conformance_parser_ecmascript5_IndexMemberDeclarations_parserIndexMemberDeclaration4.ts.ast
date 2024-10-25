@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      NumberKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' v'
+      NumberKeyword

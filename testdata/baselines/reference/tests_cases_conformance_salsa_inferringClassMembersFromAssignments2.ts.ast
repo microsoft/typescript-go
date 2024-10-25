@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '// @checkJs: true
+// @noEmit: true
+// @filename: a.js
+OOOrder'
+          Identifier: 'prototype'
+        Identifier: 'm'
+      EqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'p'
+              EqualsToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' OOOrder'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral

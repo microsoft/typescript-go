@@ -1,0 +1,157 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' TestCase'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' name'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' test'
+        FunctionType
+          BooleanKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' errorMessageRegEx'
+        QuestionToken
+        StringKeyword
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' TestRunner'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' arrayCompare'
+      Parameter
+        Identifier: 'arg1'
+        ArrayType
+          AnyKeyword
+      Parameter
+        Identifier: ' arg2'
+        ArrayType
+          AnyKeyword
+      BooleanKeyword
+      Block
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' addTest'
+      Parameter
+        Identifier: 'test'
+        TypeReference
+          Identifier: ' TestCase'
+      Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tests'
+        TypeReference
+          Identifier: ' TestRunner'
+        CallExpression
+          ParenthesizedExpression
+            FunctionExpression
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' testRunner'
+                      NewExpression
+                        Identifier: ' TestRunner'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+
+    testRunner'
+                      Identifier: 'addTest'
+                    NewExpression
+                      Identifier: ' TestCase'
+                      StringLiteral
+                      FunctionExpression
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' fb'
+                                AnyKeyword
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            fb'
+                                Identifier: 'writeUtf8Bom'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' chars'
+                                ArrayLiteralExpression
+                                  NumericLiteral
+                          ForInStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' i'
+                            Identifier: ' chars'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                fb'
+                                    Identifier: 'writeUtf8CodePoint'
+                                  ElementAccessExpression
+                                    Identifier: 'chars'
+                                    Identifier: 'i'
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            fb'
+                                Identifier: 'index'
+                              EqualsToken
+                              NumericLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' bytes'
+                                ArrayLiteralExpression
+                          ForStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' i'
+                                NumericLiteral
+                            BinaryExpression
+                              Identifier: ' i'
+                              LessThanToken
+                              NumericLiteral
+                            PostfixUnaryExpression
+                              Identifier: ' i'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                bytes'
+                                    Identifier: 'push'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'fb'
+                                      Identifier: 'readByte'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' expected'
+                                ArrayLiteralExpression
+                                  NumericLiteral
+                          ReturnStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' TestRunner'
+                                Identifier: 'arrayCompare'
+                              Identifier: 'bytes'
+                              Identifier: ' expected'
+                ReturnStatement
+                  Identifier: ' testRunner'

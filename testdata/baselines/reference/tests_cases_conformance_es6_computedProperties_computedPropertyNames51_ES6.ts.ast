@@ -1,0 +1,36 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k'
+            TypeReference
+              Identifier: ' K'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  Identifier: 't'
+                NumericLiteral
+              PropertyAssignment
+                ComputedPropertyName
+                  Identifier: 'k'
+                NumericLiteral

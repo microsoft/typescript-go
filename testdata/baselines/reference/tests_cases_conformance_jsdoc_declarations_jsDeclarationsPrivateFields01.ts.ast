@@ -1,0 +1,43 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+      StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+    GetAccessor
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+              Identifier: 'toUpperCase'
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'value'
+      Block
+        ThrowStatement
+          StringLiteral
+    MethodDeclaration
+      Identifier: '
+
+    getWorld'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier

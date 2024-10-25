@@ -1,0 +1,128 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' a'
+      StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' b'
+      StringKeyword
+      StringLiteral
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' c'
+      Block
+        ReturnStatement
+          StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' d'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' e'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' f'
+      Block
+        ReturnStatement
+          StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' g'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              NewExpression
+                Identifier: ' D'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r1'
+              StringKeyword
+              PropertyAccessExpression
+                Identifier: ' d'
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r2'
+              StringKeyword
+              PropertyAccessExpression
+                Identifier: ' d'
+                Identifier: 'a'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r3'
+              StringKeyword
+              PropertyAccessExpression
+                Identifier: ' d'
+                Identifier: 'b'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r4'
+              StringKeyword
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' d'
+                  Identifier: 'c'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r5'
+              StringKeyword
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' d'
+                  Identifier: 'd'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r6'
+              StringKeyword
+              PropertyAccessExpression
+                Identifier: ' C'
+                Identifier: 'e'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r7'
+              StringKeyword
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' C'
+                  Identifier: 'f'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r8'
+              StringKeyword
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' C'
+                  Identifier: 'g'

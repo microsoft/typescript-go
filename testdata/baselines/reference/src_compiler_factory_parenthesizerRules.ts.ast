@@ -1,0 +1,2227 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Associativity'
+        ImportSpecifier
+          Identifier: '
+    BinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    BinaryOperator'
+        ImportSpecifier
+          Identifier: '
+    cast'
+        ImportSpecifier
+          Identifier: '
+    compareValues'
+        ImportSpecifier
+          Identifier: '
+    Comparison'
+        ImportSpecifier
+          Identifier: '
+    ConciseBody'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    getExpressionAssociativity'
+        ImportSpecifier
+          Identifier: '
+    getExpressionPrecedence'
+        ImportSpecifier
+          Identifier: '
+    getLeftmostExpression'
+        ImportSpecifier
+          Identifier: '
+    getOperatorAssociativity'
+        ImportSpecifier
+          Identifier: '
+    getOperatorPrecedence'
+        ImportSpecifier
+          Identifier: '
+    identity'
+        ImportSpecifier
+          Identifier: '
+    isBinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    isBlock'
+        ImportSpecifier
+          Identifier: '
+    isCallExpression'
+        ImportSpecifier
+          Identifier: '
+    isCommaSequence'
+        ImportSpecifier
+          Identifier: '
+    isConditionalTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isConstructorTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isFunctionOrConstructorTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isFunctionTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isInferTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isIntersectionTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isJSDocNullableType'
+        ImportSpecifier
+          Identifier: '
+    isLeftHandSideExpression'
+        ImportSpecifier
+          Identifier: '
+    isLiteralKind'
+        ImportSpecifier
+          Identifier: '
+    isNamedTupleMember'
+        ImportSpecifier
+          Identifier: '
+    isNodeArray'
+        ImportSpecifier
+          Identifier: '
+    isOptionalChain'
+        ImportSpecifier
+          Identifier: '
+    isTypeOperatorNode'
+        ImportSpecifier
+          Identifier: '
+    isUnaryExpression'
+        ImportSpecifier
+          Identifier: '
+    isUnionTypeNode'
+        ImportSpecifier
+          Identifier: '
+    last'
+        ImportSpecifier
+          Identifier: '
+    LeftHandSideExpression'
+        ImportSpecifier
+          Identifier: '
+    NamedTupleMember'
+        ImportSpecifier
+          Identifier: '
+    NewExpression'
+        ImportSpecifier
+          Identifier: '
+    NodeArray'
+        ImportSpecifier
+          Identifier: '
+    NodeFactory'
+        ImportSpecifier
+          Identifier: '
+    OperatorPrecedence'
+        ImportSpecifier
+          Identifier: '
+    OuterExpressionKinds'
+        ImportSpecifier
+          Identifier: '
+    ParenthesizerRules'
+        ImportSpecifier
+          Identifier: '
+    sameMap'
+        ImportSpecifier
+          Identifier: '
+    setTextRange'
+        ImportSpecifier
+          Identifier: '
+    skipPartiallyEmittedExpressions'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    TypeNode'
+        ImportSpecifier
+          Identifier: '
+    UnaryExpression'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createParenthesizerRules'
+    Parameter
+      Identifier: 'factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    TypeReference
+      Identifier: ' ParenthesizerRules'
+    Block
+      InterfaceDeclaration
+        Identifier: ' BinaryPlusExpression'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' BinaryExpression'
+        PropertySignature
+          Identifier: '
+        cachedLiteralKind'
+          TypeReference
+            Identifier: ' SyntaxKind'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' binaryLeftOperandParenthesizerCache'
+            UnionType
+              TypeReference
+                Identifier: ' Map'
+                TypeReference
+                  Identifier: 'BinaryOperator'
+                FunctionType
+                  Parameter
+                    Identifier: 'node'
+                    TypeReference
+                      Identifier: ' Expression'
+                  TypeReference
+                    Identifier: ' Expression'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' binaryRightOperandParenthesizerCache'
+            UnionType
+              TypeReference
+                Identifier: ' Map'
+                TypeReference
+                  Identifier: 'BinaryOperator'
+                FunctionType
+                  Parameter
+                    Identifier: 'node'
+                    TypeReference
+                      Identifier: ' Expression'
+                  TypeReference
+                    Identifier: ' Expression'
+              UndefinedKeyword
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        getParenthesizeLeftSideOfBinaryForOperator'
+          ShorthandPropertyAssignment
+            Identifier: '
+        getParenthesizeRightSideOfBinaryForOperator'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeLeftSideOfBinary'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeRightSideOfBinary'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeExpressionOfComputedPropertyName'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeConditionOfConditionalExpression'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeBranchOfConditionalExpression'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeExpressionOfExportDefault'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeExpressionOfNew'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeLeftSideOfAccess'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeOperandOfPostfixUnary'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeOperandOfPrefixUnary'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeExpressionsOfCommaDelimitedList'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeExpressionForDisallowedComma'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeExpressionOfExpressionStatement'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeConciseBodyOfArrowFunction'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeCheckTypeOfConditionalType'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeExtendsTypeOfConditionalType'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeConstituentTypesOfUnionType'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeConstituentTypeOfUnionType'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeConstituentTypesOfIntersectionType'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeConstituentTypeOfIntersectionType'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeOperandOfTypeOperator'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeOperandOfReadonlyTypeOperator'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeNonArrayTypeOfPostfixType'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeElementTypesOfTupleType'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeElementTypeOfTupleType'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeTypeOfOptionalType'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeTypeArguments'
+          ShorthandPropertyAssignment
+            Identifier: '
+        parenthesizeLeadingTypeArgument'
+      FunctionDeclaration
+        Identifier: ' getParenthesizeLeftSideOfBinaryForOperator'
+        Parameter
+          Identifier: 'operatorKind'
+          TypeReference
+            Identifier: ' BinaryOperator'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        binaryLeftOperandParenthesizerCache'
+              BarBarEqualsToken
+              NewExpression
+                Identifier: ' Map'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' parenthesizerRule'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' binaryLeftOperandParenthesizerCache'
+                    Identifier: 'get'
+                  Identifier: 'operatorKind'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'parenthesizerRule'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            parenthesizerRule'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' node'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' parenthesizeLeftSideOfBinary'
+                      Identifier: 'operatorKind'
+                      Identifier: ' node'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            binaryLeftOperandParenthesizerCache'
+                    Identifier: 'set'
+                  Identifier: 'operatorKind'
+                  Identifier: ' parenthesizerRule'
+          ReturnStatement
+            Identifier: ' parenthesizerRule'
+      FunctionDeclaration
+        Identifier: ' getParenthesizeRightSideOfBinaryForOperator'
+        Parameter
+          Identifier: 'operatorKind'
+          TypeReference
+            Identifier: ' BinaryOperator'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        binaryRightOperandParenthesizerCache'
+              BarBarEqualsToken
+              NewExpression
+                Identifier: ' Map'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' parenthesizerRule'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' binaryRightOperandParenthesizerCache'
+                    Identifier: 'get'
+                  Identifier: 'operatorKind'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'parenthesizerRule'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            parenthesizerRule'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' node'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' parenthesizeRightSideOfBinary'
+                      Identifier: 'operatorKind'
+                      Identifier: ' /*leftSide*/ undefined'
+                      Identifier: ' node'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            binaryRightOperandParenthesizerCache'
+                    Identifier: 'set'
+                  Identifier: 'operatorKind'
+                  Identifier: ' parenthesizerRule'
+          ReturnStatement
+            Identifier: ' parenthesizerRule'
+      FunctionDeclaration
+        Identifier: ' binaryOperandNeedsParentheses'
+        Parameter
+          Identifier: 'binaryOperator'
+          TypeReference
+            Identifier: ' SyntaxKind'
+        Parameter
+          Identifier: ' operand'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' isLeftSideOfBinary'
+          BooleanKeyword
+        Parameter
+          Identifier: ' leftOperand'
+          UnionType
+            TypeReference
+              Identifier: ' Expression'
+            UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' binaryOperatorPrecedence'
+                CallExpression
+                  Identifier: ' getOperatorPrecedence'
+                  PropertyAccessExpression
+                    Identifier: 'SyntaxKind'
+                    Identifier: 'BinaryExpression'
+                  Identifier: ' binaryOperator'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' binaryOperatorAssociativity'
+                CallExpression
+                  Identifier: ' getOperatorAssociativity'
+                  PropertyAccessExpression
+                    Identifier: 'SyntaxKind'
+                    Identifier: 'BinaryExpression'
+                  Identifier: ' binaryOperator'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' emittedOperand'
+                CallExpression
+                  Identifier: ' skipPartiallyEmittedExpressions'
+                  Identifier: 'operand'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'isLeftSideOfBinary'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' operand'
+                    Identifier: 'kind'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'ArrowFunction'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' binaryOperatorPrecedence'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' OperatorPrecedence'
+                  Identifier: 'Assignment'
+            Block
+              ReturnStatement
+                TrueKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' operandPrecedence'
+                CallExpression
+                  Identifier: ' getExpressionPrecedence'
+                  Identifier: 'emittedOperand'
+          SwitchStatement
+            CallExpression
+              Identifier: 'compareValues'
+              Identifier: 'operandPrecedence'
+              Identifier: ' binaryOperatorPrecedence'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' Comparison'
+                  Identifier: 'LessThan'
+                IfStatement
+                  BinaryExpression
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        Identifier: 'isLeftSideOfBinary'
+                      AmpersandAmpersandToken
+                      BinaryExpression
+                        Identifier: ' binaryOperatorAssociativity'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' Associativity'
+                          Identifier: 'Right'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' operand'
+                        Identifier: 'kind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'YieldExpression'
+                  Block
+                    ReturnStatement
+                      FalseKeyword
+                ReturnStatement
+                  TrueKeyword
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' Comparison'
+                  Identifier: 'GreaterThan'
+                ReturnStatement
+                  FalseKeyword
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' Comparison'
+                  Identifier: 'EqualTo'
+                IfStatement
+                  Identifier: 'isLeftSideOfBinary'
+                  Block
+                    ReturnStatement
+                      BinaryExpression
+                        Identifier: ' binaryOperatorAssociativity'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' Associativity'
+                          Identifier: 'Right'
+                  Block
+                    IfStatement
+                      BinaryExpression
+                        CallExpression
+                          Identifier: '
+                        isBinaryExpression'
+                          Identifier: 'emittedOperand'
+                        AmpersandAmpersandToken
+                        BinaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' emittedOperand'
+                              Identifier: 'operatorToken'
+                            Identifier: 'kind'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' binaryOperator'
+                      Block
+                        IfStatement
+                          CallExpression
+                            Identifier: 'operatorHasAssociativeProperty'
+                            Identifier: 'binaryOperator'
+                          Block
+                            ReturnStatement
+                              FalseKeyword
+                        IfStatement
+                          BinaryExpression
+                            Identifier: 'binaryOperator'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SyntaxKind'
+                              Identifier: 'PlusToken'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' leftKind'
+                                  ConditionalExpression
+                                    Identifier: ' leftOperand'
+                                    QuestionToken
+                                    CallExpression
+                                      Identifier: ' getLiteralKindOfBinaryPlusOperand'
+                                      Identifier: 'leftOperand'
+                                    ColonToken
+                                    PropertyAccessExpression
+                                      Identifier: ' SyntaxKind'
+                                      Identifier: 'Unknown'
+                            IfStatement
+                              BinaryExpression
+                                CallExpression
+                                  Identifier: 'isLiteralKind'
+                                  Identifier: 'leftKind'
+                                AmpersandAmpersandToken
+                                BinaryExpression
+                                  Identifier: ' leftKind'
+                                  EqualsEqualsEqualsToken
+                                  CallExpression
+                                    Identifier: ' getLiteralKindOfBinaryPlusOperand'
+                                    Identifier: 'emittedOperand'
+                              Block
+                                ReturnStatement
+                                  FalseKeyword
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' operandAssociativity'
+                          CallExpression
+                            Identifier: ' getExpressionAssociativity'
+                            Identifier: 'emittedOperand'
+                    ReturnStatement
+                      BinaryExpression
+                        Identifier: ' operandAssociativity'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' Associativity'
+                          Identifier: 'Left'
+      FunctionDeclaration
+        Identifier: ' operatorHasAssociativeProperty'
+        Parameter
+          Identifier: 'binaryOperator'
+          TypeReference
+            Identifier: ' SyntaxKind'
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: ' binaryOperator'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'AsteriskToken'
+                    BarBarToken
+                    BinaryExpression
+                      Identifier: ' binaryOperator'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'BarToken'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' binaryOperator'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'AmpersandToken'
+                BarBarToken
+                BinaryExpression
+                  Identifier: ' binaryOperator'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'CaretToken'
+              BarBarToken
+              BinaryExpression
+                Identifier: ' binaryOperator'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CommaToken'
+      FunctionDeclaration
+        Identifier: ' getLiteralKindOfBinaryPlusOperand'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' SyntaxKind'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        node'
+              EqualsToken
+              CallExpression
+                Identifier: ' skipPartiallyEmittedExpressions'
+                Identifier: 'node'
+          IfStatement
+            CallExpression
+              Identifier: 'isLiteralKind'
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'kind'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'kind'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'BinaryExpression'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' BinaryExpression'
+                    Identifier: 'operatorToken'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'PlusToken'
+            Block
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' BinaryPlusExpression'
+                    Identifier: 'cachedLiteralKind'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  ReturnStatement
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node'
+                          TypeReference
+                            Identifier: ' BinaryPlusExpression'
+                      Identifier: 'cachedLiteralKind'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' leftKind'
+                    CallExpression
+                      Identifier: ' getLiteralKindOfBinaryPlusOperand'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'node'
+                            TypeReference
+                              Identifier: ' BinaryExpression'
+                        Identifier: 'left'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' literalKind'
+                    ConditionalExpression
+                      BinaryExpression
+                        CallExpression
+                          Identifier: ' isLiteralKind'
+                          Identifier: 'leftKind'
+                        AmpersandAmpersandToken
+                        BinaryExpression
+                          Identifier: ' leftKind'
+                          EqualsEqualsEqualsToken
+                          CallExpression
+                            Identifier: ' getLiteralKindOfBinaryPlusOperand'
+                            PropertyAccessExpression
+                              ParenthesizedExpression
+                                AsExpression
+                                  Identifier: 'node'
+                                  TypeReference
+                                    Identifier: ' BinaryExpression'
+                              Identifier: 'right'
+                      QuestionToken
+                      Identifier: ' leftKind'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'Unknown'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' BinaryPlusExpression'
+                    Identifier: 'cachedLiteralKind'
+                  EqualsToken
+                  Identifier: ' literalKind'
+              ReturnStatement
+                Identifier: ' literalKind'
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Unknown'
+      FunctionDeclaration
+        Identifier: ' parenthesizeBinaryOperand'
+        Parameter
+          Identifier: 'binaryOperator'
+          TypeReference
+            Identifier: ' SyntaxKind'
+        Parameter
+          Identifier: ' operand'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' isLeftSideOfBinary'
+          BooleanKeyword
+        Parameter
+          Identifier: ' leftOperand'
+          QuestionToken
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' skipped'
+                CallExpression
+                  Identifier: ' skipPartiallyEmittedExpressions'
+                  Identifier: 'operand'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'skipped'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'ParenthesizedExpression'
+            Block
+              ReturnStatement
+                Identifier: ' operand'
+          ReturnStatement
+            ConditionalExpression
+              CallExpression
+                Identifier: ' binaryOperandNeedsParentheses'
+                Identifier: 'binaryOperator'
+                Identifier: ' operand'
+                Identifier: ' isLeftSideOfBinary'
+                Identifier: ' leftOperand'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createParenthesizedExpression'
+                Identifier: 'operand'
+              ColonToken
+              Identifier: ' operand'
+      FunctionDeclaration
+        Identifier: ' parenthesizeLeftSideOfBinary'
+        Parameter
+          Identifier: 'binaryOperator'
+          TypeReference
+            Identifier: ' SyntaxKind'
+        Parameter
+          Identifier: ' leftSide'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' parenthesizeBinaryOperand'
+              Identifier: 'binaryOperator'
+              Identifier: ' leftSide'
+              TrueKeyword
+      FunctionDeclaration
+        Identifier: ' parenthesizeRightSideOfBinary'
+        Parameter
+          Identifier: 'binaryOperator'
+          TypeReference
+            Identifier: ' SyntaxKind'
+        Parameter
+          Identifier: ' leftSide'
+          UnionType
+            TypeReference
+              Identifier: ' Expression'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' rightSide'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' parenthesizeBinaryOperand'
+              Identifier: 'binaryOperator'
+              Identifier: ' rightSide'
+              FalseKeyword
+              Identifier: ' leftSide'
+      FunctionDeclaration
+        Identifier: ' parenthesizeExpressionOfComputedPropertyName'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isCommaSequence'
+                Identifier: 'expression'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createParenthesizedExpression'
+                Identifier: 'expression'
+              ColonToken
+              Identifier: ' expression'
+      FunctionDeclaration
+        Identifier: ' parenthesizeConditionOfConditionalExpression'
+        Parameter
+          Identifier: 'condition'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' conditionalPrecedence'
+                CallExpression
+                  Identifier: ' getOperatorPrecedence'
+                  PropertyAccessExpression
+                    Identifier: 'SyntaxKind'
+                    Identifier: 'ConditionalExpression'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'QuestionToken'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' emittedCondition'
+                CallExpression
+                  Identifier: ' skipPartiallyEmittedExpressions'
+                  Identifier: 'condition'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' conditionPrecedence'
+                CallExpression
+                  Identifier: ' getExpressionPrecedence'
+                  Identifier: 'emittedCondition'
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'compareValues'
+                Identifier: 'conditionPrecedence'
+                Identifier: ' conditionalPrecedence'
+              ExclamationEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' Comparison'
+                Identifier: 'GreaterThan'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createParenthesizedExpression'
+                  Identifier: 'condition'
+          ReturnStatement
+            Identifier: ' condition'
+      FunctionDeclaration
+        Identifier: ' parenthesizeBranchOfConditionalExpression'
+        Parameter
+          Identifier: 'branch'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' emittedExpression'
+                CallExpression
+                  Identifier: ' skipPartiallyEmittedExpressions'
+                  Identifier: 'branch'
+          ReturnStatement
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isCommaSequence'
+                Identifier: 'emittedExpression'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createParenthesizedExpression'
+                Identifier: 'branch'
+              ColonToken
+              Identifier: ' branch'
+      FunctionDeclaration
+        Identifier: ' parenthesizeExpressionOfExportDefault'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' check'
+                CallExpression
+                  Identifier: ' skipPartiallyEmittedExpressions'
+                  Identifier: 'expression'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' needsParens'
+                CallExpression
+                  Identifier: ' isCommaSequence'
+                  Identifier: 'check'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'needsParens'
+            Block
+              SwitchStatement
+                PropertyAccessExpression
+                  CallExpression
+                    Identifier: 'getLeftmostExpression'
+                    Identifier: 'check'
+                    FalseKeyword
+                  Identifier: 'kind'
+                CaseBlock
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'ClassExpression'
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'FunctionExpression'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    needsParens'
+                        EqualsToken
+                        TrueKeyword
+          ReturnStatement
+            ConditionalExpression
+              Identifier: ' needsParens'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createParenthesizedExpression'
+                Identifier: 'expression'
+              ColonToken
+              Identifier: ' expression'
+      FunctionDeclaration
+        Identifier: ' parenthesizeExpressionOfNew'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' LeftHandSideExpression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' leftmostExpr'
+                CallExpression
+                  Identifier: ' getLeftmostExpression'
+                  Identifier: 'expression'
+                  TrueKeyword
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'leftmostExpr'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CallExpression'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createParenthesizedExpression'
+                    Identifier: 'expression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'NewExpression'
+                ReturnStatement
+                  ConditionalExpression
+                    PrefixUnaryExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'leftmostExpr'
+                            TypeReference
+                              Identifier: ' NewExpression'
+                        Identifier: 'arguments'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createParenthesizedExpression'
+                      Identifier: 'expression'
+                    ColonToken
+                    AsExpression
+                      Identifier: ' expression'
+                      TypeReference
+                        Identifier: ' LeftHandSideExpression'
+          ReturnStatement
+            CallExpression
+              Identifier: ' parenthesizeLeftSideOfAccess'
+              Identifier: 'expression'
+      FunctionDeclaration
+        Identifier: ' parenthesizeLeftSideOfAccess'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' optionalChain'
+          QuestionToken
+          BooleanKeyword
+        TypeReference
+          Identifier: ' LeftHandSideExpression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' emittedExpression'
+                CallExpression
+                  Identifier: ' skipPartiallyEmittedExpressions'
+                  Identifier: 'expression'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: '
+            isLeftHandSideExpression'
+                  Identifier: 'emittedExpression'
+                AmpersandAmpersandToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'emittedExpression'
+                        Identifier: 'kind'
+                      ExclamationEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'NewExpression'
+                    BarBarToken
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'emittedExpression'
+                          TypeReference
+                            Identifier: ' NewExpression'
+                      Identifier: 'arguments'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'optionalChain'
+                  BarBarToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isOptionalChain'
+                      Identifier: 'emittedExpression'
+            Block
+              ReturnStatement
+                AsExpression
+                  Identifier: ' expression'
+                  TypeReference
+                    Identifier: ' LeftHandSideExpression'
+          ReturnStatement
+            CallExpression
+              Identifier: ' setTextRange'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createParenthesizedExpression'
+                Identifier: 'expression'
+              Identifier: ' expression'
+      FunctionDeclaration
+        Identifier: ' parenthesizeOperandOfPostfixUnary'
+        Parameter
+          Identifier: 'operand'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' LeftHandSideExpression'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isLeftHandSideExpression'
+                Identifier: 'operand'
+              QuestionToken
+              Identifier: ' operand'
+              ColonToken
+              CallExpression
+                Identifier: ' setTextRange'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'factory'
+                    Identifier: 'createParenthesizedExpression'
+                  Identifier: 'operand'
+                Identifier: ' operand'
+      FunctionDeclaration
+        Identifier: ' parenthesizeOperandOfPrefixUnary'
+        Parameter
+          Identifier: 'operand'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' UnaryExpression'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isUnaryExpression'
+                Identifier: 'operand'
+              QuestionToken
+              Identifier: ' operand'
+              ColonToken
+              CallExpression
+                Identifier: ' setTextRange'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'factory'
+                    Identifier: 'createParenthesizedExpression'
+                  Identifier: 'operand'
+                Identifier: ' operand'
+      FunctionDeclaration
+        Identifier: ' parenthesizeExpressionsOfCommaDelimitedList'
+        Parameter
+          Identifier: 'elements'
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Expression'
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'Expression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' sameMap'
+                  Identifier: 'elements'
+                  Identifier: ' parenthesizeExpressionForDisallowedComma'
+          ReturnStatement
+            CallExpression
+              Identifier: ' setTextRange'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createNodeArray'
+                Identifier: 'result'
+                PropertyAccessExpression
+                  Identifier: ' elements'
+                  Identifier: 'hasTrailingComma'
+              Identifier: ' elements'
+      FunctionDeclaration
+        Identifier: ' parenthesizeExpressionForDisallowedComma'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' emittedExpression'
+                CallExpression
+                  Identifier: ' skipPartiallyEmittedExpressions'
+                  Identifier: 'expression'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' expressionPrecedence'
+                CallExpression
+                  Identifier: ' getExpressionPrecedence'
+                  Identifier: 'emittedExpression'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' commaPrecedence'
+                CallExpression
+                  Identifier: ' getOperatorPrecedence'
+                  PropertyAccessExpression
+                    Identifier: 'SyntaxKind'
+                    Identifier: 'BinaryExpression'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'CommaToken'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' expressionPrecedence'
+                GreaterThanToken
+                Identifier: ' commaPrecedence'
+              QuestionToken
+              Identifier: ' expression'
+              ColonToken
+              CallExpression
+                Identifier: ' setTextRange'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'factory'
+                    Identifier: 'createParenthesizedExpression'
+                  Identifier: 'expression'
+                Identifier: ' expression'
+      FunctionDeclaration
+        Identifier: ' parenthesizeExpressionOfExpressionStatement'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' emittedExpression'
+                CallExpression
+                  Identifier: ' skipPartiallyEmittedExpressions'
+                  Identifier: 'expression'
+          IfStatement
+            CallExpression
+              Identifier: 'isCallExpression'
+              Identifier: 'emittedExpression'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' callee'
+                    PropertyAccessExpression
+                      Identifier: ' emittedExpression'
+                      Identifier: 'expression'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' kind'
+                    PropertyAccessExpression
+                      CallExpression
+                        Identifier: ' skipPartiallyEmittedExpressions'
+                        Identifier: 'callee'
+                      Identifier: 'kind'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'FunctionExpression'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'ArrowFunction'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' updated'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' factory'
+                            Identifier: 'updateCallExpression'
+                          Identifier: '
+                    emittedExpression'
+                          CallExpression
+                            Identifier: '
+                    setTextRange'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'factory'
+                                Identifier: 'createParenthesizedExpression'
+                              Identifier: 'callee'
+                            Identifier: ' callee'
+                          PropertyAccessExpression
+                            Identifier: '
+                    emittedExpression'
+                            Identifier: 'typeArguments'
+                          PropertyAccessExpression
+                            Identifier: '
+                    emittedExpression'
+                            Identifier: 'arguments'
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'restoreOuterExpressions'
+                      Identifier: 'expression'
+                      Identifier: ' updated'
+                      PropertyAccessExpression
+                        Identifier: ' OuterExpressionKinds'
+                        Identifier: 'PartiallyEmittedExpressions'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' leftmostExpressionKind'
+                PropertyAccessExpression
+                  CallExpression
+                    Identifier: ' getLeftmostExpression'
+                    Identifier: 'emittedExpression'
+                    FalseKeyword
+                  Identifier: 'kind'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'leftmostExpressionKind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ObjectLiteralExpression'
+              BarBarToken
+              BinaryExpression
+                Identifier: ' leftmostExpressionKind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionExpression'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' setTextRange'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createParenthesizedExpression'
+                    Identifier: 'expression'
+                  Identifier: ' expression'
+          ReturnStatement
+            Identifier: ' expression'
+      FunctionDeclaration
+        Identifier: ' parenthesizeConciseBodyOfArrowFunction'
+        Parameter
+          Identifier: 'body'
+          TypeReference
+            Identifier: ' Expression'
+        TypeReference
+          Identifier: ' Expression'
+      FunctionDeclaration
+        Identifier: ' parenthesizeConciseBodyOfArrowFunction'
+        Parameter
+          Identifier: 'body'
+          TypeReference
+            Identifier: ' ConciseBody'
+        TypeReference
+          Identifier: ' ConciseBody'
+      FunctionDeclaration
+        Identifier: ' parenthesizeConciseBodyOfArrowFunction'
+        Parameter
+          Identifier: 'body'
+          TypeReference
+            Identifier: ' ConciseBody'
+        TypeReference
+          Identifier: ' ConciseBody'
+        Block
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'isBlock'
+                  Identifier: 'body'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'isCommaSequence'
+                    Identifier: 'body'
+                  BarBarToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        Identifier: ' getLeftmostExpression'
+                        Identifier: 'body'
+                        FalseKeyword
+                      Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'ObjectLiteralExpression'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' setTextRange'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createParenthesizedExpression'
+                    Identifier: 'body'
+                  Identifier: ' body'
+          ReturnStatement
+            Identifier: ' body'
+      FunctionDeclaration
+        Identifier: ' parenthesizeCheckTypeOfConditionalType'
+        Parameter
+          Identifier: 'checkType'
+          TypeReference
+            Identifier: ' TypeNode'
+        TypeReference
+          Identifier: ' TypeNode'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'checkType'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructorType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConditionalType'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createParenthesizedType'
+                    Identifier: 'checkType'
+          ReturnStatement
+            Identifier: ' checkType'
+      FunctionDeclaration
+        Identifier: ' parenthesizeExtendsTypeOfConditionalType'
+        Parameter
+          Identifier: 'extendsType'
+          TypeReference
+            Identifier: ' TypeNode'
+        TypeReference
+          Identifier: ' TypeNode'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'extendsType'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConditionalType'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createParenthesizedType'
+                    Identifier: 'extendsType'
+          ReturnStatement
+            Identifier: ' extendsType'
+      FunctionDeclaration
+        Identifier: ' parenthesizeConstituentTypeOfUnionType'
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' TypeNode'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'type'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'UnionType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'IntersectionType'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createParenthesizedType'
+                    Identifier: 'type'
+          ReturnStatement
+            CallExpression
+              Identifier: ' parenthesizeCheckTypeOfConditionalType'
+              Identifier: 'type'
+      FunctionDeclaration
+        Identifier: ' parenthesizeConstituentTypesOfUnionType'
+        Parameter
+          Identifier: 'members'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' TypeNode'
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'TypeNode'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createNodeArray'
+              CallExpression
+                Identifier: 'sameMap'
+                Identifier: 'members'
+                Identifier: ' parenthesizeConstituentTypeOfUnionType'
+      FunctionDeclaration
+        Identifier: ' parenthesizeConstituentTypeOfIntersectionType'
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' TypeNode'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'type'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'UnionType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'IntersectionType'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createParenthesizedType'
+                    Identifier: 'type'
+          ReturnStatement
+            CallExpression
+              Identifier: ' parenthesizeConstituentTypeOfUnionType'
+              Identifier: 'type'
+      FunctionDeclaration
+        Identifier: ' parenthesizeConstituentTypesOfIntersectionType'
+        Parameter
+          Identifier: 'members'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' TypeNode'
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'TypeNode'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createNodeArray'
+              CallExpression
+                Identifier: 'sameMap'
+                Identifier: 'members'
+                Identifier: ' parenthesizeConstituentTypeOfIntersectionType'
+      FunctionDeclaration
+        Identifier: ' parenthesizeOperandOfTypeOperator'
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' TypeNode'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'type'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'IntersectionType'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createParenthesizedType'
+                    Identifier: 'type'
+          ReturnStatement
+            CallExpression
+              Identifier: ' parenthesizeConstituentTypeOfIntersectionType'
+              Identifier: 'type'
+      FunctionDeclaration
+        Identifier: ' parenthesizeOperandOfReadonlyTypeOperator'
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' TypeNode'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'type'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TypeOperator'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createParenthesizedType'
+                    Identifier: 'type'
+          ReturnStatement
+            CallExpression
+              Identifier: ' parenthesizeOperandOfTypeOperator'
+              Identifier: 'type'
+      FunctionDeclaration
+        Identifier: ' parenthesizeNonArrayTypeOfPostfixType'
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' TypeNode'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'type'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'InferType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TypeOperator'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TypeQuery'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createParenthesizedType'
+                    Identifier: 'type'
+          ReturnStatement
+            CallExpression
+              Identifier: ' parenthesizeOperandOfTypeOperator'
+              Identifier: 'type'
+      FunctionDeclaration
+        Identifier: ' parenthesizeElementTypesOfTupleType'
+        Parameter
+          Identifier: 'types'
+          TypeOperator
+            ArrayType
+              ParenthesizedType
+                UnionType
+                  TypeReference
+                    Identifier: 'TypeNode'
+                  TypeReference
+                    Identifier: ' NamedTupleMember'
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'TypeNode'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createNodeArray'
+              CallExpression
+                Identifier: 'sameMap'
+                Identifier: 'types'
+                Identifier: ' parenthesizeElementTypeOfTupleType'
+      FunctionDeclaration
+        Identifier: ' parenthesizeElementTypeOfTupleType'
+        Parameter
+          Identifier: 'type'
+          UnionType
+            TypeReference
+              Identifier: ' TypeNode'
+            TypeReference
+              Identifier: ' NamedTupleMember'
+        TypeReference
+          Identifier: ' TypeNode'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'hasJSDocPostfixQuestion'
+              Identifier: 'type'
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createParenthesizedType'
+                Identifier: 'type'
+          ReturnStatement
+            Identifier: ' type'
+      FunctionDeclaration
+        Identifier: ' hasJSDocPostfixQuestion'
+        Parameter
+          Identifier: 'type'
+          UnionType
+            TypeReference
+              Identifier: ' TypeNode'
+            TypeReference
+              Identifier: ' NamedTupleMember'
+        BooleanKeyword
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isJSDocNullableType'
+              Identifier: 'type'
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' type'
+                Identifier: 'postfix'
+          IfStatement
+            CallExpression
+              Identifier: 'isNamedTupleMember'
+              Identifier: 'type'
+            ReturnStatement
+              CallExpression
+                Identifier: ' hasJSDocPostfixQuestion'
+                PropertyAccessExpression
+                  Identifier: 'type'
+                  Identifier: 'type'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: 'isFunctionTypeNode'
+                  Identifier: 'type'
+                BarBarToken
+                CallExpression
+                  Identifier: ' isConstructorTypeNode'
+                  Identifier: 'type'
+              BarBarToken
+              CallExpression
+                Identifier: ' isTypeOperatorNode'
+                Identifier: 'type'
+            ReturnStatement
+              CallExpression
+                Identifier: ' hasJSDocPostfixQuestion'
+                PropertyAccessExpression
+                  Identifier: 'type'
+                  Identifier: 'type'
+          IfStatement
+            CallExpression
+              Identifier: 'isConditionalTypeNode'
+              Identifier: 'type'
+            ReturnStatement
+              CallExpression
+                Identifier: ' hasJSDocPostfixQuestion'
+                PropertyAccessExpression
+                  Identifier: 'type'
+                  Identifier: 'falseType'
+          IfStatement
+            CallExpression
+              Identifier: 'isUnionTypeNode'
+              Identifier: 'type'
+            ReturnStatement
+              CallExpression
+                Identifier: ' hasJSDocPostfixQuestion'
+                CallExpression
+                  Identifier: 'last'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'types'
+          IfStatement
+            CallExpression
+              Identifier: 'isIntersectionTypeNode'
+              Identifier: 'type'
+            ReturnStatement
+              CallExpression
+                Identifier: ' hasJSDocPostfixQuestion'
+                CallExpression
+                  Identifier: 'last'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'types'
+          IfStatement
+            CallExpression
+              Identifier: 'isInferTypeNode'
+              Identifier: 'type'
+            ReturnStatement
+              BinaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'type'
+                        Identifier: 'typeParameter'
+                      Identifier: 'constraint'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' hasJSDocPostfixQuestion'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'type'
+                      Identifier: 'typeParameter'
+                    Identifier: 'constraint'
+          ReturnStatement
+            FalseKeyword
+      FunctionDeclaration
+        Identifier: ' parenthesizeTypeOfOptionalType'
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' TypeNode'
+        TypeReference
+          Identifier: ' TypeNode'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'hasJSDocPostfixQuestion'
+              Identifier: 'type'
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createParenthesizedType'
+                Identifier: 'type'
+          ReturnStatement
+            CallExpression
+              Identifier: ' parenthesizeNonArrayTypeOfPostfixType'
+              Identifier: 'type'
+      FunctionDeclaration
+        Identifier: ' parenthesizeLeadingTypeArgument'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' TypeNode'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: ' isFunctionOrConstructorTypeNode'
+                  Identifier: 'node'
+                AmpersandAmpersandToken
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'typeParameters'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createParenthesizedType'
+                Identifier: 'node'
+              ColonToken
+              Identifier: ' node'
+      FunctionDeclaration
+        Identifier: ' parenthesizeOrdinalTypeArgument'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' TypeNode'
+        Parameter
+          Identifier: ' i'
+          NumberKeyword
+        Block
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' i'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              QuestionToken
+              CallExpression
+                Identifier: ' parenthesizeLeadingTypeArgument'
+                Identifier: 'node'
+              ColonToken
+              Identifier: ' node'
+      FunctionDeclaration
+        Identifier: ' parenthesizeTypeArguments'
+        Parameter
+          Identifier: 'typeArguments'
+          UnionType
+            TypeReference
+              Identifier: ' NodeArray'
+              TypeReference
+                Identifier: 'TypeNode'
+            UndefinedKeyword
+        UnionType
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'TypeNode'
+          UndefinedKeyword
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'some'
+              Identifier: 'typeArguments'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createNodeArray'
+                  CallExpression
+                    Identifier: 'sameMap'
+                    Identifier: 'typeArguments'
+                    Identifier: ' parenthesizeOrdinalTypeArgument'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullParenthesizerRules'
+        TypeReference
+          Identifier: ' ParenthesizerRules'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    getParenthesizeLeftSideOfBinaryForOperator'
+            ArrowFunction
+              Parameter
+                Identifier: ' _'
+              EqualsGreaterThanToken
+              Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    getParenthesizeRightSideOfBinaryForOperator'
+            ArrowFunction
+              Parameter
+                Identifier: ' _'
+              EqualsGreaterThanToken
+              Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeLeftSideOfBinary'
+            ArrowFunction
+              Parameter
+                Identifier: '_binaryOperator'
+              Parameter
+                Identifier: ' leftSide'
+              EqualsGreaterThanToken
+              Identifier: ' leftSide'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeRightSideOfBinary'
+            ArrowFunction
+              Parameter
+                Identifier: '_binaryOperator'
+              Parameter
+                Identifier: ' _leftSide'
+              Parameter
+                Identifier: ' rightSide'
+              EqualsGreaterThanToken
+              Identifier: ' rightSide'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeExpressionOfComputedPropertyName'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeConditionOfConditionalExpression'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeBranchOfConditionalExpression'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeExpressionOfExportDefault'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeExpressionOfNew'
+            ArrowFunction
+              Parameter
+                Identifier: ' expression'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' cast'
+                Identifier: 'expression'
+                Identifier: ' isLeftHandSideExpression'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeLeftSideOfAccess'
+            ArrowFunction
+              Parameter
+                Identifier: ' expression'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' cast'
+                Identifier: 'expression'
+                Identifier: ' isLeftHandSideExpression'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeOperandOfPostfixUnary'
+            ArrowFunction
+              Parameter
+                Identifier: ' operand'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' cast'
+                Identifier: 'operand'
+                Identifier: ' isLeftHandSideExpression'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeOperandOfPrefixUnary'
+            ArrowFunction
+              Parameter
+                Identifier: ' operand'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' cast'
+                Identifier: 'operand'
+                Identifier: ' isUnaryExpression'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeExpressionsOfCommaDelimitedList'
+            ArrowFunction
+              Parameter
+                Identifier: ' nodes'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' cast'
+                Identifier: 'nodes'
+                Identifier: ' isNodeArray'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeExpressionForDisallowedComma'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeExpressionOfExpressionStatement'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeConciseBodyOfArrowFunction'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeCheckTypeOfConditionalType'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeExtendsTypeOfConditionalType'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeConstituentTypesOfUnionType'
+            ArrowFunction
+              Parameter
+                Identifier: ' nodes'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' cast'
+                Identifier: 'nodes'
+                Identifier: ' isNodeArray'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeConstituentTypeOfUnionType'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeConstituentTypesOfIntersectionType'
+            ArrowFunction
+              Parameter
+                Identifier: ' nodes'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' cast'
+                Identifier: 'nodes'
+                Identifier: ' isNodeArray'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeConstituentTypeOfIntersectionType'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeOperandOfTypeOperator'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeOperandOfReadonlyTypeOperator'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeNonArrayTypeOfPostfixType'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeElementTypesOfTupleType'
+            ArrowFunction
+              Parameter
+                Identifier: ' nodes'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' cast'
+                Identifier: 'nodes'
+                Identifier: ' isNodeArray'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeElementTypeOfTupleType'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeTypeOfOptionalType'
+            Identifier: ' identity'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeTypeArguments'
+            ArrowFunction
+              Parameter
+                Identifier: ' nodes'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' nodes'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' cast'
+                  Identifier: 'nodes'
+                  Identifier: ' isNodeArray'
+          PropertyAssignment
+            Identifier: '
+    parenthesizeLeadingTypeArgument'
+            Identifier: ' identity'

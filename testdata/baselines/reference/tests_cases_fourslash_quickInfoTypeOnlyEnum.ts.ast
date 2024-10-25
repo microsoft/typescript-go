@@ -1,0 +1,35 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /a.ts
+////export enum SyntaxKind {
+////  SourceFile
+////}
+
+// @Filename: /b.ts
+////import type { SyntaxKind } from './a';
+////let x: SyntaxKind/*1*/;
+////let y: SyntaxKind./*2*/SourceFile;
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+          Identifier: 'join'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

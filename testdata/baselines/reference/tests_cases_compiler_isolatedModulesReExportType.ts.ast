@@ -1,0 +1,99 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' T'
+    NumberKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' T'
+    NumberKeyword
+  ExportAssignment
+    Identifier: ' T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' T'
+    NumberKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' T'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' T'
+        StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' C'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' T'
+    StringLiteral
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' T2'
+    ExternalModuleReference
+      StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' C'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' NS'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' NS'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' T3'
+    TypeReference
+      Identifier: ' T'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' T'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' T'
+        Identifier: ' T4'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' T'
+          Identifier: ' TT'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' TT'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' C'
+          Identifier: ' CC'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' CC'

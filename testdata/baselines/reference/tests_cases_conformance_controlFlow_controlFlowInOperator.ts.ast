@@ -1,0 +1,251 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'a'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'b'
+        StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+  IfStatement
+    BinaryExpression
+      StringLiteral
+      InKeyword
+      Identifier: ' c'
+    Block
+      ExpressionStatement
+        Identifier: '
+    c'
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '      // A
+    c'
+          StringLiteral
+  IfStatement
+    BinaryExpression
+      StringLiteral
+      InKeyword
+      Identifier: ' c'
+    Block
+      ExpressionStatement
+        Identifier: '
+    c'
+  IfStatement
+    BinaryExpression
+      Identifier: 'a'
+      InKeyword
+      Identifier: ' c'
+    Block
+      ExpressionStatement
+        Identifier: '
+    c'
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '    // A
+    c'
+          Identifier: 'a'
+  IfStatement
+    BinaryExpression
+      Identifier: 'd'
+      InKeyword
+      Identifier: ' c'
+    Block
+      ExpressionStatement
+        Identifier: '
+    c'
+  FunctionDeclaration
+    Identifier: ' uniqueID_54790'
+    Parameter
+      Identifier: '
+  id'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+  seenIDs'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          StringKeyword
+    StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'id'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+    id'
+              EqualsToken
+              StringLiteral
+      IfStatement
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'id'
+              InKeyword
+              Identifier: ' seenIDs'
+        Block
+          ReturnStatement
+            Identifier: ' id'
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' Number'
+            Identifier: 'MAX_VALUE'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newID'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'id'
+                    TemplateMiddle
+                  TemplateSpan
+                    Identifier: 'i'
+                    TemplateTail
+          IfStatement
+            PrefixUnaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'newID'
+                  InKeyword
+                  Identifier: ' seenIDs'
+            Block
+              ReturnStatement
+                Identifier: ' newID'
+      ThrowStatement
+        CallExpression
+          Identifier: ' Error'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' uniqueID_54790_2'
+    Parameter
+      Identifier: 'id'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Parameter
+      Identifier: ' seenIDs'
+      ObjectKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+  id'
+          EqualsToken
+          StringLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newID'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'id'
+                    TemplateTail
+          IfStatement
+            BinaryExpression
+              Identifier: 'newID'
+              InKeyword
+              Identifier: ' seenIDs'
+            Block
+  FunctionDeclaration
+    Identifier: ' uniqueID_54790_3'
+    Parameter
+      Identifier: 'id'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Parameter
+      Identifier: ' seenIDs'
+      ObjectKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+  id'
+          EqualsToken
+          StringLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newID'
+                Identifier: ' id'
+          IfStatement
+            BinaryExpression
+              Identifier: 'newID'
+              InKeyword
+              Identifier: ' seenIDs'
+            Block

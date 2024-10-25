@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' C'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+/** @type {string} */
+C'
+        Identifier: 'prototype'
+      EqualsToken
+      NumericLiteral

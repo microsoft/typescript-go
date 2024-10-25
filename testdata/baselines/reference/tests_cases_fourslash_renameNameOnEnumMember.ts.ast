@@ -1,0 +1,24 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////enum e {
+////    firstMember,
+////    secondMember,
+////    thirdMember
+////}
+////var enumMember = e.[|/**/thirdMember|];
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'renameInfoSucceeded'
+      StringLiteral
+      StringLiteral

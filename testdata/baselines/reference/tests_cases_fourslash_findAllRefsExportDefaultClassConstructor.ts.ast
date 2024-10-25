@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '////export default class {
+////    /*1*/constructor() {}
+////}
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral

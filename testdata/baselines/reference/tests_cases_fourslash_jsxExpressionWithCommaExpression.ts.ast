@@ -1,0 +1,35 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//@Filename: jsxExpressionWithCommaExpression.tsx
+//@jsx: react
+////declare var React: any;
+////declare var x: string;
+////const a = <div x={[|x, x|]} />
+////const b = <div>{[|x, x|]}</div>
+
+verify'
+        Identifier: 'getSyntacticDiagnostics'
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+test'
+            Identifier: 'ranges'
+        Identifier: 'forEach'
+      ArrowFunction
+        Parameter
+          Identifier: 'range'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' verify'
+            Identifier: 'errorExistsAtRange'
+          Identifier: 'range'
+          NumericLiteral

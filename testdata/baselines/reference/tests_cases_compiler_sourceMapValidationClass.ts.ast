@@ -1,0 +1,65 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Greeter'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' greeting'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'b'
+        ArrayType
+          StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    greet'
+      Block
+        ReturnStatement
+          BinaryExpression
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'greeting'
+            PlusToken
+            StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x1'
+      NumberKeyword
+      NumericLiteral
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' fn'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'greeting'
+    GetAccessor
+      Identifier: ' greetings'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'greeting'
+    SetAccessor
+      Identifier: ' greetings'
+      Parameter
+        Identifier: 'greetings'
+        StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'greeting'
+            EqualsToken
+            Identifier: ' greetings'

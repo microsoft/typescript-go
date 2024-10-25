@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+//// const foo = "foo";
+//// function test1<T = /*1*/>() {}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          PropertyAccessExpression
+            Identifier: ' completion'
+            Identifier: 'globalTypes'

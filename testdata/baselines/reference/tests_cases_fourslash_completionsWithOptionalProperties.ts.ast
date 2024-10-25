@@ -1,0 +1,45 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+// @strict: true
+
+//// interface Options {
+////     hello?: boolean;
+////     world?: boolean;
+//// }
+//// declare function foo(options?: Options): void;
+//// foo({
+////     hello: true,
+////     /**/
+//// });
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'OptionalMember'

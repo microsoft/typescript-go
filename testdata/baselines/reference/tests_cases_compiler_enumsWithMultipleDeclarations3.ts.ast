@@ -1,0 +1,9 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' E'
+    ModuleBlock
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+  A'

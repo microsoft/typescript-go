@@ -1,0 +1,195 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' neverArray'
+        ArrayType
+          NeverKeyword
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        CallExpression
+          Identifier: ' f1'
+          ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        CallExpression
+          Identifier: ' f1'
+          Identifier: 'neverArray'
+  TypeAliasDeclaration
+    Identifier: ' Comparator'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' LinkedList'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    comparator'
+      TypeReference
+        Identifier: ' Comparator'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    nodes'
+      TypeReference
+        Identifier: ' Node'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Node'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: ' next'
+          TypeReference
+            Identifier: ' Node'
+            TypeReference
+              Identifier: 'T'
+      LiteralType
+        NullKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' compareNumbers'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' y'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' mkList'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'items'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' comparator'
+      TypeReference
+        Identifier: ' Comparator'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' LinkedList'
+      TypeReference
+        Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' list'
+        TypeReference
+          Identifier: ' LinkedList'
+          NumberKeyword
+        CallExpression
+          Identifier: ' mkList'
+          ArrayLiteralExpression
+          Identifier: ' compareNumbers'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'a'
+    Parameter
+      Identifier: 'as1'
+      ArrayType
+        TypeReference
+          Identifier: ' a'
+    Parameter
+      Identifier: ' as2'
+      ArrayType
+        TypeReference
+          Identifier: ' a'
+    Parameter
+      Identifier: ' cmp'
+      FunctionType
+        Parameter
+          Identifier: 'a1'
+          TypeReference
+            Identifier: ' a'
+        Parameter
+          Identifier: ' a2'
+          TypeReference
+            Identifier: ' a'
+        NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'Array'
+          Identifier: 'from'
+        ArrayLiteralExpression
+          NumericLiteral
+      ArrayLiteralExpression
+      ArrowFunction
+        Parameter
+          Identifier: 'a1'
+        Parameter
+          Identifier: ' a2'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' a1'
+          MinusToken
+          Identifier: ' a2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'Array'
+          Identifier: 'from'
+        ArrayLiteralExpression
+      ArrayLiteralExpression
+        NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'a1'
+        Parameter
+          Identifier: ' a2'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' a1'
+          MinusToken
+          Identifier: ' a2'

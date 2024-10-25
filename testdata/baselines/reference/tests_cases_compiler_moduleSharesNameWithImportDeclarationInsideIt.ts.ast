@@ -1,0 +1,32 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Z'
+    ModuleDeclaration
+      Identifier: 'M'
+      ModuleBlock
+        FunctionDeclaration
+          ExportKeyword
+          Identifier: ' bar'
+          Block
+            ReturnStatement
+              StringLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleDeclaration
+      Identifier: 'M'
+      ModuleBlock
+        ImportEqualsDeclaration
+          Identifier: ' M'
+          QualifiedName
+            Identifier: ' Z'
+            Identifier: 'M'
+        FunctionDeclaration
+          ExportKeyword
+          Identifier: ' bar'
+          Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+    M'
+              Identifier: 'bar'

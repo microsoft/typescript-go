@@ -1,0 +1,355 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              AnyKeyword
+            VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Robot'
+    TupleType
+      NumberKeyword
+      StringKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' MultiSkilledRobot'
+    TupleType
+      StringKeyword
+      TupleType
+        StringKeyword
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robotA'
+        TypeReference
+          Identifier: ' Robot'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robotB'
+        TypeReference
+          Identifier: ' Robot'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobotA'
+        TypeReference
+          Identifier: ' MultiSkilledRobot'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobotB'
+        TypeReference
+          Identifier: ' MultiSkilledRobot'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nameA'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' numberB'
+        NumberKeyword
+      VariableDeclaration
+        Identifier: ' nameB'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' skillB'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robotAInfo'
+        ArrayType
+          ParenthesizedType
+            UnionType
+              NumberKeyword
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiSkillB'
+        TupleType
+          StringKeyword
+          StringKeyword
+      VariableDeclaration
+        Identifier: ' nameMB'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' primarySkillB'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' secondarySkillB'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobotAInfo'
+        ArrayType
+          ParenthesizedType
+            UnionType
+              StringKeyword
+              TupleType
+                StringKeyword
+                StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        OmittedExpression
+        Identifier: ' nameA'
+      EqualsToken
+      Identifier: ' robotA'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        OmittedExpression
+        Identifier: ' nameB'
+      EqualsToken
+      CallExpression
+        Identifier: ' getRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        OmittedExpression
+        Identifier: ' nameB'
+      EqualsToken
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        OmittedExpression
+        Identifier: ' multiSkillB'
+      EqualsToken
+      Identifier: ' multiRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        OmittedExpression
+        Identifier: ' multiSkillB'
+      EqualsToken
+      CallExpression
+        Identifier: ' getMultiRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        OmittedExpression
+        Identifier: ' multiSkillB'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'numberB'
+      EqualsToken
+      Identifier: ' robotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'numberB'
+      EqualsToken
+      CallExpression
+        Identifier: ' getRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'numberB'
+      EqualsToken
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'nameMB'
+      EqualsToken
+      Identifier: ' multiRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'nameMB'
+      EqualsToken
+      CallExpression
+        Identifier: ' getMultiRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'nameMB'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'numberB'
+        Identifier: ' nameB'
+        Identifier: ' skillB'
+      EqualsToken
+      Identifier: ' robotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'numberB'
+        Identifier: ' nameB'
+        Identifier: ' skillB'
+      EqualsToken
+      CallExpression
+        Identifier: ' getRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'numberB'
+        Identifier: ' nameB'
+        Identifier: ' skillB'
+      EqualsToken
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'nameMB'
+        ArrayLiteralExpression
+          Identifier: 'primarySkillB'
+          Identifier: ' secondarySkillB'
+      EqualsToken
+      Identifier: ' multiRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'nameMB'
+        ArrayLiteralExpression
+          Identifier: 'primarySkillB'
+          Identifier: ' secondarySkillB'
+      EqualsToken
+      CallExpression
+        Identifier: ' getMultiRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'nameMB'
+        ArrayLiteralExpression
+          Identifier: 'primarySkillB'
+          Identifier: ' secondarySkillB'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'numberB'
+        SpreadElement
+          Identifier: 'robotAInfo'
+      EqualsToken
+      Identifier: ' robotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'numberB'
+        SpreadElement
+          Identifier: 'robotAInfo'
+      EqualsToken
+      CallExpression
+        Identifier: ' getRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'numberB'
+        SpreadElement
+          Identifier: 'robotAInfo'
+      EqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'Robot'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        SpreadElement
+          Identifier: 'multiRobotAInfo'
+      EqualsToken
+      Identifier: ' multiRobotA'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        SpreadElement
+          Identifier: 'multiRobotAInfo'
+      EqualsToken
+      CallExpression
+        Identifier: ' getMultiRobotB'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        SpreadElement
+          Identifier: 'multiRobotAInfo'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'nameA'
+      EqualsEqualsToken
+      Identifier: ' nameB'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'skillB'
+  FunctionDeclaration
+    Identifier: ' getRobotB'
+    Block
+      ReturnStatement
+        Identifier: ' robotB'
+  FunctionDeclaration
+    Identifier: ' getMultiRobotB'
+    Block
+      ReturnStatement
+        Identifier: ' multiRobotB'

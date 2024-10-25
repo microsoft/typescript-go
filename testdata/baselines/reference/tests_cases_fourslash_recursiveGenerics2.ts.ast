@@ -1,0 +1,18 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// class S18<B, B, A, B> extends S18<A[], { S19: A; (): A }[]> { }
+//// /**/
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral

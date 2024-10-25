@@ -1,0 +1,45 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Number'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Number'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        BinaryExpression
+          Identifier: ' x'
+          PlusToken
+          Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z2'
+        BinaryExpression
+          Identifier: ' x'
+          MinusToken
+          Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z3'
+        BinaryExpression
+          Identifier: ' x'
+          AsteriskToken
+          Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z4'
+        BinaryExpression
+          Identifier: ' x'
+          SlashToken
+          Identifier: ' y'

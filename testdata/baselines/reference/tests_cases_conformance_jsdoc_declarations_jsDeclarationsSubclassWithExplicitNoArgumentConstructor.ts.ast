@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Super'
+    Constructor
+      Parameter
+        Identifier: 'firstArg'
+      Parameter
+        Identifier: ' secondArg'
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Sub'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Super'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            StringLiteral
+            StringLiteral

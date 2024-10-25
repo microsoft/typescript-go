@@ -1,0 +1,91 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        LiteralType
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        LiteralType
+          StringLiteral
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        LiteralType
+          StringLiteral
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        LiteralType
+          StringLiteral
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        LiteralType
+          StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+e'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+f'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+g'
+      EqualsToken
+      StringLiteral

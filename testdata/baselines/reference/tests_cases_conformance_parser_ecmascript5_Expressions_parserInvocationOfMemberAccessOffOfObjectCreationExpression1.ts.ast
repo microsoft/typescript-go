@@ -1,0 +1,7 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' A'
+        Identifier: 'b'

@@ -1,0 +1,46 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// Regression test for bug #41417
+
+//// import {
+////     d, d as D,
+////     c,
+////     c as C, b,
+////     b as B, a
+//// } from './foo';
+//// import {
+////     h, h as H,
+////     g,
+////     g as G, f,
+////     f as F, e
+//// } from './foo';
+//// 
+//// console.log(a, B, b, c, C, d, D);
+//// console.log(e, f, F, g, G, H, h);
+
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      Identifier: '
+/*mode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' organizeImportsIgnoreCase'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      Identifier: ' /*mode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' organizeImportsIgnoreCase'
+          FalseKeyword

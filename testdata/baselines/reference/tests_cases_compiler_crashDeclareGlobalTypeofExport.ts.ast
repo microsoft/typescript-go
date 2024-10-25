@@ -1,0 +1,39 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' foo'
+    StringLiteral
+  NamespaceExportDeclaration
+    Identifier: ' foo'
+  ExportAssignment
+    Identifier: ' foo'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            TypeQuery
+              Identifier: ' foo'
+  InterfaceDeclaration
+    Identifier: ' Root'
+    PropertySignature
+      Identifier: '
+    /**
+     * A .default property for ES6 default import compatibility
+     */
+    default'
+      TypeReference
+        Identifier: ' Root'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' root'
+        TypeReference
+          Identifier: ' Root'
+  ExportAssignment
+    Identifier: ' root'

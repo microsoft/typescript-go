@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' someFunc'
+    Block
+      ReturnStatement
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+someFunc'
+        Identifier: 'someProp'
+      EqualsToken
+      StringLiteral

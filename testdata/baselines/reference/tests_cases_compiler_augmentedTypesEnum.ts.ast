@@ -1,0 +1,86 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' e1111'
+    EnumMember
+      Identifier: ' One'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1111'
+        NumericLiteral
+  EnumDeclaration
+    Identifier: ' e2'
+    EnumMember
+      Identifier: ' One'
+  FunctionDeclaration
+    Identifier: ' e2'
+    Block
+  EnumDeclaration
+    Identifier: ' e3'
+    EnumMember
+      Identifier: ' One'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e3'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  EnumDeclaration
+    Identifier: ' e4'
+    EnumMember
+      Identifier: ' One'
+  ClassDeclaration
+    Identifier: ' e4'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  EnumDeclaration
+    Identifier: ' e5'
+    EnumMember
+      Identifier: ' One'
+  EnumDeclaration
+    Identifier: ' e5'
+    EnumMember
+      Identifier: ' Two'
+  EnumDeclaration
+    Identifier: ' e5a'
+    EnumMember
+      Identifier: ' One'
+  EnumDeclaration
+    Identifier: ' e5a'
+    EnumMember
+      Identifier: ' One'
+  EnumDeclaration
+    Identifier: ' e6'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' e6'
+    ModuleBlock
+  EnumDeclaration
+    Identifier: ' e6a'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' e6a'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  EnumDeclaration
+    Identifier: ' e6b'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' e6b'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral

@@ -1,0 +1,33 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////module M {
+////    export module A {
+////        var o;
+////    }
+////}
+////module M {
+////    export class A { a = 1;}
+////}
+////module M {
+////    export class A { /**/b }
+////}
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoExists'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'numberOfErrorsInCurrentFile'
+      NumericLiteral

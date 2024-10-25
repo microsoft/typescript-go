@@ -1,0 +1,45 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    P'
+      Parameter
+        Identifier: 'ii'
+        NumberKeyword
+      Parameter
+        Identifier: ' j'
+        NumberKeyword
+      Parameter
+        Identifier: ' k'
+        NumberKeyword
+      Block
+        ForStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' i'
+              NumericLiteral
+          BinaryExpression
+            Identifier: ' i'
+            LessThanToken
+            PropertyAccessExpression
+              Identifier: ' arguments'
+              Identifier: 'length'
+          PostfixUnaryExpression
+            Identifier: ' i'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'P'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral

@@ -1,0 +1,106 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' m1'
+            Identifier: 'm1'
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NewExpression
+              Identifier: ' c1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NewExpression
+              Identifier: ' m1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo2'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' m1'
+            Identifier: 'c1'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c1'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b10'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NewExpression
+              Identifier: ' c1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo3'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' m2'
+            Identifier: 'c1'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NewExpression
+              Identifier: ' m2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            Identifier: ' b10'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NewExpression
+              Identifier: ' c1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo3'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' m2'
+            Identifier: 'c1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo2'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' m2'
+            Identifier: 'm2'

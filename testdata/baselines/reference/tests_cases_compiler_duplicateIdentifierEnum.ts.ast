@@ -1,0 +1,53 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' A'
+    EnumMember
+      Identifier: '
+    bar'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    foo'
+      NumberKeyword
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' B'
+    EnumMember
+      Identifier: '
+    bar'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' C'
+    Block
+      ReturnStatement
+        NumericLiteral
+  EnumDeclaration
+    Identifier: ' D'
+    EnumMember
+      Identifier: '
+    bar'
+  ClassDeclaration
+    Identifier: ' E'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' D'
+    Block
+      ReturnStatement
+        NumericLiteral
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    bar'

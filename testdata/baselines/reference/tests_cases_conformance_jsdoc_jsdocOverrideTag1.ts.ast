@@ -1,0 +1,66 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+
+    /**
+     * @method
+     * @param {string | number} a
+     * @returns {boolean}
+     */
+    foo'
+      Parameter
+        Identifier: 'a'
+      Block
+        ReturnStatement
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * @override
+     * @method
+     * @param {string | number} a
+     * @returns {boolean}
+     */
+    foo'
+      Parameter
+        Identifier: 'a'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'foo'
+            Identifier: 'a'
+    MethodDeclaration
+      Identifier: '
+
+    bar'
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    /** @override */
+    baz'
+      Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    /** @override */
+    foo'
+      Block

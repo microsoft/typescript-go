@@ -1,0 +1,117 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' indexed1'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              StringKeyword
+            NumberKeyword
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' indexed2'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              StringKeyword
+            BooleanKeyword
+          PropertySignature
+            Identifier: ' c'
+            BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' indexed3'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              StringKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'indexed1'
+          PropertyAssignment
+            Identifier: ' b'
+            NumericLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+// only indexed has indexer, so i[101]: any
+i'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ii'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'indexed1'
+          SpreadAssignment
+            Identifier: 'indexed2'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+// both have indexer, so i[1001]: number | boolean
+ii'
+      NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BooleanKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+indexed3'
+      EqualsToken
+      ObjectLiteralExpression
+        SpreadAssignment
+          ConditionalExpression
+            Identifier: 'b'
+            QuestionToken
+            Identifier: ' indexed3'
+            ColonToken
+            Identifier: ' undefined'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' roindex'
+        TypeLiteral
+          IndexSignature
+            ReadonlyKeyword
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' writable'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'roindex'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+writable'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral

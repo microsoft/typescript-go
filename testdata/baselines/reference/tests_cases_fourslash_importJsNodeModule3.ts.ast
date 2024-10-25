@@ -1,0 +1,220 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+// @allowJs: true
+
+// @Filename: node_modules/myMod/index.js
+//// exports.n = 3;
+//// exports.s = 'foo';
+//// exports.b = true;
+
+// @Filename: node_modules/anotherMod/index.js
+//// exports.x = 3;
+//// exports.y = 'foo';
+//// /**
+////   * @param {(number | boolean)} a The first param
+////   * @param {Array<string>}      b The second param
+////   */
+//// exports.z = function(a,b){ return "test"; };
+
+// @Filename: consumer.js
+//// import * as x from 'myMod';
+//// import {y,z} from 'anotherMod';
+//// x/**/;
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' includes'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' name'
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    StringLiteral
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'backspace'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'backspace'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    parameterDocComment'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    tags'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' kind'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' text'
+                      StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' kind'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' text'
+                      StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' kind'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' text'
+                      StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' kind'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' text'
+                      StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' kind'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' text'
+                      StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' kind'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' text'
+                      StringLiteral

@@ -1,0 +1,109 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleDeclaration
+      Identifier: 'B'
+      ModuleDeclaration
+        Identifier: 'C'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' Point'
+            PropertySignature
+              Identifier: '
+        x'
+              NumberKeyword
+            PropertySignature
+              Identifier: '
+        y'
+              NumberKeyword
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' Point'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' C'
+                    Identifier: 'Point'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' x'
+                    NumericLiteral
+                  PropertyAssignment
+                    Identifier: ' y'
+                    NumericLiteral
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleDeclaration
+      Identifier: 'X'
+      ModuleBlock
+        InterfaceDeclaration
+          ExportKeyword
+          Identifier: ' Point'
+          PropertySignature
+            Identifier: '
+        x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' X'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' Point'
+                NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        PropertyAccessExpression
+          Identifier: ' M2'
+          Identifier: 'X'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' point'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' point'
+        PropertyAccessExpression
+          Identifier: ' m'
+          Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' M2'
+              Identifier: 'X'
+            Identifier: 'Point'

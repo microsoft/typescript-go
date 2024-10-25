@@ -1,0 +1,78 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: ' foo'
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: ' bar'
+      Block
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' g'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'x'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' f'
+          Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g'
+      TypeReference
+        Identifier: 'A'
+      TypeReference
+        Identifier: ' B'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      CallExpression
+        Identifier: 'g'
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' B'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      BinaryExpression
+        Identifier: 'g'
+        LessThanToken
+        Identifier: ' A'
+      BinaryExpression
+        Identifier: ' B'
+        GreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      BinaryExpression
+        Identifier: 'g'
+        LessThanToken
+        Identifier: ' A'
+      BinaryExpression
+        Identifier: ' B'
+        GreaterThanToken
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            NumericLiteral

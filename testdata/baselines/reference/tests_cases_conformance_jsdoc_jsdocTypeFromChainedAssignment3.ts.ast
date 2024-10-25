@@ -1,0 +1,502 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @noEmit: true
+// @allowJs: true
+// @checkJs: true
+// @Filename: a.js
+exports'
+        Identifier: 'wrapSync'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' exports'
+          Identifier: 'selectSeries'
+        EqualsToken
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' exports'
+            Identifier: 'selectLimit'
+          EqualsToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' exports'
+              Identifier: 'select'
+            EqualsToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' exports'
+                Identifier: 'foldr'
+              EqualsToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' exports'
+                  Identifier: 'foldl'
+                EqualsToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' exports'
+                    Identifier: 'inject'
+                  EqualsToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' exports'
+                      Identifier: 'forEachOfLimit'
+                    EqualsToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' exports'
+                        Identifier: 'forEachOfSeries'
+                      EqualsToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' exports'
+                          Identifier: 'forEachOf'
+                        EqualsToken
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' exports'
+                            Identifier: 'forEachLimit'
+                          EqualsToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' exports'
+                              Identifier: 'forEachSeries'
+                            EqualsToken
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: ' exports'
+                                Identifier: 'forEach'
+                              EqualsToken
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: ' exports'
+                                  Identifier: 'findSeries'
+                                EqualsToken
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' exports'
+                                    Identifier: 'findLimit'
+                                  EqualsToken
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' exports'
+                                      Identifier: 'find'
+                                    EqualsToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' exports'
+                                        Identifier: 'anySeries'
+                                      EqualsToken
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' exports'
+                                          Identifier: 'anyLimit'
+                                        EqualsToken
+                                        BinaryExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' exports'
+                                            Identifier: 'any'
+                                          EqualsToken
+                                          BinaryExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' exports'
+                                              Identifier: 'allSeries'
+                                            EqualsToken
+                                            BinaryExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' exports'
+                                                Identifier: 'allLimit'
+                                              EqualsToken
+                                              BinaryExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' exports'
+                                                  Identifier: 'all'
+                                                EqualsToken
+                                                BinaryExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' exports'
+                                                    Identifier: 'whilst'
+                                                  EqualsToken
+                                                  BinaryExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: ' exports'
+                                                      Identifier: 'waterfall'
+                                                    EqualsToken
+                                                    BinaryExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: ' exports'
+                                                        Identifier: 'until'
+                                                      EqualsToken
+                                                      BinaryExpression
+                                                        PropertyAccessExpression
+                                                          Identifier: ' exports'
+                                                          Identifier: 'unmemoize'
+                                                        EqualsToken
+                                                        BinaryExpression
+                                                          PropertyAccessExpression
+                                                            Identifier: ' exports'
+                                                            Identifier: 'tryEach'
+                                                          EqualsToken
+                                                          BinaryExpression
+                                                            PropertyAccessExpression
+                                                              Identifier: ' exports'
+                                                              Identifier: 'transform'
+                                                            EqualsToken
+                                                            BinaryExpression
+                                                              PropertyAccessExpression
+                                                                Identifier: ' exports'
+                                                                Identifier: 'timesSeries'
+                                                              EqualsToken
+                                                              BinaryExpression
+                                                                PropertyAccessExpression
+                                                                  Identifier: ' exports'
+                                                                  Identifier: 'timesLimit'
+                                                                EqualsToken
+                                                                BinaryExpression
+                                                                  PropertyAccessExpression
+                                                                    Identifier: ' exports'
+                                                                    Identifier: 'times'
+                                                                  EqualsToken
+                                                                  BinaryExpression
+                                                                    PropertyAccessExpression
+                                                                      Identifier: ' exports'
+                                                                      Identifier: 'timeout'
+                                                                    EqualsToken
+                                                                    BinaryExpression
+                                                                      PropertyAccessExpression
+                                                                        Identifier: ' exports'
+                                                                        Identifier: 'sortBy'
+                                                                      EqualsToken
+                                                                      BinaryExpression
+                                                                        PropertyAccessExpression
+                                                                          Identifier: ' exports'
+                                                                          Identifier: 'someSeries'
+                                                                        EqualsToken
+                                                                        BinaryExpression
+                                                                          PropertyAccessExpression
+                                                                            Identifier: ' exports'
+                                                                            Identifier: 'someLimit'
+                                                                          EqualsToken
+                                                                          BinaryExpression
+                                                                            PropertyAccessExpression
+                                                                              Identifier: ' exports'
+                                                                              Identifier: 'some'
+                                                                            EqualsToken
+                                                                            BinaryExpression
+                                                                              PropertyAccessExpression
+                                                                                Identifier: ' exports'
+                                                                                Identifier: 'setImmediate'
+                                                                              EqualsToken
+                                                                              BinaryExpression
+                                                                                PropertyAccessExpression
+                                                                                  Identifier: ' exports'
+                                                                                  Identifier: 'series'
+                                                                                EqualsToken
+                                                                                BinaryExpression
+                                                                                  PropertyAccessExpression
+                                                                                    Identifier: ' exports'
+                                                                                    Identifier: 'seq'
+                                                                                  EqualsToken
+                                                                                  BinaryExpression
+                                                                                    PropertyAccessExpression
+                                                                                      Identifier: ' exports'
+                                                                                      Identifier: 'retryable'
+                                                                                    EqualsToken
+                                                                                    BinaryExpression
+                                                                                      PropertyAccessExpression
+                                                                                        Identifier: ' exports'
+                                                                                        Identifier: 'retry'
+                                                                                      EqualsToken
+                                                                                      BinaryExpression
+                                                                                        PropertyAccessExpression
+                                                                                          Identifier: ' exports'
+                                                                                          Identifier: 'rejectSeries'
+                                                                                        EqualsToken
+                                                                                        BinaryExpression
+                                                                                          PropertyAccessExpression
+                                                                                            Identifier: ' exports'
+                                                                                            Identifier: 'rejectLimit'
+                                                                                          EqualsToken
+                                                                                          BinaryExpression
+                                                                                            PropertyAccessExpression
+                                                                                              Identifier: ' exports'
+                                                                                              Identifier: 'reject'
+                                                                                            EqualsToken
+                                                                                            BinaryExpression
+                                                                                              PropertyAccessExpression
+                                                                                                Identifier: ' exports'
+                                                                                                Identifier: 'reflectAll'
+                                                                                              EqualsToken
+                                                                                              BinaryExpression
+                                                                                                PropertyAccessExpression
+                                                                                                  Identifier: ' exports'
+                                                                                                  Identifier: 'reflect'
+                                                                                                EqualsToken
+                                                                                                BinaryExpression
+                                                                                                  PropertyAccessExpression
+                                                                                                    Identifier: ' exports'
+                                                                                                    Identifier: 'reduceRight'
+                                                                                                  EqualsToken
+                                                                                                  BinaryExpression
+                                                                                                    PropertyAccessExpression
+                                                                                                      Identifier: ' exports'
+                                                                                                      Identifier: 'reduce'
+                                                                                                    EqualsToken
+                                                                                                    BinaryExpression
+                                                                                                      PropertyAccessExpression
+                                                                                                        Identifier: ' exports'
+                                                                                                        Identifier: 'race'
+                                                                                                      EqualsToken
+                                                                                                      BinaryExpression
+                                                                                                        PropertyAccessExpression
+                                                                                                          Identifier: ' exports'
+                                                                                                          Identifier: 'queue'
+                                                                                                        EqualsToken
+                                                                                                        BinaryExpression
+                                                                                                          PropertyAccessExpression
+                                                                                                            Identifier: ' exports'
+                                                                                                            Identifier: 'priorityQueue'
+                                                                                                          EqualsToken
+                                                                                                          BinaryExpression
+                                                                                                            PropertyAccessExpression
+                                                                                                              Identifier: ' exports'
+                                                                                                              Identifier: 'parallelLimit'
+                                                                                                            EqualsToken
+                                                                                                            BinaryExpression
+                                                                                                              PropertyAccessExpression
+                                                                                                                Identifier: ' exports'
+                                                                                                                Identifier: 'parallel'
+                                                                                                              EqualsToken
+                                                                                                              BinaryExpression
+                                                                                                                PropertyAccessExpression
+                                                                                                                  Identifier: ' exports'
+                                                                                                                  Identifier: 'nextTick'
+                                                                                                                EqualsToken
+                                                                                                                BinaryExpression
+                                                                                                                  PropertyAccessExpression
+                                                                                                                    Identifier: ' exports'
+                                                                                                                    Identifier: 'memoize'
+                                                                                                                  EqualsToken
+                                                                                                                  BinaryExpression
+                                                                                                                    PropertyAccessExpression
+                                                                                                                      Identifier: ' exports'
+                                                                                                                      Identifier: 'mapValuesSeries'
+                                                                                                                    EqualsToken
+                                                                                                                    BinaryExpression
+                                                                                                                      PropertyAccessExpression
+                                                                                                                        Identifier: ' exports'
+                                                                                                                        Identifier: 'mapValuesLimit'
+                                                                                                                      EqualsToken
+                                                                                                                      BinaryExpression
+                                                                                                                        PropertyAccessExpression
+                                                                                                                          Identifier: ' exports'
+                                                                                                                          Identifier: 'mapValues'
+                                                                                                                        EqualsToken
+                                                                                                                        BinaryExpression
+                                                                                                                          PropertyAccessExpression
+                                                                                                                            Identifier: ' exports'
+                                                                                                                            Identifier: 'mapSeries'
+                                                                                                                          EqualsToken
+                                                                                                                          BinaryExpression
+                                                                                                                            PropertyAccessExpression
+                                                                                                                              Identifier: ' exports'
+                                                                                                                              Identifier: 'mapLimit'
+                                                                                                                            EqualsToken
+                                                                                                                            BinaryExpression
+                                                                                                                              PropertyAccessExpression
+                                                                                                                                Identifier: ' exports'
+                                                                                                                                Identifier: 'map'
+                                                                                                                              EqualsToken
+                                                                                                                              BinaryExpression
+                                                                                                                                PropertyAccessExpression
+                                                                                                                                  Identifier: ' exports'
+                                                                                                                                  Identifier: 'log'
+                                                                                                                                EqualsToken
+                                                                                                                                BinaryExpression
+                                                                                                                                  PropertyAccessExpression
+                                                                                                                                    Identifier: ' exports'
+                                                                                                                                    Identifier: 'groupBySeries'
+                                                                                                                                  EqualsToken
+                                                                                                                                  BinaryExpression
+                                                                                                                                    PropertyAccessExpression
+                                                                                                                                      Identifier: ' exports'
+                                                                                                                                      Identifier: 'groupByLimit'
+                                                                                                                                    EqualsToken
+                                                                                                                                    BinaryExpression
+                                                                                                                                      PropertyAccessExpression
+                                                                                                                                        Identifier: ' exports'
+                                                                                                                                        Identifier: 'groupBy'
+                                                                                                                                      EqualsToken
+                                                                                                                                      BinaryExpression
+                                                                                                                                        PropertyAccessExpression
+                                                                                                                                          Identifier: ' exports'
+                                                                                                                                          Identifier: 'forever'
+                                                                                                                                        EqualsToken
+                                                                                                                                        BinaryExpression
+                                                                                                                                          PropertyAccessExpression
+                                                                                                                                            Identifier: ' exports'
+                                                                                                                                            Identifier: 'filterSeries'
+                                                                                                                                          EqualsToken
+                                                                                                                                          BinaryExpression
+                                                                                                                                            PropertyAccessExpression
+                                                                                                                                              Identifier: ' exports'
+                                                                                                                                              Identifier: 'filterLimit'
+                                                                                                                                            EqualsToken
+                                                                                                                                            BinaryExpression
+                                                                                                                                              PropertyAccessExpression
+                                                                                                                                                Identifier: ' exports'
+                                                                                                                                                Identifier: 'filter'
+                                                                                                                                              EqualsToken
+                                                                                                                                              BinaryExpression
+                                                                                                                                                PropertyAccessExpression
+                                                                                                                                                  Identifier: ' exports'
+                                                                                                                                                  Identifier: 'everySeries'
+                                                                                                                                                EqualsToken
+                                                                                                                                                BinaryExpression
+                                                                                                                                                  PropertyAccessExpression
+                                                                                                                                                    Identifier: ' exports'
+                                                                                                                                                    Identifier: 'everyLimit'
+                                                                                                                                                  EqualsToken
+                                                                                                                                                  BinaryExpression
+                                                                                                                                                    PropertyAccessExpression
+                                                                                                                                                      Identifier: ' exports'
+                                                                                                                                                      Identifier: 'every'
+                                                                                                                                                    EqualsToken
+                                                                                                                                                    BinaryExpression
+                                                                                                                                                      PropertyAccessExpression
+                                                                                                                                                        Identifier: ' exports'
+                                                                                                                                                        Identifier: 'ensureAsync'
+                                                                                                                                                      EqualsToken
+                                                                                                                                                      BinaryExpression
+                                                                                                                                                        PropertyAccessExpression
+                                                                                                                                                          Identifier: ' exports'
+                                                                                                                                                          Identifier: 'eachSeries'
+                                                                                                                                                        EqualsToken
+                                                                                                                                                        BinaryExpression
+                                                                                                                                                          PropertyAccessExpression
+                                                                                                                                                            Identifier: ' exports'
+                                                                                                                                                            Identifier: 'eachOfSeries'
+                                                                                                                                                          EqualsToken
+                                                                                                                                                          BinaryExpression
+                                                                                                                                                            PropertyAccessExpression
+                                                                                                                                                              Identifier: ' exports'
+                                                                                                                                                              Identifier: 'eachOfLimit'
+                                                                                                                                                            EqualsToken
+                                                                                                                                                            BinaryExpression
+                                                                                                                                                              PropertyAccessExpression
+                                                                                                                                                                Identifier: ' exports'
+                                                                                                                                                                Identifier: 'eachOf'
+                                                                                                                                                              EqualsToken
+                                                                                                                                                              BinaryExpression
+                                                                                                                                                                PropertyAccessExpression
+                                                                                                                                                                  Identifier: ' exports'
+                                                                                                                                                                  Identifier: 'eachLimit'
+                                                                                                                                                                EqualsToken
+                                                                                                                                                                BinaryExpression
+                                                                                                                                                                  PropertyAccessExpression
+                                                                                                                                                                    Identifier: ' exports'
+                                                                                                                                                                    Identifier: 'each'
+                                                                                                                                                                  EqualsToken
+                                                                                                                                                                  BinaryExpression
+                                                                                                                                                                    PropertyAccessExpression
+                                                                                                                                                                      Identifier: ' exports'
+                                                                                                                                                                      Identifier: 'during'
+                                                                                                                                                                    EqualsToken
+                                                                                                                                                                    BinaryExpression
+                                                                                                                                                                      PropertyAccessExpression
+                                                                                                                                                                        Identifier: ' exports'
+                                                                                                                                                                        Identifier: 'doWhilst'
+                                                                                                                                                                      EqualsToken
+                                                                                                                                                                      BinaryExpression
+                                                                                                                                                                        PropertyAccessExpression
+                                                                                                                                                                          Identifier: ' exports'
+                                                                                                                                                                          Identifier: 'doUntil'
+                                                                                                                                                                        EqualsToken
+                                                                                                                                                                        BinaryExpression
+                                                                                                                                                                          PropertyAccessExpression
+                                                                                                                                                                            Identifier: ' exports'
+                                                                                                                                                                            Identifier: 'doDuring'
+                                                                                                                                                                          EqualsToken
+                                                                                                                                                                          BinaryExpression
+                                                                                                                                                                            PropertyAccessExpression
+                                                                                                                                                                              Identifier: ' exports'
+                                                                                                                                                                              Identifier: 'dir'
+                                                                                                                                                                            EqualsToken
+                                                                                                                                                                            BinaryExpression
+                                                                                                                                                                              PropertyAccessExpression
+                                                                                                                                                                                Identifier: ' exports'
+                                                                                                                                                                                Identifier: 'detectSeries'
+                                                                                                                                                                              EqualsToken
+                                                                                                                                                                              BinaryExpression
+                                                                                                                                                                                PropertyAccessExpression
+                                                                                                                                                                                  Identifier: ' exports'
+                                                                                                                                                                                  Identifier: 'detectLimit'
+                                                                                                                                                                                EqualsToken
+                                                                                                                                                                                BinaryExpression
+                                                                                                                                                                                  PropertyAccessExpression
+                                                                                                                                                                                    Identifier: ' exports'
+                                                                                                                                                                                    Identifier: 'detect'
+                                                                                                                                                                                  EqualsToken
+                                                                                                                                                                                  BinaryExpression
+                                                                                                                                                                                    PropertyAccessExpression
+                                                                                                                                                                                      Identifier: ' exports'
+                                                                                                                                                                                      Identifier: 'constant'
+                                                                                                                                                                                    EqualsToken
+                                                                                                                                                                                    BinaryExpression
+                                                                                                                                                                                      PropertyAccessExpression
+                                                                                                                                                                                        Identifier: ' exports'
+                                                                                                                                                                                        Identifier: 'concatSeries'
+                                                                                                                                                                                      EqualsToken
+                                                                                                                                                                                      BinaryExpression
+                                                                                                                                                                                        PropertyAccessExpression
+                                                                                                                                                                                          Identifier: ' exports'
+                                                                                                                                                                                          Identifier: 'concatLimit'
+                                                                                                                                                                                        EqualsToken
+                                                                                                                                                                                        BinaryExpression
+                                                                                                                                                                                          PropertyAccessExpression
+                                                                                                                                                                                            Identifier: ' exports'
+                                                                                                                                                                                            Identifier: 'concat'
+                                                                                                                                                                                          EqualsToken
+                                                                                                                                                                                          BinaryExpression
+                                                                                                                                                                                            PropertyAccessExpression
+                                                                                                                                                                                              Identifier: ' exports'
+                                                                                                                                                                                              Identifier: 'compose'
+                                                                                                                                                                                            EqualsToken
+                                                                                                                                                                                            BinaryExpression
+                                                                                                                                                                                              PropertyAccessExpression
+                                                                                                                                                                                                Identifier: ' exports'
+                                                                                                                                                                                                Identifier: 'cargo'
+                                                                                                                                                                                              EqualsToken
+                                                                                                                                                                                              BinaryExpression
+                                                                                                                                                                                                PropertyAccessExpression
+                                                                                                                                                                                                  Identifier: ' exports'
+                                                                                                                                                                                                  Identifier: 'autoInject'
+                                                                                                                                                                                                EqualsToken
+                                                                                                                                                                                                BinaryExpression
+                                                                                                                                                                                                  PropertyAccessExpression
+                                                                                                                                                                                                    Identifier: ' exports'
+                                                                                                                                                                                                    Identifier: 'auto'
+                                                                                                                                                                                                  EqualsToken
+                                                                                                                                                                                                  BinaryExpression
+                                                                                                                                                                                                    PropertyAccessExpression
+                                                                                                                                                                                                      Identifier: ' exports'
+                                                                                                                                                                                                      Identifier: 'asyncify'
+                                                                                                                                                                                                    EqualsToken
+                                                                                                                                                                                                    BinaryExpression
+                                                                                                                                                                                                      PropertyAccessExpression
+                                                                                                                                                                                                        Identifier: ' exports'
+                                                                                                                                                                                                        Identifier: 'applyEachSeries'
+                                                                                                                                                                                                      EqualsToken
+                                                                                                                                                                                                      BinaryExpression
+                                                                                                                                                                                                        PropertyAccessExpression
+                                                                                                                                                                                                          Identifier: ' exports'
+                                                                                                                                                                                                          Identifier: 'applyEach'
+                                                                                                                                                                                                        EqualsToken
+                                                                                                                                                                                                        BinaryExpression
+                                                                                                                                                                                                          PropertyAccessExpression
+                                                                                                                                                                                                            Identifier: ' exports'
+                                                                                                                                                                                                            Identifier: 'apply'
+                                                                                                                                                                                                          EqualsToken
+                                                                                                                                                                                                          Identifier: ' undefined'

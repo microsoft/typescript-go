@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    Constructor
+      Block

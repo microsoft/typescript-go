@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Employee'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _fullName'
+      StringKeyword
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' fullName'
+      StringKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: '_fullName'
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' fullName'
+      Parameter
+        Identifier: '_'
+        StringKeyword
+      Block

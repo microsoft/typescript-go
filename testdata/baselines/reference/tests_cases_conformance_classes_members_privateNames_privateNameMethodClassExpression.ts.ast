@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        ClassExpression
+          PropertyDeclaration
+            PrivateIdentifier
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+          MethodDeclaration
+            PrivateIdentifier
+            Block
+              ReturnStatement
+                NumericLiteral
+          MethodDeclaration
+            StaticKeyword
+            Identifier: ' getInstance'
+            Block
+              ReturnStatement
+                NewExpression
+                  Identifier: ' C'
+          MethodDeclaration
+            Identifier: '
+    getField'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+          SemicolonClassElement
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'C'
+              Identifier: 'getInstance'
+          Identifier: 'getField'
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+C'
+          Identifier: 'getInstance'
+      PrivateIdentifier
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' // Error
+C'
+          Identifier: 'getInstance'
+      PrivateIdentifier

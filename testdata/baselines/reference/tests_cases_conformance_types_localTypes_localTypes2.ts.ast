@@ -1,0 +1,152 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      FunctionDeclaration
+        Identifier: ' f'
+        Block
+          ClassDeclaration
+            Identifier: ' C'
+            Constructor
+              Parameter
+                PublicKeyword
+                Identifier: ' x'
+                NumberKeyword
+              Parameter
+                PublicKeyword
+                Identifier: ' y'
+                NumberKeyword
+              Block
+          ReturnStatement
+            Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' C'
+            CallExpression
+              Identifier: ' f'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            NewExpression
+              Identifier: ' C'
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              Identifier: ' v'
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            PropertyAccessExpression
+              Identifier: ' v'
+              Identifier: 'y'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      FunctionDeclaration
+        Identifier: ' f'
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Block
+          ClassDeclaration
+            Identifier: ' C'
+            PropertyDeclaration
+              PublicKeyword
+              Identifier: ' x'
+              Identifier: ' x'
+            Constructor
+              Parameter
+                PublicKeyword
+                Identifier: ' y'
+                NumberKeyword
+              Block
+          ReturnStatement
+            Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' C'
+            CallExpression
+              Identifier: ' f'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            NewExpression
+              Identifier: ' C'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              Identifier: ' v'
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            PropertyAccessExpression
+              Identifier: ' v'
+              Identifier: 'y'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      FunctionDeclaration
+        Identifier: ' f'
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          NumberKeyword
+        Block
+          ClassDeclaration
+            Identifier: ' C'
+            PropertyDeclaration
+              PublicKeyword
+              Identifier: ' x'
+              Identifier: ' x'
+            PropertyDeclaration
+              PublicKeyword
+              Identifier: ' y'
+              Identifier: ' y'
+          ReturnStatement
+            Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' C'
+            CallExpression
+              Identifier: ' f'
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            NewExpression
+              Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              Identifier: ' v'
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            PropertyAccessExpression
+              Identifier: ' v'
+              Identifier: 'y'

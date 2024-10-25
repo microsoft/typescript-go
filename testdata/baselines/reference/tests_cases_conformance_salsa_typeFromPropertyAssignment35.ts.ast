@@ -1,0 +1,58 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' ollKorrect'
+    Parameter
+      Identifier: 'x'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: '_model'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Emu'
+                Identifier: 'D'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' Emu'
+                Identifier: 'D'
+              Identifier: '_wrapperInstance'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Emu'
+        Identifier: 'D'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_model'
+                EqualsToken
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Emu'
+        ObjectLiteralExpression
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+/** @type {string} */
+Emu'
+        Identifier: 'D'
+      Identifier: '_wrapperInstance'

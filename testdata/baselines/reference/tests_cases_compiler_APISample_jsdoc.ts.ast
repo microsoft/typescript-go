@@ -1,0 +1,580 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        AnyKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' parseCommentsIntoDefinition'
+    Parameter
+      Identifier: 'this'
+      AnyKeyword
+    Parameter
+      Identifier: '
+                                     symbol'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Symbol'
+    Parameter
+      Identifier: '
+                                     definition'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'description'
+          QuestionToken
+          StringKeyword
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+    Parameter
+      Identifier: '
+                                     otherAnnotations'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          LiteralType
+            TrueKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'symbol'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' comments'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' symbol'
+                Identifier: 'getDocumentationComment'
+              Identifier: 'undefined'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'comments'
+          Identifier: 'length'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        definition'
+                Identifier: 'description'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' comments'
+                      Identifier: 'map'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'comment'
+                      EqualsGreaterThanToken
+                      ConditionalExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' comment'
+                            Identifier: 'kind'
+                          EqualsEqualsEqualsToken
+                          StringLiteral
+                        QuestionToken
+                        PropertyAccessExpression
+                          Identifier: ' comment'
+                          Identifier: 'text'
+                        ColonToken
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' comment'
+                                  Identifier: 'text'
+                                Identifier: 'trim'
+                            Identifier: 'replace'
+                          RegularExpressionLiteral
+                          StringLiteral
+                  Identifier: 'join'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' jsdocs'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' symbol'
+                Identifier: 'getJsDocTags'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'checker'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    jsdocs'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'doc'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' name'
+                      BindingElement
+                        Identifier: ' text'
+                    Identifier: ' doc'
+              IfStatement
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'userValidationKeywords'
+                  Identifier: 'name'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+            definition'
+                        Identifier: 'name'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'parseValue'
+                        Identifier: 'text'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+            // special annotations
+            otherAnnotations'
+                        PropertyAccessExpression
+                          Identifier: 'doc'
+                          Identifier: 'name'
+                      EqualsToken
+                      TrueKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Annotations'
+    IndexSignature
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' getAnnotations'
+    Parameter
+      Identifier: 'this'
+      AnyKeyword
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Node'
+    UnionType
+      TypeReference
+        Identifier: ' Annotations'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' symbol'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'Symbol'
+            PropertyAccessExpression
+              ParenthesizedExpression
+                AsExpression
+                  Identifier: 'node'
+                  AnyKeyword
+              Identifier: 'symbol'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'symbol'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' jsDocTags'
+            ArrayType
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'JSDocTagInfo'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' symbol'
+                Identifier: 'getJsDocTags'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'checker'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'jsDocTags'
+          BarBarToken
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'jsDocTags'
+              Identifier: 'length'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' annotations'
+            TypeReference
+              Identifier: ' Annotations'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' jsDocTags'
+                Identifier: 'reduce'
+              ArrowFunction
+                Parameter
+                  Identifier: 'result'
+                  TypeReference
+                    Identifier: ' Annotations'
+                Parameter
+                  Identifier: ' jsDocTag'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'JSDocTagInfo'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' value'
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'parseJsDocTag'
+                          Identifier: 'jsDocTag'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'value'
+                      ExclamationEqualsEqualsToken
+                      Identifier: ' undefined'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          ElementAccessExpression
+                            Identifier: '
+            result'
+                            PropertyAccessExpression
+                              Identifier: 'jsDocTag'
+                              Identifier: 'name'
+                          EqualsToken
+                          Identifier: ' value'
+                  ReturnStatement
+                    Identifier: ' result'
+              ObjectLiteralExpression
+      ReturnStatement
+        ConditionalExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Object'
+                Identifier: 'keys'
+              Identifier: 'annotations'
+            Identifier: 'length'
+          QuestionToken
+          Identifier: ' annotations'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' parseSpecificTags'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Node'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'node'
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'SyntaxKind'
+            Identifier: 'Parameter'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'getJSDocParameterTags'
+              AsExpression
+                Identifier: 'node'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'ParameterDeclaration'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'node'
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'SyntaxKind'
+            Identifier: 'FunctionDeclaration'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' func'
+                AsExpression
+                  Identifier: ' node'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'FunctionDeclaration'
+          IfStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'hasJSDocParameterTags'
+              Identifier: 'func'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' flat'
+                    ArrayType
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' ts'
+                          Identifier: 'JSDocTag'
+                    ArrayLiteralExpression
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' tags'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' func'
+                      Identifier: 'parameters'
+                    Identifier: 'map'
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'getJSDocParameterTags'
+                Block
+                  IfStatement
+                    Identifier: 'tags'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' flat'
+                          Identifier: 'push'
+                        SpreadElement
+                          Identifier: 'tags'
+              ReturnStatement
+                Identifier: ' flat'
+  FunctionDeclaration
+    Identifier: ' getReturnTypeFromJSDoc'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Node'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'node'
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'SyntaxKind'
+            Identifier: 'FunctionDeclaration'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'getJSDocReturnType'
+              Identifier: 'node'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' type'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'getJSDocType'
+              Identifier: 'node'
+      IfStatement
+        BinaryExpression
+          Identifier: 'type'
+          AmpersandAmpersandToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' type'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'SyntaxKind'
+              Identifier: 'FunctionType'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              ParenthesizedExpression
+                AsExpression
+                  Identifier: 'type'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'FunctionTypeNode'
+              Identifier: 'type'
+  FunctionDeclaration
+    Identifier: ' getAllTags'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Node'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    ts'
+            Identifier: 'getJSDocTags'
+          Identifier: 'node'
+  FunctionDeclaration
+    Identifier: ' getSomeOtherTags'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Node'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tags'
+            ArrayType
+              ParenthesizedType
+                UnionType
+                  TypeReference
+                    QualifiedName
+                      Identifier: 'ts'
+                      Identifier: 'JSDocTag'
+                  UndefinedKeyword
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    tags'
+            Identifier: 'push'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ts'
+              Identifier: 'getJSDocAugmentsTag'
+            Identifier: 'node'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    tags'
+            Identifier: 'push'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ts'
+              Identifier: 'getJSDocClassTag'
+            Identifier: 'node'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    tags'
+            Identifier: 'push'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ts'
+              Identifier: 'getJSDocReturnTag'
+            Identifier: 'node'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' type'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'getJSDocTypeTag'
+              Identifier: 'node'
+      IfStatement
+        Identifier: 'type'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        tags'
+                Identifier: 'push'
+              Identifier: 'type'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    tags'
+            Identifier: 'push'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ts'
+              Identifier: 'getJSDocTemplateTag'
+            Identifier: 'node'
+      ReturnStatement
+        Identifier: ' tags'

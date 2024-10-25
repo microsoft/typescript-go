@@ -1,0 +1,84 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SomeConstructor'
+        FunctionExpression
+          Identifier: ' Named'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+                EqualsToken
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SomeConstructor2'
+        FunctionExpression
+          Identifier: ' Named'
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+SomeConstructor2'
+        Identifier: 'staticMember'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SomeConstructor3'
+        FunctionExpression
+          Identifier: ' Named'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+                EqualsToken
+                NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+SomeConstructor3'
+        Identifier: 'staticMember'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SelfReference'
+        FunctionExpression
+          Identifier: ' Named'
+          Block
+            IfStatement
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    ThisKeyword
+                    InstanceOfKeyword
+                    Identifier: ' Named'
+              ReturnStatement
+                NewExpression
+                  Identifier: ' Named'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+                EqualsToken
+                NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+SelfReference'
+        Identifier: 'staticMember'
+      EqualsToken
+      StringLiteral

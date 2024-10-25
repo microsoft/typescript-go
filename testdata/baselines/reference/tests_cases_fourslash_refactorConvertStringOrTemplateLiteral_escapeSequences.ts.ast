@@ -1,0 +1,378 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /a.ts
+////let s = /*a1*/"\0\b\f\t\r\n" + text + "\n"/*a2*/;
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_to_template_string'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    newContent'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: /b.ts
+////let s = /*b1*/'"' + text + "'"/*b2*/;
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_to_template_string'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    // newContent is: let s = `"${text}'`;
+    newContent'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: /c.ts
+////let s = /*c1*/'$' + text + "\\"/*c2*/;
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_to_template_string'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    // newContent is: let s = `\$${text}\\`;
+    newContent'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: /d.ts
+////let s = /*d1*/`$` + text + `\\`/*d2*/;
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_to_template_string'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    // newContent is: let s = `\$${text}\\`;
+    newContent'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: /e.ts
+////let s = /*e1*/'${' + text + "}"/*e2*/;
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_to_template_string'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    // newContent is: let s = `\${${text}}`;
+    newContent'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: /f.ts
+////let s = /*f1*/`\${` + text + `}`/*f2*/;
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_to_template_string'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    // newContent is: let s = `\${${text}}`;
+    newContent'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: /g.ts
+////let s = /*g1*/'\\$' + text + "\\"/*g2*/;
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_to_template_string'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    // newContent is: let s = `\\\$${text}\\`;
+    newContent'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: /h.ts
+////let s = /*h1*/"\u0041\u0061" + text + "\0\u0000"/*h2*/;
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_to_template_string'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    // newContent is: let s = `\u0041\u0061${text}\0\u0000`;
+    newContent'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: /i.ts
+////let s = /*i1*/'$`' + text + "`\\"/*i2*/;
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_to_template_string'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    // newContent is: let s = `\$\`${text}\`\\`;
+    newContent'
+          StringLiteral

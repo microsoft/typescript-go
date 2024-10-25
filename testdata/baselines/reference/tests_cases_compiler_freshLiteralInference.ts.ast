@@ -1,0 +1,110 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        CallExpression
+          Identifier: ' f1'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        Identifier: ' value'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        CallExpression
+          Identifier: ' f2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' value'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        PropertyAccessExpression
+          Identifier: ' obj2'
+          Identifier: 'value'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' value'
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj3'
+        CallExpression
+          Identifier: ' f3'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' value'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        PropertyAccessExpression
+          Identifier: ' obj3'
+          Identifier: 'value'

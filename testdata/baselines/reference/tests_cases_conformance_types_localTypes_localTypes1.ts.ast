@@ -1,0 +1,411 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      EnumDeclaration
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        A'
+        EnumMember
+          Identifier: ' B'
+        EnumMember
+          Identifier: ' C'
+      ClassDeclaration
+        Identifier: ' C'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          TypeReference
+            Identifier: ' E'
+      InterfaceDeclaration
+        Identifier: ' I'
+        PropertySignature
+          Identifier: '
+        x'
+          TypeReference
+            Identifier: ' E'
+      TypeAliasDeclaration
+        Identifier: ' A'
+        ArrayType
+          TypeReference
+            Identifier: ' I'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' A'
+            ArrayLiteralExpression
+              NewExpression
+                Identifier: ' C'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ElementAccessExpression
+              Identifier: '
+    a'
+              NumericLiteral
+            Identifier: 'x'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'B'
+      ReturnStatement
+        Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      FunctionDeclaration
+        Identifier: ' g'
+        Block
+          EnumDeclaration
+            Identifier: ' E'
+            EnumMember
+              Identifier: '
+            A'
+            EnumMember
+              Identifier: ' B'
+            EnumMember
+              Identifier: ' C'
+          ClassDeclaration
+            Identifier: ' C'
+            PropertyDeclaration
+              Identifier: '
+            x'
+              TypeReference
+                Identifier: ' E'
+          InterfaceDeclaration
+            Identifier: ' I'
+            PropertySignature
+              Identifier: '
+            x'
+              TypeReference
+                Identifier: ' E'
+          TypeAliasDeclaration
+            Identifier: ' A'
+            ArrayType
+              TypeReference
+                Identifier: ' I'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' A'
+                ArrayLiteralExpression
+                  NewExpression
+                    Identifier: ' C'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: '
+        a'
+                  NumericLiteral
+                Identifier: 'x'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' E'
+                Identifier: 'B'
+          ReturnStatement
+            Identifier: ' a'
+      ReturnStatement
+        CallExpression
+          Identifier: ' g'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          EnumDeclaration
+            Identifier: ' E'
+            EnumMember
+              Identifier: '
+            A'
+            EnumMember
+              Identifier: ' B'
+            EnumMember
+              Identifier: ' C'
+          IfStatement
+            Identifier: 'b'
+            Block
+              ClassDeclaration
+                Identifier: ' C'
+                PropertyDeclaration
+                  Identifier: '
+                x'
+                  TypeReference
+                    Identifier: ' E'
+              InterfaceDeclaration
+                Identifier: ' I'
+                PropertySignature
+                  Identifier: '
+                x'
+                  TypeReference
+                    Identifier: ' E'
+              TypeAliasDeclaration
+                Identifier: ' A'
+                ArrayType
+                  TypeReference
+                    Identifier: ' I'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' a'
+                    TypeReference
+                      Identifier: ' A'
+                    ArrayLiteralExpression
+                      NewExpression
+                        Identifier: ' C'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: '
+            a'
+                      NumericLiteral
+                    Identifier: 'x'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' E'
+                    Identifier: 'B'
+              ReturnStatement
+                Identifier: ' a'
+            Block
+              ClassDeclaration
+                Identifier: ' A'
+                PropertyDeclaration
+                  Identifier: '
+                x'
+                  TypeReference
+                    Identifier: ' E'
+              InterfaceDeclaration
+                Identifier: ' J'
+                PropertySignature
+                  Identifier: '
+                x'
+                  TypeReference
+                    Identifier: ' E'
+              TypeAliasDeclaration
+                Identifier: ' C'
+                ArrayType
+                  TypeReference
+                    Identifier: ' J'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' c'
+                    TypeReference
+                      Identifier: ' C'
+                    ArrayLiteralExpression
+                      NewExpression
+                        Identifier: ' A'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: '
+            c'
+                      NumericLiteral
+                    Identifier: 'x'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' E'
+                    Identifier: 'B'
+              ReturnStatement
+                Identifier: ' c'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z1'
+            FunctionExpression
+              Block
+                EnumDeclaration
+                  Identifier: ' E'
+                  EnumMember
+                    Identifier: '
+            A'
+                  EnumMember
+                    Identifier: ' B'
+                  EnumMember
+                    Identifier: ' C'
+                ClassDeclaration
+                  Identifier: ' C'
+                  PropertyDeclaration
+                    Identifier: '
+            x'
+                    TypeReference
+                      Identifier: ' E'
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z2'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                EnumDeclaration
+                  Identifier: ' E'
+                  EnumMember
+                    Identifier: '
+            A'
+                  EnumMember
+                    Identifier: ' B'
+                  EnumMember
+                    Identifier: ' C'
+                ClassDeclaration
+                  Identifier: ' C'
+                  PropertyDeclaration
+                    Identifier: '
+            x'
+                    TypeReference
+                      Identifier: ' E'
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Block
+        EnumDeclaration
+          Identifier: ' E'
+          EnumMember
+            Identifier: '
+            A'
+          EnumMember
+            Identifier: ' B'
+          EnumMember
+            Identifier: ' C'
+        ClassDeclaration
+          Identifier: ' C'
+          PropertyDeclaration
+            Identifier: '
+            x'
+            TypeReference
+              Identifier: ' E'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        EnumDeclaration
+          Identifier: ' E'
+          EnumMember
+            Identifier: '
+            A'
+          EnumMember
+            Identifier: ' B'
+          EnumMember
+            Identifier: ' C'
+        ClassDeclaration
+          Identifier: ' C'
+          PropertyDeclaration
+            Identifier: '
+            x'
+            TypeReference
+              Identifier: ' E'
+        ReturnStatement
+          NewExpression
+            Identifier: ' C'
+    GetAccessor
+      Identifier: ' p'
+      Block
+        EnumDeclaration
+          Identifier: ' E'
+          EnumMember
+            Identifier: '
+            A'
+          EnumMember
+            Identifier: ' B'
+          EnumMember
+            Identifier: ' C'
+        ClassDeclaration
+          Identifier: ' C'
+          PropertyDeclaration
+            Identifier: '
+            x'
+            TypeReference
+              Identifier: ' E'
+        ReturnStatement
+          NewExpression
+            Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Block
+      ClassDeclaration
+        Identifier: ' A'
+        PropertyDeclaration
+          Identifier: '
+        a'
+          StringKeyword
+      FunctionDeclaration
+        Identifier: ' g'
+        Block
+          ClassDeclaration
+            Identifier: ' B'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertyDeclaration
+              Identifier: '
+            b'
+              StringKeyword
+          FunctionDeclaration
+            Identifier: ' h'
+            Block
+              ClassDeclaration
+                Identifier: ' C'
+                HeritageClause
+                  ExpressionWithTypeArguments
+                    Identifier: ' B'
+                PropertyDeclaration
+                  Identifier: '
+                c'
+                  StringKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' x'
+                    NewExpression
+                      Identifier: ' C'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            x'
+                    Identifier: 'a'
+                  EqualsToken
+                  StringLiteral
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            x'
+                    Identifier: 'b'
+                  EqualsToken
+                  StringLiteral
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            x'
+                    Identifier: 'c'
+                  EqualsToken
+                  StringLiteral
+              ReturnStatement
+                Identifier: ' x'
+          ReturnStatement
+            CallExpression
+              Identifier: ' h'
+      ReturnStatement
+        CallExpression
+          Identifier: ' g'

@@ -1,0 +1,17 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'isConcatSpreadable'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'isConcatSpreadable'
+      StringKeyword

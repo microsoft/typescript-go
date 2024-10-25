@@ -1,0 +1,16 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Record'
+            StringKeyword
+            AnyKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a'
+      JsxAttributes

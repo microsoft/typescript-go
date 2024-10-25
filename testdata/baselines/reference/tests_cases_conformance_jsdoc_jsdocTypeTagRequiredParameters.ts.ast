@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          Parameter
+            Identifier: 'value'
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 's'
+    Block
+  FunctionDeclaration
+    Identifier: ' h'
+    Parameter
+      Identifier: 's'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // should error
+g'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // should error
+h'

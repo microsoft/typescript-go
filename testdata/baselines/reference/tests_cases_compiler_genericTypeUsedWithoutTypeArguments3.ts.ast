@@ -1,0 +1,12 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'

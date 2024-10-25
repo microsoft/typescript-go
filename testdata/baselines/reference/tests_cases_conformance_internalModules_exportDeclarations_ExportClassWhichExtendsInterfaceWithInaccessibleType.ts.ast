@@ -1,0 +1,50 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Point'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+
+        fromOrigin'
+          Parameter
+            Identifier: 'p'
+            TypeReference
+              Identifier: ' Point'
+          NumberKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Point2d'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Point'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' x'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' y'
+            NumberKeyword
+          Block
+        MethodDeclaration
+          Identifier: '
+
+        fromOrigin'
+          Parameter
+            Identifier: 'p'
+            TypeReference
+              Identifier: ' Point'
+          Block
+            ReturnStatement
+              NumericLiteral

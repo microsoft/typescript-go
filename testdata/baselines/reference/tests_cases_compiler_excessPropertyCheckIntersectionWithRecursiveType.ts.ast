@@ -1,0 +1,477 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Request'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' l1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' l2'
+            BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' Example'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' ex'
+        QuestionToken
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' Schema1'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      ParenthesizedType
+        ConditionalType
+          TypeReference
+            Identifier: 'T'
+          BooleanKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' type'
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' props'
+              MappedType
+                TypeParameter
+                  Identifier: 'P'
+                  TypeOperator
+                    TypeReference
+                      Identifier: ' T'
+                TypeReference
+                  Identifier: ' Schema1'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: 'T'
+                    TypeReference
+                      Identifier: 'P'
+      TypeReference
+        Identifier: ' Example'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' schemaObj1'
+        TypeReference
+          Identifier: ' Schema1'
+          TypeReference
+            Identifier: 'Request'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  props'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    l1'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+      props'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+        l2'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' type'
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+        invalid'
+                        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' Schema2'
+    TypeParameter
+      Identifier: 'T'
+    ParenthesizedType
+      ConditionalType
+        TypeReference
+          Identifier: 'T'
+        BooleanKeyword
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' type'
+              LiteralType
+                StringLiteral
+          TypeReference
+            Identifier: ' Example'
+            TypeReference
+              Identifier: 'T'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' props'
+              MappedType
+                TypeParameter
+                  Identifier: 'P'
+                  TypeOperator
+                    TypeReference
+                      Identifier: ' T'
+                TypeReference
+                  Identifier: ' Schema2'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: 'T'
+                    TypeReference
+                      Identifier: 'P'
+          TypeReference
+            Identifier: ' Example'
+            TypeReference
+              Identifier: 'T'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' schemaObj2'
+        TypeReference
+          Identifier: ' Schema2'
+          TypeReference
+            Identifier: 'Request'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  props'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    l1'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+      props'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+        l2'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' type'
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+        invalid'
+                        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' Schema3'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      TypeReference
+        Identifier: ' Example'
+        TypeReference
+          Identifier: 'T'
+      ParenthesizedType
+        ConditionalType
+          TypeReference
+            Identifier: 'T'
+          BooleanKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' type'
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' props'
+              MappedType
+                TypeParameter
+                  Identifier: 'P'
+                  TypeOperator
+                    TypeReference
+                      Identifier: ' T'
+                TypeReference
+                  Identifier: ' Schema3'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: 'T'
+                    TypeReference
+                      Identifier: 'P'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' schemaObj3'
+        TypeReference
+          Identifier: ' Schema3'
+          TypeReference
+            Identifier: 'Request'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  props'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    l1'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+      props'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+        l2'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' type'
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+        invalid'
+                        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' Schema4'
+    TypeParameter
+      Identifier: 'T'
+    ParenthesizedType
+      ConditionalType
+        TypeReference
+          Identifier: 'T'
+        BooleanKeyword
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' type'
+              LiteralType
+                StringLiteral
+          TypeReference
+            Identifier: ' Example'
+            TypeReference
+              Identifier: 'T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' props'
+            IntersectionType
+              TypeReference
+                Identifier: ' Example'
+                TypeReference
+                  Identifier: 'T'
+              MappedType
+                TypeParameter
+                  Identifier: 'P'
+                  TypeOperator
+                    TypeReference
+                      Identifier: ' T'
+                TypeReference
+                  Identifier: ' Schema4'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: 'T'
+                    TypeReference
+                      Identifier: 'P'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' schemaObj4'
+        TypeReference
+          Identifier: ' Schema4'
+          TypeReference
+            Identifier: 'Request'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  props'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    l1'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+      props'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+        l2'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' type'
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+        invalid'
+                        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' Length'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Prepend'
+    TypeParameter
+      Identifier: 'V'
+    TypeParameter
+      Identifier: ' T'
+      ArrayType
+        AnyKeyword
+    ConditionalType
+      ParenthesizedType
+        FunctionType
+          Parameter
+            Identifier: 'head'
+            TypeReference
+              Identifier: ' V'
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          InferType
+            TypeParameter
+              Identifier: ' R'
+        VoidKeyword
+      TypeReference
+        Identifier: ' R'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' BuildTree'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' N'
+      NumberKeyword
+      LiteralType
+        PrefixUnaryExpression
+          NumericLiteral
+    TypeParameter
+      Identifier: ' I'
+      ArrayType
+        AnyKeyword
+      TupleType
+    IndexedAccessType
+      TypeLiteral
+        PropertySignature
+          NumericLiteral
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          NumericLiteral
+          IntersectionType
+            TypeReference
+              Identifier: ' T'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' children'
+                ArrayType
+                  TypeReference
+                    Identifier: ' BuildTree'
+                    TypeReference
+                      Identifier: 'T'
+                    TypeReference
+                      Identifier: ' N'
+                    TypeReference
+                      Identifier: ' Prepend'
+                      AnyKeyword
+                      TypeReference
+                        Identifier: ' I'
+      ConditionalType
+        TypeReference
+          Identifier: 'Length'
+          TypeReference
+            Identifier: 'I'
+        TypeReference
+          Identifier: ' N'
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' User'
+    PropertySignature
+      Identifier: '
+  name'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' GrandUser'
+    TypeReference
+      Identifier: ' BuildTree'
+      TypeReference
+        Identifier: 'User'
+      LiteralType
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' grandUser'
+        TypeReference
+          Identifier: ' GrandUser'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+  children'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+      name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+      children'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+          name'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+          children'
+                        ArrayLiteralExpression
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+              name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+              children'
+                              ArrayLiteralExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                  name'
+                                    StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        ElementAccessExpression
+          PropertyAccessExpression
+            ElementAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+
+grandUser'
+                Identifier: 'children'
+              NumericLiteral
+            Identifier: 'children'
+          NumericLiteral
+        Identifier: 'children'
+      NumericLiteral

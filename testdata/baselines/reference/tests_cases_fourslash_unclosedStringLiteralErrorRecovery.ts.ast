@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////"an unclosed string is a terrible thing!
+////
+////class foo { public x() { } }
+////var f = new foo();
+////f./**/
+
+// Error recovery for unclosed string literals
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral

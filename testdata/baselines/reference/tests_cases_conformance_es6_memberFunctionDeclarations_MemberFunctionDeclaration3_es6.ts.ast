@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      AsteriskToken
+      ComputedPropertyName
+        Identifier: 'foo'
+      Block

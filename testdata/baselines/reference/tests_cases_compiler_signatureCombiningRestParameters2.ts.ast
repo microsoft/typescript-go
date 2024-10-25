@@ -1,0 +1,52 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Console'
+    MethodSignature
+      Identifier: '
+  log'
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        AnyKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'optionalParams'
+        ArrayType
+          AnyKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' logs'
+        ArrayType
+          StringKeyword
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' originalLog'
+        TypeQuery
+          QualifiedName
+            Identifier: ' console'
+            Identifier: 'log'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+  logs'
+                Identifier: 'push'
+              SpreadElement
+                Identifier: 'args'

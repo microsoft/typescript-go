@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyClass'
+    PropertyDeclaration
+      ComputedPropertyName
+        BinaryExpression
+          Identifier: ''
+          BarBarToken
+          Identifier: ''
+  IfStatement
+    FalseKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' MyClass'
+  IfStatement
+    FalseKeyword
+    Block
+      ReturnStatement
+        StringLiteral

@@ -1,0 +1,9 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'unscopables'
+      StringKeyword

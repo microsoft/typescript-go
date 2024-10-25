@@ -1,0 +1,21 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Host'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' Host'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Worker'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' Worker'

@@ -1,0 +1,84 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+// @allowNonTsExtensions: true
+
+// @Filename: file1.js
+
+////var file1Identifier = 1;
+////interface Foo { FooProp: number };
+
+// @Filename: file2.js
+
+////var file2Identifier1 = 2;
+////var file2Identifier2 = 2;
+/////*1*/
+////file2Identifier2./*2*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'GlobalsOrKeywords'
+        PropertyAssignment
+          Identifier: '
+        excludes'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'JavascriptIdentifiers'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'JavascriptIdentifiers'
+        PropertyAssignment
+          Identifier: '
+        excludes'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral

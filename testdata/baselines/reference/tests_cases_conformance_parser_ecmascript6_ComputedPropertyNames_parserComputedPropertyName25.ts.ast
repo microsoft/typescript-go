@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'e'
+      BinaryExpression
+        ElementAccessExpression
+          NumericLiteral
+          Identifier: 'e2'
+        EqualsToken
+        NumericLiteral

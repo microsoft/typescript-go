@@ -1,0 +1,41 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// GH#35372
+
+// @jsx: preserve
+// @filename: main.tsx
+////function foo() {
+////    return <div>/*a*/<a>content</a>/*b*/</div>;
+////}
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newContent'
+          NoSubstitutionTemplateLiteral

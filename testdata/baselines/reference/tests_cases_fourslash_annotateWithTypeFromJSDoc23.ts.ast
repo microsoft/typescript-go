@@ -1,0 +1,40 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+// @strict: true
+/////**
+//// * @typedef Foo
+//// * @template L, R
+//// */
+/////**
+//// * @param {function(R): boolean} a
+//// * @param {function(R): L} b
+//// * @returns {function(R): Foo.<L, R>}
+//// * @template L, R
+//// */
+////function foo(a, b) {
+////}
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Annotate_with_type_from_JSDoc'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noUnusedLocals: true
+////class C {
+////    private "string" (){}
+////}
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          StringLiteral

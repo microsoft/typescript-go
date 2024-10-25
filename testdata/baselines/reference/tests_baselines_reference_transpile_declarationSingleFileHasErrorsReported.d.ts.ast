@@ -1,0 +1,167 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' string'
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' string'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+//// [Diagnostics reported]
+declarationSingleFileHasErrorsReported'
+        Identifier: 'ts'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9010'
+    ExpressionStatement
+      Identifier: ' Variable'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' with'
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationSingleFileHasErrorsReported'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS1005'
+    ExpressionStatement
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' expected'
+        Identifier: ''
+      EqualsEqualsEqualsToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' declarationSingleFileHasErrorsReported'
+          Identifier: 'ts'
+        NumericLiteral
+        Identifier: ' errors'
+      EqualsEqualsEqualsToken
+      Identifier: ''
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' string'
+        StringLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9010'
+    ExpressionStatement
+      Identifier: ' Variable'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' with'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' declarationSingleFileHasErrorsReported'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' a'
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS1005'
+    ExpressionStatement
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' expected'
+      Identifier: ''

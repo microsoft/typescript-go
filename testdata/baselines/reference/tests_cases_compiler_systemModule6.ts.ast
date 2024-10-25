@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        NewExpression
+          Identifier: ' C'

@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'nonsense'
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+obj'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+
+obj'
+      PropertyAccessExpression
+        Identifier: 'Symbol'
+        Identifier: 'nonsense'

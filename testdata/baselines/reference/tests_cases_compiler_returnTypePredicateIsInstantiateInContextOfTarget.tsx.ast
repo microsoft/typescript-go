@@ -1,0 +1,60 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' TestComponent'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' isAny'
+            FunctionType
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'obj'
+                AnyKeyword
+              TypePredicate
+                Identifier: ' obj'
+                TypeReference
+                  Identifier: ' T'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' defaultProps'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        isAny'
+          PropertyAccessExpression
+            Identifier: ' TestComponent'
+            Identifier: 'isAny'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' isAny'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'obj'
+        AnyKeyword
+      TypePredicate
+        Identifier: ' obj'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ReturnStatement
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TestRender'
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'TestComponent'
+            JsxAttributes

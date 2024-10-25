@@ -1,0 +1,121 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      Decorator
+        Identifier: 'dec'
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+    SetAccessor
+      Decorator
+        Identifier: 'dec'
+      Identifier: ' x'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      Identifier: '
+    y'
+      NumberKeyword
+    MethodDeclaration
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      Identifier: ' method'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+    SetAccessor
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      Identifier: ' x'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      Identifier: ' y'
+      NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      ClassExpression
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' C'
+        Constructor
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Block
+        MethodDeclaration
+          Decorator
+            Identifier: 'dec'
+          Identifier: '
+    method'
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Block
+        SetAccessor
+          Decorator
+            Identifier: 'dec'
+          Identifier: ' x'
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Block
+        PropertyDeclaration
+          Decorator
+            Identifier: 'dec'
+          Identifier: '
+    y'
+          NumberKeyword
+        MethodDeclaration
+          Decorator
+            Identifier: 'dec'
+          StaticKeyword
+          Identifier: ' method'
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Block
+        SetAccessor
+          Decorator
+            Identifier: 'dec'
+          StaticKeyword
+          Identifier: ' x'
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Block
+        PropertyDeclaration
+          Decorator
+            Identifier: 'dec'
+          StaticKeyword
+          Identifier: ' y'
+          NumberKeyword

@@ -1,0 +1,42 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+      PrefixUnaryExpression
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' A'
+        LiteralType
+          NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' B'
+        LiteralType
+          NumericLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' A'
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' X'
+            Identifier: 'f'

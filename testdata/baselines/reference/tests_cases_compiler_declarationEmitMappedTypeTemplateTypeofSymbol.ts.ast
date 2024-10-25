@@ -1,0 +1,55 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' timestampSymbol'
+        TypeOperator
+          SymbolKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Timestamp'
+        MappedType
+          TypeParameter
+            Identifier: 'TKey'
+            TypeQuery
+              Identifier: ' timestampSymbol'
+          LiteralType
+            TrueKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' now'
+    TypeQuery
+      Identifier: ' Timestamp'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' x'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' timestamp'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'now'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' now'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' timestamp'
+        CallExpression
+          Identifier: ' now'

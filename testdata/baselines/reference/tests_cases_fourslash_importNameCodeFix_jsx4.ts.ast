@@ -1,0 +1,57 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @jsx: react
+// @module: esnext
+// @esModuleInterop: true
+// @moduleResolution: node
+
+// @Filename: /node_modules/react/index.d.ts
+////export = React;
+////export as namespace React;
+////declare namespace React {
+////    class Component {}
+////}
+
+// @Filename: /node_modules/react-native/index.d.ts
+////import * as React from "react";
+////export class Text extends React.Component {};
+
+// @Filename: /a.tsx
+////import { Text } from "react-native";
+////<Text></Text>;
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Import_0_from_1'
+              Identifier: 'message'
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

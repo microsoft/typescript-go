@@ -1,0 +1,249 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' test'
+            Parameter
+              Identifier: 'description'
+              StringKeyword
+            Parameter
+              Identifier: ' source'
+              StringKeyword
+            Parameter
+              Identifier: ' verifier'
+              FunctionType
+                Parameter
+                  Identifier: 'file'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'SourceFile'
+                Parameter
+                  Identifier: ' checker'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'TypeChecker'
+                VoidKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        it'
+                  Identifier: 'description'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' result'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' Harness'
+                                  Identifier: 'Compiler'
+                                Identifier: 'compileFiles'
+                              ArrayLiteralExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    unitName'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                    content'
+                                    Identifier: ' source'
+                              ArrayLiteralExpression
+                              ObjectLiteralExpression
+                              ObjectLiteralExpression
+                              StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' file'
+                            NonNullExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  NonNullExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' result'
+                                      Identifier: 'program'
+                                  Identifier: 'getSourceFile'
+                                StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' checker'
+                            CallExpression
+                              PropertyAccessExpression
+                                NonNullExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' result'
+                                    Identifier: 'program'
+                                Identifier: 'getTypeChecker'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifier'
+                          Identifier: 'file'
+                          Identifier: ' checker'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    test'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                Parameter
+                  Identifier: 'file'
+                Parameter
+                  Identifier: ' checker'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' foundCount'
+                        NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' stdLibRefSymbols'
+                        NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' expectedSymbols'
+                        ArrayLiteralExpression
+                          StringLiteral
+                          StringLiteral
+                          StringLiteral
+                          StringLiteral
+                          StringLiteral
+                          StringLiteral
+                          StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' walker'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' checker'
+                            Identifier: 'getSymbolWalker'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'symbol'
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' isStdLibSymbol'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'forEach'
+                                      PropertyAccessExpression
+                                        Identifier: 'symbol'
+                                        Identifier: 'declarations'
+                                      ArrowFunction
+                                        Parameter
+                                          Identifier: ' d'
+                                        EqualsGreaterThanToken
+                                        Block
+                                          ReturnStatement
+                                            PropertyAccessExpression
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' ts'
+                                                  Identifier: 'getSourceFileOfNode'
+                                                Identifier: 'd'
+                                              Identifier: 'hasNoDefaultLib'
+                              IfStatement
+                                Identifier: 'isStdLibSymbol'
+                                Block
+                                  ExpressionStatement
+                                    PostfixUnaryExpression
+                                      Identifier: '
+                    stdLibRefSymbols'
+                                  ReturnStatement
+                                    FalseKeyword
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'equal'
+                                  PropertyAccessExpression
+                                    Identifier: 'symbol'
+                                    Identifier: 'name'
+                                  ElementAccessExpression
+                                    Identifier: ' expectedSymbols'
+                                    Identifier: 'foundCount'
+                              ExpressionStatement
+                                PostfixUnaryExpression
+                                  Identifier: '
+                foundCount'
+                              ReturnStatement
+                                TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' symbols'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' checker'
+                            Identifier: 'getExportsOfModule'
+                          PropertyAccessExpression
+                            Identifier: 'file'
+                            Identifier: 'symbol'
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' symbol'
+                    Identifier: ' symbols'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                walker'
+                            Identifier: 'walkSymbol'
+                          Identifier: 'symbol'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            assert'
+                        Identifier: 'equal'
+                      Identifier: 'foundCount'
+                      PropertyAccessExpression
+                        Identifier: ' expectedSymbols'
+                        Identifier: 'length'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            assert'
+                        Identifier: 'equal'
+                      Identifier: 'stdLibRefSymbols'
+                      NumericLiteral

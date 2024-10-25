@@ -1,0 +1,25 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' PropDeco'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' Object'
+    Parameter
+      Identifier: ' propKey'
+      UnionType
+        StringKeyword
+        SymbolKeyword
+    Block
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'PropDeco'
+      PublicKeyword
+      Identifier: ' foo'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral

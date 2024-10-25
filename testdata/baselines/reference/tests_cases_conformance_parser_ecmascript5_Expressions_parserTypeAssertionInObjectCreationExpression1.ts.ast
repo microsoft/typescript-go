@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NewExpression
+          Identifier: ''
+        LessThanToken
+        Identifier: 'T'
+      GreaterThanToken
+      CallExpression
+        Identifier: 'Foo'

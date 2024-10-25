@@ -1,0 +1,6 @@
+SourceFile
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Date'
+      TypeReference
+        Identifier: 'A'

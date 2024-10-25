@@ -1,0 +1,37 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Number'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Comparable'
+        NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    compareTo'
+      Parameter
+        Identifier: 'other'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+Number'
+          Identifier: 'prototype'
+        Identifier: 'compareTo'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'other'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'valueOf'
+              EqualsEqualsToken
+              Identifier: ' other'

@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      AsteriskToken
+      Identifier: ' foo'
+      Block

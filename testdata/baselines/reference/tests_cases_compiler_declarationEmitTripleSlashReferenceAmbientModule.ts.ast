@@ -1,0 +1,48 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Url'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' parse'
+        TypeReference
+          Identifier: ' Url'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' parse'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' parse'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thing'
+        ImportType
+          LiteralType
+            StringLiteral
+          Identifier: 'Url'
+        CallExpression
+          Identifier: ' parse'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' parse'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thing'
+        CallExpression
+          Identifier: ' parse'

@@ -1,0 +1,133 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' AssignmentExpression'
+        ImportSpecifier
+          Identifier: ' Block'
+        ImportSpecifier
+          Identifier: ' ClassLikeDeclaration'
+        ImportSpecifier
+          Identifier: ' ClassStaticBlockDeclaration'
+        ImportSpecifier
+          Identifier: ' EqualsToken'
+        ImportSpecifier
+          Identifier: ' ExpressionStatement'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' NodeArray'
+        ImportSpecifier
+          Identifier: ' NodeFactory'
+        ImportSpecifier
+          Identifier: ' Statement'
+        ImportSpecifier
+          Identifier: ' ThisExpression'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ClassThisAssignmentBlock'
+    IntersectionType
+      TypeReference
+        Identifier: ' ClassStaticBlockDeclaration'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' body'
+          IntersectionType
+            TypeReference
+              Identifier: ' Block'
+            TypeLiteral
+              PropertySignature
+                ReadonlyKeyword
+                Identifier: ' statements'
+                IntersectionType
+                  TypeReference
+                    Identifier: ' NodeArray'
+                    TypeReference
+                      Identifier: 'Statement'
+                  TypeOperator
+                    TupleType
+                      IntersectionType
+                        TypeReference
+                          Identifier: '
+            ExpressionStatement'
+                        TypeLiteral
+                          PropertySignature
+                            ReadonlyKeyword
+                            Identifier: ' expression'
+                            IntersectionType
+                              TypeReference
+                                Identifier: ' AssignmentExpression'
+                                TypeReference
+                                  Identifier: 'EqualsToken'
+                              TypeLiteral
+                                PropertySignature
+                                  ReadonlyKeyword
+                                  Identifier: ' left'
+                                  TypeReference
+                                    Identifier: ' Identifier'
+                                PropertySignature
+                                  ReadonlyKeyword
+                                  Identifier: ' right'
+                                  TypeReference
+                                    Identifier: ' ThisExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isClassThisAssignmentBlock'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ClassThisAssignmentBlock'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' classHasClassThisAssignment'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' injectClassThisAssignmentIfMissing'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+    Parameter
+      Identifier: 'factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' classThis'
+      TypeReference
+        Identifier: ' Identifier'
+    Parameter
+      Identifier: ' thisExpression'
+      QuestionToken
+      TypeReference
+        Identifier: ' ThisExpression'
+    TypeReference
+      Identifier: ' Extract'
+      TypeReference
+        Identifier: 'ClassLikeDeclaration'
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'T'
+        LiteralType
+          StringLiteral

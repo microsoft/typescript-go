@@ -1,0 +1,9 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        DeclareKeyword
+        StringLiteral
+        ModuleBlock

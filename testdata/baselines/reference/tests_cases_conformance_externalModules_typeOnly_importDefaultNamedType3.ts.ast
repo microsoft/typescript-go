@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  ImportEqualsDeclaration
+    Identifier: ' from'
+    ExternalModuleReference
+      StringLiteral

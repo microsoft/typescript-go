@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'arr'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' depth'
+      NumberKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' arr'
+            Identifier: 'flat'
+          Identifier: 'depth'

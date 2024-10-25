@@ -1,0 +1,35 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////const x = [1,2,3].map(/*a*/x => x + 1/*b*/);
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newContent'
+          NoSubstitutionTemplateLiteral

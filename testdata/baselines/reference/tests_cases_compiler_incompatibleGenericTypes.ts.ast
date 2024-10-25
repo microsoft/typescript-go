@@ -1,0 +1,39 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+
+  m1'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            Identifier: 'p'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' I1'
+        TypeReference
+          Identifier: 'U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        TypeReference
+          Identifier: ' I1'
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        TypeReference
+          Identifier: ' I1'
+          NumberKeyword
+        Identifier: ' v1'

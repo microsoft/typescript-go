@@ -1,0 +1,97 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            StringKeyword
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            TypeReference
+              Identifier: ' T'
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            TypeReference
+              Identifier: ' T'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          EqualsGreaterThanToken
+          Identifier: ' x'

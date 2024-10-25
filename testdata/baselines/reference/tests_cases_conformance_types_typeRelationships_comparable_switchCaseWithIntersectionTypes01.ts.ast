@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strAndNum'
+        IntersectionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numAndBool'
+        IntersectionType
+          NumberKeyword
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bool'
+        BooleanKeyword
+  SwitchStatement
+    Identifier: 'strAndNum'
+    CaseBlock
+      CaseClause
+        Identifier: ' strAndNum'
+        BreakStatement
+      CaseClause
+        Identifier: ' str'
+      CaseClause
+        Identifier: ' num'
+        BreakStatement
+      CaseClause
+        Identifier: ' numAndBool'
+        BreakStatement
+      CaseClause
+        Identifier: ' bool'
+        BreakStatement

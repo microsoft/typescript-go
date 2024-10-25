@@ -1,0 +1,45 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @checkJs: true
+// @target: es5
+// @outDir: ./out
+// @declaration: true
+// @filename: source.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' MyClass'
+  FunctionDeclaration
+    Identifier: ' MyClass'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+MyClass'
+        Identifier: 'staticMethod'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+MyClass'
+          Identifier: 'prototype'
+        Identifier: 'method'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+MyClass'
+        Identifier: 'staticProperty'
+      EqualsToken
+      NumericLiteral

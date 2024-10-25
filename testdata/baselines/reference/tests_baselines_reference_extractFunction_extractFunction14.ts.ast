@@ -1,0 +1,169 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't1'
+      TypeReference
+        Identifier: ' T'
+    Block
+      FunctionDeclaration
+        Identifier: ' G'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 't2'
+          TypeReference
+            Identifier: ' T'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        /*[#|*/t1'
+                Identifier: 'toString'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        t2'
+                Identifier: 'toString'
+  FunctionDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't1'
+      TypeReference
+        Identifier: ' T'
+    Block
+      FunctionDeclaration
+        Identifier: ' G'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 't2'
+          TypeReference
+            Identifier: ' T'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        /*RENAME*/newFunction'
+          FunctionDeclaration
+            Identifier: ' newFunction'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            t1'
+                    Identifier: 'toString'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            t2'
+                    Identifier: 'toString'
+  FunctionDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't1'
+      TypeReference
+        Identifier: ' T'
+    Block
+      FunctionDeclaration
+        Identifier: ' G'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 't2'
+          TypeReference
+            Identifier: ' T'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        /*RENAME*/newFunction'
+              TypeReference
+                Identifier: 'T'
+              Identifier: 't2'
+      FunctionDeclaration
+        Identifier: ' newFunction'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 't2'
+          TypeReference
+            Identifier: ' T'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        t1'
+                Identifier: 'toString'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        t2'
+                Identifier: 'toString'
+  FunctionDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't1'
+      TypeReference
+        Identifier: ' T'
+    Block
+      FunctionDeclaration
+        Identifier: ' G'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 't2'
+          TypeReference
+            Identifier: ' T'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        /*RENAME*/newFunction'
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' T'
+              Identifier: 't1'
+              Identifier: ' t2'
+  FunctionDeclaration
+    Identifier: ' newFunction'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' T'
+    Parameter
+      Identifier: 't1'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' t2'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    t1'
+            Identifier: 'toString'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    t2'
+            Identifier: 'toString'

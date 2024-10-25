@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+A'
+        Identifier: 'hasOwnProperty'
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    Constructor
+      Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+B'
+        Identifier: 'hasOwnProperty'
+      StringLiteral

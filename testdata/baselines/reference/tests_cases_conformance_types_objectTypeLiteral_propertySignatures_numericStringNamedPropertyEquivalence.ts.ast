@@ -1,0 +1,45 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StringLiteral
+      NumberKeyword
+    PropertyDeclaration
+      StringLiteral
+      NumberKeyword
+    PropertyDeclaration
+      NumericLiteral
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      StringLiteral
+      NumberKeyword
+    PropertySignature
+      StringLiteral
+      NumberKeyword
+    PropertySignature
+      NumericLiteral
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            StringLiteral
+            NumberKeyword
+          PropertySignature
+            NumericLiteral
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral

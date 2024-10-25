@@ -1,0 +1,63 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ListProps'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    PropertySignature
+      Identifier: '
+  items'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    PropertySignature
+      Identifier: '
+  itemKey'
+      TypeReference
+        Identifier: ' K'
+    PropertySignature
+      Identifier: '
+  prop'
+      NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Component'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' K'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' ListProps'
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' K'
+          VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+Component'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'items'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'name'
+                StringLiteral
+        PropertyAssignment
+          Identifier: ' itemKey'
+          StringLiteral

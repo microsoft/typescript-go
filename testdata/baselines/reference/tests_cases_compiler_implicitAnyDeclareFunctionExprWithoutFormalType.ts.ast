@@ -1,0 +1,94 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambda'
+        ArrowFunction
+          Parameter
+            Identifier: 'l1'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambd2'
+        ArrowFunction
+          Parameter
+            Identifier: 'll1'
+          Parameter
+            Identifier: ' ll2'
+            StringKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lamda3'
+        FunctionExpression
+          Identifier: ' myLambda3'
+          Parameter
+            Identifier: 'myParam'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lamda4'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambda5'
+        FunctionExpression
+          Identifier: ' temp'
+          Block
+            ReturnStatement
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambda6'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambda7'
+        FunctionExpression
+          Identifier: ' temp'
+          Block
+            ReturnStatement
+              Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambda8'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambda9'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambda10'
+        FunctionExpression
+          Identifier: ' temp1'
+          Block
+            ReturnStatement
+              NumericLiteral

@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' D'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral

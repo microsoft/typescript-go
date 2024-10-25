@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' A'

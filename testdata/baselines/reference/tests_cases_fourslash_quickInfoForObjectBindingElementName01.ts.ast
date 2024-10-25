@@ -1,0 +1,24 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////interface I {
+////    property1: number;
+////    property2: string;
+////}
+////
+////var foo: I;
+////var { /**/property1 } = foo;
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

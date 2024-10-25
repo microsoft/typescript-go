@@ -1,0 +1,10 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' foo'
+    ExternalModuleReference
+      Identifier: 'x'

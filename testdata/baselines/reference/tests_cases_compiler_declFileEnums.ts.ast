@@ -1,0 +1,76 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' e1'
+    EnumMember
+      Identifier: '
+    a'
+    EnumMember
+      Identifier: '
+    b'
+    EnumMember
+      Identifier: '
+    c'
+  EnumDeclaration
+    Identifier: ' e2'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+      BinaryExpression
+        Identifier: ' a'
+        PlusToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    c'
+      NumericLiteral
+  EnumDeclaration
+    Identifier: ' e3'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+      PropertyAccessExpression
+        Identifier: ' Math'
+        Identifier: 'PI'
+    EnumMember
+      Identifier: '
+    c'
+      BinaryExpression
+        Identifier: ' a'
+        PlusToken
+        NumericLiteral
+  EnumDeclaration
+    Identifier: ' e4'
+    EnumMember
+      Identifier: '
+    a'
+    EnumMember
+      Identifier: '
+    b'
+    EnumMember
+      Identifier: '
+    c'
+    EnumMember
+      Identifier: '
+    d'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    e'
+  EnumDeclaration
+    Identifier: ' e5'
+    EnumMember
+      StringLiteral
+    EnumMember
+      StringLiteral
+    EnumMember
+      StringLiteral
+    EnumMember
+      StringLiteral

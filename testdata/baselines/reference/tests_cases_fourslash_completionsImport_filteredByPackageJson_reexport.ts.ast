@@ -1,0 +1,113 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//@noEmit: true
+
+//@Filename: /package.json
+////{
+////  "dependencies": {
+////    "@emotion/core": "*"
+////  }
+////}
+
+//@Filename: /node_modules/@emotion/css/index.d.ts
+////export declare const css: any;
+////const css2: any;
+////export { css2 };
+
+//@Filename: /node_modules/@emotion/css/package.json
+////{
+////  "name": "@emotion/css",
+////  "types": "./index.d.ts"
+////}
+
+//@Filename: /node_modules/@emotion/core/index.d.ts
+////import { css2 } from "@emotion/css";
+////export { css } from "@emotion/css";
+////export { css2 };
+
+//@Filename: /node_modules/@emotion/core/package.json
+////{
+////  "name": "@emotion/core",
+////  "types": "./index.d.ts"
+////}
+
+//@Filename: /src/index.ts
+////cs/**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'marker'
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              Identifier: '
+    completion'
+              Identifier: 'undefinedVarEntry'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+      name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+      sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'AutoImportSuggestions'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+      name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+      sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'AutoImportSuggestions'
+            SpreadElement
+              PropertyAccessExpression
+                Identifier: 'completion'
+                Identifier: 'statementKeywordsWithTypes'
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword

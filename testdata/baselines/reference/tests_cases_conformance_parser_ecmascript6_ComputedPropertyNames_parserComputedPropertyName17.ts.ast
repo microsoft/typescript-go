@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          SetAccessor
+            ComputedPropertyName
+              Identifier: 'e'
+            Parameter
+              Identifier: 'v'
+            Block

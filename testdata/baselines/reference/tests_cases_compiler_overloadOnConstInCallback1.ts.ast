@@ -1,0 +1,51 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    x1'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Parameter
+        Identifier: ' callback'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            LiteralType
+              StringLiteral
+          NumberKeyword
+    MethodDeclaration
+      Identifier: ' // error
+    x1'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Parameter
+        Identifier: ' callback'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            AnyKeyword
+          NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        callback'
+            StringLiteral
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        callback'
+            StringLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' hm'
+              StringLiteral
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        callback'
+            Identifier: 'hm'

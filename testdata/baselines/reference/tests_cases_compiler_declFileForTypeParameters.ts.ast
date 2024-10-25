@@ -1,0 +1,24 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'

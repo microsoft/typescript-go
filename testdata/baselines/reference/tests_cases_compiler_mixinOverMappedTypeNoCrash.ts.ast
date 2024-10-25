@@ -1,0 +1,86 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ClassInterface'
+    TypeParameter
+      Identifier: 'C'
+    MappedType
+      TypeParameter
+        Identifier: 'key'
+        TypeOperator
+          TypeReference
+            Identifier: ' C'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' C'
+        TypeReference
+          Identifier: 'key'
+  TypeAliasDeclaration
+    Identifier: ' InstanceInterface'
+    TypeParameter
+      Identifier: 'I'
+    TypeLiteral
+      ConstructSignature
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        TypeReference
+          Identifier: ' I'
+      PropertySignature
+        Identifier: '
+    prototype'
+        TypeReference
+          Identifier: ' I'
+  TypeAliasDeclaration
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'I'
+      TypeReference
+        Identifier: ' Object'
+    TypeParameter
+      Identifier: ' C'
+      AnyKeyword
+    IntersectionType
+      TypeReference
+        Identifier: ' ClassInterface'
+        TypeReference
+          Identifier: 'C'
+      TypeReference
+        Identifier: ' InstanceInterface'
+        TypeReference
+          Identifier: 'I'
+  FunctionDeclaration
+    Identifier: ' cloneClass'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Constructor'
+        TypeLiteral
+    Parameter
+      Identifier: 'OriginalClass'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ClassDeclaration
+        Identifier: ' AnotherOriginalClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' OriginalClass'
+        Constructor
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                SpreadElement
+                  Identifier: 'args'
+      ReturnStatement
+        Identifier: ' AnotherOriginalClass'

@@ -1,0 +1,20 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' let'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+  Block
+    ForOfStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' let'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+      Block

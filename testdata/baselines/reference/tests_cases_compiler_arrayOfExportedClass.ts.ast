@@ -1,0 +1,39 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Car'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+  ExportAssignment
+    Identifier: ' Car'
+  ImportEqualsDeclaration
+    Identifier: ' Car'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' Road'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' cars'
+      ArrayType
+        TypeReference
+          Identifier: ' Car'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' AddCars'
+      Parameter
+        Identifier: 'cars'
+        ArrayType
+          TypeReference
+            Identifier: ' Car'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'cars'
+            EqualsToken
+            Identifier: ' cars'
+  ExportAssignment
+    Identifier: ' Road'

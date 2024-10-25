@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  SwitchStatement
+    TrueKeyword
+    CaseBlock
+      CaseClause
+        BinaryExpression
+          Identifier: ' f'
+          EqualsEqualsEqualsToken
+          StringLiteral
+      DefaultClause
+        ExpressionStatement
+          Identifier: '
+    f'
+      CaseClause
+        BinaryExpression
+          Identifier: ' f'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        ExpressionStatement
+          Identifier: '
+    f'

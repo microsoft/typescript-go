@@ -1,0 +1,89 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' address'
+    StringKeyword
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' nullthrows'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    AnyKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' nullthrows'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: 'nullthrows'
+            Identifier: ' default'
+  ExportAssignment
+    Identifier: ' nullthrows'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ip'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' nullthrows'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getAddress'
+    StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' nullthrows'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ip'
+              Identifier: 'address'

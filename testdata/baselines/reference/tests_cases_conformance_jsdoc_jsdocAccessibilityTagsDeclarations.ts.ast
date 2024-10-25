@@ -1,0 +1,93 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Protected'
+    Constructor
+      Parameter
+        Identifier: 'c'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            EqualsToken
+            Identifier: ' c'
+    MethodDeclaration
+      Identifier: '
+    /** @protected */
+    m'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'c'
+    GetAccessor
+      Identifier: ' p'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'c'
+    SetAccessor
+      Identifier: ' p'
+      Parameter
+        Identifier: 'value'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            EqualsToken
+            Identifier: ' value'
+  ClassDeclaration
+    Identifier: ' Private'
+    Constructor
+      Parameter
+        Identifier: 'c'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            EqualsToken
+            Identifier: ' c'
+    MethodDeclaration
+      Identifier: '
+    /** @private */
+    m'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'c'
+    GetAccessor
+      Identifier: ' p'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'c'
+    SetAccessor
+      Identifier: ' p'
+      Parameter
+        Identifier: 'value'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            EqualsToken
+            Identifier: ' value'
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: '/** @public */ x'
+      Parameter
+        Identifier: ' /** @protected */ y'
+      Parameter
+        Identifier: ' /** @private */ z'
+      Block

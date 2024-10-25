@@ -1,0 +1,150 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BinaryExpression
+          NumericLiteral
+          AsteriskAsteriskToken
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BinaryExpression
+          NumericLiteral
+          AsteriskAsteriskToken
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        BinaryExpression
+          NumericLiteral
+          AsteriskAsteriskToken
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        BinaryExpression
+          NumericLiteral
+          AsteriskAsteriskToken
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        BinaryExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+          AsteriskAsteriskToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        BinaryExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+          AsteriskAsteriskToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        BinaryExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+          AsteriskAsteriskToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        BinaryExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+          AsteriskAsteriskToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+k'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        NumericLiteral
+        TemplateTail
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+k'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        NumericLiteral
+        TemplateTail
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+k'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        NumericLiteral
+        TemplateTail
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+k'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        NumericLiteral
+        TemplateTail

@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Thing'
+    NumberKeyword
+  ExportAssignment
+    Identifier: ' Thing'
+  NamespaceExportDeclaration
+    Identifier: ' Foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumberKeyword
+        CallExpression
+          Identifier: ' Foo'

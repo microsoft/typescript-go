@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    SetAccessor
+      Identifier: ' foo'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'v'
+      Block

@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ConstructorType
+          VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+f'
+        Identifier: 'arguments'
+      EqualsEqualsToken
+      NumericLiteral

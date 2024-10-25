@@ -1,0 +1,94 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' LengthDown'
+    TypeParameter
+      Identifier: '
+  Str'
+      StringKeyword
+    TypeParameter
+      Identifier: '
+  Length'
+      UnionType
+        NumberKeyword
+        BigIntKeyword
+    TypeParameter
+      Identifier: '
+  It'
+    ConditionalType
+      TypeReference
+        Identifier: ' It'
+      TypeReference
+        QualifiedName
+          Identifier: ' StrIter'
+          Identifier: 'Iterator'
+      ConditionalType
+        TypeReference
+          QualifiedName
+            Identifier: ' StrIter'
+            Identifier: 'CutAt'
+          TypeReference
+            Identifier: 'Str'
+          TypeReference
+            Identifier: ' It'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' $Rest'
+            TemplateTail
+        TypeReference
+          Identifier: ' LengthDown'
+          TypeReference
+            Identifier: '$Rest'
+          TypeReference
+            Identifier: ' Add'
+            TypeReference
+              Identifier: 'Length'
+            TypeReference
+              QualifiedName
+                Identifier: ' StrIter'
+                Identifier: 'Value'
+              TypeReference
+                Identifier: 'It'
+          TypeReference
+            Identifier: ' It'
+        TypeReference
+          Identifier: ' LengthDown'
+          TypeReference
+            Identifier: 'Str'
+          TypeReference
+            Identifier: ' Length'
+          TypeReference
+            QualifiedName
+              Identifier: ' StrIter'
+              Identifier: 'Prev'
+            TypeReference
+              Identifier: 'It'
+      TypeReference
+        Identifier: ' Length'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      UnknownKeyword
+      ConditionalType
+        UnknownKeyword
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' $Rest'
+            TemplateTail
+        TypeReference
+          Identifier: ' Foo'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' Foo'
+          UnknownKeyword
+      UnknownKeyword

@@ -1,0 +1,36 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' c'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' types'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'c'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // Fails as expected, import is still allowed though.
+console'
+        Identifier: 'log'
+      PropertyAccessExpression
+        Identifier: 'types'
+        Identifier: 'c'
+  ExportDeclaration
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NumericLiteral

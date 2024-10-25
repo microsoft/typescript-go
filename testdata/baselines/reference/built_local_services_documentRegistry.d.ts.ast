@@ -1,0 +1,486 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' CreateSourceFileOptions'
+        ImportSpecifier
+          Identifier: ' IScriptSnapshot'
+        ImportSpecifier
+          Identifier: ' JSDocParsingMode'
+        ImportSpecifier
+          Identifier: ' MinimalResolutionCacheHost'
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' ResolutionMode'
+        ImportSpecifier
+          Identifier: ' ScriptKind'
+        ImportSpecifier
+          Identifier: ' ScriptTarget'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DocumentRegistry'
+    MethodSignature
+      Identifier: '
+    /**
+     * Request a stored SourceFile with a given fileName and compilationSettings.
+     * The first call to acquire will call createLanguageServiceSourceFile to generate
+     * the SourceFile if was not found in the registry.
+     *
+     * @param fileName The name of the file requested
+     * @param compilationSettingsOrHost Some compilation settings like target affects the
+     * shape of a the resulting SourceFile. This allows the DocumentRegistry to store
+     * multiple copies of the same file for different compilation settings. A minimal
+     * resolution cache is needed to fully define a source file's shape when
+     * the compilation settings include `module: node16`+, so providing a cache host
+     * object should be preferred. A common host is a language service `ConfiguredProject`.
+     * @param scriptSnapshot Text of the file. Only used if the file was not found
+     * in the registry and a new one was created.
+     * @param version Current version of the file. Only used if the file was not found
+     * in the registry and a new one was created.
+     */
+    acquireDocument'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' compilationSettingsOrHost'
+        UnionType
+          TypeReference
+            Identifier: ' CompilerOptions'
+          TypeReference
+            Identifier: ' MinimalResolutionCacheHost'
+      Parameter
+        Identifier: ' scriptSnapshot'
+        TypeReference
+          Identifier: ' IScriptSnapshot'
+      Parameter
+        Identifier: ' version'
+        StringKeyword
+      Parameter
+        Identifier: ' scriptKind'
+        QuestionToken
+        TypeReference
+          Identifier: ' ScriptKind'
+      Parameter
+        Identifier: ' sourceFileOptions'
+        QuestionToken
+        UnionType
+          TypeReference
+            Identifier: ' CreateSourceFileOptions'
+          TypeReference
+            Identifier: ' ScriptTarget'
+      TypeReference
+        Identifier: ' SourceFile'
+    MethodSignature
+      Identifier: '
+    acquireDocumentWithKey'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' path'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' compilationSettingsOrHost'
+        UnionType
+          TypeReference
+            Identifier: ' CompilerOptions'
+          TypeReference
+            Identifier: ' MinimalResolutionCacheHost'
+      Parameter
+        Identifier: ' key'
+        TypeReference
+          Identifier: ' DocumentRegistryBucketKey'
+      Parameter
+        Identifier: ' scriptSnapshot'
+        TypeReference
+          Identifier: ' IScriptSnapshot'
+      Parameter
+        Identifier: ' version'
+        StringKeyword
+      Parameter
+        Identifier: ' scriptKind'
+        QuestionToken
+        TypeReference
+          Identifier: ' ScriptKind'
+      Parameter
+        Identifier: ' sourceFileOptions'
+        QuestionToken
+        UnionType
+          TypeReference
+            Identifier: ' CreateSourceFileOptions'
+          TypeReference
+            Identifier: ' ScriptTarget'
+      TypeReference
+        Identifier: ' SourceFile'
+    MethodSignature
+      Identifier: '
+    /**
+     * Request an updated version of an already existing SourceFile with a given fileName
+     * and compilationSettings. The update will in-turn call updateLanguageServiceSourceFile
+     * to get an updated SourceFile.
+     *
+     * @param fileName The name of the file requested
+     * @param compilationSettingsOrHost Some compilation settings like target affects the
+     * shape of a the resulting SourceFile. This allows the DocumentRegistry to store
+     * multiple copies of the same file for different compilation settings. A minimal
+     * resolution cache is needed to fully define a source file's shape when
+     * the compilation settings include `module: node16`+, so providing a cache host
+     * object should be preferred. A common host is a language service `ConfiguredProject`.
+     * @param scriptSnapshot Text of the file.
+     * @param version Current version of the file.
+     */
+    updateDocument'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' compilationSettingsOrHost'
+        UnionType
+          TypeReference
+            Identifier: ' CompilerOptions'
+          TypeReference
+            Identifier: ' MinimalResolutionCacheHost'
+      Parameter
+        Identifier: ' scriptSnapshot'
+        TypeReference
+          Identifier: ' IScriptSnapshot'
+      Parameter
+        Identifier: ' version'
+        StringKeyword
+      Parameter
+        Identifier: ' scriptKind'
+        QuestionToken
+        TypeReference
+          Identifier: ' ScriptKind'
+      Parameter
+        Identifier: ' sourceFileOptions'
+        QuestionToken
+        UnionType
+          TypeReference
+            Identifier: ' CreateSourceFileOptions'
+          TypeReference
+            Identifier: ' ScriptTarget'
+      TypeReference
+        Identifier: ' SourceFile'
+    MethodSignature
+      Identifier: '
+    updateDocumentWithKey'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' path'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' compilationSettingsOrHost'
+        UnionType
+          TypeReference
+            Identifier: ' CompilerOptions'
+          TypeReference
+            Identifier: ' MinimalResolutionCacheHost'
+      Parameter
+        Identifier: ' key'
+        TypeReference
+          Identifier: ' DocumentRegistryBucketKey'
+      Parameter
+        Identifier: ' scriptSnapshot'
+        TypeReference
+          Identifier: ' IScriptSnapshot'
+      Parameter
+        Identifier: ' version'
+        StringKeyword
+      Parameter
+        Identifier: ' scriptKind'
+        QuestionToken
+        TypeReference
+          Identifier: ' ScriptKind'
+      Parameter
+        Identifier: ' sourceFileOptions'
+        QuestionToken
+        UnionType
+          TypeReference
+            Identifier: ' CreateSourceFileOptions'
+          TypeReference
+            Identifier: ' ScriptTarget'
+      TypeReference
+        Identifier: ' SourceFile'
+    MethodSignature
+      Identifier: '
+    getKeyForCompilationSettings'
+      Parameter
+        Identifier: 'settings'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      TypeReference
+        Identifier: ' DocumentRegistryBucketKey'
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    getDocumentRegistryBucketKeyWithMode'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' DocumentRegistryBucketKey'
+      Parameter
+        Identifier: ' mode'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      TypeReference
+        Identifier: ' DocumentRegistryBucketKeyWithMode'
+    MethodSignature
+      Identifier: '
+    /**
+     * Informs the DocumentRegistry that a file is not needed any longer.
+     *
+     * Note: It is not allowed to call release on a SourceFile that was not acquired from
+     * this registry originally.
+     *
+     * @param fileName The name of the file to be released
+     * @param compilationSettings The compilation settings used to acquire the file
+     * @param scriptKind The script kind of the file to be released
+     *
+     * @deprecated pass scriptKind and impliedNodeFormat for correctness
+     */
+    releaseDocument'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' compilationSettings'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' scriptKind'
+        QuestionToken
+        TypeReference
+          Identifier: ' ScriptKind'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * Informs the DocumentRegistry that a file is not needed any longer.
+     *
+     * Note: It is not allowed to call release on a SourceFile that was not acquired from
+     * this registry originally.
+     *
+     * @param fileName The name of the file to be released
+     * @param compilationSettings The compilation settings used to acquire the file
+     * @param scriptKind The script kind of the file to be released
+     * @param impliedNodeFormat The implied source file format of the file to be released
+     */
+    releaseDocument'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' compilationSettings'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' scriptKind'
+        TypeReference
+          Identifier: ' ScriptKind'
+      Parameter
+        Identifier: ' impliedNodeFormat'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * @deprecated pass scriptKind for and impliedNodeFormat correctness */
+    releaseDocumentWithKey'
+      Parameter
+        Identifier: 'path'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' key'
+        TypeReference
+          Identifier: ' DocumentRegistryBucketKey'
+      Parameter
+        Identifier: ' scriptKind'
+        QuestionToken
+        TypeReference
+          Identifier: ' ScriptKind'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    releaseDocumentWithKey'
+      Parameter
+        Identifier: 'path'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' key'
+        TypeReference
+          Identifier: ' DocumentRegistryBucketKey'
+      Parameter
+        Identifier: ' scriptKind'
+        TypeReference
+          Identifier: ' ScriptKind'
+      Parameter
+        Identifier: ' impliedNodeFormat'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    reportStats'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getBuckets'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'DocumentRegistryBucketKeyWithMode'
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Path'
+          TypeReference
+            Identifier: ' BucketEntry'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ExternalDocumentCache'
+    MethodSignature
+      Identifier: '
+    setDocument'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' DocumentRegistryBucketKeyWithMode'
+      Parameter
+        Identifier: ' path'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getDocument'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' DocumentRegistryBucketKeyWithMode'
+      Parameter
+        Identifier: ' path'
+        TypeReference
+          Identifier: ' Path'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' DocumentRegistryBucketKey'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    __bucketKey'
+          AnyKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DocumentRegistryEntry'
+    PropertySignature
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    PropertySignature
+      Identifier: '
+    languageServiceRefCount'
+      NumberKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' BucketEntry'
+    UnionType
+      TypeReference
+        Identifier: ' DocumentRegistryEntry'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'ScriptKind'
+        TypeReference
+          Identifier: ' DocumentRegistryEntry'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isDocumentRegistryEntry'
+    Parameter
+      Identifier: 'entry'
+      TypeReference
+        Identifier: ' BucketEntry'
+    TypePredicate
+      Identifier: ' entry'
+      TypeReference
+        Identifier: ' DocumentRegistryEntry'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createDocumentRegistry'
+    Parameter
+      Identifier: 'useCaseSensitiveFileNames'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' currentDirectory'
+      QuestionToken
+      StringKeyword
+    Parameter
+      Identifier: ' jsDocParsingMode'
+      QuestionToken
+      TypeReference
+        Identifier: ' JSDocParsingMode'
+    TypeReference
+      Identifier: ' DocumentRegistry'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' DocumentRegistryBucketKeyWithMode'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    __documentRegistryBucketKeyWithMode'
+          AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createDocumentRegistryInternal'
+    Parameter
+      Identifier: 'useCaseSensitiveFileNames'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' currentDirectory'
+      QuestionToken
+      StringKeyword
+    Parameter
+      Identifier: ' jsDocParsingMode'
+      QuestionToken
+      TypeReference
+        Identifier: ' JSDocParsingMode'
+    Parameter
+      Identifier: ' externalCache'
+      QuestionToken
+      TypeReference
+        Identifier: ' ExternalDocumentCache'
+    TypeReference
+      Identifier: ' DocumentRegistry'

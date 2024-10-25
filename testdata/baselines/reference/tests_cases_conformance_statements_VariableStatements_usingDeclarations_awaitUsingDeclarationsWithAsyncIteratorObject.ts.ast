@@ -1,0 +1,48 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ai'
+        TypeReference
+          Identifier: ' AsyncIterator'
+          StringKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aio'
+        TypeReference
+          Identifier: ' AsyncIteratorObject'
+          StringKeyword
+          UndefinedKeyword
+          UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ag'
+        TypeReference
+          Identifier: ' AsyncGenerator'
+          StringKeyword
+          VoidKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it0'
+            Identifier: ' aio'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it1'
+            Identifier: ' ag'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' it2'
+            Identifier: ' ai'

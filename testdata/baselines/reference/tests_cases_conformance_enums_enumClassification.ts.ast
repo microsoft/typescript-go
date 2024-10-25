@@ -1,0 +1,166 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E01'
+    EnumMember
+      Identifier: '
+    A'
+  EnumDeclaration
+    Identifier: ' E02'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral
+  EnumDeclaration
+    Identifier: ' E03'
+    EnumMember
+      Identifier: '
+    A'
+      StringLiteral
+  EnumDeclaration
+    Identifier: ' E04'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+    EnumMember
+      Identifier: '
+    C'
+  EnumDeclaration
+    Identifier: ' E05'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    C'
+  EnumDeclaration
+    Identifier: ' E06'
+    EnumMember
+      Identifier: '
+    A'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    B'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    C'
+      StringLiteral
+  EnumDeclaration
+    Identifier: ' E07'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+    EnumMember
+      Identifier: '
+    C'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    D'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    E'
+    EnumMember
+      Identifier: '
+    F'
+      StringLiteral
+  EnumDeclaration
+    Identifier: ' E08'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    C'
+      Identifier: ' A'
+    EnumMember
+      Identifier: '
+    D'
+      Identifier: ' B'
+    EnumMember
+      Identifier: '
+    E'
+      Identifier: ' C'
+  EnumDeclaration
+    Identifier: ' E10'
+  EnumDeclaration
+    Identifier: ' E11'
+    EnumMember
+      Identifier: '
+    A'
+      PrefixUnaryExpression
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+    EnumMember
+      Identifier: '
+    C'
+  EnumDeclaration
+    Identifier: ' E12'
+    EnumMember
+      Identifier: '
+    A'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    C'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+  EnumDeclaration
+    Identifier: ' E20'
+    EnumMember
+      Identifier: '
+    A'
+      PropertyAccessExpression
+        StringLiteral
+        Identifier: 'length'
+    EnumMember
+      Identifier: '
+    B'
+      BinaryExpression
+        Identifier: ' A'
+        PlusToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    C'
+      PrefixUnaryExpression
+        StringLiteral
+    EnumMember
+      Identifier: '
+    D'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' Math'
+          Identifier: 'sin'
+        NumericLiteral

@@ -1,0 +1,113 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' NonGeneric'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          StringKeyword
+      ClassDeclaration
+        Identifier: ' D'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' C'
+        PropertyDeclaration
+          Identifier: '
+        bar'
+          StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'prototype'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    r'
+          Identifier: 'foo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            PropertyAccessExpression
+              Identifier: ' D'
+              Identifier: 'prototype'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    r2'
+          Identifier: 'bar'
+  ModuleDeclaration
+    Identifier: ' Generic'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: 'U'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        bar'
+          TypeReference
+            Identifier: ' U'
+      ClassDeclaration
+        Identifier: ' D'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: 'U'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' C'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: 'U'
+        PropertyDeclaration
+          Identifier: '
+        baz'
+          TypeReference
+            Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        bing'
+          TypeReference
+            Identifier: ' U'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'prototype'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ra'
+            PropertyAccessExpression
+              Identifier: ' r'
+              Identifier: 'foo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            PropertyAccessExpression
+              Identifier: ' D'
+              Identifier: 'prototype'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rb'
+            PropertyAccessExpression
+              Identifier: ' r2'
+              Identifier: 'baz'

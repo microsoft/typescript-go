@@ -1,0 +1,28 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Bundle'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' TransformationContext'
+        ImportSpecifier
+          Identifier: ' Transformer'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' transformTypeScript'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    TypeReference
+      Identifier: ' Transformer'
+      UnionType
+        TypeReference
+          Identifier: 'SourceFile'
+        TypeReference
+          Identifier: ' Bundle'

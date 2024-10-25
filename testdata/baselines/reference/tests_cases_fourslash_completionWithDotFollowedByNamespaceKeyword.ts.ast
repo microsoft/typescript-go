@@ -1,0 +1,29 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////namespace A {
+////    function foo() {
+////        if (true) {
+////            B./**/
+////        namespace B {
+////            export function baz() { }
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral

@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////const foo: 1n = 1n;
+////export function fn(b = foo) {}
+
+verify'
+        Identifier: 'baselineInlayHints'
+      Identifier: 'undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    includeInlayFunctionParameterTypeHints'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    interactiveInlayHints'
+          TrueKeyword

@@ -1,0 +1,211 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' use'
+        TypeReference
+          Identifier: ' Overload'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+use'
+      ArrowFunction
+        Parameter
+          Identifier: 'req'
+        Parameter
+          Identifier: ' res'
+        EqualsGreaterThanToken
+        Block
+  InterfaceDeclaration
+    Identifier: ' Overload'
+    CallSignature
+      Parameter
+        Identifier: 'handler1'
+        FunctionType
+          Parameter
+            Identifier: 'req1'
+            StringKeyword
+          VoidKeyword
+      VoidKeyword
+    CallSignature
+      Parameter
+        Identifier: 'handler2'
+        FunctionType
+          Parameter
+            Identifier: 'req2'
+            NumberKeyword
+          Parameter
+            Identifier: ' res2'
+            NumberKeyword
+          VoidKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' app'
+        TypeReference
+          Identifier: ' MyApp'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+app'
+        Identifier: 'use'
+      ArrowFunction
+        Parameter
+          Identifier: 'err'
+          AnyKeyword
+        Parameter
+          Identifier: ' req'
+        Parameter
+          Identifier: ' res'
+        Parameter
+          Identifier: ' next'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+  InterfaceDeclaration
+    Identifier: ' MyApp'
+    PropertySignature
+      Identifier: '
+    use'
+      IntersectionType
+        TypeReference
+          Identifier: ' IRouterHandler'
+          ThisType
+        TypeReference
+          Identifier: ' IRouterMatcher'
+          ThisType
+  InterfaceDeclaration
+    Identifier: ' IRouterHandler'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'handlers'
+        ArrayType
+          TypeReference
+            Identifier: ' RequestHandler'
+      TypeReference
+        Identifier: ' T'
+    CallSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'handlers'
+        ArrayType
+          TypeReference
+            Identifier: ' RequestHandlerParams'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' IRouterMatcher'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'path'
+        TypeReference
+          Identifier: ' PathParams'
+      Parameter
+        DotDotDotToken
+        Identifier: 'handlers'
+        ArrayType
+          TypeReference
+            Identifier: ' RequestHandler'
+      TypeReference
+        Identifier: ' T'
+    CallSignature
+      Parameter
+        Identifier: 'path'
+        TypeReference
+          Identifier: ' PathParams'
+      Parameter
+        DotDotDotToken
+        Identifier: 'handlers'
+        ArrayType
+          TypeReference
+            Identifier: ' RequestHandlerParams'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' PathParams'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' RegExp'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            StringKeyword
+            TypeReference
+              Identifier: ' RegExp'
+  TypeAliasDeclaration
+    Identifier: ' RequestHandlerParams'
+    UnionType
+      TypeReference
+        Identifier: ' RequestHandler'
+      TypeReference
+        Identifier: ' ErrorRequestHandler'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            TypeReference
+              Identifier: 'RequestHandler'
+            TypeReference
+              Identifier: ' ErrorRequestHandler'
+  InterfaceDeclaration
+    Identifier: ' RequestHandler'
+    CallSignature
+      Parameter
+        Identifier: 'req'
+        TypeReference
+          Identifier: ' Request'
+      Parameter
+        Identifier: ' res'
+        TypeReference
+          Identifier: ' Response'
+      Parameter
+        Identifier: ' next'
+        TypeReference
+          Identifier: ' NextFunction'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' ErrorRequestHandler'
+    CallSignature
+      Parameter
+        Identifier: 'err'
+        AnyKeyword
+      Parameter
+        Identifier: ' req'
+        TypeReference
+          Identifier: ' Request'
+      Parameter
+        Identifier: ' res'
+        TypeReference
+          Identifier: ' Response'
+      Parameter
+        Identifier: ' next'
+        TypeReference
+          Identifier: ' NextFunction'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Request'
+    PropertySignature
+      Identifier: '
+    method'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Response'
+    PropertySignature
+      Identifier: '
+    statusCode'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' NextFunction'
+    CallSignature
+      Parameter
+        Identifier: 'err'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword

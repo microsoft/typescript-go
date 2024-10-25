@@ -1,0 +1,114 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Cat'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    canMeow'
+      LiteralType
+        TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' Dog'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    canBark'
+      LiteralType
+        TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' Animal'
+    UnionType
+      TypeReference
+        Identifier: ' Cat'
+      TypeReference
+        Identifier: ' Dog'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' assertEqual'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      AnyKeyword
+    Parameter
+      Identifier: ' type'
+      TypeReference
+        Identifier: ' T'
+    TypePredicate
+      AssertsKeyword
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' animal'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' type'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' canMeow'
+              TrueKeyword
+          TypeReference
+            Identifier: ' Animal'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+assertEqual'
+      PropertyAccessExpression
+        Identifier: 'animal'
+        Identifier: 'type'
+      AsExpression
+        StringLiteral
+        TypeReference
+          Identifier: ' const'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+animal'
+      Identifier: 'canMeow'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' animalOrUndef'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' type'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' canMeow'
+              TrueKeyword
+          UnionType
+            TypeReference
+              Identifier: ' Animal'
+            UndefinedKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+assertEqual'
+      PropertyAccessExpression
+        Identifier: 'animalOrUndef'
+        QuestionDotToken
+        Identifier: 'type'
+      AsExpression
+        StringLiteral
+        TypeReference
+          Identifier: ' const'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+animalOrUndef'
+      Identifier: 'canMeow'

@@ -1,0 +1,84 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' NumVal'
+    PropertySignature
+      Identifier: ' val'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' StrVal'
+    PropertySignature
+      Identifier: ' val'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Val'
+    UnionType
+      TypeReference
+        Identifier: ' NumVal'
+      TypeReference
+        Identifier: ' StrVal'
+  FunctionDeclaration
+    Identifier: ' isNumVal'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Val'
+    TypePredicate
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' NumVal'
+    Block
+      ReturnStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'val'
+          EqualsEqualsEqualsToken
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'things'
+      ArrayType
+        TypeReference
+          Identifier: ' Val'
+    VoidKeyword
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' thing'
+        Identifier: ' things'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isNumVal'
+              Identifier: 'thing'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' val'
+                    Identifier: ' thing'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            val'
+                    Identifier: 'toFixed'
+                  NumericLiteral
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' val'
+                    Identifier: ' thing'
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+            val'
+                  Identifier: 'length'

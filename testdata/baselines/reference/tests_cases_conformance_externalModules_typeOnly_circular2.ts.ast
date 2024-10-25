@@ -1,0 +1,23 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' B'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeReference
+      Identifier: ' B'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    TypeReference
+      Identifier: ' A'

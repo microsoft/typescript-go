@@ -1,0 +1,44 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      LiteralType
+        StringLiteral
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      LiteralType
+        StringLiteral
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    UnionType
+      StringKeyword
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    UnionType
+      StringKeyword
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'a'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'length'
+      ReturnStatement
+        Identifier: ' a'

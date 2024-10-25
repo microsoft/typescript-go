@@ -1,0 +1,12 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' M'
+              Identifier: 'I'

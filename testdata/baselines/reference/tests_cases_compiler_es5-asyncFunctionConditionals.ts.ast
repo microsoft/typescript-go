@@ -1,0 +1,65 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' z'
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+      VariableDeclaration
+        Identifier: ' c'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' conditional0'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          ConditionalExpression
+            ParenthesizedExpression
+              AwaitExpression
+                Identifier: ' x'
+            QuestionToken
+            Identifier: ' y'
+            ColonToken
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' conditional1'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          ConditionalExpression
+            Identifier: ' x'
+            QuestionToken
+            AwaitExpression
+              Identifier: ' y'
+            ColonToken
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' conditional2'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          ConditionalExpression
+            Identifier: ' x'
+            QuestionToken
+            Identifier: ' y'
+            ColonToken
+            AwaitExpression
+              Identifier: ' z'

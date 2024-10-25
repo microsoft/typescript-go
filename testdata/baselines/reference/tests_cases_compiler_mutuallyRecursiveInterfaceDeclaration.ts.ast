@@ -1,0 +1,21 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' B'
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' A'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'A'
+      ExportSpecifier
+        Identifier: ' B'

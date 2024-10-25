@@ -1,0 +1,50 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' repro'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'config'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  params'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: '
+  callback'
+          FunctionType
+            FunctionType
+              Parameter
+                Identifier: 'params'
+                TypeReference
+                  Identifier: ' T'
+              NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+repro'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  params'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+  callback'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrowFunction
+                  Parameter
+                    Identifier: ' a'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    Identifier: ' a'
+                    PlusToken
+                    NumericLiteral

@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////declare function schema<T> (value : T) : {field : T};
+////
+////declare const b: boolean;
+////const obj/*1*/ = schema(b);
+////const actualTypeOfNested/*2*/ = schema(obj);
+
+verify'
+        Identifier: 'quickInfos'
+      ObjectLiteralExpression
+        PropertyAssignment
+          NumericLiteral
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          NumericLiteral
+          NoSubstitutionTemplateLiteral

@@ -1,0 +1,2105 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' createExportingModuleFile'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' exportPrefix'
+      StringKeyword
+    Parameter
+      Identifier: ' exportCount'
+      NumberKeyword
+    TypeReference
+      Identifier: ' File'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        path'
+          PropertyAssignment
+            Identifier: '
+        content'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'arrayOf'
+                  Identifier: 'exportCount'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' i'
+                    EqualsGreaterThanToken
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'exportPrefix'
+                        TemplateMiddle
+                      TemplateSpan
+                        Identifier: 'i'
+                        TemplateMiddle
+                      TemplateSpan
+                        Identifier: 'i'
+                        TemplateTail
+                Identifier: 'join'
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' createExportingModuleFiles'
+    Parameter
+      Identifier: 'pathPrefix'
+      StringKeyword
+    Parameter
+      Identifier: ' fileCount'
+      NumberKeyword
+    Parameter
+      Identifier: ' exportCount'
+      NumberKeyword
+    Parameter
+      Identifier: ' getExportPrefix'
+      FunctionType
+        Parameter
+          Identifier: 'fileIndex'
+          NumberKeyword
+        StringKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' File'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'arrayOf'
+          Identifier: 'fileCount'
+          ArrowFunction
+            Parameter
+              Identifier: ' fileIndex'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        createExportingModuleFile'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'pathPrefix'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'fileIndex'
+                  TemplateTail
+              CallExpression
+                Identifier: '
+            getExportPrefix'
+                Identifier: 'fileIndex'
+              Identifier: '
+            exportCount'
+  FunctionDeclaration
+    Identifier: ' createNodeModulesPackage'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    Parameter
+      Identifier: ' fileCount'
+      NumberKeyword
+    Parameter
+      Identifier: ' exportCount'
+      NumberKeyword
+    Parameter
+      Identifier: ' getExportPrefix'
+      FunctionType
+        Parameter
+          Identifier: 'fileIndex'
+          NumberKeyword
+        StringKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' File'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exportingFiles'
+            CallExpression
+              Identifier: ' createExportingModuleFiles'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'packageName'
+                  TemplateTail
+              Identifier: ' fileCount'
+              Identifier: ' exportCount'
+              Identifier: ' getExportPrefix'
+      ReturnStatement
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            path'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'packageName'
+                  TemplateTail
+            PropertyAssignment
+              Identifier: '
+            content'
+              NoSubstitutionTemplateLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            path'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'packageName'
+                  TemplateTail
+            PropertyAssignment
+              Identifier: '
+            content'
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' exportingFiles'
+                        Identifier: 'map'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'f'
+                        EqualsGreaterThanToken
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'ts'
+                                Identifier: 'removeFileExtension'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'convertToRelativePath'
+                                PropertyAccessExpression
+                                  Identifier: 'f'
+                                  Identifier: 'path'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'packageName'
+                                    TemplateTail
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'identity'
+                            TemplateTail
+                    Identifier: 'join'
+                  StringLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+          SpreadElement
+            Identifier: 'exportingFiles'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' indexFile'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tsconfigFile'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' packageJsonFile'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' excessFileCount'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'Completions'
+                            Identifier: 'moduleSpecifierResolutionLimit'
+                          PlusToken
+                          NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' exportingFiles'
+                        CallExpression
+                          Identifier: ' createExportingModuleFiles'
+                          NoSubstitutionTemplateLiteral
+                          BinaryExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'Completions'
+                              Identifier: 'moduleSpecifierResolutionLimit'
+                            PlusToken
+                            Identifier: ' excessFileCount'
+                          NumericLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' i'
+                            EqualsGreaterThanToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'i'
+                                TemplateTail
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' typeToTriggerCompletions'
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: 'tsconfigFile'
+                            Identifier: ' indexFile'
+                            SpreadElement
+                              Identifier: 'exportingFiles'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexFile'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              Identifier: '
+
+        typeToTriggerCompletions'
+                              PropertyAccessExpression
+                                Identifier: 'indexFile'
+                                Identifier: 'path'
+                              StringLiteral
+                              ArrowFunction
+                                Parameter
+                                  Identifier: ' completions'
+                                EqualsGreaterThanToken
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      Identifier: '
+            assert'
+                                      PropertyAccessExpression
+                                        Identifier: 'completions'
+                                        Identifier: 'isIncomplete'
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+            assert'
+                                        Identifier: 'lengthOf'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'completions'
+                                            Identifier: 'entries'
+                                          Identifier: 'filter'
+                                        ArrowFunction
+                                          Parameter
+                                            Identifier: 'entry'
+                                          EqualsGreaterThanToken
+                                          PropertyAccessExpression
+                                            ParenthesizedExpression
+                                              AsExpression
+                                                PropertyAccessExpression
+                                                  Identifier: 'entry'
+                                                  Identifier: 'data'
+                                                AnyKeyword
+                                            QuestionDotToken
+                                            Identifier: 'moduleSpecifier'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'Completions'
+                                        Identifier: 'moduleSpecifierResolutionLimit'
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+            assert'
+                                        Identifier: 'lengthOf'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'completions'
+                                            Identifier: 'entries'
+                                          Identifier: 'filter'
+                                        ArrowFunction
+                                          Parameter
+                                            Identifier: 'entry'
+                                          EqualsGreaterThanToken
+                                          BinaryExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' entry'
+                                              Identifier: 'source'
+                                            AmpersandAmpersandToken
+                                            PrefixUnaryExpression
+                                              PropertyAccessExpression
+                                                ParenthesizedExpression
+                                                  AsExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: 'entry'
+                                                      Identifier: 'data'
+                                                    AnyKeyword
+                                                QuestionDotToken
+                                                Identifier: 'moduleSpecifier'
+                                      Identifier: ' excessFileCount'
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+            assert'
+                                        Identifier: 'deepEqual'
+                                      PropertyAccessExpression
+                                        Identifier: 'completions'
+                                        Identifier: 'optionalReplacementSpan'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' start'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' line'
+                                              NumericLiteral
+                                            PropertyAssignment
+                                              Identifier: ' offset'
+                                              NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: ' end'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' line'
+                                              NumericLiteral
+                                            PropertyAssignment
+                                              Identifier: ' offset'
+                                              NumericLiteral
+                            Identifier: 'continueTyping'
+                          StringLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' completions'
+                            EqualsGreaterThanToken
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                assert'
+                                  PropertyAccessExpression
+                                    Identifier: 'completions'
+                                    Identifier: 'isIncomplete'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'lengthOf'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'completions'
+                                        Identifier: 'entries'
+                                      Identifier: 'filter'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: 'entry'
+                                      EqualsGreaterThanToken
+                                      PropertyAccessExpression
+                                        ParenthesizedExpression
+                                          AsExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'entry'
+                                              Identifier: 'data'
+                                            AnyKeyword
+                                        QuestionDotToken
+                                        Identifier: 'moduleSpecifier'
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'Completions'
+                                      Identifier: 'moduleSpecifierResolutionLimit'
+                                    AsteriskToken
+                                    NumericLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'deepEqual'
+                                  PropertyAccessExpression
+                                    Identifier: 'completions'
+                                    Identifier: 'optionalReplacementSpan'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' start'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' line'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: ' offset'
+                                          NumericLiteral
+                                    PropertyAssignment
+                                      Identifier: ' end'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' line'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: ' offset'
+                                          NumericLiteral
+                        Identifier: 'continueTyping'
+                      StringLiteral
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' completions'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                assert'
+                              PrefixUnaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'completions'
+                                  Identifier: 'isIncomplete'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                assert'
+                                Identifier: 'lengthOf'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'completions'
+                                    Identifier: 'entries'
+                                  Identifier: 'filter'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: 'entry'
+                                  EqualsGreaterThanToken
+                                  PropertyAccessExpression
+                                    ParenthesizedExpression
+                                      AsExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'entry'
+                                          Identifier: 'data'
+                                        AnyKeyword
+                                    QuestionDotToken
+                                    Identifier: 'moduleSpecifier'
+                              PropertyAccessExpression
+                                Identifier: ' exportingFiles'
+                                Identifier: 'length'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' exportingFiles'
+                        CallExpression
+                          Identifier: ' createExportingModuleFiles'
+                          NoSubstitutionTemplateLiteral
+                          NumericLiteral
+                          NumericLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' i'
+                            EqualsGreaterThanToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'i'
+                                TemplateTail
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' typeToTriggerCompletions'
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: 'tsconfigFile'
+                            Identifier: ' indexFile'
+                            SpreadElement
+                              Identifier: 'exportingFiles'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexFile'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        typeToTriggerCompletions'
+                      PropertyAccessExpression
+                        Identifier: 'indexFile'
+                        Identifier: 'path'
+                      StringLiteral
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' completions'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            assert'
+                              PrefixUnaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'completions'
+                                  Identifier: 'isIncomplete'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' excessFileCount'
+                        NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' exportingFiles'
+                        CallExpression
+                          Identifier: ' createExportingModuleFiles'
+                          NoSubstitutionTemplateLiteral
+                          BinaryExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'Completions'
+                              Identifier: 'moduleSpecifierResolutionLimit'
+                            PlusToken
+                            Identifier: ' excessFileCount'
+                          NumericLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' i'
+                            EqualsGreaterThanToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'i'
+                                TemplateTail
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' typeToTriggerCompletions'
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: 'tsconfigFile'
+                            Identifier: ' indexFile'
+                            SpreadElement
+                              Identifier: 'exportingFiles'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexFile'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              Identifier: '
+
+        typeToTriggerCompletions'
+                              PropertyAccessExpression
+                                Identifier: 'indexFile'
+                                Identifier: 'path'
+                              StringLiteral
+                              ArrowFunction
+                                Parameter
+                                  Identifier: ' completions'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  Identifier: ' assert'
+                                  PropertyAccessExpression
+                                    Identifier: 'completions'
+                                    Identifier: 'isIncomplete'
+                            Identifier: 'backspace'
+                        Identifier: 'type'
+                      StringLiteral
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' completions'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' assert'
+                          PrefixUnaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'completions'
+                              Identifier: 'isIncomplete'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' ambientFiles'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'arrayOf'
+                          NumericLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'i'
+                            TypeReference
+                              Identifier: ' File'
+                            EqualsGreaterThanToken
+                            ParenthesizedExpression
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+            path'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'i'
+                                      TemplateTail
+                                PropertyAssignment
+                                  Identifier: '
+            content'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'i'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'i'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'i'
+                                      TemplateTail
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' exportingFiles'
+                        CallExpression
+                          Identifier: ' createExportingModuleFiles'
+                          NoSubstitutionTemplateLiteral
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'Completions'
+                            Identifier: 'moduleSpecifierResolutionLimit'
+                          NumericLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' i'
+                            EqualsGreaterThanToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'i'
+                                TemplateTail
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' typeToTriggerCompletions'
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: 'tsconfigFile'
+                            Identifier: ' indexFile'
+                            SpreadElement
+                              Identifier: 'ambientFiles'
+                            SpreadElement
+                              Identifier: 'exportingFiles'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexFile'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        typeToTriggerCompletions'
+                      PropertyAccessExpression
+                        Identifier: 'indexFile'
+                        Identifier: 'path'
+                      StringLiteral
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' completions'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            assert'
+                              PrefixUnaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'completions'
+                                  Identifier: 'isIncomplete'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'lengthOf'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'completions'
+                                    Identifier: 'entries'
+                                  Identifier: 'filter'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: 'e'
+                                  EqualsGreaterThanToken
+                                  PropertyAccessExpression
+                                    ParenthesizedExpression
+                                      AsExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'e'
+                                          Identifier: 'data'
+                                        AnyKeyword
+                                    QuestionDotToken
+                                    Identifier: 'moduleSpecifier'
+                              BinaryExpression
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ambientFiles'
+                                    Identifier: 'length'
+                                  AsteriskToken
+                                  NumericLiteral
+                                PlusToken
+                                PropertyAccessExpression
+                                  Identifier: ' exportingFiles'
+                                  Identifier: 'length'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' exportingFiles'
+                        CallExpression
+                          Identifier: ' createExportingModuleFiles'
+                          NoSubstitutionTemplateLiteral
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'Completions'
+                            Identifier: 'moduleSpecifierResolutionLimit'
+                          NumericLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' i'
+                            EqualsGreaterThanToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'i'
+                                TemplateTail
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' nodeModulesPackage'
+                        CallExpression
+                          Identifier: ' createNodeModulesPackage'
+                          StringLiteral
+                          NumericLiteral
+                          NumericLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' i'
+                            EqualsGreaterThanToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'i'
+                                TemplateTail
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' typeToTriggerCompletions'
+                          BindingElement
+                            Identifier: ' assertCompletionDetailsOk'
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: 'tsconfigFile'
+                            Identifier: ' packageJsonFile'
+                            Identifier: ' indexFile'
+                            SpreadElement
+                              Identifier: 'exportingFiles'
+                            SpreadElement
+                              Identifier: 'nodeModulesPackage'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexFile'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          Identifier: '
+
+        typeToTriggerCompletions'
+                          PropertyAccessExpression
+                            Identifier: 'indexFile'
+                            Identifier: 'path'
+                          StringLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' completions'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              Identifier: ' assert'
+                              PropertyAccessExpression
+                                Identifier: 'completions'
+                                Identifier: 'isIncomplete'
+                        Identifier: 'continueTyping'
+                      StringLiteral
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' completions'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                assert'
+                              PrefixUnaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'completions'
+                                  Identifier: 'isIncomplete'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                assert'
+                                Identifier: 'lengthOf'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'completions'
+                                    Identifier: 'entries'
+                                  Identifier: 'filter'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: 'entry'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        ParenthesizedExpression
+                                          AsExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'entry'
+                                              Identifier: 'data'
+                                            AnyKeyword
+                                        QuestionDotToken
+                                        Identifier: 'moduleSpecifier'
+                                      QuestionDotToken
+                                      Identifier: 'startsWith'
+                                    StringLiteral
+                              NumericLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                assertCompletionDetailsOk'
+                              PropertyAccessExpression
+                                Identifier: '
+                    indexFile'
+                                Identifier: 'path'
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                    completions'
+                                      Identifier: 'entries'
+                                    Identifier: 'find'
+                                  ArrowFunction
+                                    Parameter
+                                      Identifier: 'entry'
+                                    EqualsGreaterThanToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          ParenthesizedExpression
+                                            AsExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'entry'
+                                                Identifier: 'data'
+                                              AnyKeyword
+                                          QuestionDotToken
+                                          Identifier: 'moduleSpecifier'
+                                        QuestionDotToken
+                                        Identifier: 'startsWith'
+                                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' constantsDts'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' exportingFiles'
+                        CallExpression
+                          Identifier: ' createExportingModuleFiles'
+                          StringLiteral
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'Completions'
+                            Identifier: 'moduleSpecifierResolutionLimit'
+                          NumericLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' i'
+                            EqualsGreaterThanToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'i'
+                                TemplateTail
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' typeToTriggerCompletions'
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: 'tsconfigFile'
+                            Identifier: ' indexFile'
+                            SpreadElement
+                              Identifier: 'exportingFiles'
+                            Identifier: ' constantsDts'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexFile'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          Identifier: '
+
+        typeToTriggerCompletions'
+                          PropertyAccessExpression
+                            Identifier: 'indexFile'
+                            Identifier: 'path'
+                          StringLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' completions'
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' sigint'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' completions'
+                                          Identifier: 'entries'
+                                        Identifier: 'find'
+                                      ArrowFunction
+                                        Parameter
+                                          Identifier: 'e'
+                                        EqualsGreaterThanToken
+                                        BinaryExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' e'
+                                            Identifier: 'name'
+                                          EqualsEqualsEqualsToken
+                                          StringLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+            assert'
+                                  Identifier: 'sigint'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+            assert'
+                                  PrefixUnaryExpression
+                                    PropertyAccessExpression
+                                      ParenthesizedExpression
+                                        AsExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'sigint'
+                                            Identifier: 'data'
+                                          AnyKeyword
+                                      Identifier: 'moduleSpecifier'
+                        Identifier: 'continueTyping'
+                      StringLiteral
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' completions'
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' sigint'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' completions'
+                                      Identifier: 'entries'
+                                    Identifier: 'find'
+                                  ArrowFunction
+                                    Parameter
+                                      Identifier: 'e'
+                                    EqualsGreaterThanToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' e'
+                                        Identifier: 'name'
+                                      EqualsEqualsEqualsToken
+                                      StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                assert'
+                              PropertyAccessExpression
+                                ParenthesizedExpression
+                                  AsExpression
+                                    PropertyAccessExpression
+                                      NonNullExpression
+                                        Identifier: 'sigint'
+                                      Identifier: 'data'
+                                    AnyKeyword
+                                Identifier: 'moduleSpecifier'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+  FunctionDeclaration
+    Identifier: ' setup'
+    Parameter
+      Identifier: 'files'
+      ArrayType
+        TypeReference
+          Identifier: ' File'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' TestServerHost'
+                Identifier: 'createServerHost'
+              Identifier: 'files'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' session'
+            NewExpression
+              Identifier: ' TestSession'
+              Identifier: 'host'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' projectService'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' session'
+                Identifier: 'getProjectService'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    session'
+            Identifier: 'executeCommandSeq'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'server'
+                Identifier: 'protocol'
+              Identifier: 'ConfigureRequest'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        command'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'server'
+                    Identifier: 'protocol'
+                  Identifier: 'CommandTypes'
+                Identifier: 'Configure'
+            PropertyAssignment
+              Identifier: '
+        arguments'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            preferences'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                allowIncompleteCompletions'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+                includeCompletionsForModuleExports'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+                includeCompletionsWithInsertText'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+                includeCompletionsForImportStatements'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+                includePackageJsonAutoImports'
+                      StringLiteral
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' host'
+          ShorthandPropertyAssignment
+            Identifier: ' session'
+          ShorthandPropertyAssignment
+            Identifier: ' projectService'
+          ShorthandPropertyAssignment
+            Identifier: ' typeToTriggerCompletions'
+          ShorthandPropertyAssignment
+            Identifier: ' assertCompletionDetailsOk'
+      FunctionDeclaration
+        Identifier: ' typeToTriggerCompletions'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Parameter
+          Identifier: ' typedCharacters'
+          StringKeyword
+        Parameter
+          Identifier: ' cb'
+          QuestionToken
+          FunctionType
+            Parameter
+              Identifier: 'completions'
+              TypeReference
+                QualifiedName
+                  QualifiedName
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'server'
+                    Identifier: 'protocol'
+                  Identifier: 'CompletionInfo'
+            VoidKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' project'
+                NonNullExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' projectService'
+                      Identifier: 'getDefaultProjectForFile'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'server'
+                        Identifier: 'toNormalizedPath'
+                      Identifier: 'fileName'
+                    TrueKeyword
+          ReturnStatement
+            CallExpression
+              Identifier: ' type'
+              Identifier: 'typedCharacters'
+              Identifier: ' cb'
+              FalseKeyword
+          FunctionDeclaration
+            Identifier: ' type'
+            Parameter
+              Identifier: 'typedCharacters'
+              StringKeyword
+            Parameter
+              Identifier: ' cb'
+              UnionType
+                ParenthesizedType
+                  FunctionType
+                    Parameter
+                      Identifier: 'completions'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'CompletionInfo'
+                    VoidKeyword
+                UndefinedKeyword
+            Parameter
+              Identifier: ' isIncompleteContinuation'
+              BooleanKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' file'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'Debug'
+                        Identifier: 'checkDefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'project'
+                                  Identifier: 'getLanguageService'
+                                TrueKeyword
+                              Identifier: 'getProgram'
+                          QuestionDotToken
+                          Identifier: 'getSourceFile'
+                        Identifier: 'fileName'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' line'
+                      BindingElement
+                        Identifier: ' character'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getLineAndCharacterOfPosition'
+                      Identifier: 'file'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' file'
+                          Identifier: 'text'
+                        Identifier: 'length'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' oneBasedEditPosition'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' line'
+                        BinaryExpression
+                          Identifier: ' line'
+                          PlusToken
+                          NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' offset'
+                        BinaryExpression
+                          Identifier: ' character'
+                          PlusToken
+                          NumericLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            session'
+                    Identifier: 'executeCommandSeq'
+                  TypeReference
+                    QualifiedName
+                      QualifiedName
+                        QualifiedName
+                          Identifier: 'ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'UpdateOpenRequest'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                command'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'CommandTypes'
+                        Identifier: 'UpdateOpen'
+                    PropertyAssignment
+                      Identifier: '
+                arguments'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    changedFiles'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              ShorthandPropertyAssignment
+                                Identifier: '
+                        fileName'
+                              PropertyAssignment
+                                Identifier: '
+                        textChanges'
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                            newText'
+                                      Identifier: ' typedCharacters'
+                                    PropertyAssignment
+                                      Identifier: '
+                            start'
+                                      Identifier: ' oneBasedEditPosition'
+                                    PropertyAssignment
+                                      Identifier: '
+                            end'
+                                      Identifier: ' oneBasedEditPosition'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' response'
+                    AsExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CompletionsRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'CommandTypes'
+                                Identifier: 'CompletionInfo'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    file'
+                                  Identifier: ' fileName'
+                                PropertyAssignment
+                                  Identifier: '
+                    line'
+                                  PropertyAccessExpression
+                                    Identifier: ' oneBasedEditPosition'
+                                    Identifier: 'line'
+                                PropertyAssignment
+                                  Identifier: '
+                    offset'
+                                  PropertyAccessExpression
+                                    Identifier: ' oneBasedEditPosition'
+                                    Identifier: 'offset'
+                                PropertyAssignment
+                                  Identifier: '
+                    triggerKind'
+                                  ConditionalExpression
+                                    Identifier: ' isIncompleteContinuation'
+                                    QuestionToken
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'server'
+                                          Identifier: 'protocol'
+                                        Identifier: 'CompletionTriggerKind'
+                                      Identifier: 'TriggerForIncompleteCompletions'
+                                    ColonToken
+                                    Identifier: ' undefined'
+                        Identifier: 'response'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'CompletionInfo'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+            cb'
+                  QuestionDotToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'ts'
+                        Identifier: 'Debug'
+                      Identifier: 'checkDefined'
+                    Identifier: 'response'
+              ReturnStatement
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                backspace'
+                  PropertyAssignment
+                    Identifier: '
+                continueTyping'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'typedCharacters'
+                        StringKeyword
+                      Parameter
+                        Identifier: ' cb'
+                        FunctionType
+                          Parameter
+                            Identifier: 'completions'
+                            TypeReference
+                              QualifiedName
+                                QualifiedName
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'server'
+                                  Identifier: 'protocol'
+                                Identifier: 'CompletionInfo'
+                          VoidKeyword
+                      EqualsGreaterThanToken
+                      Block
+                        ReturnStatement
+                          CallExpression
+                            Identifier: ' type'
+                            Identifier: 'typedCharacters'
+                            Identifier: ' cb'
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'response'
+                                  Identifier: 'isIncomplete'
+          FunctionDeclaration
+            Identifier: ' backspace'
+            Parameter
+              Identifier: 'n'
+              NumericLiteral
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' file'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'Debug'
+                        Identifier: 'checkDefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'project'
+                                  Identifier: 'getLanguageService'
+                                TrueKeyword
+                              Identifier: 'getProgram'
+                          QuestionDotToken
+                          Identifier: 'getSourceFile'
+                        Identifier: 'fileName'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' startLineCharacter'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getLineAndCharacterOfPosition'
+                      Identifier: 'file'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' file'
+                            Identifier: 'text'
+                          Identifier: 'length'
+                        MinusToken
+                        Identifier: ' n'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' endLineCharacter'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getLineAndCharacterOfPosition'
+                      Identifier: 'file'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' file'
+                          Identifier: 'text'
+                        Identifier: 'length'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' oneBasedStartPosition'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' line'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' startLineCharacter'
+                            Identifier: 'line'
+                          PlusToken
+                          NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' offset'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' startLineCharacter'
+                            Identifier: 'character'
+                          PlusToken
+                          NumericLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' oneBasedEndPosition'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' line'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' endLineCharacter'
+                            Identifier: 'line'
+                          PlusToken
+                          NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' offset'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' endLineCharacter'
+                            Identifier: 'character'
+                          PlusToken
+                          NumericLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            session'
+                    Identifier: 'executeCommandSeq'
+                  TypeReference
+                    QualifiedName
+                      QualifiedName
+                        QualifiedName
+                          Identifier: 'ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'UpdateOpenRequest'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                command'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'CommandTypes'
+                        Identifier: 'UpdateOpen'
+                    PropertyAssignment
+                      Identifier: '
+                arguments'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    changedFiles'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              ShorthandPropertyAssignment
+                                Identifier: '
+                        fileName'
+                              PropertyAssignment
+                                Identifier: '
+                        textChanges'
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                            newText'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                            start'
+                                      Identifier: ' oneBasedStartPosition'
+                                    PropertyAssignment
+                                      Identifier: '
+                            end'
+                                      Identifier: ' oneBasedEndPosition'
+              ReturnStatement
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                backspace'
+                  PropertyAssignment
+                    Identifier: '
+                type'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'typedCharacters'
+                        StringKeyword
+                      Parameter
+                        Identifier: ' cb'
+                        FunctionType
+                          Parameter
+                            Identifier: 'completions'
+                            TypeReference
+                              QualifiedName
+                                QualifiedName
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'server'
+                                  Identifier: 'protocol'
+                                Identifier: 'CompletionInfo'
+                          VoidKeyword
+                      EqualsGreaterThanToken
+                      Block
+                        ReturnStatement
+                          CallExpression
+                            Identifier: ' type'
+                            Identifier: 'typedCharacters'
+                            Identifier: ' cb'
+                            FalseKeyword
+      FunctionDeclaration
+        Identifier: ' assertCompletionDetailsOk'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Parameter
+          Identifier: ' entry'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'server'
+                Identifier: 'protocol'
+              Identifier: 'CompletionEntry'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' project'
+                NonNullExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' projectService'
+                      Identifier: 'getDefaultProjectForFile'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'server'
+                        Identifier: 'toNormalizedPath'
+                      Identifier: 'fileName'
+                    TrueKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' file'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'Debug'
+                    Identifier: 'checkDefined'
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'project'
+                              Identifier: 'getLanguageService'
+                            TrueKeyword
+                          Identifier: 'getProgram'
+                      QuestionDotToken
+                      Identifier: 'getSourceFile'
+                    Identifier: 'fileName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' line'
+                  BindingElement
+                    Identifier: ' character'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'getLineAndCharacterOfPosition'
+                  Identifier: 'file'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' file'
+                        Identifier: 'text'
+                      Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' details'
+                AsExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'CompletionDetailsRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'CompletionDetails'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                file'
+                              Identifier: ' fileName'
+                            PropertyAssignment
+                              Identifier: '
+                line'
+                              BinaryExpression
+                                Identifier: ' line'
+                                PlusToken
+                                NumericLiteral
+                            PropertyAssignment
+                              Identifier: '
+                offset'
+                              BinaryExpression
+                                Identifier: ' character'
+                                PlusToken
+                                NumericLiteral
+                            PropertyAssignment
+                              Identifier: '
+                entryNames'
+                              ArrayLiteralExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    name'
+                                    PropertyAccessExpression
+                                      Identifier: ' entry'
+                                      Identifier: 'name'
+                                  PropertyAssignment
+                                    Identifier: '
+                    source'
+                                    PropertyAccessExpression
+                                      Identifier: ' entry'
+                                      Identifier: 'source'
+                                  PropertyAssignment
+                                    Identifier: '
+                    data'
+                                    PropertyAccessExpression
+                                      Identifier: ' entry'
+                                      Identifier: 'data'
+                    Identifier: 'response'
+                  ArrayType
+                    TypeReference
+                      QualifiedName
+                        QualifiedName
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'server'
+                          Identifier: 'protocol'
+                        Identifier: 'CompletionEntryDetails'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        assert'
+              ElementAccessExpression
+                Identifier: 'details'
+                NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        assert'
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: 'details'
+                  NumericLiteral
+                Identifier: 'codeActions'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        assert'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              PropertyAccessExpression
+                                ElementAccessExpression
+                                  Identifier: 'details'
+                                  NumericLiteral
+                                Identifier: 'codeActions'
+                              NumericLiteral
+                            Identifier: 'changes'
+                          NumericLiteral
+                        Identifier: 'textChanges'
+                      NumericLiteral
+                    Identifier: 'newText'
+                  Identifier: 'includes'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          PropertyAccessExpression
+                            Identifier: 'entry'
+                            Identifier: 'data'
+                          AnyKeyword
+                      Identifier: 'moduleSpecifier'
+                    TemplateTail
+          ReturnStatement
+            Identifier: ' details'

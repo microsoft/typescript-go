@@ -1,0 +1,204 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+      ClassDeclaration
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: '
+        b'
+          Block
+        MethodDeclaration
+          Identifier: '
+        a'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' z'
+                  NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' a1'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' x'
+                      NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            y'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            z'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'b'
+            ReturnStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' a1'
+                  Identifier: 'x'
+                PlusToken
+                NumericLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+      ClassDeclaration
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: '
+        b'
+          Block
+        MethodDeclaration
+          Identifier: '
+        a'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' z'
+                  NumericLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' /*RENAME*/newFunction'
+            FunctionDeclaration
+              Identifier: ' newFunction'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' a1'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' x'
+                          NumericLiteral
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                y'
+                    EqualsToken
+                    NumericLiteral
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                z'
+                    EqualsToken
+                    NumericLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'b'
+                ReturnStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' a1'
+                      Identifier: 'x'
+                    PlusToken
+                    NumericLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+      ClassDeclaration
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: '
+        b'
+          Block
+        MethodDeclaration
+          Identifier: '
+        a'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' z'
+                  NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' __return'
+            ExpressionStatement
+              ParenthesizedExpression
+                BinaryExpression
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: ' __return'
+                    ShorthandPropertyAssignment
+                      Identifier: ' z'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: '/*RENAME*/newMethod'
+                    Identifier: 'z'
+            ReturnStatement
+              Identifier: ' __return'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' newMethod'
+          Parameter
+            Identifier: 'z'
+            NumberKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' a1'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' x'
+                      NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            y'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            z'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'b'
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' __return'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' a1'
+                      Identifier: 'x'
+                    PlusToken
+                    NumericLiteral
+                ShorthandPropertyAssignment
+                  Identifier: ' z'

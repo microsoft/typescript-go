@@ -1,0 +1,51 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unreachable'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            UnknownKeyword
+          NumberKeyword
+          EqualsGreaterThanToken
+          Block
+            SwitchStatement
+              TypeOfExpression
+                Identifier: ' x'
+              CaseBlock
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    NumericLiteral
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    NumericLiteral
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    NumericLiteral
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    NumericLiteral
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    NumericLiteral
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    NumericLiteral
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    NumericLiteral
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    NumericLiteral
+            ExpressionStatement
+              Identifier: '
+    x'

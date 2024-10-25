@@ -1,0 +1,84 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumberKeyword
+            Identifier: ' x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      PropertyAccessExpression
+        Identifier: 'E'
+        Identifier: 'A'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            UnionType
+              TypeReference
+                Identifier: ' A'
+              TypeReference
+                Identifier: ' B'
+            Identifier: ' x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+bar'
+      NewExpression
+        Identifier: ' A'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bar'
+      NewExpression
+        Identifier: ' B'

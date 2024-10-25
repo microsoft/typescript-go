@@ -1,0 +1,230 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// interface TFunction {
+////     (_: 'login.title', __?: {}): string;
+////     (_: 'login.description', __?: {}): string;
+////     (_: 'login.sendEmailAgree', __?: {}): string;
+////     (_: 'login.termsOfUse', __?: {}): string;
+////     (_: 'login.privacyPolicy', __?: {}): string;
+////     (_: 'login.sendEmailButton', __?: {}): string;
+////     (_: 'login.emailInputPlaceholder', __?: {}): string;
+////     (_: 'login.errorWrongEmailTitle', __?: {}): string;
+////     (_: 'login.errorWrongEmailDescription', __?: {}): string;
+////     (_: 'login.errorGeneralEmailTitle', __?: {}): string;
+////     (_: 'login.errorGeneralEmailDescription', __?: {}): string;
+////     (_: 'login.loginErrorTitle', __?: {}): string;
+////     (_: 'login.loginErrorDescription', __?: {}): string;
+////     (_: 'login.openEmailAppErrorTitle', __?: {}): string;
+////     (_: 'login.openEmailAppErrorDescription', __?: {}): string;
+////     (_: 'login.openEmailAppErrorConfirm', __?: {}): string;
+//// }
+//// const f: TFunction = (() => {}) as any;
+//// f('[|login./**/|]')
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral

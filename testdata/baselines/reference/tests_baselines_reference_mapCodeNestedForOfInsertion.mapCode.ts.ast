@@ -1,0 +1,109 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+        ExpressionStatement
+          ArrayLiteralExpression
+            BinaryExpression
+              Identifier: ''
+              BarBarToken
+              Identifier: ''
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            StringLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            StringLiteral
+      ReturnStatement
+        NumericLiteral
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  console'
+            Identifier: 'log'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  console'
+            Identifier: 'log'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              StringLiteral
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            console'
+                    Identifier: 'log'
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            console'
+                    Identifier: 'log'
+                  StringLiteral
+      ReturnStatement
+        NumericLiteral

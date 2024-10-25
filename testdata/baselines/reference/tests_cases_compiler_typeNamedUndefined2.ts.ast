@@ -1,0 +1,63 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' ns'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' undefined'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s'
+                CallExpression
+                  Identifier: ' Symbol'
+          TypeAliasDeclaration
+            ExportKeyword
+            Identifier: ' undefined'
+            TypeQuery
+              Identifier: ' s'
+      EmptyStatement
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' x'
+        Parameter
+          Identifier: 'p'
+          UndefinedKeyword
+        UndefinedKeyword
+        Block
+          ReturnStatement
+            Identifier: ' p'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' x'
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ns'
+            Identifier: 'undefined'
+          Identifier: 'undefined'
+    Block
+      ReturnStatement
+        Identifier: ' p'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' undefined'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            CallExpression
+              Identifier: ' Symbol'
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' undefined'
+        TypeQuery
+          Identifier: ' s'
+  EmptyStatement

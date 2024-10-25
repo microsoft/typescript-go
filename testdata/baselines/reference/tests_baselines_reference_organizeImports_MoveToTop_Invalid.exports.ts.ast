@@ -1,0 +1,74 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' F1'
+      ExportSpecifier
+        Identifier: ' F2'
+    StringLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExportDeclaration
+    StringLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' b'
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        StringLiteral
+        TemplateTail
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        StringLiteral
+        TemplateTail
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' D'
+    StringLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' D'
+      ExportSpecifier
+        Identifier: ' F1'
+      ExportSpecifier
+        Identifier: ' F2'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' b'
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        StringLiteral
+        TemplateTail
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        StringLiteral
+        TemplateTail
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral

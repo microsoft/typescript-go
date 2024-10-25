@@ -1,0 +1,5 @@
+SourceFile
+  LabeledStatement
+    Identifier: 'f'
+    ExpressionStatement
+      Identifier: ' number'

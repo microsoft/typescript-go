@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'foo'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' y'

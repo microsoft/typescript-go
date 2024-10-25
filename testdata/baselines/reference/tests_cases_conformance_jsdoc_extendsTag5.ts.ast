@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'a'
+      Block
+        ReturnStatement
+          Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'

@@ -1,0 +1,8 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeLiteral
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral

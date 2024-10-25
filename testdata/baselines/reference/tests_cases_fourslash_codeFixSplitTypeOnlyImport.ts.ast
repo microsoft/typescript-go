@@ -1,0 +1,89 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /a.ts
+////export type B = {};
+////export type C = {};
+////export default interface A {}
+
+// @Filename: /b.ts
+////export type E = {};
+////export type F = {};
+////export default class D {}
+
+// @Filename: /c.ts
+////import type A, { B, C } from './a';
+////import type D, * as types from './b';
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  errorCode'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'A_type_only_import_can_specify_a_default_import_or_named_bindings_but_not_both'
+            Identifier: 'code'
+        PropertyAssignment
+          Identifier: '
+  description'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Split_into_two_separate_import_declarations'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+  applyChanges'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: '
+  index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  fixAllDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Split_all_invalid_type_only_imports'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

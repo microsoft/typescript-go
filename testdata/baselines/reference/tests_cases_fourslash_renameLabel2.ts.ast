@@ -1,0 +1,14 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+/////**/foo: {
+////    break foo;
+////}
+
+verify'
+        Identifier: 'baselineRename'
+      StringLiteral
+      ObjectLiteralExpression

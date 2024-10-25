@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Uppercase'
+          StringKeyword
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Uppercase'
+          StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            StringLiteral

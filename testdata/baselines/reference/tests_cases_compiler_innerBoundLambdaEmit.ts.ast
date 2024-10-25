@@ -1,0 +1,25 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Foo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+  InterfaceDeclaration
+    Identifier: ' Array'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    toFoo'
+      TypeReference
+        QualifiedName
+          Identifier: ' M'
+          Identifier: 'Foo'

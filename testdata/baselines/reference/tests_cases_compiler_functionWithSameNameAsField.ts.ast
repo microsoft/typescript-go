@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' TestProgressBar'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' total'
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' total'
+      Parameter
+        Identifier: 'total'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'total'
+            EqualsToken
+            Identifier: ' total'
+        ReturnStatement
+          ThisKeyword

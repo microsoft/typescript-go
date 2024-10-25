@@ -1,0 +1,19 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' __foo'
+    UnionType
+      NumberKeyword
+      VoidKeyword
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' __foo'
+    UnionType
+      StringKeyword
+      VoidKeyword
+    Block

@@ -1,0 +1,41 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0Def'
+          BindingElement
+            Identifier: ' r0'
+          BindingElement
+            Identifier: ' r1Def'
+          BindingElement
+            Identifier: ' r1'
+          BindingElement
+            Identifier: ' r2Def'
+          BindingElement
+            Identifier: ' r2'
+          BindingElement
+            Identifier: ' r3Def'
+          BindingElement
+            Identifier: ' r3'
+          BindingElement
+            Identifier: ' r4Def'
+          BindingElement
+            Identifier: ' r4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      ArrayLiteralExpression
+        Identifier: 'r0'
+        Identifier: ' r1'
+        Identifier: ' r2'
+        Identifier: ' r3'
+        Identifier: ' r4'

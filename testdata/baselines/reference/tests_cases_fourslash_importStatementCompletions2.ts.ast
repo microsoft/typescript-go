@@ -1,0 +1,100 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+        Identifier: 'forEach'
+      ArrowFunction
+        Parameter
+          Identifier: 'marker'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+  verify'
+                Identifier: 'completions'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    marker'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'marker'
+                      TemplateTail
+                PropertyAssignment
+                  Identifier: '
+    isNewIdentifierLocation'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    exact'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+      name'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+      source'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+      sourceDisplay'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+      insertText'
+                        NoSubstitutionTemplateLiteral
+                      PropertyAssignment
+                        Identifier: '
+      isSnippet'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+      replacementSpan'
+                        ElementAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' test'
+                              Identifier: 'ranges'
+                          Identifier: 'marker'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+      name'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+      sortText'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' completion'
+                            Identifier: 'SortText'
+                          Identifier: 'GlobalsOrKeywords'
+                PropertyAssignment
+                  Identifier: '
+    preferences'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+      includeCompletionsForImportStatements'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+      includeCompletionsForModuleExports'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+      includeCompletionsWithSnippetText'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+      includeCompletionsWithInsertText'
+                      TrueKeyword

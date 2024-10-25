@@ -1,0 +1,76 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Bar'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+      ExpressionWithTypeArguments
+        Identifier: ' Bar'
+  InterfaceDeclaration
+    Identifier: ' I4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+      ExpressionWithTypeArguments
+        Identifier: ' Bar'
+    PropertySignature
+      Identifier: ' // error
+    x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Baz'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' y'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I5'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+      ExpressionWithTypeArguments
+        Identifier: ' Baz'
+    PropertySignature
+      Identifier: '
+    z'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        StringKeyword
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'y'

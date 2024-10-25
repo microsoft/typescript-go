@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+  x'
+          PropertySignature
+            Identifier: '
+  y'

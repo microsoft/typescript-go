@@ -1,0 +1,162 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def3'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def4'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def5'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def6'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def7'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def8'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def9'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def10'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def11'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def12'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        LiteralType
+          StringLiteral
+  ExportAssignment
+    Identifier: ' bad'

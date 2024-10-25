@@ -1,0 +1,10 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        AsteriskToken
+        Identifier: 'generator'
+        AnyKeyword
+        Block

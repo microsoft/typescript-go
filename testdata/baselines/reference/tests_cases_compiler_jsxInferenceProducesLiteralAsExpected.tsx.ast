@@ -1,0 +1,117 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' FunctionPropertyNames'
+    TypeParameter
+      Identifier: 'T'
+    IndexedAccessType
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        ConditionalType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'K'
+          TypeReference
+            Identifier: ' Function'
+          TypeReference
+            Identifier: ' K'
+          NeverKeyword
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' TestObject'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      StringKeyword
+      StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    b'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    c'
+      FunctionType
+        VoidKeyword
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  InterfaceDeclaration
+    Identifier: ' TestProps'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    model'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' FunctionPropertyNames'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' Test'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' TestProps'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ReturnStatement
+        JsxFragment
+          JsxOpeningFragment
+          JsxClosingFragment
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' model'
+        NewExpression
+          Identifier: ' TestObject'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' el1'
+        JsxSelfClosingElement
+          Identifier: 'Test'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' model'
+              JsxExpression
+                Identifier: 'model'
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' el2'
+        JsxSelfClosingElement
+          Identifier: 'Test'
+          TypeReference
+            Identifier: 'TestObject'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' model'
+              JsxExpression
+                Identifier: 'model'
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral

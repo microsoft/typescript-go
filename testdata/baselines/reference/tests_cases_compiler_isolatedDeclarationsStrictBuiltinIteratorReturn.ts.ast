@@ -1,0 +1,417 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+          AnyKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+          UndefinedKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+          TypeReference
+            Identifier: ' BuiltinIteratorReturn'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x7'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+          TypeReference
+            Identifier: ' BuiltinIteratorReturn'
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x8'
+        TypeReference
+          Identifier: ' IterableIterator'
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x9'
+        TypeReference
+          Identifier: ' IterableIterator'
+          NumberKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x10'
+        TypeReference
+          Identifier: ' IterableIterator'
+          NumberKeyword
+          AnyKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+        TypeReference
+          Identifier: ' IterableIterator'
+          NumberKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x12'
+        TypeReference
+          Identifier: ' IterableIterator'
+          NumberKeyword
+          UndefinedKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x13'
+        TypeReference
+          Identifier: ' IterableIterator'
+          NumberKeyword
+          TypeReference
+            Identifier: ' BuiltinIteratorReturn'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x14'
+        TypeReference
+          Identifier: ' IterableIterator'
+          NumberKeyword
+          TypeReference
+            Identifier: ' BuiltinIteratorReturn'
+          AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeReference
+      Identifier: ' Iterable'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeReference
+      Identifier: ' Iterable'
+      NumberKeyword
+      AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    TypeReference
+      Identifier: ' Iterable'
+      NumberKeyword
+      AnyKeyword
+      AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f4'
+    TypeReference
+      Identifier: ' Iterable'
+      NumberKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f5'
+    TypeReference
+      Identifier: ' Iterable'
+      NumberKeyword
+      UndefinedKeyword
+      AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f6'
+    TypeReference
+      Identifier: ' Iterable'
+      NumberKeyword
+      TypeReference
+        Identifier: ' BuiltinIteratorReturn'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f7'
+    TypeReference
+      Identifier: ' Iterable'
+      NumberKeyword
+      TypeReference
+        Identifier: ' BuiltinIteratorReturn'
+      AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f8'
+    TypeReference
+      Identifier: ' IterableIterator'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f9'
+    TypeReference
+      Identifier: ' IterableIterator'
+      NumberKeyword
+      AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f10'
+    TypeReference
+      Identifier: ' IterableIterator'
+      NumberKeyword
+      AnyKeyword
+      AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f11'
+    TypeReference
+      Identifier: ' IterableIterator'
+      NumberKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f12'
+    TypeReference
+      Identifier: ' IterableIterator'
+      NumberKeyword
+      UndefinedKeyword
+      AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f13'
+    TypeReference
+      Identifier: ' IterableIterator'
+      NumberKeyword
+      TypeReference
+        Identifier: ' BuiltinIteratorReturn'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f14'
+    TypeReference
+      Identifier: ' IterableIterator'
+      NumberKeyword
+      TypeReference
+        Identifier: ' BuiltinIteratorReturn'
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        ArrowFunction
+          TypeReference
+            Identifier: ' Iterable'
+            NumberKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        ArrowFunction
+          TypeReference
+            Identifier: ' Iterable'
+            NumberKeyword
+            AnyKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        ArrowFunction
+          TypeReference
+            Identifier: ' Iterable'
+            NumberKeyword
+            AnyKeyword
+            AnyKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        ArrowFunction
+          TypeReference
+            Identifier: ' Iterable'
+            NumberKeyword
+            UndefinedKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        ArrowFunction
+          TypeReference
+            Identifier: ' Iterable'
+            NumberKeyword
+            UndefinedKeyword
+            AnyKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        ArrowFunction
+          TypeReference
+            Identifier: ' Iterable'
+            NumberKeyword
+            TypeReference
+              Identifier: ' BuiltinIteratorReturn'
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a7'
+        ArrowFunction
+          TypeReference
+            Identifier: ' Iterable'
+            NumberKeyword
+            TypeReference
+              Identifier: ' BuiltinIteratorReturn'
+            AnyKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a8'
+        ArrowFunction
+          TypeReference
+            Identifier: ' IterableIterator'
+            NumberKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9'
+        ArrowFunction
+          TypeReference
+            Identifier: ' IterableIterator'
+            NumberKeyword
+            AnyKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a10'
+        ArrowFunction
+          TypeReference
+            Identifier: ' IterableIterator'
+            NumberKeyword
+            AnyKeyword
+            AnyKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a11'
+        ArrowFunction
+          TypeReference
+            Identifier: ' IterableIterator'
+            NumberKeyword
+            UndefinedKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a12'
+        ArrowFunction
+          TypeReference
+            Identifier: ' IterableIterator'
+            NumberKeyword
+            UndefinedKeyword
+            AnyKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a13'
+        ArrowFunction
+          TypeReference
+            Identifier: ' IterableIterator'
+            NumberKeyword
+            TypeReference
+              Identifier: ' BuiltinIteratorReturn'
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a14'
+        ArrowFunction
+          TypeReference
+            Identifier: ' IterableIterator'
+            NumberKeyword
+            TypeReference
+              Identifier: ' BuiltinIteratorReturn'
+            AnyKeyword
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword

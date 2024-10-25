@@ -1,0 +1,157 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeQuery
+      Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' MixA'
+    IntersectionType
+      TypeReference
+        Identifier: ' A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'foo'
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' OriginA1'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'A'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' OriginA2'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'MixA'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeQuery
+          Identifier: ' a'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' MixB'
+    IntersectionType
+      TypeReference
+        Identifier: ' B'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' OriginB1'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'B'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' OriginB2'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'MixB'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' MixC'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          StringKeyword
+      TypeReference
+        Identifier: ' A'
+  TypeAliasDeclaration
+    Identifier: ' OriginC'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'MixC'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' MixD'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        IntersectionType
+          TypeReference
+            Identifier: 'T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              StringKeyword
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' OriginD'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        IntersectionType
+          TypeReference
+            Identifier: 'MixD'
+            IntersectionType
+              TypeReference
+                Identifier: 'A'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' foo'
+                  StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              StringKeyword
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' E'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        IntersectionType
+          TypeReference
+            Identifier: 'A'
+          TypeLiteral
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' MixE'
+    IntersectionType
+      TypeReference
+        Identifier: ' E'
+      TypeLiteral
+  TypeAliasDeclaration
+    Identifier: ' OriginE'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'MixE'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' OriginF'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'A'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'A'
+        TemplateTail

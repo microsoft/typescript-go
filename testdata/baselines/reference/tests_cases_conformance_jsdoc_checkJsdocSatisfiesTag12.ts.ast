@@ -1,0 +1,65 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t5'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t6'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t7'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t8'
+        ParenthesizedExpression
+          NumericLiteral

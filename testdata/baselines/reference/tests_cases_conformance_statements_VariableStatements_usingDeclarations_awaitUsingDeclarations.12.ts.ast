@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ObjectLiteralExpression

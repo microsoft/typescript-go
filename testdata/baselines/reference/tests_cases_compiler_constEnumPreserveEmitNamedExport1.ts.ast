@@ -1,0 +1,22 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' A'
+    EnumMember
+      Identifier: '
+    Foo'
+  EmptyStatement
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'

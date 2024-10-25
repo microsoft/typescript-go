@@ -1,0 +1,54 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IPromise'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    then'
+      Parameter
+        Identifier: 'successCallback'
+        FunctionType
+          Parameter
+            Identifier: 'promiseValue'
+            TypeReference
+              Identifier: ' T'
+          AnyKeyword
+      Parameter
+        Identifier: ' errorCallback'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'reason'
+            AnyKeyword
+          AnyKeyword
+      TypeReference
+        Identifier: ' IPromise'
+        AnyKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      IfStatement
+        TrueKeyword
+        ReturnStatement
+          CallExpression
+            Identifier: ' b'
+      ReturnStatement
+        CallExpression
+          Identifier: ' d'
+  FunctionDeclaration
+    Identifier: ' b'
+    TypeReference
+      Identifier: ' IPromise'
+      VoidKeyword
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' d'
+    TypeReference
+      Identifier: ' IPromise'
+      AnyKeyword
+    Block
+      ReturnStatement
+        NullKeyword

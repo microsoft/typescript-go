@@ -1,0 +1,171 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' cloneAgain'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' a'
+        BindingElement
+          DotDotDotToken
+          Identifier: 'clone'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+    VoidKeyword
+    Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' suddenly'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' z'
+                PropertySignature
+                  Identifier: ' ka'
+            PropertySignature
+              Identifier: ' y'
+              StringKeyword
+        VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+suddenly'
+      ArrowFunction
+        Parameter
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' x'
+              Identifier: ' a'
+            BindingElement
+              DotDotDotToken
+              Identifier: 'rest'
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          Identifier: ' rest'
+          Identifier: 'y'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+suddenly'
+      ArrowFunction
+        Parameter
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' x'
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' z'
+                  NumericLiteral
+                BindingElement
+                  DotDotDotToken
+                  Identifier: 'nested'
+            BindingElement
+              DotDotDotToken
+              Identifier: 'rest'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' z'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' ka'
+                  NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              StringLiteral
+        EqualsGreaterThanToken
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' rest'
+            Identifier: 'y'
+          PlusToken
+          PropertyAccessExpression
+            Identifier: ' nested'
+            Identifier: 'ka'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'clone'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+      VoidKeyword
+      Block
+    SetAccessor
+      Identifier: ' p'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'clone'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+      Block
+  FunctionDeclaration
+    Identifier: ' foobar'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' bar'
+          ObjectLiteralExpression
+        BindingElement
+          DotDotDotToken
+          Identifier: 'opts'
+      AnyKeyword
+      ObjectLiteralExpression
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foobar'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foobar'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' baz'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foobar'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' bar'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' greeting'
+              StringLiteral

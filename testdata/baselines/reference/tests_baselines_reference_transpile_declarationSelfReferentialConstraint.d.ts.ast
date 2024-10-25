@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' object'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    foo'
+            ArrowFunction
+              TypeParameter
+                Identifier: 'T'
+                UnionType
+                  TypeReference
+                    Identifier: ' Set'
+                    TypeReference
+                      Identifier: 'T'
+                  TupleType
+              VoidKeyword
+              EqualsGreaterThanToken
+              Block
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' object'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    foo'
+            FunctionType
+              TypeParameter
+                Identifier: 'T'
+                UnionType
+                  TypeReference
+                    Identifier: ' Set'
+                    TypeReference
+                      Identifier: 'T'
+                  TupleType
+              VoidKeyword

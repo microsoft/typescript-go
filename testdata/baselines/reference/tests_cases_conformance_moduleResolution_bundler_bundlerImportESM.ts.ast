@@ -1,0 +1,24 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' esm'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' esm'
+    StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' esm'
+    StringLiteral

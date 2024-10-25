@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Color'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    Red'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    Green'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    Blue'
+              StringLiteral
+          TypeReference
+            Identifier: ' const'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Color'
+    TypeQuery
+      Identifier: ' Color'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Colors'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' Color'
+      TypeOperator
+        TypeReference
+          Identifier: ' Color'

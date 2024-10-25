@@ -1,0 +1,53 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' isDefined'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+        LiteralType
+          NullKeyword
+        VoidKeyword
+    TypePredicate
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' value'
+            ExclamationEqualsEqualsToken
+            Identifier: ' undefined'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' value'
+            ExclamationEqualsEqualsToken
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  IfStatement
+    CallExpression
+      Identifier: 'isDefined'
+      Identifier: 'foo'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  console'
+            Identifier: 'log'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'foo'
+              Identifier: 'toUpperCase'

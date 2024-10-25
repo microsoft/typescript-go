@@ -1,0 +1,246 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Array'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' ReadonlyArray'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' Int8Array'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' Uint8Array'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' Uint8ClampedArray'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' Int16Array'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' Uint16Array'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' Int32Array'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' Uint32Array'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' Float32Array'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' Float64Array'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' BigInt64Array'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        BigIntKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    Identifier: ' BigUint64Array'
+    TypeParameter
+      Identifier: 'TArrayBuffer'
+      TypeReference
+        Identifier: ' ArrayBufferLike'
+    MethodSignature
+      Identifier: '
+    /**
+     * Returns the item located at the specified index.
+     * @param index The zero-based index of the desired code unit. A negative index will count back from the last item.
+     */
+    at'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      UnionType
+        BigIntKeyword
+        UndefinedKeyword

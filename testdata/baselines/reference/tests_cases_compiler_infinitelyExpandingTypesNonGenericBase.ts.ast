@@ -1,0 +1,65 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Functionality'
+    TypeParameter
+      Identifier: 'V'
+    PropertyDeclaration
+      Identifier: '
+    property'
+      TypeReference
+        Identifier: ' Options'
+        TypeReference
+          Identifier: 'V'
+  ClassDeclaration
+    Identifier: ' Base'
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    options'
+      TypeReference
+        Identifier: ' Options'
+        ArrayType
+          TypeReference
+            Identifier: 'Functionality'
+            TypeReference
+              Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' OptionsBase'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    Options'
+      TypeReference
+        Identifier: ' Options'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' Options'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' OptionsBase'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' o'
+    Parameter
+      Identifier: 'type'
+      ConstructorType
+        TypeReference
+          Identifier: ' Base'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+o'
+      Identifier: 'A'

@@ -1,0 +1,57 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: esnext
+// @isolatedModules: true
+// @filename: /a.ts
+////type T1 = {};
+////const a = 1;
+////const b = 1;
+////export { a };
+
+// @filename: /b.ts
+////type T2 = {};
+////type T3 = {};
+////export type { T2 };
+
+// @filename: /c.ts
+////import { b, T1 } from "./a";
+////import { T3 } from "./b";
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixAllDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Export_all_referenced_locals'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral

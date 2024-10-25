@@ -1,0 +1,77 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numTypedVariableCount'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strTypedVariableCount'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: 'numTypedVariableCount'
+        PlusToken
+        Identifier: ' strTypedVariableCount'
+      ExclamationEqualsEqualsToken
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'markers'
+        Identifier: 'length'
+    Block
+      ThrowStatement
+        StringLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      Identifier: ' numTypedVariableCount'
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'quickInfoAt'
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            Identifier: ' i'
+          StringLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      Identifier: ' strTypedVariableCount'
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'quickInfoAt'
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'i'
+                PlusToken
+                Identifier: ' numTypedVariableCount'
+          StringLiteral

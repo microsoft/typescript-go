@@ -1,0 +1,103 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' R'
+    IntersectionType
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          NumberKeyword
+          TemplateTail
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    _thing'
+          LiteralType
+            TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' _S'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' S'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: '_S'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: '_S'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' T'
+    UnionType
+      TypeReference
+        Identifier: ' R'
+      TypeReference
+        Identifier: ' S'
+  TypeAliasDeclaration
+    Identifier: ' X'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'T'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'T'
+        TemplateTail
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Props'
+    TypeReference
+      Identifier: ' Partial'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    x'
+          TypeReference
+            Identifier: ' X'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        TypeReference
+          Identifier: ' Props'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TypeReference
+          Identifier: ' Props'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'a1'
+          SpreadAssignment
+            Identifier: 'a2'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' b'

@@ -1,0 +1,24 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts"/>
+
+/////**/module Default{var x= ( { } ) ;}
+
+
+format'
+        Identifier: 'document'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'currentLineContentIs'
+      StringLiteral

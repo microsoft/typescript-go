@@ -1,0 +1,41 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' set'
+        ObjectLiteralExpression
+          SetAccessor
+            Identifier: ' foo'
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' get'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' set'
+      ExportSpecifier
+        Identifier: ' get'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' set'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' set'
+          Identifier: ' yield'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' get'
+    StringLiteral

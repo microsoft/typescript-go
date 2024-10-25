@@ -1,0 +1,145 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleDeclaration
+      Identifier: 'Bar'
+      ModuleBlock
+        ExpressionStatement
+          StringLiteral
+        ClassDeclaration
+          Identifier: ' Greeter'
+          Constructor
+            Parameter
+              PublicKeyword
+              Identifier: ' greeting'
+              StringKeyword
+            Block
+          MethodDeclaration
+            Identifier: '
+
+        greet'
+            Block
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    StringLiteral
+                    PlusToken
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'greeting'
+                  PlusToken
+                  StringLiteral
+        FunctionDeclaration
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'greeting'
+            StringKeyword
+          TypeReference
+            Identifier: ' Greeter'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' Greeter'
+                Identifier: 'greeting'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' greeter'
+              NewExpression
+                Identifier: ' Greeter'
+                StringLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' str'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' greeter'
+                  Identifier: 'greet'
+        FunctionDeclaration
+          Identifier: ' foo2'
+          Parameter
+            Identifier: 'greeting'
+            StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'restGreetings'
+            ArrayType
+              StringKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' greeters'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Greeter'
+                  ArrayLiteralExpression
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: ' /* inline block comment */
+        greeters'
+                  NumericLiteral
+                EqualsToken
+                NewExpression
+                  Identifier: ' Greeter'
+                  Identifier: 'greeting'
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' restGreetings'
+                  Identifier: 'length'
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            greeters'
+                      Identifier: 'push'
+                    NewExpression
+                      Identifier: ' Greeter'
+                      ElementAccessExpression
+                        Identifier: 'restGreetings'
+                        Identifier: 'i'
+            ReturnStatement
+              Identifier: ' greeters'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              CallExpression
+                Identifier: ' foo2'
+                StringLiteral
+                StringLiteral
+                StringLiteral
+        ForStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' j'
+              NumericLiteral
+          BinaryExpression
+            Identifier: ' j'
+            LessThanToken
+            PropertyAccessExpression
+              Identifier: ' b'
+              Identifier: 'length'
+          PostfixUnaryExpression
+            Identifier: ' j'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ElementAccessExpression
+                    Identifier: '
+        b'
+                    Identifier: 'j'
+                  Identifier: 'greet'

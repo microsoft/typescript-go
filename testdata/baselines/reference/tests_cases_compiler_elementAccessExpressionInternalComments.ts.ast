@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '/*0*/ Array'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: ' /*5*/
+
+/*0*/ Array'
+      StringLiteral

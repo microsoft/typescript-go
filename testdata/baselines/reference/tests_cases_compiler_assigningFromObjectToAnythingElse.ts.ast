@@ -1,0 +1,53 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' RegExp'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' String'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          TypeReference
+            Identifier: 'Object'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' String'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          TypeReference
+            Identifier: 'Number'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' w'
+        TypeReference
+          Identifier: ' Error'
+        NewExpression
+          Identifier: ' Object'

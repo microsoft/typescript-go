@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'items'
+            ArrayType
+              NeverKeyword
+          ArrayType
+            NeverKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        FunctionType
+          ArrayType
+            UnknownKeyword
+        Identifier: ' s'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TupleType
+          ArrayType
+            UnknownKeyword
+        Identifier: ' s'

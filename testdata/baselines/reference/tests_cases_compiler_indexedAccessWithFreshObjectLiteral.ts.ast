@@ -1,0 +1,177 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'id'
+      StringKeyword
+    Block
+      ReturnStatement
+        ElementAccessExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+      a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: '
+      b'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      c'
+              TrueKeyword
+          Identifier: 'id'
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'id'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        ElementAccessExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+      a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: '
+      b'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      c'
+              FalseKeyword
+          Identifier: 'id'
+  FunctionDeclaration
+    Identifier: ' baz'
+    Parameter
+      Identifier: 'id'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        ElementAccessExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              NumericLiteral
+              NumericLiteral
+            PropertyAssignment
+              NumericLiteral
+              StringLiteral
+            PropertyAssignment
+              NumericLiteral
+              FalseKeyword
+          Identifier: 'id'
+  FunctionDeclaration
+    Identifier: ' qux'
+    Parameter
+      Identifier: 'id'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    Block
+      ReturnStatement
+        ElementAccessExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              NumericLiteral
+              NumericLiteral
+            PropertyAssignment
+              NumericLiteral
+              StringLiteral
+            PropertyAssignment
+              NumericLiteral
+              FalseKeyword
+          Identifier: 'id'
+  FunctionDeclaration
+    Identifier: ' quux'
+    Parameter
+      Identifier: 'id'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        ElementAccessExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+      a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: '
+      b'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      c'
+              FalseKeyword
+          Identifier: 'id'
+  FunctionDeclaration
+    Identifier: ' corge'
+    Parameter
+      Identifier: 'id'
+      StringKeyword
+    Block
+      ReturnStatement
+        ElementAccessExpression
+          ParenthesizedExpression
+            AsExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+      a'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+      b'
+                  StringLiteral
+              TypeReference
+                Identifier: ' Record'
+                StringKeyword
+                UnionType
+                  NumberKeyword
+                  StringKeyword
+          Identifier: 'id'
+  FunctionDeclaration
+    Identifier: ' grault'
+    Parameter
+      Identifier: 'id'
+      StringKeyword
+    Block
+      ReturnStatement
+        ElementAccessExpression
+          ParenthesizedExpression
+            AsExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+      a'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+      b'
+                  StringLiteral
+              TypeLiteral
+                IndexSignature
+                  Parameter
+                    Identifier: 'k'
+                    StringKeyword
+                  UnionType
+                    StringKeyword
+                    NumberKeyword
+          Identifier: 'id'

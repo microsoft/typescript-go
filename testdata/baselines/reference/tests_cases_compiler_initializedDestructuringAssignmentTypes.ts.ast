@@ -1,0 +1,24 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          BindingElement
+            Identifier: ' a'
+            StringLiteral
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              StringLiteral
+              Identifier: 'match'
+            StringLiteral
+          BarBarToken
+          ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+a'
+        Identifier: 'toFixed'

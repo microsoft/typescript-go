@@ -1,0 +1,187 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x4'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x4'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y4'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' y5'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x5'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y5'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x6'
+          BindingElement
+            Identifier: ' y6'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x6'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y6'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x7'
+            Identifier: ' a1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x7'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y7'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' y8'
+            Identifier: ' b1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x8'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y8'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x9'
+            Identifier: ' a2'
+          BindingElement
+            Identifier: ' y9'
+            Identifier: ' b2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x9'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y9'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            Identifier: ' x11'
+          BindingElement
+            Identifier: ' b'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' a'
+                Identifier: ' y11'
+              BindingElement
+                Identifier: ' b'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' a'
+                    Identifier: ' z11'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' a'
+                    TrueKeyword
+  FunctionDeclaration
+    Identifier: ' f15'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a4'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b4'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c4'
+            TrueKeyword
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' a4'
+          ShorthandPropertyAssignment
+            Identifier: ' b4'
+          ShorthandPropertyAssignment
+            Identifier: ' c4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a4'
+          BindingElement
+            Identifier: ' b4'
+          BindingElement
+            Identifier: ' c4'
+        CallExpression
+          Identifier: ' f15'
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' a4'
+              BindingElement
+                Identifier: ' b4'
+              BindingElement
+                Identifier: ' c4'
+            CallExpression
+              Identifier: ' f15'

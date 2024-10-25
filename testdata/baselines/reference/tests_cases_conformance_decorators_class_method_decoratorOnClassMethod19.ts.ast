@@ -1,0 +1,50 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      PrivateIdentifier
+    MethodDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'decorator'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' C1'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' x'
+              PrivateIdentifier
+      Identifier: '
+    y'
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      PrivateIdentifier
+    MethodDeclaration
+      Identifier: '
+
+    y'
+      Parameter
+        Decorator
+          CallExpression
+            Identifier: 'decorator'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' C2'
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' x'
+                PrivateIdentifier
+        Identifier: ' p'
+      Block

@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' abc'
+        LiteralType
+          StringLiteral
+        NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' de_NEWLINE_f'
+        LiteralType
+          StringLiteral
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            StringLiteral
+            TemplateTail

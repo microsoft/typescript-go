@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' a'
+      AnyKeyword
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' b'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' c'
+      AnyKeyword
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' d'
+      NumericLiteral

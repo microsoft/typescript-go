@@ -1,0 +1,158 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: ' a'
+      TypeReference
+        Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  TypeAliasDeclaration
+    Identifier: ' Deep'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' Deep'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'K'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'deep'
+      TypeReference
+        Identifier: ' Deep'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' out'
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+out'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+out'
+        Identifier: 'a'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+out'
+                  Identifier: 'a'
+                Identifier: 'a'
+              Identifier: 'a'
+            Identifier: 'a'
+          Identifier: 'a'
+        Identifier: 'a'
+      Identifier: 'a'
+  InterfaceDeclaration
+    Identifier: ' B'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      TypeReference
+        Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oub'
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+oub'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+oub'
+        Identifier: 'b'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+oub'
+                Identifier: 'b'
+              Identifier: 'a'
+            Identifier: 'n'
+          Identifier: 'a'
+        Identifier: 'n'
+      Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xhr'
+        TypeReference
+          Identifier: ' XMLHttpRequest'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' out2'
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'xhr'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+out2'
+      Identifier: 'responseXML'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+out2'
+            Identifier: 'responseXML'
+          Identifier: 'activeElement'
+        Identifier: 'className'
+      Identifier: 'length'

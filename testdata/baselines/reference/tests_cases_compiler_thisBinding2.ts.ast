@@ -1,0 +1,90 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+ x'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            CallExpression
+              ParenthesizedExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' x'
+                          NumericLiteral
+                    ReturnStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'x'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            CallExpression
+              FunctionExpression
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' x'
+                        NumericLiteral
+                  ReturnStatement
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' setTimeout'
+    Parameter
+      Identifier: 'expression'
+      AnyKeyword
+    Parameter
+      Identifier: ' msec'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' language'
+      QuestionToken
+      AnyKeyword
+    NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' messenger'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    message'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    start'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' setTimeout'
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' x'
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'message'
+                    NumericLiteral

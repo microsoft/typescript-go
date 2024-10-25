@@ -1,0 +1,24 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' greeter'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' unused'
+              NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' used'
+              StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        used'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' used'
+              PlusToken
+              StringLiteral

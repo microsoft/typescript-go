@@ -1,0 +1,52 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        PrefixUnaryExpression
+          MissingDeclaration
+            Decorator
+              Identifier: ''
+  VariableStatement
+    Decorator
+      Identifier: '$'
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        PrefixUnaryExpression
+          MissingDeclaration
+            Decorator
+              Identifier: ''
+  MissingDeclaration
+    Decorator
+      Identifier: ''
+  MissingDeclaration
+    Decorator
+      Identifier: ''
+  ExpressionStatement
+    NonNullExpression
+      Identifier: '
+OK'
+  ExpressionStatement
+    Identifier: '
+HERE'
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+GOTTA'
+  ExpressionStatement
+    Identifier: ' GO'
+  ExpressionStatement
+    Identifier: ' FAST'
+  ExpressionStatement
+    Identifier: '
+
+// @filename: b.ts
+fhqwhgads'
+  ExpressionStatement
+    Identifier: '
+to'
+  ExpressionStatement
+    Identifier: '
+limit'

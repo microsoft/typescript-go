@@ -1,0 +1,21 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        TrueKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' c'
+  ImportEqualsDeclaration
+    Identifier: ' myModule'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' myModule'
+        Identifier: 'c'

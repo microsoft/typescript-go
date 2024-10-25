@@ -1,0 +1,630 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numOrDate'
+        UnionType
+          NumberKeyword
+          TypeReference
+            Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrBoolean'
+        UnionType
+          StringKeyword
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNum'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfDifferentReturnType'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              NumberKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              TypeReference
+                Identifier: ' Date'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+numOrDate'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionOfDifferentReturnType'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrBoolean'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionOfDifferentReturnType'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error 
+unionOfDifferentReturnType1'
+      TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfDifferentReturnType1'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              NumberKeyword
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              StringKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              TypeReference
+                Identifier: ' Date'
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              BooleanKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+numOrDate'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionOfDifferentReturnType1'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrBoolean'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionOfDifferentReturnType1'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+unionOfDifferentReturnType1'
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error in type of parameter
+unionOfDifferentReturnType1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfDifferentParameterTypes'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              NumberKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              TypeReference
+                Identifier: ' Date'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+unionOfDifferentParameterTypes'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '// error - no call signatures
+unionOfDifferentParameterTypes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '// error - no call signatures
+unionOfDifferentParameterTypes'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfDifferentNumberOfSignatures'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              NumberKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              TypeReference
+                Identifier: ' Date'
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              BooleanKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+unionOfDifferentNumberOfSignatures'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error - no call signatures
+unionOfDifferentNumberOfSignatures'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error - no call signatures
+unionOfDifferentNumberOfSignatures'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithDifferentParameterCount'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              StringKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+unionWithDifferentParameterCount'
+  ExpressionStatement
+    CallExpression
+      Identifier: '// needs more args
+unionWithDifferentParameterCount'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '// needs more args
+unionWithDifferentParameterCount'
+      StringLiteral
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithOptionalParameter1'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                QuestionToken
+                NumberKeyword
+              StringKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                QuestionToken
+                NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter1'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter1'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter1'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error in parameter type
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithOptionalParameter2'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                QuestionToken
+                NumberKeyword
+              StringKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter2'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter2'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter2'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithOptionalParameter3'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                QuestionToken
+                NumberKeyword
+              StringKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter3'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter3'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter3'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // wrong argument type
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithOptionalParameter3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithRestParameter1'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'b'
+                ArrayType
+                  NumberKeyword
+              StringKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'b'
+                ArrayType
+                  NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter1'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter1'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter1'
+        StringLiteral
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter1'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error in parameter type
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithRestParameter2'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'b'
+                ArrayType
+                  NumberKeyword
+              StringKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                NumberKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter2'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter2'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter2'
+        StringLiteral
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter2'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithRestParameter3'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'b'
+                ArrayType
+                  NumberKeyword
+              StringKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter3'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter3'
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter3'
+        StringLiteral
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error no call signature
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter3'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // wrong argument type
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithRestParameter4'
+        UnionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                DotDotDotToken
+                Identifier: 'a'
+                ArrayType
+                  StringKeyword
+              StringKeyword
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Parameter
+                Identifier: ' b'
+                StringKeyword
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter4'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error supplied parameters do not match any call signature
+strOrNum'
+      EqualsToken
+      CallExpression
+        Identifier: ' unionWithRestParameter4'
+        StringLiteral
+        StringLiteral

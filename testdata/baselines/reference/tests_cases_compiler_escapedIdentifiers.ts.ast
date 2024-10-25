@@ -1,0 +1,446 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0061'
+        NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+a'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+\u0061'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+b'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+\u0062'
+  ModuleDeclaration
+    Identifier: ' moduleType1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' baz1'
+            NumberKeyword
+  ModuleDeclaration
+    Identifier: ' moduleType'
+    ModuleBlock
+  ExpressionStatement
+    Identifier: 'u0032'
+  Block
+    VariableStatement
+      ExportKeyword
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' baz2'
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+moduleType1'
+        Identifier: 'baz1'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    Identifier: '
+moduleType'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'u0031'
+        Identifier: 'baz1'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+moduleType2'
+        Identifier: 'baz2'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    Identifier: '
+moduleType'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'u0032'
+        Identifier: 'baz2'
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' classType1'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' foo1'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' classType'
+  ExpressionStatement
+    Identifier: 'u0032'
+  Block
+    LabeledStatement
+      Identifier: ' foo2'
+      ExpressionStatement
+        Identifier: ' number'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classType1Object1'
+        NewExpression
+          Identifier: ' classType1'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+classType1Object1'
+        Identifier: 'foo1'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classType1Object2'
+        NewExpression
+          Identifier: ' classType'
+      VariableDeclaration
+        Identifier: 'u0031'
+  ExpressionStatement
+    ParenthesizedExpression
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+classType1Object2'
+        Identifier: 'foo1'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classType2Object1'
+        NewExpression
+          Identifier: ' classType2'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+classType2Object1'
+        Identifier: 'foo2'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classType2Object2'
+        NewExpression
+          Identifier: ' classType'
+      VariableDeclaration
+        Identifier: 'u0032'
+  ExpressionStatement
+    ParenthesizedExpression
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+classType2Object2'
+        Identifier: 'foo2'
+      EqualsToken
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' interfaceType1'
+    PropertySignature
+      Identifier: ' 
+    bar1'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' interfaceType'
+  ExpressionStatement
+    Identifier: 'u0032'
+  Block
+    LabeledStatement
+      Identifier: ' 
+    bar2'
+      ExpressionStatement
+        Identifier: ' number'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' interfaceType1Object1'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'interfaceType1'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' bar1'
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+interfaceType1Object1'
+        Identifier: 'bar1'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' interfaceType1Object2'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'interfaceType'
+          Identifier: ''
+      VariableDeclaration
+        Identifier: 'u0031'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ''
+      GreaterThanToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' bar1'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+interfaceType1Object2'
+        Identifier: 'bar1'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' interfaceType2Object1'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'interfaceType2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' bar2'
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+interfaceType2Object1'
+        Identifier: 'bar2'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' interfaceType2Object2'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'interfaceType'
+          Identifier: ''
+      VariableDeclaration
+        Identifier: 'u0032'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ''
+      GreaterThanToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' bar2'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+interfaceType2Object2'
+        Identifier: 'bar2'
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' testClass'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' func'
+      Parameter
+        Identifier: 'arg1'
+        NumberKeyword
+      Parameter
+        Identifier: ' arg'
+      Parameter
+        Identifier: 'u0032'
+        StringKeyword
+      Parameter
+        Identifier: ' arg'
+      Parameter
+        Identifier: 'u0033'
+        BooleanKeyword
+      Parameter
+        Identifier: ' arg4'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' 
+        arg'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: 'u0031'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        arg2'
+            EqualsToken
+            StringLiteral
+        ExpressionStatement
+          Identifier: '
+        arg'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: 'u0033'
+            EqualsToken
+            TrueKeyword
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        arg4'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' constructorTestClass'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' arg1'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' arg'
+      Parameter
+        Identifier: 'u0032'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' arg'
+      Parameter
+        Identifier: 'u0033'
+        BooleanKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' arg4'
+        NumberKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' constructorTestObject'
+        NewExpression
+          Identifier: ' constructorTestClass'
+          NumericLiteral
+          StringLiteral
+          TrueKeyword
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+constructorTestObject'
+      Identifier: 'arg'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'u0031'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+constructorTestObject'
+        Identifier: 'arg2'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+constructorTestObject'
+      Identifier: 'arg'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'u0033'
+      EqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+constructorTestObject'
+        Identifier: 'arg4'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    Identifier: '
+
+// Lables
+
+l'
+  LabeledStatement
+    Identifier: '\u0061bel1'
+    WhileStatement
+      FalseKeyword
+      Block
+        WhileStatement
+          FalseKeyword
+          ContinueStatement
+            Identifier: ' label1'
+  LabeledStatement
+    Identifier: ' 
+
+label2'
+    WhileStatement
+      FalseKeyword
+      Block
+        WhileStatement
+          FalseKeyword
+          ContinueStatement
+            Identifier: ' l'
+        ExpressionStatement
+          Identifier: '\u0061bel2'
+  LabeledStatement
+    Identifier: ' 
+
+label3'
+    WhileStatement
+      FalseKeyword
+      Block
+        WhileStatement
+          FalseKeyword
+          ContinueStatement
+            Identifier: ' label3'
+  ExpressionStatement
+    Identifier: ' 
+
+l'
+  LabeledStatement
+    Identifier: '\u0061bel4'
+    WhileStatement
+      FalseKeyword
+      Block
+        WhileStatement
+          FalseKeyword
+          ContinueStatement
+            Identifier: ' l'
+        ExpressionStatement
+          Identifier: '\u0061bel4'

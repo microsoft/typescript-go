@@ -1,0 +1,137 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// import { type A, type a, b, B } from "foo";
+//// console.log(a, b, A, B);
+
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      Identifier: '
+    /*mode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' organizeImportsIgnoreCase'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' organizeImportsTypeOrder'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'replaceLine'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      Identifier: '
+    /*mode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' organizeImportsIgnoreCase'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' organizeImportsTypeOrder'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'replaceLine'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      Identifier: '
+    /*mode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' organizeImportsIgnoreCase'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' organizeImportsTypeOrder'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'replaceLine'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      Identifier: '
+    /*mode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' organizeImportsIgnoreCase'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'replaceLine'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      Identifier: '
+    /*mode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' organizeImportsIgnoreCase'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'replaceLine'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      Identifier: '
+    /*mode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' organizeImportsIgnoreCase'
+          FalseKeyword

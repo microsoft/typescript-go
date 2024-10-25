@@ -1,0 +1,1533 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T01'
+    IntersectionType
+      TypeLiteral
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T02'
+    IntersectionType
+      TypeLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T03'
+    IntersectionType
+      TypeLiteral
+      ObjectKeyword
+  TypeAliasDeclaration
+    Identifier: ' T04'
+    IntersectionType
+      TypeLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' T05'
+    IntersectionType
+      TypeLiteral
+      LiteralType
+        NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' T06'
+    IntersectionType
+      TypeLiteral
+      UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' T07'
+    IntersectionType
+      UndefinedKeyword
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T10'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+  TypeAliasDeclaration
+    Identifier: ' T11'
+    IntersectionType
+      NumberKeyword
+      TypeLiteral
+  TypeAliasDeclaration
+    Identifier: ' T12'
+    IntersectionType
+      BigIntKeyword
+      TypeLiteral
+  TypeAliasDeclaration
+    Identifier: ' ThisNode'
+    TypeLiteral
+  TypeAliasDeclaration
+    Identifier: ' ThatNode'
+    TypeLiteral
+  TypeAliasDeclaration
+    Identifier: ' ThisOrThatNode'
+    UnionType
+      TypeReference
+        Identifier: ' ThisNode'
+      TypeReference
+        Identifier: ' ThatNode'
+  FunctionDeclaration
+    Identifier: ' f01'
+    Parameter
+      Identifier: 'u'
+      UnknownKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            TypeLiteral
+            Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            UnionType
+              TypeLiteral
+              LiteralType
+                NullKeyword
+              UndefinedKeyword
+            Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            UnionType
+              TypeLiteral
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  StringKeyword
+              LiteralType
+                NullKeyword
+              UndefinedKeyword
+            Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x4'
+            UnionType
+              TypeReference
+                Identifier: ' ThisOrThatNode'
+              LiteralType
+                NullKeyword
+              UndefinedKeyword
+            Identifier: ' u'
+  FunctionDeclaration
+    Identifier: ' f10'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f11'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f12'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f20'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'x'
+            ExclamationEqualsEqualsToken
+            Identifier: ' undefined'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' x'
+            ExclamationEqualsEqualsToken
+            NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f21'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'x'
+            ExclamationEqualsEqualsToken
+            Identifier: ' undefined'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' x'
+            ExclamationEqualsEqualsToken
+            NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f22'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeLiteral
+        UndefinedKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'x'
+            ExclamationEqualsEqualsToken
+            Identifier: ' undefined'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' x'
+            ExclamationEqualsEqualsToken
+            NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f23'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f30'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f31'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          AmpersandAmpersandToken
+          Identifier: ' x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f32'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeLiteral
+        UndefinedKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' possiblyNull'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              TrueKeyword
+          QuestionToken
+          Identifier: ' x'
+          ColonToken
+          NullKeyword
+  FunctionDeclaration
+    Identifier: ' possiblyUndefined'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              TrueKeyword
+          QuestionToken
+          Identifier: ' x'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' possiblyNullOrUndefined'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' possiblyUndefined'
+          CallExpression
+            Identifier: 'possiblyNull'
+            Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' ensureNotNull'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        ThrowStatement
+          CallExpression
+            Identifier: ' Error'
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' ensureNotUndefined'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ThrowStatement
+          CallExpression
+            Identifier: ' Error'
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' ensureNotNullOrUndefined'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' ensureNotUndefined'
+          CallExpression
+            Identifier: 'ensureNotNull'
+            Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' f40'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' b'
+      UnionType
+        NumberKeyword
+        LiteralType
+          NullKeyword
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a1'
+            CallExpression
+              Identifier: ' ensureNotNullOrUndefined'
+              Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b1'
+            CallExpression
+              Identifier: ' ensureNotNullOrUndefined'
+              Identifier: 'b'
+  TypeAliasDeclaration
+    Identifier: ' QQ'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' NonNullable'
+      TypeReference
+        Identifier: 'NonNullable'
+        TypeReference
+          Identifier: 'NonNullable'
+          TypeReference
+            Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' f41'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a1'
+            CallExpression
+              Identifier: ' ensureNotUndefined'
+              CallExpression
+                Identifier: 'ensureNotNull'
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a2'
+            CallExpression
+              Identifier: ' ensureNotNull'
+              CallExpression
+                Identifier: 'ensureNotUndefined'
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a3'
+            CallExpression
+              Identifier: ' ensureNotNull'
+              CallExpression
+                Identifier: 'ensureNotNull'
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a4'
+            CallExpression
+              Identifier: ' ensureNotUndefined'
+              CallExpression
+                Identifier: 'ensureNotUndefined'
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a5'
+            CallExpression
+              Identifier: ' ensureNotNullOrUndefined'
+              CallExpression
+                Identifier: 'ensureNotNullOrUndefined'
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a6'
+            CallExpression
+              Identifier: ' ensureNotNull'
+              CallExpression
+                Identifier: 'possiblyNullOrUndefined'
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a7'
+            CallExpression
+              Identifier: ' ensureNotUndefined'
+              CallExpression
+                Identifier: 'possiblyNullOrUndefined'
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a8'
+            CallExpression
+              Identifier: ' ensureNotNull'
+              CallExpression
+                Identifier: 'possiblyUndefined'
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a9'
+            CallExpression
+              Identifier: ' ensureNotUndefined'
+              CallExpression
+                Identifier: 'possiblyNull'
+                Identifier: 'a'
+  FunctionDeclaration
+    Identifier: ' deepEquals'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' T'
+    BooleanKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  Identifier: ' a'
+                ExclamationEqualsEqualsToken
+                StringLiteral
+              BarBarToken
+              BinaryExpression
+                TypeOfExpression
+                  Identifier: ' b'
+                ExclamationEqualsEqualsToken
+                StringLiteral
+            BarBarToken
+            PrefixUnaryExpression
+              Identifier: 'a'
+          BarBarToken
+          PrefixUnaryExpression
+            Identifier: 'b'
+        Block
+          ReturnStatement
+            FalseKeyword
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Array'
+              Identifier: 'isArray'
+            Identifier: 'a'
+          BarBarToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'isArray'
+            Identifier: 'b'
+        Block
+          ReturnStatement
+            FalseKeyword
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Object'
+                Identifier: 'keys'
+              Identifier: 'a'
+            Identifier: 'length'
+          ExclamationEqualsEqualsToken
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Object'
+                Identifier: 'keys'
+              Identifier: 'b'
+            Identifier: 'length'
+        Block
+          ReturnStatement
+            FalseKeyword
+      ReturnStatement
+        TrueKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        LiteralType
+          NullKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            Identifier: ' x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        y'
+  FunctionDeclaration
+    Identifier: ' ff1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Block
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    t'
+          Identifier: 'k'
+  FunctionDeclaration
+    Identifier: ' ff2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeLiteral
+    Parameter
+      Identifier: ' k'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Block
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    t'
+          Identifier: 'k'
+  FunctionDeclaration
+    Identifier: ' ff3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeOperator
+        ParenthesizedType
+          IntersectionType
+            TypeReference
+              Identifier: 'T'
+            TypeLiteral
+    Block
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    t'
+          Identifier: 'k'
+  FunctionDeclaration
+    Identifier: ' ff4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeLiteral
+    Parameter
+      Identifier: ' k'
+      TypeOperator
+        ParenthesizedType
+          IntersectionType
+            TypeReference
+              Identifier: 'T'
+            TypeLiteral
+    Block
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    t'
+          Identifier: 'k'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+ff1'
+      NullKeyword
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+ff2'
+      NullKeyword
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+ff3'
+      NullKeyword
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+ff4'
+      NullKeyword
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 'key'
+          StringKeyword
+        UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' NullableFoo'
+    UnionType
+      TypeReference
+        Identifier: ' Foo'
+      UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' NullableFoo'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' NonNullable'
+        TypeReference
+          Identifier: 'T'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' fx0'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        ParenthesizedType
+          UnionType
+            TypeLiteral
+            LiteralType
+              NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+  FunctionDeclaration
+    Identifier: ' fx1'
+    TypeParameter
+      Identifier: 'T'
+      UnknownKeyword
+    Parameter
+      Identifier: 'value'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        ParenthesizedType
+          UnionType
+            TypeLiteral
+            LiteralType
+              NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+  FunctionDeclaration
+    Identifier: ' fx2'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    Parameter
+      Identifier: 'value'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        ParenthesizedType
+          UnionType
+            TypeLiteral
+            LiteralType
+              NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+  FunctionDeclaration
+    Identifier: ' fx3'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeLiteral
+        UndefinedKeyword
+    Parameter
+      Identifier: 'value'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        ParenthesizedType
+          UnionType
+            TypeLiteral
+            LiteralType
+              NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+  FunctionDeclaration
+    Identifier: ' fx4'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeLiteral
+        LiteralType
+          NullKeyword
+    Parameter
+      Identifier: 'value'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        ParenthesizedType
+          UnionType
+            TypeLiteral
+            LiteralType
+              NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+  FunctionDeclaration
+    Identifier: ' fx5'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeLiteral
+        LiteralType
+          NullKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: 'value'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        ParenthesizedType
+          UnionType
+            TypeLiteral
+            LiteralType
+              NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+  FunctionDeclaration
+    Identifier: ' fx10'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Parameter
+      Identifier: ' y'
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsToken
+          Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' SendBlob'
+    Parameter
+      Identifier: 'encoding'
+      UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'encoding'
+            ExclamationEqualsEqualsToken
+            Identifier: ' undefined'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' encoding'
+            ExclamationEqualsEqualsToken
+            StringLiteral
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              StringLiteral
+      ExpressionStatement
+        Identifier: '
+    encoding'
+  EmptyStatement
+  FunctionDeclaration
+    Identifier: ' doSomething1'
+    TypeParameter
+      Identifier: 'T'
+      UnknownKeyword
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ReturnStatement
+            Identifier: ' value'
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ThrowStatement
+            CallExpression
+              Identifier: ' Error'
+              StringLiteral
+      ReturnStatement
+        Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' doSomething2'
+    Parameter
+      Identifier: 'value'
+      UnknownKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ReturnStatement
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+  TypeAliasDeclaration
+    Identifier: ' TypeA'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    A'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: '
+    B'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TypeB'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    A'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: '
+    B'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: '
+    C'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' R'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        TypeReference
+          Identifier: ' TypeA'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeOperator
+        TypeReference
+          Identifier: ' TypeB'
+      TupleType
+        IndexedAccessType
+          TypeReference
+            Identifier: 'TypeA'
+          TypeReference
+            Identifier: 'T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' TypeB'
+          TypeReference
+            Identifier: 'T'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' R2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' PropertyKey'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeOperator
+        TypeReference
+          Identifier: ' TypeA'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        TypeOperator
+          TypeReference
+            Identifier: ' TypeB'
+        TupleType
+          IndexedAccessType
+            TypeReference
+              Identifier: 'TypeA'
+            TypeReference
+              Identifier: 'T'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' TypeB'
+            TypeReference
+              Identifier: 'T'
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' AB'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' x'
+    TypeParameter
+      Identifier: 'T_AB'
+      TypeReference
+        Identifier: ' AB'
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeReference
+          Identifier: ' T_AB'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' y'
+      AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            NeverKeyword
+            AsExpression
+              Identifier: ' y'
+              IntersectionType
+                TypeReference
+                  Identifier: ' T_AB'
+                UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' Left'
+    LiteralType
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Right'
+    IntersectionType
+      LiteralType
+        StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' right'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Either'
+    UnionType
+      TypeReference
+        Identifier: ' Left'
+      TypeReference
+        Identifier: ' Right'
+  FunctionDeclaration
+    Identifier: ' assertNever'
+    Parameter
+      Identifier: 'v'
+      NeverKeyword
+    NeverKeyword
+    Block
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' fx20'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' Either'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' foo'
+                LiteralType
+                  StringLiteral
+                Identifier: ' value'
+        IfStatement
+          BinaryExpression
+            Identifier: 'value'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' bar'
+                  LiteralType
+                    StringLiteral
+                  Identifier: ' value'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+        assertNever'
+                Identifier: 'value'

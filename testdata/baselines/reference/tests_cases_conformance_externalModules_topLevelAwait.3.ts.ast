@@ -1,0 +1,15 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' await'
+        AnyKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' await'

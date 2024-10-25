@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          ThisKeyword
+          PrivateIdentifier
+        Identifier: 'z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newLocal'
+        PropertyAccessExpression
+          ThisKeyword
+          PrivateIdentifier
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+/*RENAME*/newLocal'
+        Identifier: 'z'

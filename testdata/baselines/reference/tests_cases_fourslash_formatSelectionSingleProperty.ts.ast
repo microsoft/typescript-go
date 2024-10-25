@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// console.log({
+//// }, {
+//// /*1*/    a: 1,
+//// /*2*/    b: 2
+//// })
+
+format'
+        Identifier: 'selection'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'currentFileContentIs'
+      NoSubstitutionTemplateLiteral

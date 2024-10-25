@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Parameter
+        Identifier: 'c'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _t'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ThisKeyword

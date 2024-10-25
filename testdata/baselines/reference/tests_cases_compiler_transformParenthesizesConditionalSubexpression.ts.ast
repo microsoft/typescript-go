@@ -1,0 +1,44 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' K'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' p'
+            ParenthesizedExpression
+              ConditionalExpression
+                TrueKeyword
+                QuestionToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    ComputedPropertyName
+                      Identifier: 'K'
+                    StringLiteral
+                ColonToken
+                NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' p'
+            ParenthesizedExpression
+              ConditionalExpression
+                TrueKeyword
+                QuestionToken
+                AsExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      ComputedPropertyName
+                        Identifier: 'K'
+                      StringLiteral
+                  AnyKeyword
+                ColonToken
+                NullKeyword

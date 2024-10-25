@@ -1,0 +1,76 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    VoidKeyword
+    Block
+  ClassDeclaration
+    Identifier: ' c'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    // dont keep this comment
+    foo'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    /*! keep this pinned comment */
+    foo'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    VoidKeyword
+    Block

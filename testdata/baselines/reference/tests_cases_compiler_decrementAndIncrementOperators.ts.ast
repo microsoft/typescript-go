@@ -1,0 +1,123 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'x'
+          PlusToken
+          Identifier: ' x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'x'
+          PlusToken
+          Identifier: ' x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'x'
+          PlusToken
+          Identifier: ' x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'x'
+          PlusToken
+          Identifier: ' x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+
+//OK
+x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        Identifier: 'x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        ParenthesizedExpression
+          Identifier: 'x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        ParenthesizedExpression
+          Identifier: 'x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+x'
+        PostfixUnaryExpression
+          Identifier: 'x'

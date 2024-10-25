@@ -1,0 +1,94 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: ' e'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    val'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'X'
+          TypeReference
+            Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    val'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' A'
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x'
+        Identifier: 'val'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '         // val -> number
+x'
+          Identifier: 'a'
+        Identifier: 'val'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '       // val -> number
+x'
+            Identifier: 'a'
+          Identifier: 'b'
+        Identifier: 'val'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '     // val -> X<number> (This should be an error)
+x'
+              Identifier: 'a'
+            Identifier: 'b'
+          Identifier: 'a'
+        Identifier: 'val'
+      EqualsToken
+      NumericLiteral

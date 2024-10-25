@@ -1,0 +1,209 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' TextChannel'
+    PropertySignature
+      Identifier: '
+    id'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    phoneNumber'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' EmailChannel'
+    PropertySignature
+      Identifier: '
+    id'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    addres'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Channel'
+    UnionType
+      TypeReference
+        Identifier: ' TextChannel'
+      TypeReference
+        Identifier: ' EmailChannel'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ChannelType'
+    ConditionalType
+      TypeReference
+        Identifier: ' Channel'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' type'
+          InferType
+            TypeParameter
+              Identifier: ' R'
+      TypeReference
+        Identifier: ' R'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' Omit'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: '
+    T'
+      IndexedAccessType
+        ParenthesizedType
+          IntersectionType
+            MappedType
+              TypeParameter
+                Identifier: 'P'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' T'
+              TypeReference
+                Identifier: ' P'
+            MappedType
+              TypeParameter
+                Identifier: 'P'
+                TypeReference
+                  Identifier: ' K'
+              NeverKeyword
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'x'
+                  StringKeyword
+                NeverKeyword
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' ChannelOfType'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ChannelType'
+    TypeParameter
+      Identifier: ' A'
+      TypeReference
+        Identifier: ' Channel'
+    ConditionalType
+      TypeReference
+        Identifier: ' A'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' type'
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' A'
+      NeverKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' NewChannel'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Channel'
+    IntersectionType
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'T'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: '
+    Partial'
+        TypeReference
+          Identifier: 'Omit'
+          TypeReference
+            Identifier: 'T'
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' localChannelId'
+          StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' makeNewChannel'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ChannelType'
+    Parameter
+      Identifier: 'type'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' NewChannel'
+      TypeReference
+        Identifier: 'ChannelOfType'
+        TypeReference
+          Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' localChannelId'
+            NoSubstitutionTemplateLiteral
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' type'
+          ShorthandPropertyAssignment
+            Identifier: ' localChannelId'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newTextChannel'
+        CallExpression
+          Identifier: ' makeNewChannel'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+// This should work
+newTextChannel'
+        Identifier: 'phoneNumber'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newTextChannel2'
+        TypeReference
+          Identifier: ' NewChannel'
+          TypeReference
+            Identifier: 'TextChannel'
+        CallExpression
+          Identifier: ' makeNewChannel'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+// Compare with this, which ofc works.
+newTextChannel2'
+        Identifier: 'phoneNumber'
+      EqualsToken
+      StringLiteral

@@ -1,0 +1,64 @@
+SourceFile
+  ExportAssignment
+    Identifier: ' Foo'
+  NamespaceExportDeclaration
+    Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' c'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' c'
+              NumberKeyword
+  ExportAssignment
+    Identifier: ' x'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Bar'
+        ImportSpecifier
+          Identifier: ' toString'
+        ImportSpecifier
+          Identifier: ' foo'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+        ImportSpecifier
+          Identifier: ' b'
+        ImportSpecifier
+          Identifier: ' c'
+        ImportSpecifier
+          Identifier: ' d'
+        ImportSpecifier
+          Identifier: ' toString'
+          Identifier: ' foo2String'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+c'

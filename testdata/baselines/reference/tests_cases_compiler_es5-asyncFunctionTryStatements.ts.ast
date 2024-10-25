@@ -1,0 +1,310 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' y'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' z'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' b'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' c'
+        AnyKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryCatch0'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              Identifier: '
+        y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryCatch1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' x'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              Identifier: '
+        y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryCatch2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              AwaitExpression
+                Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryCatch3'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'Function'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' x'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ReturnStatement
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' e'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryFinally0'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryFinally1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryFinally2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryCatchFinally0'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' z'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              Identifier: '
+        y'
+        Block
+          ExpressionStatement
+            Identifier: '
+        z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryCatchFinally1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' z'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' x'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              Identifier: '
+        y'
+        Block
+          ExpressionStatement
+            Identifier: '
+        z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryCatchFinally2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' z'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              AwaitExpression
+                Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: '
+        z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' tryCatchFinally3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' z'
+            AnyKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ExpressionStatement
+              Identifier: '
+        y'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' z'

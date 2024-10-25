@@ -1,0 +1,19 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        AbstractKeyword
+        Identifier: ' A'
+      ExpressionStatement
+        NewExpression
+          Identifier: ' A'
+  ImportEqualsDeclaration
+    Identifier: ' myA'
+    QualifiedName
+      Identifier: ' M'
+      Identifier: 'A'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' myA'

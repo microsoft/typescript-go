@@ -1,0 +1,87 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'x'
+              BooleanKeyword
+            TypeReference
+              Identifier: ' C'
+          ConstructSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            TypeReference
+              Identifier: ' D'
+  FunctionDeclaration
+    Identifier: ' foo4'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'cb'
+      ConstructorType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' u'
+            TypeReference
+              Identifier: ' U'
+      ReturnStatement
+        Identifier: ' u'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' foo4'
+          Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              BooleanKeyword
+            TypeReference
+              Identifier: ' T'
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' foo4'
+          Identifier: 'b'

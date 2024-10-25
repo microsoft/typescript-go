@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          GetAccessor
+            ComputedPropertyName
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            ComputedPropertyName
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+            Parameter
+              Identifier: 'v'
+              StringKeyword
+            Block

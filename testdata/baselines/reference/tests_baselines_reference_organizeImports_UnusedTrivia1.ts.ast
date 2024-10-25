@@ -1,0 +1,7 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' /*C*/ F1'
+    StringLiteral

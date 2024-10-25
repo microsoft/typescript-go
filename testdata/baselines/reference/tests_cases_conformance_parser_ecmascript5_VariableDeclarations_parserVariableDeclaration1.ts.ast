@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' selection'
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' 
+			position'
+        Identifier: ' b'
+      VariableDeclaration
+        Identifier: '
+			model'
+        Identifier: ' c'
+      VariableDeclaration
+        Identifier: '
+			support'
+        Identifier: ' d'

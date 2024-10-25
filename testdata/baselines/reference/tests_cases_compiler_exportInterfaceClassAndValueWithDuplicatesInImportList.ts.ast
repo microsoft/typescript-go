@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'foo'
+      ExportSpecifier
+        Identifier: ' Foo'
+      ExportSpecifier
+        Identifier: ' Foo'

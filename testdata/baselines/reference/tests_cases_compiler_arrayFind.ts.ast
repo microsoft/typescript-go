@@ -1,0 +1,63 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' isNumber'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' x'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrayOfStringsNumbersAndBooleans'
+        ArrayLiteralExpression
+          StringLiteral
+          FalseKeyword
+          NumericLiteral
+          StringLiteral
+          NumericLiteral
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foundNumber'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' arrayOfStringsNumbersAndBooleans'
+            Identifier: 'find'
+          Identifier: 'isNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' readonlyArrayOfStringsNumbersAndBooleans'
+        AsExpression
+          Identifier: ' arrayOfStringsNumbersAndBooleans'
+          TypeReference
+            Identifier: ' ReadonlyArray'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' readonlyFoundNumber'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' readonlyArrayOfStringsNumbersAndBooleans'
+            Identifier: 'find'
+          Identifier: 'isNumber'

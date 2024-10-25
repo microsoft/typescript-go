@@ -1,0 +1,95 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Kind'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' kindIs'
+    Parameter
+      Identifier: 'kind'
+      TypeReference
+        Identifier: ' Kind'
+    Parameter
+      Identifier: ' is'
+      LiteralType
+        StringLiteral
+    TypePredicate
+      Identifier: ' kind'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' kindIs'
+    Parameter
+      Identifier: 'kind'
+      TypeReference
+        Identifier: ' Kind'
+    Parameter
+      Identifier: ' is'
+      LiteralType
+        StringLiteral
+    TypePredicate
+      Identifier: ' kind'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' kindIs'
+    Parameter
+      Identifier: 'kind'
+      TypeReference
+        Identifier: ' Kind'
+    Parameter
+      Identifier: ' is'
+      TypeReference
+        Identifier: ' Kind'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' kind'
+          EqualsEqualsEqualsToken
+          Identifier: ' is'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Kind'
+        Identifier: ' undefined'
+  IfStatement
+    CallExpression
+      Identifier: 'kindIs'
+      Identifier: 'x'
+      StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            Identifier: ' x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            Identifier: ' x'
+  IfStatement
+    PrefixUnaryExpression
+      CallExpression
+        Identifier: 'kindIs'
+        Identifier: 'x'
+        StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            Identifier: ' x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            Identifier: ' x'

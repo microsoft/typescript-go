@@ -1,0 +1,83 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      Parameter
+        Identifier: 'x'
+      Block
+    PropertyDeclaration
+      Identifier: '
+  p'
+      ArrowFunction
+        Parameter
+          Identifier: ' x'
+        EqualsGreaterThanToken
+        Block
+    MethodDeclaration
+      Identifier: '
+  m'
+      Parameter
+        Identifier: 'x'
+      Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+C'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' C'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' C'
+        Identifier: 'p'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+  m'
+            Parameter
+              Identifier: 'x'
+            Block
+          PropertyAssignment
+            Identifier: '
+  p'
+            ArrowFunction
+              Parameter
+                Identifier: ' x'
+              EqualsGreaterThanToken
+              Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+obj'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // Always been ok
+obj'
+        Identifier: 'p'

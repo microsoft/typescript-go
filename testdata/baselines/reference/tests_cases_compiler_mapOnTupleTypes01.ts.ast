@@ -1,0 +1,254 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mapOnLooseArrayLiteral'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' n'
+              AsteriskToken
+              Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numTuple'
+        TupleType
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' numTuple'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              AsteriskToken
+              Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numNum'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strStr'
+        TupleType
+          StringKeyword
+          StringKeyword
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numStr'
+        TupleType
+          NumberKeyword
+          StringKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' numNum'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' n'
+              AsteriskToken
+              Identifier: ' n'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' strStr'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' s'
+                Identifier: 'charCodeAt'
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' numStr'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numNumNum'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' numNumNum'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' n'
+              AsteriskToken
+              Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numNumNumNum'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' numNumNumNum'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' n'
+              AsteriskToken
+              Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numNumNumNumNum'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' numNumNumNumNum'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' n'
+              AsteriskToken
+              Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numNumNumNumNumNum'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' numNumNumNumNum'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' n'
+              AsteriskToken
+              Identifier: ' n'

@@ -1,0 +1,85 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ObjA'
+    PropertySignature
+      Identifier: '
+  y'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' ObjB'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Opts'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    PropertySignature
+      Identifier: 'a'
+      TypeReference
+        Identifier: 'A'
+    PropertySignature
+      Identifier: ' b'
+      TypeReference
+        Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        ArrowFunction
+          TypeParameter
+            Identifier: '
+  A'
+            TypeReference
+              Identifier: ' ObjA'
+          TypeParameter
+            Identifier: '
+  B'
+            TypeReference
+              Identifier: ' ObjB'
+            TypeReference
+              Identifier: ' ObjB'
+          Parameter
+            Identifier: 'opts'
+            TypeReference
+              Identifier: 'Opts'
+              TypeReference
+                Identifier: 'A'
+              TypeReference
+                Identifier: ' B'
+          StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' MyObjA'
+    PropertySignature
+      Identifier: '
+  x'
+      StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+fn'
+      TypeReference
+        Identifier: 'MyObjA'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  a'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              StringLiteral
+        PropertyAssignment
+          Identifier: '
+  b'
+          ObjectLiteralExpression

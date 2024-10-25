@@ -1,0 +1,91 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PerformanceHooks'
+    PropertySignature
+      Identifier: '
+    shouldWriteNativeEvents'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    performance'
+      QuestionToken
+      TypeReference
+        Identifier: ' Performance'
+    PropertySignature
+      Identifier: '
+    performanceTime'
+      QuestionToken
+      TypeReference
+        Identifier: ' PerformanceTime'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PerformanceTime'
+    MethodSignature
+      Identifier: '
+    now'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    timeOrigin'
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Performance'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' PerformanceTime'
+    MethodSignature
+      Identifier: '
+    mark'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    measure'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Parameter
+        Identifier: ' startMark'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' endMark'
+        QuestionToken
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    clearMeasures'
+      Parameter
+        Identifier: 'name'
+        QuestionToken
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    clearMarks'
+      Parameter
+        Identifier: 'name'
+        QuestionToken
+        StringKeyword
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' tryGetNativePerformanceHooks'
+    UnionType
+      TypeReference
+        Identifier: ' PerformanceHooks'
+      UndefinedKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' timestamp'
+        FunctionType
+          NumberKeyword

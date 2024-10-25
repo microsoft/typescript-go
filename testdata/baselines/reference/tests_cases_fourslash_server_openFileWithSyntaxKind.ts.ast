@@ -1,0 +1,41 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts"/>
+
+// Because the fourslash runner automatically opens the first file with the default setting,
+// to test the openFile function, the targeted file cannot be the first one.
+
+// @Filename: dumbFile.ts
+//// var x;
+
+// @allowJs: true
+// @Filename: test.ts
+//// /**
+////  * @type {number}
+////  */
+//// var t;
+//// t.
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+      Identifier: ' /*content*/ undefined'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'eof'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' includes'
+          StringLiteral

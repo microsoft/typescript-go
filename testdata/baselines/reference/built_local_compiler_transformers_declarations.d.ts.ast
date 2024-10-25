@@ -1,0 +1,55 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Bundle'
+        ImportSpecifier
+          Identifier: ' DiagnosticWithLocation'
+        ImportSpecifier
+          Identifier: ' EmitHost'
+        ImportSpecifier
+          Identifier: ' EmitResolver'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' TransformationContext'
+        ImportSpecifier
+          Identifier: ' Transformer'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDeclarationDiagnostics'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' EmitHost'
+    Parameter
+      Identifier: ' resolver'
+      TypeReference
+        Identifier: ' EmitResolver'
+    Parameter
+      Identifier: ' file'
+      TypeReference
+        Identifier: ' SourceFile'
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' DiagnosticWithLocation'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' transformDeclarations'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    TypeReference
+      Identifier: ' Transformer'
+      UnionType
+        TypeReference
+          Identifier: 'SourceFile'
+        TypeReference
+          Identifier: ' Bundle'

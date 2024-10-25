@@ -1,0 +1,174 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' ComponentType'
+    TypeParameter
+      Identifier: 'P'
+    FunctionType
+      Parameter
+        Identifier: 'p'
+        TypeReference
+          Identifier: ' P'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' ComponentProps'
+    TypeParameter
+      Identifier: 'C'
+    ConditionalType
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        Identifier: ' ComponentType'
+        InferType
+          TypeParameter
+            Identifier: ' P'
+      TypeReference
+        Identifier: ' P'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' Attrs'
+    TypeParameter
+      Identifier: 'P'
+    TypeParameter
+      Identifier: ' A'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'P'
+    TypeReference
+      Identifier: ' A'
+  InterfaceDeclaration
+    Identifier: ' StyledFunction'
+    TypeParameter
+      Identifier: '
+  C'
+      TypeReference
+        Identifier: ' ComponentType'
+        AnyKeyword
+    TypeParameter
+      Identifier: '
+  O'
+      ObjectKeyword
+      TypeLiteral
+    TypeParameter
+      Identifier: '
+  A'
+      TypeOperator
+        AnyKeyword
+      NeverKeyword
+    MethodSignature
+      Identifier: '
+  attrs'
+      TypeParameter
+        Identifier: '
+    U'
+      TypeParameter
+        Identifier: '
+    NewA'
+        IntersectionType
+          TypeReference
+            Identifier: ' Partial'
+            IntersectionType
+              TypeReference
+                Identifier: 'ComponentProps'
+                TypeReference
+                  Identifier: 'C'
+              TypeReference
+                Identifier: ' U'
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'others'
+                StringKeyword
+              AnyKeyword
+        TypeLiteral
+      Parameter
+        Identifier: '
+    attrs'
+        TypeReference
+          Identifier: ' Attrs'
+          IntersectionType
+            TypeReference
+              Identifier: 'ComponentProps'
+              TypeReference
+                Identifier: 'C'
+            TypeReference
+              Identifier: ' U'
+          TypeReference
+            Identifier: ' NewA'
+      TypeReference
+        Identifier: ' StyledFunction'
+        TypeReference
+          Identifier: 'C'
+        IntersectionType
+          TypeReference
+            Identifier: ' O'
+          TypeReference
+            Identifier: ' NewA'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeOperator
+            TypeReference
+              Identifier: ' NewA'
+  InterfaceDeclaration
+    Identifier: ' StyledInterface'
+    CallSignature
+      TypeParameter
+        Identifier: 'C'
+        TypeReference
+          Identifier: ' ComponentType'
+          AnyKeyword
+      Parameter
+        Identifier: 'component'
+        TypeReference
+          Identifier: ' C'
+      TypeReference
+        Identifier: ' StyledFunction'
+        TypeReference
+          Identifier: 'C'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' styled'
+        TypeReference
+          Identifier: ' StyledInterface'
+  InterfaceDeclaration
+    Identifier: ' BaseProps'
+    PropertySignature
+      Identifier: '
+  as'
+      QuestionToken
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Flex'
+        FunctionType
+          Parameter
+            Identifier: 'props'
+            TypeReference
+              Identifier: ' BaseProps'
+          LiteralType
+            NullKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' StyledSelect'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' styled'
+              Identifier: 'Flex'
+            Identifier: 'attrs'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  as'
+              StringLiteral

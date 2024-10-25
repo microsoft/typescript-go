@@ -1,0 +1,11 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Album'
+    PropertySignature
+      StringLiteral
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    artist'
+      StringKeyword

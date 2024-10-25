@@ -1,0 +1,129 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// interface Yadda<T> { x: T }
+////
+//// export let blah: Yadda/*a*/<string>/*b*/;
+////
+//// interface YaddaWithDefault<T = boolean/*c*/> { x: T/*d*/ }
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'refactorAvailableForTriggerReason'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    triggerReason'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    triggerReason'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    triggerReason'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newContent'
+          NoSubstitutionTemplateLiteral

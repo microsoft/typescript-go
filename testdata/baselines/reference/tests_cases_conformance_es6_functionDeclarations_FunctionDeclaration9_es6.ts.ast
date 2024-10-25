@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  YieldExpression
+                Identifier: ' foo'

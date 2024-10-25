@@ -1,0 +1,48 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m2'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' c1'
+  ExportAssignment
+    Identifier: ' m1'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' a'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' b'
+    ExternalModuleReference
+      StringLiteral
+  ExportAssignment
+    Identifier: ' b'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' b1'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' c'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              QualifiedName
+                QualifiedName
+                  Identifier: ' c'
+                  Identifier: 'b1'
+                Identifier: 'a'
+              Identifier: 'm2'
+            Identifier: 'c1'

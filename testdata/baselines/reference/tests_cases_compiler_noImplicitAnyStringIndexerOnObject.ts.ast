@@ -1,0 +1,629 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ElementAccessExpression
+          ObjectLiteralExpression
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        StringKeyword
+        ElementAccessExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  get'
+            ArrowFunction
+              Parameter
+                Identifier: 'key'
+                StringKeyword
+              EqualsGreaterThanToken
+              StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+c'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  set'
+            ArrowFunction
+              Parameter
+                Identifier: 'key'
+                StringKeyword
+              EqualsGreaterThanToken
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        ElementAccessExpression
+          Identifier: ' d'
+          StringLiteral
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' e'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    get'
+              ArrowFunction
+                Parameter
+                  Identifier: 'key'
+                  StringKeyword
+                EqualsGreaterThanToken
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+    set'
+              ArrowFunction
+                Parameter
+                  Identifier: 'key'
+                  StringKeyword
+                EqualsGreaterThanToken
+                StringLiteral
+    ExpressionStatement
+      ElementAccessExpression
+        Identifier: '
+  e'
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: '
+  e'
+          StringLiteral
+        EqualsToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: '
+  e'
+          StringLiteral
+        PlusEqualsToken
+        NumericLiteral
+    ExpressionStatement
+      PostfixUnaryExpression
+        ElementAccessExpression
+          Identifier: '
+  e'
+          StringLiteral
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' e'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    get'
+              ArrowFunction
+                Parameter
+                  Identifier: 'key'
+                  StringKeyword
+                EqualsGreaterThanToken
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+    set'
+              ArrowFunction
+                Parameter
+                  Identifier: 'key'
+                  StringKeyword
+                Parameter
+                  Identifier: ' value'
+                  StringKeyword
+                EqualsGreaterThanToken
+                StringLiteral
+    ExpressionStatement
+      ElementAccessExpression
+        Identifier: '
+  e'
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: '
+  e'
+          StringLiteral
+        EqualsToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: '
+  e'
+          StringLiteral
+        PlusEqualsToken
+        NumericLiteral
+    ExpressionStatement
+      PostfixUnaryExpression
+        ElementAccessExpression
+          Identifier: '
+  e'
+          StringLiteral
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' e'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    get'
+              ArrowFunction
+                Parameter
+                  Identifier: 'key'
+                  UnionType
+                    LiteralType
+                      StringLiteral
+                    LiteralType
+                      StringLiteral
+                EqualsGreaterThanToken
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+    set'
+              ArrowFunction
+                Parameter
+                  Identifier: 'key'
+                  UnionType
+                    LiteralType
+                      StringLiteral
+                    LiteralType
+                      StringLiteral
+                Parameter
+                  Identifier: ' value'
+                  StringKeyword
+                EqualsGreaterThanToken
+                StringLiteral
+    ExpressionStatement
+      ElementAccessExpression
+        Identifier: '
+  e'
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: '
+  e'
+          StringLiteral
+        EqualsToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: '
+  e'
+          StringLiteral
+        PlusEqualsToken
+        NumericLiteral
+    ExpressionStatement
+      PostfixUnaryExpression
+        ElementAccessExpression
+          Identifier: '
+  e'
+          StringLiteral
+  Block
+    ExpressionStatement
+      ElementAccessExpression
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' get'
+              ArrowFunction
+                Parameter
+                  Identifier: 'key'
+                  StringKeyword
+                EqualsGreaterThanToken
+                StringLiteral
+            PropertyAssignment
+              Identifier: ' set'
+              ArrowFunction
+                Parameter
+                  Identifier: 'key'
+                  StringKeyword
+                Parameter
+                  Identifier: ' value'
+                  StringKeyword
+                EqualsGreaterThanToken
+                Block
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' get'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'key'
+                    StringKeyword
+                  EqualsGreaterThanToken
+                  StringLiteral
+              PropertyAssignment
+                Identifier: ' set'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'key'
+                    StringKeyword
+                  Parameter
+                    Identifier: ' value'
+                    StringKeyword
+                  EqualsGreaterThanToken
+                  Block
+          StringLiteral
+        EqualsToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' get'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'key'
+                    StringKeyword
+                  EqualsGreaterThanToken
+                  StringLiteral
+              PropertyAssignment
+                Identifier: ' set'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'key'
+                    StringKeyword
+                  Parameter
+                    Identifier: ' value'
+                    StringKeyword
+                  EqualsGreaterThanToken
+                  Block
+          StringLiteral
+        PlusEqualsToken
+        NumericLiteral
+    ExpressionStatement
+      PostfixUnaryExpression
+        ElementAccessExpression
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' get'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'key'
+                    StringKeyword
+                  EqualsGreaterThanToken
+                  StringLiteral
+              PropertyAssignment
+                Identifier: ' set'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'key'
+                    StringKeyword
+                  Parameter
+                    Identifier: ' value'
+                    StringKeyword
+                  EqualsGreaterThanToken
+                  Block
+          StringLiteral
+  Block
+    ExpressionStatement
+      ElementAccessExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' foo'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' get'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'key'
+                        StringKeyword
+                      EqualsGreaterThanToken
+                      StringLiteral
+                  PropertyAssignment
+                    Identifier: ' set'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'key'
+                        StringKeyword
+                      Parameter
+                        Identifier: ' value'
+                        StringKeyword
+                      EqualsGreaterThanToken
+                      Block
+          Identifier: 'foo'
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' foo'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' get'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'key'
+                          StringKeyword
+                        EqualsGreaterThanToken
+                        StringLiteral
+                    PropertyAssignment
+                      Identifier: ' set'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'key'
+                          StringKeyword
+                        Parameter
+                          Identifier: ' value'
+                          StringKeyword
+                        EqualsGreaterThanToken
+                        Block
+            Identifier: 'foo'
+          StringLiteral
+        EqualsToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' foo'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' get'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'key'
+                          StringKeyword
+                        EqualsGreaterThanToken
+                        StringLiteral
+                    PropertyAssignment
+                      Identifier: ' set'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'key'
+                          StringKeyword
+                        Parameter
+                          Identifier: ' value'
+                          StringKeyword
+                        EqualsGreaterThanToken
+                        Block
+            Identifier: 'foo'
+          StringLiteral
+        PlusEqualsToken
+        NumericLiteral
+    ExpressionStatement
+      PostfixUnaryExpression
+        ElementAccessExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' foo'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' get'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'key'
+                          StringKeyword
+                        EqualsGreaterThanToken
+                        StringLiteral
+                    PropertyAssignment
+                      Identifier: ' set'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'key'
+                          StringKeyword
+                        Parameter
+                          Identifier: ' value'
+                          StringKeyword
+                        EqualsGreaterThanToken
+                        Block
+            Identifier: 'foo'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+o'
+      Identifier: 'k'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k2'
+        LiteralType
+          StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+o'
+      Identifier: 'k2'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sym'
+        TypeOperator
+          SymbolKeyword
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+o'
+      Identifier: 'sym'
+  EnumDeclaration
+    Identifier: ' NumEnum'
+    EnumMember
+      Identifier: ' a'
+    EnumMember
+      Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numEnumKey'
+        TypeReference
+          Identifier: ' NumEnum'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+o'
+      Identifier: 'numEnumKey'
+  EnumDeclaration
+    Identifier: ' StrEnum'
+    EnumMember
+      Identifier: ' a'
+      StringLiteral
+    EnumMember
+      Identifier: ' b'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strEnumKey'
+        TypeReference
+          Identifier: ' StrEnum'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+o'
+      Identifier: 'strEnumKey'
+  InterfaceDeclaration
+    Identifier: ' MyMap'
+    TypeParameter
+      Identifier: 'K'
+    TypeParameter
+      Identifier: ' T'
+    MethodSignature
+      Identifier: '
+  get'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+  set'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Dog'
+    MethodSignature
+      Identifier: ' bark'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rover'
+        TypeReference
+          Identifier: ' Dog'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' bark'
+            Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' map'
+        TypeReference
+          Identifier: ' MyMap'
+          TypeReference
+            Identifier: 'Dog'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+map'
+        Identifier: 'rover'
+      EqualsToken
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+  prop'
+      TypeReference
+        Identifier: ' MyMap'
+        StringKeyword
+        StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        TypeReference
+          Identifier: ' I'
+  ExpressionStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+m'
+        Identifier: 'prop'
+      StringLiteral

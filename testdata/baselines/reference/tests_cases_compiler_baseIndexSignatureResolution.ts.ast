@@ -1,0 +1,57 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' a'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' b'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    IndexSignature
+      Parameter
+        Identifier: 'i'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Base'
+  InterfaceDeclaration
+    Identifier: ' FooOf'
+    TypeParameter
+      Identifier: 'TBase'
+      TypeReference
+        Identifier: ' Base'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    IndexSignature
+      Parameter
+        Identifier: 'i'
+        NumberKeyword
+      TypeReference
+        Identifier: ' TBase'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' FooOf'
+          TypeReference
+            Identifier: 'Derived'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Derived'
+        ElementAccessExpression
+          Identifier: ' x'
+          NumericLiteral

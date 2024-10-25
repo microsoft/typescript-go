@@ -1,0 +1,74 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @filename: types.ts
+//// /** @deprecated */
+//// export type SelectorMap<T extends Record<string, (...params: unknown[]) => unknown>> = {
+////     [key in keyof T]: T[key];
+//// };
+
+// @filename: index.ts
+//// /** @deprecated */
+//// export type SelectorMap<T extends Record<string, (...params: unknown[]) => unknown>> = {
+////     [key in keyof T]: T[key];
+//// };
+//// 
+//// export declare const value2: {
+////     sliceSelectors: <FuncMap extends [|import('./types').SelectorMap<FuncMap>|]>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]> };
+//// };
+//// 
+//// export declare const value3: {
+////     sliceSelectors: <FuncMap extends [|SelectorMap<FuncMap>|]>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]> };
+//// };
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ranges'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral

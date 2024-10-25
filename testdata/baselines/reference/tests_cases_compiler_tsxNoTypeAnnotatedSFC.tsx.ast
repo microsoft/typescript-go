@@ -1,0 +1,26 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Test123'
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'div'
+            JsxAttributes
+  FunctionDeclaration
+    Identifier: ' testComponent'
+    Parameter
+      Identifier: 'props'
+    Block
+      ReturnStatement
+        JsxSelfClosingElement
+          Identifier: 'Test123'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'props'

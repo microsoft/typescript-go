@@ -1,0 +1,52 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////interface I {
+////    [|interfaceMethodSignature(a: string): boolean;|]
+////    interfaceMethodSignature(b: number): boolean;
+////    interfaceMethodSignature(f: I): boolean;
+////}
+////interface I {
+////    [|interfaceMethodSignature(b: boolean): boolean;|]
+////}
+
+verify'
+        Identifier: 'navigateTo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    pattern'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    expected'
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' test'
+                  Identifier: 'ranges'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'range'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' name'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    StringLiteral
+                  ShorthandPropertyAssignment
+                    Identifier: ' range'
+                  PropertyAssignment
+                    Identifier: ' containerName'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' containerKind'
+                    StringLiteral

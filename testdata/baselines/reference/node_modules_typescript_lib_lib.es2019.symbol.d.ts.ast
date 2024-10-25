@@ -1,0 +1,9 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Symbol'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' description'
+      UnionType
+        StringKeyword
+        UndefinedKeyword

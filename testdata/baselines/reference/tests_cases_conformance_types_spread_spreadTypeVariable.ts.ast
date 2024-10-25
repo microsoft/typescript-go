@@ -1,0 +1,103 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'arg'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'arg'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        NumberKeyword
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'arg'
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        NumberKeyword
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'key'
+              StringKeyword
+            AnyKeyword
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'arg'
+  FunctionDeclaration
+    Identifier: ' f5'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        ArrayType
+          StringKeyword
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'key'
+              StringKeyword
+            AnyKeyword
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'arg'
+  FunctionDeclaration
+    Identifier: ' f6'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'arg'

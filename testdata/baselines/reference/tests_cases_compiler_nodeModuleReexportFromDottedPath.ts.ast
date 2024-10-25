@@ -1,0 +1,58 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PrismaClientOptions'
+    PropertySignature
+      Identifier: '
+  rejectOnNotFound'
+      QuestionToken
+      AnyKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' PrismaClient'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' PrismaClientOptions'
+      TypeReference
+        Identifier: ' PrismaClientOptions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fetcher'
+  ExportDeclaration
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' PrismaClient'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' enhancePrisma'
+        FunctionType
+          TypeParameter
+            Identifier: 'TPrismaClientCtor'
+          Parameter
+            Identifier: 'client'
+            TypeReference
+              Identifier: ' TPrismaClientCtor'
+          IntersectionType
+            TypeReference
+              Identifier: ' TPrismaClientCtor'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' enhanced'
+                UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' EnhancedPrisma'
+        CallExpression
+          Identifier: ' enhancePrisma'
+          Identifier: 'PrismaClient'
+  ExportAssignment
+    NewExpression
+      Identifier: ' EnhancedPrisma'

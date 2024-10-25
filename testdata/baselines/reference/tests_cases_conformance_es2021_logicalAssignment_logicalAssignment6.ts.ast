@@ -1,0 +1,88 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'results'
+      UnionType
+        ArrayType
+          NumberKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' results1'
+      UnionType
+        ArrayType
+          NumberKeyword
+        UndefinedKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'results'
+                BarBarEqualsToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'results1'
+                    BarBarEqualsToken
+                    ArrayLiteralExpression
+            Identifier: 'push'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'results'
+      UnionType
+        ArrayType
+          NumberKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' results1'
+      UnionType
+        ArrayType
+          NumberKeyword
+        UndefinedKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'results'
+                QuestionQuestionEqualsToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'results1'
+                    QuestionQuestionEqualsToken
+                    ArrayLiteralExpression
+            Identifier: 'push'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'results'
+      UnionType
+        ArrayType
+          NumberKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' results1'
+      UnionType
+        ArrayType
+          NumberKeyword
+        UndefinedKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'results'
+                AmpersandAmpersandEqualsToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'results1'
+                    AmpersandAmpersandEqualsToken
+                    ArrayLiteralExpression
+            Identifier: 'push'
+          NumericLiteral

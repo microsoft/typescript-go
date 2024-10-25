@@ -1,0 +1,78 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' testPromise1'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' testPromise2'
+    Block
+      ReturnStatement
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testPromise3'
+        FunctionExpression
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+    console'
+                  Identifier: 'log'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testPromise4'
+        FunctionExpression
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+    console'
+                  Identifier: 'log'
+                StringLiteral
+  FunctionDeclaration
+    Identifier: ' testNever1'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' testNever2'
+    Block
+      ReturnStatement
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testNever3'
+        FunctionExpression
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+    console'
+                  Identifier: 'log'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testNever4'
+        FunctionExpression
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+    console'
+                  Identifier: 'log'
+                StringLiteral

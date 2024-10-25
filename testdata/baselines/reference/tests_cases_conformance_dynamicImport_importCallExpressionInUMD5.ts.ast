@@ -1,0 +1,27 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' func'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' packageName'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' packageJson'
+            AwaitExpression
+              CallExpression
+                ImportKeyword
+                BinaryExpression
+                  Identifier: 'packageName'
+                  PlusToken
+                  StringLiteral

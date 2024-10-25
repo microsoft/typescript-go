@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'arg'
+      Block
+  ClassDeclaration
+    Identifier: ' Super'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              ThisKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

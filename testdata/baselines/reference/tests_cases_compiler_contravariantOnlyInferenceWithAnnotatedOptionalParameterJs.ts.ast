@@ -1,0 +1,33 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' filter'
+    Parameter
+      Identifier: 'predicate'
+    Block
+      ReturnStatement
+        ParenthesizedExpression
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'pose'
+            EqualsGreaterThanToken
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'pose'
+            Parameter
+              Identifier: ' _'
+            EqualsGreaterThanToken
+            TrueKeyword

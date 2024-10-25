@@ -1,0 +1,55 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' SomeLongOptionA'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' someLongOptionA'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' SomeLongOptionB'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' someLongOptionB'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' SomeLongOptionC'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' someLongOptionC'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' SomeLongOptionD'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' someLongOptionD'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' SomeLongOptionE'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' someLongOptionE'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' SomeLongOptionF'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' someLongOptionF'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          TypeReference
+            Identifier: ' SomeLongOptionA'
+          TypeReference
+            Identifier: ' SomeLongOptionB'
+          TypeReference
+            Identifier: ' SomeLongOptionC'
+          TypeReference
+            Identifier: ' SomeLongOptionD'
+          TypeReference
+            Identifier: ' SomeLongOptionE'
+          TypeReference
+            Identifier: ' SomeLongOptionF'
+        NumericLiteral

@@ -1,0 +1,34 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /a.ts
+////[|type Props = {
+////    a: number;
+////}
+////class Foo {
+////    readonly a: number;
+////    constructor({ a }: Props) {
+////        this.a = a;
+////    }
+////}|]
+////
+////export default function f() {
+////    return new Foo({ a: 1 });
+////}
+
+verify'
+        Identifier: 'moveToNewFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral

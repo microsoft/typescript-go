@@ -1,0 +1,56 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AsExpression
+          ObjectLiteralExpression
+          NeverKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'c'

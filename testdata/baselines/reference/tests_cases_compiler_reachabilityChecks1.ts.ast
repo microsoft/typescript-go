@@ -1,0 +1,127 @@
+SourceFile
+  WhileStatement
+    TrueKeyword
+    EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      WhileStatement
+        TrueKeyword
+        EmptyStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' A1'
+    ModuleBlock
+      DoStatement
+        Block
+        TrueKeyword
+      ModuleDeclaration
+        Identifier: ' A'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' F'
+  ModuleDeclaration
+    Identifier: ' A2'
+    ModuleBlock
+      WhileStatement
+        TrueKeyword
+        EmptyStatement
+      ModuleDeclaration
+        Identifier: ' A'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+  ModuleDeclaration
+    Identifier: ' A3'
+    ModuleBlock
+      WhileStatement
+        TrueKeyword
+        EmptyStatement
+      TypeAliasDeclaration
+        Identifier: ' T'
+        StringKeyword
+  ModuleDeclaration
+    Identifier: ' A4'
+    ModuleBlock
+      WhileStatement
+        TrueKeyword
+        EmptyStatement
+      ModuleDeclaration
+        Identifier: ' A'
+        ModuleBlock
+          EnumDeclaration
+            ConstKeyword
+            Identifier: ' E'
+            EnumMember
+              Identifier: ' X'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ReturnStatement
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      ReturnStatement
+      ClassDeclaration
+        Identifier: ' A'
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      ForStatement
+        EmptyStatement
+      ModuleDeclaration
+        Identifier: ' C'
+        ModuleBlock
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      DoStatement
+        Block
+        TrueKeyword
+      EnumDeclaration
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        X'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        X'
+          NumericLiteral

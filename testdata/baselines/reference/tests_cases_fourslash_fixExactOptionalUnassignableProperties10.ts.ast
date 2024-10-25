@@ -1,0 +1,56 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @strictNullChecks: true
+// @exactOptionalPropertyTypes: true
+//// interface IF {
+////     a?: number
+//// }
+//// interface J {
+////     a?: number | undefined
+//// }
+//// declare var j: J
+//// function fi(if_: IF) { return if_ }
+//// fi(j/**/)
+verify'
+        Identifier: 'codeFixAvailable'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Add_undefined_to_optional_property_type'
+              Identifier: 'message'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_undefined_to_optional_property_type'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

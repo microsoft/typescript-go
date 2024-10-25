@@ -1,0 +1,99 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  YieldExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  YieldExpression
+                    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  YieldExpression
+                    AsteriskToken
+                    ArrayLiteralExpression
+                      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f5'
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  YieldExpression
+                    AsteriskToken
+                    CallExpression
+                      ParenthesizedExpression
+                        FunctionExpression
+                          AsyncKeyword
+                          AsteriskToken
+                          Block
+                            ExpressionStatement
+                              YieldExpression
+                                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f6'
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  AwaitExpression
+                    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f7'
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ReturnStatement
+              NumericLiteral

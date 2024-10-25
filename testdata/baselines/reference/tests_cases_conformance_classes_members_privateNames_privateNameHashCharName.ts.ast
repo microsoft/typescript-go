@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+
+    m'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: ''

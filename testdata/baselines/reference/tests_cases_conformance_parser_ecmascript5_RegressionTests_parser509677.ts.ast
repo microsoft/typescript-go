@@ -1,0 +1,9 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' y'
+            StringKeyword

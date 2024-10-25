@@ -1,0 +1,63 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////
+//// /**
+////  * @typedef {number} FooNum
+////  */
+////
+//// /**
+////  * Comment above
+////  * the typedef
+////  *
+////  * @typedef {(number|string|undefined)} FooSome
+////  */
+////
+//// /**
+////  * @typedef {string} Foo1
+////  *
+////  * @typedef FooPerson
+////  * type {object}
+////  * @property {string} id - person's ID
+////  * @property name {string} // person's name
+////  * @property {number|undefined} age - person's age
+////  *
+////  * @see another content
+////  *
+////  * @typedef {object} AnotherFooPerson
+////  * @property {object} data
+////  * @property {string} data.name
+////  * @property {number} data.age
+////  * @property {object} data.contact
+////  * @property {string} data.contact.address
+////  * @property {string} [data.contact.phone]
+////  *
+////  *
+////  * @extends another content
+////  */
+////
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  fixAllDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_all_typedef_to_TypeScript_types'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

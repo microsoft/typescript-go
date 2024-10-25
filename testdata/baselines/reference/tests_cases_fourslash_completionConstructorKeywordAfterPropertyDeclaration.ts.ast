@@ -1,0 +1,92 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' generateRange'
+    Parameter
+      Identifier: 'l'
+      NumberKeyword
+    Parameter
+      Identifier: ' r'
+      NumberKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Array'
+            Identifier: 'from'
+          CallExpression
+            Identifier: 'Array'
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'r'
+                MinusToken
+                Identifier: ' l'
+              PlusToken
+              NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            Parameter
+              Identifier: ' i'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' String'
+              BinaryExpression
+                Identifier: 'i'
+                PlusToken
+                Identifier: ' l'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          CallExpression
+            Identifier: ' generateRange'
+            NumericLiteral
+            NumericLiteral
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'GlobalsOrKeywords'
+        PropertyAssignment
+          Identifier: '
+  isNewIdentifierLocation'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          CallExpression
+            Identifier: ' generateRange'
+            NumericLiteral
+            NumericLiteral
+        PropertyAssignment
+          Identifier: '
+  exact'
+          ArrayLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  isNewIdentifierLocation'
+          TrueKeyword

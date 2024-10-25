@@ -1,0 +1,568 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' FuncType'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'p'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+      TypeQuery
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' fun'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' FuncType'
+    Parameter
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' fun'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' FuncType'
+    Parameter
+      Identifier: ' g'
+      TypeReference
+        Identifier: ' FuncType'
+    Parameter
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' fun'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+      ArrayType
+        AnyKeyword
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' fun'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: ' x'
+                  NumberKeyword
+                  Identifier: 'undefined'
+              ReturnStatement
+                Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' fun'
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' x'
+                    NumberKeyword
+                    Identifier: 'undefined'
+                ReturnStatement
+                  Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' fun'
+          ParenthesizedExpression
+            ParenthesizedExpression
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: ' x'
+                      NumberKeyword
+                      Identifier: 'undefined'
+                  ReturnStatement
+                    Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        CallExpression
+          Identifier: ' fun'
+          ParenthesizedExpression
+            ParenthesizedExpression
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' x'
+                        NumberKeyword
+                        Identifier: 'undefined'
+                    ReturnStatement
+                      Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        CallExpression
+          Identifier: ' fun'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: ' x'
+                  NumberKeyword
+                  Identifier: 'undefined'
+              ReturnStatement
+                Identifier: ' x'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: ' x'
+                  NumberKeyword
+                  Identifier: 'undefined'
+              ReturnStatement
+                Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        CallExpression
+          Identifier: ' fun'
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' x'
+                    NumberKeyword
+                    Identifier: 'undefined'
+                ReturnStatement
+                  Identifier: ' x'
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' x'
+                    NumberKeyword
+                    Identifier: 'undefined'
+                ReturnStatement
+                  Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        CallExpression
+          Identifier: ' fun'
+          ParenthesizedExpression
+            ParenthesizedExpression
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: ' x'
+                      NumberKeyword
+                      Identifier: 'undefined'
+                  ReturnStatement
+                    Identifier: ' x'
+          ParenthesizedExpression
+            ParenthesizedExpression
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: ' x'
+                      NumberKeyword
+                      Identifier: 'undefined'
+                  ReturnStatement
+                    Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        CallExpression
+          Identifier: ' fun'
+          ParenthesizedExpression
+            ParenthesizedExpression
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' x'
+                        NumberKeyword
+                        Identifier: 'undefined'
+                    ReturnStatement
+                      Identifier: ' x'
+          ParenthesizedExpression
+            ParenthesizedExpression
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: ' x'
+                      NumberKeyword
+                      Identifier: 'undefined'
+                  ReturnStatement
+                    Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        CallExpression
+          Identifier: ' fun'
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Math'
+                    Identifier: 'random'
+                LessThanToken
+                NumericLiteral
+              QuestionToken
+              ArrowFunction
+                Parameter
+                  Identifier: ' x'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: ' x'
+                      NumberKeyword
+                      Identifier: 'undefined'
+                  ReturnStatement
+                    Identifier: ' x'
+              ColonToken
+              ArrowFunction
+                Parameter
+                  Identifier: ' x'
+                EqualsGreaterThanToken
+                Identifier: ' undefined'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        CallExpression
+          Identifier: ' fun'
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Math'
+                    Identifier: 'random'
+                LessThanToken
+                NumericLiteral
+              QuestionToken
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' x'
+                        NumberKeyword
+                        Identifier: 'undefined'
+                    ReturnStatement
+                      Identifier: ' x'
+              ColonToken
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Identifier: ' undefined'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        CallExpression
+          Identifier: ' fun'
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Math'
+                    Identifier: 'random'
+                LessThanToken
+                NumericLiteral
+              QuestionToken
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' x'
+                        NumberKeyword
+                        Identifier: 'undefined'
+                    ReturnStatement
+                      Identifier: ' x'
+              ColonToken
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Identifier: ' undefined'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: ' x'
+                  NumberKeyword
+                  Identifier: 'undefined'
+              ReturnStatement
+                Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        CallExpression
+          Identifier: ' fun'
+          ParenthesizedExpression
+            ParenthesizedExpression
+              ConditionalExpression
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'Math'
+                      Identifier: 'random'
+                  LessThanToken
+                  NumericLiteral
+                QuestionToken
+                ParenthesizedExpression
+                  ParenthesizedExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'x'
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: ' x'
+                            NumberKeyword
+                            Identifier: 'undefined'
+                        ReturnStatement
+                          Identifier: ' x'
+                ColonToken
+                ParenthesizedExpression
+                  ParenthesizedExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'x'
+                      EqualsGreaterThanToken
+                      Identifier: ' undefined'
+          ParenthesizedExpression
+            ParenthesizedExpression
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: ' x'
+                      NumberKeyword
+                      Identifier: 'undefined'
+                  ReturnStatement
+                    Identifier: ' x'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambda1'
+        TypeReference
+          Identifier: ' FuncType'
+        ArrowFunction
+          Parameter
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: ' x'
+                NumberKeyword
+                Identifier: 'undefined'
+            ReturnStatement
+              Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambda2'
+        TypeReference
+          Identifier: ' FuncType'
+        ParenthesizedExpression
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: ' x'
+                  NumberKeyword
+                  Identifier: 'undefined'
+              ReturnStatement
+                Identifier: ' x'
+  TypeAliasDeclaration
+    Identifier: ' ObjType'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        FunctionType
+          Parameter
+            Identifier: 'p'
+            NumberKeyword
+          StringKeyword
+      PropertySignature
+        Identifier: ' y'
+        FunctionType
+          Parameter
+            Identifier: 'p'
+            StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        TypeReference
+          Identifier: ' ObjType'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            ArrowFunction
+              Parameter
+                Identifier: ' x'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'x'
+                  CommaToken
+                  Identifier: ' undefined'
+          PropertyAssignment
+            Identifier: ' y'
+            ArrowFunction
+              Parameter
+                Identifier: ' y'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'y'
+                  CommaToken
+                  Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        TypeReference
+          Identifier: ' ObjType'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              ArrowFunction
+                Parameter
+                  Identifier: ' x'
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'x'
+                    CommaToken
+                    Identifier: ' undefined'
+            PropertyAssignment
+              Identifier: ' y'
+              ArrowFunction
+                Parameter
+                  Identifier: ' y'
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'y'
+                    CommaToken
+                    Identifier: ' undefined'

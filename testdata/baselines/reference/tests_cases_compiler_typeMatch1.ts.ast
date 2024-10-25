@@ -1,0 +1,133 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: ' z'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    PropertySignature
+      Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' z'
+            NumberKeyword
+          MethodSignature
+            Identifier: ' f'
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            StringKeyword
+          MethodSignature
+            Identifier: ' f'
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' z'
+            NumberKeyword
+          PropertySignature
+            Identifier: 'f'
+            TypeLiteral
+              CallSignature
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                StringKeyword
+              CallSignature
+                Parameter
+                  Identifier: 's'
+                  StringKeyword
+                NumberKeyword
+        Identifier: ' x1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: 'I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        TypeReference
+          Identifier: 'I2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' z'
+        Identifier: ' i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' z'
+        Identifier: ' i2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        TypeReference
+          Identifier: 'I'
+        Identifier: 'i2'
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        NewExpression
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x7'
+        NewExpression
+          Identifier: ' D'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x6'
+      EqualsToken
+      Identifier: ' x7'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x6'
+      EqualsToken
+      Identifier: 'C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+C'
+      EqualsEqualsToken
+      Identifier: 'D'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+C'
+      EqualsEqualsToken
+      Identifier: 'C'

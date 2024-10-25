@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineDocumentHighlights'
+      Identifier: 'r'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' filesToSearch'
+          ArrayLiteralExpression
+            StringLiteral

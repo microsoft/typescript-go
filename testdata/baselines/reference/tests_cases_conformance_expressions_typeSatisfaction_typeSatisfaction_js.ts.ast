@@ -1,0 +1,9 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        SatisfiesExpression
+          Identifier: ' undefined'
+          LiteralType
+            NumericLiteral

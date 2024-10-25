@@ -1,0 +1,77 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' TopLevel'
+    PropertySignature
+      Identifier: '
+    duplicate1'
+      FunctionType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    duplicate2'
+      FunctionType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    duplicate3'
+      FunctionType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    duplicate4'
+      FunctionType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    duplicate5'
+      FunctionType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    duplicate6'
+      FunctionType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    duplicate7'
+      FunctionType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    duplicate8'
+      FunctionType
+        StringKeyword
+  InterfaceDeclaration
+    Identifier: ' TopLevel'
+    MethodSignature
+      Identifier: '
+    duplicate1'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    duplicate2'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    duplicate3'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    duplicate4'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    duplicate5'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    duplicate6'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    duplicate7'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    duplicate8'
+      NumberKeyword

@@ -1,0 +1,30 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' model'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' el'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' document'
+            Identifier: 'getElementById'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' greeter'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' model'
+            Identifier: 'Greeter'
+          Identifier: 'el'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+/** things */
+greeter'
+        Identifier: 'start'

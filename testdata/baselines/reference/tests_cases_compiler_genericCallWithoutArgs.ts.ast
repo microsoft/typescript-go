@@ -1,0 +1,25 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' Y'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' X'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Y'
+    Block
+  ExpressionStatement
+    PropertyAccessExpression
+      ExpressionWithTypeArguments
+        Identifier: '
+
+f'
+        NumberKeyword
+        StringKeyword
+      Identifier: ''

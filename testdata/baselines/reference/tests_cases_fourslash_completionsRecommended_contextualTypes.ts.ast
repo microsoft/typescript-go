@@ -1,0 +1,147 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: '/// <reference path="fourslash.ts" />
+
+// @jsx: preserve
+
+// @Filename: /a.tsx
+////enum E {}
+////enum F {}
+////interface I { e: E }
+////function f(e: E, f: F) {}
+////f(/*arg0*/, /*arg1*/);
+////
+////const i: I = { e: /*prop*/ };
+////
+////function tag(arr: TemplateStringsArray, x: E) {}
+////tag`${/*tag*/}`;
+////
+////declare function MainButton(props: { e: E }): any;
+////<MainButton e={/*jsx*/} />
+////<MainButton e=/*jsx2*/ />
+
+recommended'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+recommended'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' enumName'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+recommended'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          FalseKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+recommended'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+recommended'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          FalseKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+recommended'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: ' insertText'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' recommended'
+    Parameter
+      Identifier: 'marker'
+      StringKeyword
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' insertText'
+        BindingElement
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+        BindingElement
+          Identifier: ' enumName'
+          StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' insertText'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: ' isNewIdentifierLocation'
+          QuestionToken
+          BooleanKeyword
+        PropertySignature
+          Identifier: ' enumName'
+          QuestionToken
+          StringKeyword
+      ObjectLiteralExpression
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: '
+        marker'
+            PropertyAssignment
+              Identifier: '
+        includes'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            name'
+                  Identifier: ' enumName'
+                PropertyAssignment
+                  Identifier: '
+            text'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'enumName'
+                      TemplateTail
+                PropertyAssignment
+                  Identifier: '
+            kind'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            isRecommended'
+                  TrueKeyword
+                ShorthandPropertyAssignment
+                  Identifier: '
+            insertText'
+            ShorthandPropertyAssignment
+              Identifier: '
+        isNewIdentifierLocation'
+            PropertyAssignment
+              Identifier: '
+        preferences'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            includeInsertTextCompletions'
+                  TrueKeyword

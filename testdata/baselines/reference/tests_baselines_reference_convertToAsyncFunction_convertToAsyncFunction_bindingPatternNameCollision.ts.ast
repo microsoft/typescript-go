@@ -1,0 +1,70 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            StringLiteral
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' fetch'
+              Identifier: 'result'
+            Identifier: 'then'
+          Identifier: 'res'
+  FunctionDeclaration
+    Identifier: ' res'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' status'
+        BindingElement
+          Identifier: ' trailer'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'status'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result_1'
+            AwaitExpression
+              CallExpression
+                Identifier: ' fetch'
+                Identifier: 'result'
+      ReturnStatement
+        CallExpression
+          Identifier: ' res'
+          Identifier: 'result_1'
+  FunctionDeclaration
+    Identifier: ' res'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' status'
+        BindingElement
+          Identifier: ' trailer'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'status'

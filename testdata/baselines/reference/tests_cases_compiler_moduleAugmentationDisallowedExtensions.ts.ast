@@ -1,0 +1,165 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' N1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: 'x1'
+              BindingElement
+                Identifier: ' y1'
+              BindingElement
+                Identifier: ' z0'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: 'n'
+              BindingElement
+                Identifier: ' z1'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: 'arr'
+                    ArrayBindingPattern
+                      BindingElement
+                        Identifier: 'el1'
+                      BindingElement
+                        Identifier: ' el2'
+                      BindingElement
+                        Identifier: ' el3'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'x1'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' y1'
+                StringKeyword
+              PropertySignature
+                Identifier: ' z0'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'n'
+                    NumberKeyword
+              PropertySignature
+                Identifier: ' z1'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'arr'
+                    ArrayType
+                      NumberKeyword
+      InterfaceDeclaration
+        Identifier: ' A'
+        PropertySignature
+          Identifier: ' x'
+      ModuleDeclaration
+        Identifier: ' N'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+      ClassDeclaration
+        Identifier: ' Cls'
+      FunctionDeclaration
+        Identifier: ' foo'
+        NumberKeyword
+      TypeAliasDeclaration
+        Identifier: ' T'
+        NumberKeyword
+      ImportDeclaration
+        ImportClause
+          NamespaceImport
+            Identifier: ' all'
+        StringLiteral
+      ImportDeclaration
+        ImportClause
+          NamedImports
+            ImportSpecifier
+              Identifier: 'a'
+        StringLiteral
+      ExportDeclaration
+        StringLiteral
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: 'a'
+        StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ExportAssignment
+        Identifier: ' N1'
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Observable'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    filter'
+      Parameter
+        Identifier: 'pred'
+        FunctionType
+          Parameter
+            Identifier: 'e'
+            TypeReference
+              Identifier: 'T'
+          BooleanKeyword
+      TypeReference
+        Identifier: ' Observable'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Observable'
+    StringLiteral
+  ImportDeclaration
+    StringLiteral

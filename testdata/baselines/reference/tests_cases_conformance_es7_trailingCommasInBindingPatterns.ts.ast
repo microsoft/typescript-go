@@ -1,0 +1,82 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'a'
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'b'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+      VariableDeclaration
+        Identifier: ' d'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'c'
+        EqualsToken
+        ArrayLiteralExpression
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'd'
+        EqualsToken
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'e'
+        TypeAssertionExpression
+          AnyKeyword
+          ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'f'
+        TypeAssertionExpression
+          AnyKeyword
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+      VariableDeclaration
+        Identifier: ' h'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          Identifier: 'g'
+        EqualsToken
+        TypeAssertionExpression
+          AnyKeyword
+          ArrayLiteralExpression
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: 'h'
+        EqualsToken
+        TypeAssertionExpression
+          AnyKeyword
+          ObjectLiteralExpression

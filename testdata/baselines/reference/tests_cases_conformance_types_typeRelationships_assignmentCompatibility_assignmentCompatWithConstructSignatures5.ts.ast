@@ -1,0 +1,642 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' OtherDerived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bing'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' Derived'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a11'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' bar'
+                TypeReference
+                  Identifier: ' T'
+          TypeReference
+            Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a15'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a16'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a17'
+        TypeLiteral
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' Derived'
+            Parameter
+              Identifier: 'x'
+              ConstructorType
+                Parameter
+                  Identifier: 'a'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' Base'
+            Parameter
+              Identifier: 'x'
+              ConstructorType
+                Parameter
+                  Identifier: 'a'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a18'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'x'
+              TypeLiteral
+                ConstructSignature
+                  TypeParameter
+                    Identifier: 'T'
+                    TypeReference
+                      Identifier: ' Derived'
+                  Parameter
+                    Identifier: 'a'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+                ConstructSignature
+                  TypeParameter
+                    Identifier: 'T'
+                    TypeReference
+                      Identifier: ' Base'
+                  Parameter
+                    Identifier: 'a'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+            ArrayType
+              AnyKeyword
+          ConstructSignature
+            Parameter
+              Identifier: 'x'
+              TypeLiteral
+                ConstructSignature
+                  TypeParameter
+                    Identifier: 'T'
+                    TypeReference
+                      Identifier: ' Derived2'
+                  Parameter
+                    Identifier: 'a'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+                ConstructSignature
+                  TypeParameter
+                    Identifier: 'T'
+                    TypeReference
+                      Identifier: ' Base'
+                  Parameter
+                    Identifier: 'a'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+            ArrayType
+              AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b'
+      EqualsToken
+      Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a2'
+      EqualsToken
+      Identifier: ' b2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b2'
+      EqualsToken
+      Identifier: ' a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a3'
+      EqualsToken
+      Identifier: ' b3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b3'
+      EqualsToken
+      Identifier: ' a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a4'
+      EqualsToken
+      Identifier: ' b4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b4'
+      EqualsToken
+      Identifier: ' a4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b5'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a5'
+      EqualsToken
+      Identifier: ' b5'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b5'
+      EqualsToken
+      Identifier: ' a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b6'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' Derived'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a6'
+      EqualsToken
+      Identifier: ' b6'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b6'
+      EqualsToken
+      Identifier: ' a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b11'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' U'
+              PropertySignature
+                Identifier: ' bar'
+                TypeReference
+                  Identifier: ' U'
+          TypeReference
+            Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a11'
+      EqualsToken
+      Identifier: ' b11'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b11'
+      EqualsToken
+      Identifier: ' a11'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b15'
+        ConstructorType
+          TypeParameter
+            Identifier: 'U'
+          TypeParameter
+            Identifier: ' V'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' U'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' V'
+          ArrayType
+            TypeReference
+              Identifier: ' U'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a15'
+      EqualsToken
+      Identifier: ' b15'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b15'
+      EqualsToken
+      Identifier: ' a15'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b16'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a15'
+      EqualsToken
+      Identifier: ' b16'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b15'
+      EqualsToken
+      Identifier: ' a16'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b17'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a17'
+      EqualsToken
+      Identifier: ' b17'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b17'
+      EqualsToken
+      Identifier: ' a17'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b18'
+        ConstructorType
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+          ArrayType
+            AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a18'
+      EqualsToken
+      Identifier: ' b18'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+b18'
+      EqualsToken
+      Identifier: ' a18'

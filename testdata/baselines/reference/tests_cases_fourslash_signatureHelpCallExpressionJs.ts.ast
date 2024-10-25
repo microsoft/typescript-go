@@ -1,0 +1,76 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @checkJs: true
+// @allowJs: true
+
+// @Filename: main.js
+////function allOptional() { arguments; }
+////allOptional(/*1*/);
+////allOptional(1, 2, 3);
+////function someOptional(x, y) { arguments; }
+////someOptional(/*2*/);
+////someOptional(1, 2, 3);
+////someOptional(); // no error here; x and y are optional in JS
+
+verify'
+        Identifier: 'noErrors'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        isVariadic'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        isVariadic'
+          TrueKeyword

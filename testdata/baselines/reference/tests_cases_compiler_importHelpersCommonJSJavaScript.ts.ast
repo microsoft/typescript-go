@@ -1,0 +1,108 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        Block
+          ExpressionStatement
+            StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              StringLiteral
+              CommaToken
+              StringLiteral
+          ExpressionStatement
+            StringLiteral
+        ExpressionStatement
+          StringLiteral
+        Block
+          ExpressionStatement
+            StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              StringLiteral
+              CommaToken
+              StringLiteral
+          Block
+            ExpressionStatement
+              StringLiteral
+            ExpressionStatement
+              BinaryExpression
+                StringLiteral
+                CommaToken
+                StringLiteral
+            ExpressionStatement
+              StringLiteral
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          StringLiteral
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' __extends'
+        AnyKeyword
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    Identifier: ' Foo'
+  ClassDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' Bar'

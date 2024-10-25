@@ -1,0 +1,28 @@
+SourceFile
+  ExportAssignment
+    Identifier: ' Foo'
+  ClassDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'A'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+      Block
+  ImportEqualsDeclaration
+    Identifier: ' Foo'
+    ExternalModuleReference
+      StringLiteral
+  ExportAssignment
+    Identifier: ' Bar'
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Foo'
+        NumberKeyword

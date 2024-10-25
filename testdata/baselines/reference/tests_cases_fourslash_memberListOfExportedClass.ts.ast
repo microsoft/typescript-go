@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////module M {
+////  export class C { public pub = 0; private priv = 1; }
+////  export var V = 0;
+////}
+////
+////
+////var c = new M.C();
+////
+////c./**/ // test on c.
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral

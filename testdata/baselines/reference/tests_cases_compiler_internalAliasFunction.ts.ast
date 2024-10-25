@@ -1,0 +1,35 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' a'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Block
+          ReturnStatement
+            Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' c'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' b'
+        QualifiedName
+          Identifier: ' a'
+          Identifier: 'foo'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bVal'
+            CallExpression
+              Identifier: ' b'
+              NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bVal2'
+            Identifier: ' b'

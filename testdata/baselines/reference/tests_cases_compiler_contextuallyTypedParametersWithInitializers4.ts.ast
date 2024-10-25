@@ -1,0 +1,60 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    TypeParameter
+      Identifier: '
+  TContext'
+    TypeParameter
+      Identifier: '
+  TMethods'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        FunctionType
+          Parameter
+            Identifier: 'ctx'
+            TypeReference
+              Identifier: ' TContext'
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              ParenthesizedType
+                UnionType
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+          UnknownKeyword
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TContext'
+    Parameter
+      Identifier: ' methods'
+      TypeReference
+        Identifier: ' TMethods'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    count'
+          NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    checkLimit'
+          ArrowFunction
+            Parameter
+              Identifier: 'ctx'
+            Parameter
+              Identifier: ' max'
+              NumericLiteral
+            EqualsGreaterThanToken
+            Block

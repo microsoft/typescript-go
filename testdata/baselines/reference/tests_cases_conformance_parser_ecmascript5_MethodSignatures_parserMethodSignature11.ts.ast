@@ -1,0 +1,7 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      NumericLiteral
+      TypeParameter
+        Identifier: 'T'

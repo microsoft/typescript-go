@@ -1,0 +1,479 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Prop'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      StringKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' MyComp'
+    TypeParameter
+      Identifier: 'P'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'P'
+        TypeLiteral
+    PropertyDeclaration
+      Identifier: '
+    internalProp'
+      TypeReference
+        Identifier: ' P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        JsxSelfClosingElement
+          Identifier: 'MyComp'
+          TypeReference
+            Identifier: 'Prop'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'MyComp'
+          TypeReference
+            Identifier: 'Prop'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral
+        JsxClosingElement
+          Identifier: 'MyComp'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+
+x'
+      EqualsToken
+      JsxSelfClosingElement
+        Identifier: 'MyComp'
+        TypeReference
+          Identifier: 'Prop'
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' a'
+            JsxExpression
+              NumericLiteral
+          JsxAttribute
+            Identifier: ' b'
+            JsxExpression
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'MyComp'
+          TypeReference
+            Identifier: 'Prop'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' b'
+              JsxExpression
+                NumericLiteral
+        JsxClosingElement
+          Identifier: 'MyComp'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxSelfClosingElement
+        Identifier: 'MyComp'
+        TypeReference
+          Identifier: 'Prop'
+        TypeReference
+          Identifier: ' Prop'
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' a'
+            JsxExpression
+              NumericLiteral
+          JsxAttribute
+            Identifier: ' b'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'MyComp'
+          TypeReference
+            Identifier: 'Prop'
+          TypeReference
+            Identifier: ' Prop'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral
+        JsxClosingElement
+          Identifier: 'MyComp'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxSelfClosingElement
+        Identifier: 'MyComp'
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' a'
+            JsxExpression
+              NumericLiteral
+          JsxAttribute
+            Identifier: ' b'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'MyComp'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral
+        JsxClosingElement
+          Identifier: 'MyComp'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxSelfClosingElement
+        Identifier: 'MyComp'
+        TypeLiteral
+        JsxAttributes
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'MyComp'
+          TypeLiteral
+          JsxAttributes
+        JsxClosingElement
+          Identifier: 'MyComp'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' MyComp2'
+    TypeParameter
+      Identifier: 'P'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+    TypeParameter
+      Identifier: ' P2'
+      TypeLiteral
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        IntersectionType
+          TypeReference
+            Identifier: 'P'
+          TypeReference
+            Identifier: ' P2'
+        TypeLiteral
+    PropertyDeclaration
+      Identifier: '
+    internalProp'
+      TupleType
+        TypeReference
+          Identifier: 'P'
+        TypeReference
+          Identifier: ' P2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      JsxSelfClosingElement
+        Identifier: 'MyComp2'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' a'
+            StringLiteral
+          JsxAttribute
+            Identifier: ' b'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'MyComp2'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral
+        JsxClosingElement
+          Identifier: 'MyComp2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+
+x'
+      EqualsToken
+      JsxSelfClosingElement
+        Identifier: 'MyComp2'
+        TypeReference
+          Identifier: 'Prop'
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' a'
+            JsxExpression
+              NumericLiteral
+          JsxAttribute
+            Identifier: ' b'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'MyComp2'
+          TypeReference
+            Identifier: 'Prop'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral
+        JsxClosingElement
+          Identifier: 'MyComp2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxSelfClosingElement
+        Identifier: 'MyComp2'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: 'b'
+            StringKeyword
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' a'
+            StringLiteral
+          JsxAttribute
+            Identifier: ' b'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'MyComp2'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: 'b'
+              StringKeyword
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral
+        JsxClosingElement
+          Identifier: 'MyComp2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+
+x'
+      EqualsToken
+      JsxSelfClosingElement
+        Identifier: 'MyComp2'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: 'b'
+            StringKeyword
+        TypeReference
+          Identifier: ' Prop'
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' a'
+            StringLiteral
+          JsxAttribute
+            Identifier: ' b'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'MyComp2'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: 'b'
+              StringKeyword
+          TypeReference
+            Identifier: ' Prop'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral
+        JsxClosingElement
+          Identifier: 'MyComp2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxSelfClosingElement
+        Identifier: 'MyComp2'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: 'b'
+            NumberKeyword
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' a'
+            StringLiteral
+          JsxAttribute
+            Identifier: ' b'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'MyComp2'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: 'b'
+              NumberKeyword
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral
+        JsxClosingElement
+          Identifier: 'MyComp2'

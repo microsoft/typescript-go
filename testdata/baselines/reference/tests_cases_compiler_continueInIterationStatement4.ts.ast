@@ -1,0 +1,8 @@
+SourceFile
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+    Identifier: ' something'
+    Block
+      ContinueStatement

@@ -1,0 +1,327 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' asyncGen'
+    Parameter
+      Identifier: 'n'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          Identifier: ' n'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        ExpressionStatement
+          YieldExpression
+            BinaryExpression
+              Identifier: ' i'
+              AsteriskToken
+              NumericLiteral
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' genPromises'
+    Parameter
+      Identifier: 'n'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          Identifier: ' n'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          ExpressionStatement
+            YieldExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+                BinaryExpression
+                  Identifier: 'i'
+                  AsteriskToken
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrLike'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+              NumericLiteral
+          PropertyAssignment
+            NumericLiteral
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+              NumericLiteral
+          PropertyAssignment
+            NumericLiteral
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+              NumericLiteral
+          PropertyAssignment
+            NumericLiteral
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+              NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    length'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+  ForOfStatement
+    AwaitKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+    CallExpression
+      Identifier: ' asyncGen'
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  arr'
+            Identifier: 'push'
+          Identifier: 'v'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sameArr1'
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'fromAsync'
+            Identifier: 'arrLike'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sameArr2'
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'fromAsync'
+            ArrayLiteralExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'Promise'
+                  Identifier: 'resolve'
+                NumericLiteral
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+                NumericLiteral
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+                NumericLiteral
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sameArr3'
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'fromAsync'
+            CallExpression
+              Identifier: 'genPromises'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sameArr4'
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'fromAsync'
+            CallExpression
+              Identifier: 'asyncGen'
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' Data'
+    Parameter
+      Identifier: 'n'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Data'
+        Identifier: 'fromAsync'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' Array'
+        Identifier: 'fromAsync'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sameArr5'
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Data'
+              Identifier: 'fromAsync'
+            CallExpression
+              Identifier: 'asyncGen'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mapArr1'
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'fromAsync'
+            CallExpression
+              Identifier: 'asyncGen'
+              NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: ' v'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' v'
+                AsteriskAsteriskToken
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mapArr2'
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'fromAsync'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: ' v'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+                BinaryExpression
+                  Identifier: 'v'
+                  AsteriskAsteriskToken
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mapArr3'
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'fromAsync'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: ' v'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' v'
+                AsteriskAsteriskToken
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' err'
+        NewExpression
+          Identifier: ' Error'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' badIterable'
+        ObjectLiteralExpression
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'iterator'
+            Block
+              ThrowStatement
+                Identifier: ' err'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' badArray'
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'fromAsync'
+            Identifier: 'badIterable'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' withIndexResult'
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'fromAsync'
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+            ArrowFunction
+              Parameter
+                Identifier: 'str'
+              Parameter
+                Identifier: ' index'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' index'
+                  ShorthandPropertyAssignment
+                    Identifier: ' str'

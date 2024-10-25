@@ -1,0 +1,136 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'foo'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // expect error
+a'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' n'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // expect error
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // expect error
+a'
+      EqualsToken
+      Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // expect error
+
+n'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // expect error
+b'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // expect error
+s'
+      EqualsToken
+      Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numObj'
+        TypeReference
+          Identifier: ' Number'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' boolObj'
+        TypeReference
+          Identifier: ' Boolean'
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strObj'
+        TypeReference
+          Identifier: ' String'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' numObj'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+a'
+      EqualsToken
+      Identifier: ' boolObj'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+a'
+      EqualsToken
+      Identifier: ' strObj'

@@ -1,0 +1,212 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ac'
+        TypeReference
+          Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ai'
+        TypeReference
+          Identifier: ' I'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ae'
+        TypeReference
+          Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumberKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        StringKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        BooleanKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' Date'
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        AnyKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        VoidKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        TypeReference
+          Identifier: ' Object'
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeLiteral
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        FunctionType
+          TypeLiteral
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        TypeReference
+          Identifier: ' Function'
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          StringKeyword
+        Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ac'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ai'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ae'
+      EqualsToken
+      Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        ArrayType
+          NumberKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            StringKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Number'
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q'
+        TypeReference
+          Identifier: ' String'
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' V'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          Identifier: ' undefined'

@@ -1,0 +1,75 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    next'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: ' // will be recursive reference when OwnerList is expanded
+    owner'
+      TypeReference
+        Identifier: ' OwnerList'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' OwnerList'
+    TypeParameter
+      Identifier: 'U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'List'
+          TypeReference
+            Identifier: 'U'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' OwnerList2'
+    TypeParameter
+      Identifier: 'U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'List'
+          TypeReference
+            Identifier: 'U'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        TypeReference
+          Identifier: ' OwnerList'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        TypeReference
+          Identifier: ' OwnerList2'
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+o1'
+      EqualsToken
+      Identifier: ' o2'

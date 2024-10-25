@@ -1,0 +1,32 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @noUnusedLocals: true
+// @noUnusedParameters: true
+
+////[|function f({
+////    a, b, /* comment related to c */
+////    c,
+////}: any)|] {
+////    a;
+////    c;
+////}
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newRangeContent'
+          NoSubstitutionTemplateLiteral

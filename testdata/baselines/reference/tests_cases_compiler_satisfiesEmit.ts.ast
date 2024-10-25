@@ -1,0 +1,13 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' a'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        SatisfiesExpression
+          Identifier: ' a'
+          TypeReference
+            Identifier: ' bleh'

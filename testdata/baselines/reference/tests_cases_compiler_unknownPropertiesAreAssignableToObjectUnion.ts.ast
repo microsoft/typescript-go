@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          TypeReference
+            Identifier: ' Object'
+          StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        UnionType
+          TypeReference
+            Identifier: ' Object'
+          UndefinedKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral

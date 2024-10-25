@@ -1,0 +1,100 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+      StringKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' y'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+    GetAccessor
+      PublicKeyword
+      Identifier: ' z'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' z'
+      Parameter
+        Identifier: 'v'
+      Block
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Object'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Object'
+    PropertyDeclaration
+      NumericLiteral
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    x'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    y'
+      Parameter
+        Identifier: 'b'
+        NumberKeyword
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    z'
+      NumberKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Object'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Object'
+    PropertySignature
+      NumericLiteral
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' i'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+i'
+      EqualsToken
+      Identifier: ' c'

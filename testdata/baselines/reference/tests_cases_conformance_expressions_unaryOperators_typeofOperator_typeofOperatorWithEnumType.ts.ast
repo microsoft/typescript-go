@@ -1,0 +1,102 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' ENUM'
+  EmptyStatement
+  EnumDeclaration
+    Identifier: ' ENUM1'
+    EnumMember
+      Identifier: ' A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      StringLiteral
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString1'
+        TypeOfExpression
+          Identifier: ' ENUM'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString2'
+        TypeOfExpression
+          Identifier: ' ENUM1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString3'
+        TypeOfExpression
+          ElementAccessExpression
+            Identifier: ' ENUM1'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString4'
+        TypeOfExpression
+          ParenthesizedExpression
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: 'ENUM'
+                NumericLiteral
+              PlusToken
+              ElementAccessExpression
+                Identifier: ' ENUM1'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString5'
+        TypeOfExpression
+          TypeOfExpression
+            Identifier: ' ENUM'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString6'
+        TypeOfExpression
+          TypeOfExpression
+            TypeOfExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: 'ENUM'
+                    NumericLiteral
+                  PlusToken
+                  PropertyAccessExpression
+                    Identifier: ' ENUM1'
+                    Identifier: 'B'
+  ExpressionStatement
+    TypeOfExpression
+      Identifier: ' ENUM'
+  ExpressionStatement
+    TypeOfExpression
+      Identifier: ' ENUM1'
+  ExpressionStatement
+    TypeOfExpression
+      ElementAccessExpression
+        Identifier: ' ENUM1'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' ENUM'
+      CommaToken
+      Identifier: ' ENUM1'
+  EnumDeclaration
+    Identifier: ' z'
+  EmptyStatement
+  LabeledStatement
+    Identifier: '
+z'
+    ExpressionStatement
+      TypeOfExpression
+        Identifier: ' ENUM'
+  LabeledStatement
+    Identifier: '
+z'
+    ExpressionStatement
+      TypeOfExpression
+        Identifier: ' ENUM1'

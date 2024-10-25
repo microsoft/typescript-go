@@ -1,0 +1,68 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' timezoneNames'
+        AsExpression
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+          TypeReference
+            Identifier: ' const'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zoneName'
+    Identifier: ' timezoneNames'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' formatter'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'DateTimeFormat'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    timeZone'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    timeZoneName'
+                  Identifier: ' zoneName'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' enumerationKeys'
+        AsExpression
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+          TypeReference
+            Identifier: ' const'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' key'
+    Identifier: ' enumerationKeys'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' supported'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'supportedValuesOf'
+              Identifier: 'key'

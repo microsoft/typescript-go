@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /a.ts
+////console.log("hello");
+////[|console.log("goodbye");|]
+
+verify'
+        Identifier: 'moveToNewFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral

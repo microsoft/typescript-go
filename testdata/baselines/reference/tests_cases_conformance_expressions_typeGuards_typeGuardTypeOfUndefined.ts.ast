@@ -1,0 +1,493 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' test1'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' a'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' a'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test2'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' a'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' a'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test3'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          BarBarToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+		a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test4'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            ExclamationEqualsEqualsToken
+            StringLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+		a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test5'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' a'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' a'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test6'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' a'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' a'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test7'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          BarBarToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+		a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test8'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            ExclamationEqualsEqualsToken
+            StringLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+		a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test9'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' a'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' a'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test10'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' a'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' a'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test11'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          BarBarToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+		a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test12'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            ExclamationEqualsEqualsToken
+            StringLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+		a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test13'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        NumberKeyword
+        VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' a'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' a'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test14'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        NumberKeyword
+        VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' a'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' a'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+            Block
+              ExpressionStatement
+                Identifier: '
+            a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test15'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        NumberKeyword
+        VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          BarBarToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+		a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'
+  FunctionDeclaration
+    Identifier: ' test16'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        BooleanKeyword
+        NumberKeyword
+        VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            ExclamationEqualsEqualsToken
+            StringLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+		a'
+        Block
+          ExpressionStatement
+            Identifier: '
+        a'

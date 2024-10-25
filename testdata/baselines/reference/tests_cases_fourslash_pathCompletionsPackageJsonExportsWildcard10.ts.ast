@@ -1,0 +1,50 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: preserve
+// @moduleResolution: bundler
+// @allowImportingTsExtensions: true
+// @jsx: react
+
+// @Filename: /node_modules/repo/package.json
+//// {
+////   "name": "repo",
+////   "exports": {
+////     "./*": "./src/*"
+////   }
+//// }
+
+// @Filename: /node_modules/repo/src/card.tsx
+//// export {};
+
+// @Filename: /main.ts
+//// import { } from "repo//**/";
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  isNewIdentifierLocation'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+  exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral

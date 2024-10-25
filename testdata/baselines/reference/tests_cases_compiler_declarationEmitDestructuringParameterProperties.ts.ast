@@ -1,0 +1,64 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    Constructor
+      Parameter
+        PublicKeyword
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x'
+          BindingElement
+            Identifier: ' y'
+          BindingElement
+            Identifier: ' z'
+        ArrayType
+          StringKeyword
+      Block
+  TypeAliasDeclaration
+    Identifier: ' TupleType1'
+    TupleType
+      StringKeyword
+      NumberKeyword
+      BooleanKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    Constructor
+      Parameter
+        PublicKeyword
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x'
+          BindingElement
+            Identifier: ' y'
+          BindingElement
+            Identifier: ' z'
+        TypeReference
+          Identifier: ' TupleType1'
+      Block
+  TypeAliasDeclaration
+    Identifier: ' ObjType1'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        NumberKeyword
+      PropertySignature
+        Identifier: ' y'
+        StringKeyword
+      PropertySignature
+        Identifier: ' z'
+        BooleanKeyword
+  ClassDeclaration
+    Identifier: ' C3'
+    Constructor
+      Parameter
+        PublicKeyword
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x'
+          BindingElement
+            Identifier: ' y'
+          BindingElement
+            Identifier: ' z'
+        TypeReference
+          Identifier: ' ObjType1'
+      Block

@@ -1,0 +1,39 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'c'
+    VoidKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'c'
+    VoidKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      StringLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+bar'
+      StringLiteral
+      NumericLiteral

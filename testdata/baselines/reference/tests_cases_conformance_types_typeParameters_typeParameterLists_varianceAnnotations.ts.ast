@@ -1,0 +1,749 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Covariant'
+    TypeParameter
+      OutKeyword
+      Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    x'
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' super_covariant'
+        TypeReference
+          Identifier: ' Covariant'
+          UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sub_covariant'
+        TypeReference
+          Identifier: ' Covariant'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+super_covariant'
+      EqualsToken
+      Identifier: ' sub_covariant'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+sub_covariant'
+      EqualsToken
+      Identifier: ' super_covariant'
+  TypeAliasDeclaration
+    Identifier: ' Contravariant'
+    TypeParameter
+      InKeyword
+      Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' super_contravariant'
+        TypeReference
+          Identifier: ' Contravariant'
+          UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sub_contravariant'
+        TypeReference
+          Identifier: ' Contravariant'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+super_contravariant'
+      EqualsToken
+      Identifier: ' sub_contravariant'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+sub_contravariant'
+      EqualsToken
+      Identifier: ' super_contravariant'
+  TypeAliasDeclaration
+    Identifier: ' Invariant'
+    TypeParameter
+      InKeyword
+      OutKeyword
+      Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' super_invariant'
+        TypeReference
+          Identifier: ' Invariant'
+          UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sub_invariant'
+        TypeReference
+          Identifier: ' Invariant'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+super_invariant'
+      EqualsToken
+      Identifier: ' sub_invariant'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+sub_invariant'
+      EqualsToken
+      Identifier: ' super_invariant'
+  TypeAliasDeclaration
+    Identifier: ' T10'
+    TypeParameter
+      OutKeyword
+      Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T11'
+    TypeParameter
+      InKeyword
+      Identifier: ' T'
+    TypeOperator
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T12'
+    TypeParameter
+      OutKeyword
+      Identifier: ' T'
+    TypeParameter
+      OutKeyword
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' T13'
+    TypeParameter
+      InKeyword
+      OutKeyword
+      Identifier: ' T'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Covariant1'
+    TypeParameter
+      InKeyword
+      Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '  // Error
+    x'
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Contravariant1'
+    TypeParameter
+      OutKeyword
+      Identifier: ' T'
+    TypeOperator
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Contravariant2'
+    TypeParameter
+      OutKeyword
+      Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '  // Error
+    f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Invariant1'
+    TypeParameter
+      InKeyword
+      Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '  // Error
+    f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Invariant2'
+    TypeParameter
+      OutKeyword
+      Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '  // Error
+    f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Foo1'
+    TypeParameter
+      InKeyword
+      Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '  // Error
+    x'
+        TypeReference
+          Identifier: ' T'
+      PropertySignature
+        Identifier: '
+    f'
+        TypeReference
+          Identifier: ' FooFn1'
+          TypeReference
+            Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' FooFn1'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'foo'
+        TypeReference
+          Identifier: ' Bar1'
+          ArrayType
+            TypeReference
+              Identifier: 'T'
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Bar1'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    value'
+        TypeReference
+          Identifier: ' Foo1'
+          ArrayType
+            TypeReference
+              Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Foo2'
+    TypeParameter
+      OutKeyword
+      Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '  // Error
+    x'
+        TypeReference
+          Identifier: ' T'
+      PropertySignature
+        Identifier: '
+    f'
+        TypeReference
+          Identifier: ' FooFn2'
+          TypeReference
+            Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' FooFn2'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'foo'
+        TypeReference
+          Identifier: ' Bar2'
+          ArrayType
+            TypeReference
+              Identifier: 'T'
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Bar2'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    value'
+        TypeReference
+          Identifier: ' Foo2'
+          ArrayType
+            TypeReference
+              Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Foo3'
+    TypeParameter
+      InKeyword
+      OutKeyword
+      Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    x'
+        TypeReference
+          Identifier: ' T'
+      PropertySignature
+        Identifier: '
+    f'
+        TypeReference
+          Identifier: ' FooFn3'
+          TypeReference
+            Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' FooFn3'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'foo'
+        TypeReference
+          Identifier: ' Bar3'
+          ArrayType
+            TypeReference
+              Identifier: 'T'
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Bar3'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    value'
+        TypeReference
+          Identifier: ' Foo3'
+          ArrayType
+            TypeReference
+              Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' T20'
+    TypeParameter
+      PublicKeyword
+      Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T21'
+    TypeParameter
+      InKeyword
+      OutKeyword
+      InKeyword
+      Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T22'
+    TypeParameter
+      InKeyword
+      OutKeyword
+      OutKeyword
+      Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T23'
+    TypeParameter
+      OutKeyword
+      InKeyword
+      Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      InKeyword
+      Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      OutKeyword
+      Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      InKeyword
+      Identifier: ' a'
+      NumericLiteral
+    PropertyDeclaration
+      OutKeyword
+      Identifier: ' b'
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' Baz'
+    TypeParameter
+      OutKeyword
+      Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Baz'
+    TypeParameter
+      InKeyword
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' baz1'
+        TypeReference
+          Identifier: ' Baz'
+          UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' baz2'
+        TypeReference
+          Identifier: ' Baz'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+baz1'
+      EqualsToken
+      Identifier: ' baz2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+baz2'
+      EqualsToken
+      Identifier: ' baz1'
+  InterfaceDeclaration
+    Identifier: ' Parent'
+    TypeParameter
+      OutKeyword
+      Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    child'
+      UnionType
+        TypeReference
+          Identifier: ' Child'
+          TypeReference
+            Identifier: 'A'
+        LiteralType
+          NullKeyword
+    PropertySignature
+      Identifier: '
+    parent'
+      UnionType
+        TypeReference
+          Identifier: ' Parent'
+          TypeReference
+            Identifier: 'A'
+        LiteralType
+          NullKeyword
+  InterfaceDeclaration
+    Identifier: ' Child'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+      UnknownKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Parent'
+        TypeReference
+          Identifier: 'A'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' a'
+      TypeReference
+        Identifier: ' A'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' fn'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'inp'
+      TypeReference
+        Identifier: ' Child'
+        TypeReference
+          Identifier: 'A'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' Child'
+              UnknownKeyword
+            Identifier: ' inp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pu'
+        TypeReference
+          Identifier: ' Parent'
+          UnknownKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' child'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' child'
+                NullKeyword
+              PropertyAssignment
+                Identifier: ' parent'
+                NullKeyword
+          PropertyAssignment
+            Identifier: ' parent'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' notString'
+        TypeReference
+          Identifier: ' Parent'
+          StringKeyword
+        Identifier: ' pu'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' StateNode'
+    TypeParameter
+      Identifier: 'TContext'
+    TypeParameter
+      InKeyword
+      OutKeyword
+      Identifier: ' TEvent'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' type'
+          StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    _storedEvent'
+      TypeReference
+        Identifier: ' TEvent'
+    PropertyDeclaration
+      Identifier: '
+    _action'
+      TypeReference
+        Identifier: ' ActionObject'
+        TypeReference
+          Identifier: 'TEvent'
+    PropertyDeclaration
+      Identifier: '
+    _state'
+      TypeReference
+        Identifier: ' StateNode'
+        TypeReference
+          Identifier: 'TContext'
+        AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' ActionObject'
+    TypeParameter
+      Identifier: 'TEvent'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' type'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    exec'
+      FunctionType
+        Parameter
+          Identifier: 'meta'
+          TypeReference
+            Identifier: ' StateNode'
+            AnyKeyword
+            TypeReference
+              Identifier: ' TEvent'
+        VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' createMachine'
+    TypeParameter
+      Identifier: 'TEvent'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' type'
+          StringKeyword
+    Parameter
+      Identifier: 'action'
+      TypeReference
+        Identifier: ' ActionObject'
+        TypeReference
+          Identifier: 'TEvent'
+    TypeReference
+      Identifier: ' StateNode'
+      AnyKeyword
+      AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' interpret'
+    TypeParameter
+      Identifier: 'TContext'
+    Parameter
+      Identifier: 'machine'
+      TypeReference
+        Identifier: ' StateNode'
+        TypeReference
+          Identifier: 'TContext'
+        AnyKeyword
+    VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' machine'
+        CallExpression
+          Identifier: ' createMachine'
+          AsExpression
+            ObjectLiteralExpression
+            AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+interpret'
+      Identifier: 'machine'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qq'
+        TypeReference
+          Identifier: ' ActionObject'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' type'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' value'
+              NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+createMachine'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' type'
+            LiteralType
+              StringLiteral
+          PropertySignature
+            Identifier: ' value'
+            NumberKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' type'
+            LiteralType
+              StringLiteral
+      Identifier: 'qq'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Anon'
+        ClassExpression
+          TypeParameter
+            OutKeyword
+            Identifier: ' T'
+          MethodDeclaration
+            Identifier: '
+    foo'
+            TypeReference
+              Identifier: ' InstanceType'
+              ParenthesizedType
+                TypeQuery
+                  Identifier: ' Anon'
+                  TypeReference
+                    Identifier: 'T'
+            Block
+              ReturnStatement
+                ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' OuterC'
+        ClassExpression
+          Identifier: ' C'
+          TypeParameter
+            OutKeyword
+            Identifier: ' T'
+          MethodDeclaration
+            Identifier: '
+    foo'
+            TypeReference
+              Identifier: ' C'
+              TypeReference
+                Identifier: 'T'
+            Block
+              ReturnStatement
+                ThisKeyword

@@ -1,0 +1,108 @@
+SourceFile
+  IfStatement
+    BinaryExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'Ca'
+          Identifier: 'test'
+        PropertyAccessExpression
+          Identifier: 'c'
+          Identifier: 'href'
+      BarBarToken
+      BinaryExpression
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Ba'
+              Identifier: 'test'
+            PropertyAccessExpression
+              Identifier: 'c'
+              Identifier: 'href'
+          AmpersandAmpersandToken
+          CallExpression
+            PropertyAccessExpression
+              RegularExpressionLiteral
+              Identifier: 'test'
+            PropertyAccessExpression
+              Identifier: 'c'
+              Identifier: 'href'
+        AmpersandAmpersandToken
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              RegularExpressionLiteral
+              Identifier: 'test'
+            PropertyAccessExpression
+              Identifier: 'c'
+              Identifier: 'href'
+    ExpressionStatement
+      BinaryExpression
+        BinaryExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                RegularExpressionLiteral
+                Identifier: 'test'
+              PropertyAccessExpression
+                Identifier: 'c'
+                Identifier: 'href'
+            BarBarToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'd'
+                PlusEqualsToken
+                StringLiteral
+          CommaToken
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                RegularExpressionLiteral
+                Identifier: 'test'
+              PropertyAccessExpression
+                Identifier: 'c'
+                Identifier: 'href'
+            BarBarToken
+            ParenthesizedExpression
+              BinaryExpression
+                BinaryExpression
+                  Identifier: 'd'
+                  PlusEqualsToken
+                  BinaryExpression
+                    StringLiteral
+                    PlusToken
+                    CallExpression
+                      Identifier: ' encodeURIComponent'
+                      BinaryExpression
+                        BinaryExpression
+                          CallExpression
+                            Identifier: 'W'
+                            StringLiteral
+                          BarBarToken
+                          CallExpression
+                            Identifier: ' W'
+                            StringLiteral
+                        BarBarToken
+                        Identifier: ' A'
+                CommaToken
+                BinaryExpression
+                  Identifier: ' d'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' d'
+                      Identifier: 'substring'
+                    NumericLiteral
+                    BinaryExpression
+                      NumericLiteral
+                      MinusToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' c'
+                          Identifier: 'href'
+                        Identifier: 'length'
+        CommaToken
+        BinaryExpression
+          Identifier: ' b'
+          EqualsToken
+          PrefixUnaryExpression
+            NumericLiteral

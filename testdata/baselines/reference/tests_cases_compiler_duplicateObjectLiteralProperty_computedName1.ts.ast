@@ -1,0 +1,89 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PrefixUnaryExpression
+                NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PrefixUnaryExpression
+                NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PrefixUnaryExpression
+                NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t5'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              StringLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t6'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PrefixUnaryExpression
+                NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t7'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              StringLiteral
+            NumericLiteral

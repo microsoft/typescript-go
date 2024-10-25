@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Thing'
+    MethodDeclaration
+      Identifier: '
+  foo'
+      NumberKeyword
+  ExportAssignment
+    Identifier: ' Thing'
+  NamespaceExportDeclaration
+    Identifier: ' Foo'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        Identifier: ' Foo'

@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' classification'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'syntacticClassificationsAre'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'comment'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'jsxSelfClosingTagName'
+        StringLiteral

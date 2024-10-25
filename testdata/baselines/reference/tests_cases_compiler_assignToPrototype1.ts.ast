@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Point'
+    MethodDeclaration
+      Identifier: '
+  add'
+      Parameter
+        Identifier: 'dx'
+        NumberKeyword
+      Parameter
+        Identifier: ' dy'
+        NumberKeyword
+      VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+Point'
+          Identifier: 'prototype'
+        Identifier: 'add'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'dx'
+        Parameter
+          Identifier: ' dy'
+        Block

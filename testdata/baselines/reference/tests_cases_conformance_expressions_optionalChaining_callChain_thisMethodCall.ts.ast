@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    method'
+      QuestionToken
+      Block
+    MethodDeclaration
+      Identifier: '
+    other'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'method'
+            QuestionDotToken

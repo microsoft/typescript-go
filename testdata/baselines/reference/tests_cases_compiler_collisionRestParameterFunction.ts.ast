@@ -1,0 +1,131 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: '_i'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'restParameters'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' _i'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f1NoError'
+    Parameter
+      Identifier: '_i'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' _i'
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    Parameter
+      Identifier: '_i'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'restParameters'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2NoError'
+    Parameter
+      Identifier: '_i'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      DotDotDotToken
+      Identifier: 'restParameters'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' _i'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3NoError'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' _i'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: '_i'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: '_i'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: '_i'
+      AnyKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+    Block
+  FunctionDeclaration
+    Identifier: ' f4NoError'
+    Parameter
+      Identifier: '_i'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f4NoError'
+    Parameter
+      Identifier: '_i'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' f4NoError'
+    Parameter
+      Identifier: '_i'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f5'
+    Parameter
+      Identifier: '_i'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f5'
+    Parameter
+      Identifier: '_i'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f6'
+    Parameter
+      Identifier: '_i'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f6'
+    Parameter
+      Identifier: '_i'
+      StringKeyword

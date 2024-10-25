@@ -1,0 +1,49 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' example'
+    TypeParameter
+      Identifier: 'T1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    foo'
+                ArrowFunction
+                  TypeParameter
+                    Identifier: 'T2'
+                  Parameter
+                    Identifier: 't2'
+                    TypeReference
+                      Identifier: ' T2'
+                  EqualsGreaterThanToken
+                  Identifier: ' x'
+              PropertyAssignment
+                Identifier: '
+    bar'
+                ArrowFunction
+                  Parameter
+                    Identifier: 't1'
+                    TypeReference
+                      Identifier: ' T1'
+                  EqualsGreaterThanToken
+                  Identifier: ' x'
+      ReturnStatement
+        Identifier: ' x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: '
+
+example'
+              NumberKeyword
+            Identifier: 'foo'
+          StringLiteral
+        Identifier: 'bar'
+      NumericLiteral

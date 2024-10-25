@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n1'
+        FunctionType
+          BooleanKeyword
+        FunctionExpression
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n2'
+        FunctionType
+          BooleanKeyword
+        FunctionExpression
+          BooleanKeyword
+          Block

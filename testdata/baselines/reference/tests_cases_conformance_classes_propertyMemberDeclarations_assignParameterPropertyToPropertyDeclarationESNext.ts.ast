@@ -1,0 +1,187 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    qux'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'bar'
+    PropertyDeclaration
+      Identifier: ' // should error
+    bar'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'foo'
+    PropertyDeclaration
+      Identifier: ' // should error
+    quiz'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'bar'
+    PropertyDeclaration
+      Identifier: ' // ok
+    quench'
+      CallExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'm1'
+    PropertyDeclaration
+      Identifier: ' // ok
+    quanch'
+      CallExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'm3'
+    MethodDeclaration
+      Identifier: ' // should error
+    m1'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'foo'
+    PropertyDeclaration
+      Identifier: '
+    m3'
+      FunctionExpression
+        Block
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' foo'
+        StringKeyword
+      Block
+    PropertyDeclaration
+      Identifier: '
+    quim'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'baz'
+    PropertyDeclaration
+      Identifier: ' // should error
+    baz'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'foo'
+    PropertyDeclaration
+      Identifier: ' // should error
+    quid'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'baz'
+    MethodDeclaration
+      Identifier: ' // ok
+    m2'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'foo'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    quill'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'foo'
+  ClassDeclaration
+    Identifier: ' E'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      ArrowFunction
+        EqualsGreaterThanToken
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'foo1'
+          PlusToken
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'foo2'
+    PropertyDeclaration
+      Identifier: ' // both ok
+    foo1'
+      StringLiteral
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' foo2'
+        StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' F'
+    PropertyDeclaration
+      Identifier: '
+    Inner'
+      ClassExpression
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' F'
+        PropertyDeclaration
+          Identifier: '
+        p2'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'p1'
+    PropertyDeclaration
+      Identifier: '
+    p1'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' G'
+    PropertyDeclaration
+      Identifier: '
+    Inner'
+      ClassExpression
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' G'
+        PropertyDeclaration
+          Identifier: '
+        p2'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'p1'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' p1'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' H'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' p1'
+        TypeReference
+          Identifier: ' C'
+      Block
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p2'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'p1'
+              Identifier: 'foo'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p3'
+      ArrowFunction
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'p1'
+          Identifier: 'foo'

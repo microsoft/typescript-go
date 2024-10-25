@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' m'
+      QuestionToken
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    body'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'm'
+            AmpersandAmpersandToken
+            CallExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'm'

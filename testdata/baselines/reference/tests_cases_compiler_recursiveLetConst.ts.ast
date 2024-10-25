@@ -1,0 +1,106 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          Identifier: ' x'
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x1'
+        BinaryExpression
+          Identifier: ' x1'
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        BinaryExpression
+          Identifier: ' y'
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'y1'
+        BinaryExpression
+          Identifier: ' y1'
+          PlusToken
+          NumericLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        Identifier: ' v'
+    Block
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'v'
+        Identifier: ' v'
+    Block
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+    Identifier: ' v'
+    Block
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+    Identifier: ' v'
+    Block
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'v'
+    Identifier: ' v'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x2'
+            Identifier: ' x2'
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z0'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Identifier: ' z0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z1'
+        FunctionExpression
+          Block
+            ReturnStatement
+              Identifier: ' z1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z2'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' f'
+            Block
+              ReturnStatement
+                Identifier: ' z2'

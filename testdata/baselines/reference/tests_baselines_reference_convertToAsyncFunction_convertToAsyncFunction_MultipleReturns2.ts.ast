@@ -1,0 +1,192 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              ArrowFunction
+                Parameter
+                  Identifier: 'res'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' console'
+                    Identifier: 'log'
+                  StringLiteral
+                  Identifier: ' res'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'ok'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              ArrowFunction
+                Parameter
+                  Identifier: 'res'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' console'
+                    Identifier: 'log'
+                  Identifier: 'res'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              Identifier: 'resp'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' blob'
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' resp'
+                                Identifier: 'blob'
+                            Identifier: 'then'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'blob'
+                            EqualsGreaterThanToken
+                            PropertyAccessExpression
+                              Identifier: ' blob'
+                              Identifier: 'byteOffset'
+                        Identifier: 'catch'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'err'
+                        EqualsGreaterThanToken
+                        StringLiteral
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: ' fetch'
+                      StringLiteral
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'res'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' console'
+                        Identifier: 'log'
+                      StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              ArrowFunction
+                Parameter
+                  Identifier: 'res'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' console'
+                    Identifier: 'log'
+                  StringLiteral
+                  Identifier: ' res'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'ok'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' res_1'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' fetch'
+                    StringLiteral
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              Identifier: 'res_1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' resp'
+            AwaitExpression
+              Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' blob'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' resp'
+                        Identifier: 'blob'
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'blob_1'
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      Identifier: ' blob_1'
+                      Identifier: 'byteOffset'
+                Identifier: 'catch'
+              ArrowFunction
+                Parameter
+                  Identifier: 'err'
+                EqualsGreaterThanToken
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' res_2'
+            AwaitExpression
+              CallExpression
+                Identifier: ' fetch'
+                StringLiteral
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' console'
+            Identifier: 'log'
+          StringLiteral

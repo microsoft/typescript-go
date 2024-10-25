@@ -1,0 +1,48 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' b1'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          Identifier: ' b1'
+          Identifier: 'a'
+  ImportEqualsDeclaration
+    Identifier: ' b2'
+    ExternalModuleReference
+      StringLiteral
+  IfStatement
+    Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            PropertyAccessExpression
+              Identifier: ' b2'
+              Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ParenthesizedExpression
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'b1'
+                Identifier: 'b'
+              EqualsEqualsEqualsToken
+              Identifier: ' b'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral

@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' a'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+    StringLiteral
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' a'
+        Identifier: 'A'

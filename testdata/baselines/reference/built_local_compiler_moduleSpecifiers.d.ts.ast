@@ -1,0 +1,456 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' Extension'
+        ImportSpecifier
+          Identifier: ' FutureSourceFile'
+        ImportSpecifier
+          Identifier: ' ModuleSpecifierEnding'
+        ImportSpecifier
+          Identifier: ' ModuleSpecifierOptions'
+        ImportSpecifier
+          Identifier: ' ModuleSpecifierResolutionHost'
+        ImportSpecifier
+          Identifier: ' ResolutionMode'
+        ImportSpecifier
+          Identifier: ' ResolvedModuleSpecifierInfo'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+        ImportSpecifier
+          Identifier: ' UserPreferences'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' RelativePreference'
+    EnumMember
+      Identifier: '
+    Relative'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NonRelative'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Shortest'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ExternalNonRelative'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ModuleSpecifierPreferences'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' relativePreference'
+      TypeReference
+        Identifier: ' RelativePreference'
+    MethodSignature
+      Identifier: '
+    /**
+     * @param syntaxImpliedNodeFormat Used when the import syntax implies ESM or CJS irrespective of the mode of the file.
+     */
+    getAllowedEndingsInPreferredOrder'
+      Parameter
+        Identifier: 'syntaxImpliedNodeFormat'
+        QuestionToken
+        TypeReference
+          Identifier: ' ResolutionMode'
+      ArrayType
+        TypeReference
+          Identifier: ' ModuleSpecifierEnding'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' excludeRegexes'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getModuleSpecifierPreferences'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' importModuleSpecifierPreference'
+        BindingElement
+          Identifier: ' importModuleSpecifierEnding'
+        BindingElement
+          Identifier: ' autoImportSpecifierExcludeRegexes'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'ModuleSpecifierResolutionHost'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' importingSourceFile'
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'SourceFile'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+    Parameter
+      Identifier: ' oldImportSpecifier'
+      QuestionToken
+      StringKeyword
+    TypeReference
+      Identifier: ' ModuleSpecifierPreferences'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' updateModuleSpecifier'
+    Parameter
+      Identifier: 'compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' importingSourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' importingSourceFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' toFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: ' oldImportSpecifier'
+      StringKeyword
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleSpecifierOptions'
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getModuleSpecifier'
+    Parameter
+      Identifier: 'compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' importingSourceFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' FutureSourceFile'
+    Parameter
+      Identifier: ' importingSourceFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' toFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleSpecifierOptions'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNodeModulesPackageName'
+    Parameter
+      Identifier: 'compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' importingSourceFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' FutureSourceFile'
+    Parameter
+      Identifier: ' nodeModulesFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleSpecifierOptions'
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' tryGetModuleSpecifiersFromCache'
+    Parameter
+      Identifier: 'moduleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' importingSourceFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' FutureSourceFile'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: ' userPreferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleSpecifierOptions'
+    UnionType
+      TypeReference
+        Identifier: ' ModuleSpecifierResult'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getModuleSpecifiers'
+    Parameter
+      Identifier: 'moduleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' importingSourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: ' userPreferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleSpecifierOptions'
+    TypeOperator
+      ArrayType
+        StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ModuleSpecifierResult'
+    PropertySignature
+      Identifier: '
+    kind'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' ResolvedModuleSpecifierInfo'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    moduleSpecifiers'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    computedWithoutCache'
+      BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getModuleSpecifiersWithCacheInfo'
+    Parameter
+      Identifier: 'moduleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' importingSourceFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' FutureSourceFile'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: ' userPreferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' options'
+      UnionType
+        TypeReference
+          Identifier: ' ModuleSpecifierOptions'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' forAutoImport'
+      BooleanKeyword
+    TypeReference
+      Identifier: ' ModuleSpecifierResult'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getLocalModuleSpecifierBetweenFileNames'
+    Parameter
+      Identifier: 'importingFile'
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'SourceFile'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+    Parameter
+      Identifier: ' targetFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleSpecifierOptions'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' countPathComponents'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachFileNameOfModule'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'importingFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' importedFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: ' preferSymlinks'
+      BooleanKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Parameter
+          Identifier: ' isRedirect'
+          BooleanKeyword
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' tryGetRealFileNameForNonJsDeclarationFileName'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' tryGetJSExtensionForFile'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    UnionType
+      TypeReference
+        Identifier: ' Extension'
+      UndefinedKeyword

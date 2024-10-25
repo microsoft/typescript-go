@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        FunctionExpression
+          Identifier: ' y'
+          Block
+            ExpressionStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  NumericLiteral
+                  TemplateTail
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  NumericLiteral
+                  TemplateTail

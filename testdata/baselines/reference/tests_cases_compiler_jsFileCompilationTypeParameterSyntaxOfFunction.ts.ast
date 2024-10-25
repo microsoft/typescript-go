@@ -1,0 +1,6 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    Block

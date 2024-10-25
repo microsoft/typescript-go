@@ -1,0 +1,231 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CodeActionCommand'
+        ImportSpecifier
+          Identifier: ' CodeFixAction'
+        ImportSpecifier
+          Identifier: ' CodeFixAllContext'
+        ImportSpecifier
+          Identifier: ' CodeFixContext'
+        ImportSpecifier
+          Identifier: ' CodeFixRegistration'
+        ImportSpecifier
+          Identifier: ' CombinedCodeActions'
+        ImportSpecifier
+          Identifier: ' DiagnosticOrDiagnosticAndArguments'
+        ImportSpecifier
+          Identifier: ' DiagnosticWithLocation'
+        ImportSpecifier
+          Identifier: ' FileTextChanges'
+        ImportSpecifier
+          Identifier: ' TextChange'
+        ImportSpecifier
+          Identifier: ' textChanges'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createCodeFixActionWithoutFixAll'
+    Parameter
+      Identifier: 'fixName'
+      StringKeyword
+    Parameter
+      Identifier: ' changes'
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+    Parameter
+      Identifier: ' description'
+      TypeReference
+        Identifier: ' DiagnosticOrDiagnosticAndArguments'
+    TypeReference
+      Identifier: ' CodeFixAction'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createCodeFixAction'
+    Parameter
+      Identifier: 'fixName'
+      StringKeyword
+    Parameter
+      Identifier: ' changes'
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+    Parameter
+      Identifier: ' description'
+      TypeReference
+        Identifier: ' DiagnosticOrDiagnosticAndArguments'
+    Parameter
+      Identifier: ' fixId'
+      TypeLiteral
+    Parameter
+      Identifier: ' fixAllDescription'
+      TypeReference
+        Identifier: ' DiagnosticOrDiagnosticAndArguments'
+    Parameter
+      Identifier: ' command'
+      QuestionToken
+      TypeReference
+        Identifier: ' CodeActionCommand'
+    TypeReference
+      Identifier: ' CodeFixAction'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createCodeFixActionMaybeFixAll'
+    Parameter
+      Identifier: 'fixName'
+      StringKeyword
+    Parameter
+      Identifier: ' changes'
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+    Parameter
+      Identifier: ' description'
+      TypeReference
+        Identifier: ' DiagnosticOrDiagnosticAndArguments'
+    Parameter
+      Identifier: ' fixId'
+      QuestionToken
+      TypeLiteral
+    Parameter
+      Identifier: ' fixAllDescription'
+      QuestionToken
+      TypeReference
+        Identifier: ' DiagnosticOrDiagnosticAndArguments'
+    Parameter
+      Identifier: ' command'
+      QuestionToken
+      TypeReference
+        Identifier: ' CodeActionCommand'
+    TypeReference
+      Identifier: ' CodeFixAction'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' registerCodeFix'
+    Parameter
+      Identifier: 'reg'
+      TypeReference
+        Identifier: ' CodeFixRegistration'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getSupportedErrorCodes'
+    TypeOperator
+      ArrayType
+        StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getFixes'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixContext'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' CodeFixAction'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getAllFixes'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixAllContext'
+    TypeReference
+      Identifier: ' CombinedCodeActions'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createCombinedCodeActions'
+    Parameter
+      Identifier: 'changes'
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+    Parameter
+      Identifier: ' commands'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' CodeActionCommand'
+    TypeReference
+      Identifier: ' CombinedCodeActions'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createFileTextChanges'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' textChanges'
+      ArrayType
+        TypeReference
+          Identifier: ' TextChange'
+    TypeReference
+      Identifier: ' FileTextChanges'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' codeFixAll'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixAllContext'
+    Parameter
+      Identifier: ' errorCodes'
+      ArrayType
+        NumberKeyword
+    Parameter
+      Identifier: ' use'
+      FunctionType
+        Parameter
+          Identifier: 'changes'
+          TypeReference
+            QualifiedName
+              Identifier: ' textChanges'
+              Identifier: 'ChangeTracker'
+        Parameter
+          Identifier: ' error'
+          TypeReference
+            Identifier: ' DiagnosticWithLocation'
+        Parameter
+          Identifier: ' commands'
+          ArrayType
+            TypeReference
+              Identifier: ' CodeActionCommand'
+        VoidKeyword
+    TypeReference
+      Identifier: ' CombinedCodeActions'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' eachDiagnostic'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixAllContext'
+    Parameter
+      Identifier: ' errorCodes'
+      TypeOperator
+        ArrayType
+          NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'diag'
+          TypeReference
+            Identifier: ' DiagnosticWithLocation'
+        VoidKeyword
+    VoidKeyword

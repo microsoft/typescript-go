@@ -1,0 +1,38 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Scalar'
+    CallSignature
+      StringKeyword
+    PropertySignature
+      Identifier: '
+	value'
+      NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' scalar'
+    Parameter
+      Identifier: 'value'
+      StringKeyword
+    TypeReference
+      Identifier: ' Scalar'
+    Block
+      ReturnStatement
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' scalar'
+    StringLiteral
+  ExportAssignment
+    ObjectLiteralExpression
+      GetAccessor
+        Identifier: ' xs'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' scalar'
+              StringLiteral

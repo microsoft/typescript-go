@@ -1,0 +1,27 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'N'
+    StringLiteral
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' N'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: 'x'
+          AnyKeyword

@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' require'
+        AnyKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' A'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' Foo'
+        Identifier: ' A'
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'

@@ -1,0 +1,21 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    SetAccessor
+      Decorator
+        Identifier: 'dec'
+      PrivateIdentifier
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+  ExportDeclaration
+    NamedExports

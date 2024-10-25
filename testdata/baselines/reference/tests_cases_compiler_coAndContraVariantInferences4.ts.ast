@@ -1,0 +1,122 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' SyntaxKind'
+    EnumMember
+      Identifier: '
+    Modifier'
+    EnumMember
+      Identifier: '
+    Decorator'
+  InterfaceDeclaration
+    Identifier: ' Node'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' SyntaxKind'
+  InterfaceDeclaration
+    Identifier: ' Modifier'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Node'
+    PropertySignature
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' SyntaxKind'
+          Identifier: 'Modifier'
+  InterfaceDeclaration
+    Identifier: ' Decorator'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Node'
+    PropertySignature
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' SyntaxKind'
+          Identifier: 'Decorator'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isModifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Modifier'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isDecorator'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Decorator'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' every'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 'array'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' callback'
+      FunctionType
+        Parameter
+          Identifier: 'element'
+          TypeReference
+            Identifier: ' T'
+        TypePredicate
+          Identifier: ' element'
+          TypeReference
+            Identifier: ' U'
+    TypePredicate
+      Identifier: ' array'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' U'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' modifiers'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Decorator'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Modifier'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    every'
+          Identifier: 'modifiers'
+          Identifier: ' isModifier'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    every'
+          Identifier: 'modifiers'
+          Identifier: ' isDecorator'

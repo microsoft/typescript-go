@@ -1,0 +1,70 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+// @strict: true
+
+//// interface User {
+////     address?: {
+////         city: string;
+////         "postal code": string;
+////     }
+//// };
+//// declare const user: User;
+//// user.address[|./**/|]
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' includeInsertTextCompletions'
+              TrueKeyword

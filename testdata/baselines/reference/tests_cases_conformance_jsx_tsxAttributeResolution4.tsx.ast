@@ -1,0 +1,51 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          Identifier: '
+		test1'
+          TypeReference
+            Identifier: ' Attribs1'
+  InterfaceDeclaration
+    Identifier: ' Attribs1'
+    MethodSignature
+      Identifier: '
+	x'
+      Parameter
+        Identifier: 'n'
+        StringKeyword
+      VoidKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'test1'
+      JsxAttributes
+        JsxAttribute
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              ArrowFunction
+                Parameter
+                  Identifier: 'n'
+                EqualsGreaterThanToken
+                NumericLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'test1'
+      JsxAttributes
+        JsxAttribute
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              ArrowFunction
+                Parameter
+                  Identifier: 'n'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' n'
+                  Identifier: 'len'

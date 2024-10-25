@@ -1,0 +1,63 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+// @filename: /foo.ts
+/////** @deprecated */
+////export function foo() {}
+
+// @filename: /test.ts
+////import { [|foo|] } from "./foo";
+////[|foo|];
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0'
+          BindingElement
+            Identifier: ' r1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            Identifier: ' r0'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            Identifier: ' r1'

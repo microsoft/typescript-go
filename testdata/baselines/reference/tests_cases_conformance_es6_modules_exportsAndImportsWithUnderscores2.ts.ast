@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' R'
+        AnyKeyword
+  ExportAssignment
+    BinaryExpression
+      Identifier: ' R'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          StringLiteral
+          TrueKeyword
+        PropertyAssignment
+          StringLiteral
+          ObjectLiteralExpression
+  ImportDeclaration
+    ImportClause
+      Identifier: ' R'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' __esmodule'
+          BindingElement
+            Identifier: ' __proto__'
+        Identifier: ' R'

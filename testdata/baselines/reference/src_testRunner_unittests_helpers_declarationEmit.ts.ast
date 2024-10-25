@@ -1,0 +1,280 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' getSysForDeclarationEmitWithErrors'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' incremental'
+      UnionType
+        LiteralType
+          TrueKeyword
+        UndefinedKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' TestServerHost'
+            Identifier: 'createWatchedSystem'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                module'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                moduleResolution'
+                        StringLiteral
+                      SpreadAssignment
+                        Identifier: 'options'
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                incremental'
+                      PropertyAssignment
+                        Identifier: '
+                skipLibCheck'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                skipDefaultLibCheck'
+                        TrueKeyword
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            type'
+                    StringLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            name'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            type'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            main'
+                    StringLiteral
+  FunctionDeclaration
+    Identifier: ' getSysForDeclarationEmitWithErrorsWithOutFile'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' incremental'
+      UnionType
+        LiteralType
+          TrueKeyword
+        UndefinedKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' TestServerHost'
+            Identifier: 'createWatchedSystem'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                module'
+                        StringLiteral
+                      SpreadAssignment
+                        Identifier: 'options'
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                incremental'
+                      PropertyAssignment
+                        Identifier: '
+                skipLibCheck'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                skipDefaultLibCheck'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                outFile'
+                        StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            include'
+                    ArrayLiteralExpression
+                      StringLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachDeclarationEmitWithErrorsScenario'
+    Parameter
+      Identifier: '
+    action'
+      FunctionType
+        Parameter
+          Identifier: '
+        scenarioName'
+          FunctionType
+            Parameter
+              Identifier: 'scenario'
+              StringKeyword
+            StringKeyword
+        Parameter
+          Identifier: '
+        sys'
+          FunctionType
+            TypeReference
+              Identifier: ' TestServerHost'
+        VoidKeyword
+    Parameter
+      Identifier: '
+    withComposite'
+      BooleanKeyword
+    VoidKeyword
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' outFile'
+        ArrayLiteralExpression
+          FalseKeyword
+          TrueKeyword
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' incremental'
+            AsExpression
+              ArrayLiteralExpression
+                Identifier: 'undefined'
+                TrueKeyword
+              TypeReference
+                Identifier: ' const'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            action'
+                  ArrowFunction
+                    Parameter
+                      Identifier: '
+                scenario'
+                    EqualsGreaterThanToken
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        ConditionalExpression
+                          Identifier: 'outFile'
+                          QuestionToken
+                          StringLiteral
+                          ColonToken
+                          StringLiteral
+                        TemplateMiddle
+                      TemplateSpan
+                        Identifier: 'scenario'
+                        TemplateMiddle
+                      TemplateSpan
+                        ConditionalExpression
+                          Identifier: 'incremental'
+                          QuestionToken
+                          StringLiteral
+                          ColonToken
+                          StringLiteral
+                        TemplateTail
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      ParenthesizedExpression
+                        ConditionalExpression
+                          Identifier: 'outFile'
+                          QuestionToken
+                          Identifier: ' getSysForDeclarationEmitWithErrorsWithOutFile'
+                          ColonToken
+                          Identifier: '
+                        getSysForDeclarationEmitWithErrors'
+                      ConditionalExpression
+                        BinaryExpression
+                          Identifier: '
+                            withComposite'
+                          AmpersandAmpersandToken
+                          Identifier: ' incremental'
+                        QuestionToken
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' composite'
+                            TrueKeyword
+                        ColonToken
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' declaration'
+                            TrueKeyword
+                      Identifier: '
+                            incremental'

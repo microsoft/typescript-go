@@ -1,0 +1,305 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Wagon'
+    Parameter
+      Identifier: 'numberOxen'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'numberOxen'
+          EqualsToken
+          Identifier: ' numberOxen'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+/** @param {Wagon[]=} wagons */
+Wagon'
+        Identifier: 'circle'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'wagons'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              Identifier: ' wagons'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' wagons'
+                Identifier: 'length'
+              ColonToken
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/** @param {*[]=} supplies - *[]= is my favourite type */
+Wagon'
+          Identifier: 'prototype'
+        Identifier: 'load'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'supplies'
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/** @param {*[]=} supplies - Yep, still a great type */
+Wagon'
+          Identifier: 'prototype'
+        Identifier: 'weight'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: ' supplies'
+        EqualsGreaterThanToken
+        ConditionalExpression
+          Identifier: ' supplies'
+          QuestionToken
+          PropertyAccessExpression
+            Identifier: ' supplies'
+            Identifier: 'length'
+          ColonToken
+          PrefixUnaryExpression
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Wagon'
+          Identifier: 'prototype'
+        Identifier: 'speed'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'numberOxen'
+              SlashToken
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'weight'
+  ClassDeclaration
+    Identifier: ' Sql'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Wagon'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foonly'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    /**
+     * @param {Array.<string>} files
+     * @param {"csv" | "json" | "xmlolololol"} format
+     * This is not assignable, so should have a type error
+     */
+    load'
+      Parameter
+        Identifier: 'files'
+      Parameter
+        Identifier: ' format'
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'format'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          Block
+            ThrowStatement
+              NewExpression
+                Identifier: ' Error'
+                StringLiteral
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'speed'
+            IfStatement
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'weight'
+                LessThanToken
+                NumericLiteral
+              Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' db'
+        NewExpression
+          Identifier: ' Sql'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+db'
+        Identifier: 'numberOxen'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' db'
+        Identifier: 'foonly'
+  ClassDeclaration
+    Identifier: ' Drakkhen'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Dragon'
+  FunctionDeclaration
+    Identifier: ' Dragon'
+    Parameter
+      Identifier: 'numberEaten'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'numberEaten'
+          EqualsToken
+          Identifier: ' numberEaten'
+  ClassDeclaration
+    Identifier: ' Firedrake'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Dragon'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' Conestoga'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Wagon'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' drunkOO'
+        LiteralType
+          TrueKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            StringLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' circle'
+      Parameter
+        Identifier: 'others'
+        ArrayType
+          ParenthesizedType
+            TypeQuery
+              Identifier: ' Wagon'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' others'
+            Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' Conestoga'
+          TrueKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+c'
+      Identifier: 'drunkOO'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+c'
+      Identifier: 'numberOxen'
+  FunctionDeclaration
+    Identifier: ' Soup'
+    Parameter
+      Identifier: 'flavour'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'flavour'
+          EqualsToken
+          Identifier: ' flavour'
+  ClassDeclaration
+    Identifier: ' Chowder'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Soup'
+    MethodDeclaration
+      Identifier: '
+    log'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'flavour'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' soup'
+        NewExpression
+          Identifier: ' Soup'
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+soup'
+      Identifier: 'flavour'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' chowder'
+        NewExpression
+          Identifier: ' Chowder'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' claim'
+              StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+chowder'
+        Identifier: 'flavour'
+      Identifier: 'claim'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorNoArgs'
+        NewExpression
+          Identifier: ' Chowder'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorArgType'
+        NewExpression
+          Identifier: ' Chowder'
+          NumericLiteral

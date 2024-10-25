@@ -1,0 +1,13 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' modErr'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' modErr1'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' modErr2'
+    ExternalModuleReference
+      StringLiteral

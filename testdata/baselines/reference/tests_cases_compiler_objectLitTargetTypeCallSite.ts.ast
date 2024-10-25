@@ -1,0 +1,29 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' process'
+    Parameter
+      Identifier: ' x'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+process'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'a'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: 'b'
+          StringLiteral

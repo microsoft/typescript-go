@@ -1,0 +1,52 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+////async function fn(a: string, b: Promise<string>) {
+////  const x = b;
+////  fn(x, b);
+////  fn(b, b);
+////}
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  fixAllDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Fix_all_expressions_possibly_missing_await'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+  fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

@@ -1,0 +1,164 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' System'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Timer'
+    MethodSignature
+      Identifier: '
+    enter'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    exit'
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createTimerIf'
+    Parameter
+      Identifier: 'condition'
+      BooleanKeyword
+    Parameter
+      Identifier: ' measureName'
+      StringKeyword
+    Parameter
+      Identifier: ' startMarkName'
+      StringKeyword
+    Parameter
+      Identifier: ' endMarkName'
+      StringKeyword
+    TypeReference
+      Identifier: ' Timer'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createTimer'
+    Parameter
+      Identifier: 'measureName'
+      StringKeyword
+    Parameter
+      Identifier: ' startMarkName'
+      StringKeyword
+    Parameter
+      Identifier: ' endMarkName'
+      StringKeyword
+    TypeReference
+      Identifier: ' Timer'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullTimer'
+        TypeReference
+          Identifier: ' Timer'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' mark'
+    Parameter
+      Identifier: 'markName'
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' measure'
+    Parameter
+      Identifier: 'measureName'
+      StringKeyword
+    Parameter
+      Identifier: ' startMarkName'
+      QuestionToken
+      StringKeyword
+    Parameter
+      Identifier: ' endMarkName'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getCount'
+    Parameter
+      Identifier: 'markName'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDuration'
+    Parameter
+      Identifier: 'measureName'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachMeasure'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        Parameter
+          Identifier: 'measureName'
+          StringKeyword
+        Parameter
+          Identifier: ' duration'
+          NumberKeyword
+        VoidKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachMark'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        Parameter
+          Identifier: 'markName'
+          StringKeyword
+        VoidKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' clearMeasures'
+    Parameter
+      Identifier: 'name'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' clearMarks'
+    Parameter
+      Identifier: 'name'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isEnabled'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' enable'
+    Parameter
+      Identifier: 'system'
+      QuestionToken
+      TypeReference
+        Identifier: ' System'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' disable'
+    VoidKeyword

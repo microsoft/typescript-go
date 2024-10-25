@@ -1,0 +1,16 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' BadGenerator'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Iterator'
+        NumberKeyword
+      ExpressionWithTypeArguments
+        Identifier: ' Iterable'
+        StringKeyword
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g3'
+    TypeReference
+      Identifier: ' BadGenerator'
+    Block

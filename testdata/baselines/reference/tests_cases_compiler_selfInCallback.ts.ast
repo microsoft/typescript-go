@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' callback'
+      Parameter
+        Identifier: 'cb'
+        FunctionType
+          VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: 'cb'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' doit'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'callback'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'p1'
+                    PlusToken
+                    NumericLiteral

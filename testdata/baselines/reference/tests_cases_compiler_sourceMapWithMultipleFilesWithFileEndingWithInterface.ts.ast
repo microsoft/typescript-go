@@ -1,0 +1,50 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' X'
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' Navigator'
+    MethodSignature
+      Identifier: '
+    getGamepads'
+      Parameter
+        Identifier: 'func'
+        QuestionToken
+        AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    webkitGetGamepads'
+      Parameter
+        Identifier: 'func'
+        QuestionToken
+        AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    msGetGamepads'
+      Parameter
+        Identifier: 'func'
+        QuestionToken
+        AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    webkitGamepads'
+      Parameter
+        Identifier: 'func'
+        QuestionToken
+        AnyKeyword
+      AnyKeyword
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c1'

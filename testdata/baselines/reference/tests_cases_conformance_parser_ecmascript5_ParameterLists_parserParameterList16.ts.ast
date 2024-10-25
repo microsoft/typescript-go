@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+   foo'
+      Parameter
+        Identifier: 'a'
+        NumericLiteral
+    MethodDeclaration
+      Identifier: '
+   foo'
+      Parameter
+        Identifier: 'a'
+      Parameter
+        Identifier: ' b'
+      Block

@@ -1,0 +1,159 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Declaration'
+        ImportSpecifier
+          Identifier: ' DefinitionInfo'
+        ImportSpecifier
+          Identifier: ' DefinitionInfoAndBoundSpan'
+        ImportSpecifier
+          Identifier: ' FileReference'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDefinitionAtPosition'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' searchOtherFilesOnly'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' stopAtAlias'
+      QuestionToken
+      BooleanKeyword
+    UnionType
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' DefinitionInfo'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getReferenceAtPosition'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    reference'
+          TypeReference
+            Identifier: ' FileReference'
+        PropertySignature
+          Identifier: '
+    fileName'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+    unverified'
+          BooleanKeyword
+        PropertySignature
+          Identifier: '
+    file'
+          QuestionToken
+          TypeReference
+            Identifier: ' SourceFile'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getTypeDefinitionAtPosition'
+    Parameter
+      Identifier: 'typeChecker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    UnionType
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' DefinitionInfo'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDefinitionAndBoundSpan'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    UnionType
+      TypeReference
+        Identifier: ' DefinitionInfoAndBoundSpan'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createDefinitionInfo'
+    Parameter
+      Identifier: 'declaration'
+      TypeReference
+        Identifier: ' Declaration'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' unverified'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' failedAliasResolution'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' DefinitionInfo'

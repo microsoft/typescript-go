@@ -1,0 +1,16 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'a'
+              BindingElement
+                Identifier: ' b'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral

@@ -1,0 +1,7 @@
+SourceFile
+  ExportAssignment
+    ParenthesizedExpression
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        NumericLiteral

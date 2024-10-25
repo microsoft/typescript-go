@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ConditionalExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              StringLiteral
+              TemplateTail
+          QuestionToken
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              StringLiteral
+              TemplateTail
+          ColonToken
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              StringLiteral
+              TemplateTail

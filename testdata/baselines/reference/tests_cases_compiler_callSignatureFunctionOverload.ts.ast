@@ -1,0 +1,57 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'name'
+              StringKeyword
+            StringKeyword
+          CallSignature
+            Parameter
+              Identifier: 'name'
+              LiteralType
+                StringLiteral
+            StringKeyword
+          CallSignature
+            Parameter
+              Identifier: 'name'
+              LiteralType
+                StringLiteral
+            StringKeyword
+          CallSignature
+            Parameter
+              Identifier: 'name'
+              LiteralType
+                StringLiteral
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo2'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'name'
+              StringKeyword
+            StringKeyword
+          CallSignature
+            Parameter
+              Identifier: 'name'
+              LiteralType
+                StringLiteral
+            StringKeyword
+          CallSignature
+            Parameter
+              Identifier: 'name'
+              LiteralType
+                StringLiteral
+            StringKeyword
+          CallSignature
+            Parameter
+              Identifier: 'name'
+              LiteralType
+                StringLiteral
+            StringKeyword

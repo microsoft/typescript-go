@@ -1,0 +1,16 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' HTMLSelectElement'
+    PropertySignature
+      Identifier: '
+    options'
+      TypeReference
+        Identifier: ' HTMLSelectElement'
+    CallSignature
+      TypeParameter
+        Identifier: 'A'
+      Parameter
+        Identifier: 'name'
+        TypeReference
+          Identifier: ' A'
+      AnyKeyword

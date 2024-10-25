@@ -1,0 +1,184 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Class'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+// error: 'Class' doesn't have property 'notPresent'
+Class'
+          Identifier: 'prototype'
+        Identifier: 'containsError'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'notPresent'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+// lots of methods that return this, which caused out-of-memory in #9527
+Class'
+          Identifier: 'prototype'
+        Identifier: 'm1'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'a'
+        Parameter
+          Identifier: ' b'
+        Parameter
+          Identifier: ' c'
+        Parameter
+          Identifier: ' d'
+        Parameter
+          Identifier: ' tx'
+        Parameter
+          Identifier: ' ty'
+        Block
+          ReturnStatement
+            ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Class'
+          Identifier: 'prototype'
+        Identifier: 'm2'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'x'
+        Parameter
+          Identifier: ' y'
+        Block
+          ReturnStatement
+            ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Class'
+          Identifier: 'prototype'
+        Identifier: 'm3'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'x'
+        Parameter
+          Identifier: ' y'
+        Block
+          ReturnStatement
+            ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Class'
+          Identifier: 'prototype'
+        Identifier: 'm4'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'angle'
+        Block
+          ReturnStatement
+            ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Class'
+          Identifier: 'prototype'
+        Identifier: 'm5'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'matrix'
+        Block
+          ReturnStatement
+            ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Class'
+          Identifier: 'prototype'
+        Identifier: 'm6'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'x'
+        Parameter
+          Identifier: ' y'
+        Parameter
+          Identifier: ' pivotX'
+        Parameter
+          Identifier: ' pivotY'
+        Parameter
+          Identifier: ' scaleX'
+        Parameter
+          Identifier: ' scaleY'
+        Parameter
+          Identifier: ' rotation'
+        Parameter
+          Identifier: ' skewX'
+        Parameter
+          Identifier: ' skewY'
+        Block
+          ReturnStatement
+            ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Class'
+          Identifier: 'prototype'
+        Identifier: 'm7'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'matrix'
+        Block
+          ReturnStatement
+            ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Class'
+          Identifier: 'prototype'
+        Identifier: 'm8'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Class'
+          Identifier: 'prototype'
+        Identifier: 'm9'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            ThisKeyword

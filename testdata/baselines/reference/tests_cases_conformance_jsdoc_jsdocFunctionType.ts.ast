@@ -1,0 +1,184 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' id1'
+    Parameter
+      Identifier: 'c'
+    Block
+      ReturnStatement
+        Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' id1'
+          FunctionExpression
+            Parameter
+              Identifier: 'n'
+            Block
+              ReturnStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'length'
+                  PlusToken
+                  Identifier: ' n'
+  FunctionDeclaration
+    Identifier: ' id2'
+    Parameter
+      Identifier: 'c'
+    Block
+      ReturnStatement
+        Identifier: ' c'
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'n'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'length'
+            EqualsToken
+            Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          Identifier: ' id2'
+          Identifier: 'C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        NewExpression
+          Identifier: ' y'
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z'
+      Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionExpression
+          Parameter
+            Identifier: 'ab'
+          Parameter
+            Identifier: ' onetwo'
+          Block
+            ReturnStatement
+              ConditionalExpression
+                BinaryExpression
+                  Identifier: ' ab'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                QuestionToken
+                NumericLiteral
+                ColonToken
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' D'
+    Parameter
+      Identifier: 'n'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'length'
+          EqualsToken
+          Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y2'
+        CallExpression
+          Identifier: ' id2'
+          Identifier: 'D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z2'
+        NewExpression
+          Identifier: ' y2'
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z2'
+      Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' construct'
+        FunctionExpression
+          Parameter
+            Identifier: 'dref'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' dref'
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z3'
+        CallExpression
+          Identifier: ' construct'
+          Identifier: 'D'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z3'
+      Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' E'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'not_length_on_purpose'
+                EqualsToken
+                Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y3'
+        CallExpression
+          Identifier: ' id2'
+          Identifier: 'E'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+    Block
+      ExpressionStatement
+        Identifier: '
+  args'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      NumericLiteral
+      StringLiteral
+      StringLiteral

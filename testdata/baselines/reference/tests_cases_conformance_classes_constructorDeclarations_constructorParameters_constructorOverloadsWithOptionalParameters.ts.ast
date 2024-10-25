@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        QuestionToken
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        ArrayType
+          AnyKeyword
+    Constructor
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        QuestionToken
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        ArrayType
+          AnyKeyword
+    Constructor
+      Block

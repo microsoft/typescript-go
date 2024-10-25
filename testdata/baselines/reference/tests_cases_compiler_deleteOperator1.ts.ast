@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BooleanKeyword
+        DeleteExpression
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        AnyKeyword
+        DeleteExpression
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        NumberKeyword
+        DeleteExpression
+          Identifier: ' a'

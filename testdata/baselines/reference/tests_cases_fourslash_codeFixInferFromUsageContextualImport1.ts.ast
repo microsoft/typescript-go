@@ -1,0 +1,40 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @strict: true
+// @noImplicitAny: true
+// @noLib: true
+
+// @Filename: /a.ts
+////export interface User {}
+////export declare function getEmail(user: User): string;
+
+// @Filename: /b.ts
+////import { getEmail } from "./a";
+////
+////export function f([|user|]) {
+////    getEmail(user);
+////}
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

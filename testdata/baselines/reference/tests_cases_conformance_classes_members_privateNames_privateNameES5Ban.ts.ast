@@ -1,0 +1,43 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Block
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      PrivateIdentifier
+      Block
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      StringLiteral
+    MethodDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      Block
+    GetAccessor
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      Block
+    GetAccessor
+      StaticKeyword
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      PrivateIdentifier
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block

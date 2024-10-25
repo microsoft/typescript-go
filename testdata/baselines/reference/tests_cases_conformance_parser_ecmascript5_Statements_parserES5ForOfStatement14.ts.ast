@@ -1,0 +1,11 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a'
+          BindingElement
+            Identifier: ' b'
+    Identifier: ' X'
+    Block

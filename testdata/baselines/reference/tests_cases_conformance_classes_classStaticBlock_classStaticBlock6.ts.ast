@@ -1,0 +1,117 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' a'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    ClassStaticBlockDeclaration
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' await'
+              NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arguments'
+              NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' eval'
+              NumericLiteral
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          AwaitExpression
+            Identifier: ''
+        IfStatement
+          TrueKeyword
+          Block
+        ExpressionStatement
+          Identifier: '
+
+        arguments'
+        ExpressionStatement
+          AwaitExpression
+            Identifier: ''
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' CC'
+    Constructor
+      Block
+        ClassDeclaration
+          Identifier: ' C'
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' B'
+          ClassStaticBlockDeclaration
+            Block
+              ClassDeclaration
+                Identifier: ' CC'
+                HeritageClause
+                  ExpressionWithTypeArguments
+                    Identifier: ' B'
+                Constructor
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        SuperKeyword
+              ExpressionStatement
+                CallExpression
+                  SuperKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' B'
+        ClassStaticBlockDeclaration
+          Block
+            ExpressionStatement
+              Identifier: '
+            arguments'
+            ExpressionStatement
+              AwaitExpression
+                Identifier: ''
+            FunctionDeclaration
+              AsyncKeyword
+              Identifier: ' ff'
+              Block
+                ExpressionStatement
+                  Identifier: '
+                arguments'
+                ExpressionStatement
+                  AwaitExpression
+                    Identifier: ''
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' B'
+        ClassStaticBlockDeclaration
+          Block
+            ExpressionStatement
+              Identifier: '
+            arguments'
+            FunctionDeclaration
+              Identifier: ' ff'
+              Block
+                ExpressionStatement
+                  Identifier: '
+                arguments'

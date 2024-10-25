@@ -1,0 +1,199 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NUMBER'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NUMBER1'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      NumberKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objA'
+        NewExpression
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean1'
+        DeleteExpression
+          Identifier: ' NUMBER'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean2'
+        DeleteExpression
+          Identifier: ' NUMBER1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean3'
+        DeleteExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean4'
+        DeleteExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean5'
+        DeleteExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              ArrowFunction
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean6'
+        DeleteExpression
+          PropertyAccessExpression
+            Identifier: ' objA'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean7'
+        DeleteExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean8'
+        DeleteExpression
+          ElementAccessExpression
+            Identifier: ' NUMBER1'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean9'
+        DeleteExpression
+          CallExpression
+            Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean10'
+        DeleteExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' A'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean11'
+        DeleteExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'NUMBER'
+              PlusToken
+              Identifier: ' NUMBER'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean12'
+        DeleteExpression
+          DeleteExpression
+            Identifier: ' NUMBER'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean13'
+        DeleteExpression
+          DeleteExpression
+            DeleteExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'NUMBER'
+                  PlusToken
+                  Identifier: ' NUMBER'
+  ExpressionStatement
+    DeleteExpression
+      NumericLiteral
+  ExpressionStatement
+    DeleteExpression
+      Identifier: ' NUMBER'
+  ExpressionStatement
+    DeleteExpression
+      Identifier: ' NUMBER1'
+  ExpressionStatement
+    DeleteExpression
+      CallExpression
+        Identifier: ' foo'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' objA'
+        Identifier: 'a'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' M'
+        Identifier: 'n'
+  ExpressionStatement
+    BinaryExpression
+      DeleteExpression
+        PropertyAccessExpression
+          Identifier: ' objA'
+          Identifier: 'a'
+      CommaToken
+      PropertyAccessExpression
+        Identifier: ' M'
+        Identifier: 'n'

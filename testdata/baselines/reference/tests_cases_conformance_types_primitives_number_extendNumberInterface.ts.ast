@@ -1,0 +1,61 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Number'
+    MethodSignature
+      Identifier: '
+    doStuff'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    doOtherStuff'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        StringKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'doStuff'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        StringKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'doOtherStuff'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        StringKeyword
+        CallExpression
+          ElementAccessExpression
+            Identifier: ' x'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        StringKeyword
+        CallExpression
+          ElementAccessExpression
+            Identifier: ' x'
+            StringLiteral
+          StringLiteral

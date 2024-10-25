@@ -1,0 +1,2991 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    arrayFrom'
+        ImportSpecifier
+          Identifier: '
+    compareStringsCaseSensitive'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    DocumentPositionMapper'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    identity'
+        ImportSpecifier
+          Identifier: '
+    identitySourceMapConsumer'
+        ImportSpecifier
+          Identifier: '
+    isString'
+        ImportSpecifier
+          Identifier: '
+    noop'
+        ImportSpecifier
+          Identifier: '
+    SourceMapper'
+        ImportSpecifier
+          Identifier: '
+    toSorted'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    AutoImportProviderProject'
+        ImportSpecifier
+          Identifier: '
+    AuxiliaryProject'
+        ImportSpecifier
+          Identifier: '
+    ConfiguredProject'
+        ImportSpecifier
+          Identifier: '
+    isBackgroundProject'
+        ImportSpecifier
+          Identifier: '
+    isConfiguredProject'
+        ImportSpecifier
+          Identifier: '
+    LogLevel'
+        ImportSpecifier
+          Identifier: '
+    Project'
+        ImportSpecifier
+          Identifier: '
+    ProjectKind'
+        ImportSpecifier
+          Identifier: '
+    ProjectService'
+        ImportSpecifier
+          Identifier: '
+    ScriptInfo'
+        ImportSpecifier
+          Identifier: '
+    SourceMapFileWatcher'
+        ImportSpecifier
+          Identifier: '
+    TextStorage'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' LoggerWithInMemoryLogs'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ProjectData'
+    PropertySignature
+      Identifier: '
+    projectStateVersion'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Project'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    projectProgramVersion'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Project'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    dirty'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Project'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    initialLoadPending'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Project'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    isClosed'
+      TypeReference
+        Identifier: ' ReturnType'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'Project'
+          LiteralType
+            StringLiteral
+    PropertySignature
+      Identifier: '
+    isOrphan'
+      TypeReference
+        Identifier: ' ReturnType'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'Project'
+          LiteralType
+            StringLiteral
+    PropertySignature
+      Identifier: '
+    noOpenRef'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    deferredClose'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' ConfiguredProject'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    documentPositionMappers'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' SourceMapper'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    autoImportProviderHost'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Project'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    noDtsResolutionProject'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Project'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    originalConfiguredProjects'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Project'
+        LiteralType
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' SourceMapFileWatcherData'
+    PropertySignature
+      Identifier: '
+    sourceInfos'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' SourceMapFileWatcher'
+        LiteralType
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ScriptInfoData'
+    PropertySignature
+      Identifier: '
+    open'
+      TypeReference
+        Identifier: ' ReturnType'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'ScriptInfo'
+          LiteralType
+            StringLiteral
+    PropertySignature
+      Identifier: '
+    version'
+      TypeReference
+        Identifier: ' ReturnType'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'TextStorage'
+          LiteralType
+            StringLiteral
+    PropertySignature
+      Identifier: '
+    pendingReloadFromDisk'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' TextStorage'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    deferredDelete'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' ScriptInfo'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    sourceMapFilePath'
+      UnionType
+        TypeReference
+          Identifier: ' Exclude'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'ScriptInfo'
+            LiteralType
+              StringLiteral
+          TypeReference
+            Identifier: ' SourceMapFileWatcher'
+        TypeReference
+          Identifier: ' SourceMapFileWatcherData'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    declarationInfoPath'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' ScriptInfo'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    sourceInfos'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' ScriptInfo'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    documentPositionMapper'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' ScriptInfo'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    containingProjects'
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'Project'
+  EnumDeclaration
+    Identifier: ' Diff'
+    EnumMember
+      Identifier: '
+    None'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    New'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    Change'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    Deleted'
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' StatePropertyLog'
+    UnionType
+      StringKeyword
+      ArrayType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' StateItemLog'
+    TupleType
+      StringKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' StatePropertyLog'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' patchServiceForStateBaseline'
+    Parameter
+      Identifier: 'service'
+      TypeReference
+        Identifier: ' ProjectService'
+    VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'service'
+                Identifier: 'logger'
+              Identifier: 'isTestLogger'
+          BarBarToken
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'service'
+                  Identifier: 'logger'
+                Identifier: 'hasLevel'
+              PropertyAccessExpression
+                Identifier: 'LogLevel'
+                Identifier: 'verbose'
+        ReturnStatement
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'service'
+            Identifier: 'baseline'
+          ExclamationEqualsEqualsToken
+          Identifier: ' noop'
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' projects'
+            NewExpression
+              Identifier: ' Map'
+              TypeReference
+                Identifier: 'Project'
+              TypeReference
+                Identifier: ' ProjectData'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' scriptInfos'
+            NewExpression
+              Identifier: ' Map'
+              TypeReference
+                Identifier: 'ScriptInfo'
+              TypeReference
+                Identifier: ' ScriptInfoData'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' documentPositionMappers'
+            NewExpression
+              Identifier: ' Map'
+              TypeReference
+                Identifier: 'DocumentPositionMapper'
+              TypeReference
+                Identifier: ' DocumentPositionMapper'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nextDocumentPositionMapperId'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mapperToId'
+            NewExpression
+              Identifier: ' Map'
+              TypeReference
+                Identifier: 'DocumentPositionMapper'
+              NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' logger'
+            AsExpression
+              PropertyAccessExpression
+                Identifier: ' service'
+                Identifier: 'logger'
+              TypeReference
+                Identifier: ' LoggerWithInMemoryLogs'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    service'
+            Identifier: 'baseline'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' title'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' currentMappers'
+                    NewExpression
+                      Identifier: ' Set'
+                      TypeReference
+                        Identifier: 'DocumentPositionMapper'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' projectLogs'
+                    CallExpression
+                      Identifier: ' baselineProjects'
+                      Identifier: 'currentMappers'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' infoLogs'
+                    CallExpression
+                      Identifier: ' baselineScriptInfos'
+                      Identifier: 'currentMappers'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        currentMappers'
+                    Identifier: 'delete'
+                  Identifier: 'identitySourceMapConsumer'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' mapperLogs'
+                    CallExpression
+                      Identifier: ' baselineDocumentPositionMappers'
+                      Identifier: 'currentMappers'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'projectLogs'
+                      QuestionDotToken
+                      Identifier: 'length'
+                    BarBarToken
+                    PropertyAccessExpression
+                      Identifier: ' infoLogs'
+                      QuestionDotToken
+                      Identifier: 'length'
+                  BarBarToken
+                  PropertyAccessExpression
+                    Identifier: ' mapperLogs'
+                    QuestionDotToken
+                    Identifier: 'length'
+                Block
+                  IfStatement
+                    Identifier: 'title'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' logger'
+                          Identifier: 'log'
+                        Identifier: 'title'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            sendLogsToLogger'
+                      StringLiteral
+                      Identifier: ' projectLogs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            sendLogsToLogger'
+                      StringLiteral
+                      Identifier: ' infoLogs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            sendLogsToLogger'
+                      StringLiteral
+                      Identifier: ' mapperLogs'
+      FunctionDeclaration
+        Identifier: ' sendLogsToLogger'
+        Parameter
+          Identifier: 'title'
+          StringKeyword
+        Parameter
+          Identifier: ' logs'
+          UnionType
+            ArrayType
+              TypeReference
+                Identifier: ' StateItemLog'
+            UndefinedKeyword
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'logs'
+            ReturnStatement
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        logger'
+                Identifier: 'log'
+              Identifier: 'title'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: '
+        toSorted'
+                  Identifier: 'logs'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'a'
+                    Parameter
+                      Identifier: ' b'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' compareStringsCaseSensitive'
+                      ElementAccessExpression
+                        Identifier: 'a'
+                        NumericLiteral
+                      ElementAccessExpression
+                        Identifier: ' b'
+                        NumericLiteral
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  ArrayBindingPattern
+                    BindingElement
+                      Identifier: 'title'
+                    BindingElement
+                      Identifier: ' propertyLogs'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                logger'
+                        Identifier: 'log'
+                      Identifier: 'title'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                propertyLogs'
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'p'
+                        EqualsGreaterThanToken
+                        ConditionalExpression
+                          CallExpression
+                            Identifier: ' isString'
+                            Identifier: 'p'
+                          QuestionToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' logger'
+                              Identifier: 'log'
+                            Identifier: 'p'
+                          ColonToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' p'
+                              Identifier: 'forEach'
+                            ArrowFunction
+                              Parameter
+                                Identifier: 's'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' logger'
+                                  Identifier: 'log'
+                                Identifier: 's'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        logger'
+                Identifier: 'log'
+              StringLiteral
+      FunctionDeclaration
+        Identifier: ' baselineProjects'
+        Parameter
+          Identifier: 'currentMappers'
+          TypeReference
+            Identifier: ' Set'
+            TypeReference
+              Identifier: 'DocumentPositionMapper'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' autoImportProviderProjects'
+                AsExpression
+                  ArrayLiteralExpression
+                  ArrayType
+                    TypeReference
+                      Identifier: ' AutoImportProviderProject'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' auxiliaryProjects'
+                AsExpression
+                  ArrayLiteralExpression
+                  ArrayType
+                    TypeReference
+                      Identifier: ' AuxiliaryProject'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' orphanConfiguredProjects'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' service'
+                    Identifier: 'getOrphanConfiguredProjects'
+                  Identifier: '
+            /*toRetainConfiguredProjects*/ undefined'
+                  Identifier: '
+            /*openFilesWithRetainedConfiguredProject*/ undefined'
+                  Identifier: '
+            /*externalProjectsRetainingConfiguredProjects*/ undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' noOpenRef'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'project'
+                    TypeReference
+                      Identifier: ' Project'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    CallExpression
+                      Identifier: ' isConfiguredProject'
+                      Identifier: 'project'
+                    AmpersandAmpersandToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'project'
+                            Identifier: 'isClosed'
+                        BarBarToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' orphanConfiguredProjects'
+                            Identifier: 'has'
+                          Identifier: 'project'
+          ReturnStatement
+            CallExpression
+              Identifier: ' baselineState'
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  Identifier: 'service'
+                  Identifier: 'externalProjects'
+                PropertyAccessExpression
+                  Identifier: ' service'
+                  Identifier: 'configuredProjects'
+                PropertyAccessExpression
+                  Identifier: ' service'
+                  Identifier: 'inferredProjects'
+                Identifier: ' autoImportProviderProjects'
+                Identifier: ' auxiliaryProjects'
+              Identifier: '
+            projects'
+              ArrowFunction
+                Parameter
+                  Identifier: 'logs'
+                Parameter
+                  Identifier: ' project'
+                Parameter
+                  Identifier: ' data'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    PropertyAccessExpression
+                      Identifier: 'project'
+                      Identifier: 'autoImportProviderHost'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' autoImportProviderProjects'
+                          Identifier: 'push'
+                        PropertyAccessExpression
+                          Identifier: 'project'
+                          Identifier: 'autoImportProviderHost'
+                  IfStatement
+                    PropertyAccessExpression
+                      Identifier: 'project'
+                      Identifier: 'noDtsResolutionProject'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' auxiliaryProjects'
+                          Identifier: 'push'
+                        PropertyAccessExpression
+                          Identifier: 'project'
+                          Identifier: 'noDtsResolutionProject'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' projectDiff'
+                        CallExpression
+                          Identifier: ' newOrDeleted'
+                          Identifier: 'project'
+                          Identifier: ' projects'
+                          Identifier: ' data'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'projectDiff'
+                      ExclamationEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' Diff'
+                        Identifier: 'Deleted'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              Identifier: ' getSourceMapper'
+                              Identifier: 'project'
+                            QuestionDotToken
+                            Identifier: 'documentPositionMappers'
+                          Identifier: 'forEach'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'mapper'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' currentMappers'
+                              Identifier: 'add'
+                            Identifier: 'mapper'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' projectPropertyLogs'
+                        AsExpression
+                          ArrayLiteralExpression
+                          ArrayType
+                            StringKeyword
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'Always'
+                        Identifier: ' data'
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' project'
+                          Identifier: 'projectStateVersion'
+                        Identifier: ' projectDiff'
+                        Identifier: ' projectPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'Always'
+                        Identifier: ' data'
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' project'
+                          Identifier: 'projectProgramVersion'
+                        Identifier: ' projectDiff'
+                        Identifier: ' projectPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'TruthyOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' project'
+                          Identifier: 'dirty'
+                        Identifier: ' projectDiff'
+                        Identifier: ' projectPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'TruthyOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' project'
+                          Identifier: 'initialLoadPending'
+                        Identifier: ' projectDiff'
+                        Identifier: ' projectPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'TruthyOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'isClosed'
+                        Identifier: ' projectDiff'
+                        Identifier: ' projectPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'TruthyOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        BinaryExpression
+                          PrefixUnaryExpression
+                            CallExpression
+                              Identifier: 'isBackgroundProject'
+                              Identifier: 'project'
+                          AmpersandAmpersandToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' project'
+                              Identifier: 'isOrphan'
+                        Identifier: ' projectDiff'
+                        Identifier: ' projectPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'TruthyOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        CallExpression
+                          Identifier: ' noOpenRef'
+                          Identifier: 'project'
+                        Identifier: ' projectDiff'
+                        Identifier: ' projectPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'TruthyOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        BinaryExpression
+                          CallExpression
+                            Identifier: ' isConfiguredProject'
+                            Identifier: 'project'
+                          AmpersandAmpersandToken
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'deferredClose'
+                        Identifier: ' projectDiff'
+                        Identifier: ' projectPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printMapPropertyValue'
+                        PropertyAccessExpression
+                          Identifier: '
+                    PrintPropertyWhen'
+                          Identifier: 'Changed'
+                        PropertyAccessExpression
+                          Identifier: '
+                    data'
+                          QuestionDotToken
+                          Identifier: 'documentPositionMappers'
+                        StringLiteral
+                        PropertyAccessExpression
+                          CallExpression
+                            Identifier: '
+                    getSourceMapper'
+                            Identifier: 'project'
+                          QuestionDotToken
+                          Identifier: 'documentPositionMappers'
+                        Identifier: '
+                    projectDiff'
+                        Identifier: '
+                    projectPropertyLogs'
+                        Identifier: '
+                    toStringDocumentPostionMapper'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'DefinedOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' project'
+                          Identifier: 'autoImportProviderHost'
+                        Identifier: ' projectDiff'
+                        Identifier: ' projectPropertyLogs'
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'autoImportProviderHost'
+                          QuestionToken
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' project'
+                              Identifier: 'autoImportProviderHost'
+                            Identifier: 'projectName'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'autoImportProviderHost'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                projectDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'DefinedOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' project'
+                          Identifier: 'noDtsResolutionProject'
+                        Identifier: ' projectDiff'
+                        Identifier: ' projectPropertyLogs'
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'noDtsResolutionProject'
+                          QuestionToken
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' project'
+                              Identifier: 'noDtsResolutionProject'
+                            Identifier: 'projectName'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'noDtsResolutionProject'
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' printSetPropertyAndCreateStatementLog'
+                      Identifier: '
+                    logs'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          PropertyAccessExpression
+                            Identifier: 'project'
+                            Identifier: 'projectName'
+                          TemplateMiddle
+                        TemplateSpan
+                          ElementAccessExpression
+                            Identifier: 'ProjectKind'
+                            PropertyAccessExpression
+                              Identifier: 'project'
+                              Identifier: 'projectKind'
+                          TemplateTail
+                      PropertyAccessExpression
+                        Identifier: '
+                    PrintPropertyWhen'
+                        Identifier: 'DefinedOrChangedOrNew'
+                      PropertyAccessExpression
+                        Identifier: '
+                    data'
+                        QuestionDotToken
+                        Identifier: 'originalConfiguredProjects'
+                      StringLiteral
+                      PropertyAccessExpression
+                        Identifier: '
+                    project'
+                        Identifier: 'originalConfiguredProjects'
+                      Identifier: '
+                    projectDiff'
+                      Identifier: '
+                    projectPropertyLogs'
+                      Identifier: '
+                    identity'
+              ArrowFunction
+                Parameter
+                  Identifier: '
+            project'
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                projectStateVersion'
+                      PropertyAccessExpression
+                        Identifier: ' project'
+                        Identifier: 'projectStateVersion'
+                    PropertyAssignment
+                      Identifier: '
+                projectProgramVersion'
+                      PropertyAccessExpression
+                        Identifier: ' project'
+                        Identifier: 'projectProgramVersion'
+                    PropertyAssignment
+                      Identifier: '
+                dirty'
+                      PropertyAccessExpression
+                        Identifier: ' project'
+                        Identifier: 'dirty'
+                    PropertyAssignment
+                      Identifier: '
+                initialLoadPending'
+                      PropertyAccessExpression
+                        Identifier: ' project'
+                        Identifier: 'initialLoadPending'
+                    PropertyAssignment
+                      Identifier: '
+                isClosed'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' project'
+                          Identifier: 'isClosed'
+                    PropertyAssignment
+                      Identifier: '
+                isOrphan'
+                      BinaryExpression
+                        PrefixUnaryExpression
+                          CallExpression
+                            Identifier: 'isBackgroundProject'
+                            Identifier: 'project'
+                        AmpersandAmpersandToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'isOrphan'
+                    PropertyAssignment
+                      Identifier: '
+                noOpenRef'
+                      CallExpression
+                        Identifier: ' noOpenRef'
+                        Identifier: 'project'
+                    PropertyAssignment
+                      Identifier: '
+                deferredClose'
+                      BinaryExpression
+                        CallExpression
+                          Identifier: ' isConfiguredProject'
+                          Identifier: 'project'
+                        AmpersandAmpersandToken
+                        PropertyAccessExpression
+                          Identifier: ' project'
+                          Identifier: 'deferredClose'
+                    PropertyAssignment
+                      Identifier: '
+                autoImportProviderHost'
+                      PropertyAccessExpression
+                        Identifier: ' project'
+                        Identifier: 'autoImportProviderHost'
+                    PropertyAssignment
+                      Identifier: '
+                noDtsResolutionProject'
+                      PropertyAccessExpression
+                        Identifier: ' project'
+                        Identifier: 'noDtsResolutionProject'
+                    PropertyAssignment
+                      Identifier: '
+                originalConfiguredProjects'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' project'
+                          Identifier: 'originalConfiguredProjects'
+                        AmpersandAmpersandToken
+                        NewExpression
+                          Identifier: ' Set'
+                          PropertyAccessExpression
+                            Identifier: 'project'
+                            Identifier: 'originalConfiguredProjects'
+                    PropertyAssignment
+                      Identifier: '
+                documentPositionMappers'
+                      NewExpression
+                        Identifier: ' Map'
+                        PropertyAccessExpression
+                          CallExpression
+                            Identifier: 'getSourceMapper'
+                            Identifier: 'project'
+                          QuestionDotToken
+                          Identifier: 'documentPositionMappers'
+      FunctionDeclaration
+        Identifier: ' baselineScriptInfos'
+        Parameter
+          Identifier: 'currentMappers'
+          TypeReference
+            Identifier: ' Set'
+            TypeReference
+              Identifier: 'DocumentPositionMapper'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' baselineState'
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  Identifier: 'service'
+                  Identifier: 'filenameToScriptInfo'
+              Identifier: '
+            scriptInfos'
+              ArrowFunction
+                Parameter
+                  Identifier: 'logs'
+                Parameter
+                  Identifier: ' info'
+                Parameter
+                  Identifier: ' data'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' infoDiff'
+                        CallExpression
+                          Identifier: ' newOrDeleted'
+                          Identifier: 'info'
+                          Identifier: ' scriptInfos'
+                          Identifier: ' data'
+                  IfStatement
+                    BinaryExpression
+                      BinaryExpression
+                        Identifier: 'infoDiff'
+                        ExclamationEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' Diff'
+                          Identifier: 'Deleted'
+                      AmpersandAmpersandToken
+                      PropertyAccessExpression
+                        Identifier: ' info'
+                        Identifier: 'documentPositionMapper'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' currentMappers'
+                          Identifier: 'add'
+                        PropertyAccessExpression
+                          Identifier: 'info'
+                          Identifier: 'documentPositionMapper'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' infoPropertyLogs'
+                        AsExpression
+                          ArrayLiteralExpression
+                          ArrayType
+                            StringKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' isOpen'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' info'
+                            Identifier: 'isScriptOpen'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                infoDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'Changed'
+                        Identifier: ' data'
+                        StringLiteral
+                        Identifier: ' isOpen'
+                        Identifier: ' infoDiff'
+                        Identifier: ' infoPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                infoDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'Always'
+                        Identifier: ' data'
+                        StringLiteral
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' info'
+                              Identifier: 'textStorage'
+                            Identifier: 'getVersion'
+                        Identifier: ' infoDiff'
+                        Identifier: ' infoPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                infoDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'TruthyOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' info'
+                            Identifier: 'textStorage'
+                          Identifier: 'pendingReloadFromDisk'
+                        Identifier: ' infoDiff'
+                        Identifier: ' infoPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                infoDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'TruthyOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' info'
+                          Identifier: 'deferredDelete'
+                        Identifier: ' infoDiff'
+                        Identifier: ' infoPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                infoDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printScriptInfoSourceMapFilePath'
+                        Identifier: 'data'
+                        Identifier: ' info'
+                        Identifier: ' infoDiff'
+                        Identifier: ' infoPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                infoDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'DefinedOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' info'
+                          Identifier: 'declarationInfoPath'
+                        Identifier: ' infoDiff'
+                        Identifier: ' infoPropertyLogs'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                infoDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printSetPropertyValueWorker'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'DefinedOrChangedOrNew'
+                        PropertyAccessExpression
+                          Identifier: ' data'
+                          QuestionDotToken
+                          Identifier: 'sourceInfos'
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' info'
+                          Identifier: 'sourceInfos'
+                        Identifier: ' infoDiff'
+                        Identifier: ' infoPropertyLogs'
+                        Identifier: ' identity'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                infoDiff'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' printProperty'
+                        PropertyAccessExpression
+                          Identifier: 'PrintPropertyWhen'
+                          Identifier: 'DefinedOrChangedOrNew'
+                        Identifier: ' data'
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' info'
+                          Identifier: 'documentPositionMapper'
+                        Identifier: ' infoDiff'
+                        Identifier: ' infoPropertyLogs'
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            Identifier: ' info'
+                            Identifier: 'documentPositionMapper'
+                          QuestionToken
+                          CallExpression
+                            Identifier: ' toStringDocumentPostionMapper'
+                            PropertyAccessExpression
+                              Identifier: 'info'
+                              Identifier: 'documentPositionMapper'
+                          ColonToken
+                          Identifier: ' undefined'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' defaultProject'
+                        UnionType
+                          TypeReference
+                            Identifier: ' Project'
+                          UndefinedKeyword
+                  TryStatement
+                    Block
+                      IfStatement
+                        Identifier: 'isOpen'
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: ' defaultProject'
+                            EqualsToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' info'
+                                Identifier: 'getDefaultProject'
+                    CatchClause
+                      VariableDeclaration
+                        Identifier: 'e'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    Debug'
+                              Identifier: 'assert'
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: 'e'
+                                Identifier: 'message'
+                              EqualsEqualsEqualsToken
+                              StringLiteral
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' printSetPropertyAndCreateStatementLog'
+                      Identifier: '
+                    logs'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          PropertyAccessExpression
+                            Identifier: 'info'
+                            Identifier: 'fileName'
+                          TemplateMiddle
+                        TemplateSpan
+                          ConditionalExpression
+                            PropertyAccessExpression
+                              Identifier: 'info'
+                              Identifier: 'isDynamic'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            StringLiteral
+                          TemplateMiddle
+                        TemplateSpan
+                          ConditionalExpression
+                            Identifier: 'isOpen'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            StringLiteral
+                          TemplateTail
+                      PropertyAccessExpression
+                        Identifier: '
+                    PrintPropertyWhen'
+                        Identifier: 'Always'
+                      PropertyAccessExpression
+                        Identifier: '
+                    data'
+                        QuestionDotToken
+                        Identifier: 'containingProjects'
+                      StringLiteral
+                      NewExpression
+                        Identifier: ' Set'
+                        PropertyAccessExpression
+                          Identifier: 'info'
+                          Identifier: 'containingProjects'
+                      Identifier: '
+                    infoDiff'
+                      Identifier: '
+                    infoPropertyLogs'
+                      ArrowFunction
+                        Parameter
+                          Identifier: '
+                    project'
+                        EqualsGreaterThanToken
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            PropertyAccessExpression
+                              Identifier: 'project'
+                              Identifier: 'projectName'
+                            TemplateMiddle
+                          TemplateSpan
+                            ConditionalExpression
+                              BinaryExpression
+                                Identifier: 'defaultProject'
+                                EqualsEqualsEqualsToken
+                                Identifier: ' project'
+                              QuestionToken
+                              StringLiteral
+                              ColonToken
+                              StringLiteral
+                            TemplateTail
+              ArrowFunction
+                Parameter
+                  Identifier: '
+            info'
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                open'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' info'
+                          Identifier: 'isScriptOpen'
+                    PropertyAssignment
+                      Identifier: '
+                version'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' info'
+                            Identifier: 'textStorage'
+                          Identifier: 'getVersion'
+                    PropertyAssignment
+                      Identifier: '
+                pendingReloadFromDisk'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' info'
+                          Identifier: 'textStorage'
+                        Identifier: 'pendingReloadFromDisk'
+                    PropertyAssignment
+                      Identifier: '
+                sourceMapFilePath'
+                      ConditionalExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' info'
+                            Identifier: 'sourceMapFilePath'
+                          AmpersandAmpersandToken
+                          PrefixUnaryExpression
+                            CallExpression
+                              Identifier: 'isString'
+                              PropertyAccessExpression
+                                Identifier: 'info'
+                                Identifier: 'sourceMapFilePath'
+                        QuestionToken
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' original'
+                            PropertyAccessExpression
+                              Identifier: ' info'
+                              Identifier: 'sourceMapFilePath'
+                          PropertyAssignment
+                            Identifier: ' sourceInfos'
+                            NewExpression
+                              Identifier: ' Set'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'info'
+                                  Identifier: 'sourceMapFilePath'
+                                Identifier: 'sourceInfos'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: '
+                    info'
+                          Identifier: 'sourceMapFilePath'
+                    PropertyAssignment
+                      Identifier: '
+                declarationInfoPath'
+                      PropertyAccessExpression
+                        Identifier: ' info'
+                        Identifier: 'declarationInfoPath'
+                    PropertyAssignment
+                      Identifier: '
+                sourceInfos'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' info'
+                          Identifier: 'sourceInfos'
+                        AmpersandAmpersandToken
+                        NewExpression
+                          Identifier: ' Set'
+                          PropertyAccessExpression
+                            Identifier: 'info'
+                            Identifier: 'sourceInfos'
+                    PropertyAssignment
+                      Identifier: '
+                documentPositionMapper'
+                      PropertyAccessExpression
+                        Identifier: ' info'
+                        Identifier: 'documentPositionMapper'
+                    PropertyAssignment
+                      Identifier: '
+                containingProjects'
+                      NewExpression
+                        Identifier: ' Set'
+                        PropertyAccessExpression
+                          Identifier: 'info'
+                          Identifier: 'containingProjects'
+                    PropertyAssignment
+                      Identifier: '
+                deferredDelete'
+                      PropertyAccessExpression
+                        Identifier: ' info'
+                        Identifier: 'deferredDelete'
+      FunctionDeclaration
+        Identifier: ' baselineDocumentPositionMappers'
+        Parameter
+          Identifier: 'currentMappers'
+          TypeReference
+            Identifier: ' Set'
+            TypeReference
+              Identifier: 'DocumentPositionMapper'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' baselineState'
+                  ArrayLiteralExpression
+                    Identifier: 'currentMappers'
+                  Identifier: '
+            documentPositionMappers'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'logs'
+                    Parameter
+                      Identifier: ' mapper'
+                    Parameter
+                      Identifier: ' data'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' mapperDiff'
+                            CallExpression
+                              Identifier: ' newOrDeleted'
+                              Identifier: 'mapper'
+                              Identifier: ' documentPositionMappers'
+                              Identifier: ' data'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                logs'
+                            Identifier: 'push'
+                          ArrayLiteralExpression
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                CallExpression
+                                  Identifier: 'toStringDocumentPostionMapper'
+                                  Identifier: 'mapper'
+                                TemplateMiddle
+                              TemplateSpan
+                                Identifier: 'mapperDiff'
+                                TemplateTail
+                            Identifier: '
+                    emptyArray'
+                      ReturnStatement
+                        Identifier: ' mapperDiff'
+                  Identifier: '
+            identity'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        mapperToId'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: '_id'
+                Parameter
+                  Identifier: ' mapper'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    PrefixUnaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'documentPositionMappers'
+                          Identifier: 'has'
+                        Identifier: 'mapper'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' mapperToId'
+                          Identifier: 'delete'
+                        Identifier: 'mapper'
+          ReturnStatement
+            Identifier: ' result'
+      FunctionDeclaration
+        Identifier: ' baselineState'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' Data'
+        Parameter
+          Identifier: '
+        currentCaches'
+          ArrayType
+            ParenthesizedType
+              UnionType
+                ArrayType
+                  TypeReference
+                    Identifier: 'T'
+                TypeReference
+                  Identifier: ' Map'
+                  AnyKeyword
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' Set'
+                  TypeReference
+                    Identifier: 'T'
+        Parameter
+          Identifier: '
+        dataMap'
+          TypeReference
+            Identifier: ' Map'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' Data'
+        Parameter
+          Identifier: '
+        printWorker'
+          FunctionType
+            Parameter
+              Identifier: 'logs'
+              ArrayType
+                TypeReference
+                  Identifier: ' StateItemLog'
+            Parameter
+              Identifier: ' current'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' data'
+              UnionType
+                TypeReference
+                  Identifier: ' Data'
+                UndefinedKeyword
+            TypeReference
+              Identifier: ' Diff'
+        Parameter
+          Identifier: '
+        toData'
+          FunctionType
+            Parameter
+              Identifier: 'current'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' Data'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' logs'
+                AsExpression
+                  ArrayLiteralExpression
+                  ArrayType
+                    TypeReference
+                      Identifier: ' StateItemLog'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' hasChange'
+                FalseKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' currentSet'
+                NewExpression
+                  Identifier: ' Set'
+                  TypeReference
+                    Identifier: 'T'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        currentCaches'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'currentCache'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' currentCache'
+                    Identifier: 'forEach'
+                  Identifier: 'printCurrent'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'currentSet'
+                Identifier: 'size'
+              ExclamationEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' dataMap'
+                Identifier: 'size'
+            Block
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ArrayBindingPattern
+                      BindingElement
+                        Identifier: 'key'
+                      BindingElement
+                        Identifier: ' data'
+                CallExpression
+                  Identifier: ' arrayFrom'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'dataMap'
+                      Identifier: 'entries'
+                Block
+                  IfStatement
+                    PrefixUnaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'currentSet'
+                          Identifier: 'has'
+                        Identifier: 'key'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    dataMap'
+                            Identifier: 'delete'
+                          Identifier: 'key'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                    printWorker'
+                          Identifier: 'logs'
+                          Identifier: ' key'
+                          Identifier: ' data'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            hasChange'
+                  EqualsToken
+                  TrueKeyword
+          ReturnStatement
+            ConditionalExpression
+              Identifier: ' hasChange'
+              QuestionToken
+              Identifier: ' logs'
+              ColonToken
+              Identifier: ' undefined'
+          FunctionDeclaration
+            Identifier: ' printCurrent'
+            Parameter
+              Identifier: 'current'
+              TypeReference
+                Identifier: ' T'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'current'
+                ReturnStatement
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            currentSet'
+                    Identifier: 'add'
+                  Identifier: 'current'
+              IfStatement
+                CallExpression
+                  Identifier: 'printWorker'
+                  Identifier: 'logs'
+                  Identifier: ' current'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' dataMap'
+                      Identifier: 'get'
+                    Identifier: 'current'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                hasChange'
+                      EqualsToken
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                dataMap'
+                        Identifier: 'set'
+                      Identifier: 'current'
+                      CallExpression
+                        Identifier: ' toData'
+                        Identifier: 'current'
+      FunctionDeclaration
+        Identifier: ' newOrDeleted'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' Data'
+        Parameter
+          Identifier: 'current'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' dataMap'
+          TypeReference
+            Identifier: ' Map'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' Data'
+        Parameter
+          Identifier: ' data'
+          UnionType
+            TypeReference
+              Identifier: ' Data'
+            UndefinedKeyword
+        Block
+          ReturnStatement
+            ConditionalExpression
+              PrefixUnaryExpression
+                Identifier: 'data'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' Diff'
+                Identifier: 'New'
+              ColonToken
+              ConditionalExpression
+                PrefixUnaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'dataMap'
+                      Identifier: 'has'
+                    Identifier: 'current'
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' Diff'
+                  Identifier: 'Deleted'
+                ColonToken
+                PropertyAccessExpression
+                  Identifier: ' Diff'
+                  Identifier: 'None'
+      EnumDeclaration
+        Identifier: ' PrintPropertyWhen'
+        EnumMember
+          Identifier: '
+        Always'
+        EnumMember
+          Identifier: '
+        TruthyOrChangedOrNew'
+        EnumMember
+          Identifier: '
+        Changed'
+        EnumMember
+          Identifier: '
+        DefinedOrChangedOrNew'
+      FunctionDeclaration
+        Identifier: ' printProperty'
+        TypeParameter
+          Identifier: 'Data'
+        TypeParameter
+          Identifier: ' Key'
+          IntersectionType
+            TypeOperator
+              TypeReference
+                Identifier: ' Data'
+            StringKeyword
+        Parameter
+          Identifier: '
+        printWhen'
+          TypeReference
+            Identifier: ' PrintPropertyWhen'
+        Parameter
+          Identifier: '
+        data'
+          UnionType
+            TypeReference
+              Identifier: ' Data'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        key'
+          TypeReference
+            Identifier: ' Key'
+        Parameter
+          Identifier: '
+        value'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' Data'
+            TypeReference
+              Identifier: 'Key'
+        Parameter
+          Identifier: '
+        dataDiff'
+          TypeReference
+            Identifier: ' Diff'
+        Parameter
+          Identifier: '
+        propertyLogs'
+          ArrayType
+            TypeReference
+              Identifier: ' StatePropertyLog'
+        Parameter
+          Identifier: '
+        stringValue'
+          QuestionToken
+          UnionType
+            IndexedAccessType
+              TypeReference
+                Identifier: ' Data'
+              TypeReference
+                Identifier: 'Key'
+            StringKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' printPropertyWorker'
+              Identifier: '
+            printWhen'
+              Identifier: '
+            value'
+              ConditionalExpression
+                BinaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      Identifier: 'data'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: ' data'
+                      Identifier: 'key'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' value'
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' Diff'
+                  Identifier: 'Change'
+                ColonToken
+                PropertyAccessExpression
+                  Identifier: ' Diff'
+                  Identifier: 'None'
+              Identifier: '
+            dataDiff'
+              Identifier: '
+            propertyLogs'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'key'
+                  TemplateMiddle
+                TemplateSpan
+                  ConditionalExpression
+                    BinaryExpression
+                      Identifier: 'stringValue'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' undefined'
+                    QuestionToken
+                    Identifier: ' value'
+                    ColonToken
+                    Identifier: ' stringValue'
+                  TemplateTail
+      FunctionDeclaration
+        Identifier: ' printSetPropertyValueWorker'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: '
+        printWhen'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' PrintPropertyWhen'
+                Identifier: 'Always'
+            TypeReference
+              QualifiedName
+                Identifier: ' PrintPropertyWhen'
+                Identifier: 'DefinedOrChangedOrNew'
+        Parameter
+          Identifier: '
+        dataValue'
+          UnionType
+            TypeReference
+              Identifier: ' Set'
+              TypeReference
+                Identifier: 'T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        propertyName'
+          StringKeyword
+        Parameter
+          Identifier: '
+        propertyValue'
+          UnionType
+            TypeReference
+              Identifier: ' Set'
+              TypeReference
+                Identifier: 'T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        dataDiff'
+          TypeReference
+            Identifier: ' Diff'
+        Parameter
+          Identifier: '
+        propertyLogs'
+          ArrayType
+            TypeReference
+              Identifier: ' StatePropertyLog'
+        Parameter
+          Identifier: '
+        toStringPropertyValue'
+          FunctionType
+            Parameter
+              Identifier: 'v'
+              TypeReference
+                Identifier: ' T'
+            StringKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' printMapOrSetPropertyValueWorker'
+              Identifier: '
+            printWhen'
+              Identifier: '
+            dataValue'
+              Identifier: '
+            propertyName'
+              Identifier: '
+            propertyValue'
+              Identifier: '
+            dataDiff'
+              Identifier: '
+            propertyLogs'
+              ArrowFunction
+                Parameter
+                  Identifier: '
+            value'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: ' dataDiff'
+                      ExclamationEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' Diff'
+                        Identifier: 'New'
+                    AmpersandAmpersandToken
+                    PrefixUnaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'dataValue'
+                          QuestionDotToken
+                          Identifier: 'has'
+                        Identifier: 'value'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' Diff'
+                    Identifier: 'New'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' Diff'
+                    Identifier: 'None'
+              Identifier: '
+            toStringPropertyValue'
+      FunctionDeclaration
+        Identifier: ' printMapPropertyValue'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: '
+        printWhen'
+          TypeReference
+            QualifiedName
+              Identifier: ' PrintPropertyWhen'
+              Identifier: 'Changed'
+        Parameter
+          Identifier: '
+        dataValue'
+          UnionType
+            TypeReference
+              Identifier: ' Map'
+              StringKeyword
+              TypeReference
+                Identifier: ' T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        propertyName'
+          StringKeyword
+        Parameter
+          Identifier: '
+        propertyValue'
+          UnionType
+            TypeReference
+              Identifier: ' Map'
+              StringKeyword
+              TypeReference
+                Identifier: ' T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        dataDiff'
+          TypeReference
+            Identifier: ' Diff'
+        Parameter
+          Identifier: '
+        propertyLogs'
+          ArrayType
+            TypeReference
+              Identifier: ' StatePropertyLog'
+        Parameter
+          Identifier: '
+        toStringPropertyValue'
+          FunctionType
+            Parameter
+              Identifier: 'v'
+              TypeReference
+                Identifier: ' T'
+            StringKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' printMapOrSetPropertyValueWorker'
+              Identifier: '
+            printWhen'
+              Identifier: '
+            dataValue'
+              Identifier: '
+            propertyName'
+              Identifier: '
+            propertyValue'
+              Identifier: '
+            dataDiff'
+              Identifier: '
+            propertyLogs'
+              ArrowFunction
+                Parameter
+                  Identifier: 'value'
+                Parameter
+                  Identifier: ' key'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: '
+                dataDiff'
+                      ExclamationEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' Diff'
+                        Identifier: 'New'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' dataValue'
+                          QuestionDotToken
+                          Identifier: 'get'
+                        Identifier: 'key'
+                      ExclamationEqualsEqualsToken
+                      Identifier: ' value'
+                  QuestionToken
+                  ConditionalExpression
+                    PrefixUnaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'dataValue'
+                          QuestionDotToken
+                          Identifier: 'has'
+                        Identifier: 'key'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: ' Diff'
+                      Identifier: 'New'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: ' Diff'
+                      Identifier: 'Change'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' Diff'
+                    Identifier: 'None'
+              ArrowFunction
+                Parameter
+                  Identifier: 'value'
+                Parameter
+                  Identifier: ' key'
+                EqualsGreaterThanToken
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'key'
+                    TemplateMiddle
+                  TemplateSpan
+                    CallExpression
+                      Identifier: 'toStringPropertyValue'
+                      Identifier: 'value'
+                    TemplateTail
+      TypeAliasDeclaration
+        Identifier: ' MapOrSetPropertyKey'
+        TypeParameter
+          Identifier: 'T'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' Map'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+            AnyKeyword
+          TypeReference
+            Identifier: ' U'
+          ConditionalType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: ' Set'
+              InferType
+                TypeParameter
+                  Identifier: ' U'
+            TypeReference
+              Identifier: ' U'
+            NeverKeyword
+      TypeAliasDeclaration
+        Identifier: ' MapOrSetPropertyValue'
+        TypeParameter
+          Identifier: 'T'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' Map'
+            AnyKeyword
+            InferType
+              TypeParameter
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' U'
+          ConditionalType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: ' Set'
+              InferType
+                TypeParameter
+                  Identifier: ' U'
+            TypeReference
+              Identifier: ' U'
+            NeverKeyword
+      FunctionDeclaration
+        Identifier: ' printMapOrSetPropertyValueWorker'
+        TypeParameter
+          Identifier: 'T'
+          UnionType
+            TypeReference
+              Identifier: ' Map'
+              StringKeyword
+              AnyKeyword
+            TypeReference
+              Identifier: ' Set'
+              AnyKeyword
+        Parameter
+          Identifier: '
+        printWhen'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' PrintPropertyWhen'
+                Identifier: 'Always'
+            TypeReference
+              QualifiedName
+                Identifier: ' PrintPropertyWhen'
+                Identifier: 'DefinedOrChangedOrNew'
+            TypeReference
+              QualifiedName
+                Identifier: ' PrintPropertyWhen'
+                Identifier: 'Changed'
+        Parameter
+          Identifier: '
+        dataValue'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        propertyName'
+          StringKeyword
+        Parameter
+          Identifier: '
+        propertyValue'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        dataDiff'
+          TypeReference
+            Identifier: ' Diff'
+        Parameter
+          Identifier: '
+        propertyLogs'
+          ArrayType
+            TypeReference
+              Identifier: ' StatePropertyLog'
+        Parameter
+          Identifier: '
+        getPropertyDiff'
+          FunctionType
+            Parameter
+              Identifier: 'value'
+              TypeReference
+                Identifier: ' MapOrSetPropertyValue'
+                TypeReference
+                  Identifier: 'T'
+            Parameter
+              Identifier: ' key'
+              TypeReference
+                Identifier: ' MapOrSetPropertyKey'
+                TypeReference
+                  Identifier: 'T'
+            TypeReference
+              Identifier: ' Diff'
+        Parameter
+          Identifier: '
+        toStringPropertyValue'
+          FunctionType
+            Parameter
+              Identifier: 'value'
+              TypeReference
+                Identifier: ' MapOrSetPropertyValue'
+                TypeReference
+                  Identifier: 'T'
+            Parameter
+              Identifier: ' key'
+              TypeReference
+                Identifier: ' MapOrSetPropertyKey'
+                TypeReference
+                  Identifier: 'T'
+            StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' mapPropertyLogs'
+                AsExpression
+                  ArrayLiteralExpression
+                  ArrayType
+                    StringKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' mapPropertyDiff'
+                PropertyAccessExpression
+                  Identifier: ' Diff'
+                  Identifier: 'None'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        propertyValue'
+                QuestionDotToken
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'p'
+                Parameter
+                  Identifier: ' key'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  Identifier: '
+            mapPropertyDiff'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' printPropertyWorker'
+                    PropertyAccessExpression
+                      Identifier: '
+                PrintPropertyWhen'
+                      Identifier: 'Always'
+                    Identifier: '
+                p'
+                    CallExpression
+                      Identifier: '
+                getPropertyDiff'
+                      Identifier: 'p'
+                      Identifier: ' key'
+                    Identifier: '
+                mapPropertyDiff'
+                    Identifier: '
+                mapPropertyLogs'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        CallExpression
+                          Identifier: 'toStringPropertyValue'
+                          Identifier: 'p'
+                          Identifier: ' key'
+                        TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        dataValue'
+                QuestionDotToken
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'p'
+                Parameter
+                  Identifier: ' key'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'propertyValue'
+                        QuestionDotToken
+                        Identifier: 'has'
+                      Identifier: 'key'
+                    ReturnStatement
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            mapPropertyDiff'
+                      EqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' Diff'
+                        Identifier: 'Change'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            mapPropertyLogs'
+                        Identifier: 'push'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          CallExpression
+                            Identifier: 'toStringPropertyValue'
+                            Identifier: 'p'
+                            Identifier: ' key'
+                          TemplateMiddle
+                        TemplateSpan
+                          PropertyAccessExpression
+                            Identifier: 'Diff'
+                            Identifier: 'Deleted'
+                          TemplateTail
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        dataDiff'
+              EqualsToken
+              CallExpression
+                Identifier: ' printPropertyWorker'
+                Identifier: '
+            printWhen'
+                Identifier: '
+            propertyValue'
+                ConditionalExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      Identifier: 'mapPropertyDiff'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' Diff'
+                    Identifier: 'Change'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' Diff'
+                    Identifier: 'None'
+                Identifier: '
+            dataDiff'
+                Identifier: '
+            propertyLogs'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'propertyName'
+                    TemplateMiddle
+                  TemplateSpan
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'propertyValue'
+                        QuestionDotToken
+                        Identifier: 'size'
+                      BarBarToken
+                      NumericLiteral
+                    TemplateTail
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'printWhen'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' PrintPropertyWhen'
+                  Identifier: 'Changed'
+              BarBarToken
+              Identifier: ' mapPropertyDiff'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' propertyLogs'
+                  Identifier: 'push'
+                Identifier: 'mapPropertyLogs'
+          ReturnStatement
+            Identifier: ' dataDiff'
+      FunctionDeclaration
+        Identifier: ' printPropertyWorker'
+        Parameter
+          Identifier: '
+        printWhen'
+          TypeReference
+            Identifier: ' PrintPropertyWhen'
+        Parameter
+          Identifier: '
+        value'
+          AnyKeyword
+        Parameter
+          Identifier: '
+        propertyDiff'
+          TypeReference
+            Identifier: ' Diff'
+        Parameter
+          Identifier: '
+        dataDiff'
+          TypeReference
+            Identifier: ' Diff'
+        Parameter
+          Identifier: '
+        propertyLogs'
+          ArrayType
+            TypeReference
+              Identifier: ' StatePropertyLog'
+        Parameter
+          Identifier: '
+        stringValue'
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                ConditionalExpression
+                  BinaryExpression
+                    PrefixUnaryExpression
+                      Identifier: 'dataDiff'
+                    AmpersandAmpersandToken
+                    Identifier: ' propertyDiff'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' Diff'
+                    Identifier: 'Change'
+                  ColonToken
+                  Identifier: ' dataDiff'
+          SwitchStatement
+            Identifier: 'printWhen'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' PrintPropertyWhen'
+                  Identifier: 'Changed'
+                IfStatement
+                  PrefixUnaryExpression
+                    Identifier: 'propertyDiff'
+                  ReturnStatement
+                    Identifier: ' result'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' PrintPropertyWhen'
+                  Identifier: 'TruthyOrChangedOrNew'
+                IfStatement
+                  BinaryExpression
+                    PrefixUnaryExpression
+                      Identifier: 'value'
+                    AmpersandAmpersandToken
+                    PrefixUnaryExpression
+                      Identifier: 'propertyDiff'
+                  ReturnStatement
+                    Identifier: ' result'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' PrintPropertyWhen'
+                  Identifier: 'Always'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' PrintPropertyWhen'
+                  Identifier: 'DefinedOrChangedOrNew'
+                IfStatement
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: 'value'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' undefined'
+                    AmpersandAmpersandToken
+                    PrefixUnaryExpression
+                      Identifier: 'propertyDiff'
+                  ReturnStatement
+                    Identifier: ' result'
+                BreakStatement
+              DefaultClause
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                Debug'
+                      Identifier: 'assertNever'
+                    Identifier: 'printWhen'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        propertyLogs'
+                Identifier: 'push'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'stringValue'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'propertyDiff'
+                  TemplateTail
+          ReturnStatement
+            Identifier: ' result'
+      FunctionDeclaration
+        Identifier: ' printSetPropertyAndCreateStatementLog'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: '
+        logs'
+          ArrayType
+            TypeReference
+              Identifier: ' StateItemLog'
+        Parameter
+          Identifier: '
+        header'
+          StringKeyword
+        Parameter
+          Identifier: '
+        printWhen'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' PrintPropertyWhen'
+                Identifier: 'Always'
+            TypeReference
+              QualifiedName
+                Identifier: ' PrintPropertyWhen'
+                Identifier: 'DefinedOrChangedOrNew'
+        Parameter
+          Identifier: '
+        dataValue'
+          UnionType
+            TypeReference
+              Identifier: ' Set'
+              TypeReference
+                Identifier: 'T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        propertyName'
+          StringKeyword
+        Parameter
+          Identifier: '
+        propertyValue'
+          UnionType
+            TypeReference
+              Identifier: ' Set'
+              TypeReference
+                Identifier: 'T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        dataDiff'
+          TypeReference
+            Identifier: ' Diff'
+        Parameter
+          Identifier: '
+        propertyLogs'
+          ArrayType
+            TypeReference
+              Identifier: ' StatePropertyLog'
+        Parameter
+          Identifier: '
+        toStringPropertyValue'
+          FunctionType
+            Parameter
+              Identifier: 'v'
+              TypeReference
+                Identifier: ' T'
+            StringKeyword
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        dataDiff'
+              EqualsToken
+              CallExpression
+                Identifier: ' printSetPropertyValueWorker'
+                Identifier: '
+            printWhen'
+                Identifier: '
+            dataValue'
+                Identifier: '
+            propertyName'
+                Identifier: '
+            propertyValue'
+                Identifier: '
+            dataDiff'
+                Identifier: '
+            propertyLogs'
+                Identifier: '
+            toStringPropertyValue'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        logs'
+                Identifier: 'push'
+              ArrayLiteralExpression
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'header'
+                    TemplateMiddle
+                  TemplateSpan
+                    Identifier: 'dataDiff'
+                    TemplateTail
+                Identifier: '
+            propertyLogs'
+          ReturnStatement
+            Identifier: ' dataDiff'
+      FunctionDeclaration
+        Identifier: ' printScriptInfoSourceMapFilePath'
+        Parameter
+          Identifier: '
+        data'
+          UnionType
+            TypeReference
+              Identifier: ' ScriptInfoData'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        info'
+          TypeReference
+            Identifier: ' ScriptInfo'
+        Parameter
+          Identifier: '
+        infoDiff'
+          TypeReference
+            Identifier: ' Diff'
+        Parameter
+          Identifier: '
+        infoPropertyLogs'
+          ArrayType
+            TypeReference
+              Identifier: ' StatePropertyLog'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'info'
+                    Identifier: 'sourceMapFilePath'
+                BarBarToken
+                CallExpression
+                  Identifier: ' isString'
+                  PropertyAccessExpression
+                    Identifier: 'info'
+                    Identifier: 'sourceMapFilePath'
+              QuestionToken
+              CallExpression
+                Identifier: '
+            printProperty'
+                PropertyAccessExpression
+                  Identifier: '
+                PrintPropertyWhen'
+                  Identifier: 'DefinedOrChangedOrNew'
+                Identifier: '
+                data'
+                StringLiteral
+                PropertyAccessExpression
+                  Identifier: '
+                info'
+                  Identifier: 'sourceMapFilePath'
+                Identifier: '
+                infoDiff'
+                Identifier: '
+                infoPropertyLogs'
+              ColonToken
+              CallExpression
+                Identifier: '
+            printSetPropertyValueWorker'
+                PropertyAccessExpression
+                  Identifier: '
+                PrintPropertyWhen'
+                  Identifier: 'DefinedOrChangedOrNew'
+                ConditionalExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                data'
+                      QuestionDotToken
+                      Identifier: 'sourceMapFilePath'
+                    AmpersandAmpersandToken
+                    PrefixUnaryExpression
+                      CallExpression
+                        Identifier: 'isString'
+                        PropertyAccessExpression
+                          Identifier: 'data'
+                          QuestionDotToken
+                          Identifier: 'sourceMapFilePath'
+                  QuestionToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' data'
+                      Identifier: 'sourceMapFilePath'
+                    Identifier: 'sourceInfos'
+                  ColonToken
+                  Identifier: ' undefined'
+                StringLiteral
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                info'
+                    Identifier: 'sourceMapFilePath'
+                  Identifier: 'sourceInfos'
+                Identifier: '
+                infoDiff'
+                Identifier: '
+                infoPropertyLogs'
+                Identifier: '
+                identity'
+      FunctionDeclaration
+        Identifier: ' toStringDocumentPostionMapper'
+        Parameter
+          Identifier: 'documentPositionMapper'
+          TypeReference
+            Identifier: ' DocumentPositionMapper'
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'documentPositionMapper'
+              EqualsEqualsEqualsToken
+              Identifier: ' identitySourceMapConsumer'
+            ReturnStatement
+              StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' id'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' mapperToId'
+                    Identifier: 'get'
+                  Identifier: 'documentPositionMapper'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'id'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' mapperToId'
+                  Identifier: 'set'
+                Identifier: 'documentPositionMapper'
+                BinaryExpression
+                  Identifier: ' id'
+                  EqualsToken
+                  PostfixUnaryExpression
+                    Identifier: ' nextDocumentPositionMapperId'
+          ReturnStatement
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'id'
+                TemplateTail
+      FunctionDeclaration
+        Identifier: ' getSourceMapper'
+        Parameter
+          Identifier: 'project'
+          TypeReference
+            Identifier: ' Project'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' project'
+                  Identifier: 'projectKind'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' ProjectKind'
+                  Identifier: 'AutoImportProvider'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            project'
+                      Identifier: 'getLanguageService'
+                    FalseKeyword
+                  QuestionDotToken
+                  Identifier: 'getSourceMapper'
+              ColonToken
+              Identifier: '
+            undefined'

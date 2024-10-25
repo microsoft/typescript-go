@@ -1,0 +1,21 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    MethodSignature
+      Identifier: '
+    method'
+  ClassDeclaration
+    Identifier: ' C1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I1'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'a'
+        NumericLiteral
+      Parameter
+        Identifier: ' b'
+        QuestionToken
+      Block

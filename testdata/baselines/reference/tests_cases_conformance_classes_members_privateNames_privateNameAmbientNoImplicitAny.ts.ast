@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      PrivateIdentifier

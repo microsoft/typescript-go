@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+  F'
+      Parameter
+        Identifier: 'A'
+        QuestionToken
+      Parameter
+        Identifier: ' B'
+      Block

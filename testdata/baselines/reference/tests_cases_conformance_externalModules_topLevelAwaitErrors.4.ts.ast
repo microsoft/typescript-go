@@ -1,0 +1,11 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'await'
+        ArrayLiteralExpression
+          NumericLiteral

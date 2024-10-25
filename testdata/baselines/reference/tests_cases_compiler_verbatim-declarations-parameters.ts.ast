@@ -1,0 +1,81 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Map'
+    IntersectionType
+      TypeLiteral
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          StringKeyword
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' MapOrUndefined'
+    UnionType
+      TypeReference
+        Identifier: ' Map'
+      UndefinedKeyword
+      LiteralType
+        StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' reuseTypeNode'
+        QuestionToken
+        UnionType
+          TypeReference
+            Identifier: ' Map'
+          UndefinedKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' reuseTypeNode2'
+        QuestionToken
+        TypeReference
+          Identifier: ' Exclude'
+          TypeReference
+            Identifier: 'MapOrUndefined'
+          LiteralType
+            StringLiteral
+      Parameter
+        PublicKeyword
+        Identifier: ' resolveType'
+        QuestionToken
+        TypeReference
+          Identifier: ' Map'
+      Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo1'
+    Parameter
+      Identifier: '
+    // Type node is accurate, preserve
+    reuseTypeNode'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+        UndefinedKeyword
+      ObjectLiteralExpression
+    Parameter
+      Identifier: '
+    reuseTypeNode2'
+      TypeReference
+        Identifier: ' Exclude'
+        TypeReference
+          Identifier: 'MapOrUndefined'
+        LiteralType
+          StringLiteral
+      ObjectLiteralExpression
+    Parameter
+      Identifier: '
+    // Resolve type node, requires adding | undefined
+    resolveType'
+      TypeReference
+        Identifier: ' Map'
+      ObjectLiteralExpression
+    Parameter
+      Identifier: ' 
+    requiredParam'
+      NumberKeyword
+    Block

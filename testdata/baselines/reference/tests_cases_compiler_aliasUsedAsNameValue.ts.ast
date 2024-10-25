@@ -1,0 +1,40 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' id'
+        NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' b'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+    Block
+      ReturnStatement
+        NullKeyword
+  ImportEqualsDeclaration
+    Identifier: ' mod'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' b'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        FunctionExpression
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+    //var x = mod.id; // TODO needed hack that mod is loaded
+    b'
+                  Identifier: 'b'
+                Identifier: 'mod'

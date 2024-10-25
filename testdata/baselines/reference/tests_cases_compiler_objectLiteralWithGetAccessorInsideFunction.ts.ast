@@ -1,0 +1,19 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' bar'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ObjectLiteralExpression
+              GetAccessor
+                Identifier: ' _extraOccluded'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' occluded'
+                        NumericLiteral
+                  ReturnStatement
+                    Identifier: ' occluded'

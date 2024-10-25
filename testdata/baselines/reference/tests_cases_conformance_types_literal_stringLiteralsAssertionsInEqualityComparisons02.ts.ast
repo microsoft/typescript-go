@@ -1,0 +1,55 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' EnhancedString'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' enhancements'
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BinaryExpression
+          StringLiteral
+          EqualsEqualsEqualsToken
+          AsExpression
+            StringLiteral
+            LiteralType
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BinaryExpression
+          StringLiteral
+          ExclamationEqualsEqualsToken
+          ParenthesizedExpression
+            AsExpression
+              StringLiteral
+              LiteralType
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        BinaryExpression
+          StringLiteral
+          EqualsEqualsToken
+          ParenthesizedExpression
+            TypeAssertionExpression
+              NumberKeyword
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        BinaryExpression
+          StringLiteral
+          EqualsEqualsEqualsToken
+          ParenthesizedExpression
+            AsExpression
+              StringLiteral
+              TypeReference
+                Identifier: ' EnhancedString'

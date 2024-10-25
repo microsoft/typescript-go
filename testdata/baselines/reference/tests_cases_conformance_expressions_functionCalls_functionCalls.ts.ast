@@ -1,0 +1,110 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyVar'
+        AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+anyVar'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+anyVar'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Invoke function call on value of type 'any' with type arguments
+// These should be errors
+anyVar'
+      StringKeyword
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+anyVar'
+      NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+anyVar'
+      TypeReference
+        Identifier: 'Window'
+      Identifier: 'undefined'
+  InterfaceDeclaration
+    Identifier: ' SubFunc'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Function'
+    PropertySignature
+      Identifier: '
+    prop'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' subFunc'
+        TypeReference
+          Identifier: ' SubFunc'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+subFunc'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+subFunc'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+subFunc'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+
+// Invoke function call on value of a subtype of Function with no call signatures with type arguments
+// These should be errors
+subFunc'
+      NumberKeyword
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+subFunc'
+      StringKeyword
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+subFunc'
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' func'
+        TypeReference
+          Identifier: ' Function'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+func'
+      NumberKeyword
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+func'
+      StringKeyword
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+func'
+      AnyKeyword

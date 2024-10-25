@@ -1,0 +1,35 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' CharCode'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CharCode'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' User'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'input'
+        NumberKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'CharCode'
+              Identifier: 'A'
+            EqualsEqualsEqualsToken
+            Identifier: ' input'
+          Block

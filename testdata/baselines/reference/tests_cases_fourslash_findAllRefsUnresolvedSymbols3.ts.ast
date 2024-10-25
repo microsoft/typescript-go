@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////import * as /*a0*/Bar from "does-not-exist";
+////
+////let a: /*a1*/Bar;
+////let b: /*a2*/Bar<string>;
+////let c: /*a3*/Bar<string, number>;
+////let d: /*a4*/Bar./*b0*/X;
+////let e: /*a5*/Bar./*b1*/X<string>;
+////let f: /*a6*/Bar./*c0*/X./*d0*/Y;
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral

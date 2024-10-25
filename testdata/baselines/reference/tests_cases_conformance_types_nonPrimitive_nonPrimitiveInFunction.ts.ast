@@ -1,0 +1,60 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' takeObject'
+    Parameter
+      Identifier: 'o'
+      ObjectKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' returnObject'
+    ObjectKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nonPrimitive'
+        ObjectKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' primitive'
+        BooleanKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+takeObject'
+      Identifier: 'nonPrimitive'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+nonPrimitive'
+      EqualsToken
+      CallExpression
+        Identifier: ' returnObject'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+takeObject'
+      Identifier: 'primitive'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // expect error
+primitive'
+      EqualsToken
+      CallExpression
+        Identifier: ' returnObject'
+  FunctionDeclaration
+    Identifier: ' returnError'
+    ObjectKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ret'
+            NumericLiteral
+      ReturnStatement
+        Identifier: ' ret'

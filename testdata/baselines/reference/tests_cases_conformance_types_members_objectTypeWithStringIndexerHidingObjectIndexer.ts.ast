@@ -1,0 +1,93 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Object'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ElementAccessExpression
+          Identifier: ' o'
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        StringKeyword
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    bar'
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        StringKeyword
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    baz'
+            StringKeyword
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        StringKeyword
+        ElementAccessExpression
+          Identifier: ' o2'
+          StringLiteral

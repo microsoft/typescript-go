@@ -1,0 +1,213 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IPromise3'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' IPromise3'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' IPromise3'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' IPromise3'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' IPromise3'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' IPromise3'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' IPromise3'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' IPromise3'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' IPromise3'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    done'
+      QuestionToken
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          AnyKeyword
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          AnyKeyword
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        TypeReference
+          Identifier: ' IPromise3'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        TypeReference
+          Identifier: ' IPromise3'
+          StringKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' p1'
+            Identifier: 'then'
+          FunctionExpression
+            Parameter
+              Identifier: 'x'
+            Block
+              ReturnStatement
+                Identifier: ' x'

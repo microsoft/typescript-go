@@ -1,0 +1,9 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        TypeReference
+          Identifier: ' bar'

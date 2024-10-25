@@ -1,0 +1,69 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' MyProps'
+    PropertySignature
+      Identifier: '
+    x'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' MyInnerProps'
+  InterfaceDeclaration
+    Identifier: ' MyInnerProps'
+    PropertySignature
+      Identifier: '
+    value'
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' MyComponent'
+    Parameter
+      Identifier: '_props'
+      TypeReference
+        Identifier: ' MyProps'
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'span'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'span'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyComponent'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        JsxSelfClosingElement
+          Identifier: 'MyComponent'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' x'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' y'
+              JsxExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+    value'
+                    NumericLiteral

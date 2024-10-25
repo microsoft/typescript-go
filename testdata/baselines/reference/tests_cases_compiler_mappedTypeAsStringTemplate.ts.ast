@@ -1,0 +1,40 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'Extract'
+              TypeReference
+                Identifier: 'K'
+              StringKeyword
+            TemplateTail
+        NumberKeyword
+    Parameter
+      Identifier: 'foox'
+      TypeReference
+        Identifier: ' T'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      Identifier: 'c'

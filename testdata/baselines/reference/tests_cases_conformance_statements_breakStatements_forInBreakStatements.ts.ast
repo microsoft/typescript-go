@@ -1,0 +1,111 @@
+SourceFile
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ObjectLiteralExpression
+    Block
+      BreakStatement
+  LabeledStatement
+    Identifier: '
+
+ONE'
+    ForInStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+      ObjectLiteralExpression
+      Block
+        BreakStatement
+          Identifier: ' ONE'
+  LabeledStatement
+    Identifier: '
+
+TWO'
+    LabeledStatement
+      Identifier: '
+THREE'
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        ObjectLiteralExpression
+        Block
+          BreakStatement
+            Identifier: ' THREE'
+  LabeledStatement
+    Identifier: '
+
+FOUR'
+    ForInStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+      ObjectLiteralExpression
+      Block
+        LabeledStatement
+          Identifier: '
+    FIVE'
+          ForInStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+            ObjectLiteralExpression
+            Block
+              BreakStatement
+                Identifier: ' FOUR'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ObjectLiteralExpression
+    Block
+      LabeledStatement
+        Identifier: '
+    SIX'
+        ForInStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+          ObjectLiteralExpression
+          BreakStatement
+            Identifier: ' SIX'
+  LabeledStatement
+    Identifier: '
+
+SEVEN'
+    ForInStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+      ObjectLiteralExpression
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        ObjectLiteralExpression
+        ForInStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+          ObjectLiteralExpression
+          BreakStatement
+            Identifier: ' SEVEN'
+  LabeledStatement
+    Identifier: '
+
+EIGHT'
+    ForInStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+      ObjectLiteralExpression
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fn'
+              FunctionExpression
+                Block
+        BreakStatement
+          Identifier: ' EIGHT'

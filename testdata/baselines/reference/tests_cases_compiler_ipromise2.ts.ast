@@ -1,0 +1,249 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Windows'
+    ModuleDeclaration
+      Identifier: 'Foundation'
+      ModuleBlock
+        InterfaceDeclaration
+          ExportKeyword
+          Identifier: ' IPromise'
+          TypeParameter
+            Identifier: 'T'
+          MethodSignature
+            Identifier: '
+        then'
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'success'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'value'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' IPromise'
+                  TypeReference
+                    Identifier: 'U'
+            Parameter
+              Identifier: ' error'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'error'
+                  AnyKeyword
+                TypeReference
+                  Identifier: ' IPromise'
+                  TypeReference
+                    Identifier: 'U'
+            Parameter
+              Identifier: ' progress'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'progress'
+                  AnyKeyword
+                VoidKeyword
+            TypeReference
+              QualifiedName
+                QualifiedName
+                  Identifier: ' Windows'
+                  Identifier: 'Foundation'
+                Identifier: 'IPromise'
+              TypeReference
+                Identifier: 'U'
+          MethodSignature
+            Identifier: '
+        then'
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'success'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'value'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' IPromise'
+                  TypeReference
+                    Identifier: 'U'
+            Parameter
+              Identifier: ' error'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'error'
+                  AnyKeyword
+                TypeReference
+                  Identifier: ' U'
+            Parameter
+              Identifier: ' progress'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'progress'
+                  AnyKeyword
+                VoidKeyword
+            TypeReference
+              QualifiedName
+                QualifiedName
+                  Identifier: ' Windows'
+                  Identifier: 'Foundation'
+                Identifier: 'IPromise'
+              TypeReference
+                Identifier: 'U'
+          MethodSignature
+            Identifier: '
+        then'
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'success'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'value'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' U'
+            Parameter
+              Identifier: ' error'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'error'
+                  AnyKeyword
+                TypeReference
+                  Identifier: ' IPromise'
+                  TypeReference
+                    Identifier: 'U'
+            Parameter
+              Identifier: ' progress'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'progress'
+                  AnyKeyword
+                VoidKeyword
+            TypeReference
+              QualifiedName
+                QualifiedName
+                  Identifier: ' Windows'
+                  Identifier: 'Foundation'
+                Identifier: 'IPromise'
+              TypeReference
+                Identifier: 'U'
+          MethodSignature
+            Identifier: '
+        then'
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'success'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'value'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' U'
+            Parameter
+              Identifier: ' error'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'error'
+                  AnyKeyword
+                TypeReference
+                  Identifier: ' U'
+            Parameter
+              Identifier: ' progress'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'progress'
+                  AnyKeyword
+                VoidKeyword
+            TypeReference
+              QualifiedName
+                QualifiedName
+                  Identifier: ' Windows'
+                  Identifier: 'Foundation'
+                Identifier: 'IPromise'
+              TypeReference
+                Identifier: 'U'
+          MethodSignature
+            Identifier: '
+        done'
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'success'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'value'
+                  TypeReference
+                    Identifier: ' T'
+                AnyKeyword
+            Parameter
+              Identifier: ' error'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'error'
+                  AnyKeyword
+                AnyKeyword
+            Parameter
+              Identifier: ' progress'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'progress'
+                  AnyKeyword
+                VoidKeyword
+            VoidKeyword
+          PropertySignature
+            Identifier: '
+        value'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' Windows'
+              Identifier: 'Foundation'
+            Identifier: 'IPromise'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' p'
+            Identifier: 'then'
+          FunctionExpression
+            Parameter
+              Identifier: 's'
+            Block
+              ReturnStatement
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' p2'
+          Identifier: 'value'

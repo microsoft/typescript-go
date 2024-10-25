@@ -1,0 +1,101 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lol'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  /** @type {string|undefined} */
+  foo'
+            Identifier: ' undefined'
+          PropertyAssignment
+            Identifier: '
+  /** @type {string|undefined} */
+  bar'
+            StringLiteral
+          MethodDeclaration
+            Identifier: '
+  /** @type {function(number): number} */
+  method1'
+            Parameter
+              Identifier: 'n1'
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' n1'
+                  PlusToken
+                  NumericLiteral
+          ShorthandPropertyAssignment
+            Identifier: '
+  /** @type {string} */
+  lol'
+          PropertyAssignment
+            ComputedPropertyName
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+  /** @type {function(number): number} */
+  arrowFunc'
+            ArrowFunction
+              Parameter
+                Identifier: 'num'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' num'
+                PlusToken
+                NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+obj'
+        Identifier: 'foo'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+obj'
+      Identifier: 'lol'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+obj'
+        Identifier: 'bar'
+      EqualsToken
+      Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' obj'
+            Identifier: 'method1'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+obj'
+        Identifier: 'bar1'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+obj'
+        Identifier: 'arrowFunc'
+      NumericLiteral

@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' union'
+        UnionType
+          StringKeyword
+          ArrayType
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        StringKeyword
+  ForOfStatement
+    Identifier: 'v'
+    Identifier: ' union'
+    Block

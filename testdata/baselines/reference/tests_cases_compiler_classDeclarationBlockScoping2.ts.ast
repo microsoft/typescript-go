@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            Identifier: ' C'
+      Block
+        ClassDeclaration
+          Identifier: ' C'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c2'
+              Identifier: ' C'
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' C'
+          EqualsEqualsEqualsToken
+          Identifier: ' c1'

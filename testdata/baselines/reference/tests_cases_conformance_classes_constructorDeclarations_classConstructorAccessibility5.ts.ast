@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      ProtectedKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' make'
+      Block
+        ExpressionStatement
+          NewExpression
+            Identifier: ' Base'
+  ClassDeclaration
+    Identifier: ' Unrelated'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fake'
+      Block
+        ExpressionStatement
+          NewExpression
+            Identifier: ' Base'

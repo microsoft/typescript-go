@@ -1,0 +1,29 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      TupleType
+        AnyKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          Identifier: ' foo'
+          ArrayLiteralExpression
+            Identifier: 'undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral

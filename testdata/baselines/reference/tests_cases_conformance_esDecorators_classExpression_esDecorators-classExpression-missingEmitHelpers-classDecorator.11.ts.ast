@@ -1,0 +1,25 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// uses __esDecorate, __runInitializers, __setFunctionName
+C'
+      QuestionQuestionEqualsToken
+      ClassExpression
+        Decorator
+          Identifier: 'dec'
+  ExportDeclaration
+    NamedExports

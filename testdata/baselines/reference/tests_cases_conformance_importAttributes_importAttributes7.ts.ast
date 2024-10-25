@@ -1,0 +1,54 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: '
+    a'
+        StringLiteral
+      PropertyAssignment
+        Identifier: '
+    b'
+        StringLiteral
+      PropertyAssignment
+        NumericLiteral
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' a'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' a'
+        StringLiteral
+      PropertyAssignment
+        StringLiteral
+        StringLiteral
+    EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            CallExpression
+              ImportKeyword
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        with'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' a'
+                      StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+      ExpressionStatement
+        Identifier: '
+    a'

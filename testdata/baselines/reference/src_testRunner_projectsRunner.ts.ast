@@ -1,0 +1,3051 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' documents'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' fakes'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Utils'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vfs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vpath'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ProjectRunnerTestCase'
+    PropertySignature
+      Identifier: '
+    scenario'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    projectRoot'
+      StringKeyword
+    PropertySignature
+      Identifier: ' // project where it lives - this also is the current directory when compiling
+    inputFiles'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: ' // list of input files to be given to program
+    resolveMapRoot'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: ' // should we resolve this map root and give compiler the absolute disk path as map root?
+    resolveSourceRoot'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: ' // should we resolve this source root and give compiler the absolute disk path as map root?
+    baselineCheck'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: ' // Verify the baselines of output files, if this is false, we will write to output to the disk but there is no verification of baselines
+    runTest'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: ' // Run the resulting test
+    bug'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' ProjectRunnerTestCaseResolutionInfo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ProjectRunnerTestCase'
+    PropertySignature
+      Identifier: '
+    // Apart from actual test case the results of the resolution
+    resolvedInputFiles'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: ' // List of files that were asked to read by compiler
+    emittedFiles'
+      TypeOperator
+        ArrayType
+          StringKeyword
+  InterfaceDeclaration
+    Identifier: ' CompileProjectFilesResult'
+    PropertySignature
+      Identifier: '
+    configFileSourceFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'SourceFile'
+    PropertySignature
+      Identifier: '
+    moduleKind'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ModuleKind'
+    PropertySignature
+      Identifier: '
+    program'
+      QuestionToken
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Program'
+    PropertySignature
+      Identifier: '
+    compilerOptions'
+      QuestionToken
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'CompilerOptions'
+    PropertySignature
+      Identifier: '
+    errors'
+      TypeOperator
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Diagnostic'
+    PropertySignature
+      Identifier: '
+    sourceMapData'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'SourceMapEmitResult'
+  InterfaceDeclaration
+    Identifier: ' BatchCompileProjectTestCaseResult'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CompileProjectFilesResult'
+    PropertySignature
+      Identifier: '
+    outputFiles'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' documents'
+              Identifier: 'TextDocument'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ProjectRunner'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' Harness'
+          Identifier: 'RunnerBase'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' enumerateTestFiles'
+      ArrayType
+        StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' all'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'enumerateFiles'
+                StringLiteral
+                RegularExpressionLiteral
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' recursive'
+                    TrueKeyword
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'Harness'
+              Identifier: 'shards'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            ReturnStatement
+              Identifier: ' all'
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' all'
+              Identifier: 'filter'
+            ArrowFunction
+              Parameter
+                Identifier: '_val'
+              Parameter
+                Identifier: ' idx'
+              EqualsGreaterThanToken
+              BinaryExpression
+                BinaryExpression
+                  Identifier: ' idx'
+                  PercentToken
+                  PropertyAccessExpression
+                    Identifier: ' Harness'
+                    Identifier: 'shards'
+                EqualsEqualsEqualsToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'Harness'
+                      Identifier: 'shardId'
+                    MinusToken
+                    NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' Harness'
+          Identifier: 'TestRunnerKind'
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' initializeTests'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        describe'
+            StringLiteral
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' tests'
+                      ConditionalExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'tests'
+                            Identifier: 'length'
+                          EqualsEqualsEqualsToken
+                          NumericLiteral
+                        QuestionToken
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'enumerateTestFiles'
+                        ColonToken
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'tests'
+                ForOfStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' test'
+                  Identifier: ' tests'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'runProjectTestCase'
+                        Identifier: 'test'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' runProjectTestCase'
+      Parameter
+        Identifier: 'testCaseFileName'
+        StringKeyword
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' name'
+                BindingElement
+                  Identifier: ' payload'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' ProjectTestCase'
+              Identifier: 'getConfigurations'
+            Identifier: 'testCaseFileName'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            describe'
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        StringLiteral
+                        PlusToken
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' payload'
+                            Identifier: 'testCase'
+                          Identifier: 'scenario'
+                      PlusToken
+                      StringLiteral
+                    PlusToken
+                    Identifier: ' testCaseFileName'
+                  PlusToken
+                  ParenthesizedExpression
+                    ConditionalExpression
+                      Identifier: 'name'
+                      QuestionToken
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'name'
+                          TemplateTail
+                      ColonToken
+                      NoSubstitutionTemplateLiteral
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' projectTestCase'
+                          UnionType
+                            TypeReference
+                              Identifier: ' ProjectTestCase'
+                            UndefinedKeyword
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                before'
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                    projectTestCase'
+                                EqualsToken
+                                NewExpression
+                                  Identifier: ' ProjectTestCase'
+                                  Identifier: 'testCaseFileName'
+                                  Identifier: ' payload'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                it'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            Identifier: 'testCaseFileName'
+                            TemplateTail
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            Identifier: ' projectTestCase'
+                            AmpersandAmpersandToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' projectTestCase'
+                                Identifier: 'verifyResolution'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                it'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            Identifier: 'testCaseFileName'
+                            TemplateTail
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            Identifier: ' projectTestCase'
+                            AmpersandAmpersandToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' projectTestCase'
+                                Identifier: 'verifyDiagnostics'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                it'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            Identifier: 'testCaseFileName'
+                            TemplateTail
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            Identifier: ' projectTestCase'
+                            AmpersandAmpersandToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' projectTestCase'
+                                Identifier: 'verifyJavaScriptOutput'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                // NOTE: This check was commented out in previous code. Leaving this here to eventually be restored if needed.
+                // it(`Correct sourcemap content for ${testCaseFileName}`, () => projectTestCase && projectTestCase.verifySourceMapRecord());
+                it'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            Identifier: 'testCaseFileName'
+                            TemplateTail
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            Identifier: ' projectTestCase'
+                            AmpersandAmpersandToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' projectTestCase'
+                                Identifier: 'verifyDeclarations'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                after'
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                    projectTestCase'
+                                EqualsToken
+                                Identifier: ' undefined'
+  ClassDeclaration
+    Identifier: ' ProjectCompilerHost'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' fakes'
+          Identifier: 'CompilerHost'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _testCase'
+      IntersectionType
+        TypeReference
+          Identifier: ' ProjectRunnerTestCase'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'CompilerOptions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _projectParseConfigHost'
+      UnionType
+        TypeReference
+          Identifier: ' ProjectParseConfigHost'
+        UndefinedKeyword
+    Constructor
+      Parameter
+        Identifier: 'sys'
+        UnionType
+          TypeReference
+            QualifiedName
+              Identifier: ' fakes'
+              Identifier: 'System'
+          TypeReference
+            QualifiedName
+              Identifier: ' vfs'
+              Identifier: 'FileSystem'
+      Parameter
+        Identifier: ' compilerOptions'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'CompilerOptions'
+      Parameter
+        Identifier: ' _testCaseJustName'
+        StringKeyword
+      Parameter
+        Identifier: ' testCase'
+        IntersectionType
+          TypeReference
+            Identifier: ' ProjectRunnerTestCase'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'CompilerOptions'
+      Parameter
+        Identifier: ' _moduleKind'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'ModuleKind'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'sys'
+            Identifier: ' compilerOptions'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_testCase'
+            EqualsToken
+            Identifier: ' testCase'
+    GetAccessor
+      PublicKeyword
+      OverrideKeyword
+      Identifier: ' parseConfigHost'
+      TypeReference
+        QualifiedName
+          Identifier: ' fakes'
+          Identifier: 'ParseConfigHost'
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_projectParseConfigHost'
+            BarBarToken
+            ParenthesizedExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_projectParseConfigHost'
+                EqualsToken
+                NewExpression
+                  Identifier: ' ProjectParseConfigHost'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'sys'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_testCase'
+    MethodDeclaration
+      PublicKeyword
+      OverrideKeyword
+      Identifier: ' getDefaultLibFileName'
+      Parameter
+        Identifier: '_options'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'CompilerOptions'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' vpath'
+              Identifier: 'resolve'
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'getDefaultLibLocation'
+            StringLiteral
+  ClassDeclaration
+    Identifier: ' ProjectParseConfigHost'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' fakes'
+          Identifier: 'ParseConfigHost'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _testCase'
+      IntersectionType
+        TypeReference
+          Identifier: ' ProjectRunnerTestCase'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'CompilerOptions'
+    Constructor
+      Parameter
+        Identifier: 'sys'
+        TypeReference
+          QualifiedName
+            Identifier: ' fakes'
+            Identifier: 'System'
+      Parameter
+        Identifier: ' testCase'
+        IntersectionType
+          TypeReference
+            Identifier: ' ProjectRunnerTestCase'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'CompilerOptions'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'sys'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_testCase'
+            EqualsToken
+            Identifier: ' testCase'
+    MethodDeclaration
+      PublicKeyword
+      OverrideKeyword
+      Identifier: ' readDirectory'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' extensions'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' excludes'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' includes'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' depth'
+        NumberKeyword
+      ArrayType
+        StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' result'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'readDirectory'
+                Identifier: 'path'
+                Identifier: ' extensions'
+                Identifier: ' excludes'
+                Identifier: ' includes'
+                Identifier: ' depth'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' projectRoot'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' vpath'
+                  Identifier: 'resolve'
+                PropertyAccessExpression
+                  Identifier: 'vfs'
+                  Identifier: 'srcFolder'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_testCase'
+                  Identifier: 'projectRoot'
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' result'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'item'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            vpath'
+                  Identifier: 'relative'
+                Identifier: '
+                projectRoot'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                vpath'
+                    Identifier: 'resolve'
+                  Identifier: 'projectRoot'
+                  Identifier: ' item'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'vfs'
+                  Identifier: 'ignoreCase'
+  InterfaceDeclaration
+    Identifier: ' ProjectTestConfiguration'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    payload'
+      TypeReference
+        Identifier: ' ProjectTestPayload'
+  InterfaceDeclaration
+    Identifier: ' ProjectTestPayload'
+    PropertySignature
+      Identifier: '
+    testCase'
+      IntersectionType
+        TypeReference
+          Identifier: ' ProjectRunnerTestCase'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'CompilerOptions'
+    PropertySignature
+      Identifier: '
+    moduleKind'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ModuleKind'
+    PropertySignature
+      Identifier: '
+    vfs'
+      TypeReference
+        QualifiedName
+          Identifier: ' vfs'
+          Identifier: 'FileSystem'
+  ClassDeclaration
+    Identifier: ' ProjectTestCase'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' testCase'
+      IntersectionType
+        TypeReference
+          Identifier: ' ProjectRunnerTestCase'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'CompilerOptions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' testCaseJustName'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' sys'
+      TypeReference
+        QualifiedName
+          Identifier: ' fakes'
+          Identifier: 'System'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' compilerOptions'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'CompilerOptions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' compilerResult'
+      TypeReference
+        Identifier: ' BatchCompileProjectTestCaseResult'
+    Constructor
+      Parameter
+        Identifier: 'testCaseFileName'
+        StringKeyword
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' testCase'
+          BindingElement
+            Identifier: ' moduleKind'
+          BindingElement
+            Identifier: ' vfs'
+        TypeReference
+          Identifier: ' ProjectTestPayload'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'testCase'
+            EqualsToken
+            Identifier: ' testCase'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'testCaseJustName'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' testCaseFileName'
+                    Identifier: 'replace'
+                  RegularExpressionLiteral
+                  StringLiteral
+                Identifier: 'replace'
+              RegularExpressionLiteral
+              StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'compilerOptions'
+            EqualsToken
+            CallExpression
+              Identifier: ' createCompilerOptions'
+              Identifier: 'testCase'
+              Identifier: ' moduleKind'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'sys'
+            EqualsToken
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' fakes'
+                Identifier: 'System'
+              Identifier: 'vfs'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' configFileName'
+              UnionType
+                StringKeyword
+                UndefinedKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' inputFiles'
+              PropertyAccessExpression
+                Identifier: ' testCase'
+                Identifier: 'inputFiles'
+        IfStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'compilerOptions'
+            Identifier: 'project'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            // Parse project
+            configFileName'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'normalizePath'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'ts'
+                      Identifier: 'combinePaths'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'compilerOptions'
+                      Identifier: 'project'
+                    StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assert'
+                BinaryExpression
+                  PrefixUnaryExpression
+                    Identifier: 'inputFiles'
+                  BarBarToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' inputFiles'
+                      Identifier: 'length'
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+                StringLiteral
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'inputFiles'
+              BarBarToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' inputFiles'
+                  Identifier: 'length'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            configFileName'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'findConfigFile'
+                    StringLiteral
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' path'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'sys'
+                          Identifier: 'fileExists'
+                        Identifier: 'path'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' errors'
+              UnionType
+                ArrayType
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'Diagnostic'
+                UndefinedKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' configFileSourceFiles'
+              ArrayType
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'SourceFile'
+              ArrayLiteralExpression
+        IfStatement
+          Identifier: 'configFileName'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' result'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'readJsonConfigFile'
+                    Identifier: 'configFileName'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' path'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'sys'
+                          Identifier: 'readFile'
+                        Identifier: 'path'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            configFileSourceFiles'
+                  Identifier: 'push'
+                Identifier: 'result'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' configParseHost'
+                  NewExpression
+                    Identifier: ' ProjectParseConfigHost'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'sys'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'testCase'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' configParseResult'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'parseJsonSourceFileConfigFileContent'
+                    Identifier: 'result'
+                    Identifier: ' configParseHost'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getDirectoryPath'
+                      Identifier: 'configFileName'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'compilerOptions'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            inputFiles'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' configParseResult'
+                  Identifier: 'fileNames'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'compilerOptions'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' configParseResult'
+                  Identifier: 'options'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            errors'
+                EqualsToken
+                ArrayLiteralExpression
+                  SpreadElement
+                    PropertyAccessExpression
+                      Identifier: 'result'
+                      Identifier: 'parseDiagnostics'
+                  SpreadElement
+                    PropertyAccessExpression
+                      Identifier: 'configParseResult'
+                      Identifier: 'errors'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' compilerHost'
+              NewExpression
+                Identifier: ' ProjectCompilerHost'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'sys'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'compilerOptions'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'testCaseJustName'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'testCase'
+                Identifier: ' moduleKind'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' projectCompilerResult'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'compileProjectFiles'
+                Identifier: 'moduleKind'
+                Identifier: ' configFileSourceFiles'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' inputFiles'
+                Identifier: ' compilerHost'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'compilerOptions'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'compilerResult'
+            EqualsToken
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+            configFileSourceFiles'
+              ShorthandPropertyAssignment
+                Identifier: '
+            moduleKind'
+              PropertyAssignment
+                Identifier: '
+            program'
+                PropertyAccessExpression
+                  Identifier: ' projectCompilerResult'
+                  Identifier: 'program'
+              PropertyAssignment
+                Identifier: '
+            compilerOptions'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'compilerOptions'
+              PropertyAssignment
+                Identifier: '
+            sourceMapData'
+                PropertyAccessExpression
+                  Identifier: ' projectCompilerResult'
+                  Identifier: 'sourceMapData'
+              PropertyAssignment
+                Identifier: '
+            outputFiles'
+                PropertyAccessExpression
+                  Identifier: ' compilerHost'
+                  Identifier: 'outputs'
+              PropertyAssignment
+                Identifier: '
+            errors'
+                ConditionalExpression
+                  Identifier: ' errors'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'concatenate'
+                    Identifier: 'errors'
+                    PropertyAccessExpression
+                      Identifier: ' projectCompilerResult'
+                      Identifier: 'errors'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' projectCompilerResult'
+                    Identifier: 'errors'
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' vfs'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'sys'
+            Identifier: 'vfs'
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' getConfigurations'
+      Parameter
+        Identifier: 'testCaseFileName'
+        StringKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' ProjectTestConfiguration'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' testCase'
+              IntersectionType
+                TypeReference
+                  Identifier: ' ProjectRunnerTestCase'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'CompilerOptions'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' testFileText'
+              UnionType
+                StringKeyword
+                UndefinedKeyword
+        TryStatement
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            testFileText'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' Harness'
+                      Identifier: 'IO'
+                    Identifier: 'readFile'
+                  Identifier: 'testCaseFileName'
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            assert'
+                  FalseKeyword
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        StringLiteral
+                        PlusToken
+                        Identifier: ' testCaseFileName'
+                      PlusToken
+                      StringLiteral
+                    PlusToken
+                    PropertyAccessExpression
+                      Identifier: ' e'
+                      Identifier: 'message'
+        TryStatement
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            testCase'
+                EqualsToken
+                AsExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' JSON'
+                      Identifier: 'parse'
+                    NonNullExpression
+                      Identifier: 'testFileText'
+                  IntersectionType
+                    TypeReference
+                      Identifier: ' ProjectRunnerTestCase'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'CompilerOptions'
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ThrowStatement
+                CallExpression
+                  Identifier: ' assert'
+                  FalseKeyword
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        StringLiteral
+                        PlusToken
+                        Identifier: ' testCaseFileName'
+                      PlusToken
+                      StringLiteral
+                    PlusToken
+                    PropertyAccessExpression
+                      Identifier: ' e'
+                      Identifier: 'message'
+        FunctionDeclaration
+          Identifier: ' makeFileSystem'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' fs'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' vfs'
+                      Identifier: 'createFromFileSystem'
+                    PropertyAccessExpression
+                      Identifier: 'Harness'
+                      Identifier: 'IO'
+                    FalseKeyword
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            fs'
+                  Identifier: 'mountSync'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'vpath'
+                    Identifier: 'resolve'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'Harness'
+                        Identifier: 'IO'
+                      Identifier: 'getWorkspaceRoot'
+                  StringLiteral
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' vpath'
+                    Identifier: 'combine'
+                  PropertyAccessExpression
+                    Identifier: 'vfs'
+                    Identifier: 'srcFolder'
+                  StringLiteral
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' vfs'
+                    Identifier: 'createResolver'
+                  PropertyAccessExpression
+                    Identifier: 'Harness'
+                    Identifier: 'IO'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            fs'
+                  Identifier: 'mkdirpSync'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'vpath'
+                    Identifier: 'combine'
+                  PropertyAccessExpression
+                    Identifier: 'vfs'
+                    Identifier: 'srcFolder'
+                  PropertyAccessExpression
+                    Identifier: ' testCase'
+                    Identifier: 'projectRoot'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            fs'
+                  Identifier: 'chdir'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'vpath'
+                    Identifier: 'combine'
+                  PropertyAccessExpression
+                    Identifier: 'vfs'
+                    Identifier: 'srcFolder'
+                  PropertyAccessExpression
+                    Identifier: ' testCase'
+                    Identifier: 'projectRoot'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            fs'
+                  Identifier: 'makeReadonly'
+            ReturnStatement
+              Identifier: ' fs'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fs'
+              UnionType
+                TypeReference
+                  QualifiedName
+                    Identifier: ' vfs'
+                    Identifier: 'FileSystem'
+                UndefinedKeyword
+        ReturnStatement
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+                name'
+                NoSubstitutionTemplateLiteral
+              PropertyAssignment
+                Identifier: '
+                payload'
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                    testCase'
+                  PropertyAssignment
+                    Identifier: '
+                    moduleKind'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'ModuleKind'
+                      Identifier: 'CommonJS'
+                  GetAccessor
+                    Identifier: ' vfs'
+                    Block
+                      ReturnStatement
+                        BinaryExpression
+                          Identifier: ' fs'
+                          QuestionQuestionEqualsToken
+                          CallExpression
+                            Identifier: ' makeFileSystem'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+                name'
+                NoSubstitutionTemplateLiteral
+              PropertyAssignment
+                Identifier: '
+                payload'
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                    testCase'
+                  PropertyAssignment
+                    Identifier: '
+                    moduleKind'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'ModuleKind'
+                      Identifier: 'AMD'
+                  GetAccessor
+                    Identifier: ' vfs'
+                    Block
+                      ReturnStatement
+                        BinaryExpression
+                          Identifier: ' fs'
+                          QuestionQuestionEqualsToken
+                          CallExpression
+                            Identifier: ' makeFileSystem'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifyResolution'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' cwd'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'vfs'
+                  Identifier: 'cwd'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' ignoreCase'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'vfs'
+                Identifier: 'ignoreCase'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' resolutionInfo'
+              IntersectionType
+                TypeReference
+                  Identifier: ' ProjectRunnerTestCaseResolutionInfo'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'CompilerOptions'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' JSON'
+                  Identifier: 'parse'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'JSON'
+                    Identifier: 'stringify'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'testCase'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        resolutionInfo'
+              Identifier: 'resolvedInputFiles'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'compilerResult'
+                        Identifier: 'program'
+                    Identifier: 'getSourceFiles'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' fileName'
+                      Identifier: ' input'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                vpath'
+                        Identifier: 'beneath'
+                      PropertyAccessExpression
+                        Identifier: 'vfs'
+                        Identifier: 'builtFolder'
+                      Identifier: ' input'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'vfs'
+                        Identifier: 'ignoreCase'
+                    BarBarToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' vpath'
+                        Identifier: 'beneath'
+                      PropertyAccessExpression
+                        Identifier: 'vfs'
+                        Identifier: 'testLibFolder'
+                      Identifier: ' input'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'vfs'
+                        Identifier: 'ignoreCase'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Utils'
+                      Identifier: 'removeTestPathPrefixes'
+                    Identifier: 'input'
+                  ColonToken
+                  ConditionalExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    vpath'
+                        Identifier: 'isAbsolute'
+                      Identifier: 'input'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' vpath'
+                        Identifier: 'relative'
+                      Identifier: 'cwd'
+                      Identifier: ' input'
+                      Identifier: ' ignoreCase'
+                    ColonToken
+                    Identifier: '
+                    input'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+
+        resolutionInfo'
+              Identifier: 'emittedFiles'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'compilerResult'
+                        Identifier: 'outputFiles'
+                    Identifier: 'map'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'output'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' output'
+                            Identifier: 'meta'
+                          Identifier: 'get'
+                        StringLiteral
+                      BarBarToken
+                      PropertyAccessExpression
+                        Identifier: ' output'
+                        Identifier: 'file'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'output'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Utils'
+                    Identifier: 'removeTestPathPrefixes'
+                  ConditionalExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'vpath'
+                        Identifier: 'isAbsolute'
+                      Identifier: 'output'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' vpath'
+                        Identifier: 'relative'
+                      Identifier: 'cwd'
+                      Identifier: ' output'
+                      Identifier: ' ignoreCase'
+                    ColonToken
+                    Identifier: ' output'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' content'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' JSON'
+                  Identifier: 'stringify'
+                Identifier: 'resolutionInfo'
+                Identifier: ' undefined'
+                StringLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Harness'
+                Identifier: 'Baseline'
+              Identifier: 'runBaseline'
+            BinaryExpression
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'getBaselineFolder'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'compilerResult'
+                    Identifier: 'moduleKind'
+                PlusToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'testCaseJustName'
+              PlusToken
+              StringLiteral
+            Identifier: ' content'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifyDiagnostics'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'compilerResult'
+              Identifier: 'errors'
+            Identifier: 'length'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            Harness'
+                    Identifier: 'Baseline'
+                  Identifier: 'runBaseline'
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'getBaselineFolder'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'compilerResult'
+                        Identifier: 'moduleKind'
+                    PlusToken
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'testCaseJustName'
+                  PlusToken
+                  StringLiteral
+                CallExpression
+                  Identifier: ' getErrorsBaseline'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'compilerResult'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifyJavaScriptOutput'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'testCase'
+            Identifier: 'baselineCheck'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' errs'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Error'
+                  ArrayLiteralExpression
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' nonSubfolderDiskFiles'
+                  NumericLiteral
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' output'
+              NonNullExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'compilerResult'
+                  Identifier: 'outputFiles'
+              Block
+                TryStatement
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' fileName'
+                          BinaryExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' output'
+                                  Identifier: 'meta'
+                                Identifier: 'get'
+                              StringLiteral
+                            BarBarToken
+                            PropertyAccessExpression
+                              Identifier: ' output'
+                              Identifier: 'file'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' diskFileName'
+                          ConditionalExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' vpath'
+                                Identifier: 'isAbsolute'
+                              Identifier: 'fileName'
+                            QuestionToken
+                            Identifier: ' fileName'
+                            ColonToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' vpath'
+                                Identifier: 'resolve'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    ThisKeyword
+                                    Identifier: 'vfs'
+                                  Identifier: 'cwd'
+                              Identifier: ' fileName'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' diskRelativeName'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' vpath'
+                              Identifier: 'relative'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'vfs'
+                                Identifier: 'cwd'
+                            Identifier: ' diskFileName'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'vfs'
+                              Identifier: 'ignoreCase'
+                    IfStatement
+                      BinaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'vpath'
+                            Identifier: 'isAbsolute'
+                          Identifier: 'diskRelativeName'
+                        BarBarToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' diskRelativeName'
+                            Identifier: 'startsWith'
+                          StringLiteral
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                        // If the generated output file resides in the parent folder or is rooted path,
+                        // we need to instead create files that can live in the project reference folder
+                        // but make sure extension of these files matches with the fileName the compiler asked to write
+                        diskRelativeName'
+                            EqualsToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'nonSubfolderDiskFiles'
+                                TemplateMiddle
+                              TemplateSpan
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'vpath'
+                                    Identifier: 'extname'
+                                  Identifier: 'fileName'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                                    StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'vfs'
+                                    Identifier: 'ignoreCase'
+                                TemplateTail
+                        ExpressionStatement
+                          PostfixUnaryExpression
+                            Identifier: '
+                        nonSubfolderDiskFiles'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' content'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' Utils'
+                              Identifier: 'removeTestPathPrefixes'
+                            PropertyAccessExpression
+                              Identifier: 'output'
+                              Identifier: 'text'
+                            TrueKeyword
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    Harness'
+                            Identifier: 'Baseline'
+                          Identifier: 'runBaseline'
+                        BinaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'getBaselineFolder'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'compilerResult'
+                              Identifier: 'moduleKind'
+                          PlusToken
+                          Identifier: ' diskRelativeName'
+                        AsExpression
+                          Identifier: ' content'
+                          UnionType
+                            StringKeyword
+                            LiteralType
+                              NullKeyword
+                  CatchClause
+                    VariableDeclaration
+                      Identifier: 'e'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    errs'
+                            Identifier: 'push'
+                          Identifier: 'e'
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'errs'
+                Identifier: 'length'
+              Block
+                ThrowStatement
+                  CallExpression
+                    Identifier: ' Error'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'errs'
+                        Identifier: 'join'
+                      StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifySourceMapRecord'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifyDeclarations'
+      Block
+        IfStatement
+          BinaryExpression
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'compilerResult'
+                  Identifier: 'errors'
+                Identifier: 'length'
+            AmpersandAmpersandToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'testCase'
+              Identifier: 'declaration'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' dTsCompileResult'
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'compileDeclarations'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'compilerResult'
+            IfStatement
+              BinaryExpression
+                Identifier: 'dTsCompileResult'
+                AmpersandAmpersandToken
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' dTsCompileResult'
+                    Identifier: 'errors'
+                  Identifier: 'length'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                Harness'
+                        Identifier: 'Baseline'
+                      Identifier: 'runBaseline'
+                    BinaryExpression
+                      BinaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'getBaselineFolder'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'compilerResult'
+                            Identifier: 'moduleKind'
+                        PlusToken
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'testCaseJustName'
+                      PlusToken
+                      StringLiteral
+                    CallExpression
+                      Identifier: ' getErrorsBaseline'
+                      Identifier: 'dTsCompileResult'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' getBaselineFolder'
+      Parameter
+        Identifier: 'moduleKind'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'ModuleKind'
+      Block
+        ReturnStatement
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  StringLiteral
+                  PlusToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'testCaseJustName'
+                PlusToken
+                StringLiteral
+              PlusToken
+              CallExpression
+                Identifier: ' moduleNameToString'
+                Identifier: 'moduleKind'
+            PlusToken
+            StringLiteral
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' cleanProjectUrl'
+      Parameter
+        Identifier: 'url'
+        StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' diskProjectPath'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'normalizeSlashes'
+                NonNullExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'Harness'
+                        Identifier: 'IO'
+                      Identifier: 'resolvePath'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'testCase'
+                      Identifier: 'projectRoot'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' projectRootUrl'
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                Identifier: ' diskProjectPath'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' normalizedProjectRoot'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'normalizeSlashes'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'testCase'
+                  Identifier: 'projectRoot'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        diskProjectPath'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' diskProjectPath'
+                Identifier: 'substr'
+              NumericLiteral
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' diskProjectPath'
+                  Identifier: 'lastIndexOf'
+                Identifier: 'normalizedProjectRoot'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        projectRootUrl'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' projectRootUrl'
+                Identifier: 'substr'
+              NumericLiteral
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' projectRootUrl'
+                  Identifier: 'lastIndexOf'
+                Identifier: 'normalizedProjectRoot'
+        IfStatement
+          BinaryExpression
+            Identifier: 'url'
+            AmpersandAmpersandToken
+            PropertyAccessExpression
+              Identifier: ' url'
+              Identifier: 'length'
+          Block
+            IfStatement
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'url'
+                    Identifier: 'indexOf'
+                  Identifier: 'projectRootUrl'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                // replace the disk specific project url path into project root url
+                url'
+                    EqualsToken
+                    BinaryExpression
+                      StringLiteral
+                      PlusToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' url'
+                          Identifier: 'substr'
+                        PropertyAccessExpression
+                          Identifier: 'projectRootUrl'
+                          Identifier: 'length'
+              IfStatement
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'url'
+                      Identifier: 'indexOf'
+                    Identifier: 'diskProjectPath'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                // Replace the disk specific path into the project root path
+                url'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' url'
+                          Identifier: 'substr'
+                        PropertyAccessExpression
+                          Identifier: 'diskProjectPath'
+                          Identifier: 'length'
+                  IfStatement
+                    BinaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'url'
+                          Identifier: 'charCodeAt'
+                        NumericLiteral
+                      ExclamationEqualsEqualsToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'CharacterCodes'
+                        Identifier: 'slash'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    url'
+                          EqualsToken
+                          BinaryExpression
+                            StringLiteral
+                            PlusToken
+                            Identifier: ' url'
+        ReturnStatement
+          Identifier: ' url'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' compileProjectFiles'
+      Parameter
+        Identifier: 'moduleKind'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'ModuleKind'
+      Parameter
+        Identifier: ' configFileSourceFiles'
+        TypeOperator
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'SourceFile'
+      Parameter
+        Identifier: ' getInputFiles'
+        FunctionType
+          TypeOperator
+            ArrayType
+              StringKeyword
+      Parameter
+        Identifier: ' compilerHost'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'CompilerHost'
+      Parameter
+        Identifier: ' compilerOptions'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'CompilerOptions'
+      TypeReference
+        Identifier: ' CompileProjectFilesResult'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' program'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'createProgram'
+                CallExpression
+                  Identifier: 'getInputFiles'
+                Identifier: ' compilerOptions'
+                Identifier: ' compilerHost'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' errors'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'getPreEmitDiagnostics'
+                Identifier: 'program'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' sourceMaps'
+                  Identifier: ' sourceMapData'
+                BindingElement
+                  Identifier: ' diagnostics'
+                  Identifier: ' emitDiagnostics'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' program'
+                  Identifier: 'emit'
+        IfStatement
+          Identifier: 'sourceMapData'
+          Block
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' data'
+              Identifier: ' sourceMapData'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                data'
+                      Identifier: 'sourceMap'
+                    EqualsToken
+                    ObjectLiteralExpression
+                      SpreadAssignment
+                        PropertyAccessExpression
+                          Identifier: 'data'
+                          Identifier: 'sourceMap'
+                      PropertyAssignment
+                        Identifier: '
+                    sources'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' data'
+                                Identifier: 'sourceMap'
+                              Identifier: 'sources'
+                            Identifier: 'map'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'source'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'cleanProjectUrl'
+                              Identifier: 'source'
+                      PropertyAssignment
+                        Identifier: '
+                    sourceRoot'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' data'
+                              Identifier: 'sourceMap'
+                            Identifier: 'sourceRoot'
+                          AmpersandAmpersandToken
+                          CallExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'cleanProjectUrl'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'data'
+                                Identifier: 'sourceMap'
+                              Identifier: 'sourceRoot'
+        ReturnStatement
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: '
+            configFileSourceFiles'
+            ShorthandPropertyAssignment
+              Identifier: '
+            moduleKind'
+            ShorthandPropertyAssignment
+              Identifier: '
+            program'
+            PropertyAssignment
+              Identifier: '
+            errors'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'concatenate'
+                Identifier: 'errors'
+                Identifier: ' emitDiagnostics'
+            ShorthandPropertyAssignment
+              Identifier: '
+            sourceMapData'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' compileDeclarations'
+      Parameter
+        Identifier: 'compilerResult'
+        TypeReference
+          Identifier: ' BatchCompileProjectTestCaseResult'
+      Block
+        IfStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'compilerResult'
+              Identifier: 'program'
+          Block
+            ReturnStatement
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' compilerOptions'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' compilerResult'
+                    Identifier: 'program'
+                  Identifier: 'getCompilerOptions'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' allInputFiles'
+              ArrayType
+                TypeReference
+                  QualifiedName
+                    Identifier: ' documents'
+                    Identifier: 'TextDocument'
+              ArrayLiteralExpression
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' rootFiles'
+              ArrayType
+                StringKeyword
+              ArrayLiteralExpression
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        ts'
+              Identifier: 'forEach'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'compilerResult'
+                  Identifier: 'program'
+                Identifier: 'getSourceFiles'
+            ArrowFunction
+              Parameter
+                Identifier: ' sourceFile'
+              EqualsGreaterThanToken
+              Block
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'sourceFile'
+                    Identifier: 'isDeclarationFile'
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'vpath'
+                            Identifier: 'isDefaultLibrary'
+                          PropertyAccessExpression
+                            Identifier: 'sourceFile'
+                            Identifier: 'fileName'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    allInputFiles'
+                              Identifier: 'unshift'
+                            NewExpression
+                              PropertyAccessExpression
+                                Identifier: ' documents'
+                                Identifier: 'TextDocument'
+                              PropertyAccessExpression
+                                Identifier: 'sourceFile'
+                                Identifier: 'fileName'
+                              PropertyAccessExpression
+                                Identifier: ' sourceFile'
+                                Identifier: 'text'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                rootFiles'
+                          Identifier: 'unshift'
+                        PropertyAccessExpression
+                          Identifier: 'sourceFile'
+                          Identifier: 'fileName'
+                  IfStatement
+                    PrefixUnaryExpression
+                      ParenthesizedExpression
+                        PropertyAccessExpression
+                          Identifier: 'compilerOptions'
+                          Identifier: 'outFile'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' emitOutputFilePathWithoutExtension'
+                            UnionType
+                              StringKeyword
+                              UndefinedKeyword
+                      IfStatement
+                        PropertyAccessExpression
+                          Identifier: 'compilerOptions'
+                          Identifier: 'outDir'
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' sourceFilePath'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'getNormalizedAbsolutePath'
+                                  PropertyAccessExpression
+                                    Identifier: 'sourceFile'
+                                    Identifier: 'fileName'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      NonNullExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' compilerResult'
+                                          Identifier: 'program'
+                                      Identifier: 'getCurrentDirectory'
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    sourceFilePath'
+                              EqualsToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sourceFilePath'
+                                  Identifier: 'replace'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    NonNullExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'compilerResult'
+                                        Identifier: 'program'
+                                    Identifier: 'getCommonSourceDirectory'
+                                StringLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    emitOutputFilePathWithoutExtension'
+                              EqualsToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'removeFileExtension'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'combinePaths'
+                                  PropertyAccessExpression
+                                    Identifier: 'compilerOptions'
+                                    Identifier: 'outDir'
+                                  Identifier: ' sourceFilePath'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    emitOutputFilePathWithoutExtension'
+                              EqualsToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'removeFileExtension'
+                                PropertyAccessExpression
+                                  Identifier: 'sourceFile'
+                                  Identifier: 'fileName'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' outputDtsFileName'
+                            BinaryExpression
+                              Identifier: ' emitOutputFilePathWithoutExtension'
+                              PlusToken
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'Extension'
+                                Identifier: 'Dts'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' file'
+                            CallExpression
+                              Identifier: ' findOutputDtsFile'
+                              Identifier: 'outputDtsFileName'
+                      IfStatement
+                        Identifier: 'file'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    allInputFiles'
+                                Identifier: 'unshift'
+                              Identifier: 'file'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    rootFiles'
+                                Identifier: 'unshift'
+                              BinaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'file'
+                                      Identifier: 'meta'
+                                    Identifier: 'get'
+                                  StringLiteral
+                                BarBarToken
+                                PropertyAccessExpression
+                                  Identifier: ' file'
+                                  Identifier: 'file'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' outputDtsFileName'
+                            BinaryExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'removeFileExtension'
+                                PropertyAccessExpression
+                                  Identifier: 'compilerOptions'
+                                  Identifier: 'outFile'
+                              PlusToken
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'Extension'
+                                Identifier: 'Dts'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' outputDtsFile'
+                            NonNullExpression
+                              CallExpression
+                                Identifier: ' findOutputDtsFile'
+                                Identifier: 'outputDtsFileName'
+                      IfStatement
+                        PrefixUnaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'contains'
+                            Identifier: 'allInputFiles'
+                            Identifier: ' outputDtsFile'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    allInputFiles'
+                                Identifier: 'unshift'
+                              Identifier: 'outputDtsFile'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    rootFiles'
+                                Identifier: 'unshift'
+                              BinaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'outputDtsFile'
+                                      Identifier: 'meta'
+                                    Identifier: 'get'
+                                  StringLiteral
+                                BarBarToken
+                                PropertyAccessExpression
+                                  Identifier: ' outputDtsFile'
+                                  Identifier: 'file'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _vfs'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' vfs'
+                  Identifier: 'createFromFileSystem'
+                PropertyAccessExpression
+                  Identifier: 'Harness'
+                  Identifier: 'IO'
+                FalseKeyword
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            documents'
+                    Identifier: ' allInputFiles'
+                  PropertyAssignment
+                    Identifier: '
+            cwd'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' vpath'
+                        Identifier: 'combine'
+                      PropertyAccessExpression
+                        Identifier: 'vfs'
+                        Identifier: 'srcFolder'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'testCase'
+                        Identifier: 'projectRoot'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' compilerHost'
+              NewExpression
+                Identifier: ' ProjectCompilerHost'
+                Identifier: '_vfs'
+                NonNullExpression
+                  PropertyAccessExpression
+                    Identifier: ' compilerResult'
+                    Identifier: 'compilerOptions'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'testCaseJustName'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'testCase'
+                PropertyAccessExpression
+                  Identifier: ' compilerResult'
+                  Identifier: 'moduleKind'
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'compileProjectFiles'
+            PropertyAccessExpression
+              Identifier: 'compilerResult'
+              Identifier: 'moduleKind'
+            PropertyAccessExpression
+              Identifier: ' compilerResult'
+              Identifier: 'configFileSourceFiles'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Identifier: ' rootFiles'
+            Identifier: ' compilerHost'
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: ' compilerResult'
+                Identifier: 'compilerOptions'
+        FunctionDeclaration
+          Identifier: ' findOutputDtsFile'
+          Parameter
+            Identifier: 'fileName'
+            StringKeyword
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'forEach'
+                PropertyAccessExpression
+                  Identifier: 'compilerResult'
+                  Identifier: 'outputFiles'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' outputFile'
+                  EqualsGreaterThanToken
+                  ConditionalExpression
+                    BinaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' outputFile'
+                            Identifier: 'meta'
+                          Identifier: 'get'
+                        StringLiteral
+                      EqualsEqualsEqualsToken
+                      Identifier: ' fileName'
+                    QuestionToken
+                    Identifier: ' outputFile'
+                    ColonToken
+                    Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' moduleNameToString'
+    Parameter
+      Identifier: 'moduleKind'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ModuleKind'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' moduleKind'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'ModuleKind'
+              Identifier: 'AMD'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          ConditionalExpression
+            BinaryExpression
+              Identifier: '
+        moduleKind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'ModuleKind'
+                Identifier: 'CommonJS'
+            QuestionToken
+            StringLiteral
+            ColonToken
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' getErrorsBaseline'
+    Parameter
+      Identifier: 'compilerResult'
+      TypeReference
+        Identifier: ' CompileProjectFilesResult'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inputSourceFiles'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' compilerResult'
+                  Identifier: 'configFileSourceFiles'
+                Identifier: 'slice'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'compilerResult'
+          Identifier: 'program'
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sourceFile'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' compilerResult'
+                  Identifier: 'program'
+                Identifier: 'getSourceFiles'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'Harness'
+                      Identifier: 'isDefaultLibraryFile'
+                    PropertyAccessExpression
+                      Identifier: 'sourceFile'
+                      Identifier: 'fileName'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                inputSourceFiles'
+                        Identifier: 'push'
+                      Identifier: 'sourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inputFiles'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' inputSourceFiles'
+                Identifier: 'map'
+              TypeReference
+                QualifiedName
+                  QualifiedName
+                    Identifier: 'Harness'
+                    Identifier: 'Compiler'
+                  Identifier: 'TestFile'
+              ArrowFunction
+                Parameter
+                  Identifier: 'sourceFile'
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+        unitName'
+                      ConditionalExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'isRootedDiskPath'
+                          PropertyAccessExpression
+                            Identifier: 'sourceFile'
+                            Identifier: 'fileName'
+                        QuestionToken
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            Harness'
+                              Identifier: 'RunnerBase'
+                            Identifier: 'removeFullPaths'
+                          PropertyAccessExpression
+                            Identifier: 'sourceFile'
+                            Identifier: 'fileName'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: '
+            sourceFile'
+                          Identifier: 'fileName'
+                    PropertyAssignment
+                      Identifier: '
+        content'
+                      PropertyAccessExpression
+                        Identifier: ' sourceFile'
+                        Identifier: 'text'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' Harness'
+              Identifier: 'Compiler'
+            Identifier: 'getErrorBaseline'
+          Identifier: 'inputFiles'
+          PropertyAccessExpression
+            Identifier: ' compilerResult'
+            Identifier: 'errors'
+  FunctionDeclaration
+    Identifier: ' createCompilerOptions'
+    Parameter
+      Identifier: 'testCase'
+      IntersectionType
+        TypeReference
+          Identifier: ' ProjectRunnerTestCase'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'CompilerOptions'
+    Parameter
+      Identifier: ' moduleKind'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ModuleKind'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' compilerOptions'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'CompilerOptions'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        noErrorTruncation'
+                FalseKeyword
+              PropertyAssignment
+                Identifier: '
+        skipDefaultLibCheck'
+                FalseKeyword
+              PropertyAssignment
+                Identifier: '
+        moduleResolution'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'ModuleResolutionKind'
+                  Identifier: 'Classic'
+              PropertyAssignment
+                Identifier: '
+        module'
+                Identifier: ' moduleKind'
+              PropertyAssignment
+                Identifier: '
+        newLine'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'NewLineKind'
+                  Identifier: 'CarriageReturnLineFeed'
+              PropertyAssignment
+                Identifier: '
+        mapRoot'
+                ConditionalExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' testCase'
+                      Identifier: 'resolveMapRoot'
+                    AmpersandAmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' testCase'
+                      Identifier: 'mapRoot'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' vpath'
+                      Identifier: 'resolve'
+                    PropertyAccessExpression
+                      Identifier: 'vfs'
+                      Identifier: 'srcFolder'
+                    PropertyAccessExpression
+                      Identifier: ' testCase'
+                      Identifier: 'mapRoot'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' testCase'
+                    Identifier: 'mapRoot'
+              PropertyAssignment
+                Identifier: '
+
+        sourceRoot'
+                ConditionalExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' testCase'
+                      Identifier: 'resolveSourceRoot'
+                    AmpersandAmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' testCase'
+                      Identifier: 'sourceRoot'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' vpath'
+                      Identifier: 'resolve'
+                    PropertyAccessExpression
+                      Identifier: 'vfs'
+                      Identifier: 'srcFolder'
+                    PropertyAccessExpression
+                      Identifier: ' testCase'
+                      Identifier: 'sourceRoot'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' testCase'
+                    Identifier: 'sourceRoot'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' optionNameMap'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'arrayToMap'
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'optionDeclarations'
+              ArrowFunction
+                Parameter
+                  Identifier: ' option'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' option'
+                  Identifier: 'name'
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' name'
+        Identifier: ' testCase'
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'name'
+                ExclamationEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' name'
+                ExclamationEqualsEqualsToken
+                StringLiteral
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' option'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' optionNameMap'
+                        Identifier: 'get'
+                      Identifier: 'name'
+              IfStatement
+                Identifier: 'option'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' optType'
+                        PropertyAccessExpression
+                          Identifier: ' option'
+                          Identifier: 'type'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' value'
+                        AsExpression
+                          ElementAccessExpression
+                            Identifier: ' testCase'
+                            Identifier: 'name'
+                          AnyKeyword
+                  IfStatement
+                    PrefixUnaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'isString'
+                        Identifier: 'optType'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' key'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' value'
+                                Identifier: 'toLowerCase'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' optTypeValue'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' optType'
+                                Identifier: 'get'
+                              Identifier: 'key'
+                      IfStatement
+                        Identifier: 'optTypeValue'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                        value'
+                              EqualsToken
+                              Identifier: ' optTypeValue'
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+                compilerOptions'
+                        PropertyAccessExpression
+                          Identifier: 'option'
+                          Identifier: 'name'
+                      EqualsToken
+                      Identifier: ' value'
+      ReturnStatement
+        Identifier: ' compilerOptions'

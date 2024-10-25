@@ -1,0 +1,49 @@
+SourceFile
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    Identifier: ' String'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    WScript'
+            Identifier: 'Echo'
+          Identifier: 'x'
+  ForInStatement
+    Identifier: 'x'
+    Identifier: ' String'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    WScript'
+            Identifier: 'Echo'
+          Identifier: 'x'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+    Identifier: ' String'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    WScript'
+            Identifier: 'Echo'
+          Identifier: 'x2'
+  ForInStatement
+    Identifier: 'x'
+    Identifier: ' String'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    WScript'
+            Identifier: 'Echo'
+          Identifier: 'x'

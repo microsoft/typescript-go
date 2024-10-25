@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    print'
+      Block
+        ReturnStatement
+          StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              ParenthesizedExpression
+                AwaitExpression
+                  CallExpression
+                    ImportKeyword
+                    StringLiteral
+              Identifier: 'B'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NewExpression
+              Identifier: ' C'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    c'
+            Identifier: 'print'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'

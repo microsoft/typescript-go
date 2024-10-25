@@ -1,0 +1,18 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' x'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' c'
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' a'
+        QualifiedName
+          Identifier: ' x'
+          Identifier: 'c'
+      ExportAssignment
+        Identifier: ' x'

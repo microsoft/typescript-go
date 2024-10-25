@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      NumericLiteral

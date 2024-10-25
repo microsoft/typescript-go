@@ -1,0 +1,9 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' n'
+            Block

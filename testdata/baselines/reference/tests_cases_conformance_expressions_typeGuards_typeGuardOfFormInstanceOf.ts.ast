@@ -1,0 +1,299 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    p1'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    p2'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' D1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    p3'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      Identifier: '
+    p4'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNum'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctor1'
+        UnionType
+          TypeReference
+            Identifier: ' C1'
+          TypeReference
+            Identifier: ' C2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+str'
+      EqualsToken
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' ctor1'
+          InstanceOfKeyword
+          Identifier: ' C1'
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          Identifier: ' ctor1'
+          Identifier: 'p1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // C1
+num'
+      EqualsToken
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' ctor1'
+          InstanceOfKeyword
+          Identifier: ' C2'
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          Identifier: ' ctor1'
+          Identifier: 'p2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // C2
+str'
+      EqualsToken
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' ctor1'
+          InstanceOfKeyword
+          Identifier: ' D1'
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          Identifier: ' ctor1'
+          Identifier: 'p1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // D1
+num'
+      EqualsToken
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' ctor1'
+          InstanceOfKeyword
+          Identifier: ' D1'
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          Identifier: ' ctor1'
+          Identifier: 'p3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctor2'
+        UnionType
+          TypeReference
+            Identifier: ' C2'
+          TypeReference
+            Identifier: ' D1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+num'
+      EqualsToken
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' ctor2'
+          InstanceOfKeyword
+          Identifier: ' C2'
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          Identifier: ' ctor2'
+          Identifier: 'p2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // C2
+num'
+      EqualsToken
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' ctor2'
+          InstanceOfKeyword
+          Identifier: ' D1'
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          Identifier: ' ctor2'
+          Identifier: 'p3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // D1
+str'
+      EqualsToken
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' ctor2'
+          InstanceOfKeyword
+          Identifier: ' D1'
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          Identifier: ' ctor2'
+          Identifier: 'p1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        UnionType
+          TypeReference
+            Identifier: ' D1'
+          TypeReference
+            Identifier: ' C2'
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' ctor2'
+            InstanceOfKeyword
+            Identifier: ' C1'
+          AmpersandAmpersandToken
+          Identifier: ' ctor2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctor3'
+        UnionType
+          TypeReference
+            Identifier: ' C1'
+          TypeReference
+            Identifier: ' C2'
+  IfStatement
+    BinaryExpression
+      Identifier: 'ctor3'
+      InstanceOfKeyword
+      Identifier: ' C1'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    ctor3'
+          Identifier: 'p1'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    ctor3'
+          Identifier: 'p2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctor4'
+        UnionType
+          TypeReference
+            Identifier: ' C1'
+          TypeReference
+            Identifier: ' C2'
+          TypeReference
+            Identifier: ' C3'
+  IfStatement
+    BinaryExpression
+      Identifier: 'ctor4'
+      InstanceOfKeyword
+      Identifier: ' C1'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    ctor4'
+          Identifier: 'p1'
+    IfStatement
+      BinaryExpression
+        Identifier: 'ctor4'
+        InstanceOfKeyword
+        Identifier: ' C2'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+    ctor4'
+            Identifier: 'p2'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+    ctor4'
+            Identifier: 'p4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctor5'
+        UnionType
+          TypeReference
+            Identifier: ' C1'
+          TypeReference
+            Identifier: ' D1'
+          TypeReference
+            Identifier: ' C2'
+  IfStatement
+    BinaryExpression
+      Identifier: 'ctor5'
+      InstanceOfKeyword
+      Identifier: ' C1'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    ctor5'
+          Identifier: 'p1'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    ctor5'
+          Identifier: 'p2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctor6'
+        UnionType
+          TypeReference
+            Identifier: ' C1'
+          TypeReference
+            Identifier: ' C2'
+          TypeReference
+            Identifier: ' C3'
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: 'ctor6'
+        InstanceOfKeyword
+        Identifier: ' C1'
+      BarBarToken
+      BinaryExpression
+        Identifier: ' ctor6'
+        InstanceOfKeyword
+        Identifier: ' C2'
+    Block
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    ctor6'
+          Identifier: 'p4'

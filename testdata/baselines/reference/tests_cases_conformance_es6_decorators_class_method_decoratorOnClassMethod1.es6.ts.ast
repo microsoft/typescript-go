@@ -1,0 +1,30 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'target'
+      AnyKeyword
+    Parameter
+      Identifier: ' propertyKey'
+      StringKeyword
+    Parameter
+      Identifier: ' descriptor'
+      TypeReference
+        Identifier: ' TypedPropertyDescriptor'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' TypedPropertyDescriptor'
+      TypeReference
+        Identifier: 'T'
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    MethodDeclaration
+      Decorator
+        Identifier: 'dec'
+      Identifier: ' method'
+      Block

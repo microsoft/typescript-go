@@ -1,0 +1,151 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        TypeQuery
+          Identifier: ' M'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        Identifier: ' M'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        PropertyAccessExpression
+          Identifier: ' m'
+          Identifier: 'a'
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        ModuleBlock
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' Origin'
+            TypeReference
+              Identifier: ' Point'
+            Block
+              ReturnStatement
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' x'
+                    NumericLiteral
+                  PropertyAssignment
+                    Identifier: ' y'
+                    NumericLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            Identifier: ' M2'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' Origin'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' y'
+                NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        TypeQuery
+          QualifiedName
+            Identifier: ' M2'
+            Identifier: 'Point'
+  ModuleDeclaration
+    Identifier: ' M3'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Utils'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' Point'
+            PropertySignature
+              Identifier: '
+            x'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' y'
+              NumberKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Utils'
+        PropertyDeclaration
+          Identifier: '
+        name'
+          StringKeyword

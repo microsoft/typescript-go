@@ -1,0 +1,18 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////interface Number {
+////    /*definition*/myObjectMethod(): number;
+////}
+////
+////var o = 0;
+////o.[|/*reference1*/myObjectMethod|]();
+////o[[|"/*reference2*/myObjectMethod"|]]();
+
+verify'
+        Identifier: 'baselineGoToDefinition'
+      StringLiteral
+      StringLiteral

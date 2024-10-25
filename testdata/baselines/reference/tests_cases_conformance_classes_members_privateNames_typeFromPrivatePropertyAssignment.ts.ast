@@ -1,0 +1,47 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' foo'
+        QuestionToken
+        StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+      QuestionToken
+      TypeReference
+        Identifier: ' Foo'
+    PropertyDeclaration
+      PrivateIdentifier
+      QuestionToken
+      TypeReference
+        Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+
+    m'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+                BarBarToken
+                ObjectLiteralExpression
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+              BarBarToken
+              ObjectLiteralExpression

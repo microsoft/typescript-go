@@ -1,0 +1,88 @@
+SourceFile
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          ObjectBindingPattern
+            BindingElement
+              DotDotDotToken
+              Identifier: 'props'
+          ObjectLiteralExpression
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' t1'
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                SymbolKeyword
+              UnknownKeyword
+          Identifier: ' props'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' t2'
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                SymbolKeyword
+              UnknownKeyword
+          ObjectLiteralExpression
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          ObjectBindingPattern
+            BindingElement
+              DotDotDotToken
+              Identifier: 'props'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: ' c'
+              StringLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' t1'
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              UnionType
+                NumberKeyword
+                BooleanKeyword
+                StringKeyword
+          Identifier: ' props'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' t2'
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              UnionType
+                NumberKeyword
+                BooleanKeyword
+                StringKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: ' c'
+              StringLiteral
+    EmptyStatement

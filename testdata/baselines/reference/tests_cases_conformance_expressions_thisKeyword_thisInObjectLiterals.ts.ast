@@ -1,0 +1,62 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyClass'
+    PropertyDeclaration
+      Identifier: '
+    t'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+
+    fn'
+      Block
+        TypeAliasDeclaration
+          Identifier: ' ContainingThis'
+          ThisType
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' t'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' x'
+                  ThisKeyword
+                PropertyAssignment
+                  Identifier: ' y'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 't'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' t'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  TypeReference
+                    Identifier: ' ContainingThis'
+                PropertySignature
+                  Identifier: ' y'
+                  NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    f'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'spaaace'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' f'
+            FunctionType
+              AnyKeyword

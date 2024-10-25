@@ -1,0 +1,42 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '// @allowJs: true
+// @checkJs: true
+// @target: es5
+// @outDir: ./out
+// @declaration: true
+// @filename: jsDeclarationsExportAssignedConstructorFunction.js
+/** @constructor */
+module'
+          Identifier: 'exports'
+        Identifier: 'MyClass'
+      EqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'x'
+              EqualsToken
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+module'
+            Identifier: 'exports'
+          Identifier: 'MyClass'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    a'
+          FunctionExpression
+            Block

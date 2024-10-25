@@ -1,0 +1,518 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        ObjectLiteralExpression
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'dispose'
+            Block
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d2'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' af'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d3'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+      ExpressionStatement
+        AwaitExpression
+          NullKeyword
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d4'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+      ExpressionStatement
+        YieldExpression
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' ag'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d5'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+      ExpressionStatement
+        YieldExpression
+      ExpressionStatement
+        AwaitExpression
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' d6'
+                  ObjectLiteralExpression
+                    MethodDeclaration
+                      ComputedPropertyName
+                        PropertyAccessExpression
+                          Identifier: 'Symbol'
+                          Identifier: 'dispose'
+                      Block
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' d7'
+                ObjectLiteralExpression
+                  MethodDeclaration
+                    ComputedPropertyName
+                      PropertyAccessExpression
+                        Identifier: 'Symbol'
+                        Identifier: 'dispose'
+                    Block
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d8'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+    ClassStaticBlockDeclaration
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d9'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+    MethodDeclaration
+      Identifier: '
+
+    m'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d10'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+    GetAccessor
+      Identifier: ' x'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d11'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'v'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d12'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' am'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d13'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+        ExpressionStatement
+          AwaitExpression
+            NullKeyword
+    MethodDeclaration
+      AsteriskToken
+      Identifier: ' g'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d14'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+        ExpressionStatement
+          YieldExpression
+    MethodDeclaration
+      AsyncKeyword
+      AsteriskToken
+      Identifier: ' ag'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d15'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+        ExpressionStatement
+          YieldExpression
+        ExpressionStatement
+          AwaitExpression
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d16'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' C3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      NumericLiteral
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d17'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d18'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' d19'
+          ObjectLiteralExpression
+            MethodDeclaration
+              ComputedPropertyName
+                PropertyAccessExpression
+                  Identifier: 'Symbol'
+                  Identifier: 'dispose'
+              Block
+  SwitchStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'Math'
+        Identifier: 'random'
+    CaseBlock
+      CaseClause
+        NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d20'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+        BreakStatement
+      CaseClause
+        NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d21'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+        BreakStatement
+  IfStatement
+    TrueKeyword
+    SwitchStatement
+      NumericLiteral
+      CaseBlock
+        CaseClause
+          NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' d22'
+                ObjectLiteralExpression
+                  MethodDeclaration
+                    ComputedPropertyName
+                      PropertyAccessExpression
+                        Identifier: 'Symbol'
+                        Identifier: 'dispose'
+                    Block
+          BreakStatement
+  TryStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d23'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+    CatchClause
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d24'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d25'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+  IfStatement
+    TrueKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d26'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d27'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+  WhileStatement
+    TrueKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d28'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+      BreakStatement
+  DoStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d29'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+      BreakStatement
+    TrueKeyword
+  ForStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d30'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+      BreakStatement
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ObjectLiteralExpression
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d31'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ArrayLiteralExpression
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d32'
+            ObjectLiteralExpression
+              MethodDeclaration
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'Symbol'
+                    Identifier: 'dispose'
+                Block
+  ExportDeclaration
+    NamedExports

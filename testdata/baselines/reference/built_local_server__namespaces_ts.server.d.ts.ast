@@ -1,0 +1,36 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' protocol'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' protocol'
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral

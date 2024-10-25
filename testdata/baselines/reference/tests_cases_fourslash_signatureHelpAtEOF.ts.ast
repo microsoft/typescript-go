@@ -1,0 +1,34 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////function Foo(arg1: string, arg2: string) {
+////}
+////
+////Foo(/**/
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    parameterCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    parameterSpan'
+          StringLiteral

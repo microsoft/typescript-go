@@ -1,0 +1,59 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' defineCommonExtensionSymbols'
+    Parameter
+      Identifier: 'apiPrivate'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    /** @enum {string} */
+    apiPrivate'
+            Identifier: 'Events'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+      ButtonClicked'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      PanelObjectSelected'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      NetworkRequestFinished'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      OpenResource'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      PanelSearch'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      RecordingStarted'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      RecordingStopped'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      ResourceAdded'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      ResourceContentCommitted'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      ViewShown'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+      ViewHidden'
+              StringLiteral

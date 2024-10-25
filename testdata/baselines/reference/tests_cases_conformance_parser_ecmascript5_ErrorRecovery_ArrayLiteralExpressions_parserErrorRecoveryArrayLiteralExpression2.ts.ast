@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' points'
+        ArrayLiteralExpression
+          PrefixUnaryExpression
+            NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          PrefixUnaryExpression
+            NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          PrefixUnaryExpression
+            NumericLiteral

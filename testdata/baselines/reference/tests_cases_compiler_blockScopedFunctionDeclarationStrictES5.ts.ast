@@ -1,0 +1,17 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  IfStatement
+    TrueKeyword
+    Block
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // Error to declare function in block scope
+    foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'

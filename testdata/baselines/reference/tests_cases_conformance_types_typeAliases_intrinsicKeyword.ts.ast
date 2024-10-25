@@ -1,0 +1,82 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        TypeReference
+          Identifier: ' intrinsic'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' intrinsic'
+            TypeReference
+              Identifier: ' intrinsic'
+  TypeAliasDeclaration
+    Identifier: ' TE1'
+    ParenthesizedType
+      TypeReference
+        Identifier: 'intrinsic'
+  TypeAliasDeclaration
+    Identifier: ' TE2'
+    TypeParameter
+      Identifier: 'intrinsic'
+    IntrinsicKeyword
+  TypeAliasDeclaration
+    Identifier: ' TE3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' intrinsic'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' TE4'
+    TypeParameter
+      Identifier: 'intrinsic'
+      TypeReference
+        Identifier: ' intrinsic'
+    IntrinsicKeyword
+  TypeAliasDeclaration
+    Identifier: ' TE5'
+    TypeParameter
+      Identifier: 'intrinsic'
+      TypeReference
+        Identifier: ' intrinsic'
+    ParenthesizedType
+      TypeReference
+        Identifier: 'intrinsic'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' intrinsic'
+            TypeReference
+              QualifiedName
+                Identifier: ' intrinsic'
+                Identifier: 'intrinsic'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'intrinsic'
+      StringKeyword
+    Block
+      ReturnStatement
+        Identifier: ' intrinsic'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' intrinsic'
+        StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s1'
+            TypeReference
+              Identifier: ' intrinsic'
+            StringLiteral

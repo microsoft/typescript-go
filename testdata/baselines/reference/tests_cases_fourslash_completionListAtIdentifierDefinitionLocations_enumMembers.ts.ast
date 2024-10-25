@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////var aa = 1;
+
+////enum a { /*enumValueName1*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'markers'
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'

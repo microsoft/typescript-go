@@ -1,0 +1,97 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' a'
+        StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' acceptA'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+    Block
+  FunctionDeclaration
+    Identifier: ' acceptB'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'b'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'T'
+    Block
+  FunctionDeclaration
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'T'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          InstanceOfKeyword
+          Identifier: ' B'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        acceptA'
+              Identifier: 'x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          InstanceOfKeyword
+          Identifier: ' A'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        acceptA'
+              Identifier: 'x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          InstanceOfKeyword
+          Identifier: ' B'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        acceptB'
+              Identifier: 'x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          InstanceOfKeyword
+          Identifier: ' B'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        acceptB'
+              Identifier: 'x'

@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyBrand'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _a'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' test'
+    Parameter
+      Identifier: 'strInput'
+      IntersectionType
+        StringKeyword
+        TypeReference
+          Identifier: ' MyBrand'
+    Block
+      SwitchStatement
+        Identifier: 'strInput'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              NumericLiteral
+      ReturnStatement
+        NumericLiteral

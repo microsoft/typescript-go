@@ -1,0 +1,24 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  WithStatement
+    Identifier: 'x'
+    Block
+      FunctionDeclaration
+        Identifier: ' f'
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            CallExpression
+              Identifier: ' f'
+              NumericLiteral

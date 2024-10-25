@@ -1,0 +1,79 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        CallExpression
+          Identifier: ' classification'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'syntacticClassificationsAre'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c1'
+          Identifier: 'numericLiteral'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c1'
+          Identifier: 'keyword'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c1'
+          Identifier: 'keyword'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c1'
+          Identifier: 'punctuation'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        CallExpression
+          Identifier: ' classification'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'syntacticClassificationsAre'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c2'
+          Identifier: 'semanticToken'
+        StringLiteral
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c2'
+          Identifier: 'semanticToken'
+        StringLiteral
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c2'
+          Identifier: 'semanticToken'
+        StringLiteral
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c2'
+          Identifier: 'semanticToken'
+        StringLiteral
+        StringLiteral

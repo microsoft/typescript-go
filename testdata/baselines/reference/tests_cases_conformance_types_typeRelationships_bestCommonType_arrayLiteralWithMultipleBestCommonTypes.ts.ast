@@ -1,0 +1,157 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            QuestionToken
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' z'
+            QuestionToken
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' a'
+            QuestionToken
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' as'
+        ArrayLiteralExpression
+          Identifier: 'a'
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bs'
+        ArrayLiteralExpression
+          Identifier: 'b'
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cs'
+        ArrayLiteralExpression
+          Identifier: 'a'
+          Identifier: ' b'
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ds'
+        ArrayLiteralExpression
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Object'
+            EqualsGreaterThanToken
+            NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            EqualsGreaterThanToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' es'
+        ArrayLiteralExpression
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            EqualsGreaterThanToken
+            NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Object'
+            EqualsGreaterThanToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fs'
+        ArrayLiteralExpression
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  NumberKeyword
+                PropertySignature
+                  Identifier: ' y'
+                  QuestionToken
+                  NumberKeyword
+            EqualsGreaterThanToken
+            NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'b'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  NumberKeyword
+                PropertySignature
+                  Identifier: ' z'
+                  QuestionToken
+                  NumberKeyword
+            EqualsGreaterThanToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' gs'
+        ArrayLiteralExpression
+          ArrowFunction
+            Parameter
+              Identifier: 'b'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  NumberKeyword
+                PropertySignature
+                  Identifier: ' z'
+                  QuestionToken
+                  NumberKeyword
+            EqualsGreaterThanToken
+            NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  NumberKeyword
+                PropertySignature
+                  Identifier: ' y'
+                  QuestionToken
+                  NumberKeyword
+            EqualsGreaterThanToken
+            NumericLiteral

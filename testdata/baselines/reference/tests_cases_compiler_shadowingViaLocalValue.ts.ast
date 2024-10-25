@@ -1,0 +1,24 @@
+SourceFile
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x1'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            NumericLiteral
+        EmptyStatement

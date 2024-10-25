@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' baz'
+        TypeReference
+          Identifier: ' foo'
+  ClassDeclaration
+    Identifier: ' baz'
+  ClassDeclaration
+    Identifier: ' foo'

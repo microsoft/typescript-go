@@ -1,0 +1,65 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      TypeReference
+        Identifier: ' B'
+  EmptyStatement
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' a'
+  InterfaceDeclaration
+    Identifier: ' B'
+    CallSignature
+      TypeReference
+        Identifier: ' C'
+  EmptyStatement
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          Identifier: ' b'
+  InterfaceDeclaration
+    Identifier: ' C'
+    CallSignature
+      TypeReference
+        Identifier: ' A'
+  EmptyStatement
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        CallExpression
+          Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      Identifier: ' y'

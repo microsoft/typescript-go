@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////class C {
+////    caller = () => {
+////        this.callee();
+////    }
+////
+////    /**/callee = () => {
+////    }
+////}
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineCallHierarchy'

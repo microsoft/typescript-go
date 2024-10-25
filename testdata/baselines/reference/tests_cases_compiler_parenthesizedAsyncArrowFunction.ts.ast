@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ParenthesizedExpression
+          ArrowFunction
+            AsyncKeyword
+            Parameter
+              Identifier: ' bar'
+            EqualsGreaterThanToken
+            Identifier: ' bar'

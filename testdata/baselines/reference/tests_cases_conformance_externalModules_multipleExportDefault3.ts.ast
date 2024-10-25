@@ -1,0 +1,11 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: '
+    uhoh'
+        StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' C'

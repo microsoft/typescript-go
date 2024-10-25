@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Greeter'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' greet'
+      StringKeyword
+      Block
+        ThrowStatement
+          StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' greeting'
+      StringKeyword
+      Block
+        ThrowStatement
+          StringLiteral

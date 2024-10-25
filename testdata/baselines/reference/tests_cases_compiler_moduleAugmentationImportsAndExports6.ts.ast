@@ -1,0 +1,128 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'A'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'B'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+A'
+          Identifier: 'prototype'
+        Identifier: 'foo'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' N'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Ifc'
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Cls'
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+  ImportEqualsDeclaration
+    Identifier: ' I'
+    QualifiedName
+      Identifier: ' N'
+      Identifier: 'Ifc'
+  ImportEqualsDeclaration
+    Identifier: ' C'
+    QualifiedName
+      Identifier: ' N'
+      Identifier: 'Cls'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        MethodSignature
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' B'
+        MethodSignature
+          Identifier: '
+        bar'
+          TypeReference
+            Identifier: ' I'
+        MethodSignature
+          Identifier: '
+        baz'
+          TypeReference
+            Identifier: ' C'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'A'
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'foo'
+          Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'bar'
+          Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'baz'
+          Identifier: 'b'

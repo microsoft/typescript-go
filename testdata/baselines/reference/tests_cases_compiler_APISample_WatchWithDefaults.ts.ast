@@ -1,0 +1,146 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        AnyKeyword
+  ImportEqualsDeclaration
+    Identifier: ' ts'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' watchMain'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' configPath'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'findConfigFile'
+              StringLiteral
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'sys'
+                Identifier: 'fileExists'
+              StringLiteral
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'configPath'
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createWatchCompilerHost'
+              Identifier: 'configPath'
+              ObjectLiteralExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'sys'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' origCreateProgram'
+            PropertyAccessExpression
+              Identifier: ' host'
+              Identifier: 'createProgram'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'createProgram'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: 'rootNames'
+            Parameter
+              Identifier: ' options'
+            Parameter
+              Identifier: ' host'
+            Parameter
+              Identifier: ' oldProgram'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        console'
+                    Identifier: 'log'
+                  StringLiteral
+              ReturnStatement
+                CallExpression
+                  Identifier: ' origCreateProgram'
+                  Identifier: 'rootNames'
+                  Identifier: ' options'
+                  Identifier: ' host'
+                  Identifier: ' oldProgram'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' origPostProgramCreate'
+            PropertyAccessExpression
+              Identifier: ' host'
+              Identifier: 'afterProgramCreate'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    host'
+            Identifier: 'afterProgramCreate'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' program'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        console'
+                    Identifier: 'log'
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  NonNullExpression
+                    Identifier: '
+        origPostProgramCreate'
+                  Identifier: 'program'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // `createWatchProgram` creates an initial program, watches files, and updates the program over time.
+    ts'
+            Identifier: 'createWatchProgram'
+          Identifier: 'host'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+watchMain'

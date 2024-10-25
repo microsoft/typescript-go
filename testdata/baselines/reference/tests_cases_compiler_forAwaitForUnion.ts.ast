@@ -1,0 +1,25 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'source'
+      UnionType
+        TypeReference
+          Identifier: ' Iterable'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' AsyncIterable'
+          TypeReference
+            Identifier: 'T'
+    Block
+      ForOfStatement
+        AwaitKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        Identifier: ' source'
+        Block

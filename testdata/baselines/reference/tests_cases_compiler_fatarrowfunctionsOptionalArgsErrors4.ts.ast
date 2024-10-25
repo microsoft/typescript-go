@@ -1,0 +1,181 @@
+SourceFile
+  ExpressionStatement
+    ConditionalExpression
+      FalseKeyword
+      QuestionToken
+      ArrowFunction
+        Parameter
+          Identifier: 'arg'
+          QuestionToken
+          NumberKeyword
+          NumericLiteral
+        EqualsGreaterThanToken
+        NumericLiteral
+      ColonToken
+      NullKeyword
+  ExpressionStatement
+    ConditionalExpression
+      FalseKeyword
+      QuestionToken
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'arg'
+            QuestionToken
+            NumberKeyword
+            NumericLiteral
+          EqualsGreaterThanToken
+          NumericLiteral
+      ColonToken
+      NullKeyword
+  ExpressionStatement
+    ConditionalExpression
+      FalseKeyword
+      QuestionToken
+      NullKeyword
+      ColonToken
+      ArrowFunction
+        Parameter
+          Identifier: 'arg'
+          QuestionToken
+          NumberKeyword
+          NumericLiteral
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        ParenthesizedExpression
+          ArrowFunction
+            Parameter
+              Identifier: 'arg'
+              QuestionToken
+              NumberKeyword
+              NumericLiteral
+            EqualsGreaterThanToken
+            NumericLiteral
+        PlusToken
+        StringLiteral
+      PlusToken
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'arg'
+            QuestionToken
+            NumberKeyword
+            NumericLiteral
+          EqualsGreaterThanToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+    foo'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        EqualsGreaterThanToken
+        NumericLiteral
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+          QuestionToken
+        EqualsGreaterThanToken
+        NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        Parameter
+          Identifier: ' b'
+          QuestionToken
+        EqualsGreaterThanToken
+        NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+          NumericLiteral
+        EqualsGreaterThanToken
+        NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+          NumericLiteral
+        EqualsGreaterThanToken
+        NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+          QuestionToken
+          NumberKeyword
+          NumericLiteral
+        EqualsGreaterThanToken
+        NumericLiteral
+      ArrowFunction
+        Parameter
+          DotDotDotToken
+          Identifier: 'a'
+          ArrayType
+            NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        Parameter
+          Identifier: ' b'
+          QuestionToken
+          NumericLiteral
+        Parameter
+          DotDotDotToken
+          Identifier: 'c'
+          ArrayType
+            NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        EqualsGreaterThanToken
+        ArrowFunction
+          Parameter
+            Identifier: 'b'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'c'
+            EqualsGreaterThanToken
+            NumericLiteral
+      ConditionalExpression
+        FalseKeyword
+        QuestionToken
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          NumericLiteral
+        ColonToken
+        ArrowFunction
+          Parameter
+            Identifier: 'b'
+          EqualsGreaterThanToken
+          NumericLiteral

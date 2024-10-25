@@ -1,0 +1,42 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' In'
+        ImportSpecifier
+          Identifier: ' Out'
+        ImportSpecifier
+          Identifier: ' Base'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' object'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+  doThing'
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' Base'
+            Parameter
+              Identifier: '_t'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' _in'
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' In'
+                TypeReference
+                  Identifier: 'T'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' Out'
+              TypeReference
+                Identifier: 'T'
+            Block
+              ReturnStatement

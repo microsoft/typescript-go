@@ -1,0 +1,54 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Keyboard'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' Key'
+        EnumMember
+          Identifier: ' UP'
+        EnumMember
+          Identifier: ' DOWN'
+        EnumMember
+          Identifier: ' LEFT'
+        EnumMember
+          Identifier: ' RIGHT'
+  ModuleDeclaration
+    Identifier: ' App'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' Key'
+        QualifiedName
+          Identifier: ' Keyboard'
+          Identifier: 'Key'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'key'
+          TypeReference
+            Identifier: ' Key'
+        VoidKeyword
+        Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+  foo'
+          PropertyAccessExpression
+            Identifier: 'Key'
+            Identifier: 'UP'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  foo'
+          PropertyAccessExpression
+            Identifier: 'Key'
+            Identifier: 'DOWN'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  foo'
+          PropertyAccessExpression
+            Identifier: 'Key'
+            Identifier: 'LEFT'

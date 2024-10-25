@@ -1,0 +1,468 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xx'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' yy'
+        AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fn'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            ArrayType
+              AnyKeyword
+            ArrayLiteralExpression
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'arr'
+          Identifier: 'length'
+        CaseBlock
+          CaseClause
+            BinaryExpression
+              NumericLiteral
+              CommaToken
+              NumericLiteral
+            ReturnStatement
+              StringLiteral
+          DefaultClause
+            ReturnStatement
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Math'
+            Identifier: 'pow'
+          ParenthesizedExpression
+            BinaryExpression
+              NumericLiteral
+              CommaToken
+              NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrayLiteralExpression
+          ParenthesizedExpression
+            BinaryExpression
+              NumericLiteral
+              PlusToken
+              NumericLiteral
+          ParenthesizedExpression
+            BinaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  BinaryExpression
+                    NumericLiteral
+                    PlusToken
+                    NumericLiteral
+                  CommaToken
+                  NumericLiteral
+              AsteriskToken
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Error cases
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          Identifier: ' xx'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          RegularExpressionLiteral
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: '
+xx'
+        EqualsToken
+        ParenthesizedExpression
+          BinaryExpression
+            NoSubstitutionTemplateLiteral
+            CommaToken
+            StringLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: '
+xx'
+        EqualsToken
+        ParenthesizedExpression
+          BinaryExpression
+            TrueKeyword
+            CommaToken
+            FalseKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          FalseKeyword
+          CommaToken
+          TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          NullKeyword
+          CommaToken
+          Identifier: ' xx'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'undefined'
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+          CommaToken
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          FunctionExpression
+            Block
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          ObjectLiteralExpression
+          CommaToken
+          ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' xx'
+          CommaToken
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+            PostfixUnaryExpression
+              Identifier: ' x'
+          CommaToken
+          Identifier: ' xx'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          NonNullExpression
+            Identifier: 'xx'
+          CommaToken
+          Identifier: ' xx'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          ConditionalExpression
+            Identifier: 'xx'
+            QuestionToken
+            NumericLiteral
+            ColonToken
+            NumericLiteral
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            NumericLiteral
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'xx'
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'xx'
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'xx'
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'xx'
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      CallExpression
+        ParenthesizedExpression
+          BinaryExpression
+            NumericLiteral
+            CommaToken
+            Identifier: ' xx'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// OK cases
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          ConditionalExpression
+            Identifier: 'xx'
+            QuestionToken
+            PostfixUnaryExpression
+              Identifier: ' x'
+            ColonToken
+            NumericLiteral
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'xx'
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'xx'
+            EqualsToken
+            NumericLiteral
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'xx'
+              EqualsToken
+              NumericLiteral
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'xx'
+            PlusEqualsToken
+            NumericLiteral
+          CommaToken
+          Identifier: ' xx'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'xx'
+              PlusEqualsToken
+              NumericLiteral
+          CommaToken
+          Identifier: ' xx'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'pow'
+            NumericLiteral
+            NumericLiteral
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          VoidExpression
+            Identifier: ' xx'
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          AsExpression
+            Identifier: 'xx'
+            AnyKeyword
+          CommaToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      CallExpression
+        ParenthesizedExpression
+          BinaryExpression
+            NumericLiteral
+            CommaToken
+            PropertyAccessExpression
+              Identifier: ' xx'
+              Identifier: 'fn'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      CallExpression
+        ParenthesizedExpression
+          BinaryExpression
+            NumericLiteral
+            CommaToken
+            ElementAccessExpression
+              Identifier: ' xx'
+              StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+xx'
+      EqualsToken
+      TaggedTemplateExpression
+        ParenthesizedExpression
+          BinaryExpression
+            NumericLiteral
+            CommaToken
+            PropertyAccessExpression
+              Identifier: ' xx'
+              Identifier: 'fn'
+        NoSubstitutionTemplateLiteral

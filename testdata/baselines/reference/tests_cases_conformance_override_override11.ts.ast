@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' Sub'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        OverrideKeyword
+        PublicKeyword
+        Identifier: ' foo'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

@@ -1,0 +1,112 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertyDeclaration
+          Identifier: '
+        y'
+          NumberKeyword
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Point'
+        MethodDeclaration
+          Identifier: '
+        fromCarthesian'
+          Parameter
+            Identifier: 'p'
+            TypeReference
+              QualifiedName
+                Identifier: ' A'
+                Identifier: 'Point'
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' x'
+                  PropertyAccessExpression
+                    Identifier: ' p'
+                    Identifier: 'x'
+                PropertyAssignment
+                  Identifier: ' y'
+                  PropertyAccessExpression
+                    Identifier: ' p'
+                    Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            Identifier: ' A'
+            Identifier: 'Point'
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleDeclaration
+      Identifier: 'Y'
+      ModuleDeclaration
+        Identifier: 'Z'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' Line'
+            PropertyDeclaration
+              Identifier: '
+        length'
+              NumberKeyword
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Y'
+        ModuleBlock
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' Z'
+            ModuleBlock
+              ClassDeclaration
+                Identifier: ' Line'
+                PropertyDeclaration
+                  Identifier: '
+                name'
+                  StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' length'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              QualifiedName
+                Identifier: ' X'
+                Identifier: 'Y'
+              Identifier: 'Z'
+            Identifier: 'Line'

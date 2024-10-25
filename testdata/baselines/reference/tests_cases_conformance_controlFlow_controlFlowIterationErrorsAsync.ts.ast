@@ -1,0 +1,505 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cond'
+        BooleanKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' len'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' s'
+          Identifier: 'length'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              AwaitExpression
+                CallExpression
+                  Identifier: ' len'
+                  Identifier: 'x'
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              AwaitExpression
+                CallExpression
+                  Identifier: ' len'
+                  Identifier: 'x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' g1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              AwaitExpression
+                CallExpression
+                  Identifier: ' foo'
+                  Identifier: 'x'
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' g2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              AwaitExpression
+                CallExpression
+                  Identifier: ' foo'
+                  Identifier: 'x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' asNumber'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+    Block
+      ReturnStatement
+        PrefixUnaryExpression
+          Identifier: 'x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' h1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              BinaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'x'
+                PlusToken
+                NumericLiteral
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' h2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              BinaryExpression
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' asNumber'
+                    Identifier: 'x'
+                PlusToken
+                NumericLiteral
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' h3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' asNumber'
+                    Identifier: 'x'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' y'
+                PlusToken
+                NumericLiteral
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' h4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' asNumber'
+                    Identifier: 'x'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' y'
+                PlusToken
+                NumericLiteral
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' get_things'
+    Parameter
+      Identifier: '_'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foobar'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' before'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+            Identifier: ' undefined'
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' results'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' get_things'
+                    Identifier: 'before'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        before'
+              EqualsToken
+              ElementAccessExpression
+                Identifier: ' results'
+                NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foox'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+  ExpressionStatement
+    ArrowFunction
+      AsyncKeyword
+      EqualsGreaterThanToken
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' bar'
+              UnionType
+                StringKeyword
+                UndefinedKeyword
+              Identifier: ' undefined'
+        DoStatement
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' baz'
+                  AwaitExpression
+                    CallExpression
+                      Identifier: ' foox'
+                      Identifier: 'bar'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+    bar'
+                EqualsToken
+                Identifier: ' baz'
+          Identifier: 'bar'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' myQuery'
+    Parameter
+      Identifier: 'input'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' lastId'
+          UnionType
+            NumberKeyword
+            UndefinedKeyword
+    TypeReference
+      Identifier: ' Promise'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' entities'
+          ArrayType
+            NumberKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' myFunc'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lastId'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+            Identifier: ' undefined'
+      WhileStatement
+        TrueKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' entities'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' myQuery'
+                    ObjectLiteralExpression
+                      ShorthandPropertyAssignment
+                        Identifier: '
+        lastId'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+    lastId'
+              EqualsToken
+              ElementAccessExpression
+                Identifier: ' entities'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'entities'
+                    Identifier: 'length'
+                  MinusToken
+                  NumericLiteral

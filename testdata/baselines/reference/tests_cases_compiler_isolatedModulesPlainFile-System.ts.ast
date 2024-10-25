@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' run'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+run'
+      NumericLiteral

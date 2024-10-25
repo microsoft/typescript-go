@@ -1,0 +1,367 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: 'b'
+      NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' func1'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          QuestionToken
+          NumberKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f'
+          Identifier: 'a'
+          Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' func2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+          NumericLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          QuestionToken
+          NumberKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: 'b'
+          NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f'
+          Identifier: 'a'
+          Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' func3'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          QuestionToken
+          NumberKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'a'
+          NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f'
+          Identifier: 'a'
+          Identifier: 'b'
+  FunctionDeclaration
+    Identifier: ' func4'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'b'
+            BindingElement
+              Identifier: ' c'
+        BindingElement
+          Identifier: ' d'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'b'
+              NumberKeyword
+            PropertySignature
+              Identifier: 'c'
+              QuestionToken
+              NumberKeyword
+        PropertySignature
+          Identifier: 'd'
+          NumberKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'a'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: 'c'
+              NumericLiteral
+        PropertyAssignment
+          Identifier: 'd'
+          NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f'
+          Identifier: 'b'
+          Identifier: 'c'
+  FunctionDeclaration
+    Identifier: ' func5'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'b'
+            BindingElement
+              Identifier: ' c'
+              NumericLiteral
+        BindingElement
+          Identifier: ' d'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'b'
+              NumberKeyword
+            PropertySignature
+              Identifier: 'c'
+              QuestionToken
+              NumberKeyword
+        PropertySignature
+          Identifier: 'd'
+          NumberKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'a'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: 'c'
+              NumericLiteral
+        PropertyAssignment
+          Identifier: 'd'
+          NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f'
+          Identifier: 'b'
+          Identifier: ' c'
+  FunctionDeclaration
+    Identifier: ' func6'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'b'
+            BindingElement
+              Identifier: ' c'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' c'
+              NumericLiteral
+        BindingElement
+          Identifier: ' d'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'b'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' c'
+              QuestionToken
+              NumberKeyword
+        PropertySignature
+          Identifier: ' d'
+          NumberKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'a'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: 'c'
+              NumericLiteral
+        PropertyAssignment
+          Identifier: ' d'
+          NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f'
+          Identifier: 'b'
+          Identifier: ' c'
+  FunctionDeclaration
+    Identifier: ' func7'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'b'
+            BindingElement
+              Identifier: ' c'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' c'
+              NumericLiteral
+        BindingElement
+          Identifier: ' d'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'b'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' c'
+              QuestionToken
+              NumberKeyword
+        PropertySignature
+          Identifier: ' d'
+          NumberKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'a'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' c'
+              NumericLiteral
+        PropertyAssignment
+          Identifier: ' d'
+          NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f'
+          Identifier: 'b'
+          Identifier: ' c'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' bar'
+      QuestionToken
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' performFoo'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' bar'
+      TypeReference
+        Identifier: ' Foo'
+      ObjectLiteralExpression
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  useBar'
+          Identifier: 'bar'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' useBar'
+    Parameter
+      Identifier: 'bar'
+      NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+performFoo'
+  FunctionDeclaration
+    Identifier: ' performFoo2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' bar'
+          NullKeyword
+      TypeReference
+        Identifier: ' Foo'
+      ObjectLiteralExpression
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  useBar2'
+          Identifier: 'bar'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' useBar2'
+    Parameter
+      Identifier: 'bar'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+performFoo2'

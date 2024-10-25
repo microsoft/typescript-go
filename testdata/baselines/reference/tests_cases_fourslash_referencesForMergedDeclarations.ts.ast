@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+/////*1*/interface /*2*/Foo {
+////}
+////
+/////*3*/module /*4*/Foo {
+////    export interface Bar { }
+////}
+////
+/////*5*/function /*6*/Foo(): void {
+////}
+////
+////var f1: /*7*/Foo.Bar;
+////var f2: /*8*/Foo;
+/////*9*/Foo.bind(this);
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral

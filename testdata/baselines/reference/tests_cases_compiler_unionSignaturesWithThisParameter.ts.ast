@@ -1,0 +1,46 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' x'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'ctor'
+      UnionType
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'this'
+              TypeLiteral
+            Parameter
+              Identifier: ' v'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+          ConstructSignature
+            Parameter
+              Identifier: 'v'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'v'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+          ConstructSignature
+            Parameter
+              Identifier: 'v'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+    Parameter
+      Identifier: ' t'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        NewExpression
+          Identifier: ' ctor'
+          Identifier: 't'

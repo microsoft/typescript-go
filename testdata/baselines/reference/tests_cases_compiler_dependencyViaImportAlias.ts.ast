@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  ImportEqualsDeclaration
+    Identifier: ' a'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' A'
+    QualifiedName
+      Identifier: ' a'
+      Identifier: 'A'
+  ExportAssignment
+    Identifier: ' A'

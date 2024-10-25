@@ -1,0 +1,10 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Calculator'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' handelChar'
+          Block

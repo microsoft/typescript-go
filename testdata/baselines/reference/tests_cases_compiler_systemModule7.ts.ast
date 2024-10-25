@@ -1,0 +1,16 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' I'

@@ -1,0 +1,9 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'

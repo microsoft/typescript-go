@@ -1,0 +1,64 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' noReturn'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    n'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    y'
+        NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' A1'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' A2'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' y'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        TypeReference
+          Identifier: ' A1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TypeReference
+          Identifier: ' A2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t1'
+      EqualsToken
+      Identifier: ' t2'

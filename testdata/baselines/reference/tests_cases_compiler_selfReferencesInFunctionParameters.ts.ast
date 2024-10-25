@@ -1,0 +1,43 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+      Identifier: ' x'
+    Block
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'x0'
+      StringLiteral
+    Parameter
+      Identifier: ' x'
+      NumberKeyword
+      Identifier: ' x'
+    Block
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumericLiteral
+      Parameter
+        Identifier: ' y'
+        Identifier: ' y'
+      Block
+    MethodDeclaration
+      Identifier: '
+     
+    bar'
+      Parameter
+        Identifier: 'a'
+        StringLiteral
+      Parameter
+        Identifier: ' b'
+        StringKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' b'
+            Identifier: 'toString'
+      Block

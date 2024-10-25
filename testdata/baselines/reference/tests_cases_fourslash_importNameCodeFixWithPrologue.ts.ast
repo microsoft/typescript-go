@@ -1,0 +1,75 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /a.ts
+////"use strict";
+////export class A { }
+
+// @Filename: /b.ts
+////"use strict";
+////export class B extends A { }
+
+// @Filename: /c.ts
+/////*---------------------------------------------------------------------------------------------
+//// *  Copyright (c) Microsoft Corporation. All rights reserved.
+//// *  Licensed under the MIT License. See License.txt in the project root for license information.
+//// *--------------------------------------------------------------------------------------------*/
+////"use strict";
+////export class B extends A { }
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          CallExpression
+            Identifier: ' ignoreInterpolations'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_import_from_0'
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          CallExpression
+            Identifier: ' ignoreInterpolations'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_import_from_0'
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

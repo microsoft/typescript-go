@@ -1,0 +1,1471 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ArrowFunction'
+        ImportSpecifier
+          Identifier: ' ClassElement'
+        ImportSpecifier
+          Identifier: ' ClassExpression'
+        ImportSpecifier
+          Identifier: ' ClassLikeDeclaration'
+        ImportSpecifier
+          Identifier: ' ConstructorDeclaration'
+        ImportSpecifier
+          Identifier: ' DeclarationStatement'
+        ImportSpecifier
+          Identifier: ' EmitTextWriter'
+        ImportSpecifier
+          Identifier: ' EnumDeclaration'
+        ImportSpecifier
+          Identifier: ' EnumMember'
+        ImportSpecifier
+          Identifier: ' Expression'
+        ImportSpecifier
+          Identifier: ' FileTextChanges'
+        ImportSpecifier
+          Identifier: ' formatting'
+        ImportSpecifier
+          Identifier: ' FunctionDeclaration'
+        ImportSpecifier
+          Identifier: ' FunctionExpression'
+        ImportSpecifier
+          Identifier: ' HasJSDoc'
+        ImportSpecifier
+          Identifier: ' ImportSpecifier'
+        ImportSpecifier
+          Identifier: ' InterfaceDeclaration'
+        ImportSpecifier
+          Identifier: ' JSDoc'
+        ImportSpecifier
+          Identifier: ' JSDocTag'
+        ImportSpecifier
+          Identifier: ' LanguageServiceHost'
+        ImportSpecifier
+          Identifier: ' MethodSignature'
+        ImportSpecifier
+          Identifier: ' Modifier'
+        ImportSpecifier
+          Identifier: ' NamedImports'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' NodeArray'
+        ImportSpecifier
+          Identifier: ' ObjectLiteralElementLike'
+        ImportSpecifier
+          Identifier: ' ObjectLiteralExpression'
+        ImportSpecifier
+          Identifier: ' ParameterDeclaration'
+        ImportSpecifier
+          Identifier: ' PrintHandlers'
+        ImportSpecifier
+          Identifier: ' PropertyAssignment'
+        ImportSpecifier
+          Identifier: ' PropertyDeclaration'
+        ImportSpecifier
+          Identifier: ' PropertySignature'
+        ImportSpecifier
+          Identifier: ' SignatureDeclaration'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' Statement'
+        ImportSpecifier
+          Identifier: ' SyntaxKind'
+        ImportSpecifier
+          Identifier: ' TextChange'
+        ImportSpecifier
+          Identifier: ' TextRange'
+        ImportSpecifier
+          Identifier: ' TypeLiteralNode'
+        ImportSpecifier
+          Identifier: ' TypeNode'
+        ImportSpecifier
+          Identifier: ' TypeParameterDeclaration'
+        ImportSpecifier
+          Identifier: ' UserPreferences'
+        ImportSpecifier
+          Identifier: ' VariableDeclaration'
+        ImportSpecifier
+          Identifier: ' VariableStatement'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ConfigurableStart'
+    PropertySignature
+      Identifier: '
+    leadingTriviaOption'
+      QuestionToken
+      TypeReference
+        Identifier: ' LeadingTriviaOption'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ConfigurableEnd'
+    PropertySignature
+      Identifier: '
+    trailingTriviaOption'
+      QuestionToken
+      TypeReference
+        Identifier: ' TrailingTriviaOption'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' LeadingTriviaOption'
+    EnumMember
+      Identifier: '
+    /** Exclude all leading trivia (use getStart()) */
+    Exclude'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /** Include leading trivia and,
+     * if there are no line breaks between the node and the previous token,
+     * include all trivia between the node and the previous token
+     */
+    IncludeAll'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * Include attached JSDoc comments
+     */
+    JSDoc'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * Only delete trivia on the same line as getStart().
+     * Used to avoid deleting leading comments
+     */
+    StartLine'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' TrailingTriviaOption'
+    EnumMember
+      Identifier: '
+    /** Exclude all trailing trivia (use getEnd()) */
+    Exclude'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /** Doesn't include whitespace, but does strip comments */
+    ExcludeWhitespace'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /** Include trailing trivia */
+    Include'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ConfigurableStartEnd'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ConfigurableStart'
+      ExpressionWithTypeArguments
+        Identifier: ' ConfigurableEnd'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InsertNodeOptions'
+    PropertySignature
+      Identifier: '
+    /**
+     * Text to be inserted before the new node
+     */
+    prefix'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Text to be inserted after the new node
+     */
+    suffix'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Text of inserted node will be formatted with this indentation, otherwise indentation will be inferred from the old node
+     */
+    indentation'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Text of inserted node will be formatted with this delta, otherwise delta will be inferred from the new node kind
+     */
+    delta'
+      QuestionToken
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ReplaceWithMultipleNodesOptions'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' InsertNodeOptions'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' joiner'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ChangeNodeOptions'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ConfigurableStartEnd'
+      ExpressionWithTypeArguments
+        Identifier: ' InsertNodeOptions'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TextChangesContext'
+    PropertySignature
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    PropertySignature
+      Identifier: '
+    formatContext'
+      TypeReference
+        QualifiedName
+          Identifier: ' formatting'
+          Identifier: 'FormatContext'
+    PropertySignature
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TypeAnnotatable'
+    UnionType
+      TypeReference
+        Identifier: ' SignatureDeclaration'
+      TypeReference
+        Identifier: ' VariableDeclaration'
+      TypeReference
+        Identifier: ' ParameterDeclaration'
+      TypeReference
+        Identifier: ' PropertyDeclaration'
+      TypeReference
+        Identifier: ' PropertySignature'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ThisTypeAnnotatable'
+    UnionType
+      TypeReference
+        Identifier: ' FunctionDeclaration'
+      TypeReference
+        Identifier: ' FunctionExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isThisTypeAnnotatable'
+    Parameter
+      Identifier: 'containingFunction'
+      TypeReference
+        Identifier: ' SignatureDeclaration'
+    TypePredicate
+      Identifier: ' containingFunction'
+      TypeReference
+        Identifier: ' ThisTypeAnnotatable'
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ChangeTracker'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' newLineCharacter'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' formatContext'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' changes'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' newFileChanges'
+      QuestionToken
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' classesWithNodesInsertedAtStart'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' deletedNodes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fromContext'
+      Parameter
+        Identifier: 'context'
+        TypeReference
+          Identifier: ' TextChangesContext'
+      TypeReference
+        Identifier: ' ChangeTracker'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' with'
+      Parameter
+        Identifier: 'context'
+        TypeReference
+          Identifier: ' TextChangesContext'
+      Parameter
+        Identifier: ' cb'
+        FunctionType
+          Parameter
+            Identifier: 'tracker'
+            TypeReference
+              Identifier: ' ChangeTracker'
+          VoidKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+    Constructor
+      Parameter
+        Identifier: 'newLineCharacter'
+        StringKeyword
+      Parameter
+        Identifier: ' formatContext'
+        TypeReference
+          QualifiedName
+            Identifier: ' formatting'
+            Identifier: 'FormatContext'
+    MethodDeclaration
+      Identifier: '
+    pushRaw'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' change'
+        TypeReference
+          Identifier: ' FileTextChanges'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    deleteRange'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' range'
+        TypeReference
+          Identifier: ' TextRange'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    delete'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' node'
+        UnionType
+          TypeReference
+            Identifier: ' Node'
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'TypeParameterDeclaration'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** Stop! Consider using `delete` instead, which has logic for deleting nodes from delimited lists. */
+    deleteNode'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ConfigurableStartEnd'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    deleteNodes'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' nodes'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+      Parameter
+        Identifier: ' options'
+        UnionType
+          TypeReference
+            Identifier: ' ConfigurableStartEnd'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' hasTrailingComment'
+        BooleanKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    deleteModifier'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' modifier'
+        TypeReference
+          Identifier: ' Modifier'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    deleteNodeRange'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' startNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' endNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ConfigurableStartEnd'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    deleteNodeRangeExcludingEnd'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' startNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' afterEndNode'
+        UnionType
+          TypeReference
+            Identifier: ' Node'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ConfigurableStartEnd'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    replaceRange'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' range'
+        TypeReference
+          Identifier: ' TextRange'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' InsertNodeOptions'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    replaceNode'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' oldNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ChangeNodeOptions'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    replaceNodeRange'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' startNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' endNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ChangeNodeOptions'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' replaceRangeWithNodes'
+    MethodDeclaration
+      Identifier: '
+    replaceNodeWithNodes'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' oldNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNodes'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ChangeNodeOptions'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    replaceNodeWithText'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' oldNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' text'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    replaceNodeRangeWithNodes'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' startNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' endNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNodes'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        IntersectionType
+          TypeReference
+            Identifier: ' ReplaceWithMultipleNodesOptions'
+          TypeReference
+            Identifier: ' ConfigurableStartEnd'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    nodeHasTrailingComment'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' oldNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' configurableEnd'
+        QuestionToken
+        TypeReference
+          Identifier: ' ConfigurableEnd'
+      BooleanKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' nextCommaToken'
+    MethodDeclaration
+      Identifier: '
+    replacePropertyAssignment'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' oldNode'
+        TypeReference
+          Identifier: ' PropertyAssignment'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' PropertyAssignment'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertNodeAt'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' pos'
+        NumberKeyword
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' InsertNodeOptions'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' insertNodesAt'
+    MethodDeclaration
+      Identifier: '
+    insertNodeAtTopOfFile'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Statement'
+      Parameter
+        Identifier: ' blankLineBetween'
+        BooleanKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertNodesAtTopOfFile'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' newNodes'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Statement'
+      Parameter
+        Identifier: ' blankLineBetween'
+        BooleanKeyword
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' insertAtTopOfFile'
+    MethodDeclaration
+      Identifier: '
+    insertNodesAtEndOfFile'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' newNodes'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Statement'
+      Parameter
+        Identifier: ' blankLineBetween'
+        BooleanKeyword
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' insertAtEndOfFile'
+    MethodDeclaration
+      Identifier: '
+    insertStatementsInNewFile'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' statements'
+        TypeOperator
+          ArrayType
+            ParenthesizedType
+              UnionType
+                TypeReference
+                  Identifier: 'Statement'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'NewLineTrivia'
+      Parameter
+        Identifier: ' oldFile'
+        QuestionToken
+        TypeReference
+          Identifier: ' SourceFile'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertFirstParameter'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' parameters'
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'ParameterDeclaration'
+      Parameter
+        Identifier: ' newParam'
+        TypeReference
+          Identifier: ' ParameterDeclaration'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertNodeBefore'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' before'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' blankLineBetween'
+        QuestionToken
+        BooleanKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ConfigurableStartEnd'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertNodesBefore'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' before'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNodes'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+      Parameter
+        Identifier: ' blankLineBetween'
+        QuestionToken
+        BooleanKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ConfigurableStartEnd'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertModifierAt'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' pos'
+        NumberKeyword
+      Parameter
+        Identifier: ' modifier'
+        TypeReference
+          Identifier: ' SyntaxKind'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' InsertNodeOptions'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertModifierBefore'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' modifier'
+        TypeReference
+          Identifier: ' SyntaxKind'
+      Parameter
+        Identifier: ' before'
+        TypeReference
+          Identifier: ' Node'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertCommentBeforeLine'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' lineNumber'
+        NumberKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' commentText'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertJsdocCommentBefore'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' HasJSDoc'
+      Parameter
+        Identifier: ' tag'
+        TypeReference
+          Identifier: ' JSDoc'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' createJSDocText'
+    MethodDeclaration
+      Identifier: '
+    replaceJSDocComment'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' HasJSDoc'
+      Parameter
+        Identifier: ' tags'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' JSDocTag'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    addJSDocTags'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' parent'
+        TypeReference
+          Identifier: ' HasJSDoc'
+      Parameter
+        Identifier: ' newTags'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' JSDocTag'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    filterJSDocTags'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' parent'
+        TypeReference
+          Identifier: ' HasJSDoc'
+      Parameter
+        Identifier: ' predicate'
+        FunctionType
+          Parameter
+            Identifier: 'tag'
+            TypeReference
+              Identifier: ' JSDocTag'
+          BooleanKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    replaceRangeWithText'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' range'
+        TypeReference
+          Identifier: ' TextRange'
+      Parameter
+        Identifier: ' text'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertText'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' pos'
+        NumberKeyword
+      Parameter
+        Identifier: ' text'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** Prefer this over replacing a node with another that has a type annotation, as it avoids reformatting the other parts of the node. */
+    tryInsertTypeAnnotation'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' TypeAnnotatable'
+      Parameter
+        Identifier: ' type'
+        TypeReference
+          Identifier: ' TypeNode'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    tryInsertThisTypeAnnotation'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' ThisTypeAnnotatable'
+      Parameter
+        Identifier: ' type'
+        TypeReference
+          Identifier: ' TypeNode'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertTypeParameters'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' SignatureDeclaration'
+      Parameter
+        Identifier: ' typeParameters'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' TypeParameterDeclaration'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getOptionsForInsertNodeBefore'
+    MethodDeclaration
+      Identifier: '
+    insertNodeAtConstructorStart'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' ctr'
+        TypeReference
+          Identifier: ' ConstructorDeclaration'
+      Parameter
+        Identifier: ' newStatement'
+        TypeReference
+          Identifier: ' Statement'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertNodeAtConstructorStartAfterSuperCall'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' ctr'
+        TypeReference
+          Identifier: ' ConstructorDeclaration'
+      Parameter
+        Identifier: ' newStatement'
+        TypeReference
+          Identifier: ' Statement'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertNodeAtConstructorEnd'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' ctr'
+        TypeReference
+          Identifier: ' ConstructorDeclaration'
+      Parameter
+        Identifier: ' newStatement'
+        TypeReference
+          Identifier: ' Statement'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' replaceConstructorBody'
+    MethodDeclaration
+      Identifier: '
+    insertNodeAtEndOfScope'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' scope'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Node'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertMemberAtStart'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' node'
+        UnionType
+          TypeReference
+            Identifier: ' ClassLikeDeclaration'
+          TypeReference
+            Identifier: ' InterfaceDeclaration'
+          TypeReference
+            Identifier: ' TypeLiteralNode'
+          TypeReference
+            Identifier: ' EnumDeclaration'
+      Parameter
+        Identifier: ' newElement'
+        UnionType
+          TypeReference
+            Identifier: ' ClassElement'
+          TypeReference
+            Identifier: ' PropertySignature'
+          TypeReference
+            Identifier: ' MethodSignature'
+          TypeReference
+            Identifier: ' EnumMember'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertNodeAtObjectStart'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' obj'
+        TypeReference
+          Identifier: ' ObjectLiteralExpression'
+      Parameter
+        Identifier: ' newElement'
+        TypeReference
+          Identifier: ' ObjectLiteralElementLike'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' insertNodeAtStartWorker'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' guessIndentationFromExistingMembers'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' computeIndentationForNewMember'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getInsertNodeAtStartInsertOptions'
+    MethodDeclaration
+      Identifier: '
+    insertNodeAfterComma'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' after'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Node'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertNodeAfter'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' after'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Node'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertNodeAtEndOfList'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' list'
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'Node'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Node'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertNodesAfter'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' after'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNodes'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' insertNodeAfterWorker'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getInsertNodeAfterOptions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getInsertNodeAfterOptionsWorker'
+    MethodDeclaration
+      Identifier: '
+    insertName'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' node'
+        UnionType
+          TypeReference
+            Identifier: ' FunctionExpression'
+          TypeReference
+            Identifier: ' ClassExpression'
+          TypeReference
+            Identifier: ' ArrowFunction'
+      Parameter
+        Identifier: ' name'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertExportModifier'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' node'
+        UnionType
+          TypeReference
+            Identifier: ' DeclarationStatement'
+          TypeReference
+            Identifier: ' VariableStatement'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    insertImportSpecifierAtIndex'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' importSpecifier'
+        TypeReference
+          Identifier: ' ImportSpecifier'
+      Parameter
+        Identifier: ' namedImports'
+        TypeReference
+          Identifier: ' NamedImports'
+      Parameter
+        Identifier: ' index'
+        NumberKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * This function should be used to insert nodes in lists when nodes don't carry separators as the part of the node range,
+     * i.e. arguments in arguments lists, parameters in parameter lists etc.
+     * Note that separators are part of the node in statements and class elements.
+     */
+    insertNodeInListAfter'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' after'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' newNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' containingList'
+        QuestionToken
+        UnionType
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+          UndefinedKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    parenthesizeExpression'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' expression'
+        TypeReference
+          Identifier: ' Expression'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' finishClassesWithNodesInsertedAtStart'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' finishDeleteDeclarations'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Note: after calling this, the TextChanges object must be discarded!
+     * @param validate only for tests
+     *    The reason we must validate as part of this method is that `getNonFormattedText` changes the node's positions,
+     *    so we can only call this once and can't get the non-formatted text separately.
+     */
+    getChanges'
+      Parameter
+        Identifier: 'validate'
+        QuestionToken
+        TypeReference
+          Identifier: ' ValidateNonFormattedText'
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+    MethodDeclaration
+      Identifier: '
+    createNewFile'
+      Parameter
+        Identifier: 'oldFile'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' statements'
+        TypeOperator
+          ArrayType
+            ParenthesizedType
+              UnionType
+                TypeReference
+                  Identifier: 'Statement'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'NewLineTrivia'
+      VoidKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ValidateNonFormattedText'
+    FunctionType
+      Parameter
+        Identifier: 'node'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' text'
+        StringKeyword
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' applyChanges'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' changes'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' TextChange'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' assignPositionsToNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' Node'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TextChangesWriter'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' EmitTextWriter'
+      ExpressionWithTypeArguments
+        Identifier: ' PrintHandlers'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createWriter'
+    Parameter
+      Identifier: 'newLine'
+      StringKeyword
+    TypeReference
+      Identifier: ' TextChangesWriter'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isValidLocationToAddComment'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' deleteNode'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        Identifier: ' ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' ConfigurableStartEnd'
+    VoidKeyword

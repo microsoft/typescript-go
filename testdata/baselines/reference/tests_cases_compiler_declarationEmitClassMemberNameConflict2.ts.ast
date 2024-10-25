@@ -1,0 +1,35 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Bar'
+        StringLiteral
+  EnumDeclaration
+    Identifier: ' Hello'
+    EnumMember
+      Identifier: '
+    World'
+  EnumDeclaration
+    Identifier: ' Hello1'
+    EnumMember
+      Identifier: '
+    World1'
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    // Same names + string => OK
+    Bar'
+      Identifier: ' Bar'
+    PropertyDeclaration
+      Identifier: '
+
+    // Same names + enum => OK
+    Hello'
+      Identifier: ' Hello'
+    PropertyDeclaration
+      Identifier: '
+
+    // Different names + enum => OK
+    Hello2'
+      Identifier: ' Hello1'

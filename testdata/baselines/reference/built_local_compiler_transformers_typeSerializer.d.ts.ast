@@ -1,0 +1,195 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' AccessorDeclaration'
+        ImportSpecifier
+          Identifier: ' ArrayLiteralExpression'
+        ImportSpecifier
+          Identifier: ' Block'
+        ImportSpecifier
+          Identifier: ' CaseBlock'
+        ImportSpecifier
+          Identifier: ' ClassLikeDeclaration'
+        ImportSpecifier
+          Identifier: ' ConditionalExpression'
+        ImportSpecifier
+          Identifier: ' Expression'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' MethodDeclaration'
+        ImportSpecifier
+          Identifier: ' ModuleBlock'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' ParameterDeclaration'
+        ImportSpecifier
+          Identifier: ' PropertyAccessEntityNameExpression'
+        ImportSpecifier
+          Identifier: ' PropertyDeclaration'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' TransformationContext'
+        ImportSpecifier
+          Identifier: ' TypeNode'
+        ImportSpecifier
+          Identifier: ' VoidExpression'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SerializedEntityName'
+    UnionType
+      TypeReference
+        Identifier: ' Identifier'
+      TypeReference
+        Identifier: ' PropertyAccessEntityNameExpression'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SerializedTypeNode'
+    UnionType
+      TypeReference
+        Identifier: ' SerializedEntityName'
+      TypeReference
+        Identifier: ' ConditionalExpression'
+      TypeReference
+        Identifier: ' VoidExpression'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RuntimeTypeSerializerContext'
+    PropertySignature
+      Identifier: '
+    /** Specifies the current lexical block scope */
+    currentLexicalScope'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' Block'
+        TypeReference
+          Identifier: ' ModuleBlock'
+        TypeReference
+          Identifier: ' CaseBlock'
+    PropertySignature
+      Identifier: '
+    /** Specifies the containing `class`, but only when there is no other block scope between the current location and the `class`. */
+    currentNameScope'
+      UnionType
+        TypeReference
+          Identifier: ' ClassLikeDeclaration'
+        UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RuntimeTypeSerializer'
+    MethodSignature
+      Identifier: '
+    /**
+     * Serializes a type node for use with decorator type metadata.
+     *
+     * Types are serialized in the following fashion:
+     * - Void types point to "undefined" (e.g. "void 0")
+     * - Function and Constructor types point to the global "Function" constructor.
+     * - Interface types with a call or construct signature types point to the global
+     *   "Function" constructor.
+     * - Array and Tuple types point to the global "Array" constructor.
+     * - Type predicates and booleans point to the global "Boolean" constructor.
+     * - String literal types and strings point to the global "String" constructor.
+     * - Enum and number types point to the global "Number" constructor.
+     * - Symbol types point to the global "Symbol" constructor.
+     * - Type references to classes (or class-like variables) point to the constructor for the class.
+     * - Anything else points to the global "Object" constructor.
+     *
+     * @param node The type node to serialize.
+     */
+    serializeTypeNode'
+      Parameter
+        Identifier: 'serializerContext'
+        TypeReference
+          Identifier: ' RuntimeTypeSerializerContext'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' TypeNode'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    /**
+     * Serializes the type of a node for use with decorator type metadata.
+     * @param node The node that should have its type serialized.
+     */
+    serializeTypeOfNode'
+      Parameter
+        Identifier: 'serializerContext'
+        TypeReference
+          Identifier: ' RuntimeTypeSerializerContext'
+      Parameter
+        Identifier: ' node'
+        UnionType
+          TypeReference
+            Identifier: ' PropertyDeclaration'
+          TypeReference
+            Identifier: ' ParameterDeclaration'
+          TypeReference
+            Identifier: ' AccessorDeclaration'
+          TypeReference
+            Identifier: ' ClassLikeDeclaration'
+          TypeReference
+            Identifier: ' MethodDeclaration'
+      Parameter
+        Identifier: ' container'
+        TypeReference
+          Identifier: ' ClassLikeDeclaration'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    /**
+     * Serializes the types of the parameters of a node for use with decorator type metadata.
+     * @param node The node that should have its parameter types serialized.
+     */
+    serializeParameterTypesOfNode'
+      Parameter
+        Identifier: 'serializerContext'
+        TypeReference
+          Identifier: ' RuntimeTypeSerializerContext'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' container'
+        TypeReference
+          Identifier: ' ClassLikeDeclaration'
+      TypeReference
+        Identifier: ' ArrayLiteralExpression'
+    MethodSignature
+      Identifier: '
+    /**
+     * Serializes the return type of a node for use with decorator type metadata.
+     * @param node The node that should have its return type serialized.
+     */
+    serializeReturnTypeOfNode'
+      Parameter
+        Identifier: 'serializerContext'
+        TypeReference
+          Identifier: ' RuntimeTypeSerializerContext'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' Node'
+      TypeReference
+        Identifier: ' SerializedTypeNode'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createRuntimeTypeSerializer'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    TypeReference
+      Identifier: ' RuntimeTypeSerializer'

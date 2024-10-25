@@ -1,0 +1,42 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+  foo'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' Str'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' 
+  T'
+      TypeReference
+        Identifier: ' Foo'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            StringLiteral
+        StringKeyword
+        TypeReference
+          Identifier: ' Str'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            LiteralType
+              StringLiteral
+        NeverKeyword
+      NeverKeyword

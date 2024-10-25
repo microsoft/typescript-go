@@ -1,0 +1,21 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' NS'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' A'
+        ObjectKeyword
+  ExportAssignment
+    Identifier: ' NS'
+  NamespaceExportDeclaration
+    Identifier: ' MyTypes'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' NS'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' NS'
+  NamespaceExportDeclaration
+    Identifier: ' ModuleATypes'

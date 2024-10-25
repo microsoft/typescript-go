@@ -1,0 +1,10 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' globalThis'
+            Identifier: ' global'

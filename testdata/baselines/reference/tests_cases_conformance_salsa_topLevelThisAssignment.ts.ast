@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      ThisKeyword
+      Identifier: 'a'
+  ExpressionStatement
+    Identifier: '
+a'
+  ExpressionStatement
+    PropertyAccessExpression
+      ThisKeyword
+      Identifier: 'a'
+  ExpressionStatement
+    Identifier: '
+a'

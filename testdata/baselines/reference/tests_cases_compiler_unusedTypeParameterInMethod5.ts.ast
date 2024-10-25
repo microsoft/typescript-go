@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' f1'
+      FunctionExpression
+        TypeParameter
+          Identifier: 'X'
+        Block

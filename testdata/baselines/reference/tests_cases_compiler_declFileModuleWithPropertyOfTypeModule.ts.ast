@@ -1,0 +1,13 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            Identifier: ' m'

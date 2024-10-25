@@ -1,0 +1,54 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+// No prototype assignments are needed to enable class inference
+
+// @allowNonTsExtensions: true
+// @Filename: myMod.js
+//// function myCtor() {
+////     this.foo = 'hello';
+////     this.bar = 10;
+//// }
+//// let x = new myCtor();
+//// x/**/
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Check members of the function
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' includes'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' name'
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    StringLiteral

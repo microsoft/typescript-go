@@ -1,0 +1,312 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' iterator'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Iterator'
+            Identifier: 'from'
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mapped'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' iterator'
+            Identifier: 'map'
+          Identifier: 'String'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' filtered'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' iterator'
+            Identifier: 'filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              GreaterThanToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' isZero'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    TypePredicate
+      Identifier: ' x'
+      LiteralType
+        NumericLiteral
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' x'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zero'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' iterator'
+            Identifier: 'filter'
+          Identifier: 'isZero'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' iteratorFromBare'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Iterator'
+            Identifier: 'from'
+          ObjectLiteralExpression
+            MethodDeclaration
+              Identifier: '
+  next'
+              Block
+                ReturnStatement
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+      done'
+                      BinaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' Math'
+                            Identifier: 'random'
+                        LessThanToken
+                        NumericLiteral
+                    PropertyAssignment
+                      Identifier: '
+      value'
+                      StringLiteral
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' gen'
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mappedGen'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' gen'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' x'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              QuestionToken
+              StringLiteral
+              ColonToken
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mappedValues'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  NumericLiteral
+                  NumericLiteral
+                Identifier: 'values'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' x'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              QuestionToken
+              StringLiteral
+              ColonToken
+              StringLiteral
+  ClassDeclaration
+    Identifier: ' GoodIterator'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Iterator'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+  next'
+      Block
+        ReturnStatement
+          AsExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' done'
+                FalseKeyword
+              PropertyAssignment
+                Identifier: ' value'
+                NumericLiteral
+            TypeReference
+              Identifier: ' const'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Iterator'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Iterator'
+        NumberKeyword
+  ClassDeclaration
+    Identifier: ' BadIterator1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Iterator'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+  next'
+      Block
+        IfStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Math'
+                Identifier: 'random'
+            LessThanToken
+            NumericLiteral
+          Block
+            ReturnStatement
+              AsExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' done'
+                    FalseKeyword
+                  PropertyAssignment
+                    Identifier: ' value'
+                    NumericLiteral
+                TypeReference
+                  Identifier: ' const'
+          Block
+            ReturnStatement
+              AsExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' done'
+                    TrueKeyword
+                  PropertyAssignment
+                    Identifier: ' value'
+                    StringLiteral
+                TypeReference
+                  Identifier: ' const'
+  ClassDeclaration
+    Identifier: ' BadIterator2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Iterator'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+  next'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' done'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: ' value'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' BadIterator3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Iterator'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+  next'
+      Block
+        IfStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Math'
+                Identifier: 'random'
+            LessThanToken
+            NumericLiteral
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' done'
+                  FalseKeyword
+                PropertyAssignment
+                  Identifier: ' value'
+                  NumericLiteral
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' done'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: ' value'
+                  StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g1'
+        TypeReference
+          Identifier: ' Generator'
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' iter1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Iterator'
+            Identifier: 'from'
+          Identifier: 'g1'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' iter2'
+        TypeReference
+          Identifier: ' IteratorObject'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' iter3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' iter2'
+            Identifier: 'flatMap'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' g1'

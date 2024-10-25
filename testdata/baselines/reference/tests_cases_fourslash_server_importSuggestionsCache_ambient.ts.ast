@@ -1,0 +1,171 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts" />
+
+// @Filename: /home/src/workspaces/project/tsconfig.json
+////{ "compilerOptions": { "module": "esnext" } }
+
+// @Filename: /home/src/workspaces/project/ambient.d.ts
+////declare module 'ambient' {
+////  export const ambient = 0;
+////}
+////a/**/
+
+edit'
+        Identifier: 'disableFormatting'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Ensure 'ambient' shows up
+verifyIncludes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Delete it, ensure it doesn’t show up
+edit'
+        Identifier: 'deleteLineRange'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyExcludes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Add it back with changes, ensure it shows up
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insertLines'
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyIncludes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Replace 'ambient2' with 'ambient3'
+edit'
+        Identifier: 'replaceLine'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyExcludes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyIncludes'
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' verifyIncludes'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'marker'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includes'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+            name'
+                PropertyAssignment
+                  Identifier: '
+            source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+            PropertyAssignment
+              Identifier: '
+        preferences'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            includeCompletionsForModuleExports'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            includeInsertTextCompletions'
+                  TrueKeyword
+  FunctionDeclaration
+    Identifier: ' verifyExcludes'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'marker'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        excludes'
+              Identifier: ' name'
+            PropertyAssignment
+              Identifier: '
+        preferences'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            includeCompletionsForModuleExports'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            includeInsertTextCompletions'
+                  TrueKeyword

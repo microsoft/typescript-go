@@ -1,0 +1,125 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'matchResult'
+      TypeReference
+        Identifier: ' RegExpMatchArray'
+    Parameter
+      Identifier: ' execResult'
+      TypeReference
+        Identifier: ' RegExpExecArray'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          ElementAccessExpression
+            Identifier: '
+    matchResult'
+            NumericLiteral
+          Identifier: 'length'
+      ExpressionStatement
+        PropertyAccessExpression
+          ElementAccessExpression
+            Identifier: '
+    matchResult'
+            NumericLiteral
+          Identifier: 'length'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    matchResult'
+            Identifier: 'index'
+          PlusToken
+          NumericLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+    matchResult'
+            Identifier: 'input'
+          Identifier: 'length'
+      ExpressionStatement
+        PropertyAccessExpression
+          ElementAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    matchResult'
+              Identifier: 'groups'
+            StringLiteral
+          Identifier: 'length'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    matchResult'
+            Identifier: 'groups'
+          EqualsToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        PropertyAccessExpression
+          ElementAccessExpression
+            Identifier: '
+
+    execResult'
+            NumericLiteral
+          Identifier: 'length'
+      ExpressionStatement
+        PropertyAccessExpression
+          ElementAccessExpression
+            Identifier: '
+    execResult'
+            NumericLiteral
+          Identifier: 'length'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    execResult'
+            Identifier: 'index'
+          PlusToken
+          NumericLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+    execResult'
+            Identifier: 'input'
+          Identifier: 'length'
+      ExpressionStatement
+        PropertyAccessExpression
+          ElementAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    execResult'
+              Identifier: 'groups'
+            StringLiteral
+          Identifier: 'length'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    execResult'
+            Identifier: 'groups'
+          EqualsToken
+          Identifier: ' undefined'
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'Math'
+            Identifier: 'random'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        matchResult'
+              EqualsToken
+              Identifier: ' execResult'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        execResult'
+              EqualsToken
+              Identifier: ' matchResult'

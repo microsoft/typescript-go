@@ -1,0 +1,100 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' NumberMap'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' StringMap'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' numberMapToArray'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'object'
+      TypeReference
+        Identifier: ' NumberMap'
+        TypeReference
+          Identifier: 'T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' stringMapToArray'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'object'
+      TypeReference
+        Identifier: ' StringMap'
+        TypeReference
+          Identifier: 'T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberMap'
+        TypeReference
+          Identifier: ' NumberMap'
+          TypeReference
+            Identifier: 'Function'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' stringMap'
+        TypeReference
+          Identifier: ' StringMap'
+          TypeReference
+            Identifier: 'Function'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        ArrayType
+          TypeReference
+            Identifier: ' Function'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        CallExpression
+          Identifier: ' numberMapToArray'
+          Identifier: 'numberMap'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        CallExpression
+          Identifier: ' numberMapToArray'
+          Identifier: 'stringMap'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        CallExpression
+          Identifier: ' stringMapToArray'
+          Identifier: 'numberMap'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        CallExpression
+          Identifier: ' stringMapToArray'
+          Identifier: 'stringMap'

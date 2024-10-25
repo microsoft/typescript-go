@@ -1,0 +1,42 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test'
+  ExportAssignment
+    Identifier: ' Test'
+  ClassDeclaration
+    Identifier: ' Test'
+  ExportAssignment
+    Identifier: ' Test'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Test'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' X'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Test'
+    Constructor
+      Parameter
+        Identifier: 'options'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'options'
+            Identifier: 'test'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'test'
+                EqualsToken
+                NewExpression
+                  PropertyAccessExpression
+                    Identifier: ' options'
+                    Identifier: 'test'
+  ExportAssignment
+    Identifier: ' X'

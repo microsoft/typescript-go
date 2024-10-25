@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' static'
+    PropertyDeclaration
+      Identifier: ' Foo'

@@ -1,0 +1,49 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="./fourslash.ts" />
+
+//// declare namespace JSX {
+////     interface Element {
+////         render(): Element | string | false;
+////     }
+//// }
+////
+//// function SFC<T>(_props: Record<string, T>) {
+////     return '';
+//// }
+////
+//// (</*1*/SFC/>);
+//// (</*2*/SFC<string>/>);
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' text'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' text'
+          StringLiteral

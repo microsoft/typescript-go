@@ -1,0 +1,1922 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' documents'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' fakes'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vfs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' verifyApi'
+            Parameter
+              Identifier: 'fileName'
+              StringKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' builtFile'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'fileName'
+                        TemplateTail
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' api'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'fileName'
+                        TemplateTail
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' fileContent'
+                    StringKeyword
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        before'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+            fileContent'
+                          EqualsToken
+                          NonNullExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' Harness'
+                                  Identifier: 'IO'
+                                Identifier: 'readFile'
+                              Identifier: 'builtFile'
+                      IfStatement
+                        PrefixUnaryExpression
+                          Identifier: 'fileContent'
+                        ThrowStatement
+                          NewExpression
+                            Identifier: ' Error'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'fileName'
+                                TemplateTail
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+            fileContent'
+                          EqualsToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' fileContent'
+                              Identifier: 'replace'
+                            RegularExpressionLiteral
+                            StringLiteral
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+        it'
+                  StringLiteral
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            Harness'
+                              Identifier: 'Baseline'
+                            Identifier: 'runBaseline'
+                          Identifier: 'api'
+                          Identifier: ' fileContent'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' PrintDiff'
+                              TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyApi'
+                      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' assertDefinedTokenToString'
+            Parameter
+              Identifier: 'initial'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'SyntaxKind'
+            Parameter
+              Identifier: ' last'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'SyntaxKind'
+            Block
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' t'
+                    Identifier: ' initial'
+                BinaryExpression
+                  Identifier: ' t'
+                  LessThanEqualsToken
+                  Identifier: ' last'
+                PostfixUnaryExpression
+                  Identifier: ' t'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            assert'
+                        Identifier: 'isDefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'tokenToString'
+                        Identifier: 't'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'ts'
+                                Identifier: 'Debug'
+                              Identifier: 'formatSyntaxKind'
+                            Identifier: 't'
+                          TemplateTail
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertDefinedTokenToString'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'SyntaxKind'
+                        Identifier: 'FirstPunctuation'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'SyntaxKind'
+                        Identifier: 'LastPunctuation'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertDefinedTokenToString'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'SyntaxKind'
+                        Identifier: 'FirstKeyword'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'SyntaxKind'
+                        Identifier: 'LastKeyword'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'throw'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'factory'
+                            Identifier: 'createPrivateIdentifier'
+                          StringLiteral
+                      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' testFilePath'
+                        StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' testFileText'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' testSourceFile'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createSourceFile'
+                          Identifier: 'testFilePath'
+                          Identifier: ' testFileText'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'Latest'
+                          TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' funcDec'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' testSourceFile'
+                                Identifier: 'statements'
+                              Identifier: 'find'
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'isFunctionDeclaration'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' tags'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'getJSDocTags'
+                          Identifier: 'funcDec'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isDefined'
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: 'tags'
+                          NumericLiteral
+                        Identifier: 'comment'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isDefined'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: 'tags'
+                            NumericLiteral
+                          Identifier: 'comment'
+                        NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isString'
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: 'tags'
+                          NumericLiteral
+                        Identifier: 'comment'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      AsExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: 'tags'
+                            NumericLiteral
+                          Identifier: 'comment'
+                        StringKeyword
+                      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' prop'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'factory'
+                            Identifier: 'createPrivateIdentifier'
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'isPropertyName'
+                        Identifier: 'prop'
+                      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' content'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        NewExpression
+                          PropertyAccessExpression
+                            Identifier: ' fakes'
+                            Identifier: 'CompilerHost'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'vfs'
+                              Identifier: 'createFromFileSystem'
+                            PropertyAccessExpression
+                              Identifier: '
+            Harness'
+                              Identifier: 'IO'
+                            TrueKeyword
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' documents'
+                                ArrayLiteralExpression
+                                  NewExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' documents'
+                                      Identifier: 'TextDocument'
+                                    StringLiteral
+                                    Identifier: ' content'
+                              PropertyAssignment
+                                Identifier: ' cwd'
+                                StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' program'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createProgram'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+            host'
+                            PropertyAssignment
+                              Identifier: '
+            rootNames'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+            options'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' noLib'
+                                  TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' checker'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' program'
+                            Identifier: 'getTypeChecker'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' program'
+                              Identifier: 'getSourceFile'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' classDeclaration'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' file'
+                                Identifier: 'statements'
+                              Identifier: 'find'
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'isClassDeclaration'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' propertyAccess'
+                        AsExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              PropertyAccessExpression
+                                ElementAccessExpression
+                                  NonNullExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' classDeclaration'
+                                      Identifier: 'heritageClauses'
+                                  NumericLiteral
+                                Identifier: 'types'
+                              NumericLiteral
+                            Identifier: 'expression'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'PropertyAccessExpression'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' type'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' checker'
+                            Identifier: 'getTypeAtLocation'
+                          Identifier: 'propertyAccess'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'ok'
+                      PrefixUnaryExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'type'
+                              Identifier: 'flags'
+                            AmpersandToken
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'TypeFlags'
+                              Identifier: 'Any'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      Identifier: 'type'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' checker'
+                          Identifier: 'getTypeAtLocation'
+                        PropertyAccessExpression
+                          Identifier: 'propertyAccess'
+                          Identifier: 'name'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' content'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        NewExpression
+                          PropertyAccessExpression
+                            Identifier: ' fakes'
+                            Identifier: 'CompilerHost'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'vfs'
+                              Identifier: 'createFromFileSystem'
+                            PropertyAccessExpression
+                              Identifier: '
+            Harness'
+                              Identifier: 'IO'
+                            TrueKeyword
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' documents'
+                                ArrayLiteralExpression
+                                  NewExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' documents'
+                                      Identifier: 'TextDocument'
+                                    StringLiteral
+                                    Identifier: ' content'
+                              PropertyAssignment
+                                Identifier: ' cwd'
+                                StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' program'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createProgram'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+            host'
+                            PropertyAssignment
+                              Identifier: '
+            rootNames'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+            options'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' noLib'
+                                  TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' checker'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' program'
+                            Identifier: 'getTypeChecker'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' program'
+                              Identifier: 'getSourceFile'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' type'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' checker'
+                            Identifier: 'getTypeAtLocation'
+                          Identifier: 'file'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        Identifier: 'type'
+                        Identifier: 'flags'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'TypeFlags'
+                        Identifier: 'Any'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' content'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        NewExpression
+                          PropertyAccessExpression
+                            Identifier: ' fakes'
+                            Identifier: 'CompilerHost'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'vfs'
+                              Identifier: 'createFromFileSystem'
+                            PropertyAccessExpression
+                              Identifier: '
+            Harness'
+                              Identifier: 'IO'
+                            TrueKeyword
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' documents'
+                                ArrayLiteralExpression
+                                  NewExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' documents'
+                                      Identifier: 'TextDocument'
+                                    StringLiteral
+                                    Identifier: ' content'
+                              PropertyAssignment
+                                Identifier: ' cwd'
+                                StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' program'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createProgram'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+            host'
+                            PropertyAssignment
+                              Identifier: '
+            rootNames'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+            options'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' noLib'
+                                  TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' checker'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' program'
+                            Identifier: 'getTypeChecker'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' program'
+                              Identifier: 'getSourceFile'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ArrayBindingPattern
+                          BindingElement
+                            Identifier: 'declaration'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ParenthesizedExpression
+                              AsExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'findLast'
+                                  PropertyAccessExpression
+                                    Identifier: 'file'
+                                    Identifier: 'statements'
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'isVariableStatement'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'VariableStatement'
+                            Identifier: 'declarationList'
+                          Identifier: 'declarations'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'checker'
+                            Identifier: 'getTypeAtLocation'
+                          NonNullExpression
+                            PropertyAccessExpression
+                              Identifier: 'declaration'
+                              Identifier: 'initializer'
+                        Identifier: 'flags'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'TypeFlags'
+                        Identifier: 'Object'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' content'
+                        BinaryExpression
+                          StringLiteral
+                          PlusToken
+                          StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        NewExpression
+                          PropertyAccessExpression
+                            Identifier: ' fakes'
+                            Identifier: 'CompilerHost'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'vfs'
+                              Identifier: 'createFromFileSystem'
+                            PropertyAccessExpression
+                              Identifier: '
+            Harness'
+                              Identifier: 'IO'
+                            TrueKeyword
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' documents'
+                                ArrayLiteralExpression
+                                  NewExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' documents'
+                                      Identifier: 'TextDocument'
+                                    StringLiteral
+                                    Identifier: ' content'
+                              PropertyAssignment
+                                Identifier: ' cwd'
+                                StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' program'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createProgram'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+            host'
+                            PropertyAssignment
+                              Identifier: '
+            rootNames'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+            options'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' noLib'
+                                  TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' checker'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' program'
+                            Identifier: 'getTypeChecker'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' program'
+                              Identifier: 'getSourceFile'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ArrayBindingPattern
+                          BindingElement
+                            Identifier: 'declaration'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ParenthesizedExpression
+                              AsExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'findLast'
+                                  PropertyAccessExpression
+                                    Identifier: 'file'
+                                    Identifier: 'statements'
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'isVariableStatement'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'VariableStatement'
+                            Identifier: 'declarationList'
+                          Identifier: 'declarations'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'checker'
+                            Identifier: 'getTypeAtLocation'
+                          Identifier: 'declaration'
+                        Identifier: 'flags'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'TypeFlags'
+                        Identifier: 'Any'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' savedUILocale'
+                UnionType
+                  StringKeyword
+                  UndefinedKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    beforeEach'
+              ArrowFunction
+                EqualsGreaterThanToken
+                BinaryExpression
+                  Identifier: ' savedUILocale'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'getUILocale'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    afterEach'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'setUILocale'
+                  Identifier: 'savedUILocale'
+          FunctionDeclaration
+            Identifier: ' verifyValidateLocale'
+            Parameter
+              Identifier: 'locale'
+              StringKeyword
+            Parameter
+              Identifier: ' expectedToReadFile'
+              BooleanKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        it'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'locale'
+                      TemplateMiddle
+                    TemplateSpan
+                      ConditionalExpression
+                        Identifier: 'expectedToReadFile'
+                        QuestionToken
+                        StringLiteral
+                        ColonToken
+                        StringLiteral
+                      TemplateTail
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' errors'
+                            ArrayType
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'Diagnostic'
+                            ArrayLiteralExpression
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            ts'
+                            Identifier: 'validateLocaleAndSetLanguage'
+                          Identifier: 'locale'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                getExecutingFilePath'
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                resolvePath'
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'identity'
+                            PropertyAssignment
+                              Identifier: '
+                fileExists'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: ' fileName'
+                                EqualsGreaterThanToken
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    assert'
+                                        Identifier: 'isTrue'
+                                      Identifier: 'expectedToReadFile'
+                                      TemplateExpression
+                                        TemplateHead
+                                        TemplateSpan
+                                          Identifier: 'locale'
+                                          TemplateMiddle
+                                        TemplateSpan
+                                          ConditionalExpression
+                                            Identifier: 'expectedToReadFile'
+                                            QuestionToken
+                                            StringLiteral
+                                            ColonToken
+                                            StringLiteral
+                                          TemplateMiddle
+                                        TemplateSpan
+                                          Identifier: 'fileName'
+                                          TemplateTail
+                                  ReturnStatement
+                                    Identifier: ' expectedToReadFile'
+                            PropertyAssignment
+                              Identifier: '
+                readFile'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: ' fileName'
+                                EqualsGreaterThanToken
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    assert'
+                                        Identifier: 'isTrue'
+                                      Identifier: 'expectedToReadFile'
+                                      TemplateExpression
+                                        TemplateHead
+                                        TemplateSpan
+                                          Identifier: 'locale'
+                                          TemplateMiddle
+                                        TemplateSpan
+                                          ConditionalExpression
+                                            Identifier: 'expectedToReadFile'
+                                            QuestionToken
+                                            StringLiteral
+                                            ColonToken
+                                            StringLiteral
+                                          TemplateMiddle
+                                        TemplateSpan
+                                          Identifier: 'fileName'
+                                          TemplateTail
+                                  ThrowStatement
+                                    NewExpression
+                                      Identifier: ' Error'
+                                      StringLiteral
+                          Identifier: ' errors'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+    ts'
+                  Identifier: 'supportedLocaleDirectories'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'locale'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' verifyValidateLocale'
+                  Identifier: 'locale'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'locale'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' verifyValidateLocale'
+                  Identifier: 'locale'
+                  FalseKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' content'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' sourceFile'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createSourceFile'
+                          StringLiteral
+                          Identifier: ' content'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ESNext'
+                          TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' paramTag'
+                        ElementAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              ElementAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    ElementAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          ElementAccessExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' sourceFile'
+                                                Identifier: 'getChildren'
+                                            NumericLiteral
+                                          Identifier: 'getChildren'
+                                      NumericLiteral
+                                    Identifier: 'getChildren'
+                                NumericLiteral
+                              Identifier: 'getChildren'
+                          NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' kids'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' paramTag'
+                            Identifier: 'getChildren'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' seen'
+                        NewExpression
+                          Identifier: ' Set'
+                          TypeReference
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'Node'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        ts'
+                        Identifier: 'forEachChild'
+                      Identifier: 'paramTag'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' n'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'strictEqual'
+                              FalseKeyword
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' seen'
+                                  Identifier: 'has'
+                                Identifier: 'n'
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            seen'
+                                Identifier: 'add'
+                              Identifier: 'n'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      NumericLiteral
+                      PropertyAccessExpression
+                        Identifier: ' kids'
+                        Identifier: 'length'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' content'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' sourceFile'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createSourceFile'
+                          StringLiteral
+                          Identifier: ' content'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ESNext'
+                          TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' endOfFileToken'
+                        ElementAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sourceFile'
+                              Identifier: 'getChildren'
+                          NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'endOfFileToken'
+                            Identifier: 'getChildren'
+                        Identifier: 'length'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'endOfFileToken'
+                          Identifier: 'getChildCount'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'notEqual'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'endOfFileToken'
+                          Identifier: 'getChildAt'
+                        NumericLiteral
+                      Identifier: ' /*expected*/ undefined'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' content'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' sourceFile'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createSourceFile'
+                          StringLiteral
+                          Identifier: ' content'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ESNext'
+                          TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' classNode'
+                        AsExpression
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' sourceFile'
+                              Identifier: 'statements'
+                            NumericLiteral
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'ClassDeclaration'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' propNode'
+                        AsExpression
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' classNode'
+                              Identifier: 'members'
+                            NumericLiteral
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'PropertyDeclaration'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'ModifierFlags'
+                        Identifier: 'None'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'getSyntacticModifierFlags'
+                        Identifier: 'propNode'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'ModifierFlags'
+                        Identifier: 'None'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'getEffectiveModifierFlags'
+                        Identifier: 'propNode'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'ModifierFlags'
+                        Identifier: 'None'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'getSyntacticModifierFlags'
+                        Identifier: 'propNode'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' content'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' sourceFile'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createSourceFile'
+                          StringLiteral
+                          Identifier: ' content'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ESNext'
+                          TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' classNode'
+                        AsExpression
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' sourceFile'
+                              Identifier: 'statements'
+                            NumericLiteral
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'ClassDeclaration'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' propNode'
+                        AsExpression
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' classNode'
+                              Identifier: 'members'
+                            NumericLiteral
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'PropertyDeclaration'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'ModifierFlags'
+                        Identifier: 'None'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'getSyntacticModifierFlags'
+                        Identifier: 'propNode'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'ModifierFlags'
+                        Identifier: 'Private'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'getEffectiveModifierFlags'
+                        Identifier: 'propNode'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'ModifierFlags'
+                        Identifier: 'None'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'getSyntacticModifierFlags'
+                        Identifier: 'propNode'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' verifyAPI'
+            Parameter
+              Identifier: 'useJsonParsingApi'
+              BooleanKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sys'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    checkJs'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                    composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                    declaration'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                    emitDeclarationOnly'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                    module'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                    outDir'
+                                    StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                name'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                version'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                type'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                exports'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    StringLiteral
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                        types'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                        default'
+                                        StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' currentDirectory'
+                          StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' commandLine'
+                    NonNullExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'getParsedCommandLineOfConfigFile'
+                        StringLiteral
+                        Identifier: '
+            /*optionsToExtend*/ undefined'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                fileExists'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'fileExists'
+                                Identifier: 'bind'
+                              Identifier: 'sys'
+                          PropertyAssignment
+                            Identifier: '
+                getCurrentDirectory'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'getCurrentDirectory'
+                                Identifier: 'bind'
+                              Identifier: 'sys'
+                          PropertyAssignment
+                            Identifier: '
+                onUnRecoverableConfigFileDiagnostic'
+                            ArrowFunction
+                              EqualsGreaterThanToken
+                              Block
+                          PropertyAssignment
+                            Identifier: '
+                readDirectory'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'readDirectory'
+                                Identifier: 'bind'
+                              Identifier: 'sys'
+                          PropertyAssignment
+                            Identifier: '
+                readFile'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'readFile'
+                                Identifier: 'bind'
+                              Identifier: 'sys'
+                          PropertyAssignment
+                            Identifier: '
+                useCaseSensitiveFileNames'
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'useCaseSensitiveFileNames'
+                          PropertyAssignment
+                            Identifier: '
+                directoryExists'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'directoryExists'
+                                Identifier: 'bind'
+                              Identifier: 'sys'
+                          PropertyAssignment
+                            Identifier: '
+                getDirectories'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'getDirectories'
+                                Identifier: 'bind'
+                              Identifier: 'sys'
+                          PropertyAssignment
+                            Identifier: '
+                realpath'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'realpath'
+                                Identifier: 'bind'
+                              Identifier: 'sys'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' config'
+                    ConditionalExpression
+                      PrefixUnaryExpression
+                        Identifier: 'useJsonParsingApi'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' JSON'
+                          Identifier: 'parse'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'sys'
+                              Identifier: 'readFile'
+                            StringLiteral
+                      ColonToken
+                      Identifier: ' undefined'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' host'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'createCompilerHostWorker'
+                      ConditionalExpression
+                        Identifier: '
+            useJsonParsingApi'
+                        QuestionToken
+                        PropertyAccessExpression
+                          Identifier: ' commandLine'
+                          Identifier: 'options'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: ' config'
+                          Identifier: 'compilerOptions'
+                      Identifier: '
+            /*setParentNodes*/ undefined'
+                      Identifier: '
+            sys'
+              ExpressionStatement
+                CallExpression
+                  ParenthesizedExpression
+                    ConditionalExpression
+                      Identifier: 'useJsonParsingApi'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' assert'
+                        Identifier: 'doesNotThrow'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: ' assert'
+                        Identifier: 'throws'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            ts'
+                        Identifier: 'createProgram'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                rootNames'
+                          PropertyAccessExpression
+                            Identifier: ' commandLine'
+                            Identifier: 'fileNames'
+                        PropertyAssignment
+                          Identifier: '
+                options'
+                          ConditionalExpression
+                            Identifier: ' useJsonParsingApi'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: ' commandLine'
+                              Identifier: 'options'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: ' config'
+                              Identifier: 'compilerOptions'
+                        ShorthandPropertyAssignment
+                          Identifier: '
+                host'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyAPI'
+                      TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyAPI'
+                      FalseKeyword

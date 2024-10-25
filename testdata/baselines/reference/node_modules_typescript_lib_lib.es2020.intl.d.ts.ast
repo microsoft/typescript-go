@@ -1,0 +1,1055 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Intl'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' UnicodeBCP47LocaleIdentifier'
+        StringKeyword
+      TypeAliasDeclaration
+        Identifier: ' RelativeTimeFormatUnit'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' RelativeTimeFormatUnitSingular'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' RelativeTimeFormatLocaleMatcher'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' RelativeTimeFormatNumeric'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' RelativeTimeFormatStyle'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' LocalesArgument'
+        UnionType
+          TypeReference
+            Identifier: ' UnicodeBCP47LocaleIdentifier'
+          TypeReference
+            Identifier: ' Locale'
+          TypeOperator
+            ArrayType
+              ParenthesizedType
+                UnionType
+                  TypeReference
+                    Identifier: 'UnicodeBCP47LocaleIdentifier'
+                  TypeReference
+                    Identifier: ' Locale'
+          UndefinedKeyword
+      InterfaceDeclaration
+        Identifier: ' RelativeTimeFormatOptions'
+        PropertySignature
+          Identifier: '
+        /** The locale matching algorithm to use. For information about this option, see [Intl page](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_negotiation). */
+        localeMatcher'
+          QuestionToken
+          TypeReference
+            Identifier: ' RelativeTimeFormatLocaleMatcher'
+        PropertySignature
+          Identifier: '
+        /** The format of output message. */
+        numeric'
+          QuestionToken
+          TypeReference
+            Identifier: ' RelativeTimeFormatNumeric'
+        PropertySignature
+          Identifier: '
+        /** The length of the internationalized message. */
+        style'
+          QuestionToken
+          TypeReference
+            Identifier: ' RelativeTimeFormatStyle'
+      InterfaceDeclaration
+        Identifier: ' ResolvedRelativeTimeFormatOptions'
+        PropertySignature
+          Identifier: '
+        locale'
+          TypeReference
+            Identifier: ' UnicodeBCP47LocaleIdentifier'
+        PropertySignature
+          Identifier: '
+        style'
+          TypeReference
+            Identifier: ' RelativeTimeFormatStyle'
+        PropertySignature
+          Identifier: '
+        numeric'
+          TypeReference
+            Identifier: ' RelativeTimeFormatNumeric'
+        PropertySignature
+          Identifier: '
+        numberingSystem'
+          StringKeyword
+      TypeAliasDeclaration
+        Identifier: ' RelativeTimeFormatPart'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+            type'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: '
+            value'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+            type'
+              TypeReference
+                Identifier: ' Exclude'
+                TypeReference
+                  Identifier: 'NumberFormatPartTypes'
+                LiteralType
+                  StringLiteral
+            PropertySignature
+              Identifier: '
+            value'
+              StringKeyword
+            PropertySignature
+              Identifier: '
+            unit'
+              TypeReference
+                Identifier: ' RelativeTimeFormatUnitSingular'
+      InterfaceDeclaration
+        Identifier: ' RelativeTimeFormat'
+        MethodSignature
+          Identifier: '
+        /**
+         * Formats a value and a unit according to the locale
+         * and formatting options of the given
+         * [`Intl.RelativeTimeFormat`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RelativeTimeFormat)
+         * object.
+         *
+         * While this method automatically provides the correct plural forms,
+         * the grammatical form is otherwise as neutral as possible.
+         *
+         * It is the caller's responsibility to handle cut-off logic
+         * such as deciding between displaying "in 7 days" or "in 1 week".
+         * This API does not support relative dates involving compound units.
+         * e.g "in 5 days and 4 hours".
+         *
+         * @param value -  Numeric value to use in the internationalized relative time message
+         *
+         * @param unit - [Unit](https://tc39.es/ecma402/#sec-singularrelativetimeunit) to use in the relative time internationalized message.
+         *
+         * @throws `RangeError` if `unit` was given something other than `unit` possible values
+         *
+         * @returns {string} Internationalized relative time message as string
+         *
+         * [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat/format).
+         */
+        format'
+          Parameter
+            Identifier: 'value'
+            NumberKeyword
+          Parameter
+            Identifier: ' unit'
+            TypeReference
+              Identifier: ' RelativeTimeFormatUnit'
+          StringKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         *  Returns an array of objects representing the relative time format in parts that can be used for custom locale-aware formatting.
+         *
+         *  @param value - Numeric value to use in the internationalized relative time message
+         *
+         *  @param unit - [Unit](https://tc39.es/ecma402/#sec-singularrelativetimeunit) to use in the relative time internationalized message.
+         *
+         *  @throws `RangeError` if `unit` was given something other than `unit` possible values
+         *
+         *  [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat/formatToParts).
+         */
+        formatToParts'
+          Parameter
+            Identifier: 'value'
+            NumberKeyword
+          Parameter
+            Identifier: ' unit'
+            TypeReference
+              Identifier: ' RelativeTimeFormatUnit'
+          ArrayType
+            TypeReference
+              Identifier: ' RelativeTimeFormatPart'
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Provides access to the locale and options computed during initialization of this `Intl.RelativeTimeFormat` object.
+         *
+         * [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat/resolvedOptions).
+         */
+        resolvedOptions'
+          TypeReference
+            Identifier: ' ResolvedRelativeTimeFormatOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' RelativeTimeFormat'
+            TypeLiteral
+              ConstructSignature
+                Parameter
+                  Identifier: '
+            locales'
+                  QuestionToken
+                  TypeReference
+                    Identifier: ' LocalesArgument'
+                Parameter
+                  Identifier: '
+            options'
+                  QuestionToken
+                  TypeReference
+                    Identifier: ' RelativeTimeFormatOptions'
+                TypeReference
+                  Identifier: ' RelativeTimeFormat'
+              MethodSignature
+                Identifier: '
+
+        /**
+         * Returns an array containing those of the provided locales
+         * that are supported in date and time formatting
+         * without having to fall back to the runtime's default locale.
+         *
+         * @param locales - A string with a [BCP 47 language tag](http://tools.ietf.org/html/rfc5646), or an array of such strings.
+         *  For the general form and interpretation of the locales argument,
+         *  see the [`Intl` page](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation).
+         *
+         * @param options - An [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat/RelativeTimeFormat#Parameters)
+         *  with some or all of options of the formatting.
+         *
+         * @returns An array containing those of the provided locales
+         *  that are supported in date and time formatting
+         *  without having to fall back to the runtime's default locale.
+         *
+         * [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat/supportedLocalesOf).
+         */
+        supportedLocalesOf'
+                Parameter
+                  Identifier: '
+            locales'
+                  QuestionToken
+                  TypeReference
+                    Identifier: ' LocalesArgument'
+                Parameter
+                  Identifier: '
+            options'
+                  QuestionToken
+                  TypeReference
+                    Identifier: ' RelativeTimeFormatOptions'
+                ArrayType
+                  TypeReference
+                    Identifier: ' UnicodeBCP47LocaleIdentifier'
+      InterfaceDeclaration
+        Identifier: ' NumberFormatOptionsStyleRegistry'
+        PropertySignature
+          Identifier: '
+        unit'
+          NeverKeyword
+      InterfaceDeclaration
+        Identifier: ' NumberFormatOptionsCurrencyDisplayRegistry'
+        PropertySignature
+          Identifier: '
+        narrowSymbol'
+          NeverKeyword
+      InterfaceDeclaration
+        Identifier: ' NumberFormatOptionsSignDisplayRegistry'
+        PropertySignature
+          Identifier: '
+        auto'
+          NeverKeyword
+        PropertySignature
+          Identifier: '
+        never'
+          NeverKeyword
+        PropertySignature
+          Identifier: '
+        always'
+          NeverKeyword
+        PropertySignature
+          Identifier: '
+        exceptZero'
+          NeverKeyword
+      TypeAliasDeclaration
+        Identifier: ' NumberFormatOptionsSignDisplay'
+        TypeOperator
+          TypeReference
+            Identifier: ' NumberFormatOptionsSignDisplayRegistry'
+      InterfaceDeclaration
+        Identifier: ' NumberFormatOptions'
+        PropertySignature
+          Identifier: '
+        numberingSystem'
+          QuestionToken
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        compactDisplay'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        notation'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        signDisplay'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' NumberFormatOptionsSignDisplay'
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        unit'
+          QuestionToken
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        unitDisplay'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        currencySign'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            UndefinedKeyword
+      InterfaceDeclaration
+        Identifier: ' ResolvedNumberFormatOptions'
+        PropertySignature
+          Identifier: '
+        compactDisplay'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+        PropertySignature
+          Identifier: '
+        notation'
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+        PropertySignature
+          Identifier: '
+        signDisplay'
+          TypeReference
+            Identifier: ' NumberFormatOptionsSignDisplay'
+        PropertySignature
+          Identifier: '
+        unit'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        unitDisplay'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+        PropertySignature
+          Identifier: '
+        currencySign'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+      InterfaceDeclaration
+        Identifier: ' NumberFormatPartTypeRegistry'
+        PropertySignature
+          Identifier: '
+        compact'
+          NeverKeyword
+        PropertySignature
+          Identifier: '
+        exponentInteger'
+          NeverKeyword
+        PropertySignature
+          Identifier: '
+        exponentMinusSign'
+          NeverKeyword
+        PropertySignature
+          Identifier: '
+        exponentSeparator'
+          NeverKeyword
+        PropertySignature
+          Identifier: '
+        unit'
+          NeverKeyword
+        PropertySignature
+          Identifier: '
+        unknown'
+          NeverKeyword
+      InterfaceDeclaration
+        Identifier: ' DateTimeFormatOptions'
+        PropertySignature
+          Identifier: '
+        calendar'
+          QuestionToken
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        dayPeriod'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        numberingSystem'
+          QuestionToken
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+
+        dateStyle'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        timeStyle'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        hourCycle'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            UndefinedKeyword
+      TypeAliasDeclaration
+        Identifier: ' LocaleHourCycleKey'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' LocaleCollationCaseFirst'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      InterfaceDeclaration
+        Identifier: ' LocaleOptions'
+        PropertySignature
+          Identifier: '
+        /** A string containing the language, and the script and region if available. */
+        baseName'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        /** The part of the Locale that indicates the locale's calendar era. */
+        calendar'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        /** Flag that defines whether case is taken into account for the locale's collation rules. */
+        caseFirst'
+          QuestionToken
+          TypeReference
+            Identifier: ' LocaleCollationCaseFirst'
+        PropertySignature
+          Identifier: '
+        /** The collation type used for sorting */
+        collation'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        /** The time keeping format convention used by the locale. */
+        hourCycle'
+          QuestionToken
+          TypeReference
+            Identifier: ' LocaleHourCycleKey'
+        PropertySignature
+          Identifier: '
+        /** The primary language subtag associated with the locale. */
+        language'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        /** The numeral system used by the locale. */
+        numberingSystem'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        /** Flag that defines whether the locale has special collation handling for numeric characters. */
+        numeric'
+          QuestionToken
+          BooleanKeyword
+        PropertySignature
+          Identifier: '
+        /** The region of the world (usually a country) associated with the locale. Possible values are region codes as defined by ISO 3166-1. */
+        region'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        /** The script used for writing the particular language used in the locale. Possible values are script codes as defined by ISO 15924. */
+        script'
+          QuestionToken
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' Locale'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' LocaleOptions'
+        PropertySignature
+          Identifier: '
+        /** A string containing the language, and the script and region if available. */
+        baseName'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        /** The primary language subtag associated with the locale. */
+        language'
+          StringKeyword
+        MethodSignature
+          Identifier: '
+        /** Gets the most likely values for the language, script, and region of the locale based on existing values. */
+        maximize'
+          TypeReference
+            Identifier: ' Locale'
+        MethodSignature
+          Identifier: '
+        /** Attempts to remove information about the locale that would be added by calling `Locale.maximize()`. */
+        minimize'
+          TypeReference
+            Identifier: ' Locale'
+        MethodSignature
+          Identifier: '
+        /** Returns the locale's full locale identifier string. */
+        toString'
+          TypeReference
+            Identifier: ' UnicodeBCP47LocaleIdentifier'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Locale'
+            TypeLiteral
+              ConstructSignature
+                Parameter
+                  Identifier: 'tag'
+                  UnionType
+                    TypeReference
+                      Identifier: ' UnicodeBCP47LocaleIdentifier'
+                    TypeReference
+                      Identifier: ' Locale'
+                Parameter
+                  Identifier: ' options'
+                  QuestionToken
+                  TypeReference
+                    Identifier: ' LocaleOptions'
+                TypeReference
+                  Identifier: ' Locale'
+      TypeAliasDeclaration
+        Identifier: ' DisplayNamesFallback'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' DisplayNamesType'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' DisplayNamesLanguageDisplay'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      InterfaceDeclaration
+        Identifier: ' DisplayNamesOptions'
+        PropertySignature
+          Identifier: '
+        localeMatcher'
+          QuestionToken
+          TypeReference
+            Identifier: ' RelativeTimeFormatLocaleMatcher'
+        PropertySignature
+          Identifier: '
+        style'
+          QuestionToken
+          TypeReference
+            Identifier: ' RelativeTimeFormatStyle'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            Identifier: ' DisplayNamesType'
+        PropertySignature
+          Identifier: '
+        languageDisplay'
+          QuestionToken
+          TypeReference
+            Identifier: ' DisplayNamesLanguageDisplay'
+        PropertySignature
+          Identifier: '
+        fallback'
+          QuestionToken
+          TypeReference
+            Identifier: ' DisplayNamesFallback'
+      InterfaceDeclaration
+        Identifier: ' ResolvedDisplayNamesOptions'
+        PropertySignature
+          Identifier: '
+        locale'
+          TypeReference
+            Identifier: ' UnicodeBCP47LocaleIdentifier'
+        PropertySignature
+          Identifier: '
+        style'
+          TypeReference
+            Identifier: ' RelativeTimeFormatStyle'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            Identifier: ' DisplayNamesType'
+        PropertySignature
+          Identifier: '
+        fallback'
+          TypeReference
+            Identifier: ' DisplayNamesFallback'
+        PropertySignature
+          Identifier: '
+        languageDisplay'
+          QuestionToken
+          TypeReference
+            Identifier: ' DisplayNamesLanguageDisplay'
+      InterfaceDeclaration
+        Identifier: ' DisplayNames'
+        MethodSignature
+          Identifier: '
+        /**
+         * Receives a code and returns a string based on the locale and options provided when instantiating
+         * [`Intl.DisplayNames()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DisplayNames)
+         *
+         * @param code The `code` to provide depends on the `type` passed to display name during creation:
+         *  - If the type is `"region"`, code should be either an [ISO-3166 two letters region code](https://www.iso.org/iso-3166-country-codes.html),
+         *    or a [three digits UN M49 Geographic Regions](https://unstats.un.org/unsd/methodology/m49/).
+         *  - If the type is `"script"`, code should be an [ISO-15924 four letters script code](https://unicode.org/iso15924/iso15924-codes.html).
+         *  - If the type is `"language"`, code should be a `languageCode` ["-" `scriptCode`] ["-" `regionCode` ] *("-" `variant` )
+         *    subsequence of the unicode_language_id grammar in [UTS 35's Unicode Language and Locale Identifiers grammar](https://unicode.org/reports/tr35/#Unicode_language_identifier).
+         *    `languageCode` is either a two letters ISO 639-1 language code or a three letters ISO 639-2 language code.
+         *  - If the type is `"currency"`, code should be a [3-letter ISO 4217 currency code](https://www.iso.org/iso-4217-currency-codes.html).
+         *
+         * [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DisplayNames/of).
+         */
+        of'
+          Parameter
+            Identifier: 'code'
+            StringKeyword
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        /**
+         * Returns a new object with properties reflecting the locale and style formatting options computed during the construction of the current
+         * [`Intl/DisplayNames`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DisplayNames) object.
+         *
+         * [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DisplayNames/resolvedOptions).
+         */
+        resolvedOptions'
+          TypeReference
+            Identifier: ' ResolvedDisplayNamesOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' DisplayNames'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+        prototype'
+                TypeReference
+                  Identifier: ' DisplayNames'
+              ConstructSignature
+                Parameter
+                  Identifier: 'locales'
+                  TypeReference
+                    Identifier: ' LocalesArgument'
+                Parameter
+                  Identifier: ' options'
+                  TypeReference
+                    Identifier: ' DisplayNamesOptions'
+                TypeReference
+                  Identifier: ' DisplayNames'
+              MethodSignature
+                Identifier: '
+
+        /**
+         * Returns an array containing those of the provided locales that are supported in display names without having to fall back to the runtime's default locale.
+         *
+         * @param locales A string with a BCP 47 language tag, or an array of such strings.
+         *   For the general form and interpretation of the `locales` argument, see the [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#locale_identification_and_negotiation)
+         *   page.
+         *
+         * @param options An object with a locale matcher.
+         *
+         * @returns An array of strings representing a subset of the given locale tags that are supported in display names without having to fall back to the runtime's default locale.
+         *
+         * [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DisplayNames/supportedLocalesOf).
+         */
+        supportedLocalesOf'
+                Parameter
+                  Identifier: 'locales'
+                  QuestionToken
+                  TypeReference
+                    Identifier: ' LocalesArgument'
+                Parameter
+                  Identifier: ' options'
+                  QuestionToken
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' localeMatcher'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' RelativeTimeFormatLocaleMatcher'
+                ArrayType
+                  TypeReference
+                    Identifier: ' UnicodeBCP47LocaleIdentifier'
+      InterfaceDeclaration
+        Identifier: ' CollatorConstructor'
+        ConstructSignature
+          Parameter
+            Identifier: 'locales'
+            QuestionToken
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' CollatorOptions'
+          TypeReference
+            Identifier: ' Collator'
+        CallSignature
+          Parameter
+            Identifier: 'locales'
+            QuestionToken
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' CollatorOptions'
+          TypeReference
+            Identifier: ' Collator'
+        MethodSignature
+          Identifier: '
+        supportedLocalesOf'
+          Parameter
+            Identifier: 'locales'
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' CollatorOptions'
+          ArrayType
+            StringKeyword
+      InterfaceDeclaration
+        Identifier: ' DateTimeFormatConstructor'
+        ConstructSignature
+          Parameter
+            Identifier: 'locales'
+            QuestionToken
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' DateTimeFormatOptions'
+          TypeReference
+            Identifier: ' DateTimeFormat'
+        CallSignature
+          Parameter
+            Identifier: 'locales'
+            QuestionToken
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' DateTimeFormatOptions'
+          TypeReference
+            Identifier: ' DateTimeFormat'
+        MethodSignature
+          Identifier: '
+        supportedLocalesOf'
+          Parameter
+            Identifier: 'locales'
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' DateTimeFormatOptions'
+          ArrayType
+            StringKeyword
+      InterfaceDeclaration
+        Identifier: ' NumberFormatConstructor'
+        ConstructSignature
+          Parameter
+            Identifier: 'locales'
+            QuestionToken
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' NumberFormatOptions'
+          TypeReference
+            Identifier: ' NumberFormat'
+        CallSignature
+          Parameter
+            Identifier: 'locales'
+            QuestionToken
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' NumberFormatOptions'
+          TypeReference
+            Identifier: ' NumberFormat'
+        MethodSignature
+          Identifier: '
+        supportedLocalesOf'
+          Parameter
+            Identifier: 'locales'
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' NumberFormatOptions'
+          ArrayType
+            StringKeyword
+      InterfaceDeclaration
+        Identifier: ' PluralRulesConstructor'
+        ConstructSignature
+          Parameter
+            Identifier: 'locales'
+            QuestionToken
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' PluralRulesOptions'
+          TypeReference
+            Identifier: ' PluralRules'
+        CallSignature
+          Parameter
+            Identifier: 'locales'
+            QuestionToken
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeReference
+              Identifier: ' PluralRulesOptions'
+          TypeReference
+            Identifier: ' PluralRules'
+        MethodSignature
+          Identifier: '
+
+        supportedLocalesOf'
+          Parameter
+            Identifier: 'locales'
+            TypeReference
+              Identifier: ' LocalesArgument'
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            TypeLiteral
+              PropertySignature
+                Identifier: ' localeMatcher'
+                QuestionToken
+                UnionType
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+          ArrayType
+            StringKeyword

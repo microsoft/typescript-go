@@ -1,0 +1,113 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: ' global'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        ExclamationToken
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result2'
+        ExclamationToken
+        TypeReference
+          Identifier: ' I'
+  IfStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'result'
+          InstanceOfKeyword
+          Identifier: ' RegExp'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    result'
+          EqualsToken
+          Identifier: ' result2'
+    IfStatement
+      PrefixUnaryExpression
+        PropertyAccessExpression
+          Identifier: 'result'
+          Identifier: 'global'
+      Block
+  InterfaceDeclaration
+    Identifier: ' OnChanges'
+    MethodSignature
+      Identifier: '
+    onChanges'
+      Parameter
+        Identifier: 'changes'
+        TypeReference
+          Identifier: ' Record'
+          StringKeyword
+          UnknownKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Validator'
+    MethodSignature
+      Identifier: '
+    validate'
+      UnionType
+        LiteralType
+          NullKeyword
+        TypeReference
+          Identifier: ' Record'
+          StringKeyword
+          UnknownKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    validate'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            IntersectionType
+              TypeReference
+                Identifier: ' Validator'
+              TypeReference
+                Identifier: ' Partial'
+                TypeReference
+                  Identifier: 'OnChanges'
+            AsExpression
+              NullKeyword
+              AnyKeyword
+      IfStatement
+        BinaryExpression
+          Identifier: 'v'
+          InstanceOfKeyword
+          Identifier: ' C'
+        Block
+          ExpressionStatement
+            Identifier: '
+        v'
+      ExpressionStatement
+        Identifier: '
+    v'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'v'
+          Identifier: 'onChanges'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        v'
+                Identifier: 'onChanges'
+              ObjectLiteralExpression

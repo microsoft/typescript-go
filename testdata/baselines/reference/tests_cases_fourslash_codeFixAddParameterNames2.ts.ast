@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noImplicitAny: true
+////type Rest = ([|...number|]) => void;
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      StringLiteral

@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' type'
+    StringLiteral

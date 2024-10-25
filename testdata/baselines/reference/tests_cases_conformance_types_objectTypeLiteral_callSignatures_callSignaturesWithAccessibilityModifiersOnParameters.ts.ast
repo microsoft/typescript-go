@@ -1,0 +1,300 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      PublicKeyword
+      Identifier: ' x'
+    Parameter
+      PrivateKeyword
+      Identifier: ' y'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            PublicKeyword
+            Identifier: ' x'
+          Parameter
+            PrivateKeyword
+            Identifier: ' y'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionExpression
+          Parameter
+            PublicKeyword
+            Identifier: ' x'
+          Parameter
+            PrivateKeyword
+            Identifier: ' y'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          Parameter
+            PrivateKeyword
+            Identifier: ' y'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            PublicKeyword
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      PrivateKeyword
+      Identifier: ' x'
+      StringKeyword
+    Parameter
+      PublicKeyword
+      Identifier: ' y'
+      NumberKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f5'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            PrivateKeyword
+            Identifier: ' x'
+            StringKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' y'
+            NumberKeyword
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f6'
+        FunctionExpression
+          Parameter
+            PrivateKeyword
+            Identifier: ' x'
+            StringKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' y'
+            NumberKeyword
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f7'
+        ArrowFunction
+          Parameter
+            PrivateKeyword
+            Identifier: ' x'
+            StringKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' y'
+            NumberKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f8'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            PrivateKeyword
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            PublicKeyword
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+      Parameter
+        PrivateKeyword
+        Identifier: ' y'
+      Block
+    MethodDeclaration
+      Identifier: '
+    foo2'
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' y'
+        StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    foo3'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        PrivateKeyword
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' T'
+      Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        PrivateKeyword
+        Identifier: ' x'
+      Parameter
+        PublicKeyword
+        Identifier: ' y'
+    CallSignature
+      Parameter
+        PrivateKeyword
+        Identifier: ' x'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' y'
+        NumberKeyword
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        PrivateKeyword
+        Identifier: ' x'
+      Parameter
+        PublicKeyword
+        Identifier: ' y'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    foo3'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        PrivateKeyword
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              PublicKeyword
+              Identifier: ' x'
+            Parameter
+              PrivateKeyword
+              Identifier: ' y'
+          MethodSignature
+            Identifier: '
+    foo2'
+            Parameter
+              PrivateKeyword
+              Identifier: ' x'
+              NumberKeyword
+            Parameter
+              PublicKeyword
+              Identifier: ' y'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    foo'
+            Parameter
+              PublicKeyword
+              Identifier: ' x'
+            Parameter
+              Identifier: ' y'
+            Block
+          PropertyAssignment
+            Identifier: '
+    a'
+            FunctionExpression
+              Identifier: ' foo'
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              Parameter
+                PrivateKeyword
+                Identifier: ' y'
+                StringKeyword
+              Block
+          PropertyAssignment
+            Identifier: '
+    b'
+            ArrowFunction
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                PublicKeyword
+                Identifier: ' x'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                PrivateKeyword
+                Identifier: ' y'
+                TypeReference
+                  Identifier: ' T'
+              EqualsGreaterThanToken
+              Block

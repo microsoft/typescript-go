@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' bar'
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Foo'
+          Identifier: 'prototype'
+        Identifier: 'bar'
+      EqualsToken
+      Identifier: ' undefined'

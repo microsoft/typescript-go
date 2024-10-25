@@ -1,0 +1,24 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' outer'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' g'
+        ExternalModuleReference
+          StringLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' g'
+                Identifier: 'square'
+              NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            StringLiteral

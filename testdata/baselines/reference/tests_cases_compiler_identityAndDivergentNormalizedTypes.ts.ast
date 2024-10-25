@@ -1,0 +1,153 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' ApiPost'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        path'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: '
+        body'
+          TypeLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        path'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: '
+        body'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' PostPath'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' ApiPost'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' PostBody'
+    TypeParameter
+      Identifier: 'PATH'
+      TypeReference
+        Identifier: ' PostPath'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' Extract'
+        TypeReference
+          Identifier: 'ApiPost'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' path'
+            TypeReference
+              Identifier: ' PATH'
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' post'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'PATH'
+            TypeReference
+              Identifier: ' PostPath'
+          Parameter
+            Identifier: '
+    path'
+            TypeReference
+              Identifier: ' PATH'
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: 'body'
+              BindingElement
+                DotDotDotToken
+                Identifier: 'options'
+            IntersectionType
+              TypeReference
+                Identifier: ' Omit'
+                TypeReference
+                  Identifier: 'RequestInit'
+                LiteralType
+                  StringLiteral
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'body'
+                  TypeReference
+                    Identifier: ' PostBody'
+                    TypeReference
+                      Identifier: 'PATH'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tmp'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'PATH'
+            TypeReference
+              Identifier: ' PostPath'
+          Parameter
+            Identifier: '
+  path'
+            TypeReference
+              Identifier: ' PATH'
+          Parameter
+            Identifier: '
+  body'
+            TypeReference
+              Identifier: ' PostBody'
+              TypeReference
+                Identifier: 'PATH'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+  post'
+                TypeReference
+                  Identifier: 'PATH'
+                Identifier: 'path'
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' body'
+  FunctionDeclaration
+    Identifier: ' fx1'
+    TypeParameter
+      Identifier: 'P'
+      TypeReference
+        Identifier: ' PostPath'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' body'
+          TypeReference
+            Identifier: ' PostBody'
+            TypeReference
+              Identifier: 'P'
+    Parameter
+      Identifier: ' y'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' body'
+          TypeReference
+            Identifier: ' PostBody'
+            TypeReference
+              Identifier: 'P'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'

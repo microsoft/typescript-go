@@ -1,0 +1,46 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' autoImportFileExcludePatterns'
+        ArrayLiteralExpression
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  excludes'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+            ShorthandPropertyAssignment
+              Identifier: '
+    autoImportFileExcludePatterns'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+      Identifier: ' /*errorCode*/ undefined'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: ' autoImportFileExcludePatterns'

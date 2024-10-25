@@ -1,0 +1,76 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'h'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' h'
+            QuestionToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'i'
+        UnionType
+          StringKeyword
+          NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' i'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'i1'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          TypeLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' i1'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' f2'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: 'f21'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' f212'
+                StringLiteral
+        AnyKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            NumericLiteral
+            Identifier: ''
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            StringLiteral
+            Identifier: ''
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral

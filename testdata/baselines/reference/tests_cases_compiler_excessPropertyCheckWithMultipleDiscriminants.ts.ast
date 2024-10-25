@@ -1,0 +1,447 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    value'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Int'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    multipleOf'
+      QuestionToken
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Float'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Str'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    format'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Bool'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        BooleanKeyword
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Primitive'
+    UnionType
+      TypeReference
+        Identifier: ' Int'
+      TypeReference
+        Identifier: ' Float'
+      TypeReference
+        Identifier: ' Str'
+      TypeReference
+        Identifier: ' Bool'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' Primitive'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    type'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    value'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    multipleOf'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' // excess property
+    format'
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' DisjointDiscriminants'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' p1'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' p2'
+          LiteralType
+            TrueKeyword
+        PropertySignature
+          Identifier: ' p3'
+          NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' p1'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' p2'
+          LiteralType
+            FalseKeyword
+        PropertySignature
+          Identifier: ' p4'
+          StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' p1'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' p2'
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' DisjointDiscriminants'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    p1'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    p2'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    p3'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    p4'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' DisjointDiscriminants'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    p1'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    p2'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: '
+    p3'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    p4'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' DisjointDiscriminants'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    p1'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    p2'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    p3'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    p4'
+            StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Common'
+    PropertySignature
+      Identifier: '
+    type'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    n'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    a'
+      QuestionToken
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    b'
+      QuestionToken
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' CommonWithOverlappingOptionals'
+    UnionType
+      TypeReference
+        Identifier: ' Common'
+      ParenthesizedType
+        IntersectionType
+          TypeReference
+            Identifier: 'Common'
+          TypeReference
+            Identifier: ' A'
+      ParenthesizedType
+        IntersectionType
+          TypeReference
+            Identifier: 'Common'
+          TypeReference
+            Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        TypeReference
+          Identifier: ' CommonWithOverlappingOptionals'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    type'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    n'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    b'
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' CommonWithDisjointOverlappingOptionals'
+    UnionType
+      TypeReference
+        Identifier: ' Common'
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        TypeReference
+          Identifier: ' CommonWithDisjointOverlappingOptionals'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    type'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    n'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    b'
+            NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' BaseAttribute'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    type'
+        QuestionToken
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      PropertySignature
+        Identifier: '
+    required'
+        QuestionToken
+        UnionType
+          BooleanKeyword
+          UndefinedKeyword
+      PropertySignature
+        Identifier: '
+    defaultsTo'
+        QuestionToken
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Attribute'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' StringAttribute'
+      TypeReference
+        Identifier: ' NumberAttribute'
+      TypeReference
+        Identifier: ' OneToOneAttribute'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Attribute2'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' StringAttribute'
+      TypeReference
+        Identifier: ' NumberAttribute'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' StringAttribute'
+    IntersectionType
+      TypeReference
+        Identifier: ' BaseAttribute'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    type'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' NumberAttribute'
+    IntersectionType
+      TypeReference
+        Identifier: ' BaseAttribute'
+        NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    type'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: '
+    autoIncrement'
+          QuestionToken
+          UnionType
+            BooleanKeyword
+            UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' OneToOneAttribute'
+    IntersectionType
+      TypeReference
+        Identifier: ' BaseAttribute'
+        AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    model'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' attributes'
+        TypeReference
+          Identifier: ' Attribute'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    type'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    autoIncrement'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: '
+    required'
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' attributes2'
+        TypeReference
+          Identifier: ' Attribute2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    type'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    autoIncrement'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: '
+    required'
+            TrueKeyword

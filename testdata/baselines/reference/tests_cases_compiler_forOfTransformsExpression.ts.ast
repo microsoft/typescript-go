@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' items'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' item'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' items'
+        Identifier: 'sort'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        Parameter
+          Identifier: ' b'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'name'
+            Identifier: 'localeCompare'
+          PropertyAccessExpression
+            Identifier: 'b'
+            Identifier: 'name'
+    Block

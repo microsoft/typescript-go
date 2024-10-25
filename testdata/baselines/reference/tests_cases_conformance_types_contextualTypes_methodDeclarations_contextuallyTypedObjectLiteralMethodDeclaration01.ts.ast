@@ -1,0 +1,142 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    numProp'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    strProp'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    MethodSignature
+      Identifier: '
+    method1'
+      Parameter
+        Identifier: 'arg'
+        TypeReference
+          Identifier: ' A'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    method2'
+      Parameter
+        Identifier: 'arg'
+        TypeReference
+          Identifier: ' B'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' getFoo1'
+    TypeReference
+      Identifier: ' Foo'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+        method1'
+            Parameter
+              Identifier: 'arg'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            arg'
+                    Identifier: 'numProp'
+                  EqualsToken
+                  NumericLiteral
+          MethodDeclaration
+            Identifier: '
+        method2'
+            Parameter
+              Identifier: 'arg'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            arg'
+                    Identifier: 'strProp'
+                  EqualsToken
+                  StringLiteral
+  FunctionDeclaration
+    Identifier: ' getFoo2'
+    TypeReference
+      Identifier: ' Foo'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        method1'
+            ArrowFunction
+              Parameter
+                Identifier: 'arg'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            arg'
+                      Identifier: 'numProp'
+                    EqualsToken
+                    NumericLiteral
+          PropertyAssignment
+            Identifier: '
+        method2'
+            ArrowFunction
+              Parameter
+                Identifier: 'arg'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            arg'
+                      Identifier: 'strProp'
+                    EqualsToken
+                    StringLiteral
+  FunctionDeclaration
+    Identifier: ' getFoo3'
+    TypeReference
+      Identifier: ' Foo'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        method1'
+            FunctionExpression
+              Parameter
+                Identifier: 'arg'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            arg'
+                      Identifier: 'numProp'
+                    EqualsToken
+                    NumericLiteral
+          PropertyAssignment
+            Identifier: '
+        method2'
+            FunctionExpression
+              Parameter
+                Identifier: 'arg'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            arg'
+                      Identifier: 'strProp'
+                    EqualsToken
+                    StringLiteral

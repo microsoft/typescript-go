@@ -1,0 +1,237 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+// Testing that quickInfo gets information with a corresponding meaning: values to values, types to types.
+// For quick info purposes, we don't resolve past aliases.
+// However, when we have an alias for a type, the quickInfo for a value with the same should skip the alias, and vice versa.
+// goToDefinition should work the same way.
+
+// @Filename: foo.d.ts
+////declare const [|/*foo_value_declaration*/foo: number|];
+////[|declare module "foo_module" {
+////    interface /*foo_type_declaration*/I { x: number; y: number }
+////    export = I;
+////}|]
+
+// @Filename: foo_user.ts
+///////<reference path="foo.d.ts" />
+////[|import foo = require("foo_module");|]
+////const x = foo/*foo_value*/;
+////const i: foo/*foo_type*/ = { x: 1, y: 2 };
+
+verify'
+        Identifier: 'noErrors'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0'
+          BindingElement
+            Identifier: ' r1'
+          BindingElement
+            Identifier: ' r2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'navigateTo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    pattern'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    expected'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' range'
+                Identifier: ' r0'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' range'
+                Identifier: ' r2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' matchKind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' range'
+                Identifier: ' r1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoIs'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoIs'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          OmittedExpression
+          OmittedExpression
+          BindingElement
+            Identifier: ' r3'
+          BindingElement
+            Identifier: ' r4'
+          BindingElement
+            Identifier: ' r5'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'navigateTo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    pattern'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    expected'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' range'
+                Identifier: ' r3'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' range'
+                Identifier: ' r5'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' matchKind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' range'
+                Identifier: ' r4'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoIs'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoIs'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'baselineGetDefinitionAtPosition'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral

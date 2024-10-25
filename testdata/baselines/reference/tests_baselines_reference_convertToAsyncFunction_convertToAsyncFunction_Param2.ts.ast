@@ -1,0 +1,119 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' my_print'
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    Identifier: 'fetch'
+                    StringLiteral
+                  Identifier: 'then'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'res'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' console'
+                      Identifier: 'log'
+                    Identifier: 'res'
+            Identifier: 'catch'
+          ArrowFunction
+            Parameter
+              Identifier: 'err'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              StringLiteral
+              Identifier: ' err'
+  FunctionDeclaration
+    Identifier: ' my_print'
+    Parameter
+      Identifier: 'resp'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'resp'
+          Identifier: 'ok'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'resp'
+                Identifier: 'buffer'
+      ReturnStatement
+        Identifier: ' resp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      TryStatement
+        Block
+          ReturnStatement
+            AwaitExpression
+              CallExpression
+                Identifier: ' my_print'
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: 'fetch'
+                      StringLiteral
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'res'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' console'
+                        Identifier: 'log'
+                      Identifier: 'res'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'err'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                StringLiteral
+                Identifier: ' err'
+  FunctionDeclaration
+    Identifier: ' my_print'
+    Parameter
+      Identifier: 'resp'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'resp'
+          Identifier: 'ok'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'resp'
+                Identifier: 'buffer'
+      ReturnStatement
+        Identifier: ' resp'

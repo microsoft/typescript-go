@@ -1,0 +1,22 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+    ImportType
+      LiteralType
+        StringLiteral
+      Identifier: 'Foo'
+      TypeReference
+        Identifier: 'T'

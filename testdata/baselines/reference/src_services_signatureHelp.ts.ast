@@ -1,0 +1,4570 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ArrowFunction'
+        ImportSpecifier
+          Identifier: '
+    BinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    CallLikeExpression'
+        ImportSpecifier
+          Identifier: '
+    CancellationToken'
+        ImportSpecifier
+          Identifier: '
+    canHaveSymbol'
+        ImportSpecifier
+          Identifier: '
+    CheckFlags'
+        ImportSpecifier
+          Identifier: '
+    contains'
+        ImportSpecifier
+          Identifier: '
+    createPrinterWithRemoveComments'
+        ImportSpecifier
+          Identifier: '
+    createTextSpan'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromBounds'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromNode'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    ElementFlags'
+        ImportSpecifier
+          Identifier: '
+    EmitHint'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    findContainingList'
+        ImportSpecifier
+          Identifier: '
+    findIndex'
+        ImportSpecifier
+          Identifier: '
+    findPrecedingToken'
+        ImportSpecifier
+          Identifier: '
+    findTokenOnLeftOfPosition'
+        ImportSpecifier
+          Identifier: '
+    first'
+        ImportSpecifier
+          Identifier: '
+    firstDefined'
+        ImportSpecifier
+          Identifier: '
+    flatMapToMutable'
+        ImportSpecifier
+          Identifier: '
+    FunctionExpression'
+        ImportSpecifier
+          Identifier: '
+    getInvokedExpression'
+        ImportSpecifier
+          Identifier: '
+    getPossibleGenericSignatures'
+        ImportSpecifier
+          Identifier: '
+    getPossibleTypeArgumentsInfo'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    identity'
+        ImportSpecifier
+          Identifier: '
+    InternalSymbolName'
+        ImportSpecifier
+          Identifier: '
+    isArrayBindingPattern'
+        ImportSpecifier
+          Identifier: '
+    isBinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    isBindingElement'
+        ImportSpecifier
+          Identifier: '
+    isBlock'
+        ImportSpecifier
+          Identifier: '
+    isCallOrNewExpression'
+        ImportSpecifier
+          Identifier: '
+    isFunctionTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isInComment'
+        ImportSpecifier
+          Identifier: '
+    isInsideTemplateLiteral'
+        ImportSpecifier
+          Identifier: '
+    isInString'
+        ImportSpecifier
+          Identifier: '
+    isJsxOpeningLikeElement'
+        ImportSpecifier
+          Identifier: '
+    isMethodDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isNoSubstitutionTemplateLiteral'
+        ImportSpecifier
+          Identifier: '
+    isObjectBindingPattern'
+        ImportSpecifier
+          Identifier: '
+    isParameter'
+        ImportSpecifier
+          Identifier: '
+    isPropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    isSourceFile'
+        ImportSpecifier
+          Identifier: '
+    isSourceFileJS'
+        ImportSpecifier
+          Identifier: '
+    isSpreadElement'
+        ImportSpecifier
+          Identifier: '
+    isTaggedTemplateExpression'
+        ImportSpecifier
+          Identifier: '
+    isTemplateHead'
+        ImportSpecifier
+          Identifier: '
+    isTemplateLiteralToken'
+        ImportSpecifier
+          Identifier: '
+    isTemplateSpan'
+        ImportSpecifier
+          Identifier: '
+    isTemplateTail'
+        ImportSpecifier
+          Identifier: '
+    isTransientSymbol'
+        ImportSpecifier
+          Identifier: '
+    JsxTagNameExpression'
+        ImportSpecifier
+          Identifier: '
+    last'
+        ImportSpecifier
+          Identifier: '
+    lastOrUndefined'
+        ImportSpecifier
+          Identifier: '
+    ListFormat'
+        ImportSpecifier
+          Identifier: '
+    map'
+        ImportSpecifier
+          Identifier: '
+    mapToDisplayParts'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeBuilderFlags'
+        ImportSpecifier
+          Identifier: '
+    ParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ParenthesizedExpression'
+        ImportSpecifier
+          Identifier: '
+    Printer'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    punctuationPart'
+        ImportSpecifier
+          Identifier: '
+    rangeContainsRange'
+        ImportSpecifier
+          Identifier: '
+    Signature'
+        ImportSpecifier
+          Identifier: '
+    SignatureHelpItem'
+        ImportSpecifier
+          Identifier: '
+    SignatureHelpItems'
+        ImportSpecifier
+          Identifier: '
+    SignatureHelpParameter'
+        ImportSpecifier
+          Identifier: '
+    SignatureHelpTriggerReason'
+        ImportSpecifier
+          Identifier: '
+    skipTrivia'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    spacePart'
+        ImportSpecifier
+          Identifier: '
+    SpreadElement'
+        ImportSpecifier
+          Identifier: '
+    Symbol'
+        ImportSpecifier
+          Identifier: '
+    SymbolDisplayPart'
+        ImportSpecifier
+          Identifier: '
+    symbolToDisplayParts'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    TaggedTemplateExpression'
+        ImportSpecifier
+          Identifier: '
+    TemplateExpression'
+        ImportSpecifier
+          Identifier: '
+    TextSpan'
+        ImportSpecifier
+          Identifier: '
+    tryCast'
+        ImportSpecifier
+          Identifier: '
+    TupleTypeReference'
+        ImportSpecifier
+          Identifier: '
+    Type'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+        ImportSpecifier
+          Identifier: '
+    TypeParameter'
+    StringLiteral
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' InvocationKind'
+    EnumMember
+      Identifier: '
+    Call'
+    EnumMember
+      Identifier: '
+    TypeArgs'
+    EnumMember
+      Identifier: '
+    Contextual'
+  InterfaceDeclaration
+    Identifier: ' CallInvocation'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' InvocationKind'
+          Identifier: 'Call'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' CallLikeExpression'
+  InterfaceDeclaration
+    Identifier: ' TypeArgsInvocation'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' InvocationKind'
+          Identifier: 'TypeArgs'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' called'
+      TypeReference
+        Identifier: ' Identifier'
+  InterfaceDeclaration
+    Identifier: ' ContextualInvocation'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' InvocationKind'
+          Identifier: 'Contextual'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' signature'
+      TypeReference
+        Identifier: ' Signature'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' symbol'
+      TypeReference
+        Identifier: ' Symbol'
+  TypeAliasDeclaration
+    Identifier: ' Invocation'
+    UnionType
+      TypeReference
+        Identifier: ' CallInvocation'
+      TypeReference
+        Identifier: ' TypeArgsInvocation'
+      TypeReference
+        Identifier: ' ContextualInvocation'
+  InterfaceDeclaration
+    Identifier: ' ArgumentListInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' isTypeParameterList'
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' invocation'
+      TypeReference
+        Identifier: ' Invocation'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' argumentsSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' argumentIndex'
+      NumberKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' argumentCount'
+      NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getSignatureHelpItems'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' triggerReason'
+      UnionType
+        TypeReference
+          Identifier: ' SignatureHelpTriggerReason'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    UnionType
+      TypeReference
+        Identifier: ' SignatureHelpItems'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeChecker'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getTypeChecker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' startingToken'
+            CallExpression
+              Identifier: ' findTokenOnLeftOfPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' position'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'startingToken'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' onlyUseSyntacticOwners'
+            BinaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'triggerReason'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' triggerReason'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'onlyUseSyntacticOwners'
+          AmpersandAmpersandToken
+          ParenthesizedExpression
+            BinaryExpression
+              CallExpression
+                Identifier: 'isInString'
+                Identifier: 'sourceFile'
+                Identifier: ' position'
+                Identifier: ' startingToken'
+              BarBarToken
+              CallExpression
+                Identifier: ' isInComment'
+                Identifier: 'sourceFile'
+                Identifier: ' position'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isManuallyInvoked'
+            BinaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'triggerReason'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' triggerReason'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' argumentInfo'
+            CallExpression
+              Identifier: ' getContainingArgumentInfo'
+              Identifier: 'startingToken'
+              Identifier: ' position'
+              Identifier: ' sourceFile'
+              Identifier: ' typeChecker'
+              Identifier: ' isManuallyInvoked'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'argumentInfo'
+        ReturnStatement
+          Identifier: ' undefined'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    cancellationToken'
+            Identifier: 'throwIfCancellationRequested'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' candidateInfo'
+            CallExpression
+              Identifier: ' getCandidateOrTypeInfo'
+              Identifier: 'argumentInfo'
+              Identifier: ' typeChecker'
+              Identifier: ' sourceFile'
+              Identifier: ' startingToken'
+              Identifier: ' onlyUseSyntacticOwners'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    cancellationToken'
+            Identifier: 'throwIfCancellationRequested'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'candidateInfo'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isSourceFileJS'
+                Identifier: 'sourceFile'
+              QuestionToken
+              CallExpression
+                Identifier: ' createJSSignatureHelpItems'
+                Identifier: 'argumentInfo'
+                Identifier: ' program'
+                Identifier: ' cancellationToken'
+              ColonToken
+              Identifier: ' undefined'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' typeChecker'
+            Identifier: 'runWithCancellationToken'
+          Identifier: 'cancellationToken'
+          ArrowFunction
+            Parameter
+              Identifier: ' typeChecker'
+            EqualsGreaterThanToken
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+        candidateInfo'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' CandidateOrTypeKind'
+                  Identifier: 'Candidate'
+              QuestionToken
+              CallExpression
+                Identifier: ' createSignatureHelpItems'
+                PropertyAccessExpression
+                  Identifier: 'candidateInfo'
+                  Identifier: 'candidates'
+                PropertyAccessExpression
+                  Identifier: ' candidateInfo'
+                  Identifier: 'resolvedSignature'
+                Identifier: ' argumentInfo'
+                Identifier: ' sourceFile'
+                Identifier: ' typeChecker'
+              ColonToken
+              CallExpression
+                Identifier: ' createTypeHelpItems'
+                PropertyAccessExpression
+                  Identifier: 'candidateInfo'
+                  Identifier: 'symbol'
+                Identifier: ' argumentInfo'
+                Identifier: ' sourceFile'
+                Identifier: ' typeChecker'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' CandidateOrTypeKind'
+    EnumMember
+      Identifier: '
+    Candidate'
+    EnumMember
+      Identifier: '
+    Type'
+  InterfaceDeclaration
+    Identifier: ' CandidateInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' CandidateOrTypeKind'
+          Identifier: 'Candidate'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' candidates'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Signature'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' resolvedSignature'
+      TypeReference
+        Identifier: ' Signature'
+  InterfaceDeclaration
+    Identifier: ' TypeInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' CandidateOrTypeKind'
+          Identifier: 'Type'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' symbol'
+      TypeReference
+        Identifier: ' Symbol'
+  FunctionDeclaration
+    Identifier: ' getCandidateOrTypeInfo'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' invocation'
+        BindingElement
+          Identifier: ' argumentCount'
+      TypeReference
+        Identifier: ' ArgumentListInfo'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' startingToken'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' onlyUseSyntacticOwners'
+      BooleanKeyword
+    UnionType
+      TypeReference
+        Identifier: ' CandidateInfo'
+      TypeReference
+        Identifier: ' TypeInfo'
+      UndefinedKeyword
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'invocation'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' InvocationKind'
+              Identifier: 'Call'
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'onlyUseSyntacticOwners'
+                  AmpersandAmpersandToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isSyntacticOwner'
+                      Identifier: 'startingToken'
+                      PropertyAccessExpression
+                        Identifier: ' invocation'
+                        Identifier: 'node'
+                      Identifier: ' sourceFile'
+                Block
+                  ReturnStatement
+                    Identifier: ' undefined'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' candidates'
+                    ArrayType
+                      TypeReference
+                        Identifier: ' Signature'
+                    ArrayLiteralExpression
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' resolvedSignature'
+                    NonNullExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' checker'
+                          Identifier: 'getResolvedSignatureForSignatureHelp'
+                        PropertyAccessExpression
+                          Identifier: 'invocation'
+                          Identifier: 'node'
+                        Identifier: ' candidates'
+                        Identifier: ' argumentCount'
+              ReturnStatement
+                ConditionalExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' candidates'
+                      Identifier: 'length'
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+                  QuestionToken
+                  Identifier: ' undefined'
+                  ColonToken
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' kind'
+                      PropertyAccessExpression
+                        Identifier: ' CandidateOrTypeKind'
+                        Identifier: 'Candidate'
+                    ShorthandPropertyAssignment
+                      Identifier: ' candidates'
+                    ShorthandPropertyAssignment
+                      Identifier: ' resolvedSignature'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' InvocationKind'
+              Identifier: 'TypeArgs'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' called'
+                    Identifier: ' invocation'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'onlyUseSyntacticOwners'
+                  AmpersandAmpersandToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'containsPrecedingToken'
+                      Identifier: 'startingToken'
+                      Identifier: ' sourceFile'
+                      ConditionalExpression
+                        CallExpression
+                          Identifier: ' isIdentifier'
+                          Identifier: 'called'
+                        QuestionToken
+                        PropertyAccessExpression
+                          Identifier: ' called'
+                          Identifier: 'parent'
+                        ColonToken
+                        Identifier: ' called'
+                Block
+                  ReturnStatement
+                    Identifier: ' undefined'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' candidates'
+                    CallExpression
+                      Identifier: ' getPossibleGenericSignatures'
+                      Identifier: 'called'
+                      Identifier: ' argumentCount'
+                      Identifier: ' checker'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'candidates'
+                    Identifier: 'length'
+                  ExclamationEqualsEqualsToken
+                  NumericLiteral
+                ReturnStatement
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' kind'
+                      PropertyAccessExpression
+                        Identifier: ' CandidateOrTypeKind'
+                        Identifier: 'Candidate'
+                    ShorthandPropertyAssignment
+                      Identifier: ' candidates'
+                    PropertyAssignment
+                      Identifier: ' resolvedSignature'
+                      CallExpression
+                        Identifier: ' first'
+                        Identifier: 'candidates'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' symbol'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' checker'
+                        Identifier: 'getSymbolAtLocation'
+                      Identifier: 'called'
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' symbol'
+                  AmpersandAmpersandToken
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' kind'
+                      PropertyAccessExpression
+                        Identifier: ' CandidateOrTypeKind'
+                        Identifier: 'Type'
+                    ShorthandPropertyAssignment
+                      Identifier: ' symbol'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' InvocationKind'
+              Identifier: 'Contextual'
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' kind'
+                  PropertyAccessExpression
+                    Identifier: ' CandidateOrTypeKind'
+                    Identifier: 'Candidate'
+                PropertyAssignment
+                  Identifier: ' candidates'
+                  ArrayLiteralExpression
+                    PropertyAccessExpression
+                      Identifier: 'invocation'
+                      Identifier: 'signature'
+                PropertyAssignment
+                  Identifier: ' resolvedSignature'
+                  PropertyAccessExpression
+                    Identifier: ' invocation'
+                    Identifier: 'signature'
+          DefaultClause
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Debug'
+                  Identifier: 'assertNever'
+                Identifier: 'invocation'
+  FunctionDeclaration
+    Identifier: ' isSyntacticOwner'
+    Parameter
+      Identifier: 'startingToken'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' CallLikeExpression'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    BooleanKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isCallOrNewExpression'
+            Identifier: 'node'
+        ReturnStatement
+          FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' invocationChildren'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'getChildren'
+              Identifier: 'sourceFile'
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'startingToken'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'OpenParenToken'
+            ReturnStatement
+              CallExpression
+                Identifier: ' contains'
+                Identifier: 'invocationChildren'
+                Identifier: ' startingToken'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CommaToken'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' containingList'
+                    CallExpression
+                      Identifier: ' findContainingList'
+                      Identifier: 'startingToken'
+              ReturnStatement
+                BinaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      Identifier: 'containingList'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' contains'
+                    Identifier: 'invocationChildren'
+                    Identifier: ' containingList'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'LessThanToken'
+            ReturnStatement
+              CallExpression
+                Identifier: ' containsPrecedingToken'
+                Identifier: 'startingToken'
+                Identifier: ' sourceFile'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'expression'
+          DefaultClause
+            ReturnStatement
+              FalseKeyword
+  FunctionDeclaration
+    Identifier: ' createJSSignatureHelpItems'
+    Parameter
+      Identifier: 'argumentInfo'
+      TypeReference
+        Identifier: ' ArgumentListInfo'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    UnionType
+      TypeReference
+        Identifier: ' SignatureHelpItems'
+      UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'argumentInfo'
+              Identifier: 'invocation'
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' InvocationKind'
+            Identifier: 'Contextual'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expression'
+            CallExpression
+              Identifier: ' getExpressionFromInvocation'
+              PropertyAccessExpression
+                Identifier: 'argumentInfo'
+                Identifier: 'invocation'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' name'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isPropertyAccessExpression'
+                Identifier: 'expression'
+              QuestionToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' expression'
+                  Identifier: 'name'
+                Identifier: 'text'
+              ColonToken
+              Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeChecker'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getTypeChecker'
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' name'
+            EqualsEqualsEqualsToken
+            Identifier: ' undefined'
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          CallExpression
+            Identifier: ' firstDefined'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'program'
+                Identifier: 'getSourceFiles'
+            ArrowFunction
+              Parameter
+                Identifier: ' sourceFile'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: '
+        firstDefined'
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'sourceFile'
+                        Identifier: 'getNamedDeclarations'
+                    Identifier: 'get'
+                  Identifier: 'name'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' declaration'
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' type'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' declaration'
+                              Identifier: 'symbol'
+                            AmpersandAmpersandToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' typeChecker'
+                                Identifier: 'getTypeOfSymbolAtLocation'
+                              PropertyAccessExpression
+                                Identifier: 'declaration'
+                                Identifier: 'symbol'
+                              Identifier: ' declaration'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' callSignatures'
+                          BinaryExpression
+                            Identifier: ' type'
+                            AmpersandAmpersandToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' type'
+                                Identifier: 'getCallSignatures'
+                    IfStatement
+                      BinaryExpression
+                        Identifier: 'callSignatures'
+                        AmpersandAmpersandToken
+                        PropertyAccessExpression
+                          Identifier: ' callSignatures'
+                          Identifier: 'length'
+                      Block
+                        ReturnStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' typeChecker'
+                              Identifier: 'runWithCancellationToken'
+                            Identifier: '
+                    cancellationToken'
+                            ArrowFunction
+                              Parameter
+                                Identifier: '
+                    typeChecker'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                Identifier: '
+                        createSignatureHelpItems'
+                                Identifier: '
+                            callSignatures'
+                                ElementAccessExpression
+                                  Identifier: '
+                            callSignatures'
+                                  NumericLiteral
+                                Identifier: '
+                            argumentInfo'
+                                Identifier: '
+                            sourceFile'
+                                Identifier: '
+                            typeChecker'
+                                TrueKeyword
+  FunctionDeclaration
+    Identifier: ' containsPrecedingToken'
+    Parameter
+      Identifier: 'startingToken'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' container'
+      TypeReference
+        Identifier: ' Node'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' pos'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' startingToken'
+                Identifier: 'getFullStart'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' currentParent'
+            UnionType
+              TypeReference
+                Identifier: ' Node'
+              UndefinedKeyword
+            PropertyAccessExpression
+              Identifier: ' startingToken'
+              Identifier: 'parent'
+      WhileStatement
+        Identifier: 'currentParent'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' precedingToken'
+                CallExpression
+                  Identifier: ' findPrecedingToken'
+                  Identifier: 'pos'
+                  Identifier: ' sourceFile'
+                  Identifier: ' currentParent'
+                  TrueKeyword
+          IfStatement
+            Identifier: 'precedingToken'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' rangeContainsRange'
+                  Identifier: 'container'
+                  Identifier: ' precedingToken'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        currentParent'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' currentParent'
+                Identifier: 'parent'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Debug'
+            Identifier: 'fail'
+          StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ArgumentInfoForCompletions'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' invocation'
+      TypeReference
+        Identifier: ' CallLikeExpression'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' argumentIndex'
+      NumberKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' argumentCount'
+      NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getArgumentInfoForCompletions'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeReference
+        Identifier: ' ArgumentInfoForCompletions'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' info'
+            CallExpression
+              Identifier: ' getImmediatelyContainingArgumentInfo'
+              Identifier: 'node'
+              Identifier: ' position'
+              Identifier: ' sourceFile'
+              Identifier: ' checker'
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'info'
+              BarBarToken
+              PropertyAccessExpression
+                Identifier: ' info'
+                Identifier: 'isTypeParameterList'
+            BarBarToken
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' info'
+                  Identifier: 'invocation'
+                Identifier: 'kind'
+              ExclamationEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' InvocationKind'
+                Identifier: 'Call'
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' invocation'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' info'
+                  Identifier: 'invocation'
+                Identifier: 'node'
+            PropertyAssignment
+              Identifier: ' argumentCount'
+              PropertyAccessExpression
+                Identifier: ' info'
+                Identifier: 'argumentCount'
+            PropertyAssignment
+              Identifier: ' argumentIndex'
+              PropertyAccessExpression
+                Identifier: ' info'
+                Identifier: 'argumentIndex'
+  FunctionDeclaration
+    Identifier: ' getArgumentOrParameterListInfo'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' list'
+          TypeReference
+            Identifier: ' Node'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' argumentIndex'
+          NumberKeyword
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' argumentCount'
+          NumberKeyword
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' argumentsSpan'
+          TypeReference
+            Identifier: ' TextSpan'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' info'
+            CallExpression
+              Identifier: ' getArgumentOrParameterListAndIndex'
+              Identifier: 'node'
+              Identifier: ' sourceFile'
+              Identifier: ' checker'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'info'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' list'
+              BindingElement
+                Identifier: ' argumentIndex'
+            Identifier: ' info'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' argumentCount'
+            CallExpression
+              Identifier: ' getArgumentCount'
+              Identifier: 'checker'
+              Identifier: ' list'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' argumentsSpan'
+            CallExpression
+              Identifier: ' getApplicableSpanForArguments'
+              Identifier: 'list'
+              Identifier: ' sourceFile'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' list'
+          ShorthandPropertyAssignment
+            Identifier: ' argumentIndex'
+          ShorthandPropertyAssignment
+            Identifier: ' argumentCount'
+          ShorthandPropertyAssignment
+            Identifier: ' argumentsSpan'
+  FunctionDeclaration
+    Identifier: ' getArgumentOrParameterListAndIndex'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' list'
+          TypeReference
+            Identifier: ' Node'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' argumentIndex'
+          NumberKeyword
+      UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'LessThanToken'
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' node'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'OpenParenToken'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' list'
+                CallExpression
+                  Identifier: ' getChildListThatStartsWithOpenerToken'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'parent'
+                  Identifier: ' node'
+                  Identifier: ' sourceFile'
+              PropertyAssignment
+                Identifier: ' argumentIndex'
+                NumericLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' list'
+                CallExpression
+                  Identifier: ' findContainingList'
+                  Identifier: 'node'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' list'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' list'
+                PropertyAssignment
+                  Identifier: ' argumentIndex'
+                  CallExpression
+                    Identifier: ' getArgumentIndex'
+                    Identifier: 'checker'
+                    Identifier: ' list'
+                    Identifier: ' node'
+  FunctionDeclaration
+    Identifier: ' getImmediatelyContainingArgumentInfo'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeReference
+        Identifier: ' ArgumentListInfo'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' parent'
+            Identifier: ' node'
+      IfStatement
+        CallExpression
+          Identifier: 'isCallOrNewExpression'
+          Identifier: 'parent'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' invocation'
+                Identifier: ' parent'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' info'
+                CallExpression
+                  Identifier: ' getArgumentOrParameterListInfo'
+                  Identifier: 'node'
+                  Identifier: ' position'
+                  Identifier: ' sourceFile'
+                  Identifier: ' checker'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'info'
+            ReturnStatement
+              Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' list'
+                  BindingElement
+                    Identifier: ' argumentIndex'
+                  BindingElement
+                    Identifier: ' argumentCount'
+                  BindingElement
+                    Identifier: ' argumentsSpan'
+                Identifier: ' info'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' isTypeParameterList'
+                BinaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'parent'
+                        Identifier: 'typeArguments'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' parent'
+                        Identifier: 'typeArguments'
+                      Identifier: 'pos'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' list'
+                      Identifier: 'pos'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' isTypeParameterList'
+              PropertyAssignment
+                Identifier: ' invocation'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    PropertyAccessExpression
+                      Identifier: ' InvocationKind'
+                      Identifier: 'Call'
+                  PropertyAssignment
+                    Identifier: ' node'
+                    Identifier: ' invocation'
+              ShorthandPropertyAssignment
+                Identifier: ' argumentsSpan'
+              ShorthandPropertyAssignment
+                Identifier: ' argumentIndex'
+              ShorthandPropertyAssignment
+                Identifier: ' argumentCount'
+        IfStatement
+          BinaryExpression
+            CallExpression
+              Identifier: 'isNoSubstitutionTemplateLiteral'
+              Identifier: 'node'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isTaggedTemplateExpression'
+              Identifier: 'parent'
+          Block
+            IfStatement
+              CallExpression
+                Identifier: 'isInsideTemplateLiteral'
+                Identifier: 'node'
+                Identifier: ' position'
+                Identifier: ' sourceFile'
+              Block
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getArgumentListInfoForTemplate'
+                    Identifier: 'parent'
+                    NumericLiteral
+                    Identifier: ' sourceFile'
+            ReturnStatement
+              Identifier: ' undefined'
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isTemplateHead'
+                Identifier: 'node'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' parent'
+                    Identifier: 'parent'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TaggedTemplateExpression'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' templateExpression'
+                    AsExpression
+                      Identifier: ' parent'
+                      TypeReference
+                        Identifier: ' TemplateExpression'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' tagExpression'
+                    AsExpression
+                      PropertyAccessExpression
+                        Identifier: ' templateExpression'
+                        Identifier: 'parent'
+                      TypeReference
+                        Identifier: ' TaggedTemplateExpression'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        Debug'
+                    Identifier: 'assert'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'templateExpression'
+                      Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'TemplateExpression'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' argumentIndex'
+                    ConditionalExpression
+                      CallExpression
+                        Identifier: ' isInsideTemplateLiteral'
+                        Identifier: 'node'
+                        Identifier: ' position'
+                        Identifier: ' sourceFile'
+                      QuestionToken
+                      NumericLiteral
+                      ColonToken
+                      NumericLiteral
+              ReturnStatement
+                CallExpression
+                  Identifier: ' getArgumentListInfoForTemplate'
+                  Identifier: 'tagExpression'
+                  Identifier: ' argumentIndex'
+                  Identifier: ' sourceFile'
+            IfStatement
+              BinaryExpression
+                CallExpression
+                  Identifier: 'isTemplateSpan'
+                  Identifier: 'parent'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' isTaggedTemplateExpression'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'parent'
+                      Identifier: 'parent'
+                    Identifier: 'parent'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' templateSpan'
+                      Identifier: ' parent'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' tagExpression'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' parent'
+                          Identifier: 'parent'
+                        Identifier: 'parent'
+                IfStatement
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'isTemplateTail'
+                      Identifier: 'node'
+                    AmpersandAmpersandToken
+                    PrefixUnaryExpression
+                      CallExpression
+                        Identifier: 'isInsideTemplateLiteral'
+                        Identifier: 'node'
+                        Identifier: ' position'
+                        Identifier: ' sourceFile'
+                  Block
+                    ReturnStatement
+                      Identifier: ' undefined'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' spanIndex'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' templateSpan'
+                              Identifier: 'parent'
+                            Identifier: 'templateSpans'
+                          Identifier: 'indexOf'
+                        Identifier: 'templateSpan'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' argumentIndex'
+                      CallExpression
+                        Identifier: ' getArgumentIndexForTemplatePiece'
+                        Identifier: 'spanIndex'
+                        Identifier: ' node'
+                        Identifier: ' position'
+                        Identifier: ' sourceFile'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getArgumentListInfoForTemplate'
+                    Identifier: 'tagExpression'
+                    Identifier: ' argumentIndex'
+                    Identifier: ' sourceFile'
+              IfStatement
+                CallExpression
+                  Identifier: 'isJsxOpeningLikeElement'
+                  Identifier: 'parent'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' attributeSpanStart'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' parent'
+                            Identifier: 'attributes'
+                          Identifier: 'pos'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' attributeSpanEnd'
+                        CallExpression
+                          Identifier: ' skipTrivia'
+                          PropertyAccessExpression
+                            Identifier: 'sourceFile'
+                            Identifier: 'text'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' parent'
+                              Identifier: 'attributes'
+                            Identifier: 'end'
+                          FalseKeyword
+                  ReturnStatement
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            isTypeParameterList'
+                        FalseKeyword
+                      PropertyAssignment
+                        Identifier: '
+            invocation'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' kind'
+                            PropertyAccessExpression
+                              Identifier: ' InvocationKind'
+                              Identifier: 'Call'
+                          PropertyAssignment
+                            Identifier: ' node'
+                            Identifier: ' parent'
+                      PropertyAssignment
+                        Identifier: '
+            argumentsSpan'
+                        CallExpression
+                          Identifier: ' createTextSpan'
+                          Identifier: 'attributeSpanStart'
+                          BinaryExpression
+                            Identifier: ' attributeSpanEnd'
+                            MinusToken
+                            Identifier: ' attributeSpanStart'
+                      PropertyAssignment
+                        Identifier: '
+            argumentIndex'
+                        NumericLiteral
+                      PropertyAssignment
+                        Identifier: '
+            argumentCount'
+                        NumericLiteral
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' typeArgInfo'
+                        CallExpression
+                          Identifier: ' getPossibleTypeArgumentsInfo'
+                          Identifier: 'node'
+                          Identifier: ' sourceFile'
+                  IfStatement
+                    Identifier: 'typeArgInfo'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' called'
+                              BindingElement
+                                Identifier: ' nTypeArguments'
+                            Identifier: ' typeArgInfo'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' invocation'
+                            TypeReference
+                              Identifier: ' Invocation'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' kind'
+                                PropertyAccessExpression
+                                  Identifier: ' InvocationKind'
+                                  Identifier: 'TypeArgs'
+                              ShorthandPropertyAssignment
+                                Identifier: ' called'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' argumentsSpan'
+                            CallExpression
+                              Identifier: ' createTextSpanFromBounds'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'called'
+                                  Identifier: 'getStart'
+                                Identifier: 'sourceFile'
+                              PropertyAccessExpression
+                                Identifier: ' node'
+                                Identifier: 'end'
+                      ReturnStatement
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' isTypeParameterList'
+                            TrueKeyword
+                          ShorthandPropertyAssignment
+                            Identifier: ' invocation'
+                          ShorthandPropertyAssignment
+                            Identifier: ' argumentsSpan'
+                          PropertyAssignment
+                            Identifier: ' argumentIndex'
+                            Identifier: ' nTypeArguments'
+                          PropertyAssignment
+                            Identifier: ' argumentCount'
+                            BinaryExpression
+                              Identifier: ' nTypeArguments'
+                              PlusToken
+                              NumericLiteral
+                  ReturnStatement
+                    Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' getImmediatelyContainingArgumentOrContextualParameterInfo'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeReference
+        Identifier: ' ArgumentListInfo'
+      UndefinedKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          CallExpression
+            Identifier: ' tryGetParameterInfo'
+            Identifier: 'node'
+            Identifier: ' position'
+            Identifier: ' sourceFile'
+            Identifier: ' checker'
+          BarBarToken
+          CallExpression
+            Identifier: ' getImmediatelyContainingArgumentInfo'
+            Identifier: 'node'
+            Identifier: ' position'
+            Identifier: ' sourceFile'
+            Identifier: ' checker'
+  FunctionDeclaration
+    Identifier: ' getHighestBinary'
+    Parameter
+      Identifier: 'b'
+      TypeReference
+        Identifier: ' BinaryExpression'
+    TypeReference
+      Identifier: ' BinaryExpression'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          CallExpression
+            Identifier: ' isBinaryExpression'
+            PropertyAccessExpression
+              Identifier: 'b'
+              Identifier: 'parent'
+          QuestionToken
+          CallExpression
+            Identifier: ' getHighestBinary'
+            PropertyAccessExpression
+              Identifier: 'b'
+              Identifier: 'parent'
+          ColonToken
+          Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' countBinaryExpressionParameters'
+    Parameter
+      Identifier: 'b'
+      TypeReference
+        Identifier: ' BinaryExpression'
+    NumberKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          CallExpression
+            Identifier: ' isBinaryExpression'
+            PropertyAccessExpression
+              Identifier: 'b'
+              Identifier: 'left'
+          QuestionToken
+          BinaryExpression
+            CallExpression
+              Identifier: ' countBinaryExpressionParameters'
+              PropertyAccessExpression
+                Identifier: 'b'
+                Identifier: 'left'
+            PlusToken
+            NumericLiteral
+          ColonToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' tryGetParameterInfo'
+    Parameter
+      Identifier: 'startingToken'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeReference
+        Identifier: ' ArgumentListInfo'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            CallExpression
+              Identifier: ' getAdjustedNode'
+              Identifier: 'startingToken'
+      IfStatement
+        BinaryExpression
+          Identifier: 'node'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' info'
+            CallExpression
+              Identifier: ' getContextualSignatureLocationInfo'
+              Identifier: 'node'
+              Identifier: ' sourceFile'
+              Identifier: ' position'
+              Identifier: ' checker'
+      IfStatement
+        BinaryExpression
+          Identifier: 'info'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' contextualType'
+              BindingElement
+                Identifier: ' argumentIndex'
+              BindingElement
+                Identifier: ' argumentCount'
+              BindingElement
+                Identifier: ' argumentsSpan'
+            Identifier: ' info'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nonNullableContextualType'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' contextualType'
+                Identifier: 'getNonNullableType'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' symbol'
+            PropertyAccessExpression
+              Identifier: ' nonNullableContextualType'
+              Identifier: 'symbol'
+      IfStatement
+        BinaryExpression
+          Identifier: 'symbol'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' signature'
+            CallExpression
+              Identifier: ' lastOrUndefined'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'nonNullableContextualType'
+                  Identifier: 'getCallSignatures'
+      IfStatement
+        BinaryExpression
+          Identifier: 'signature'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' invocation'
+            TypeReference
+              Identifier: ' ContextualInvocation'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' kind'
+                PropertyAccessExpression
+                  Identifier: ' InvocationKind'
+                  Identifier: 'Contextual'
+              ShorthandPropertyAssignment
+                Identifier: ' signature'
+              PropertyAssignment
+                Identifier: ' node'
+                Identifier: ' startingToken'
+              PropertyAssignment
+                Identifier: ' symbol'
+                CallExpression
+                  Identifier: ' chooseBetterSymbol'
+                  Identifier: 'symbol'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' isTypeParameterList'
+            FalseKeyword
+          ShorthandPropertyAssignment
+            Identifier: ' invocation'
+          ShorthandPropertyAssignment
+            Identifier: ' argumentsSpan'
+          ShorthandPropertyAssignment
+            Identifier: ' argumentIndex'
+          ShorthandPropertyAssignment
+            Identifier: ' argumentCount'
+  FunctionDeclaration
+    Identifier: ' getAdjustedNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'node'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'OpenParenToken'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CommaToken'
+            ReturnStatement
+              Identifier: ' node'
+          DefaultClause
+            ReturnStatement
+              CallExpression
+                Identifier: ' findAncestor'
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'parent'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' n'
+                  EqualsGreaterThanToken
+                  ConditionalExpression
+                    CallExpression
+                      Identifier: ' isParameter'
+                      Identifier: 'n'
+                    QuestionToken
+                    TrueKeyword
+                    ColonToken
+                    ConditionalExpression
+                      BinaryExpression
+                        BinaryExpression
+                          CallExpression
+                            Identifier: ' isBindingElement'
+                            Identifier: 'n'
+                          BarBarToken
+                          CallExpression
+                            Identifier: ' isObjectBindingPattern'
+                            Identifier: 'n'
+                        BarBarToken
+                        CallExpression
+                          Identifier: ' isArrayBindingPattern'
+                          Identifier: 'n'
+                      QuestionToken
+                      FalseKeyword
+                      ColonToken
+                      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ContextualSignatureLocationInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' contextualType'
+      TypeReference
+        Identifier: ' Type'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' argumentIndex'
+      NumberKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' argumentCount'
+      NumberKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' argumentsSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+  FunctionDeclaration
+    Identifier: ' getContextualSignatureLocationInfo'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeReference
+        Identifier: ' ContextualSignatureLocationInfo'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' parent'
+            Identifier: ' node'
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'parent'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ParenthesizedExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'MethodDeclaration'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'FunctionExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ArrowFunction'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' info'
+                  CallExpression
+                    Identifier: ' getArgumentOrParameterListInfo'
+                    Identifier: 'node'
+                    Identifier: ' position'
+                    Identifier: ' sourceFile'
+                    Identifier: ' checker'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'info'
+              ReturnStatement
+                Identifier: ' undefined'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' argumentIndex'
+                    BindingElement
+                      Identifier: ' argumentCount'
+                    BindingElement
+                      Identifier: ' argumentsSpan'
+                  Identifier: ' info'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' contextualType'
+                  ConditionalExpression
+                    CallExpression
+                      Identifier: ' isMethodDeclaration'
+                      Identifier: 'parent'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' checker'
+                        Identifier: 'getContextualTypeForObjectLiteralElement'
+                      Identifier: 'parent'
+                    ColonToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' checker'
+                        Identifier: 'getContextualType'
+                      AsExpression
+                        Identifier: 'parent'
+                        UnionType
+                          TypeReference
+                            Identifier: ' ParenthesizedExpression'
+                          TypeReference
+                            Identifier: ' FunctionExpression'
+                          TypeReference
+                            Identifier: ' ArrowFunction'
+            ReturnStatement
+              BinaryExpression
+                Identifier: ' contextualType'
+                AmpersandAmpersandToken
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' contextualType'
+                  ShorthandPropertyAssignment
+                    Identifier: ' argumentIndex'
+                  ShorthandPropertyAssignment
+                    Identifier: ' argumentCount'
+                  ShorthandPropertyAssignment
+                    Identifier: ' argumentsSpan'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'BinaryExpression'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' highestBinary'
+                    CallExpression
+                      Identifier: ' getHighestBinary'
+                      AsExpression
+                        Identifier: 'parent'
+                        TypeReference
+                          Identifier: ' BinaryExpression'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' contextualType'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' checker'
+                        Identifier: 'getContextualType'
+                      Identifier: 'highestBinary'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' argumentIndex'
+                    ConditionalExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' node'
+                          Identifier: 'kind'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'OpenParenToken'
+                      QuestionToken
+                      NumericLiteral
+                      ColonToken
+                      BinaryExpression
+                        CallExpression
+                          Identifier: ' countBinaryExpressionParameters'
+                          AsExpression
+                            Identifier: 'parent'
+                            TypeReference
+                              Identifier: ' BinaryExpression'
+                        MinusToken
+                        NumericLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' argumentCount'
+                    CallExpression
+                      Identifier: ' countBinaryExpressionParameters'
+                      Identifier: 'highestBinary'
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' contextualType'
+                  AmpersandAmpersandToken
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: ' contextualType'
+                    ShorthandPropertyAssignment
+                      Identifier: ' argumentIndex'
+                    ShorthandPropertyAssignment
+                      Identifier: ' argumentCount'
+                    PropertyAssignment
+                      Identifier: ' argumentsSpan'
+                      CallExpression
+                        Identifier: ' createTextSpanFromNode'
+                        Identifier: 'parent'
+          DefaultClause
+            ReturnStatement
+              Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' chooseBetterSymbol'
+    Parameter
+      Identifier: 's'
+      TypeReference
+        Identifier: ' Symbol'
+    TypeReference
+      Identifier: ' Symbol'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' s'
+              Identifier: 'name'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' InternalSymbolName'
+              Identifier: 'Type'
+          QuestionToken
+          BinaryExpression
+            CallExpression
+              Identifier: ' firstDefined'
+              PropertyAccessExpression
+                Identifier: 's'
+                Identifier: 'declarations'
+              ArrowFunction
+                Parameter
+                  Identifier: ' d'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  CallExpression
+                    Identifier: ' isFunctionTypeNode'
+                    Identifier: 'd'
+                  QuestionToken
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: ' tryCast'
+                      PropertyAccessExpression
+                        Identifier: 'd'
+                        Identifier: 'parent'
+                      Identifier: ' canHaveSymbol'
+                    QuestionDotToken
+                    Identifier: 'symbol'
+                  ColonToken
+                  Identifier: ' undefined'
+            BarBarToken
+            Identifier: ' s'
+          ColonToken
+          Identifier: ' s'
+  FunctionDeclaration
+    Identifier: ' getSpreadElementCount'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' SpreadElement'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' spreadType'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getTypeAtLocation'
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'expression'
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'checker'
+            Identifier: 'isTupleType'
+          Identifier: 'spreadType'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' elementFlags'
+                  BindingElement
+                    Identifier: ' fixedLength'
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      Identifier: 'spreadType'
+                      TypeReference
+                        Identifier: ' TupleTypeReference'
+                  Identifier: 'target'
+          IfStatement
+            BinaryExpression
+              Identifier: 'fixedLength'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ReturnStatement
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' firstOptionalIndex'
+                CallExpression
+                  Identifier: ' findIndex'
+                  Identifier: 'elementFlags'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' f'
+                    EqualsGreaterThanToken
+                    PrefixUnaryExpression
+                      ParenthesizedExpression
+                        BinaryExpression
+                          Identifier: 'f'
+                          AmpersandToken
+                          PropertyAccessExpression
+                            Identifier: ' ElementFlags'
+                            Identifier: 'Required'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' firstOptionalIndex'
+                LessThanToken
+                NumericLiteral
+              QuestionToken
+              Identifier: ' fixedLength'
+              ColonToken
+              Identifier: ' firstOptionalIndex'
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' getArgumentIndex'
+    Parameter
+      Identifier: 'checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' argumentsList'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' getArgumentIndexOrCount'
+          Identifier: 'checker'
+          Identifier: ' argumentsList'
+          Identifier: ' node'
+  FunctionDeclaration
+    Identifier: ' getArgumentCount'
+    Parameter
+      Identifier: 'checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' argumentsList'
+      TypeReference
+        Identifier: ' Node'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' getArgumentIndexOrCount'
+          Identifier: 'checker'
+          Identifier: ' argumentsList'
+          Identifier: ' /*node*/ undefined'
+  FunctionDeclaration
+    Identifier: ' getArgumentIndexOrCount'
+    Parameter
+      Identifier: 'checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' argumentsList'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' args'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' argumentsList'
+                Identifier: 'getChildren'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' argumentIndex'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' skipComma'
+            FalseKeyword
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' child'
+        Identifier: ' args'
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'node'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' child'
+                EqualsEqualsEqualsToken
+                Identifier: ' node'
+            Block
+              IfStatement
+                BinaryExpression
+                  PrefixUnaryExpression
+                    Identifier: 'skipComma'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' child'
+                      Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'CommaToken'
+                Block
+                  ExpressionStatement
+                    PostfixUnaryExpression
+                      Identifier: '
+                argumentIndex'
+              ReturnStatement
+                Identifier: ' argumentIndex'
+          IfStatement
+            CallExpression
+              Identifier: 'isSpreadElement'
+              Identifier: 'child'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            argumentIndex'
+                  PlusEqualsToken
+                  CallExpression
+                    Identifier: ' getSpreadElementCount'
+                    Identifier: 'child'
+                    Identifier: ' checker'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            skipComma'
+                  EqualsToken
+                  TrueKeyword
+              ContinueStatement
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'child'
+                Identifier: 'kind'
+              ExclamationEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'CommaToken'
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            argumentIndex'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            skipComma'
+                  EqualsToken
+                  TrueKeyword
+              ContinueStatement
+          IfStatement
+            Identifier: 'skipComma'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            skipComma'
+                  EqualsToken
+                  FalseKeyword
+              ContinueStatement
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+        argumentIndex'
+      IfStatement
+        Identifier: 'node'
+        Block
+          ReturnStatement
+            Identifier: ' argumentIndex'
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' args'
+              Identifier: 'length'
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' last'
+                  Identifier: 'args'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'CommaToken'
+          QuestionToken
+          BinaryExpression
+            Identifier: ' argumentIndex'
+            PlusToken
+            NumericLiteral
+          ColonToken
+          Identifier: ' argumentIndex'
+  FunctionDeclaration
+    Identifier: ' getArgumentIndexForTemplatePiece'
+    Parameter
+      Identifier: 'spanIndex'
+      NumberKeyword
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    // Because the TemplateStringsArray is the first argument, we have to offset each substitution expression by 1.
+    // There are three cases we can encounter:
+    //      1. We are precisely in the template literal (argIndex = 0).
+    //      2. We are in or to the right of the substitution expression (argIndex = spanIndex + 1).
+    //      3. We are directly to the right of the template literal, but because we look for the token on the left,
+    //          not enough to put us in the substitution expression; we should consider ourselves part of
+    //          the *next* span's expression by offsetting the index (argIndex = (spanIndex + 1) + 1).
+    //
+    // Example: f  `# abcd $#{#  1 + 1#  }# efghi ${ #"#hello"#  }  #  `
+    //              ^       ^ ^       ^   ^          ^ ^      ^     ^
+    // Case:        1       1 3       2   1          3 2      2     1
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            Identifier: 'position'
+            GreaterThanEqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'getStart'
+          StringLiteral
+      IfStatement
+        CallExpression
+          Identifier: 'isTemplateLiteralToken'
+          Identifier: 'node'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isInsideTemplateLiteral'
+              Identifier: 'node'
+              Identifier: ' position'
+              Identifier: ' sourceFile'
+            Block
+              ReturnStatement
+                NumericLiteral
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' spanIndex'
+              PlusToken
+              NumericLiteral
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' spanIndex'
+          PlusToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' getArgumentListInfoForTemplate'
+    Parameter
+      Identifier: 'tagExpression'
+      TypeReference
+        Identifier: ' TaggedTemplateExpression'
+    Parameter
+      Identifier: ' argumentIndex'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    TypeReference
+      Identifier: ' ArgumentListInfo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' argumentCount'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isNoSubstitutionTemplateLiteral'
+                PropertyAccessExpression
+                  Identifier: 'tagExpression'
+                  Identifier: 'template'
+              QuestionToken
+              NumericLiteral
+              ColonToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' tagExpression'
+                      Identifier: 'template'
+                    Identifier: 'templateSpans'
+                  Identifier: 'length'
+                PlusToken
+                NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'argumentIndex'
+          ExclamationEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assertLessThan'
+              Identifier: 'argumentIndex'
+              Identifier: ' argumentCount'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        isTypeParameterList'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+        invocation'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' kind'
+                PropertyAccessExpression
+                  Identifier: ' InvocationKind'
+                  Identifier: 'Call'
+              PropertyAssignment
+                Identifier: ' node'
+                Identifier: ' tagExpression'
+          PropertyAssignment
+            Identifier: '
+        argumentsSpan'
+            CallExpression
+              Identifier: ' getApplicableSpanForTaggedTemplate'
+              Identifier: 'tagExpression'
+              Identifier: ' sourceFile'
+          ShorthandPropertyAssignment
+            Identifier: '
+        argumentIndex'
+          ShorthandPropertyAssignment
+            Identifier: '
+        argumentCount'
+  FunctionDeclaration
+    Identifier: ' getApplicableSpanForArguments'
+    Parameter
+      Identifier: 'argumentsList'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    TypeReference
+      Identifier: ' TextSpan'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' applicableSpanStart'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' argumentsList'
+                Identifier: 'getFullStart'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' applicableSpanEnd'
+            CallExpression
+              Identifier: ' skipTrivia'
+              PropertyAccessExpression
+                Identifier: 'sourceFile'
+                Identifier: 'text'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' argumentsList'
+                  Identifier: 'getEnd'
+              FalseKeyword
+      ReturnStatement
+        CallExpression
+          Identifier: ' createTextSpan'
+          Identifier: 'applicableSpanStart'
+          BinaryExpression
+            Identifier: ' applicableSpanEnd'
+            MinusToken
+            Identifier: ' applicableSpanStart'
+  FunctionDeclaration
+    Identifier: ' getApplicableSpanForTaggedTemplate'
+    Parameter
+      Identifier: 'taggedTemplate'
+      TypeReference
+        Identifier: ' TaggedTemplateExpression'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    TypeReference
+      Identifier: ' TextSpan'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' template'
+            PropertyAccessExpression
+              Identifier: ' taggedTemplate'
+              Identifier: 'template'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' applicableSpanStart'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' template'
+                Identifier: 'getStart'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' applicableSpanEnd'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' template'
+                Identifier: 'getEnd'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'template'
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'TemplateExpression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lastSpan'
+                CallExpression
+                  Identifier: ' last'
+                  PropertyAccessExpression
+                    Identifier: 'template'
+                    Identifier: 'templateSpans'
+          IfStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'lastSpan'
+                    Identifier: 'literal'
+                  Identifier: 'getFullWidth'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            applicableSpanEnd'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' skipTrivia'
+                    PropertyAccessExpression
+                      Identifier: 'sourceFile'
+                      Identifier: 'text'
+                    Identifier: ' applicableSpanEnd'
+                    FalseKeyword
+      ReturnStatement
+        CallExpression
+          Identifier: ' createTextSpan'
+          Identifier: 'applicableSpanStart'
+          BinaryExpression
+            Identifier: ' applicableSpanEnd'
+            MinusToken
+            Identifier: ' applicableSpanStart'
+  FunctionDeclaration
+    Identifier: ' getContainingArgumentInfo'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' isManuallyInvoked'
+      BooleanKeyword
+    UnionType
+      TypeReference
+        Identifier: ' ArgumentListInfo'
+      UndefinedKeyword
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            Identifier: ' node'
+        BinaryExpression
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isSourceFile'
+              Identifier: 'n'
+          AmpersandAmpersandToken
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'isManuallyInvoked'
+              BarBarToken
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'isBlock'
+                  Identifier: 'n'
+        BinaryExpression
+          Identifier: ' n'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' n'
+            Identifier: 'parent'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        // If the node is not a subspan of its parent, this is a big problem.
+        // There have been crashes that might be caused by this violation.
+        Debug'
+                Identifier: 'assert'
+              CallExpression
+                Identifier: 'rangeContainsRange'
+                PropertyAccessExpression
+                  Identifier: 'n'
+                  Identifier: 'parent'
+                Identifier: ' n'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'Debug'
+                        Identifier: 'formatSyntaxKind'
+                      PropertyAccessExpression
+                        Identifier: 'n'
+                        Identifier: 'kind'
+                    TemplateMiddle
+                  TemplateSpan
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'Debug'
+                        Identifier: 'formatSyntaxKind'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'n'
+                          Identifier: 'parent'
+                        Identifier: 'kind'
+                    TemplateTail
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' argumentInfo'
+                CallExpression
+                  Identifier: ' getImmediatelyContainingArgumentOrContextualParameterInfo'
+                  Identifier: 'n'
+                  Identifier: ' position'
+                  Identifier: ' sourceFile'
+                  Identifier: ' checker'
+          IfStatement
+            Identifier: 'argumentInfo'
+            Block
+              ReturnStatement
+                Identifier: ' argumentInfo'
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' getChildListThatStartsWithOpenerToken'
+    Parameter
+      Identifier: 'parent'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' openerToken'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    TypeReference
+      Identifier: ' Node'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' children'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' parent'
+                Identifier: 'getChildren'
+              Identifier: 'sourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' indexOfOpenerToken'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' children'
+                Identifier: 'indexOf'
+              Identifier: 'openerToken'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'indexOfOpenerToken'
+              GreaterThanEqualsToken
+              NumericLiteral
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' children'
+                Identifier: 'length'
+              GreaterThanToken
+              BinaryExpression
+                Identifier: ' indexOfOpenerToken'
+                PlusToken
+                NumericLiteral
+      ReturnStatement
+        ElementAccessExpression
+          Identifier: ' children'
+          BinaryExpression
+            Identifier: 'indexOfOpenerToken'
+            PlusToken
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' getExpressionFromInvocation'
+    Parameter
+      Identifier: 'invocation'
+      UnionType
+        TypeReference
+          Identifier: ' CallInvocation'
+        TypeReference
+          Identifier: ' TypeArgsInvocation'
+    UnionType
+      TypeReference
+        Identifier: ' Expression'
+      TypeReference
+        Identifier: ' JsxTagNameExpression'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' invocation'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' InvocationKind'
+              Identifier: 'Call'
+          QuestionToken
+          CallExpression
+            Identifier: ' getInvokedExpression'
+            PropertyAccessExpression
+              Identifier: 'invocation'
+              Identifier: 'node'
+          ColonToken
+          PropertyAccessExpression
+            Identifier: ' invocation'
+            Identifier: 'called'
+  FunctionDeclaration
+    Identifier: ' getEnclosingDeclarationFromInvocation'
+    Parameter
+      Identifier: 'invocation'
+      TypeReference
+        Identifier: ' Invocation'
+    TypeReference
+      Identifier: ' Node'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' invocation'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' InvocationKind'
+              Identifier: 'Call'
+          QuestionToken
+          PropertyAccessExpression
+            Identifier: ' invocation'
+            Identifier: 'node'
+          ColonToken
+          ConditionalExpression
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' invocation'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' InvocationKind'
+                Identifier: 'TypeArgs'
+            QuestionToken
+            PropertyAccessExpression
+              Identifier: ' invocation'
+              Identifier: 'called'
+            ColonToken
+            PropertyAccessExpression
+              Identifier: ' invocation'
+              Identifier: 'node'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' signatureHelpNodeBuilderFlags'
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' NodeBuilderFlags'
+              Identifier: 'OmitParameterModifiers'
+            BarToken
+            PropertyAccessExpression
+              Identifier: ' NodeBuilderFlags'
+              Identifier: 'IgnoreErrors'
+          BarToken
+          PropertyAccessExpression
+            Identifier: ' NodeBuilderFlags'
+            Identifier: 'UseAliasDefinedOutsideCurrentScope'
+  FunctionDeclaration
+    Identifier: ' createSignatureHelpItems'
+    Parameter
+      Identifier: '
+    candidates'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Signature'
+    Parameter
+      Identifier: '
+    resolvedSignature'
+      TypeReference
+        Identifier: ' Signature'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' isTypeParameterList'
+        BindingElement
+          Identifier: ' argumentCount'
+        BindingElement
+          Identifier: ' argumentsSpan'
+          Identifier: ' applicableSpan'
+        BindingElement
+          Identifier: ' invocation'
+        BindingElement
+          Identifier: ' argumentIndex'
+      TypeReference
+        Identifier: ' ArgumentListInfo'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    typeChecker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: '
+    useFullPrefix'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' SignatureHelpItems'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' enclosingDeclaration'
+            CallExpression
+              Identifier: ' getEnclosingDeclarationFromInvocation'
+              Identifier: 'invocation'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' callTargetSymbol'
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' invocation'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' InvocationKind'
+                  Identifier: 'Contextual'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' invocation'
+                Identifier: 'symbol'
+              ColonToken
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'typeChecker'
+                      Identifier: 'getSymbolAtLocation'
+                    CallExpression
+                      Identifier: 'getExpressionFromInvocation'
+                      Identifier: 'invocation'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' useFullPrefix'
+                    AmpersandAmpersandToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' resolvedSignature'
+                        Identifier: 'declaration'
+                      QuestionDotToken
+                      Identifier: 'symbol'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' callTargetDisplayParts'
+            ConditionalExpression
+              Identifier: ' callTargetSymbol'
+              QuestionToken
+              CallExpression
+                Identifier: ' symbolToDisplayParts'
+                Identifier: 'typeChecker'
+                Identifier: ' callTargetSymbol'
+                ConditionalExpression
+                  Identifier: ' useFullPrefix'
+                  QuestionToken
+                  Identifier: ' sourceFile'
+                  ColonToken
+                  Identifier: ' undefined'
+                Identifier: ' /*meaning*/ undefined'
+              ColonToken
+              Identifier: ' emptyArray'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' items'
+            CallExpression
+              Identifier: ' map'
+              Identifier: 'candidates'
+              ArrowFunction
+                Parameter
+                  Identifier: ' candidateSignature'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' getSignatureHelpItem'
+                  Identifier: 'candidateSignature'
+                  Identifier: ' callTargetDisplayParts'
+                  Identifier: ' isTypeParameterList'
+                  Identifier: ' typeChecker'
+                  Identifier: ' enclosingDeclaration'
+                  Identifier: ' sourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' selectedItemIndex'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' itemsSeen'
+            NumericLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' items'
+            Identifier: 'length'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' item'
+                ElementAccessExpression
+                  Identifier: ' items'
+                  Identifier: 'i'
+          IfStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: 'candidates'
+                Identifier: 'i'
+              EqualsEqualsEqualsToken
+              Identifier: ' resolvedSignature'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            selectedItemIndex'
+                  EqualsToken
+                  Identifier: ' itemsSeen'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'item'
+                    Identifier: 'length'
+                  GreaterThanToken
+                  NumericLiteral
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' count'
+                        NumericLiteral
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' i'
+                    Identifier: ' item'
+                    Block
+                      IfStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'i'
+                            Identifier: 'isVariadic'
+                          BarBarToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' i'
+                                Identifier: 'parameters'
+                              Identifier: 'length'
+                            GreaterThanEqualsToken
+                            Identifier: ' argumentCount'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                        selectedItemIndex'
+                              EqualsToken
+                              BinaryExpression
+                                Identifier: ' itemsSeen'
+                                PlusToken
+                                Identifier: ' count'
+                          BreakStatement
+                      ExpressionStatement
+                        PostfixUnaryExpression
+                          Identifier: '
+                    count'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        itemsSeen'
+              PlusEqualsToken
+              PropertyAccessExpression
+                Identifier: ' item'
+                Identifier: 'length'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            Identifier: 'selectedItemIndex'
+            ExclamationEqualsEqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' help'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' items'
+                CallExpression
+                  Identifier: ' flatMapToMutable'
+                  Identifier: 'items'
+                  Identifier: ' identity'
+              ShorthandPropertyAssignment
+                Identifier: ' applicableSpan'
+              ShorthandPropertyAssignment
+                Identifier: ' selectedItemIndex'
+              ShorthandPropertyAssignment
+                Identifier: ' argumentIndex'
+              ShorthandPropertyAssignment
+                Identifier: ' argumentCount'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' selected'
+            ElementAccessExpression
+              PropertyAccessExpression
+                Identifier: ' help'
+                Identifier: 'items'
+              Identifier: 'selectedItemIndex'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'selected'
+          Identifier: 'isVariadic'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' firstRest'
+                CallExpression
+                  Identifier: ' findIndex'
+                  PropertyAccessExpression
+                    Identifier: 'selected'
+                    Identifier: 'parameters'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' p'
+                    EqualsGreaterThanToken
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'p'
+                          Identifier: 'isRest'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PrefixUnaryExpression
+                  NumericLiteral
+                LessThanToken
+                Identifier: ' firstRest'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' firstRest'
+                LessThanToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' selected'
+                      Identifier: 'parameters'
+                    Identifier: 'length'
+                  MinusToken
+                  NumericLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            // We don't have any code to get this correct; instead, don't highlight a current parameter AT ALL
+            help'
+                    Identifier: 'argumentIndex'
+                  EqualsToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' selected'
+                      Identifier: 'parameters'
+                    Identifier: 'length'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            help'
+                    Identifier: 'argumentIndex'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Math'
+                      Identifier: 'min'
+                    PropertyAccessExpression
+                      Identifier: 'help'
+                      Identifier: 'argumentIndex'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' selected'
+                          Identifier: 'parameters'
+                        Identifier: 'length'
+                      MinusToken
+                      NumericLiteral
+      ReturnStatement
+        Identifier: ' help'
+  FunctionDeclaration
+    Identifier: ' createTypeHelpItems'
+    Parameter
+      Identifier: '
+    symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' argumentCount'
+        BindingElement
+          Identifier: ' argumentsSpan'
+          Identifier: ' applicableSpan'
+        BindingElement
+          Identifier: ' invocation'
+        BindingElement
+          Identifier: ' argumentIndex'
+      TypeReference
+        Identifier: ' ArgumentListInfo'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeReference
+        Identifier: ' SignatureHelpItems'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeParameters'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getLocalTypeParametersOfClassOrInterfaceOrTypeAlias'
+              Identifier: 'symbol'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'typeParameters'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' items'
+            ArrayLiteralExpression
+              CallExpression
+                Identifier: 'getTypeHelpItem'
+                Identifier: 'symbol'
+                Identifier: ' typeParameters'
+                Identifier: ' checker'
+                CallExpression
+                  Identifier: ' getEnclosingDeclarationFromInvocation'
+                  Identifier: 'invocation'
+                Identifier: ' sourceFile'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' items'
+          ShorthandPropertyAssignment
+            Identifier: ' applicableSpan'
+          PropertyAssignment
+            Identifier: ' selectedItemIndex'
+            NumericLiteral
+          ShorthandPropertyAssignment
+            Identifier: ' argumentIndex'
+          ShorthandPropertyAssignment
+            Identifier: ' argumentCount'
+  FunctionDeclaration
+    Identifier: ' getTypeHelpItem'
+    Parameter
+      Identifier: 'symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' typeParameters'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' TypeParameter'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' enclosingDeclaration'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    TypeReference
+      Identifier: ' SignatureHelpItem'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeSymbolDisplay'
+            CallExpression
+              Identifier: ' symbolToDisplayParts'
+              Identifier: 'checker'
+              Identifier: ' symbol'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' printer'
+            CallExpression
+              Identifier: ' createPrinterWithRemoveComments'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' parameters'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' typeParameters'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 't'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' createSignatureHelpParameterForTypeParameter'
+                  Identifier: 't'
+                  Identifier: ' checker'
+                  Identifier: ' enclosingDeclaration'
+                  Identifier: ' sourceFile'
+                  Identifier: ' printer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' documentation'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' symbol'
+                Identifier: 'getDocumentationComment'
+              Identifier: 'checker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tags'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' symbol'
+                Identifier: 'getJsDocTags'
+              Identifier: 'checker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' prefixDisplayParts'
+            ArrayLiteralExpression
+              SpreadElement
+                Identifier: 'typeSymbolDisplay'
+              CallExpression
+                Identifier: ' punctuationPart'
+                PropertyAccessExpression
+                  Identifier: 'SyntaxKind'
+                  Identifier: 'LessThanToken'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' isVariadic'
+            FalseKeyword
+          ShorthandPropertyAssignment
+            Identifier: ' prefixDisplayParts'
+          PropertyAssignment
+            Identifier: ' suffixDisplayParts'
+            ArrayLiteralExpression
+              CallExpression
+                Identifier: 'punctuationPart'
+                PropertyAccessExpression
+                  Identifier: 'SyntaxKind'
+                  Identifier: 'GreaterThanToken'
+          ShorthandPropertyAssignment
+            Identifier: ' separatorDisplayParts'
+          ShorthandPropertyAssignment
+            Identifier: ' parameters'
+          ShorthandPropertyAssignment
+            Identifier: ' documentation'
+          ShorthandPropertyAssignment
+            Identifier: ' tags'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' separatorDisplayParts'
+        ArrayType
+          TypeReference
+            Identifier: ' SymbolDisplayPart'
+        ArrayLiteralExpression
+          CallExpression
+            Identifier: 'punctuationPart'
+            PropertyAccessExpression
+              Identifier: 'SyntaxKind'
+              Identifier: 'CommaToken'
+          CallExpression
+            Identifier: ' spacePart'
+  FunctionDeclaration
+    Identifier: ' getSignatureHelpItem'
+    Parameter
+      Identifier: 'candidateSignature'
+      TypeReference
+        Identifier: ' Signature'
+    Parameter
+      Identifier: ' callTargetDisplayParts'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SymbolDisplayPart'
+    Parameter
+      Identifier: ' isTypeParameterList'
+      BooleanKeyword
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' enclosingDeclaration'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    ArrayType
+      TypeReference
+        Identifier: ' SignatureHelpItem'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' infos'
+            CallExpression
+              ParenthesizedExpression
+                ConditionalExpression
+                  Identifier: 'isTypeParameterList'
+                  QuestionToken
+                  Identifier: ' itemInfoForTypeParameters'
+                  ColonToken
+                  Identifier: ' itemInfoForParameters'
+              Identifier: 'candidateSignature'
+              Identifier: ' checker'
+              Identifier: ' enclosingDeclaration'
+              Identifier: ' sourceFile'
+      ReturnStatement
+        CallExpression
+          Identifier: ' map'
+          Identifier: 'infos'
+          ArrowFunction
+            Parameter
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' isVariadic'
+                BindingElement
+                  Identifier: ' parameters'
+                BindingElement
+                  Identifier: ' prefix'
+                BindingElement
+                  Identifier: ' suffix'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' prefixDisplayParts'
+                    ArrayLiteralExpression
+                      SpreadElement
+                        Identifier: 'callTargetDisplayParts'
+                      SpreadElement
+                        Identifier: 'prefix'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' suffixDisplayParts'
+                    ArrayLiteralExpression
+                      SpreadElement
+                        Identifier: 'suffix'
+                      SpreadElement
+                        CallExpression
+                          Identifier: 'returnTypeToDisplayParts'
+                          Identifier: 'candidateSignature'
+                          Identifier: ' enclosingDeclaration'
+                          Identifier: ' checker'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' documentation'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' candidateSignature'
+                        Identifier: 'getDocumentationComment'
+                      Identifier: 'checker'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' tags'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' candidateSignature'
+                        Identifier: 'getJsDocTags'
+              ReturnStatement
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' isVariadic'
+                  ShorthandPropertyAssignment
+                    Identifier: ' prefixDisplayParts'
+                  ShorthandPropertyAssignment
+                    Identifier: ' suffixDisplayParts'
+                  ShorthandPropertyAssignment
+                    Identifier: ' separatorDisplayParts'
+                  ShorthandPropertyAssignment
+                    Identifier: ' parameters'
+                  ShorthandPropertyAssignment
+                    Identifier: ' documentation'
+                  ShorthandPropertyAssignment
+                    Identifier: ' tags'
+  FunctionDeclaration
+    Identifier: ' returnTypeToDisplayParts'
+    Parameter
+      Identifier: 'candidateSignature'
+      TypeReference
+        Identifier: ' Signature'
+    Parameter
+      Identifier: ' enclosingDeclaration'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' mapToDisplayParts'
+          ArrowFunction
+            Parameter
+              Identifier: 'writer'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        writer'
+                    Identifier: 'writePunctuation'
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        writer'
+                    Identifier: 'writeSpace'
+                  StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' predicate'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' checker'
+                        Identifier: 'getTypePredicateOfSignature'
+                      Identifier: 'candidateSignature'
+              IfStatement
+                Identifier: 'predicate'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            checker'
+                        Identifier: 'writeTypePredicate'
+                      Identifier: 'predicate'
+                      Identifier: ' enclosingDeclaration'
+                      Identifier: ' /*flags*/ undefined'
+                      Identifier: ' writer'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            checker'
+                        Identifier: 'writeType'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'checker'
+                          Identifier: 'getReturnTypeOfSignature'
+                        Identifier: 'candidateSignature'
+                      Identifier: ' enclosingDeclaration'
+                      Identifier: ' /*flags*/ undefined'
+                      Identifier: ' writer'
+  InterfaceDeclaration
+    Identifier: ' SignatureHelpItemInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' isVariadic'
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' parameters'
+      ArrayType
+        TypeReference
+          Identifier: ' SignatureHelpParameter'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' prefix'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' suffix'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SymbolDisplayPart'
+  FunctionDeclaration
+    Identifier: ' itemInfoForTypeParameters'
+    Parameter
+      Identifier: 'candidateSignature'
+      TypeReference
+        Identifier: ' Signature'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' enclosingDeclaration'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    ArrayType
+      TypeReference
+        Identifier: ' SignatureHelpItemInfo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeParameters'
+            PropertyAccessExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'candidateSignature'
+                    Identifier: 'target'
+                  BarBarToken
+                  Identifier: ' candidateSignature'
+              Identifier: 'typeParameters'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' printer'
+            CallExpression
+              Identifier: ' createPrinterWithRemoveComments'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' parameters'
+            CallExpression
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'typeParameters'
+                    BarBarToken
+                    Identifier: ' emptyArray'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 't'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' createSignatureHelpParameterForTypeParameter'
+                  Identifier: 't'
+                  Identifier: ' checker'
+                  Identifier: ' enclosingDeclaration'
+                  Identifier: ' sourceFile'
+                  Identifier: ' printer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' thisParameter'
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' candidateSignature'
+                Identifier: 'thisParameter'
+              QuestionToken
+              ArrayLiteralExpression
+                NonNullExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'checker'
+                      Identifier: 'symbolToParameterDeclaration'
+                    PropertyAccessExpression
+                      Identifier: 'candidateSignature'
+                      Identifier: 'thisParameter'
+                    Identifier: ' enclosingDeclaration'
+                    Identifier: ' signatureHelpNodeBuilderFlags'
+              ColonToken
+              ArrayLiteralExpression
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getExpandedParameters'
+              Identifier: 'candidateSignature'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'paramList'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' params'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createNodeArray'
+                      ArrayLiteralExpression
+                        SpreadElement
+                          Identifier: 'thisParameter'
+                        SpreadElement
+                          CallExpression
+                            Identifier: 'map'
+                            Identifier: 'paramList'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' param'
+                              EqualsGreaterThanToken
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' checker'
+                                    Identifier: 'symbolToParameterDeclaration'
+                                  Identifier: 'param'
+                                  Identifier: ' enclosingDeclaration'
+                                  Identifier: ' signatureHelpNodeBuilderFlags'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' parameterParts'
+                    CallExpression
+                      Identifier: ' mapToDisplayParts'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'writer'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            printer'
+                                Identifier: 'writeList'
+                              PropertyAccessExpression
+                                Identifier: 'ListFormat'
+                                Identifier: 'CallExpressionArguments'
+                              Identifier: ' params'
+                              Identifier: ' sourceFile'
+                              Identifier: ' writer'
+              ReturnStatement
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' isVariadic'
+                    FalseKeyword
+                  ShorthandPropertyAssignment
+                    Identifier: ' parameters'
+                  PropertyAssignment
+                    Identifier: ' prefix'
+                    ArrayLiteralExpression
+                      CallExpression
+                        Identifier: 'punctuationPart'
+                        PropertyAccessExpression
+                          Identifier: 'SyntaxKind'
+                          Identifier: 'LessThanToken'
+                  PropertyAssignment
+                    Identifier: ' suffix'
+                    ArrayLiteralExpression
+                      CallExpression
+                        Identifier: 'punctuationPart'
+                        PropertyAccessExpression
+                          Identifier: 'SyntaxKind'
+                          Identifier: 'GreaterThanToken'
+                      SpreadElement
+                        Identifier: 'parameterParts'
+  FunctionDeclaration
+    Identifier: ' itemInfoForParameters'
+    Parameter
+      Identifier: 'candidateSignature'
+      TypeReference
+        Identifier: ' Signature'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' enclosingDeclaration'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    ArrayType
+      TypeReference
+        Identifier: ' SignatureHelpItemInfo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' printer'
+            CallExpression
+              Identifier: ' createPrinterWithRemoveComments'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeParameterParts'
+            CallExpression
+              Identifier: ' mapToDisplayParts'
+              ArrowFunction
+                Parameter
+                  Identifier: 'writer'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'candidateSignature'
+                        Identifier: 'typeParameters'
+                      AmpersandAmpersandToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' candidateSignature'
+                          Identifier: 'typeParameters'
+                        Identifier: 'length'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' args'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' factory'
+                                Identifier: 'createNodeArray'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'candidateSignature'
+                                    Identifier: 'typeParameters'
+                                  Identifier: 'map'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: 'p'
+                                  EqualsGreaterThanToken
+                                  NonNullExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' checker'
+                                        Identifier: 'typeParameterToDeclaration'
+                                      Identifier: 'p'
+                                      Identifier: ' enclosingDeclaration'
+                                      Identifier: ' signatureHelpNodeBuilderFlags'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'writeList'
+                          PropertyAccessExpression
+                            Identifier: 'ListFormat'
+                            Identifier: 'TypeParameters'
+                          Identifier: ' args'
+                          Identifier: ' sourceFile'
+                          Identifier: ' writer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lists'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getExpandedParameters'
+              Identifier: 'candidateSignature'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isVariadic'
+            FunctionType
+              Parameter
+                Identifier: 'parameterList'
+                TypeOperator
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Symbol'
+              BooleanKeyword
+            ConditionalExpression
+              PrefixUnaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'checker'
+                    Identifier: 'hasEffectiveRestParameter'
+                  Identifier: 'candidateSignature'
+              QuestionToken
+              ArrowFunction
+                Parameter
+                  Identifier: ' _'
+                EqualsGreaterThanToken
+                FalseKeyword
+              ColonToken
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' lists'
+                    Identifier: 'length'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                QuestionToken
+                ArrowFunction
+                  Parameter
+                    Identifier: ' _'
+                  EqualsGreaterThanToken
+                  TrueKeyword
+                ColonToken
+                ArrowFunction
+                  Parameter
+                    Identifier: ' pList'
+                  EqualsGreaterThanToken
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      ParenthesizedExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'pList'
+                            Identifier: 'length'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            NonNullExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    Identifier: ' tryCast'
+                                    ElementAccessExpression
+                                      Identifier: 'pList'
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'pList'
+                                          Identifier: 'length'
+                                        MinusToken
+                                        NumericLiteral
+                                    Identifier: ' isTransientSymbol'
+                                  QuestionDotToken
+                                  Identifier: 'links'
+                                Identifier: 'checkFlags'
+                            AmpersandToken
+                            PropertyAccessExpression
+                              Identifier: ' CheckFlags'
+                              Identifier: 'RestParameter'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' lists'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'parameterList'
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        isVariadic'
+                  CallExpression
+                    Identifier: ' isVariadic'
+                    Identifier: 'parameterList'
+                PropertyAssignment
+                  Identifier: '
+        parameters'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' parameterList'
+                      Identifier: 'map'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'p'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' createSignatureHelpParameterForParameter'
+                        Identifier: 'p'
+                        Identifier: ' checker'
+                        Identifier: ' enclosingDeclaration'
+                        Identifier: ' sourceFile'
+                        Identifier: ' printer'
+                PropertyAssignment
+                  Identifier: '
+        prefix'
+                  ArrayLiteralExpression
+                    SpreadElement
+                      Identifier: 'typeParameterParts'
+                    CallExpression
+                      Identifier: ' punctuationPart'
+                      PropertyAccessExpression
+                        Identifier: 'SyntaxKind'
+                        Identifier: 'OpenParenToken'
+                PropertyAssignment
+                  Identifier: '
+        suffix'
+                  ArrayLiteralExpression
+                    CallExpression
+                      Identifier: 'punctuationPart'
+                      PropertyAccessExpression
+                        Identifier: 'SyntaxKind'
+                        Identifier: 'CloseParenToken'
+  FunctionDeclaration
+    Identifier: ' createSignatureHelpParameterForParameter'
+    Parameter
+      Identifier: 'parameter'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' enclosingDeclaration'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' printer'
+      TypeReference
+        Identifier: ' Printer'
+    TypeReference
+      Identifier: ' SignatureHelpParameter'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' displayParts'
+            CallExpression
+              Identifier: ' mapToDisplayParts'
+              ArrowFunction
+                Parameter
+                  Identifier: 'writer'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' param'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' checker'
+                              Identifier: 'symbolToParameterDeclaration'
+                            Identifier: 'parameter'
+                            Identifier: ' enclosingDeclaration'
+                            Identifier: ' signatureHelpNodeBuilderFlags'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        printer'
+                        Identifier: 'writeNode'
+                      PropertyAccessExpression
+                        Identifier: 'EmitHint'
+                        Identifier: 'Unspecified'
+                      Identifier: ' param'
+                      Identifier: ' sourceFile'
+                      Identifier: ' writer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isOptional'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'isOptionalParameter'
+              AsExpression
+                PropertyAccessExpression
+                  Identifier: 'parameter'
+                  Identifier: 'valueDeclaration'
+                TypeReference
+                  Identifier: ' ParameterDeclaration'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isRest'
+            BinaryExpression
+              CallExpression
+                Identifier: ' isTransientSymbol'
+                Identifier: 'parameter'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'parameter'
+                          Identifier: 'links'
+                        Identifier: 'checkFlags'
+                      AmpersandToken
+                      PropertyAccessExpression
+                        Identifier: ' CheckFlags'
+                        Identifier: 'RestParameter'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' name'
+            PropertyAccessExpression
+              Identifier: ' parameter'
+              Identifier: 'name'
+          PropertyAssignment
+            Identifier: ' documentation'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' parameter'
+                Identifier: 'getDocumentationComment'
+              Identifier: 'checker'
+          ShorthandPropertyAssignment
+            Identifier: ' displayParts'
+          ShorthandPropertyAssignment
+            Identifier: ' isOptional'
+          ShorthandPropertyAssignment
+            Identifier: ' isRest'
+  FunctionDeclaration
+    Identifier: ' createSignatureHelpParameterForTypeParameter'
+    Parameter
+      Identifier: 'typeParameter'
+      TypeReference
+        Identifier: ' TypeParameter'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' enclosingDeclaration'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' printer'
+      TypeReference
+        Identifier: ' Printer'
+    TypeReference
+      Identifier: ' SignatureHelpParameter'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' displayParts'
+            CallExpression
+              Identifier: ' mapToDisplayParts'
+              ArrowFunction
+                Parameter
+                  Identifier: 'writer'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' param'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' checker'
+                              Identifier: 'typeParameterToDeclaration'
+                            Identifier: 'typeParameter'
+                            Identifier: ' enclosingDeclaration'
+                            Identifier: ' signatureHelpNodeBuilderFlags'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        printer'
+                        Identifier: 'writeNode'
+                      PropertyAccessExpression
+                        Identifier: 'EmitHint'
+                        Identifier: 'Unspecified'
+                      Identifier: ' param'
+                      Identifier: ' sourceFile'
+                      Identifier: ' writer'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' name'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' typeParameter'
+                Identifier: 'symbol'
+              Identifier: 'name'
+          PropertyAssignment
+            Identifier: ' documentation'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' typeParameter'
+                  Identifier: 'symbol'
+                Identifier: 'getDocumentationComment'
+              Identifier: 'checker'
+          ShorthandPropertyAssignment
+            Identifier: ' displayParts'
+          PropertyAssignment
+            Identifier: ' isOptional'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: ' isRest'
+            FalseKeyword

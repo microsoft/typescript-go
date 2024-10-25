@@ -1,0 +1,71 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myReactLib'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Bar'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _Bar'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'foo'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' data'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Bar'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' x'
+          JsxExpression
+            Identifier: 'x'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'x-component'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Bar'
+      JsxAttributes
+        JsxAttribute
+          Identifier: 'x'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Bar'
+      JsxAttributes
+        JsxAttribute
+          Identifier: 'x'
+        JsxAttribute
+          Identifier: ' y'
+          JsxExpression
+            NumericLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: '_Bar'
+      JsxAttributes
+        JsxAttribute
+          Identifier: 'x'

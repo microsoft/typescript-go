@@ -1,0 +1,49 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        StringKeyword
+    MethodSignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'iterator'
+            ArrowFunction
+              Parameter
+                Identifier: ' s'
+              EqualsGreaterThanToken
+              Identifier: ' s'
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'toStringTag'
+            Parameter
+              Identifier: 'n'
+            Block
+              ReturnStatement
+                Identifier: ' n'

@@ -1,0 +1,14 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'b'
+            ClassExpression
+              PropertyDeclaration
+                StaticKeyword
+                Identifier: ' x'
+                NumericLiteral
+          EqualsGreaterThanToken
+          Block

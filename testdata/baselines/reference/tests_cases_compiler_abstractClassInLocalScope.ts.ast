@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ClassDeclaration
+              AbstractKeyword
+              Identifier: ' A'
+            ClassDeclaration
+              Identifier: ' B'
+              HeritageClause
+                ExpressionWithTypeArguments
+                  Identifier: ' A'
+            ExpressionStatement
+              NewExpression
+                Identifier: ' B'
+            ReturnStatement
+              Identifier: ' A'

@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: ' x'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Baz'
+    PropertyDeclaration
+      Identifier: ' z'
+      NumberKeyword
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            NewExpression
+              Identifier: ' Foo'
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            NewExpression
+              Identifier: ' Baz'

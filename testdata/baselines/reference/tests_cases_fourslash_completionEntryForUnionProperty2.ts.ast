@@ -1,0 +1,83 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+////interface One {
+////    commonProperty: string;
+////    commonFunction(): number;
+////    anotherProperty: Record<string, number>;
+////}
+////
+////interface Two {
+////    commonProperty: number;
+////    commonFunction(): number;
+////    anotherProperty: { foo: number }
+////}
+////
+////var x : One | Two;
+////
+////x.commonProperty./*1*/;
+////x.anotherProperty./*2*/;
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' documentation'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' documentation'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' documentation'
+                StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral

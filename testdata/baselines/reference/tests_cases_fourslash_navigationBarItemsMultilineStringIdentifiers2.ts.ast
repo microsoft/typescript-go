@@ -1,0 +1,179 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+//// function f(p1: () => any, p2: string) { }
+//// f(() => { }, `line1\
+//// line2\
+//// line3`);
+////
+//// class c1 {
+////     const a = ' ''line1\
+////         line2';
+//// }
+////
+//// f(() => { }, `unterminated backtick 1
+//// unterminated backtick 2
+//// unterminated backtick 3
+
+verify'
+        Identifier: 'navigationTree'
+      ObjectLiteralExpression
+        PropertyAssignment
+          StringLiteral
+          StringLiteral
+        PropertyAssignment
+          StringLiteral
+          StringLiteral
+        PropertyAssignment
+          StringLiteral
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'navigationBar'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral

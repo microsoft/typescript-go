@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' bar'
+            VoidKeyword
+          PropertySignature
+            Identifier: ' baz'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    MethodSignature
+      Identifier: ' bar'
+      VoidKeyword
+    PropertySignature
+      Identifier: ' baz'

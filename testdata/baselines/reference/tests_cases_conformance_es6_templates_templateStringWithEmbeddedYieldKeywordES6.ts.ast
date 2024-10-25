@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' gen'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                YieldExpression
+                  NumericLiteral
+                TemplateTail

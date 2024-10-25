@@ -1,0 +1,71 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    Constructor
+      Block
+        FunctionDeclaration
+          Identifier: ' foo'
+          Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+
+        foo'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' inner'
+              AnyKeyword
+              CallExpression
+                ParenthesizedExpression
+                  FunctionExpression
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' CScriptIO'
+                            CallExpression
+                              ParenthesizedExpression
+                                FunctionExpression
+                                  Block
+                                    VariableStatement
+                                      VariableDeclarationList
+                                        VariableDeclaration
+                                          Identifier: ' fso'
+                                          NumericLiteral
+                                    ReturnStatement
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                    readFile'
+                                          FunctionExpression
+                                            Parameter
+                                              Identifier: 'path'
+                                              StringKeyword
+                                            StringKeyword
+                                            Block
+                                              ReturnStatement
+                                                CallExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' fso'
+                                                    Identifier: 'toString'
+                      ReturnStatement
+                        Identifier: ' inner'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' B'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+b'
+        Identifier: 'foo'

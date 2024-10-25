@@ -1,0 +1,18 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        TypeParameter
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'C'
+          StringKeyword

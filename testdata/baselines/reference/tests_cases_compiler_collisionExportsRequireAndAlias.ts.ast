@@ -1,0 +1,37 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' bar'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' bar2'
+    Block
+  ImportEqualsDeclaration
+    Identifier: ' require'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' exports'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    require'
+            Identifier: 'bar'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo2'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    exports'
+            Identifier: 'bar2'

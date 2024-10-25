@@ -1,0 +1,6 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' A'
+    EnumMember
+      StringLiteral
+      NumericLiteral

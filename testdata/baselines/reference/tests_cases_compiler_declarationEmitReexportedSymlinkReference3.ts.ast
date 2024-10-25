@@ -1,0 +1,186 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    id'
+        StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    id'
+        NumberKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' IdType'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' MetadataAccessor'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' D'
+      TypeReference
+        Identifier: ' IdType'
+      TypeReference
+        Identifier: ' IdType'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' key'
+      StringKeyword
+    Constructor
+      PrivateKeyword
+    MethodDeclaration
+      Identifier: '
+    toString'
+      StringKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' create'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' D'
+        TypeReference
+          Identifier: ' IdType'
+        TypeReference
+          Identifier: ' IdType'
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      TypeReference
+        Identifier: ' MetadataAccessor'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' D'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'MetadataAccessor'
+    StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'MetadataAccessor'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ADMIN'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' MetadataAccessor'
+            Identifier: 'create'
+          BooleanKeyword
+          StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        TrueKeyword

@@ -1,0 +1,720 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createCodeFixActionWithoutFixAll'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addRange'
+        ImportSpecifier
+          Identifier: '
+    CallExpression'
+        ImportSpecifier
+          Identifier: '
+    CodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    CodeFixContext'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    getEmitModuleKind'
+        ImportSpecifier
+          Identifier: '
+    getNamespaceDeclarationNode'
+        ImportSpecifier
+          Identifier: '
+    getQuotePreference'
+        ImportSpecifier
+          Identifier: '
+    getSourceFileOfNode'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    ImportDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isExpression'
+        ImportSpecifier
+          Identifier: '
+    isImportCall'
+        ImportSpecifier
+          Identifier: '
+    isNamedDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isTransientSymbol'
+        ImportSpecifier
+          Identifier: '
+    makeImport'
+        ImportSpecifier
+          Identifier: '
+    ModuleKind'
+        ImportSpecifier
+          Identifier: '
+    NamespaceImport'
+        ImportSpecifier
+          Identifier: '
+    NewExpression'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixName'
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' getCodeFixesForImportDeclaration'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixContext'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ImportDeclaration'
+    ArrayType
+      TypeReference
+        Identifier: ' CodeFixAction'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceFile'
+            CallExpression
+              Identifier: ' getSourceFileOfNode'
+              Identifier: 'node'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' namespace'
+            AsExpression
+              CallExpression
+                Identifier: ' getNamespaceDeclarationNode'
+                Identifier: 'node'
+              TypeReference
+                Identifier: ' NamespaceImport'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' opts'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'program'
+                Identifier: 'getCompilerOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' variations'
+            ArrayType
+              TypeReference
+                Identifier: ' CodeFixAction'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // import Bluebird from "bluebird";
+    variations'
+            Identifier: 'push'
+          CallExpression
+            Identifier: 'createAction'
+            Identifier: 'context'
+            Identifier: ' sourceFile'
+            Identifier: ' node'
+            CallExpression
+              Identifier: ' makeImport'
+              PropertyAccessExpression
+                Identifier: 'namespace'
+                Identifier: 'name'
+              Identifier: ' /*namedImports*/ undefined'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'moduleSpecifier'
+              CallExpression
+                Identifier: ' getQuotePreference'
+                Identifier: 'sourceFile'
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'preferences'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'getEmitModuleKind'
+            Identifier: 'opts'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' ModuleKind'
+            Identifier: 'CommonJS'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        // import Bluebird = require("bluebird");
+        variations'
+                Identifier: 'push'
+              CallExpression
+                Identifier: 'createAction'
+                Identifier: '
+            context'
+                Identifier: '
+            sourceFile'
+                Identifier: '
+            node'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            factory'
+                    Identifier: 'createImportEqualsDeclaration'
+                  Identifier: '
+                /*modifiers*/ undefined'
+                  FalseKeyword
+                  PropertyAccessExpression
+                    Identifier: '
+                namespace'
+                    Identifier: 'name'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                factory'
+                      Identifier: 'createExternalModuleReference'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'moduleSpecifier'
+      ReturnStatement
+        Identifier: ' variations'
+  FunctionDeclaration
+    Identifier: ' createAction'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixContext'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' replacement'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' CodeFixAction'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' changes'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' textChanges'
+                  Identifier: 'ChangeTracker'
+                Identifier: 'with'
+              Identifier: 'context'
+              ArrowFunction
+                Parameter
+                  Identifier: ' t'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' t'
+                    Identifier: 'replaceNode'
+                  Identifier: 'sourceFile'
+                  Identifier: ' node'
+                  Identifier: ' replacement'
+      ReturnStatement
+        CallExpression
+          Identifier: ' createCodeFixActionWithoutFixAll'
+          Identifier: 'fixName'
+          Identifier: ' changes'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Replace_import_with_0'
+            PropertyAccessExpression
+              ElementAccessExpression
+                PropertyAccessExpression
+                  ElementAccessExpression
+                    Identifier: ' changes'
+                    NumericLiteral
+                  Identifier: 'textChanges'
+                NumericLiteral
+              Identifier: 'newText'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    errorCodes'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'This_expression_is_not_callable'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'This_expression_is_not_constructable'
+              Identifier: 'code'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          Identifier: ' getActionsForUsageOfInvalidImport'
+  FunctionDeclaration
+    Identifier: ' getActionsForUsageOfInvalidImport'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixContext'
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' CodeFixAction'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceFile'
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'sourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' targetKind'
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'This_expression_is_not_callable'
+                  Identifier: 'code'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'errorCode'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'CallExpression'
+              ColonToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'NewExpression'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            AsExpression
+              CallExpression
+                Identifier: ' findAncestor'
+                CallExpression
+                  Identifier: 'getTokenAtPosition'
+                  Identifier: 'sourceFile'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'span'
+                    Identifier: 'start'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' a'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' a'
+                      Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' targetKind'
+              UnionType
+                TypeReference
+                  Identifier: ' CallExpression'
+                TypeReference
+                  Identifier: ' NewExpression'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'node'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expr'
+            PropertyAccessExpression
+              Identifier: ' node'
+              Identifier: 'expression'
+      ReturnStatement
+        CallExpression
+          Identifier: ' getImportCodeFixesForExpression'
+          Identifier: 'context'
+          Identifier: ' expr'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    errorCodes'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        // The following error codes cover pretty much all assignability errors that could involve an expression
+        Diagnostics'
+                Identifier: 'Argument_of_type_0_is_not_assignable_to_parameter_of_type_1'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Type_0_does_not_satisfy_the_constraint_1'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Type_0_is_not_assignable_to_type_1'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Type_0_is_not_assignable_to_type_1_Two_different_types_with_this_name_exist_but_they_are_unrelated'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Type_predicate_0_is_not_assignable_to_1'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Property_0_of_type_1_is_not_assignable_to_2_index_type_3'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: '_0_index_type_1_is_not_assignable_to_2_index_type_3'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Property_0_in_type_1_is_not_assignable_to_the_same_property_in_base_type_2'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Property_0_in_type_1_is_not_assignable_to_type_2'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Property_0_of_JSX_spread_attribute_is_not_assignable_to_target_property'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'The_this_context_of_type_0_is_not_assignable_to_method_s_this_of_type_1'
+              Identifier: 'code'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          Identifier: ' getActionsForInvalidImportLocation'
+  FunctionDeclaration
+    Identifier: ' getActionsForInvalidImportLocation'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixContext'
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' CodeFixAction'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceFile'
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'sourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            CallExpression
+              Identifier: ' findAncestor'
+              CallExpression
+                Identifier: 'getTokenAtPosition'
+                Identifier: 'sourceFile'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'span'
+                  Identifier: 'start'
+              ArrowFunction
+                Parameter
+                  Identifier: ' a'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' a'
+                        Identifier: 'getStart'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'span'
+                      Identifier: 'start'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' a'
+                        Identifier: 'getEnd'
+                    EqualsEqualsEqualsToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'context'
+                            Identifier: 'span'
+                          Identifier: 'start'
+                        PlusToken
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' context'
+                            Identifier: 'span'
+                          Identifier: 'length'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'node'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+      ReturnStatement
+        CallExpression
+          Identifier: ' getImportCodeFixesForExpression'
+          Identifier: 'context'
+          Identifier: ' node'
+  FunctionDeclaration
+    Identifier: ' getImportCodeFixesForExpression'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixContext'
+    Parameter
+      Identifier: ' expr'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' CodeFixAction'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' type'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'program'
+                    Identifier: 'getTypeChecker'
+                Identifier: 'getTypeAtLocation'
+              Identifier: 'expr'
+      IfStatement
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'type'
+                  Identifier: 'symbol'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' isTransientSymbol'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'symbol'
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' type'
+                    Identifier: 'symbol'
+                  Identifier: 'links'
+                Identifier: 'originatingImport'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fixes'
+            ArrayType
+              TypeReference
+                Identifier: ' CodeFixAction'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' relatedImport'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' type'
+                  Identifier: 'symbol'
+                Identifier: 'links'
+              Identifier: 'originatingImport'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isImportCall'
+            Identifier: 'relatedImport'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addRange'
+              Identifier: 'fixes'
+              CallExpression
+                Identifier: ' getCodeFixesForImportDeclaration'
+                Identifier: 'context'
+                Identifier: ' relatedImport'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isExpression'
+            Identifier: 'expr'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: 'isNamedDeclaration'
+                  PropertyAccessExpression
+                    Identifier: 'expr'
+                    Identifier: 'parent'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' expr'
+                      Identifier: 'parent'
+                    Identifier: 'name'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' expr'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sourceFile'
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'sourceFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' changes'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' textChanges'
+                      Identifier: 'ChangeTracker'
+                    Identifier: 'with'
+                  Identifier: 'context'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' t'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' t'
+                        Identifier: 'replaceNode'
+                      Identifier: 'sourceFile'
+                      Identifier: ' expr'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createPropertyAccessExpression'
+                        Identifier: 'expr'
+                        StringLiteral
+                      ObjectLiteralExpression
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        fixes'
+                Identifier: 'push'
+              CallExpression
+                Identifier: 'createCodeFixActionWithoutFixAll'
+                Identifier: 'fixName'
+                Identifier: ' changes'
+                PropertyAccessExpression
+                  Identifier: ' Diagnostics'
+                  Identifier: 'Use_synthetic_default_member'
+      ReturnStatement
+        Identifier: ' fixes'

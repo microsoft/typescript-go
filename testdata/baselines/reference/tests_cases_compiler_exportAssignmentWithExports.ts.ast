@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' D'
+  ExportAssignment
+    Identifier: ' D'

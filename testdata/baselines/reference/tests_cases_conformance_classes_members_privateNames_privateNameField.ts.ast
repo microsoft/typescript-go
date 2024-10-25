@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            Identifier: ' name'

@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' salt'
+    Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+salt'
+        Identifier: 'apply'
+      StringLiteral
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        NewExpression
+          Identifier: ' Function'
+          StringLiteral

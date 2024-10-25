@@ -1,0 +1,97 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'n'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+// this override should be fine (even if it's a little odd)
+C'
+          Identifier: 'prototype'
+        Identifier: 'foo'
+      EqualsToken
+      FunctionExpression
+        Block
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+D'
+          Identifier: 'prototype'
+        Identifier: 'foo'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'n'
+              EqualsToken
+              StringLiteral
+  ClassDeclaration
+    Identifier: ' Module'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Module'
+          Identifier: 'prototype'
+        Identifier: 'identifier'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Module'
+          Identifier: 'prototype'
+        Identifier: 'size'
+      EqualsToken
+      NullKeyword
+  ClassDeclaration
+    Identifier: ' NormalModule'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Module'
+    MethodDeclaration
+      Identifier: '
+    identifier'
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      Identifier: '
+    size'
+      Block
+        ReturnStatement
+          NumericLiteral

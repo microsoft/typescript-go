@@ -1,0 +1,142 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'U'
+    PropertySignature
+      Identifier: ' // error
+    y'
+      TypeReference
+        Identifier: ' U'
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: 'U'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' U'
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: 'V'
+    PropertySignature
+      Identifier: ' // error
+    y'
+      TypeReference
+        Identifier: ' V'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        x'
+          TypeReference
+            Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' A'
+        TypeParameter
+          Identifier: 'U'
+        PropertySignature
+          Identifier: ' // error
+        y'
+          TypeReference
+            Identifier: ' U'
+      InterfaceDeclaration
+        Identifier: ' B'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        PropertySignature
+          Identifier: '
+        x'
+          TypeReference
+            Identifier: ' U'
+      InterfaceDeclaration
+        Identifier: ' B'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+        PropertySignature
+          Identifier: ' // error
+        y'
+          TypeReference
+            Identifier: ' V'
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' B'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        PropertySignature
+          Identifier: '
+        x'
+          TypeReference
+            Identifier: ' U'
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' B'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+        PropertySignature
+          Identifier: ' // ok, different declaration space than other M2
+        y'
+          TypeReference
+            Identifier: ' V'
+  ModuleDeclaration
+    Identifier: ' M3'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        PropertySignature
+          Identifier: '
+        x'
+          TypeReference
+            Identifier: ' U'
+  ModuleDeclaration
+    Identifier: ' M3'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+        PropertySignature
+          Identifier: ' // error
+        y'
+          TypeReference
+            Identifier: ' V'

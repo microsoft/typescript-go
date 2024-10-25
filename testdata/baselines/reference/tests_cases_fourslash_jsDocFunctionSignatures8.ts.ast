@@ -1,0 +1,29 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+// @allowJs: true
+// @Filename: Foo.js
+/////**
+//// * Represents a person
+//// * a b multiline test
+//// * @constructor
+//// * @param {string} name The name of the person
+//// * @param {number} age The age of the person
+//// */
+////function Person(name, age) {
+////    this.name = name;
+////    this.age = age;
+////}
+////var p = new Pers/**/on();
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoIs'
+      StringLiteral
+      StringLiteral

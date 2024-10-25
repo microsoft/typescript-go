@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      StaticKeyword
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword

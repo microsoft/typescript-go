@@ -1,0 +1,64 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' isInternal1'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' isInternal2'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' isInternal3'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' isInternal4'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' isInternal5'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' isInternal6'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' isInternal7'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' notInternal1'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' notInternal2'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' notInternal3'
+        StringKeyword
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' isInternal1'
+        StringKeyword
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Baz'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' isInternal'
+        StringKeyword
+      Block

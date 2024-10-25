@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+//// interface StringExample {
+////     /** Something generic */
+////     [p: string]: any; 
+////     /** Something specific */
+////     property: number;
+//// }
+//// function stringExample(e: StringExample) {
+////     console.log(e./*property*/property);
+////     console.log(e./*string*/anything); 
+//// }
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral
+      StringLiteral

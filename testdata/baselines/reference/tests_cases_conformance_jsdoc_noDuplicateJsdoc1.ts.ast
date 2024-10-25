@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BinaryExpression
+          Identifier: ' b'
+          EqualsToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral

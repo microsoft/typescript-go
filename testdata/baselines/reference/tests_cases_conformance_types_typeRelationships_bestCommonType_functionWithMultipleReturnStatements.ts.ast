@@ -1,0 +1,114 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+        Block
+          ReturnStatement
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+        IfStatement
+          FalseKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+          Block
+            ReturnStatement
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      TryStatement
+        Block
+          ReturnStatement
+            NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ReturnStatement
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      TryStatement
+        Block
+          ReturnStatement
+            NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+        Block
+          ReturnStatement
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' f5'
+    Block
+      ReturnStatement
+        NumericLiteral
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' f6'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: 'U'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            Identifier: ' x'
+        Block
+          ReturnStatement
+            Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' f8'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            Identifier: ' x'
+        Block
+          ReturnStatement
+            Identifier: ' y'

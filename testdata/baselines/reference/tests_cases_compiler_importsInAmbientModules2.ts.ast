@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' C'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportDeclaration
+        ImportClause
+          Identifier: ' C'
+        StringLiteral

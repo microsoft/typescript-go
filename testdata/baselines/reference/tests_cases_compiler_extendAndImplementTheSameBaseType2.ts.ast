@@ -1,0 +1,73 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    bar'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+        StringKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    baz'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' D'
+        NewExpression
+          Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        StringKeyword
+        PropertyAccessExpression
+          Identifier: ' d'
+          Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' d'
+          Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        StringKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' d'
+            Identifier: 'bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' d'
+            Identifier: 'bar'

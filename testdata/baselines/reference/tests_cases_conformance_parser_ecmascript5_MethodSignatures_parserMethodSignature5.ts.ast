@@ -1,0 +1,5 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      StringLiteral

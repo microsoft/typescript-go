@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+// #33102
+
+//// try[| {
+////   var x = [
+////     {% try[||] %}|][|{% except %}|] 
+////   ]
+//// } catch (e)[| {
+////   
+//// }|]
+
+verify'
+        Identifier: 'outliningSpansInCurrentFile'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'test'
+          Identifier: 'ranges'

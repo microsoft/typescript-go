@@ -1,0 +1,59 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        StringKeyword
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    one'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    one'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      Identifier: '
+    one'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    two'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' C1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' C2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' C3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' b'

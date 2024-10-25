@@ -1,0 +1,40 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' X'
+        PropertySignature
+          Identifier: ' s'
+          StringKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' X'
+            TypeReference
+              Identifier: ' X'
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        PropertySignature
+          Identifier: ' n'
+          NumberKeyword
+      ImportEqualsDeclaration
+        Identifier: ' Y'
+        Identifier: ' A'
+      ImportEqualsDeclaration
+        Identifier: ' Z'
+        QualifiedName
+          Identifier: ' A'
+          Identifier: 'X'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            TypeReference
+              Identifier: ' Z'
+            Identifier: ' Z'

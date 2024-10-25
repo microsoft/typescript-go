@@ -1,0 +1,109 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' JSX'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' IntrinsicElements'
+            IndexSignature
+              Parameter
+                Identifier: 'e'
+                StringKeyword
+              AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createElement'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Fragment'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' h'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Frag'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' h'
+    VoidKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'createElement'
+        ImportSpecifier
+          Identifier: ' Fragment'
+    StringLiteral
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'span'
+          JsxAttributes
+        JsxClosingElement
+          Identifier: 'span'
+      JsxClosingFragment
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'h'
+        ImportSpecifier
+          Identifier: ' Frag'
+    StringLiteral
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'div'
+          JsxAttributes
+        JsxClosingElement
+          Identifier: 'div'
+      JsxClosingFragment
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'h'
+    StringLiteral
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'div'
+          JsxAttributes
+        JsxClosingElement
+          Identifier: 'div'
+      JsxClosingFragment
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'h'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Fragment'
+    StringLiteral
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'span'
+          JsxAttributes
+        JsxClosingElement
+          Identifier: 'span'
+      JsxClosingFragment

@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' fn'
+          Identifier: 'n'
+  ModuleDeclaration
+    Identifier: ' fn'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            NumericLiteral

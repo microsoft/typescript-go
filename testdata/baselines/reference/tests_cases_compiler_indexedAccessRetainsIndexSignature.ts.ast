@@ -1,0 +1,123 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Diff'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        AnyKeyword
+    TypeParameter
+      Identifier: ' U'
+      TypeOperator
+        AnyKeyword
+    IndexedAccessType
+      ParenthesizedType
+        IntersectionType
+          MappedType
+            TypeParameter
+              Identifier: 'P'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' P'
+          MappedType
+            TypeParameter
+              Identifier: 'P'
+              TypeReference
+                Identifier: ' U'
+            NeverKeyword
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              NeverKeyword
+      TypeReference
+        Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Omit'
+    TypeParameter
+      Identifier: 'U'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' U'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: 'U'
+      TypeReference
+        Identifier: ' Diff'
+        TypeOperator
+          TypeReference
+            Identifier: ' U'
+        TypeReference
+          Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' Omit1'
+    TypeParameter
+      Identifier: 'U'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' U'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: 'U'
+      TypeReference
+        Identifier: ' Diff'
+        TypeOperator
+          TypeReference
+            Identifier: ' U'
+        TypeReference
+          Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' Omit2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' Diff'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' K'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' O'
+    TypeReference
+      Identifier: ' Omit'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+      LiteralType
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeReference
+          Identifier: ' O'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral

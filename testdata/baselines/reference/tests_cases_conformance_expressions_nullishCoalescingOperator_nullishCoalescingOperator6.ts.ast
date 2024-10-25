@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'foo'
+      StringKeyword
+    Parameter
+      Identifier: ' bar'
+      BinaryExpression
+        Identifier: ' foo'
+        QuestionQuestionToken
+        StringLiteral
+    Block

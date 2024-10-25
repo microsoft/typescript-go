@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    aProp'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' X'
+        PropertySignature
+          Identifier: ' s'
+          StringKeyword
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' A'
+            NumericLiteral
+      ImportEqualsDeclaration
+        Identifier: ' Y'
+        Identifier: ' A'

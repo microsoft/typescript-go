@@ -1,0 +1,100 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' HomomorphicMappedType'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+        StringKeyword
+        BooleanKeyword
+        LiteralType
+          NullKeyword
+  FunctionDeclaration
+    Identifier: ' test1'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TupleType
+          NumberKeyword
+        TupleType
+          StringKeyword
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            ArrayType
+              AnyKeyword
+            AsExpression
+              ArrayLiteralExpression
+              TypeReference
+                Identifier: ' HomomorphicMappedType'
+                TypeReference
+                  Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr2'
+            TypeOperator
+              ArrayType
+                AnyKeyword
+            AsExpression
+              ArrayLiteralExpression
+              TypeReference
+                Identifier: ' HomomorphicMappedType'
+                TypeReference
+                  Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' test2'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TupleType
+          NumberKeyword
+        TypeOperator
+          TupleType
+            StringKeyword
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            ArrayType
+              AnyKeyword
+            AsExpression
+              ArrayLiteralExpression
+              TypeReference
+                Identifier: ' HomomorphicMappedType'
+                TypeReference
+                  Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr2'
+            TypeOperator
+              ArrayType
+                AnyKeyword
+            AsExpression
+              ArrayLiteralExpression
+              TypeReference
+                Identifier: ' HomomorphicMappedType'
+                TypeReference
+                  Identifier: 'T'

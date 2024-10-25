@@ -1,0 +1,39 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+//// interface I {
+////     baz () {}
+//// }
+//// class A {
+////     foo () {} 
+////     bar () {}
+//// }
+//// class B extends A implements I {
+////     override /*1*/
+//// }
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    excludes'
+          ArrayLiteralExpression
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    isNewIdentifierLocation'
+          TrueKeyword

@@ -1,0 +1,761 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Field'
+    Block
+      ClassDeclaration
+        Identifier: ' A_Field_Field'
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Field_Method'
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_Field_Getter'
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Field_Setter'
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+      ClassDeclaration
+        Identifier: ' A_Field_StaticField'
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Field_StaticMethod'
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_Field_StaticGetter'
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Field_StaticSetter'
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+  FunctionDeclaration
+    Identifier: ' Method'
+    Block
+      ClassDeclaration
+        Identifier: ' A_Method_Field'
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Method_Method'
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_Method_Getter'
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Method_Setter'
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+      ClassDeclaration
+        Identifier: ' A_Method_StaticField'
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Method_StaticMethod'
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_Method_StaticGetter'
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Method_StaticSetter'
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+  FunctionDeclaration
+    Identifier: ' Getter'
+    Block
+      ClassDeclaration
+        Identifier: ' A_Getter_Field'
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Getter_Method'
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_Getter_Getter'
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Getter_Setter'
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+      ClassDeclaration
+        Identifier: ' A_Getter_StaticField'
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_Getter_StaticMethod'
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_Getter_StaticGetter'
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Getter_StaticSetter'
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+  FunctionDeclaration
+    Identifier: ' Setter'
+    Block
+      ClassDeclaration
+        Identifier: ' A_Setter_Field'
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Setter_Method'
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_Setter_Getter'
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Setter_Setter'
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+      ClassDeclaration
+        Identifier: ' A_Setter_StaticField'
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Setter_StaticMethod'
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_Setter_StaticGetter'
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_Setter_StaticSetter'
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+  FunctionDeclaration
+    Identifier: ' StaticField'
+    Block
+      ClassDeclaration
+        Identifier: ' A_StaticField_Field'
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticField_Method'
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticField_Getter'
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticField_Setter'
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticField_StaticField'
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticField_StaticMethod'
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticField_StaticGetter'
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticField_StaticSetter'
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+  FunctionDeclaration
+    Identifier: ' StaticMethod'
+    Block
+      ClassDeclaration
+        Identifier: ' A_StaticMethod_Field'
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticMethod_Method'
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticMethod_Getter'
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticMethod_Setter'
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticMethod_StaticField'
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticMethod_StaticMethod'
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticMethod_StaticGetter'
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticMethod_StaticSetter'
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+  FunctionDeclaration
+    Identifier: ' StaticGetter'
+    Block
+      ClassDeclaration
+        Identifier: ' A_StaticGetter_Field'
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticGetter_Method'
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticGetter_Getter'
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticGetter_Setter'
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticGetter_StaticField'
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticGetter_StaticMethod'
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticGetter_StaticGetter'
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticGetter_StaticSetter'
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+  FunctionDeclaration
+    Identifier: ' StaticSetter'
+    Block
+      ClassDeclaration
+        Identifier: ' A_StaticSetter_Field'
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        PropertyDeclaration
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticSetter_Method'
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticSetter_Getter'
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticSetter_Setter'
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        SetAccessor
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticSetter_StaticField'
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        PropertyDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticSetter_StaticMethod'
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        MethodDeclaration
+          StaticKeyword
+          PrivateIdentifier
+          Block
+      ClassDeclaration
+        Identifier: ' A_StaticSetter_StaticGetter'
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        GetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' A_StaticSetter_StaticSetter'
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block
+        SetAccessor
+          StaticKeyword
+          PrivateIdentifier
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Block

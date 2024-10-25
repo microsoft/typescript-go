@@ -1,0 +1,82 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionExpression
+          Parameter
+            Identifier: 'prop'
+          Block
+  FunctionDeclaration
+    Identifier: ' add1'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' add2'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' add3'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' funcWithMoreParameters'
+    Parameter
+      Identifier: 'more'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' variableWithMoreParameters'
+        FunctionExpression
+          Parameter
+            Identifier: 'more'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrowWithMoreParameters'
+        ArrowFunction
+          Parameter
+            Identifier: 'more'
+          EqualsGreaterThanToken
+          Block
+  ExpressionStatement
+    ParenthesizedExpression
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+  /** @type {() => void} */
+  methodWithMoreParameters'
+          Parameter
+            Identifier: 'more'
+          Block

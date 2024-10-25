@@ -1,0 +1,51 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' check'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' includes'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' includes'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+check'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Now change the decl by adding a semicolon
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// foo should still be there
+check'

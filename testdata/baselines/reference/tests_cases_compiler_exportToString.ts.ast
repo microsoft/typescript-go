@@ -1,0 +1,10 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' toString'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' toString'

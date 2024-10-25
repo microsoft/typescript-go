@@ -1,0 +1,333 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' i1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i1_i'
+        TypeReference
+          Identifier: ' i1'
+  InterfaceDeclaration
+    Identifier: ' nc_i1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nc_i1_i'
+        TypeReference
+          Identifier: ' nc_i1'
+  InterfaceDeclaration
+    Identifier: ' i2'
+    PropertySignature
+      Identifier: '
+    /** this is x*/
+    x'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    /** this is foo*/
+    foo'
+      FunctionType
+        Parameter
+          Identifier: '/**param help*/b'
+          NumberKeyword
+        StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: '/**string param*/i'
+        StringKeyword
+      AnyKeyword
+    ConstructSignature
+      Parameter
+        Identifier: '/** param*/i'
+        TypeReference
+          Identifier: ' i1'
+    PropertySignature
+      Identifier: '
+    nc_x'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    nc_foo'
+      FunctionType
+        Parameter
+          Identifier: 'b'
+          NumberKeyword
+        StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'i'
+        NumberKeyword
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: '/**paramhelp a*/a'
+        NumberKeyword
+      Parameter
+        Identifier: '/**paramhelp b*/ b'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** this is fnfoo*/
+    fnfoo'
+      Parameter
+        Identifier: '/**param help*/b'
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    nc_fnfoo'
+      Parameter
+        Identifier: 'b'
+        NumberKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    // nc_y
+    nc_y'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i'
+        TypeReference
+          Identifier: ' i2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_x'
+        PropertyAccessExpression
+          Identifier: ' i2_i'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_foo'
+        PropertyAccessExpression
+          Identifier: ' i2_i'
+          Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_foo_r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i2_i'
+            Identifier: 'foo'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_i2_si'
+        ElementAccessExpression
+          Identifier: ' i2_i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_i2_ii'
+        ElementAccessExpression
+          Identifier: ' i2_i'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_n'
+        NewExpression
+          Identifier: ' i2_i'
+          Identifier: 'i1_i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_nc_x'
+        PropertyAccessExpression
+          Identifier: ' i2_i'
+          Identifier: 'nc_x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_nc_foo'
+        PropertyAccessExpression
+          Identifier: ' i2_i'
+          Identifier: 'nc_foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_nc_foo_r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i2_i'
+            Identifier: 'nc_foo'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_r'
+        CallExpression
+          Identifier: ' i2_i'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_fnfoo'
+        PropertyAccessExpression
+          Identifier: ' i2_i'
+          Identifier: 'fnfoo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_fnfoo_r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i2_i'
+            Identifier: 'fnfoo'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_nc_fnfoo'
+        PropertyAccessExpression
+          Identifier: ' i2_i'
+          Identifier: 'nc_fnfoo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2_i_nc_fnfoo_r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i2_i'
+            Identifier: 'nc_fnfoo'
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' i3'
+    PropertySignature
+      Identifier: '
+    /** Comment i3 x*/
+    x'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Function i3 f*/
+    f'
+      Parameter
+        Identifier: '/**number parameter*/a'
+        NumberKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /** i3 l*/
+    l'
+      FunctionType
+        Parameter
+          Identifier: '/**comment i3 l b*/b'
+          NumberKeyword
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    nc_x'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    nc_f'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    nc_l'
+      FunctionType
+        Parameter
+          Identifier: 'b'
+          NumberKeyword
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i3_i'
+        TypeReference
+          Identifier: ' i3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+i3_i'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    f'
+          ArrowFunction
+            Parameter
+              Identifier: '/**i3_i a*/a'
+              NumberKeyword
+            EqualsGreaterThanToken
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              Identifier: ' a'
+        PropertyAssignment
+          Identifier: '
+    l'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'f'
+        PropertyAssignment
+          Identifier: '
+    /** own x*/
+    x'
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'f'
+            NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    nc_x'
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'l'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+        PropertyAssignment
+          Identifier: '
+    nc_f'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'f'
+        PropertyAssignment
+          Identifier: '
+    nc_l'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'l'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i3_i'
+        Identifier: 'f'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i3_i'
+        Identifier: 'l'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i3_i'
+        Identifier: 'nc_f'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i3_i'
+        Identifier: 'nc_l'
+      NumericLiteral

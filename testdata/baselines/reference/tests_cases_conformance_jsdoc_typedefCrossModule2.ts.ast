@@ -1,0 +1,79 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // should error
+
+/** @typedef {number} Bar */
+exports'
+        Identifier: 'Bar'
+      EqualsToken
+      ClassExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+/** @typedef {number} Baz */
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    Baz'
+          ClassExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Qux'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+/** @typedef {number} Quid */
+exports'
+        Identifier: 'Quid'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+/** @typedef {number} Quack */
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    Quack'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mod'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bb'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bbb'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' mod'
+            Identifier: 'Baz'

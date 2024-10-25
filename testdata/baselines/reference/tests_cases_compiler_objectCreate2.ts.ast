@@ -1,0 +1,127 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' union'
+        UnionType
+          LiteralType
+            NullKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          Identifier: 'union'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          TypeAssertionExpression
+            ObjectKeyword
+            ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          NullKeyword
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              StringLiteral
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          Identifier: 'union'
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          ObjectLiteralExpression
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'create'
+          TypeAssertionExpression
+            ObjectKeyword
+            ObjectLiteralExpression
+          ObjectLiteralExpression

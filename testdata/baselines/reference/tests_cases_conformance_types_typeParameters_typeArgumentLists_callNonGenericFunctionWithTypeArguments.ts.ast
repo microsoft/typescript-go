@@ -1,0 +1,173 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      ReturnStatement
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' f'
+          StringKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' f2'
+          StringKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' f3'
+          StringKeyword
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' C'
+            Identifier: 'f'
+          StringKeyword
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'f'
+          StringKeyword
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    MethodDeclaration
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' C2'
+            Identifier: 'f'
+          StringKeyword
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I2'
+    MethodSignature
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        TypeReference
+          Identifier: ' I2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i2'
+            Identifier: 'f'
+          StringKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          Identifier: ' a'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          Identifier: ' a2'
+          NumberKeyword

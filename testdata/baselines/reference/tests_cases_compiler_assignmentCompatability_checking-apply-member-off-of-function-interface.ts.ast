@@ -1,0 +1,94 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Applicable'
+    MethodSignature
+      Identifier: '
+    apply'
+      Parameter
+        Identifier: 'blah'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Applicable'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Should fail
+x'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      ObjectLiteralExpression
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' f'
+  FunctionDeclaration
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'c'
+      TypeReference
+        Identifier: ' Applicable'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Should Fail
+fn'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      ArrayLiteralExpression
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+
+// Should work
+fn'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        EqualsGreaterThanToken
+        Block

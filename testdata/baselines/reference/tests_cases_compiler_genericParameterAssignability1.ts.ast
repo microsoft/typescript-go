@@ -1,0 +1,33 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+r'
+      EqualsToken
+      Identifier: ' f'

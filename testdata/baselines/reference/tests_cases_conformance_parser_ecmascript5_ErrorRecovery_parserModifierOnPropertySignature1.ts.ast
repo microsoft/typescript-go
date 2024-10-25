@@ -1,0 +1,6 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      PublicKeyword
+      Identifier: ' biz'

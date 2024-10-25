@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' bar'
+        QuestionToken
+        StringKeyword
+      Block

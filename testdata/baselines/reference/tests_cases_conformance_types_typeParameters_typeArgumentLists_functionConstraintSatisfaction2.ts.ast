@@ -1,0 +1,231 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Function'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      NumericLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        StringKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        TypeLiteral
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' foo2'
+          NewExpression
+            Identifier: ' Function'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' foo2'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              ArrayType
+                StringKeyword
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          Identifier: ' foo2'
+          Identifier: 'C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          Identifier: ' foo2'
+          Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          Identifier: ' foo2'
+          ArrowFunction
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' U'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        CallExpression
+          Identifier: ' foo2'
+          ArrowFunction
+            TypeParameter
+              Identifier: 'U'
+            TypeParameter
+              Identifier: ' V'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' U'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' V'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13'
+        CallExpression
+          Identifier: ' foo2'
+          Identifier: 'C2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r14'
+        CallExpression
+          Identifier: ' foo2'
+          Identifier: 'b2'
+  InterfaceDeclaration
+    Identifier: ' F2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Function'
+    PropertySignature
+      Identifier: ' foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        TypeReference
+          Identifier: ' F2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r16'
+        CallExpression
+          Identifier: ' foo2'
+          Identifier: 'f2'
+  FunctionDeclaration
+    Identifier: ' fff'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        CallSignature
+          VoidKeyword
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo2'
+          Identifier: 'x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo2'
+          Identifier: 'y'

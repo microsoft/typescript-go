@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    SetAccessor
+      Identifier: ' Foo'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Parameter
+        Identifier: ' b'
+        NumberKeyword
+      Block

@@ -1,0 +1,42 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              Identifier: ' t'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' X'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'f'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+t1'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral

@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// class C {
+////     notAGenerator() {
+////       [|/*start1*/yield|] 0;
+////     }
+////
+////     foo*/*end2*/() {
+////       [|/*start2*/yield|] 0;
+////     }
+//// }
+
+verify'
+        Identifier: 'baselineGoToDefinition'
+      StringLiteral
+      StringLiteral

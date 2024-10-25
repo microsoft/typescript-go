@@ -1,0 +1,134 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////export const value = 2;
+////export const func = () => 2;
+////export const func2 = function() { };
+////export function exportedFunction() { }
+
+verify'
+        Identifier: 'navigationBar'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'navigationTree'
+      ObjectLiteralExpression
+        PropertyAssignment
+          StringLiteral
+          StringLiteral
+        PropertyAssignment
+          StringLiteral
+          StringLiteral
+        PropertyAssignment
+          StringLiteral
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral

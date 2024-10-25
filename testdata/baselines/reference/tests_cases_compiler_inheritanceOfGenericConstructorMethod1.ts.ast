@@ -1,0 +1,48 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        NewExpression
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        TypeReference
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'Date'
+        NewExpression
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        NewExpression
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'Date'

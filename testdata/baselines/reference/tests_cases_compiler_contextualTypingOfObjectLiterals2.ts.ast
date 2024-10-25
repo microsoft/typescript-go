@@ -1,0 +1,32 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    foo'
+      FunctionType
+        Parameter
+          Identifier: 't'
+          StringKeyword
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' Foo'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' foo'
+          ArrowFunction
+            Parameter
+              Identifier: ' s'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' s'
+              Identifier: 'hmm'

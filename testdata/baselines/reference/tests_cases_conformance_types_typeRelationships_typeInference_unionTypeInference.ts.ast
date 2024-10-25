@@ -1,0 +1,493 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sn'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      UnionType
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        CallExpression
+          Identifier: ' f1'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        CallExpression
+          Identifier: ' f1'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        CallExpression
+          Identifier: ' f1'
+          NumericLiteral
+          Identifier: ' sn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        CallExpression
+          Identifier: ' f1'
+          Identifier: 'undefined'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        CallExpression
+          Identifier: ' f1'
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        CallExpression
+          Identifier: ' f1'
+          TrueKeyword
+          FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a7'
+        CallExpression
+          Identifier: ' f1'
+          StringLiteral
+          NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      TupleType
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        CallExpression
+          Identifier: ' f2'
+          ArrayLiteralExpression
+            StringLiteral
+            TrueKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        LiteralType
+          FalseKeyword
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        CallExpression
+          Identifier: ' f3'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        CallExpression
+          Identifier: ' f3'
+          Identifier: 'sn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        CallExpression
+          Identifier: ' f3'
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        CallExpression
+          Identifier: ' f3'
+          Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5'
+        CallExpression
+          Identifier: ' f3'
+          StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        CallExpression
+          Identifier: ' f4'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        CallExpression
+          Identifier: ' f4'
+          Identifier: 's'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d3'
+        CallExpression
+          Identifier: ' f4'
+          NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          UnionType
+            TypeReference
+              Identifier: ' U'
+            TypeReference
+              Identifier: ' Foo'
+              TypeReference
+                Identifier: 'U'
+      Parameter
+        Identifier: ' g'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'U'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'S'
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          UnionType
+            TypeReference
+              Identifier: ' S'
+            TypeReference
+              Identifier: ' Bar'
+              TypeReference
+                Identifier: 'S'
+      Parameter
+        Identifier: ' g'
+        TypeReference
+          Identifier: ' S'
+      TypeReference
+        Identifier: ' Bar'
+        TypeReference
+          Identifier: 'S'
+  FunctionDeclaration
+    Identifier: ' qux'
+    Parameter
+      Identifier: 'p1'
+      TypeReference
+        Identifier: ' Foo'
+        VoidKeyword
+    Parameter
+      Identifier: ' p2'
+      TypeReference
+        Identifier: ' Bar'
+        VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    p1'
+          EqualsToken
+          Identifier: ' p2'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'T'
+    VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          LiteralType
+            FalseKeyword
+          TypeReference
+            Identifier: ' Promise'
+            LiteralType
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      UnionType
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          Identifier: ' bar'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' containsPromises'
+        TypeOperator
+          SymbolKeyword
+        CallExpression
+          Identifier: ' Symbol'
+  TypeAliasDeclaration
+    Identifier: ' DeepPromised'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          ComputedPropertyName
+            Identifier: 'containsPromises'
+          QuestionToken
+          LiteralType
+            TrueKeyword
+      MappedType
+        TypeParameter
+          Identifier: 'TKey'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        UnionType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'TKey'
+          TypeReference
+            Identifier: ' DeepPromised'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: 'TKey'
+          TypeReference
+            Identifier: ' Promise'
+            TypeReference
+              Identifier: 'DeepPromised'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: 'TKey'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fun'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'deepPromised'
+      TypeReference
+        Identifier: ' DeepPromised'
+        TypeReference
+          Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' deepPromisedWithIndexer'
+            TypeReference
+              Identifier: ' DeepPromised'
+              TypeLiteral
+                IndexSignature
+                  Parameter
+                    Identifier: 'name'
+                    StringKeyword
+                  UnionType
+                    TypeLiteral
+                    LiteralType
+                      NullKeyword
+                    UndefinedKeyword
+            Identifier: ' deepPromised'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'values'
+          Identifier: 'deepPromisedWithIndexer'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' awaitedValue'
+                AwaitExpression
+                  Identifier: ' value'
+          IfStatement
+            Identifier: 'awaitedValue'
+            ExpressionStatement
+              AwaitExpression
+                CallExpression
+                  Identifier: ' fun'
+                  Identifier: 'awaitedValue'
+  TypeAliasDeclaration
+    Identifier: ' Deep'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      UnionType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+        TypeReference
+          Identifier: ' Deep'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: 'K'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' baz'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'dp'
+      TypeReference
+        Identifier: ' Deep'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xx'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+baz'
+      Identifier: 'xx'

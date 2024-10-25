@@ -1,0 +1,174 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+          ArrayLiteralExpression
+            NumericLiteral
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' f'
+                  FunctionExpression
+                    Block
+                      ReturnStatement
+                        Identifier: ' x'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'bar'
+                CallExpression
+                  Identifier: 'f'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    baz'
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+          ArrayLiteralExpression
+            NumericLiteral
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' a'
+                  FunctionExpression
+                    Block
+                      ReturnStatement
+                        Identifier: ' x'
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y'
+              ArrayLiteralExpression
+                NumericLiteral
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' b'
+                      FunctionExpression
+                        Block
+                          ReturnStatement
+                            Identifier: ' y'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'bar'
+                    CallExpression
+                      Identifier: 'b'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'bar'
+                CallExpression
+                  Identifier: 'a'
+    MethodDeclaration
+      Identifier: '
+    baz2'
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+          ArrayLiteralExpression
+            NumericLiteral
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' a'
+                  FunctionExpression
+                    Block
+                      ReturnStatement
+                        Identifier: ' x'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'bar'
+                CallExpression
+                  Identifier: 'a'
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y'
+              ArrayLiteralExpression
+                NumericLiteral
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' b'
+                      FunctionExpression
+                        Block
+                          ReturnStatement
+                            Identifier: ' y'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'bar'
+                    CallExpression
+                      Identifier: 'b'
+  ClassDeclaration
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' x'
+                    ArrayLiteralExpression
+                      NumericLiteral
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' f'
+                            ArrowFunction
+                              EqualsGreaterThanToken
+                              Identifier: ' x'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'bar'
+                          CallExpression
+                            Identifier: 'f'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block

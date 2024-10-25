@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    b'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'a'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

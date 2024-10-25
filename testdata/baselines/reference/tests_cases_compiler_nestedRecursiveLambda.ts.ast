@@ -1,0 +1,61 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Block
+      ExpressionStatement
+        VoidExpression
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'r'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'r'
+                  EqualsGreaterThanToken
+                  Identifier: ' r'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'r'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'r'
+              EqualsGreaterThanToken
+              Identifier: ' r'
+  ExpressionStatement
+    VoidExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'r'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'r'
+              EqualsGreaterThanToken
+              Identifier: ' r'
+  ExpressionStatement
+    ArrayLiteralExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'r'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'r'
+              EqualsGreaterThanToken
+              Identifier: ' r'

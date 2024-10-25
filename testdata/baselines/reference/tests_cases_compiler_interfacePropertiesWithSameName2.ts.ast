@@ -1,0 +1,98 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Mover'
+    MethodSignature
+      Identifier: '
+    move'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getStatus'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' speed'
+          NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Shaker'
+    MethodSignature
+      Identifier: '
+    shake'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getStatus'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' frequency'
+          NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' MoverShaker'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Mover'
+      ExpressionWithTypeArguments
+        Identifier: ' Shaker'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' MoversAndShakers'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Mover'
+        MethodDeclaration
+          Identifier: '
+        move'
+          VoidKeyword
+        MethodDeclaration
+          Identifier: '
+        getStatus'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' speed'
+              NumberKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Shaker'
+        MethodSignature
+          Identifier: '
+        shake'
+          VoidKeyword
+        MethodSignature
+          Identifier: '
+        getStatus'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' frequency'
+              NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' MoverShaker2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' MoversAndShakers'
+          Identifier: 'Mover'
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' MoversAndShakers'
+          Identifier: 'Shaker'
+  InterfaceDeclaration
+    Identifier: ' MoverShaker3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' MoversAndShakers'
+          Identifier: 'Mover'
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' MoversAndShakers'
+          Identifier: 'Shaker'
+    MethodSignature
+      Identifier: '
+    getStatus'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' speed'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' frequency'
+          NumberKeyword

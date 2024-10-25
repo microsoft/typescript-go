@@ -1,0 +1,12 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' $'
+    PropertySignature
+      Identifier: ' x'
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' $'

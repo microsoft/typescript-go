@@ -1,0 +1,93 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    PropertySignature
+      Identifier: ' foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: ' bar'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    Foo'
+      TypeReference
+        Identifier: ' Base'
+  InterfaceDeclaration
+    Identifier: ' S'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    Foo2'
+      QuestionToken
+      TypeReference
+        Identifier: ' Derived'
+  InterfaceDeclaration
+    Identifier: ' T2'
+    PropertySignature
+      NumericLiteral
+      TypeReference
+        Identifier: ' Base'
+  InterfaceDeclaration
+    Identifier: ' S2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T2'
+    PropertySignature
+      NumericLiteral
+      QuestionToken
+      TypeReference
+        Identifier: ' Derived'
+  InterfaceDeclaration
+    Identifier: ' T3'
+    PropertySignature
+      StringLiteral
+      TypeReference
+        Identifier: ' Base'
+  InterfaceDeclaration
+    Identifier: ' S3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T3'
+    PropertySignature
+      StringLiteral
+      QuestionToken
+      TypeReference
+        Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' Foo2'
+            QuestionToken
+            TypeReference
+              Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' a'
+          ColonToken
+          Identifier: ' b'

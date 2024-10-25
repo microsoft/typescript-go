@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      AbstractKeyword
+      Identifier: ' prop'
+      NumericLiteral

@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrayLiteralExpression
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    Identifier: ' a'
+    Block
+  IfStatement
+    BinaryExpression
+      NumericLiteral
+      InKeyword
+      Identifier: ' a'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumberKeyword
+  IfStatement
+    BinaryExpression
+      Identifier: 'y'
+      InKeyword
+      Identifier: ' c'
+    Block

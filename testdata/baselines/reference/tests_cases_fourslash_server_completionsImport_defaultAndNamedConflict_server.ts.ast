@@ -1,0 +1,152 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts" />
+
+// @Filename: /home/src/workspaces/project/tsconfig.json
+//// { "compilerOptions": { "noLib": true } }
+
+// @Filename: /home/src/workspaces/project/someModule.ts
+//// export const someModule = 0;
+//// export default 1;
+
+// @Filename: /home/src/workspaces/project/index.ts
+//// someMo/**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+      name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      sourceDisplay'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      kindModifiers'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+      sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'AutoImportSuggestions'
+              PropertyAssignment
+                Identifier: '
+      tags'
+                ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+      name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      sourceDisplay'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      kindModifiers'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+      sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'AutoImportSuggestions'
+              PropertyAssignment
+                Identifier: '
+      tags'
+                ArrayLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  data'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' exportName'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' fileName'
+              StringLiteral
+        PropertyAssignment
+          Identifier: '
+  description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

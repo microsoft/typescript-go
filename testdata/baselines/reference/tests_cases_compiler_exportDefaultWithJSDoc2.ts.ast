@@ -1,0 +1,13 @@
+SourceFile
+  ExportAssignment
+    ParenthesizedExpression
+      ArrayLiteralExpression
+  ImportDeclaration
+    ImportClause
+      Identifier: ' A'
+    StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+A'
+      NumericLiteral

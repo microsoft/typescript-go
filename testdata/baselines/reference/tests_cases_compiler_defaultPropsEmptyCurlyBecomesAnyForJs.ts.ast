@@ -1,0 +1,94 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    TypeParameter
+      Identifier: ' U'
+      TypeLiteral
+    PropertyDeclaration
+      Identifier: '
+    props'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    state'
+      TypeReference
+        Identifier: ' U'
+    Constructor
+      Parameter
+        Identifier: 'props'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' state'
+        TypeReference
+          Identifier: ' U'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Foo'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyFoo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    member'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyFoo'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' TypedFoo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' MyFoo'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'x'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' value'
+                Identifier: ' undefined'
+        ExpressionStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'props'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'props'
+            Identifier: 'y'
+        ExpressionStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'state'
+            Identifier: 'value'
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'member'

@@ -1,0 +1,34 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E1'
+    EnumMember
+      Identifier: '
+    // illegal case
+    // forward reference to the element of the same enum
+    X'
+      Identifier: ' Y'
+    EnumMember
+      Identifier: ' 
+    X1'
+      ElementAccessExpression
+        Identifier: ' E1'
+        StringLiteral
+    EnumMember
+      Identifier: ' 
+    // forward reference to the element of the same enum
+    Y'
+      PropertyAccessExpression
+        Identifier: ' E1'
+        Identifier: 'Z'
+    EnumMember
+      Identifier: '
+    Y1'
+      ElementAccessExpression
+        Identifier: ' E1'
+        StringLiteral
+  EnumDeclaration
+    Identifier: ' E1'
+    EnumMember
+      Identifier: '
+    Z'
+      NumericLiteral

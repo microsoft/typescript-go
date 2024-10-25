@@ -1,0 +1,33 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    m1'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    f'
+      Block
+    MethodDeclaration
+      Identifier: '
+    m1'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    m1'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    m1'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      VoidKeyword
+      Block

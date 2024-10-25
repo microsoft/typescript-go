@@ -1,0 +1,187 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' publicModule'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassInPublicModule'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f1'
+          Block
+      ClassDeclaration
+        Identifier: ' privateClassInPublicModule'
+      ClassDeclaration
+        Identifier: ' privateClassExtendingPublicClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicClassInPublicModule'
+      ClassDeclaration
+        Identifier: ' privateClassExtendingPrivateClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateClassInPublicModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassExtendingPublicClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicClassInPublicModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassExtendingPrivateClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateClassInPublicModule'
+      ClassDeclaration
+        Identifier: ' privateClassExtendingFromPrivateModuleClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicClassInPrivateModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassExtendingFromPrivateModuleClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicClassInPrivateModule'
+  ModuleDeclaration
+    Identifier: ' privateModule'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassInPrivateModule'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f1'
+          Block
+      ClassDeclaration
+        Identifier: ' privateClassInPrivateModule'
+      ClassDeclaration
+        Identifier: ' privateClassExtendingPublicClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicClassInPrivateModule'
+      ClassDeclaration
+        Identifier: ' privateClassExtendingPrivateClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateClassInPrivateModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassExtendingPublicClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicClassInPrivateModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassExtendingPrivateClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateClassInPrivateModule'
+      ClassDeclaration
+        Identifier: ' privateClassExtendingFromPrivateModuleClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicClassInPrivateModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassExtendingFromPrivateModuleClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicClassInPrivateModule'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClass'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' f1'
+      Block
+  ClassDeclaration
+    Identifier: ' privateClass'
+  ClassDeclaration
+    Identifier: ' privateClassExtendingPublicClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' publicClass'
+  ClassDeclaration
+    Identifier: ' privateClassExtendingPrivateClassInModule'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' privateClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassExtendingPublicClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' publicClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassExtendingPrivateClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' privateClass'
+  ClassDeclaration
+    Identifier: ' privateClassExtendingFromPrivateModuleClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' privateModule'
+          Identifier: 'publicClassInPrivateModule'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassExtendingFromPrivateModuleClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' privateModule'
+          Identifier: 'publicClassInPrivateModule'
+  ModuleDeclaration
+    Identifier: ' publicModuleInGlobal'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassInPublicModule'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f1'
+          Block
+      ClassDeclaration
+        Identifier: ' privateClassInPublicModule'
+      ClassDeclaration
+        Identifier: ' privateClassExtendingPublicClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicClassInPublicModule'
+      ClassDeclaration
+        Identifier: ' privateClassExtendingPrivateClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateClassInPublicModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassExtendingPublicClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicClassInPublicModule'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassExtendingPrivateClassInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateClassInPublicModule'
+  ClassDeclaration
+    Identifier: ' publicClassInGlobal'
+  ClassDeclaration
+    Identifier: ' publicClassExtendingPublicClassInGlobal'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' publicClassInGlobal'

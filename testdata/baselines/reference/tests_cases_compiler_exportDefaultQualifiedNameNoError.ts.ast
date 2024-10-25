@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      NumericLiteral
+  EmptyStatement
+  ExportAssignment
+    PropertyAccessExpression
+      Identifier: ' C'
+      Identifier: 'x'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' def'
+    StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' def'

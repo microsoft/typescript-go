@@ -1,0 +1,1390 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' assertParseResult'
+            Parameter
+              Identifier: 'subScenario'
+              StringKeyword
+            Parameter
+              Identifier: ' commandLine'
+              ArrayType
+                StringKeyword
+            Parameter
+              Identifier: ' workerDiagnostic'
+              QuestionToken
+              FunctionType
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'ParseCommandLineWorkerDiagnostics'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        it'
+                  Identifier: 'subScenario'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' baseline'
+                            ArrayType
+                              StringKeyword
+                            ArrayLiteralExpression
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'commandLine'
+                              Identifier: 'join'
+                            StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' parsed'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'parseCommandLineWorker'
+                              BinaryExpression
+                                CallExpression
+                                  Identifier: 'workerDiagnostic'
+                                  QuestionDotToken
+                                BarBarToken
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'compilerOptionsDidYouMeanDiagnostics'
+                              Identifier: ' commandLine'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          CallExpression
+                            Identifier: 'jsonToReadableText'
+                            PropertyAccessExpression
+                              Identifier: 'parsed'
+                              Identifier: 'options'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          CallExpression
+                            Identifier: 'jsonToReadableText'
+                            PropertyAccessExpression
+                              Identifier: 'parsed'
+                              Identifier: 'watchOptions'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'parsed'
+                                Identifier: 'fileNames'
+                              Identifier: 'join'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'formatDiagnostics'
+                            PropertyAccessExpression
+                              Identifier: 'parsed'
+                              Identifier: 'errors'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                getCurrentDirectory'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                getCanonicalFileName'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'identity'
+                              PropertyAssignment
+                                Identifier: '
+                getNewLine'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            Harness'
+                              Identifier: 'Baseline'
+                            Identifier: 'runBaseline'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'subScenario'
+                              TemplateTail
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' baseline'
+                              Identifier: 'join'
+                            StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    // --lib es6 0.ts
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // --declarations --allowTS
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // --lib es5,es2015.symbol.wellknown 0.ts
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // --lib es5,invalidOption 0.ts
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // 0.ts --jsx
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // 0.ts --
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // 0.ts --newLine
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // 0.ts --target
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // 0.ts --moduleResolution
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // 0.ts --lib
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // 0.ts --lib
+    // This test is an error because the empty string is falsey
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // 0.ts --lib
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // --lib es5, es7 0.ts
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // --lib es5, es7 0.ts
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // --lib es5,es2015.symbol.wellknown --target es5 0.ts
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // --module commonjs --target es5 0.ts --lib es5,es2015.symbol.wellknown
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // --module commonjs --target es5 --lib es5 0.ts --library es2015.array,es2015.symbol.wellknown
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  InterfaceDeclaration
+                    Identifier: ' VerifyNull'
+                    PropertySignature
+                      Identifier: '
+            subScenario'
+                      StringKeyword
+                    PropertySignature
+                      Identifier: '
+            optionName'
+                      StringKeyword
+                    PropertySignature
+                      Identifier: '
+            nonNullValue'
+                      QuestionToken
+                      StringKeyword
+                    PropertySignature
+                      Identifier: '
+            workerDiagnostic'
+                      QuestionToken
+                      FunctionType
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'ParseCommandLineWorkerDiagnostics'
+                  FunctionDeclaration
+                    Identifier: ' verifyNull'
+                    Parameter
+                      ObjectBindingPattern
+                        BindingElement
+                          Identifier: ' subScenario'
+                        BindingElement
+                          Identifier: ' optionName'
+                        BindingElement
+                          Identifier: ' nonNullValue'
+                        BindingElement
+                          Identifier: ' workerDiagnostic'
+                      TypeReference
+                        Identifier: ' VerifyNull'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            describe'
+                          Identifier: 'subScenario'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                assertParseResult'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'subScenario'
+                                      TemplateTail
+                                  ArrayLiteralExpression
+                                    TemplateExpression
+                                      TemplateHead
+                                      TemplateSpan
+                                        Identifier: 'optionName'
+                                        TemplateTail
+                                    StringLiteral
+                                    StringLiteral
+                                  Identifier: '
+                    workerDiagnostic'
+                              IfStatement
+                                Identifier: 'nonNullValue'
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      Identifier: '
+                    assertParseResult'
+                                      TemplateExpression
+                                        TemplateHead
+                                        TemplateSpan
+                                          Identifier: 'subScenario'
+                                          TemplateTail
+                                      ArrayLiteralExpression
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            Identifier: 'optionName'
+                                            TemplateTail
+                                        Identifier: ' nonNullValue'
+                                        StringLiteral
+                                      Identifier: '
+                        workerDiagnostic'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+
+                assertParseResult'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'subScenario'
+                                      TemplateTail
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                                    TemplateExpression
+                                      TemplateHead
+                                      TemplateSpan
+                                        Identifier: 'optionName'
+                                        TemplateTail
+                                  Identifier: '
+                    workerDiagnostic'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+
+                assertParseResult'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'subScenario'
+                                      TemplateTail
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    TemplateExpression
+                                      TemplateHead
+                                      TemplateSpan
+                                        Identifier: 'optionName'
+                                        TemplateTail
+                                  Identifier: '
+                    workerDiagnostic'
+                  InterfaceDeclaration
+                    Identifier: ' VerifyNullNonIncludedOption'
+                    PropertySignature
+                      Identifier: '
+            subScenario'
+                      StringKeyword
+                    PropertySignature
+                      Identifier: '
+            type'
+                      FunctionType
+                        UnionType
+                          LiteralType
+                            StringLiteral
+                          LiteralType
+                            StringLiteral
+                          TypeReference
+                            Identifier: ' Map'
+                            StringKeyword
+                            UnionType
+                              NumberKeyword
+                              StringKeyword
+                    PropertySignature
+                      Identifier: '
+            nonNullValue'
+                      QuestionToken
+                      StringKeyword
+                  FunctionDeclaration
+                    Identifier: ' verifyNullNonIncludedOption'
+                    Parameter
+                      ObjectBindingPattern
+                        BindingElement
+                          Identifier: ' subScenario'
+                        BindingElement
+                          Identifier: ' type'
+                        BindingElement
+                          Identifier: ' nonNullValue'
+                      TypeReference
+                        Identifier: ' VerifyNullNonIncludedOption'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifyNull'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                subScenario'
+                            PropertyAssignment
+                              Identifier: '
+                optionName'
+                              StringLiteral
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                nonNullValue'
+                            PropertyAssignment
+                              Identifier: '
+                workerDiagnostic'
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                Block
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' optionDeclarations'
+                                        ArrayType
+                                          TypeReference
+                                            QualifiedName
+                                              Identifier: ' ts'
+                                              Identifier: 'CommandLineOption'
+                                        ArrayLiteralExpression
+                                          SpreadElement
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'ts'
+                                                Identifier: 'compilerOptionsDidYouMeanDiagnostics'
+                                              Identifier: 'optionDeclarations'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: '
+                            name'
+                                              StringLiteral
+                                            PropertyAssignment
+                                              Identifier: '
+                            type'
+                                              CallExpression
+                                                Identifier: ' type'
+                                            PropertyAssignment
+                                              Identifier: '
+                            isTSConfigOnly'
+                                              TrueKeyword
+                                            PropertyAssignment
+                                              Identifier: '
+                            category'
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' ts'
+                                                  Identifier: 'Diagnostics'
+                                                Identifier: 'Backwards_Compatibility'
+                                            PropertyAssignment
+                                              Identifier: '
+                            description'
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' ts'
+                                                  Identifier: 'Diagnostics'
+                                                Identifier: 'Enable_project_compilation'
+                                            PropertyAssignment
+                                              Identifier: '
+                            defaultValueDescription'
+                                              Identifier: ' undefined'
+                                  ReturnStatement
+                                    ObjectLiteralExpression
+                                      SpreadAssignment
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'compilerOptionsDidYouMeanDiagnostics'
+                                      ShorthandPropertyAssignment
+                                        Identifier: '
+                        optionDeclarations'
+                                      PropertyAssignment
+                                        Identifier: '
+                        getOptionsNameMap'
+                                        ArrowFunction
+                                          EqualsGreaterThanToken
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' ts'
+                                              Identifier: 'createOptionNameMap'
+                                            Identifier: 'optionDeclarations'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            assertParseResult'
+                              StringLiteral
+                              ArrayLiteralExpression
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            verifyNull'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                subScenario'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                optionName'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                nonNullValue'
+                                  StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyNull'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            optionName'
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyNull'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            optionName'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            nonNullValue'
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyNullNonIncludedOption'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            type'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            nonNullValue'
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyNullNonIncludedOption'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            type'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            nonNullValue'
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyNullNonIncludedOption'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            type'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            NewExpression
+                              Identifier: ' Map'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'Object'
+                                  Identifier: 'entries'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    node'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'ModuleResolutionKind'
+                                      Identifier: 'Node10'
+                                  PropertyAssignment
+                                    Identifier: '
+                    classic'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'ModuleResolutionKind'
+                                      Identifier: 'Classic'
+                        PropertyAssignment
+                          Identifier: '
+            nonNullValue'
+                          StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' assertParseResult'
+            Parameter
+              Identifier: 'subScenario'
+              StringKeyword
+            Parameter
+              Identifier: ' commandLine'
+              ArrayType
+                StringKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        it'
+                  Identifier: 'subScenario'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' baseline'
+                            ArrayType
+                              StringKeyword
+                            ArrayLiteralExpression
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'commandLine'
+                              Identifier: 'join'
+                            StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' parsed'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'parseBuildCommand'
+                              Identifier: 'commandLine'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          CallExpression
+                            Identifier: 'jsonToReadableText'
+                            PropertyAccessExpression
+                              Identifier: 'parsed'
+                              Identifier: 'buildOptions'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          CallExpression
+                            Identifier: 'jsonToReadableText'
+                            PropertyAccessExpression
+                              Identifier: 'parsed'
+                              Identifier: 'watchOptions'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'parsed'
+                                Identifier: 'projects'
+                              Identifier: 'join'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            baseline'
+                            Identifier: 'push'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'formatDiagnostics'
+                            PropertyAccessExpression
+                              Identifier: 'parsed'
+                              Identifier: 'errors'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                getCurrentDirectory'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                getCanonicalFileName'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'identity'
+                              PropertyAssignment
+                                Identifier: '
+                getNewLine'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            Harness'
+                              Identifier: 'Baseline'
+                            Identifier: 'runBaseline'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'subScenario'
+                              TemplateTail
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' baseline'
+                              Identifier: 'join'
+                            StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertParseResult'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  FunctionDeclaration
+                    Identifier: ' verifyInvalidCombination'
+                    Parameter
+                      Identifier: 'flag1'
+                      TypeOperator
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'BuildOptions'
+                    Parameter
+                      Identifier: ' flag2'
+                      TypeOperator
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'BuildOptions'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            assertParseResult'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'flag1'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'flag2'
+                              TemplateTail
+                          ArrayLiteralExpression
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'flag1'
+                                TemplateTail
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'flag2'
+                                TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyInvalidCombination'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyInvalidCombination'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyInvalidCombination'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyInvalidCombination'
+                      StringLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertParseResult'
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' option'
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'optionDeclarations'
+                    Block
+                      IfStatement
+                        PropertyAccessExpression
+                          Identifier: 'option'
+                          Identifier: 'affectsSemanticDiagnostics'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                // semantic diagnostics affect the build info, so ensure they're included
+                assert'
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'option'
+                                  Identifier: 'affectsBuildInfo'
+                                QuestionQuestionToken
+                                FalseKeyword
+                              PropertyAccessExpression
+                                Identifier: ' option'
+                                Identifier: 'name'

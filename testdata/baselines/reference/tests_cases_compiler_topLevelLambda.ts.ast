@@ -1,0 +1,15 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'window'

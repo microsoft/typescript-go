@@ -1,0 +1,19 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Helper'
+      ClassDeclaration
+        Identifier: ' Inner'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Outer'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Helper'

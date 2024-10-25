@@ -1,0 +1,107 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Thing'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'freeze'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    a'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    b'
+              StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+exports'
+        Identifier: 'Thing'
+      EqualsToken
+      Identifier: ' Thing'
+  FunctionDeclaration
+    Identifier: ' useThing'
+    Parameter
+      Identifier: 'x'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+exports'
+        Identifier: 'useThing'
+      EqualsToken
+      Identifier: ' useThing'
+  FunctionDeclaration
+    Identifier: ' cbThing'
+    Parameter
+      Identifier: 'x'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+exports'
+        Identifier: 'cbThing'
+      EqualsToken
+      Identifier: ' cbThing'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' Thing'
+          BindingElement
+            Identifier: ' useThing'
+          BindingElement
+            Identifier: ' cbThing'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+useThing'
+      PropertyAccessExpression
+        Identifier: 'Thing'
+        Identifier: 'a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+/**
+ * @typedef {Object} LogEntry
+ * @property {string} type
+ * @property {number} time
+ */
+
+cbThing'
+      ArrowFunction
+        Parameter
+          Identifier: 'type'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' logEntry'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        time'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Date'
+                        Identifier: 'now'
+                  ShorthandPropertyAssignment
+                    Identifier: '
+        type'

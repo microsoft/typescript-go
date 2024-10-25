@@ -1,0 +1,290 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    MethodSignature
+      Identifier: '
+    foo'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'P'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'Foo'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' props'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'P'
+      Block
+    MethodDeclaration
+      Identifier: '
+    doSomething'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'props'
+              Identifier: 'foo'
+            AmpersandAmpersandToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'props'
+                Identifier: 'foo'
+  InterfaceDeclaration
+    Identifier: ' Banana'
+    PropertySignature
+      Identifier: '
+    color'
+      LiteralType
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' Monkey'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' Banana'
+        UndefinedKeyword
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' T'
+      Block
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'a'
+                Identifier: 'color'
+  InterfaceDeclaration
+    Identifier: ' BigBanana'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Banana'
+  ClassDeclaration
+    Identifier: ' BigMonkey'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Monkey'
+        TypeReference
+          Identifier: 'BigBanana'
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'a'
+                Identifier: 'color'
+  TypeAliasDeclaration
+    Identifier: ' Item'
+    TypeLiteral
+      CallSignature
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    x'
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' Item'
+        UndefinedKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        Identifier: 'obj'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'x'
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        obj'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        obj'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' Item'
+        UndefinedKeyword
+    Parameter
+      Identifier: 'obj'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    Block
+      IfStatement
+        Identifier: 'obj'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'x'
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        obj'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        obj'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' Item'
+        UndefinedKeyword
+    Parameter
+      Identifier: 'obj'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        Identifier: 'obj'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'x'
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        obj'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        obj'
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        ArrayType
+          StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: 'obj'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' x'
+      NumberKeyword
+    Block
+      IfStatement
+        Identifier: 'obj'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              ElementAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'x'
+              Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f5'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'obj'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' K'
+    Block
+      IfStatement
+        Identifier: 'obj'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'key'
+  FunctionDeclaration
+    Identifier: ' f6'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        ParenthesizedType
+          ConstructorType
+            TypeLiteral
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' a'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            NewExpression
+              Identifier: ' a'

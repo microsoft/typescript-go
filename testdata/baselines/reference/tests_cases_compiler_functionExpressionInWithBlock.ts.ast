@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' x'
+    Block
+      WithStatement
+        ObjectLiteralExpression
+        Block
+          FunctionDeclaration
+            Identifier: ' f'
+            Block
+              ExpressionStatement
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ThisKeyword

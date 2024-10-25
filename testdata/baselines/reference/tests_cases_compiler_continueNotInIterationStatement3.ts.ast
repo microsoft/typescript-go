@@ -1,0 +1,6 @@
+SourceFile
+  SwitchStatement
+    NumericLiteral
+    CaseBlock
+      DefaultClause
+        ContinueStatement

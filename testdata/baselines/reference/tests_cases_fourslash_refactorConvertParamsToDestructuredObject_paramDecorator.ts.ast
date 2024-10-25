@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////declare function required(target: Object, propertyKey: string | symbol, parameterIndex: number)
+////class C {
+////    /*a*/bar/*b*/(@required a: number, b: number) {
+////
+////    }
+////}
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'refactorAvailable'
+      StringLiteral

@@ -1,0 +1,47 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' TopLevelClass'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' TopLevelModule'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' TopLevelFunction'
+    VoidKeyword
+    Block
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' TopLevelEnum'
+    EnumMember
+      Identifier: 'E'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' TopLevelModule2'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' NonTopLevelClass'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' NonTopLevelModule'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' v'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' NonTopLevelFunction'
+        VoidKeyword
+        Block
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' NonTopLevelEnum'
+        EnumMember
+          Identifier: 'E'

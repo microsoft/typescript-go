@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////class Foo {
+////    private x;
+////}
+////
+////class Bar extends Foo {
+////    private y;
+////    foo() {
+////        this./**/
+////    }
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral

@@ -1,0 +1,48 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' D'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' test'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              NewExpression
+                Identifier: ' C'
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              NewExpression
+                Identifier: ' C'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' z'
+              NewExpression
+                Identifier: ' y'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        z'
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' C'
+    ConstructSignature
+      TypeReference
+        Identifier: ' D'

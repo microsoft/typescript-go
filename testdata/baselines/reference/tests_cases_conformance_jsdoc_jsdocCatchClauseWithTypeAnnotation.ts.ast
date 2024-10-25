@@ -1,0 +1,237 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'x'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {any} */ err'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {Any} */ err'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {unknown} */ err'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {Unknown} */ err'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'err'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: ' err'
+                Identifier: 'foo'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {any} */ err'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: ' err'
+                Identifier: 'foo'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {Any} */ err'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: ' err'
+                Identifier: 'foo'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {unknown} */ err'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                Identifier: 'err'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {Unknown} */ err'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                Identifier: 'err'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {unknown} */ err'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: ' err'
+                Identifier: 'foo'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {Unknown} */ err'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: ' err'
+                Identifier: 'foo'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {Error} */ err'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {object} */ err'
+          Block
+      TryStatement
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+        CatchClause
+          VariableDeclaration
+            Identifier: '/** @type {number} */ err'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' // e should not be a `number`
+        console'
+                  Identifier: 'log'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'err'
+                    Identifier: 'toLowerCase'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'err'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' err'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'err'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' err'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'foo'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'foo'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                Identifier: 'x'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                Identifier: 'x'
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+          Block

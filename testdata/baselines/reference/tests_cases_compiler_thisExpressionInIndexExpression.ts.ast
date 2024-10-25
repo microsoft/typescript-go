@@ -1,0 +1,12 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' r'
+          EqualsGreaterThanToken
+          ElementAccessExpression
+            Identifier: ' r'
+            ThisKeyword

@@ -1,0 +1,69 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ButtonProps'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    IntersectionType
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ButtonHTMLAttributes'
+        TypeReference
+          Identifier: 'HTMLButtonElement'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    outline'
+          QuestionToken
+          BooleanKeyword
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Button'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'ButtonProps'
+          TypeReference
+            Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' CustomButtonProps'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ButtonProps'
+    PropertySignature
+      Identifier: '
+    customProp'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' CustomButton'
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'SFC'
+          TypeReference
+            Identifier: 'CustomButtonProps'
+        ArrowFunction
+          Parameter
+            Identifier: ' props'
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'Button'
+            JsxAttributes
+              JsxAttribute
+                Identifier: 'props'

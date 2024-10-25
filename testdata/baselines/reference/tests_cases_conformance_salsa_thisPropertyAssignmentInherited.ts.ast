@@ -1,0 +1,55 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Element'
+    GetAccessor
+      Identifier: ' textContent'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' textContent'
+      Parameter
+        Identifier: 'x'
+      Block
+    MethodDeclaration
+      Identifier: '
+  cloneNode'
+      Block
+        ReturnStatement
+          ThisKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' HTMLElement'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Element'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' TextElement'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' HTMLElement'
+    GetAccessor
+      Identifier: ' innerHTML'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'textContent'
+    SetAccessor
+      Identifier: ' innerHTML'
+      Parameter
+        Identifier: 'html'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'textContent'
+            EqualsToken
+            Identifier: ' html'
+    MethodDeclaration
+      Identifier: '
+  toString'
+      Block

@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      StringLiteral
+    Block

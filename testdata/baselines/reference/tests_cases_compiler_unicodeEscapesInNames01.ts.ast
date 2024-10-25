@@ -1,0 +1,281 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0078'
+        NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+x'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: '\u0078'
+        NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+xx'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u{78}'
+        NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+x'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: '\u{78}'
+        NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+xx'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' IdentifierNameWithEscape1'
+    PropertyDeclaration
+      Identifier: '
+    \u0078'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '\u0078'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    doThing'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' IdentifierNameWithEscape2'
+    PropertyDeclaration
+      Identifier: '
+    x'
+    PropertyDeclaration
+      Identifier: '\u0078'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '\u0078'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    doThing'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'xx'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' IdentifierNameWithExtendedEscape1'
+    PropertyDeclaration
+      Identifier: '
+    \u{78}'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '\u{78}'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    doThing'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' IdentifierNameWithExtendedEscape2'
+    PropertyDeclaration
+      Identifier: '
+    x'
+    PropertyDeclaration
+      Identifier: '\u{78}'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '\u{78}'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    doThing'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'xx'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' PrivateIdentifierWithEscape1'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    doThing'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' PrivateIdentifierWithEscape2'
+    PropertyDeclaration
+      PrivateIdentifier
+    PropertyDeclaration
+      Identifier: '\u0078'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '\u0078'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    doThing'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' PrivateIdentifierWithExtendedEscape1'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    doThing'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' PrivateIdentifierWithExtendedEscape2'
+    PropertyDeclaration
+      PrivateIdentifier
+    PropertyDeclaration
+      Identifier: '\u{78}'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '\u{78}'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    doThing'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral

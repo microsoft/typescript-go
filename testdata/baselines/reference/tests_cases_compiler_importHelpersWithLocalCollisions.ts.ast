@@ -1,0 +1,110 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' __decorate'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    ExportKeyword
+    Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'o'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' __extends'
+    Parameter
+      Identifier: 'd'
+      TypeReference
+        Identifier: ' Function'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' Function'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' __decorate'
+    Parameter
+      Identifier: 'decorators'
+      ArrayType
+        TypeReference
+          Identifier: ' Function'
+    Parameter
+      Identifier: ' target'
+      AnyKeyword
+    Parameter
+      Identifier: ' key'
+      QuestionToken
+      UnionType
+        StringKeyword
+        SymbolKeyword
+    Parameter
+      Identifier: ' desc'
+      QuestionToken
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' __param'
+    Parameter
+      Identifier: 'paramIndex'
+      NumberKeyword
+    Parameter
+      Identifier: ' decorator'
+      TypeReference
+        Identifier: ' Function'
+    TypeReference
+      Identifier: ' Function'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' __metadata'
+    Parameter
+      Identifier: 'metadataKey'
+      AnyKeyword
+    Parameter
+      Identifier: ' metadataValue'
+      AnyKeyword
+    TypeReference
+      Identifier: ' Function'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' __awaiter'
+    Parameter
+      Identifier: 'thisArg'
+      AnyKeyword
+    Parameter
+      Identifier: ' _arguments'
+      AnyKeyword
+    Parameter
+      Identifier: ' P'
+      TypeReference
+        Identifier: ' Function'
+    Parameter
+      Identifier: ' generator'
+      TypeReference
+        Identifier: ' Function'
+    AnyKeyword

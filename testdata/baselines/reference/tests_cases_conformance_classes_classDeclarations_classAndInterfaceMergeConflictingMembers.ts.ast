@@ -1,0 +1,40 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C1'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' C1'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C2'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' C2'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C3'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' C3'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword

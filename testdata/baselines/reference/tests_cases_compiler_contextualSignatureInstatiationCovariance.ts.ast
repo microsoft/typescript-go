@@ -1,0 +1,76 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Animal'
+    PropertySignature
+      Identifier: ' x'
+  InterfaceDeclaration
+    Identifier: ' TallThing'
+    PropertySignature
+      Identifier: ' x2'
+  InterfaceDeclaration
+    Identifier: ' Giraffe'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Animal'
+      ExpressionWithTypeArguments
+        Identifier: ' TallThing'
+    PropertySignature
+      Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Giraffe'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g2'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' Animal'
+          Parameter
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' TallThing'
+          VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+g2'
+      EqualsToken
+      Identifier: ' f2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h2'
+        FunctionType
+          Parameter
+            Identifier: 'a1'
+            TypeReference
+              Identifier: ' Animal'
+          Parameter
+            Identifier: ' a2'
+            TypeReference
+              Identifier: ' Animal'
+          VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+h2'
+      EqualsToken
+      Identifier: ' f2'

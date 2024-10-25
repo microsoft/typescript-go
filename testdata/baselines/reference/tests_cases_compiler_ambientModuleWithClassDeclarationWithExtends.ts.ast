@@ -1,0 +1,12 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' A'
+      ClassDeclaration
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'

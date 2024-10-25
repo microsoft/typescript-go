@@ -1,0 +1,11 @@
+SourceFile
+  Block
+    ExpressionStatement
+      AwaitExpression
+        ElementAccessExpression
+          Identifier: ' using'
+          Identifier: 'a'
+    ExpressionStatement
+      NullKeyword
+  ExportDeclaration
+    NamedExports

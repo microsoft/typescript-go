@@ -1,0 +1,57 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' makeArray'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'items'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' items'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1G'
+        CallExpression
+          Identifier: ' makeArray'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2G'
+        CallExpression
+          Identifier: ' makeArray'
+          Identifier: 'b'
+  FunctionDeclaration
+    Identifier: ' makeArray2'
+    Parameter
+      Identifier: 'items'
+      ArrayType
+        AnyKeyword
+    ArrayType
+      AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' items'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3G'
+        CallExpression
+          Identifier: ' makeArray2'
+          NumericLiteral
+          StringLiteral

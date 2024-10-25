@@ -1,0 +1,412 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'arg'
+      BooleanKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'arg1'
+      NumberKeyword
+    Parameter
+      Identifier: ' arg2'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        StringKeyword
+    ArrayType
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'arg'
+      UnknownKeyword
+    UnknownKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' AllParams'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeLiteral
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            InferType
+              TypeParameter
+                Identifier: ' A1'
+          AnyKeyword
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            InferType
+              TypeParameter
+                Identifier: ' A2'
+          AnyKeyword
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            InferType
+              TypeParameter
+                Identifier: ' A3'
+          AnyKeyword
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            InferType
+              TypeParameter
+                Identifier: ' A4'
+          AnyKeyword
+      UnionType
+        TypeReference
+          Identifier: ' A1'
+        TypeReference
+          Identifier: ' A2'
+        TypeReference
+          Identifier: ' A3'
+        TypeReference
+          Identifier: ' A4'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' AllReturns'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeLiteral
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            ArrayType
+              AnyKeyword
+          InferType
+            TypeParameter
+              Identifier: ' R1'
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            ArrayType
+              AnyKeyword
+          InferType
+            TypeParameter
+              Identifier: ' R2'
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            ArrayType
+              AnyKeyword
+          InferType
+            TypeParameter
+              Identifier: ' R3'
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            ArrayType
+              AnyKeyword
+          InferType
+            TypeParameter
+              Identifier: ' R4'
+      UnionType
+        TypeReference
+          Identifier: ' R1'
+        TypeReference
+          Identifier: ' R2'
+        TypeReference
+          Identifier: ' R3'
+        TypeReference
+          Identifier: ' R4'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' Params1'
+    TypeReference
+      Identifier: ' AllParams'
+      TypeQuery
+        Identifier: ' f1'
+  TypeAliasDeclaration
+    Identifier: ' Params2'
+    TypeReference
+      Identifier: ' AllParams'
+      TypeQuery
+        Identifier: ' f2'
+  TypeAliasDeclaration
+    Identifier: ' Params3'
+    TypeReference
+      Identifier: ' AllParams'
+      TypeQuery
+        Identifier: ' f3'
+  TypeAliasDeclaration
+    Identifier: ' Returns1'
+    TypeReference
+      Identifier: ' AllReturns'
+      TypeQuery
+        Identifier: ' f1'
+  TypeAliasDeclaration
+    Identifier: ' Returns2'
+    TypeReference
+      Identifier: ' AllReturns'
+      TypeQuery
+        Identifier: ' f2'
+  TypeAliasDeclaration
+    Identifier: ' Returns3'
+    TypeReference
+      Identifier: ' AllReturns'
+      TypeQuery
+        Identifier: ' f3'
+  TypeAliasDeclaration
+    Identifier: ' InferTwoOverloads'
+    TypeParameter
+      Identifier: 'F'
+      TypeReference
+        Identifier: ' Function'
+    ConditionalType
+      TypeReference
+        Identifier: ' 
+  F'
+      TypeLiteral
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'a1'
+            InferType
+              TypeParameter
+                Identifier: ' A1'
+          InferType
+            TypeParameter
+              Identifier: ' R1'
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'a0'
+            InferType
+              TypeParameter
+                Identifier: ' A0'
+          InferType
+            TypeParameter
+              Identifier: ' R0'
+      TupleType
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'a1'
+            TypeReference
+              Identifier: ' A1'
+          TypeReference
+            Identifier: ' R1'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'a0'
+            TypeReference
+              Identifier: ' A0'
+          TypeReference
+            Identifier: ' R0'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' Expected'
+    TypeReference
+      Identifier: ' InferTwoOverloads'
+      IntersectionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            NumberKeyword
+        ParenthesizedType
+          FunctionType
+            StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' JustOneSignature'
+    TypeReference
+      Identifier: ' InferTwoOverloads'
+      ParenthesizedType
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' JustTheOtherSignature'
+    TypeReference
+      Identifier: ' InferTwoOverloads'
+      ParenthesizedType
+        FunctionType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Overloads'
+    TypeParameter
+      Identifier: 'F'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    F'
+      TypeLiteral
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            InferType
+              TypeParameter
+                Identifier: ' A1'
+          InferType
+            TypeParameter
+              Identifier: ' R1'
+        CallSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            InferType
+              TypeParameter
+                Identifier: ' A2'
+          InferType
+            TypeParameter
+              Identifier: ' R2'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'rule'
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          Identifier: ' variants'
+          UnionType
+            TupleType
+              TypeReference
+                Identifier: 'A1'
+              TypeReference
+                Identifier: ' R1'
+            TupleType
+              TypeReference
+                Identifier: 'A2'
+              TypeReference
+                Identifier: ' R2'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    F'
+        TypeLiteral
+          CallSignature
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              InferType
+                TypeParameter
+                  Identifier: ' A1'
+            InferType
+              TypeParameter
+                Identifier: ' R1'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'rule'
+            LiteralType
+              NumericLiteral
+          PropertySignature
+            Identifier: ' variants'
+            TupleType
+              TypeReference
+                Identifier: 'A1'
+              TypeReference
+                Identifier: ' R1'
+        NeverKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ok1'
+        TypeReference
+          Identifier: ' Overloads'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ok2'
+        TypeReference
+          Identifier: ' Overloads'
+          TypeLiteral
+            CallSignature
+              LiteralType
+                NumericLiteral
+            CallSignature
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              LiteralType
+                NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ok3'
+        TypeReference
+          Identifier: ' Overloads'
+          FunctionType
+            BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ok4'
+        TypeReference
+          Identifier: ' Overloads'
+          FunctionType
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              ArrayType
+                UnknownKeyword
+            BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ok5'
+        TypeReference
+          Identifier: ' Overloads'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              UnknownKeyword
+            BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ok6'
+        TypeReference
+          Identifier: ' Overloads'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              AnyKeyword
+            BooleanKeyword

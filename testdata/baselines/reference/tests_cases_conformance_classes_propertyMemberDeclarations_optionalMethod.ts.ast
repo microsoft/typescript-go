@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    method'
+      QuestionToken
+      Block

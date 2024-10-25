@@ -1,0 +1,431 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' getBaseFileName'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Logger'
+        ImportSpecifier
+          Identifier: '
+    LogLevel'
+        ImportSpecifier
+          Identifier: '
+    NormalizedPath'
+        ImportSpecifier
+          Identifier: '
+    ServerHost'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ThrottledOperations'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' pendingTimeouts'
+      NewExpression
+        Identifier: ' Map'
+        StringKeyword
+        AnyKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' logger'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' Logger'
+        UndefinedKeyword
+    Constructor
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' ServerHost'
+      Parameter
+        Identifier: ' logger'
+        TypeReference
+          Identifier: ' Logger'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'logger'
+            EqualsToken
+            ConditionalExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' logger'
+                  Identifier: 'hasLevel'
+                PropertyAccessExpression
+                  Identifier: 'LogLevel'
+                  Identifier: 'verbose'
+              QuestionToken
+              Identifier: ' logger'
+              ColonToken
+              Identifier: ' undefined'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' schedule'
+      Parameter
+        Identifier: 'operationId'
+        StringKeyword
+      Parameter
+        Identifier: ' delay'
+        NumberKeyword
+      Parameter
+        Identifier: ' cb'
+        FunctionType
+          VoidKeyword
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' pendingTimeout'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'pendingTimeouts'
+                  Identifier: 'get'
+                Identifier: 'operationId'
+        IfStatement
+          Identifier: 'pendingTimeout'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'host'
+                  Identifier: 'clearTimeout'
+                Identifier: 'pendingTimeout'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pendingTimeouts'
+              Identifier: 'set'
+            Identifier: 'operationId'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'host'
+                Identifier: 'setTimeout'
+              PropertyAccessExpression
+                Identifier: 'ThrottledOperations'
+                Identifier: 'run'
+              Identifier: ' delay'
+              Identifier: ' operationId'
+              ThisKeyword
+              Identifier: ' cb'
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'logger'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'logger'
+                  Identifier: 'info'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'operationId'
+                    TemplateMiddle
+                  TemplateSpan
+                    ConditionalExpression
+                      Identifier: 'pendingTimeout'
+                      QuestionToken
+                      StringLiteral
+                      ColonToken
+                      StringLiteral
+                    TemplateTail
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' cancel'
+      Parameter
+        Identifier: 'operationId'
+        StringKeyword
+      BooleanKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' pendingTimeout'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'pendingTimeouts'
+                  Identifier: 'get'
+                Identifier: 'operationId'
+        IfStatement
+          PrefixUnaryExpression
+            Identifier: 'pendingTimeout'
+          ReturnStatement
+            FalseKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'host'
+              Identifier: 'clearTimeout'
+            Identifier: 'pendingTimeout'
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pendingTimeouts'
+              Identifier: 'delete'
+            Identifier: 'operationId'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' run'
+      Parameter
+        Identifier: 'operationId'
+        StringKeyword
+      Parameter
+        Identifier: ' self'
+        TypeReference
+          Identifier: ' ThrottledOperations'
+      Parameter
+        Identifier: ' cb'
+        FunctionType
+          VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        self'
+                Identifier: 'pendingTimeouts'
+              Identifier: 'delete'
+            Identifier: 'operationId'
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'self'
+            Identifier: 'logger'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            self'
+                    Identifier: 'logger'
+                  Identifier: 'info'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'operationId'
+                    TemplateTail
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        cb'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' GcTimer'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' timerId'
+      AnyKeyword
+    Constructor
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' ServerHost'
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' delay'
+        NumberKeyword
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' logger'
+        TypeReference
+          Identifier: ' Logger'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' scheduleCollect'
+      VoidKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'host'
+                Identifier: 'gc'
+            BarBarToken
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'timerId'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+          Block
+            ReturnStatement
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'timerId'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'host'
+                Identifier: 'setTimeout'
+              PropertyAccessExpression
+                Identifier: 'GcTimer'
+                Identifier: 'run'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'delay'
+              ThisKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' run'
+      Parameter
+        Identifier: 'self'
+        TypeReference
+          Identifier: ' GcTimer'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        self'
+              Identifier: 'timerId'
+            EqualsToken
+            Identifier: ' undefined'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' log'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' self'
+                    Identifier: 'logger'
+                  Identifier: 'hasLevel'
+                PropertyAccessExpression
+                  Identifier: 'LogLevel'
+                  Identifier: 'requestTime'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' before'
+              BinaryExpression
+                Identifier: ' log'
+                AmpersandAmpersandToken
+                CallExpression
+                  NonNullExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' self'
+                        Identifier: 'host'
+                      Identifier: 'getMemoryUsage'
+        ExpressionStatement
+          CallExpression
+            NonNullExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' // TODO: GH#18217
+
+        self'
+                  Identifier: 'host'
+                Identifier: 'gc'
+        IfStatement
+          Identifier: 'log'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' after'
+                  CallExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' self'
+                          Identifier: 'host'
+                        Identifier: 'getMemoryUsage'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' // TODO: GH#18217
+            self'
+                    Identifier: 'logger'
+                  Identifier: 'perftrc'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'before'
+                    TemplateMiddle
+                  TemplateSpan
+                    Identifier: 'after'
+                    TemplateTail
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getBaseConfigFileName'
+    Parameter
+      Identifier: 'configFilePath'
+      TypeReference
+        Identifier: ' NormalizedPath'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' base'
+            CallExpression
+              Identifier: ' getBaseFileName'
+              Identifier: 'configFilePath'
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: ' base'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            BarBarToken
+            BinaryExpression
+              Identifier: ' base'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          QuestionToken
+          Identifier: ' base'
+          ColonToken
+          Identifier: ' undefined'

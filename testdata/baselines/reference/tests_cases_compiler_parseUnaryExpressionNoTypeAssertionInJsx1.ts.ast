@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        PrefixUnaryExpression
+          TypeAssertionExpression
+            NumberKeyword
+            Identifier: ' x'

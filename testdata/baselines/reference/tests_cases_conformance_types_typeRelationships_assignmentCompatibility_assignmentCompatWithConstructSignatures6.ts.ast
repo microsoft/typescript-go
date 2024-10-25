@@ -1,0 +1,437 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' OtherDerived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bing'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    a'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    a2'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    a3'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    a4'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' U'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    a5'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        Parameter
+          Identifier: 'x'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' U'
+        TypeReference
+          Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    a6'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Base'
+        Parameter
+          Identifier: 'x'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' Derived'
+        TypeReference
+          Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    a11'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              TypeReference
+                Identifier: ' T'
+        Parameter
+          Identifier: ' y'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              TypeReference
+                Identifier: ' T'
+            PropertySignature
+              Identifier: ' bar'
+              TypeReference
+                Identifier: ' T'
+        TypeReference
+          Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    a15'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' T'
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' T'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    a16'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Base'
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' T'
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' T'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' 
+x'
+        Identifier: 'a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' x'
+        Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' 
+x'
+        Identifier: 'a2'
+      EqualsToken
+      Identifier: ' b2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' x'
+        Identifier: 'a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x'
+        Identifier: 'a3'
+      EqualsToken
+      Identifier: ' b3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' x'
+        Identifier: 'a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' 
+x'
+        Identifier: 'a4'
+      EqualsToken
+      Identifier: ' b4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b4'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' x'
+        Identifier: 'a4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b5'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' 
+x'
+        Identifier: 'a5'
+      EqualsToken
+      Identifier: ' b5'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b5'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' x'
+        Identifier: 'a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b11'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' U'
+              PropertySignature
+                Identifier: ' bar'
+                TypeReference
+                  Identifier: ' U'
+          TypeReference
+            Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' 
+x'
+        Identifier: 'a11'
+      EqualsToken
+      Identifier: ' b11'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b11'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' x'
+        Identifier: 'a11'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b16'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' 
+x'
+        Identifier: 'a16'
+      EqualsToken
+      Identifier: ' b16'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b16'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' x'
+        Identifier: 'a16'

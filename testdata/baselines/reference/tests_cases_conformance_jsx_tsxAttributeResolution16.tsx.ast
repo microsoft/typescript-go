@@ -1,0 +1,73 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Address'
+    PropertySignature
+      Identifier: '
+  street'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  country'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' CanadianAddress'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Address'
+    PropertySignature
+      Identifier: '
+    postalCode'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' AmericanAddress'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Address'
+    PropertySignature
+      Identifier: '
+    zipCode'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Properties'
+    UnionType
+      TypeReference
+        Identifier: ' CanadianAddress'
+      TypeReference
+        Identifier: ' AmericanAddress'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' AddressComp'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'Properties'
+        VoidKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' render'
+      Block
+        ReturnStatement
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxSelfClosingElement
+          Identifier: 'AddressComp'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' postalCode'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' street'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' country'
+              StringLiteral

@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @noEmit: true
+// @checkJs: true
+// @Filename: bug27342.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'

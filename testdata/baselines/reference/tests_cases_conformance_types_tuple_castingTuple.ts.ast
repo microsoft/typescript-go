@@ -1,0 +1,270 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' a'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    PropertyDeclaration
+      Identifier: ' c'
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    PropertyDeclaration
+      Identifier: ' d'
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' e'
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' F'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' f'
+  EmptyStatement
+  EnumDeclaration
+    Identifier: ' E1'
+    EnumMember
+      Identifier: ' one'
+  EnumDeclaration
+    Identifier: ' E2'
+    EnumMember
+      Identifier: ' one'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numStrTuple'
+        TupleType
+          NumberKeyword
+          StringKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' emptyObjTuple'
+        TypeAssertionExpression
+          TupleType
+            TypeLiteral
+            TypeLiteral
+          Identifier: 'numStrTuple'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numStrBoolTuple'
+        TypeAssertionExpression
+          TupleType
+            NumberKeyword
+            StringKeyword
+            BooleanKeyword
+          Identifier: 'numStrTuple'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shorter'
+        AsExpression
+          Identifier: ' numStrBoolTuple'
+          TupleType
+            NumberKeyword
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' longer'
+        AsExpression
+          Identifier: ' numStrTuple'
+          TupleType
+            NumberKeyword
+            StringKeyword
+            BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classCDTuple'
+        TupleType
+          TypeReference
+            Identifier: 'C'
+          TypeReference
+            Identifier: ' D'
+        ArrayLiteralExpression
+          NewExpression
+            Identifier: ' C'
+          NewExpression
+            Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' interfaceIITuple'
+        TypeAssertionExpression
+          TupleType
+            TypeReference
+              Identifier: 'I'
+            TypeReference
+              Identifier: ' I'
+          Identifier: 'classCDTuple'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classCDATuple'
+        TypeAssertionExpression
+          TupleType
+            TypeReference
+              Identifier: 'C'
+            TypeReference
+              Identifier: ' D'
+            TypeReference
+              Identifier: ' A'
+          Identifier: 'classCDTuple'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' eleFromCDA1'
+        ElementAccessExpression
+          Identifier: ' classCDATuple'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' eleFromCDA2'
+        ElementAccessExpression
+          Identifier: ' classCDATuple'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t10'
+        TupleType
+          TypeReference
+            Identifier: 'E1'
+          TypeReference
+            Identifier: ' E2'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            Identifier: 'E1'
+            Identifier: 'one'
+          PropertyAccessExpression
+            Identifier: ' E2'
+            Identifier: 'one'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t11'
+        TypeAssertionExpression
+          TupleType
+            NumberKeyword
+            NumberKeyword
+          Identifier: 't10'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array1'
+        TypeAssertionExpression
+          ArrayType
+            TypeLiteral
+          Identifier: 'emptyObjTuple'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionTuple'
+        TupleType
+          TypeReference
+            Identifier: 'C'
+          UnionType
+            StringKeyword
+            NumberKeyword
+        ArrayLiteralExpression
+          NewExpression
+            Identifier: ' C'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionTuple2'
+        TupleType
+          TypeReference
+            Identifier: 'C'
+          UnionType
+            StringKeyword
+            NumberKeyword
+          TypeReference
+            Identifier: ' D'
+        ArrayLiteralExpression
+          NewExpression
+            Identifier: ' C'
+          StringLiteral
+          NewExpression
+            Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionTuple3'
+        TupleType
+          NumberKeyword
+          UnionType
+            StringKeyword
+            NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionTuple4'
+        TypeAssertionExpression
+          TupleType
+            NumberKeyword
+            NumberKeyword
+          Identifier: 'unionTuple3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        TypeAssertionExpression
+          TupleType
+            NumberKeyword
+            NumberKeyword
+          Identifier: 'numStrTuple'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t9'
+        TypeAssertionExpression
+          TupleType
+            TypeReference
+              Identifier: 'A'
+            TypeReference
+              Identifier: ' I'
+          Identifier: 'classCDTuple'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array1'
+        TypeAssertionExpression
+          ArrayType
+            NumberKeyword
+          Identifier: 'numStrTuple'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+t4'
+        NumericLiteral
+      EqualsToken
+      NumericLiteral

@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'arr'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        Identifier: '
+foo'
+        ArrayLiteralExpression
+      Identifier: 'bar'

@@ -1,0 +1,59 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        StringLiteral
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            NumberKeyword
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            NumberKeyword
+  ExpressionStatement
+    Identifier: '
+// @filename: /index.ts
+/// <reference types="pkg" resolution-mode="import" />
+/// <reference types="pkg" resolution-mode="require" />
+// Both `foo` and `bar` should resolve, as _both_ entrypoints are included by the two
+// references above.
+foo'
+  ExpressionStatement
+    Identifier: '
+bar'
+  ExportDeclaration
+    NamedExports

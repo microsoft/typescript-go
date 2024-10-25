@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'b'
+      Block

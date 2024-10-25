@@ -1,0 +1,93 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' test'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '
+    method'
+          StringLiteral
+        BindingElement
+          Identifier: '
+    nested'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' p'
+              StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    method'
+          QuestionToken
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+        PropertySignature
+          Identifier: '
+    nested'
+          QuestionToken
+          TypeLiteral
+            PropertySignature
+              Identifier: ' p'
+              UnionType
+                LiteralType
+                  StringLiteral
+                LiteralType
+                  StringLiteral
+    Block
+      ExpressionStatement
+        Identifier: '
+    method'
+      ExpressionStatement
+        Identifier: '
+    p'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+test'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' method'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' nested'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' p'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+test'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' method'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' nested'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' p'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+test'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' method'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' nested'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' p'
+              StringLiteral

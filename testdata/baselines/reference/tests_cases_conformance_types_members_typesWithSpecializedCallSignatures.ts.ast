@@ -1,0 +1,201 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived1'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived2'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+      Block
+        ReturnStatement
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived1'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived2'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+            TypeReference
+              Identifier: ' Derived1'
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+            TypeReference
+              Identifier: ' Derived2'
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            TypeReference
+              Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+c'
+      EqualsToken
+      Identifier: ' i'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+i'
+      EqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+i'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        TypeReference
+          Identifier: ' Derived1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        TypeReference
+          Identifier: ' Derived2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        TypeReference
+          Identifier: ' Base'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo'
+          StringLiteral

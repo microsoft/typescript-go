@@ -1,0 +1,92 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Foo'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Example'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Example'
+        Identifier: 'Foo'
+      EqualsToken
+      Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Foo'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'Foo'
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Example'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Example'
+        Identifier: 'Foo'
+      EqualsToken
+      Identifier: ' Foo'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Example'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Example'
+        Identifier: 'Bar'
+      EqualsToken
+      Identifier: ' Bar'
+  FunctionDeclaration
+    Identifier: ' A'
+    Block
+  FunctionDeclaration
+    Identifier: ' B'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    Block
+      ReturnStatement
+        NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+C'
+        Identifier: 'A'
+      EqualsToken
+      Identifier: ' A'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+C'
+        Identifier: 'B'
+      EqualsToken
+      Identifier: ' B'

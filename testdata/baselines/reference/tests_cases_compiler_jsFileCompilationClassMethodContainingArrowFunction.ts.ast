@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'a'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                Parameter
+                  Identifier: ' a'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'method'
+                  Identifier: 'a'

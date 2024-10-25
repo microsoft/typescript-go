@@ -1,0 +1,33 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    ConstructSignature
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    ConstructSignature
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        NewExpression
+          Identifier: ' d'

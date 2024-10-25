@@ -1,0 +1,19 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+      WhileStatement
+        NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        result'
+              EqualsToken
+              YieldExpression
+                Identifier: ' result'

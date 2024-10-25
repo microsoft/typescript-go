@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// import { Both } from "module-specifiers-unsorted";
+//// import { aa, CaseInsensitively, sorted } from "aardvark";
+
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+    ts'
+          Identifier: 'OrganizeImportsMode'
+        Identifier: 'SortAndCombine'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        organizeImportsIgnoreCase'
+          StringLiteral

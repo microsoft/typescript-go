@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' empty'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' singleAwait'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          Identifier: ' x'

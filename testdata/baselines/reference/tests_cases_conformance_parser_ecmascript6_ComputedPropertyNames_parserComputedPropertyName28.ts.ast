@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'e'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'e2'
+      NumberKeyword

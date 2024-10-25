@@ -1,0 +1,16 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' ClassA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        NewExpression
+          ElementAccessExpression
+            PropertyAccessExpression
+              Identifier: ' M'
+              Identifier: 'ClassA'
+            Identifier: ''

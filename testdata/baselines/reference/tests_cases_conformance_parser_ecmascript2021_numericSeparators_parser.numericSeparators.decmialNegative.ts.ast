@@ -1,0 +1,127 @@
+SourceFile
+  ExpressionStatement
+    Identifier: '// @filename: 1.ts
+_10'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: '
+
+// @filename: 16.ts
+_0'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: '
+
+// @filename: 29.ts
+_0'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: '
+
+// @filename: 42.ts
+_0'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      NumericLiteral
+      Identifier: '_'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: '\u005F01234'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      PlusToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      MinusToken
+      NumericLiteral
+  ExpressionStatement
+    NumericLiteral

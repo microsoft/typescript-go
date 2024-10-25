@@ -1,0 +1,62 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'func'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' baz1'
+    Parameter
+      Identifier: 'func'
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: ' f'
+          Block
+            ReturnStatement
+              Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' baz2'
+    Parameter
+      Identifier: 'func'
+      FunctionExpression
+        Block
+          ReturnStatement
+            Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' baz3'
+    Parameter
+      Identifier: 'func'
+      ClassExpression
+        PropertyDeclaration
+          Identifier: ' x'
+          Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            StringLiteral

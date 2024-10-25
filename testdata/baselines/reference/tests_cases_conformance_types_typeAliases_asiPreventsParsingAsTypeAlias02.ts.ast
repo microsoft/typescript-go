@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' type'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' string'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+  ModuleDeclaration
+    Identifier: ' container'
+    ModuleBlock
+      ExpressionStatement
+        Identifier: '
+    type'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    Foo'
+          EqualsToken
+          Identifier: ' string'

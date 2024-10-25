@@ -1,0 +1,86 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' async'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    AnyKeyword
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' await'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    AnyKeyword
+    Block
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' async'
+        ImportSpecifier
+          Identifier: ' await'
+    StringLiteral
+  ExportAssignment
+    CallExpression
+      Identifier: ' async'
+      ArrowFunction
+        EqualsGreaterThanToken
+        CallExpression
+          Identifier: ' await'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Promise'
+              Identifier: 'resolve'
+            NumericLiteral
+  ExportAssignment
+    ArrowFunction
+      AsyncKeyword
+      EqualsGreaterThanToken
+      Block
+        ReturnStatement
+          NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' async'
+        ImportSpecifier
+          Identifier: ' await'
+    StringLiteral
+  ExportAssignment
+    CallExpression
+      Identifier: ' async'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' async'
+        ImportSpecifier
+          Identifier: ' await'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' async'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' async'
+        ImportSpecifier
+          Identifier: ' await'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' async'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block

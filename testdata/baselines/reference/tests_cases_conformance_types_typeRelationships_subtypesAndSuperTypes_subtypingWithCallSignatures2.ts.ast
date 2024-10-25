@@ -1,0 +1,1583 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' OtherDerived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bing'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        ArrayType
+          NumberKeyword
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        ArrayType
+          StringKeyword
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        VoidKeyword
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        Parameter
+          Identifier: ' y'
+          NumberKeyword
+        StringKeyword
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              StringKeyword
+            NumberKeyword
+        StringKeyword
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' Base'
+            TypeReference
+              Identifier: ' Derived'
+        TypeReference
+          Identifier: ' Base'
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' Base'
+            TypeReference
+              Identifier: ' Derived'
+        FunctionType
+          Parameter
+            Identifier: 'r'
+            TypeReference
+              Identifier: ' Base'
+          TypeReference
+            Identifier: ' Derived'
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo8'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' Base'
+            TypeReference
+              Identifier: ' Derived'
+        Parameter
+          Identifier: ' y'
+          FunctionType
+            Parameter
+              Identifier: 'arg2'
+              TypeReference
+                Identifier: ' Base'
+            TypeReference
+              Identifier: ' Derived'
+        FunctionType
+          Parameter
+            Identifier: 'r'
+            TypeReference
+              Identifier: ' Base'
+          TypeReference
+            Identifier: ' Derived'
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo8'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo9'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' Base'
+            TypeReference
+              Identifier: ' Derived'
+        Parameter
+          Identifier: ' y'
+          FunctionType
+            Parameter
+              Identifier: 'arg2'
+              TypeReference
+                Identifier: ' Base'
+            TypeReference
+              Identifier: ' Derived'
+        FunctionType
+          Parameter
+            Identifier: 'r'
+            TypeReference
+              Identifier: ' Base'
+          TypeReference
+            Identifier: ' Derived'
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo9'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo10'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'x'
+          ArrayType
+            TypeReference
+              Identifier: ' Derived'
+        TypeReference
+          Identifier: ' Derived'
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo10'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo11'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              StringKeyword
+        Parameter
+          Identifier: ' y'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              StringKeyword
+            PropertySignature
+              Identifier: ' bar'
+              StringKeyword
+        TypeReference
+          Identifier: ' Base'
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo11'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo12'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' Array'
+            TypeReference
+              Identifier: 'Base'
+        Parameter
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' Array'
+            TypeReference
+              Identifier: 'Derived2'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Derived'
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo12'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo13'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' Array'
+            TypeReference
+              Identifier: 'Base'
+        Parameter
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' Array'
+            TypeReference
+              Identifier: 'Derived'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Derived'
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo13'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo14'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              NumberKeyword
+        TypeReference
+          Identifier: ' Object'
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo14'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo15'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        CallSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          ArrayType
+            NumberKeyword
+        CallSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          ArrayType
+            StringKeyword
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo15'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo16'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Derived'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            NumberKeyword
+        CallSignature
+          TypeParameter
+            Identifier: 'U'
+            TypeReference
+              Identifier: ' Base'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' U'
+          ArrayType
+            NumberKeyword
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo16'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo17'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        CallSignature
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              NumberKeyword
+          ArrayType
+            NumberKeyword
+        CallSignature
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              StringKeyword
+          ArrayType
+            StringKeyword
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo17'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo18'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        CallSignature
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              CallSignature
+                Parameter
+                  Identifier: 'a'
+                  NumberKeyword
+                NumberKeyword
+              CallSignature
+                Parameter
+                  Identifier: 'a'
+                  StringKeyword
+                StringKeyword
+          ArrayType
+            AnyKeyword
+        CallSignature
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              CallSignature
+                Parameter
+                  Identifier: 'a'
+                  BooleanKeyword
+                BooleanKeyword
+              CallSignature
+                Parameter
+                  Identifier: 'a'
+                  TypeReference
+                    Identifier: ' Date'
+                TypeReference
+                  Identifier: ' Date'
+          ArrayType
+            AnyKeyword
+    TypeQuery
+      Identifier: ' a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo18'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        CallExpression
+          Identifier: ' foo1'
+          Identifier: 'r1arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a'
+        ArrayLiteralExpression
+          Identifier: 'r1arg2'
+          Identifier: ' r1arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b'
+        ArrayLiteralExpression
+          Identifier: 'r1arg1'
+          Identifier: ' r1arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' foo2'
+          Identifier: 'r2arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2a'
+        ArrayLiteralExpression
+          Identifier: 'r2arg1'
+          Identifier: ' r2arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b'
+        ArrayLiteralExpression
+          Identifier: 'r2arg2'
+          Identifier: ' r2arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' foo3'
+          Identifier: 'r3arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3a'
+        ArrayLiteralExpression
+          Identifier: 'r3arg1'
+          Identifier: ' r3arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b'
+        ArrayLiteralExpression
+          Identifier: 'r3arg2'
+          Identifier: ' r3arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          Parameter
+            Identifier: ' y'
+            NumberKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo4'
+          Identifier: 'r4arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4a'
+        ArrayLiteralExpression
+          Identifier: 'r4arg1'
+          Identifier: ' r4arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4b'
+        ArrayLiteralExpression
+          Identifier: 'r4arg2'
+          Identifier: ' r4arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'T'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                StringKeyword
+              NumberKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          Identifier: ' foo5'
+          Identifier: 'r5arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5a'
+        ArrayLiteralExpression
+          Identifier: 'r5arg1'
+          Identifier: ' r5arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5b'
+        ArrayLiteralExpression
+          Identifier: 'r5arg2'
+          Identifier: ' r5arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' Derived'
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'T'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' Base'
+              TypeReference
+                Identifier: ' Derived'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'Base'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          Identifier: ' foo6'
+          Identifier: 'r6arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6a'
+        ArrayLiteralExpression
+          Identifier: 'r6arg1'
+          Identifier: ' r6arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6b'
+        ArrayLiteralExpression
+          Identifier: 'r6arg2'
+          Identifier: ' r6arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' Derived'
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'r'
+              TypeReference
+                Identifier: ' T'
+            EqualsGreaterThanToken
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'U'
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' Base'
+              TypeReference
+                Identifier: ' Derived'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'r'
+              TypeReference
+                Identifier: ' Base'
+            EqualsGreaterThanToken
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'Derived'
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          Identifier: ' foo7'
+          Identifier: 'r7arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7a'
+        ArrayLiteralExpression
+          Identifier: 'r7arg1'
+          Identifier: ' r7arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7b'
+        ArrayLiteralExpression
+          Identifier: 'r7arg2'
+          Identifier: ' r7arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' Derived'
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          Parameter
+            Identifier: ' y'
+            FunctionType
+              Parameter
+                Identifier: 'arg2'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'r'
+              TypeReference
+                Identifier: ' T'
+            EqualsGreaterThanToken
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'U'
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' Base'
+              TypeReference
+                Identifier: ' Derived'
+          Parameter
+            Identifier: ' y'
+            FunctionType
+              Parameter
+                Identifier: 'arg2'
+                TypeReference
+                  Identifier: ' Base'
+              TypeReference
+                Identifier: ' Derived'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'r'
+              TypeReference
+                Identifier: ' Base'
+            EqualsGreaterThanToken
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'Derived'
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          Identifier: ' foo8'
+          Identifier: 'r8arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8a'
+        ArrayLiteralExpression
+          Identifier: 'r8arg1'
+          Identifier: ' r8arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8b'
+        ArrayLiteralExpression
+          Identifier: 'r8arg2'
+          Identifier: ' r8arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' Derived'
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          Parameter
+            Identifier: ' y'
+            FunctionType
+              Parameter
+                Identifier: 'arg2'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' foo'
+                    StringKeyword
+                  PropertySignature
+                    Identifier: ' bing'
+                    NumberKeyword
+              TypeReference
+                Identifier: ' U'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'r'
+              TypeReference
+                Identifier: ' T'
+            EqualsGreaterThanToken
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'U'
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' Base'
+              TypeReference
+                Identifier: ' Derived'
+          Parameter
+            Identifier: ' y'
+            FunctionType
+              Parameter
+                Identifier: 'arg2'
+                TypeReference
+                  Identifier: ' Base'
+              TypeReference
+                Identifier: ' Derived'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'r'
+              TypeReference
+                Identifier: ' Base'
+            EqualsGreaterThanToken
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'Derived'
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        CallExpression
+          Identifier: ' foo9'
+          Identifier: 'r9arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9a'
+        ArrayLiteralExpression
+          Identifier: 'r9arg1'
+          Identifier: ' r9arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9b'
+        ArrayLiteralExpression
+          Identifier: 'r9arg2'
+          Identifier: ' r9arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Derived'
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          EqualsGreaterThanToken
+          ElementAccessExpression
+            Identifier: ' x'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10arg2'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            ArrayType
+              TypeReference
+                Identifier: ' Derived'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'Derived'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        CallExpression
+          Identifier: ' foo10'
+          Identifier: 'r10arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10a'
+        ArrayLiteralExpression
+          Identifier: 'r10arg1'
+          Identifier: ' r10arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10b'
+        ArrayLiteralExpression
+          Identifier: 'r10arg2'
+          Identifier: ' r10arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                StringKeyword
+          Parameter
+            Identifier: ' y'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                StringKeyword
+              PropertySignature
+                Identifier: ' bar'
+                StringKeyword
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'Base'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        CallExpression
+          Identifier: ' foo11'
+          Identifier: 'r11arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11a'
+        ArrayLiteralExpression
+          Identifier: 'r11arg1'
+          Identifier: ' r11arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11b'
+        ArrayLiteralExpression
+          Identifier: 'r11arg2'
+          Identifier: ' r11arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Base'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Base'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'Array'
+              TypeReference
+                Identifier: 'Derived'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Base'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Derived2'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'Array'
+              TypeReference
+                Identifier: 'Derived'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12'
+        CallExpression
+          Identifier: ' foo12'
+          Identifier: 'r12arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12a'
+        ArrayLiteralExpression
+          Identifier: 'r12arg1'
+          Identifier: ' r12arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12b'
+        ArrayLiteralExpression
+          Identifier: 'r12arg2'
+          Identifier: ' r12arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Derived'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Base'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Base'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Derived'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'Array'
+              TypeReference
+                Identifier: 'Derived'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13'
+        CallExpression
+          Identifier: ' foo13'
+          Identifier: 'r13arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13a'
+        ArrayLiteralExpression
+          Identifier: 'r13arg1'
+          Identifier: ' r13arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13b'
+        ArrayLiteralExpression
+          Identifier: 'r13arg2'
+          Identifier: ' r13arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r14arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' T'
+          EqualsGreaterThanToken
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r14arg2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                StringKeyword
+              PropertySignature
+                Identifier: ' b'
+                NumberKeyword
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'Object'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r14'
+        CallExpression
+          Identifier: ' foo14'
+          Identifier: 'r14arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r14a'
+        ArrayLiteralExpression
+          Identifier: 'r14arg1'
+          Identifier: ' r14arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r14b'
+        ArrayLiteralExpression
+          Identifier: 'r14arg2'
+          Identifier: ' r14arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r15arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            ArrayType
+              TypeReference
+                Identifier: 'T'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r15'
+        CallExpression
+          Identifier: ' foo15'
+          Identifier: 'r15arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r16arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r16'
+        CallExpression
+          Identifier: ' foo16'
+          Identifier: 'r16arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r17arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            ArrayType
+              TypeReference
+                Identifier: 'T'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r17'
+        CallExpression
+          Identifier: ' foo17'
+          Identifier: 'r17arg1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r18arg1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            ArrayType
+              TypeReference
+                Identifier: 'T'
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r18'
+        CallExpression
+          Identifier: ' foo18'
+          Identifier: 'r18arg1'

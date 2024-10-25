@@ -1,0 +1,202 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' _'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Collection'
+        TypeParameter
+          Identifier: 'T'
+      InterfaceDeclaration
+        Identifier: ' List'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Collection'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'index'
+            NumberKeyword
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        length'
+          NumberKeyword
+      InterfaceDeclaration
+        Identifier: ' ListIterator'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' TResult'
+        CallSignature
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' list'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' TResult'
+      InterfaceDeclaration
+        Identifier: ' Dictionary'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Collection'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'index'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' pluck'
+        TypeParameter
+          Identifier: 'T'
+          TypeLiteral
+        Parameter
+          Identifier: '
+        list'
+          TypeReference
+            Identifier: ' Collection'
+            TypeReference
+              Identifier: 'T'
+        Parameter
+          Identifier: '
+        propertyName'
+          StringKeyword
+        ArrayType
+          AnyKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' map'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' TResult'
+        Parameter
+          Identifier: '
+        list'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'T'
+        Parameter
+          Identifier: '
+        iterator'
+          TypeReference
+            Identifier: ' ListIterator'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' TResult'
+        Parameter
+          Identifier: '
+        context'
+          QuestionToken
+          AnyKeyword
+        ArrayType
+          TypeReference
+            Identifier: ' TResult'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' first'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'array'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'T'
+        TypeReference
+          Identifier: ' T'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' View'
+    PropertyDeclaration
+      Identifier: '
+    model'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' IData'
+    PropertySignature
+      Identifier: '
+    series'
+      ArrayType
+        TypeReference
+          Identifier: ' ISeries'
+  InterfaceDeclaration
+    Identifier: ' ISeries'
+    PropertySignature
+      Identifier: '
+    items'
+      ArrayType
+        AnyKeyword
+    PropertySignature
+      Identifier: '
+    key'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' MyView'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' View'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getDataSeries'
+      ArrayType
+        TypeReference
+          Identifier: ' ISeries'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' data'
+              ArrayType
+                TypeReference
+                  Identifier: ' IData'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'model'
+                  Identifier: 'get'
+                StringLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' allSeries'
+              ArrayType
+                ArrayType
+                  TypeReference
+                    Identifier: ' ISeries'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' _'
+                  Identifier: 'pluck'
+                Identifier: 'data'
+                StringLiteral
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' _'
+              Identifier: 'map'
+            Identifier: 'allSeries'
+            PropertyAccessExpression
+              Identifier: ' _'
+              Identifier: 'first'

@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        CallExpression
+          PropertyAccessExpression
+            ExpressionWithTypeArguments
+              Identifier: ' List'
+              NumberKeyword
+            Identifier: 'makeChild'

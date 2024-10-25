@@ -1,0 +1,38 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' K'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'k'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    k'
+            Identifier: 'values'
+  ClassDeclaration
+    Identifier: ' K'
+    MethodDeclaration
+      Identifier: '
+    values'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' K'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'K'
+      EqualsToken
+      Identifier: ' K'

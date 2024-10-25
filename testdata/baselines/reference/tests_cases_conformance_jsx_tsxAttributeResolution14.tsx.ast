@@ -1,0 +1,90 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          Identifier: '
+        div'
+          AnyKeyword
+      InterfaceDeclaration
+        Identifier: ' ElementAttributesProperty'
+        PropertySignature
+          Identifier: ' prop'
+          AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' IProps'
+    PropertySignature
+      Identifier: '
+  primaryText'
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'propName'
+        StringKeyword
+      UnionType
+        StringKeyword
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' VerticalNavMenuItem'
+    Parameter
+      Identifier: 'prop'
+      TypeReference
+        Identifier: ' IProps'
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'div'
+  FunctionDeclaration
+    Identifier: ' VerticalNav'
+    Block
+      ReturnStatement
+        ParenthesizedExpression
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxText
+            JsxSelfClosingElement
+              Identifier: 'VerticalNavMenuItem'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' primaryText'
+                  JsxExpression
+                    NumericLiteral
+            JsxText
+            JsxSelfClosingElement
+              Identifier: 'VerticalNavMenuItem'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' justRandomProp'
+                  JsxExpression
+                    NumericLiteral
+                JsxAttribute
+                  Identifier: ' primaryText'
+                  JsxExpression
+                    StringLiteral
+            JsxText
+            JsxSelfClosingElement
+              Identifier: 'VerticalNavMenuItem'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' justRandomProp1'
+                  JsxExpression
+                    TrueKeyword
+                JsxAttribute
+                  Identifier: ' primaryText'
+                  JsxExpression
+                    StringLiteral
+            JsxText
+            JsxClosingElement
+              Identifier: 'div'

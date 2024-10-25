@@ -1,0 +1,55 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' EmberObject'
+  TypeAliasDeclaration
+    Identifier: ' PersonType'
+    IntersectionType
+      TypeReference
+        Identifier: ' Readonly'
+        TypeQuery
+          Identifier: ' EmberObject'
+      ParenthesizedType
+        ConstructorType
+          Parameter
+            Identifier: 'properties'
+            QuestionToken
+            ObjectKeyword
+          IntersectionType
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+    firstName'
+                StringKeyword
+              PropertySignature
+                Identifier: '
+    lastName'
+                StringKeyword
+            TypeReference
+              Identifier: ' EmberObject'
+      ParenthesizedType
+        ConstructorType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          IntersectionType
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+    firstName'
+                StringKeyword
+              PropertySignature
+                Identifier: '
+    lastName'
+                StringKeyword
+            TypeReference
+              Identifier: ' EmberObject'
+  TypeAliasDeclaration
+    Identifier: ' PersonPrototype'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' PersonType'
+      LiteralType
+        StringLiteral

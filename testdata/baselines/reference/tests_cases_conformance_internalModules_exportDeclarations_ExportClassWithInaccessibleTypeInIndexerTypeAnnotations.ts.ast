@@ -1,0 +1,29 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Point'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertyDeclaration
+          Identifier: '
+        y'
+          NumberKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' points'
+        IndexSignature
+          Parameter
+            Identifier: 'idx'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Point'
+        IndexSignature
+          Parameter
+            Identifier: 'idx'
+            StringKeyword
+          TypeReference
+            Identifier: ' Point'

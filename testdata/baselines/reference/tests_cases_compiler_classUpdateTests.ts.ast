@@ -1,0 +1,216 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p2'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+	p3'
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p2'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+	p3'
+    Constructor
+      Block
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' p1'
+        NumericLiteral
+      Parameter
+        PrivateKeyword
+        Identifier: ' p2'
+        NumericLiteral
+      Parameter
+        Identifier: ' p3'
+        NumericLiteral
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+  ClassDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p1'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' F'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' E'
+    Constructor
+      Block
+  ClassDeclaration
+    Identifier: ' G'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' H'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' I'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' J'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' G'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' p1'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' K'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' G'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' p1'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' i'
+              NumericLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' L'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' G'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' p1'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' M'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' G'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' p1'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' i'
+              NumericLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' N'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p2'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'p1'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'p2'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' O'
+    Constructor
+      Block
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p1'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' P'
+    Constructor
+      Block
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p1'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' Q'
+    Constructor
+      Block
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' this'
+    PropertyDeclaration
+      Identifier: 'p1'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' R'
+    Constructor
+      Block
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' this'
+    PropertyDeclaration
+      Identifier: 'p1'
+      NumericLiteral

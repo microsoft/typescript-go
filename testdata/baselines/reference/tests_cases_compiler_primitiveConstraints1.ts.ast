@@ -1,0 +1,51 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo1'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo1'
+      StringKeyword
+      NumberKeyword
+      StringLiteral
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo2'
+      NumberKeyword
+      StringKeyword
+      NumericLiteral
+      StringLiteral

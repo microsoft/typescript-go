@@ -1,0 +1,109 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' s'
+            StringKeyword
+      StringKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            NumberKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' s'
+            StringKeyword
+      StringKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            NumberKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            NumberKeyword
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' s'
+            StringKeyword
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeReference
+          Identifier: ' B'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          Identifier: '
+
+v'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' s'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' n'
+              NumericLiteral
+        Identifier: 'toLowerCase'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' w'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' w'
+        TypeReference
+          Identifier: ' C'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          Identifier: '
+
+w'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' s'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' n'
+              NumericLiteral
+        Identifier: 'toLowerCase'

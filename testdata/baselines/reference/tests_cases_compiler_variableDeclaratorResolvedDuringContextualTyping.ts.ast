@@ -1,0 +1,720 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' WinJS'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ValueCallback'
+        CallSignature
+          Parameter
+            Identifier: 'value'
+            AnyKeyword
+          AnyKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' EventCallback'
+        CallSignature
+          Parameter
+            Identifier: 'value'
+            AnyKeyword
+          VoidKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ErrorCallback'
+        CallSignature
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          AnyKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ProgressCallback'
+        CallSignature
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          AnyKeyword
+      ClassDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' Promise'
+        Constructor
+          Parameter
+            Identifier: 'init'
+            FunctionType
+              Parameter
+                Identifier: 'complete'
+                TypeReference
+                  Identifier: ' ValueCallback'
+              Parameter
+                Identifier: ' error'
+                TypeReference
+                  Identifier: ' ErrorCallback'
+              Parameter
+                Identifier: ' progress'
+                TypeReference
+                  Identifier: ' ProgressCallback'
+              VoidKeyword
+          Parameter
+            Identifier: ' oncancel'
+            QuestionToken
+            AnyKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' as'
+          Parameter
+            Identifier: 'value'
+            AnyKeyword
+          TypeReference
+            Identifier: ' Promise'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' join'
+          Parameter
+            Identifier: 'promises'
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'name'
+                  StringKeyword
+                TypeReference
+                  Identifier: ' Promise'
+          TypeReference
+            Identifier: ' Promise'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' join'
+          Parameter
+            Identifier: 'promises'
+            ArrayType
+              TypeReference
+                Identifier: ' Promise'
+          TypeReference
+            Identifier: ' Promise'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' any'
+          Parameter
+            Identifier: 'promises'
+            ArrayType
+              TypeReference
+                Identifier: ' Promise'
+          TypeReference
+            Identifier: ' Promise'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' timeout'
+          Parameter
+            Identifier: 'delay'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Promise'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' wrapError'
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' Promise'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' is'
+          Parameter
+            Identifier: 'value'
+            AnyKeyword
+          BooleanKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' addEventListener'
+          Parameter
+            Identifier: 'type'
+            StringKeyword
+          Parameter
+            Identifier: ' fn'
+            TypeReference
+              Identifier: ' EventCallback'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' then'
+          Parameter
+            Identifier: 'success'
+            QuestionToken
+            TypeReference
+              Identifier: ' ValueCallback'
+          Parameter
+            Identifier: ' error'
+            QuestionToken
+            TypeReference
+              Identifier: ' ErrorCallback'
+          Parameter
+            Identifier: ' progress'
+            QuestionToken
+            TypeReference
+              Identifier: ' ProgressCallback'
+          TypeReference
+            Identifier: ' Promise'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' done'
+          Parameter
+            Identifier: 'success'
+            QuestionToken
+            TypeReference
+              Identifier: ' ValueCallback'
+          Parameter
+            Identifier: ' error'
+            QuestionToken
+            TypeReference
+              Identifier: ' ErrorCallback'
+          Parameter
+            Identifier: ' progress'
+            QuestionToken
+            TypeReference
+              Identifier: ' ProgressCallback'
+          VoidKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' cancel'
+          VoidKeyword
+      ClassDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' TPromise'
+        TypeParameter
+          Identifier: 'V'
+        Constructor
+          Parameter
+            Identifier: 'init'
+            FunctionType
+              Parameter
+                Identifier: 'complete'
+                FunctionType
+                  Parameter
+                    Identifier: 'value'
+                    TypeReference
+                      Identifier: ' V'
+                  VoidKeyword
+              Parameter
+                Identifier: ' error'
+                FunctionType
+                  Parameter
+                    Identifier: 'err'
+                    AnyKeyword
+                  VoidKeyword
+              Parameter
+                Identifier: ' progress'
+                TypeReference
+                  Identifier: ' ProgressCallback'
+              VoidKeyword
+          Parameter
+            Identifier: ' oncancel'
+            QuestionToken
+            AnyKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' then'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'success'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' V'
+              TypeReference
+                Identifier: ' TPromise'
+                TypeReference
+                  Identifier: 'U'
+          Parameter
+            Identifier: ' error'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'err'
+                AnyKeyword
+              TypeReference
+                Identifier: ' TPromise'
+                TypeReference
+                  Identifier: 'U'
+          Parameter
+            Identifier: ' progress'
+            QuestionToken
+            TypeReference
+              Identifier: ' ProgressCallback'
+          TypeReference
+            Identifier: ' TPromise'
+            TypeReference
+              Identifier: 'U'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' then'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'success'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' V'
+              TypeReference
+                Identifier: ' TPromise'
+                TypeReference
+                  Identifier: 'U'
+          Parameter
+            Identifier: ' error'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'err'
+                AnyKeyword
+              TypeReference
+                Identifier: ' U'
+          Parameter
+            Identifier: ' progress'
+            QuestionToken
+            TypeReference
+              Identifier: ' ProgressCallback'
+          TypeReference
+            Identifier: ' TPromise'
+            TypeReference
+              Identifier: 'U'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' then'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'success'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' V'
+              TypeReference
+                Identifier: ' U'
+          Parameter
+            Identifier: ' error'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'err'
+                AnyKeyword
+              TypeReference
+                Identifier: ' TPromise'
+                TypeReference
+                  Identifier: 'U'
+          Parameter
+            Identifier: ' progress'
+            QuestionToken
+            TypeReference
+              Identifier: ' ProgressCallback'
+          TypeReference
+            Identifier: ' TPromise'
+            TypeReference
+              Identifier: 'U'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' then'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'success'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' V'
+              TypeReference
+                Identifier: ' U'
+          Parameter
+            Identifier: ' error'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'err'
+                AnyKeyword
+              TypeReference
+                Identifier: ' U'
+          Parameter
+            Identifier: ' progress'
+            QuestionToken
+            TypeReference
+              Identifier: ' ProgressCallback'
+          TypeReference
+            Identifier: ' TPromise'
+            TypeReference
+              Identifier: 'U'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' done'
+          Parameter
+            Identifier: 'success'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' V'
+              VoidKeyword
+          Parameter
+            Identifier: ' error'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'err'
+                AnyKeyword
+              AnyKeyword
+          Parameter
+            Identifier: ' progress'
+            QuestionToken
+            TypeReference
+              Identifier: ' ProgressCallback'
+          VoidKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' cancel'
+          VoidKeyword
+        MethodDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' as'
+          TypeParameter
+            Identifier: 'ValueType'
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' ValueType'
+          TypeReference
+            Identifier: ' TPromise'
+            TypeReference
+              Identifier: 'ValueType'
+        MethodDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' timeout'
+          Parameter
+            Identifier: 'delay'
+            NumberKeyword
+          TypeReference
+            Identifier: ' TPromise'
+            VoidKeyword
+        MethodDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' join'
+          TypeParameter
+            Identifier: 'ValueType'
+          Parameter
+            Identifier: 'promises'
+            ArrayType
+              TypeReference
+                Identifier: ' TPromise'
+                TypeReference
+                  Identifier: 'ValueType'
+          TypeReference
+            Identifier: ' TPromise'
+            ArrayType
+              TypeReference
+                Identifier: 'ValueType'
+        MethodDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' any'
+          TypeParameter
+            Identifier: 'ValueType'
+          Parameter
+            Identifier: 'promises'
+            ArrayType
+              TypeReference
+                Identifier: ' TPromise'
+                TypeReference
+                  Identifier: 'ValueType'
+          TypeReference
+            Identifier: ' TPromise'
+            TypeReference
+              Identifier: 'ValueType'
+        MethodDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' wrapError'
+          TypeParameter
+            Identifier: 'ValueType'
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' TPromise'
+            TypeReference
+              Identifier: 'ValueType'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IXHROptions'
+        PropertySignature
+          Identifier: '
+        type'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        url'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        user'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        password'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        responseType'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        headers'
+          QuestionToken
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        customRequestInitializer'
+          QuestionToken
+          FunctionType
+            Parameter
+              Identifier: 'req'
+              AnyKeyword
+            VoidKeyword
+        PropertySignature
+          Identifier: '
+        data'
+          QuestionToken
+          AnyKeyword
+  ModuleDeclaration
+    Identifier: ' Services'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IRequestService'
+        MethodSignature
+          Identifier: '
+        /**
+         * Returns the URL that can be used to access the provided service. The optional second argument can
+         * be provided to narrow down the request URL to a specific file system resource. The third argument
+         * allows to specify to return a fully absolute server URL. 
+         */
+        getRequestUrl'
+          Parameter
+            Identifier: 'service'
+            StringKeyword
+          Parameter
+            Identifier: ' path'
+            QuestionToken
+            StringKeyword
+          StringKeyword
+        MethodSignature
+          Identifier: '
+        getRequestUrl'
+          Parameter
+            Identifier: 'service'
+            StringKeyword
+          Parameter
+            Identifier: ' path'
+            QuestionToken
+            StringKeyword
+          Parameter
+            Identifier: ' absolute'
+            QuestionToken
+            BooleanKeyword
+          StringKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Wraps the call into WinJS.XHR to allow for mocking and telemetry. Use this instead
+         * of calling WinJS.XHR directly.
+         */
+        makeRequest'
+          Parameter
+            Identifier: 'options'
+            TypeReference
+              QualifiedName
+                Identifier: ' WinJS'
+                Identifier: 'IXHROptions'
+          TypeReference
+            QualifiedName
+              Identifier: ' WinJS'
+              Identifier: 'Promise'
+  ModuleDeclaration
+    Identifier: ' Errors'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' ConnectionError'
+        Constructor
+          Parameter
+            Identifier: 'request'
+            TypeReference
+              Identifier: ' XMLHttpRequest'
+          Block
+  ModuleDeclaration
+    Identifier: ' Files'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IUploadResult'
+        PropertySignature
+          Identifier: '
+        stat'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        isNew'
+          BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' XMLHttpRequest'
+    PropertySignature
+      Identifier: '
+    status'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    responseText'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    statusText'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' FileService'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' requestService'
+      TypeReference
+        QualifiedName
+          Identifier: ' Services'
+          Identifier: 'IRequestService'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' uploadData'
+      TypeReference
+        QualifiedName
+          Identifier: ' WinJS'
+          Identifier: 'TPromise'
+        TypeReference
+          QualifiedName
+            Identifier: 'Files'
+            Identifier: 'IUploadResult'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' path'
+              StringLiteral
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'requestService'
+                  Identifier: 'makeRequest'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            url'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'requestService'
+                        Identifier: 'getRequestUrl'
+                      StringLiteral
+                      Identifier: ' path'
+                  PropertyAssignment
+                    Identifier: '
+            type'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            headers'
+                    ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            data'
+                    StringLiteral
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'response'
+                TypeReference
+                  Identifier: ' XMLHttpRequest'
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' result'
+                      TypeReference
+                        Identifier: ' IUploadResult'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' // This should be error
+                    stat'
+                          CallExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'jsonToStat'
+                            Identifier: 'newFilePath'
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: ' // _this needs to be emitted to the js file
+                    isNew'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' response'
+                              Identifier: 'status'
+                            EqualsEqualsEqualsToken
+                            NumericLiteral
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' WinJS'
+                        Identifier: 'TPromise'
+                      Identifier: 'as'
+                    TypeReference
+                      QualifiedName
+                        Identifier: 'Files'
+                        Identifier: 'IUploadResult'
+                    Identifier: 'result'
+            ArrowFunction
+              Parameter
+                Identifier: 'xhr'
+                TypeReference
+                  Identifier: ' XMLHttpRequest'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' WinJS'
+                        Identifier: 'Promise'
+                      Identifier: 'wrapError'
+                    NewExpression
+                      PropertyAccessExpression
+                        Identifier: ' Errors'
+                        Identifier: 'ConnectionError'
+                      Identifier: 'xhr'

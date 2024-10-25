@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' x'
+      NumericLiteral
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' y'
+      NumericLiteral

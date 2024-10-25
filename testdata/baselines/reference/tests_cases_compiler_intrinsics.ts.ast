@@ -1,0 +1,54 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' hasOwnProperty'
+        TypeReference
+          Identifier: ' hasOwnProperty'
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' __proto__'
+      InterfaceDeclaration
+        Identifier: ' __proto__'
+      ClassDeclaration
+        Identifier: ' C'
+        TypeParameter
+          Identifier: 'T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' __proto__'
+              TypeReference
+                Identifier: ' __proto__'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+__proto__'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // Error, __proto__ not defined
+m1'
+        Identifier: '__proto__'
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: '__proto__'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        FunctionType
+          Parameter
+            Identifier: '__proto__'
+            NumberKeyword
+          VoidKeyword

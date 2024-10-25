@@ -1,0 +1,68 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Base'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' method'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' method'
+        StringLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      ClassExpression
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' C'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+        ClassStaticBlockDeclaration
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'method'
+            ExpressionStatement
+              CallExpression
+                ElementAccessExpression
+                  SuperKeyword
+                  StringLiteral
+            ExpressionStatement
+              CallExpression
+                ElementAccessExpression
+                  SuperKeyword
+                  Identifier: 'method'
+            ExpressionStatement
+              TaggedTemplateExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'method'
+                NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              TaggedTemplateExpression
+                ElementAccessExpression
+                  SuperKeyword
+                  StringLiteral
+                NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              TaggedTemplateExpression
+                ElementAccessExpression
+                  SuperKeyword
+                  Identifier: 'method'
+                NoSubstitutionTemplateLiteral

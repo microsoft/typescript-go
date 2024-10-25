@@ -1,0 +1,130 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Segment1'
+    TupleType
+      NamedTupleMember
+        Identifier: 'length'
+        NumberKeyword
+      NumberKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Segment2'
+    TupleType
+      NumberKeyword
+      NamedTupleMember
+        Identifier: ' size'
+        NumberKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' List'
+    TupleType
+      NamedTupleMember
+        Identifier: 'item'
+        AnyKeyword
+      RestType
+        AnyKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' List2'
+    TupleType
+      AnyKeyword
+      NamedTupleMember
+        DotDotDotToken
+        Identifier: 'remainder'
+        AnyKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Pair'
+    TupleType
+      NamedTupleMember
+        Identifier: 'item'
+        AnyKeyword
+      OptionalType
+        AnyKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Pair2'
+    TupleType
+      AnyKeyword
+      NamedTupleMember
+        Identifier: ' last'
+        QuestionToken
+        AnyKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Opt'
+    TupleType
+      NamedTupleMember
+        Identifier: 'element'
+        OptionalType
+          StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Trailing'
+    TupleType
+      NamedTupleMember
+        Identifier: 'first'
+        StringKeyword
+      NamedTupleMember
+        Identifier: ' rest'
+        RestType
+          ArrayType
+            StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' OptTrailing'
+    TupleType
+      NamedTupleMember
+        Identifier: 'first'
+        StringKeyword
+      NamedTupleMember
+        Identifier: ' rest'
+        RestType
+          JSDocNullableType
+            ArrayType
+              StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' OptRest'
+    TupleType
+      NamedTupleMember
+        Identifier: 'first'
+        StringKeyword
+      NamedTupleMember
+        DotDotDotToken
+        Identifier: 'rest'
+        QuestionToken
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' NonArrayRest'
+    TupleType
+      NamedTupleMember
+        Identifier: 'first'
+        StringKeyword
+      NamedTupleMember
+        DotDotDotToken
+        Identifier: 'rest'
+        NumberKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RecusiveRestUnlabeled'
+    TupleType
+      StringKeyword
+      RestType
+        TypeReference
+          Identifier: 'RecusiveRestUnlabeled'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RecusiveRest'
+    TupleType
+      NamedTupleMember
+        Identifier: 'first'
+        StringKeyword
+      NamedTupleMember
+        DotDotDotToken
+        Identifier: 'rest'
+        TypeReference
+          Identifier: ' RecusiveRest'

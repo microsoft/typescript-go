@@ -1,0 +1,7 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' WeakKeyTypes'
+    PropertySignature
+      Identifier: '
+    symbol'
+      SymbolKeyword

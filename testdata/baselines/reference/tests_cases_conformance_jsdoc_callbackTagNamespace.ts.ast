@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'space'
+    Parameter
+      Identifier: ' peace'
+    Block
+      ReturnStatement
+        StringLiteral

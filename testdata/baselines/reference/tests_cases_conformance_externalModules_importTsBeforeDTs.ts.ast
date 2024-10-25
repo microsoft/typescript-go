@@ -1,0 +1,39 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumberKeyword
+        NumericLiteral
+  ImportEqualsDeclaration
+    Identifier: ' foo'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z1'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'x'
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z2'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'y'
+          PlusToken
+          NumericLiteral

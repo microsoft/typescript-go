@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        UnionType
+          TupleType
+            LiteralType
+              StringLiteral
+            StringKeyword
+            NumberKeyword
+          TupleType
+            LiteralType
+              StringLiteral
+            StringKeyword
+            BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' test'
+    Parameter
+      Identifier: 'arg'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' index'
+          QuestionToken
+          NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' index'
+                NumericLiteral
+            Identifier: ' arg'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'foo'
+            Identifier: 'index'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+    foo'

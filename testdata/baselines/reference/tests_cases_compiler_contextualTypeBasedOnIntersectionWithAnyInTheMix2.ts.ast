@@ -1,0 +1,104 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' IntrinsicElements'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  a'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    href'
+            QuestionToken
+            StringKeyword
+      PropertySignature
+        Identifier: '
+  div'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    dir'
+            QuestionToken
+            StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Component'
+    TypeParameter
+      Identifier: 'Props'
+    FunctionType
+      Parameter
+        Identifier: 'props'
+        TypeReference
+          Identifier: ' Props'
+      UnknownKeyword
+  InterfaceDeclaration
+    Identifier: ' NestedMDXComponents'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      TypeReference
+        Identifier: ' Component'
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' MDXComponents'
+    IntersectionType
+      TypeReference
+        Identifier: ' NestedMDXComponents'
+      MappedType
+        TypeParameter
+          Identifier: 'Key'
+          TypeOperator
+            TypeReference
+              Identifier: ' IntrinsicElements'
+        QuestionToken
+        TypeReference
+          Identifier: ' Component'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'IntrinsicElements'
+            TypeReference
+              Identifier: 'Key'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' MDXProps'
+    PropertySignature
+      Identifier: '
+  components'
+      QuestionToken
+      TypeReference
+        Identifier: ' MDXComponents'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' MyMDXComponent'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' MDXProps'
+    LiteralType
+      NullKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+MyMDXComponent'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  components'
+          ObjectLiteralExpression
+            MethodDeclaration
+              Identifier: '
+    a'
+              Parameter
+                Identifier: 'props'
+              Block
+                ReturnStatement
+                  NullKeyword
+            MethodDeclaration
+              Identifier: '
+    div'
+              Parameter
+                Identifier: 'props'
+              Block
+                ReturnStatement
+                  NullKeyword

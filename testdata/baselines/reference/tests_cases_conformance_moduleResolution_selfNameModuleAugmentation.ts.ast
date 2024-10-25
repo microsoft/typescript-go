@@ -1,0 +1,77 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+            StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        StringLiteral
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' simple'
+        Parameter
+          Identifier: 'node'
+          AnyKeyword
+        Parameter
+          Identifier: ' visitors'
+          AnyKeyword
+        Parameter
+          Identifier: ' base'
+          QuestionToken
+          AnyKeyword
+        Parameter
+          Identifier: ' state'
+          QuestionToken
+          AnyKeyword
+        AnyKeyword
+  ExportDeclaration
+    NamedExports
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' simple'
+    StringLiteral

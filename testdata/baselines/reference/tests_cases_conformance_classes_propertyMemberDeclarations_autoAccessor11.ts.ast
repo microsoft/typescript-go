@@ -1,0 +1,28 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    accessor'
+    PropertyDeclaration
+      Identifier: '
+    a'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' accessor'
+    PropertyDeclaration
+      Identifier: '
+    b'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: '
+    accessor'
+    PropertyDeclaration
+      Identifier: '
+    c'
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' accessor'
+    PropertyDeclaration
+      Identifier: '
+    d'

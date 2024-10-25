@@ -1,0 +1,24 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @allowJs: true
+// @checkJs: true
+// @Filename: /foo.js
+
+/////**
+//// * Doc
+//// * @template {new (...args: any[]) => any} T
+//// * @param {T} cls
+//// */
+////function /**/myMixin(cls) {
+////    return class extends cls {}
+////}
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      NoSubstitutionTemplateLiteral
+      StringLiteral

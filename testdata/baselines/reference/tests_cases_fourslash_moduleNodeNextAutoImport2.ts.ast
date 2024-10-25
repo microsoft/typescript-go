@@ -1,0 +1,32 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /tsconfig.json
+//// { "compilerOptions": { "module": "nodenext" } }
+
+// @Filename: /package.json
+//// { "type": "module" }
+
+// @Filename: /mobx.d.cts
+//// export declare function autorun(): void;
+
+// @Filename: /index.ts
+//// autorun/**/
+
+// @Filename: /utils.ts
+//// import "./mobx.cjs";
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral

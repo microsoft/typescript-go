@@ -1,0 +1,87 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Arg'
+    TypeParameter
+      Identifier: 'T'
+      AnyKeyword
+    TypeParameter
+      Identifier: ' Params'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+    PropertySignature
+      StringLiteral
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    meta'
+      QuestionToken
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    params'
+      QuestionToken
+      TypeReference
+        Identifier: ' Params'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' myFunction'
+    TypeParameter
+      Identifier: 'T'
+      AnyKeyword
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' Arg'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+    Block
+      ReturnStatement
+        AsExpression
+          ParenthesizedExpression
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'arg'
+                Identifier: 'params'
+              BarBarToken
+              ObjectLiteralExpression
+          TypeReference
+            Identifier: ' U'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    ImportType
+      LiteralType
+        StringLiteral
+      Identifier: 'myFunction'
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    ImportType
+      LiteralType
+        StringLiteral
+      Identifier: 'myFunction'
+      AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' slug'
+          LiteralType
+            StringLiteral

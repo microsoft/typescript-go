@@ -1,0 +1,687 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' assertSyntaxKind'
+            Parameter
+              Identifier: 'node'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'Node'
+            Parameter
+              Identifier: ' expected'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'SyntaxKind'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        assert'
+                    Identifier: 'strictEqual'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'kind'
+                  Identifier: ' expected'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'ts'
+                            Identifier: 'Debug'
+                          Identifier: 'formatSyntaxKind'
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'kind'
+                      TemplateMiddle
+                    TemplateSpan
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'ts'
+                            Identifier: 'Debug'
+                          Identifier: 'formatSyntaxKind'
+                        Identifier: 'expected'
+                      TemplateTail
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          FunctionDeclaration
+                            Identifier: ' checkExpression'
+                            Parameter
+                              Identifier: 'expression'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'Expression'
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' node'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createExportAssignment'
+                                      Identifier: '
+                    /*modifiers*/ undefined'
+                                      FalseKeyword
+                                      Identifier: '
+                    expression'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                assertSyntaxKind'
+                                  PropertyAccessExpression
+                                    Identifier: 'node'
+                                    Identifier: 'expression'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'SyntaxKind'
+                                    Identifier: 'ParenthesizedExpression'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' clazz'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createClassExpression'
+                                  Identifier: '/*modifiers*/ undefined'
+                                  StringLiteral
+                                  Identifier: ' /*typeParameters*/ undefined'
+                                  Identifier: ' /*heritageClauses*/ undefined'
+                                  ArrayLiteralExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createPropertyDeclaration'
+                                      ArrayLiteralExpression
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'ts'
+                                              Identifier: 'factory'
+                                            Identifier: 'createToken'
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'ts'
+                                              Identifier: 'SyntaxKind'
+                                            Identifier: 'StaticKeyword'
+                                      StringLiteral
+                                      Identifier: ' /*questionOrExclamationToken*/ undefined'
+                                      Identifier: ' /*type*/ undefined'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'factory'
+                                          Identifier: 'createStringLiteral'
+                                        StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkExpression'
+                              Identifier: 'clazz'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkExpression'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createPropertyAccessExpression'
+                                Identifier: 'clazz'
+                                StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' func'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createFunctionExpression'
+                                  Identifier: '/*modifiers*/ undefined'
+                                  Identifier: ' /*asteriskToken*/ undefined'
+                                  StringLiteral
+                                  Identifier: ' /*typeParameters*/ undefined'
+                                  Identifier: ' /*parameters*/ undefined'
+                                  Identifier: ' /*type*/ undefined'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createBlock'
+                                    ArrayLiteralExpression
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkExpression'
+                              Identifier: 'func'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkExpression'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createCallExpression'
+                                Identifier: 'func'
+                                Identifier: ' /*typeArguments*/ undefined'
+                                Identifier: ' /*argumentsArray*/ undefined'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkExpression'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createTaggedTemplateExpression'
+                                Identifier: 'func'
+                                Identifier: ' /*typeArguments*/ undefined'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createNoSubstitutionTemplateLiteral'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            checkExpression'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createBinaryExpression'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createStringLiteral'
+                                  StringLiteral
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'SyntaxKind'
+                                  Identifier: 'CommaToken'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createStringLiteral'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkExpression'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createCommaListExpression'
+                                ArrayLiteralExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createStringLiteral'
+                                    StringLiteral
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createStringLiteral'
+                                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          FunctionDeclaration
+                            Identifier: ' checkBody'
+                            Parameter
+                              Identifier: 'body'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'ConciseBody'
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' node'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createArrowFunction'
+                                      Identifier: '
+                    /*modifiers*/ undefined'
+                                      Identifier: '
+                    /*typeParameters*/ undefined'
+                                      ArrayLiteralExpression
+                                      Identifier: '
+                    /*type*/ undefined'
+                                      Identifier: '
+                    /*equalsGreaterThanToken*/ undefined'
+                                      Identifier: '
+                    body'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                assertSyntaxKind'
+                                  PropertyAccessExpression
+                                    Identifier: 'node'
+                                    Identifier: 'body'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'SyntaxKind'
+                                    Identifier: 'ParenthesizedExpression'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            checkBody'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createObjectLiteralExpression'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkBody'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createPropertyAccessExpression'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createObjectLiteralExpression'
+                                StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkBody'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createAsExpression'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createPropertyAccessExpression'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createObjectLiteralExpression'
+                                  StringLiteral
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createTypeReferenceNode'
+                                  StringLiteral
+                                  Identifier: ' /*typeArguments*/ undefined'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkBody'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createNonNullExpression'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createPropertyAccessExpression'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createObjectLiteralExpression'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkBody'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createCommaListExpression'
+                                ArrayLiteralExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createStringLiteral'
+                                    StringLiteral
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createStringLiteral'
+                                    StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkBody'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createBinaryExpression'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createStringLiteral'
+                                  StringLiteral
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'SyntaxKind'
+                                  Identifier: 'CommaToken'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createStringLiteral'
+                                  StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' lhs'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createIdentifier'
+                                  StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' rhs'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createArrowFunction'
+                                  Identifier: '
+                /*modifiers*/ undefined'
+                                  Identifier: '
+                /*typeParameters*/ undefined'
+                                  ArrayLiteralExpression
+                                  Identifier: '
+                /*type*/ undefined'
+                                  Identifier: '
+                /*equalsGreaterThanToken*/ undefined'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createBlock'
+                                    ArrayLiteralExpression
+                          FunctionDeclaration
+                            Identifier: ' checkRhs'
+                            Parameter
+                              Identifier: 'operator'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'BinaryOperator'
+                            Parameter
+                              Identifier: ' expectParens'
+                              BooleanKeyword
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' node'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createBinaryExpression'
+                                      Identifier: 'lhs'
+                                      Identifier: ' operator'
+                                      Identifier: ' rhs'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                assertSyntaxKind'
+                                  PropertyAccessExpression
+                                    Identifier: 'node'
+                                    Identifier: 'right'
+                                  ConditionalExpression
+                                    Identifier: ' expectParens'
+                                    QuestionToken
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'SyntaxKind'
+                                      Identifier: 'ParenthesizedExpression'
+                                    ColonToken
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'SyntaxKind'
+                                      Identifier: 'ArrowFunction'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            checkRhs'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'CommaToken'
+                              FalseKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkRhs'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'EqualsToken'
+                              FalseKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkRhs'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'PlusEqualsToken'
+                              FalseKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkRhs'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'BarBarToken'
+                              TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkRhs'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'AmpersandAmpersandToken'
+                              TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkRhs'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'QuestionQuestionToken'
+                              TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkRhs'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'EqualsEqualsToken'
+                              TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkRhs'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'BarBarEqualsToken'
+                              FalseKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkRhs'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'AmpersandAmpersandEqualsToken'
+                              FalseKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            checkRhs'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'QuestionQuestionEqualsToken'
+                              FalseKeyword

@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' BaseEvent'
+    PropertyDeclaration
+      Identifier: '
+    target'
+      TypeLiteral
+  ClassDeclaration
+    Identifier: ' MyEvent'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BaseEvent'
+    PropertyDeclaration
+      Identifier: ' // T is instantiated to any in the prototype, which is assignable to {}
+    target'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' BaseEventWrapper'
+    PropertyDeclaration
+      Identifier: '
+    t'
+      TypeReference
+        Identifier: ' BaseEvent'
+  ClassDeclaration
+    Identifier: ' MyEventWrapper'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BaseEventWrapper'
+    PropertyDeclaration
+      Identifier: '
+    t'
+      TypeReference
+        Identifier: ' MyEvent'
+        AnyKeyword

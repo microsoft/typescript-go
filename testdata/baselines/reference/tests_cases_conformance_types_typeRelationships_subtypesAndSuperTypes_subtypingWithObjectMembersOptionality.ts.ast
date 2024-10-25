@@ -1,0 +1,187 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    PropertySignature
+      Identifier: ' foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: ' bar'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertySignature
+      Identifier: ' baz'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    Foo'
+      QuestionToken
+      TypeReference
+        Identifier: ' Base'
+  InterfaceDeclaration
+    Identifier: ' S'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    Foo'
+      TypeReference
+        Identifier: ' Derived'
+  InterfaceDeclaration
+    Identifier: ' T2'
+    PropertySignature
+      NumericLiteral
+      QuestionToken
+      TypeReference
+        Identifier: ' Base'
+  InterfaceDeclaration
+    Identifier: ' S2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T2'
+    PropertySignature
+      NumericLiteral
+      TypeReference
+        Identifier: ' Derived'
+  InterfaceDeclaration
+    Identifier: ' T3'
+    PropertySignature
+      StringLiteral
+      QuestionToken
+      TypeReference
+        Identifier: ' Base'
+  InterfaceDeclaration
+    Identifier: ' S3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T3'
+    PropertySignature
+      StringLiteral
+      TypeReference
+        Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' Foo'
+            QuestionToken
+            TypeReference
+              Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' Foo'
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'Derived'
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' a'
+          ColonToken
+          Identifier: ' b'
+  ModuleDeclaration
+    Identifier: ' TwoLevels'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        Foo'
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' S'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        Foo'
+          TypeReference
+            Identifier: ' Derived2'
+      InterfaceDeclaration
+        Identifier: ' T2'
+        PropertySignature
+          NumericLiteral
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' S2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' T2'
+        PropertySignature
+          NumericLiteral
+          TypeReference
+            Identifier: ' Derived2'
+      InterfaceDeclaration
+        Identifier: ' T3'
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' S3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' T3'
+        PropertySignature
+          StringLiteral
+          TypeReference
+            Identifier: ' Derived2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' Foo'
+                QuestionToken
+                TypeReference
+                  Identifier: ' Base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' Foo'
+                TypeAssertionExpression
+                  TypeReference
+                    Identifier: 'Derived2'
+                  NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' a'
+              ColonToken
+              Identifier: ' b'

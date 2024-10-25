@@ -1,0 +1,61 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Callbacks'
+    Parameter
+      Identifier: 'flags'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Callbacks'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'flags'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Callbacks'
+    TypeParameter
+      Identifier: 'T1'
+    TypeParameter
+      Identifier: ' T2'
+    Parameter
+      Identifier: 'flags'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Callbacks'
+    TypeParameter
+      Identifier: 'T1'
+    TypeParameter
+      Identifier: ' T2'
+    TypeParameter
+      Identifier: ' T3'
+    Parameter
+      Identifier: 'flags'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+Callbacks'
+      NumberKeyword
+      StringKeyword
+      BooleanKeyword
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Callbacks'
+      NumberKeyword
+      StringKeyword
+      BooleanKeyword
+      StringLiteral

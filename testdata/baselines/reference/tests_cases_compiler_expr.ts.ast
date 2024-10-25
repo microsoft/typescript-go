@@ -1,0 +1,1203 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    Red'
+    EnumMember
+      Identifier: ' Green'
+    EnumMember
+      Identifier: ' Blue'
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            AnyKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            TypeReference
+              Identifier: 'I'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            TypeReference
+              Identifier: 'E'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    n'
+          AmpersandAmpersandToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          AmpersandAmpersandToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          AmpersandAmpersandToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          AmpersandAmpersandToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          AmpersandAmpersandToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          AmpersandAmpersandToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    s'
+          AmpersandAmpersandToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          AmpersandAmpersandToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          AmpersandAmpersandToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          AmpersandAmpersandToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          AmpersandAmpersandToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          AmpersandAmpersandToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    a'
+          AmpersandAmpersandToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          AmpersandAmpersandToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          AmpersandAmpersandToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          AmpersandAmpersandToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          AmpersandAmpersandToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          AmpersandAmpersandToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    i'
+          AmpersandAmpersandToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          AmpersandAmpersandToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          AmpersandAmpersandToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          AmpersandAmpersandToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          AmpersandAmpersandToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          AmpersandAmpersandToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    e'
+          AmpersandAmpersandToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          AmpersandAmpersandToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          AmpersandAmpersandToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          AmpersandAmpersandToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          AmpersandAmpersandToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          AmpersandAmpersandToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    n'
+          BarBarToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          BarBarToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          BarBarToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          BarBarToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          BarBarToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          BarBarToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    s'
+          BarBarToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          BarBarToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          BarBarToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          BarBarToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          BarBarToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          BarBarToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    a'
+          BarBarToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          BarBarToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          BarBarToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          BarBarToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          BarBarToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          BarBarToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    i'
+          BarBarToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          BarBarToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          BarBarToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          BarBarToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          BarBarToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          BarBarToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    e'
+          BarBarToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          BarBarToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          BarBarToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          BarBarToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          BarBarToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          BarBarToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    n'
+          EqualsEqualsToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          EqualsEqualsToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          EqualsEqualsToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          EqualsEqualsToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          EqualsEqualsToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          EqualsEqualsToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    s'
+          EqualsEqualsToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsEqualsToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsEqualsToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsEqualsToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsEqualsToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsEqualsToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    a'
+          EqualsEqualsToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    i'
+          EqualsEqualsToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          EqualsEqualsToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          EqualsEqualsToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          EqualsEqualsToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          EqualsEqualsToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          EqualsEqualsToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    e'
+          EqualsEqualsToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          EqualsEqualsToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          EqualsEqualsToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          EqualsEqualsToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          EqualsEqualsToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          EqualsEqualsToken
+          Identifier: 'e'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'i'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 's'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'n'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'a'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'b'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'i'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 's'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'n'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'a'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'b'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'i'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 's'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'n'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'a'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+
+    n'
+          PlusToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          PlusToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          PlusToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          PlusToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          PlusToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          PlusToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    s'
+          PlusToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          PlusToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          PlusToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          PlusToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          PlusToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          PlusToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    a'
+          PlusToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          PlusToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          PlusToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          PlusToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          PlusToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          PlusToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    i'
+          PlusToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          PlusToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          PlusToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          PlusToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          PlusToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          PlusToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    e'
+          PlusToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          PlusToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          PlusToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          PlusToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          PlusToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          PlusToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    n'
+          CaretToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          CaretToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          CaretToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          CaretToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          CaretToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          CaretToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    s'
+          CaretToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          CaretToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          CaretToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          CaretToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          CaretToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          CaretToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    a'
+          CaretToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          CaretToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          CaretToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          CaretToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          CaretToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          CaretToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    i'
+          CaretToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          CaretToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          CaretToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          CaretToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          CaretToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          CaretToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    e'
+          CaretToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          CaretToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          CaretToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          CaretToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          CaretToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          CaretToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    n'
+          MinusToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          MinusToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          MinusToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          MinusToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          MinusToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          MinusToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    s'
+          MinusToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          MinusToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          MinusToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          MinusToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          MinusToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          MinusToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    a'
+          MinusToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          MinusToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          MinusToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          MinusToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          MinusToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          MinusToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    i'
+          MinusToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          MinusToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          MinusToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          MinusToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          MinusToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          MinusToken
+          Identifier: 'e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    e'
+          MinusToken
+          Identifier: 'n'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          MinusToken
+          Identifier: 's'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          MinusToken
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          MinusToken
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          MinusToken
+          Identifier: 'i'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    e'
+          MinusToken
+          Identifier: 'e'

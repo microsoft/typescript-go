@@ -1,0 +1,489 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cond'
+        BooleanKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Optional'
+    TypeParameter
+      Identifier: 'a'
+    UnionType
+      TypeReference
+        Identifier: ' Some'
+        TypeReference
+          Identifier: 'a'
+      TypeReference
+        Identifier: ' None'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' None'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' none'
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Some'
+    TypeParameter
+      Identifier: 'a'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' some'
+      TypeReference
+        Identifier: ' a'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' none'
+        TypeReference
+          Identifier: ' None'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' none'
+            StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isSome'
+    TypeParameter
+      Identifier: 'a'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' Optional'
+        TypeReference
+          Identifier: 'a'
+    TypePredicate
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Some'
+        TypeReference
+          Identifier: 'a'
+    Block
+      ReturnStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' someFrom'
+    TypeParameter
+      Identifier: 'a'
+    Parameter
+      Identifier: 'some'
+      TypeReference
+        Identifier: ' a'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' some'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fn'
+    TypeParameter
+      Identifier: 'r'
+    Parameter
+      Identifier: 'makeSome'
+      FunctionType
+        TypeReference
+          Identifier: ' r'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            TypeReference
+              Identifier: ' Optional'
+              TypeReference
+                Identifier: 'r'
+            Identifier: ' none'
+      ExpressionStatement
+        Identifier: '
+    result'
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          ExpressionStatement
+            Identifier: '
+        result'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '  // Some<r> | None
+        result'
+              EqualsToken
+              CallExpression
+                Identifier: ' someFrom'
+                ConditionalExpression
+                  CallExpression
+                    Identifier: 'isSome'
+                    Identifier: 'result'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' result'
+                    Identifier: 'some'
+                  ColonToken
+                  CallExpression
+                    Identifier: ' makeSome'
+          ExpressionStatement
+            Identifier: '
+        result'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+            NumericLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '  // number, then string | number
+        x'
+              EqualsToken
+              ConditionalExpression
+                BinaryExpression
+                  TypeOfExpression
+                    Identifier: ' x'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'slice'
+                ColonToken
+                StringLiteral
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+            NumericLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' x'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            x'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'slice'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            x'
+                  EqualsToken
+                  StringLiteral
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              UndefinedKeyword
+            Identifier: ' undefined'
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              UndefinedKeyword
+            Identifier: ' undefined'
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              UndefinedKeyword
+            Identifier: ' undefined'
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'x'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              UndefinedKeyword
+            Identifier: ' undefined'
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+              LiteralType
+                NullKeyword
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            NonNullExpression
+              Identifier: '
+    x'
+            Identifier: 'slice'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            NonNullExpression
+              Identifier: '
+    x'
+            Identifier: 'slice'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            NonNullExpression
+              Identifier: '
+    x'
+            Identifier: 'slice'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          NullKeyword
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            NonNullExpression
+              Identifier: '
+    x'
+            Identifier: 'slice'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          TypeAssertionExpression
+            UnionType
+              UndefinedKeyword
+              LiteralType
+                NullKeyword
+            Identifier: 'undefined'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            NonNullExpression
+              Identifier: '
+    x'
+            Identifier: 'slice'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          TypeAssertionExpression
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+            StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            NonNullExpression
+              Identifier: '
+    x'
+            Identifier: 'slice'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          TypeAssertionExpression
+            UnionType
+              StringKeyword
+              LiteralType
+                NullKeyword
+            StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            NonNullExpression
+              Identifier: '
+    x'
+            Identifier: 'slice'
+  FunctionDeclaration
+    Identifier: ' f7'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            StringKeyword
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            NonNullExpression
+              Identifier: '
+    x'
+            Identifier: 'slice'

@@ -1,0 +1,71 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' a'
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: ' b'
+  EmptyStatement
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    f'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' X'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    MethodDeclaration
+      Identifier: '  
+    f'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' B'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' undefined'
+  ClassDeclaration
+    Identifier: ' Y'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    MethodDeclaration
+      Identifier: '
+    f'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' undefined'
+  ClassDeclaration
+    Identifier: ' Z'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    MethodDeclaration
+      Identifier: '
+    f'
+      TypeParameter
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' undefined'

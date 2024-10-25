@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' _this'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' _this'

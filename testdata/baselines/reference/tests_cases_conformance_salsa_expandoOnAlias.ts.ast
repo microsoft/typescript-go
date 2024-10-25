@@ -1,0 +1,65 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Vue'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' config'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Vue'
+        ImportSpecifier
+          Identifier: ' config'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Expando declarations aren't allowed on aliases.
+Vue'
+        Identifier: 'config'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Vue'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// This is not an expando declaration; it's just a plain property assignment.
+config'
+        Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// This is not an expando declaration; it works because non-strict JS allows
+// loosey goosey assignment on objects.
+config'
+        Identifier: 'y'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+config'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+config'
+      Identifier: 'y'

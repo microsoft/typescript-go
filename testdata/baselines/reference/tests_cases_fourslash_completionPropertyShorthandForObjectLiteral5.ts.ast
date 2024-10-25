@@ -1,0 +1,51 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '// @module: esnext
+
+// @Filename: /a.ts
+//// export const exportedConstant = 0;
+
+// @Filename: /b.ts
+//// const foo = 'foo'
+//// const obj = { exp/**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' source'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' hasAction'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: ' 
+    isNewIdentifierLocation'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' includeCompletionsForModuleExports'
+              TrueKeyword

@@ -1,0 +1,50 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' A'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' types'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        TypeQuery
+          Identifier: ' types'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  A'
+            AsExpression
+              Identifier: ' undefined'
+              AnyKeyword
+          PropertyAssignment
+            Identifier: ' // ok
+  B'
+            AsExpression
+              Identifier: ' undefined'
+              AnyKeyword

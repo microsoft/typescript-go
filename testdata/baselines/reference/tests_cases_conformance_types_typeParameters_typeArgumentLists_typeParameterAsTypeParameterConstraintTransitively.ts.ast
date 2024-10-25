@@ -1,0 +1,200 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: ' foo'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertySignature
+      Identifier: ' bar'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertySignature
+      Identifier: ' baz'
+      BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' V'
+    TypeReference
+      Identifier: ' V'
+    Block
+      ReturnStatement
+        Identifier: ' z'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+//function foo<T, U extends T, V extends U>(x: T, y: U, z: V): V { return z; }
+
+foo'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' y'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' y'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' z'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'a'
+      Identifier: ' b'
+      Identifier: ' c'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'a'
+      Identifier: ' b'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' foo'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' bar'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' hm'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+        EqualsGreaterThanToken
+        Block
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+        EqualsGreaterThanToken
+        Block
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' A'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' V'
+    TypeReference
+      Identifier: ' V'
+    Block
+      ReturnStatement
+        Identifier: ' z'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+//function foo2<T extends A, U extends T, V extends U>(x: T, y: U, z: V): V { return z; }
+foo'
+      Identifier: 'a'
+      Identifier: ' a'
+      Identifier: ' a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'a'
+      Identifier: ' b'
+      Identifier: ' c'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'b'
+      Identifier: ' b'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' foo'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' bar'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' hm'
+          StringLiteral

@@ -1,0 +1,16 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Qux'
+    PropertySignature
+      Identifier: '
+ Bar'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Qux'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' Bar'
+      NumberKeyword

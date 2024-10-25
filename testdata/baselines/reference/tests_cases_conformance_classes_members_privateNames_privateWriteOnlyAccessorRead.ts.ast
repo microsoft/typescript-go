@@ -1,0 +1,194 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test'
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'v'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' bar'
+                NumberKeyword
+      Block
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'v'
+        ArrayType
+          NumberKeyword
+      Block
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'v'
+        NumberKeyword
+      Block
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'v'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+
+  m'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' foo'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' bar'
+                  NumericLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+    console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' foo'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' foo'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+              Identifier: 'foo'
+            EqualsToken
+            Identifier: ' foo'
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' o'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+              EqualsToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' o'
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: ' foo'
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                SpreadAssignment
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+              EqualsToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' foo'
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' foo'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      PrivateIdentifier
+                    Identifier: 'foo'
+              EqualsToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' foo'
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+      foo'
+                  ObjectLiteralExpression
+                    SpreadAssignment
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          PrivateIdentifier
+                        Identifier: 'foo'
+              EqualsToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' foo'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' o'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+              SpreadElement
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+            EqualsToken
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arr'
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+                SpreadElement
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            PlusEqualsToken
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Test'
+        Identifier: 'm'

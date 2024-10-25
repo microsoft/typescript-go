@@ -1,0 +1,92 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Sammy'
+    MethodDeclaration
+      Identifier: '
+   foo'
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' bar'
+      Block
+        ReturnStatement
+          PrefixUnaryExpression
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Sammy'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' JQueryStatic'
+    PropertySignature
+      Identifier: '
+    sammy'
+      TypeReference
+        Identifier: ' Sammy'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' $'
+        TypeReference
+          Identifier: ' JQueryStatic'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' instanceOfClassSammy'
+        TypeReference
+          Identifier: ' Sammy'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' $'
+            Identifier: 'sammy'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' instanceOfClassSammy'
+            Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' $'
+              Identifier: 'sammy'
+            Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' $'
+              Identifier: 'sammy'
+            Identifier: 'bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' $'
+            Identifier: 'sammy'
+          Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // error
+
+Sammy'
+        Identifier: 'bar'

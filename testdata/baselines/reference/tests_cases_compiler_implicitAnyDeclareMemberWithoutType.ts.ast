@@ -1,0 +1,31 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IFace'
+    PropertySignature
+      Identifier: '
+    member1'
+    PropertySignature
+      Identifier: '  // error at "member1"
+    member2'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    constructor'
+      Parameter
+        Identifier: 'c1'
+      Parameter
+        Identifier: ' c2'
+        StringKeyword
+      Parameter
+        Identifier: ' c3'
+    MethodSignature
+      Identifier: '  // error at "c1, c3, "constructor"
+    funcOfIFace'
+      Parameter
+        Identifier: 'f1'
+      Parameter
+        Identifier: ' f2'
+      Parameter
+        Identifier: ' f3'
+        NumberKeyword
+    ConstructSignature

@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' inst'
+      NewExpression
+        Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral

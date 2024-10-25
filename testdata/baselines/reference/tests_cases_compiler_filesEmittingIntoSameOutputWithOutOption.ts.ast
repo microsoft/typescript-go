@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' c'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block

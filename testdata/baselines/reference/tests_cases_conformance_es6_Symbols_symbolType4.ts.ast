@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Symbol'
+            Identifier: 'for'
+          StringLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+s'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+s'

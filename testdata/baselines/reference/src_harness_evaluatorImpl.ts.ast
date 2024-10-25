@@ -1,0 +1,3807 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' compiler'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' fakes'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vfs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vpath'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sourceFile'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' vpath'
+            Identifier: 'combine'
+          PropertyAccessExpression
+            Identifier: 'vfs'
+            Identifier: 'srcFolder'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sourceFileJs'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' vpath'
+            Identifier: 'combine'
+          PropertyAccessExpression
+            Identifier: 'vfs'
+            Identifier: 'srcFolder'
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' FakeSymbol'
+        TypeReference
+          Identifier: ' SymbolConstructor'
+        AsExpression
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'description'
+                QuestionToken
+                StringKeyword
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' Symbol'
+                Identifier: 'description'
+          AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          AsExpression
+            Identifier: 'FakeSymbol'
+            AnyKeyword
+        Identifier: 'prototype'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' Symbol'
+        Identifier: 'prototype'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' key'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' Object'
+        Identifier: 'getOwnPropertyNames'
+      Identifier: 'Symbol'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Object'
+            Identifier: 'defineProperty'
+          Identifier: 'FakeSymbol'
+          Identifier: ' key'
+          NonNullExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Object'
+                Identifier: 'getOwnPropertyDescriptor'
+              Identifier: 'Symbol'
+              Identifier: ' key'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' symbolNames'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' symbolName'
+    Identifier: ' symbolNames'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ts'
+              Identifier: 'hasProperty'
+            Identifier: 'FakeSymbol'
+            Identifier: ' symbolName'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Object'
+                Identifier: 'defineProperty'
+              Identifier: 'FakeSymbol'
+              Identifier: ' symbolName'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            value'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Symbol'
+                      Identifier: 'for'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'symbolName'
+                        TemplateTail
+                PropertyAssignment
+                  Identifier: '
+            configurable'
+                  TrueKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' evaluateTypeScript'
+    Parameter
+      Identifier: 'source'
+      UnionType
+        StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' files'
+            TypeReference
+              QualifiedName
+                Identifier: ' vfs'
+                Identifier: 'FileSet'
+          PropertySignature
+            Identifier: ' rootFiles'
+            ArrayType
+              StringKeyword
+          PropertySignature
+            Identifier: ' main'
+            StringKeyword
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'CompilerOptions'
+    Parameter
+      Identifier: ' globals'
+      QuestionToken
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+    AnyKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' source'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' source'
+            EqualsToken
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' files'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    ComputedPropertyName
+                      Identifier: 'sourceFile'
+                    Identifier: ' source'
+              PropertyAssignment
+                Identifier: ' rootFiles'
+                ArrayLiteralExpression
+                  Identifier: 'sourceFile'
+              PropertyAssignment
+                Identifier: ' main'
+                Identifier: ' sourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' vfs'
+                Identifier: 'createFromFileSystem'
+              PropertyAccessExpression
+                Identifier: 'Harness'
+                Identifier: 'IO'
+              FalseKeyword
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' files'
+                  PropertyAccessExpression
+                    Identifier: ' source'
+                    Identifier: 'files'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' compilerOptions'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'CompilerOptions'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        target'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'ScriptTarget'
+                  Identifier: 'ES5'
+              PropertyAssignment
+                Identifier: '
+        module'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'ModuleKind'
+                  Identifier: 'CommonJS'
+              PropertyAssignment
+                Identifier: '
+        lib'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+              SpreadAssignment
+                Identifier: 'options'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' fakes'
+                Identifier: 'CompilerHost'
+              Identifier: 'fs'
+              Identifier: ' compilerOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' compiler'
+                Identifier: 'compileFiles'
+              Identifier: 'host'
+              PropertyAccessExpression
+                Identifier: ' source'
+                Identifier: 'rootFiles'
+              Identifier: ' compilerOptions'
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'ts'
+            Identifier: 'some'
+          PropertyAccessExpression
+            Identifier: 'result'
+            Identifier: 'diagnostics'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        assert'
+                Identifier: 'ok'
+              FalseKeyword
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'formatDiagnostics'
+                  PropertyAccessExpression
+                    Identifier: 'result'
+                    Identifier: 'diagnostics'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                getCanonicalFileName'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' file'
+                        EqualsGreaterThanToken
+                        Identifier: ' file'
+                    PropertyAssignment
+                      Identifier: '
+                getCurrentDirectory'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+                getNewLine'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' output'
+            NonNullExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' result'
+                  Identifier: 'getOutput'
+                PropertyAccessExpression
+                  Identifier: 'source'
+                  Identifier: 'main'
+                StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    assert'
+            Identifier: 'isDefined'
+          Identifier: 'output'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    globals'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' Symbol'
+              Identifier: ' FakeSymbol'
+            SpreadAssignment
+              Identifier: 'globals'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' loader'
+            CallExpression
+              Identifier: ' getLoader'
+              Identifier: 'compilerOptions'
+              Identifier: ' fs'
+              Identifier: ' globals'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' loader'
+            Identifier: 'import'
+          PropertyAccessExpression
+            Identifier: 'output'
+            Identifier: 'file'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' evaluateJavaScript'
+    Parameter
+      Identifier: 'sourceText'
+      StringKeyword
+    Parameter
+      Identifier: ' globals'
+      QuestionToken
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      StringKeyword
+      Identifier: ' sourceFileJs'
+    AnyKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    globals'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' Symbol'
+              Identifier: ' FakeSymbol'
+            SpreadAssignment
+              Identifier: 'globals'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' vfs'
+                Identifier: 'FileSystem'
+              FalseKeyword
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' files'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      ComputedPropertyName
+                        Identifier: 'sourceFile'
+                      Identifier: ' sourceText'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' CommonJsLoader'
+              Identifier: 'fs'
+              Identifier: ' globals'
+            Identifier: 'import'
+          Identifier: 'sourceFile'
+  FunctionDeclaration
+    Identifier: ' getLoader'
+    Parameter
+      Identifier: 'compilerOptions'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'CompilerOptions'
+    Parameter
+      Identifier: ' fs'
+      TypeReference
+        QualifiedName
+          Identifier: ' vfs'
+          Identifier: 'FileSystem'
+    Parameter
+      Identifier: ' globals'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+    TypeReference
+      Identifier: ' Loader'
+      UnknownKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleKind'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'getEmitModuleKind'
+              Identifier: 'compilerOptions'
+      SwitchStatement
+        Identifier: 'moduleKind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'ModuleKind'
+              Identifier: 'UMD'
+          CaseClause
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'ModuleKind'
+              Identifier: 'CommonJS'
+            ReturnStatement
+              NewExpression
+                Identifier: ' CommonJsLoader'
+                Identifier: 'fs'
+                Identifier: ' globals'
+          CaseClause
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'ModuleKind'
+              Identifier: 'System'
+            ReturnStatement
+              NewExpression
+                Identifier: ' SystemLoader'
+                Identifier: 'fs'
+                Identifier: ' globals'
+          CaseClause
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'ModuleKind'
+              Identifier: 'AMD'
+            ReturnStatement
+              NewExpression
+                Identifier: ' AmdLoader'
+                Identifier: 'fs'
+                Identifier: ' globals'
+          CaseClause
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'ModuleKind'
+              Identifier: 'None'
+          DefaultClause
+            ThrowStatement
+              NewExpression
+                Identifier: ' Error'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'ts'
+                        Identifier: 'ModuleKind'
+                      Identifier: 'moduleKind'
+                    TemplateTail
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' Loader'
+    TypeParameter
+      Identifier: 'TModule'
+    PropertyDeclaration
+      ProtectedKeyword
+      ReadonlyKeyword
+      Identifier: ' fs'
+      TypeReference
+        QualifiedName
+          Identifier: ' vfs'
+          Identifier: 'FileSystem'
+    PropertyDeclaration
+      ProtectedKeyword
+      ReadonlyKeyword
+      Identifier: ' globals'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' moduleCache'
+      NewExpression
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' TModule'
+    Constructor
+      Parameter
+        Identifier: 'fs'
+        TypeReference
+          QualifiedName
+            Identifier: ' vfs'
+            Identifier: 'FileSystem'
+      Parameter
+        Identifier: ' globals'
+        TypeReference
+          Identifier: ' Record'
+          StringKeyword
+          AnyKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fs'
+            EqualsToken
+            Identifier: ' fs'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'globals'
+            EqualsToken
+            Identifier: ' globals'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' isFile'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'fs'
+                Identifier: 'existsSync'
+              Identifier: 'file'
+            AmpersandAmpersandToken
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'fs'
+                    Identifier: 'statSync'
+                  Identifier: 'file'
+                Identifier: 'isFile'
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' evaluate'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      Parameter
+        Identifier: ' file'
+        StringKeyword
+      Parameter
+        Identifier: ' module'
+        TypeReference
+          Identifier: ' TModule'
+      VoidKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' createModule'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      TypeReference
+        Identifier: ' TModule'
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' getExports'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' TModule'
+      AnyKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' load'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      TypeReference
+        Identifier: ' TModule'
+      Block
+        IfStatement
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'isExternalModuleNameRelative'
+              Identifier: 'file'
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'file'
+                  TemplateTail
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' module'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'moduleCache'
+                  Identifier: 'get'
+                Identifier: 'file'
+        IfStatement
+          Identifier: 'module'
+          ReturnStatement
+            Identifier: ' module'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'moduleCache'
+              Identifier: 'set'
+            Identifier: 'file'
+            BinaryExpression
+              Identifier: ' module'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'createModule'
+                Identifier: 'file'
+        TryStatement
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' sourceText'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'fs'
+                      Identifier: 'readFileSync'
+                    Identifier: 'file'
+                    StringLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'evaluate'
+                Identifier: 'sourceText'
+                Identifier: ' file'
+                Identifier: ' module'
+            ReturnStatement
+              Identifier: ' module'
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'moduleCache'
+                    Identifier: 'delete'
+                  Identifier: 'file'
+              ThrowStatement
+                Identifier: ' e'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' resolve'
+      Parameter
+        Identifier: 'id'
+        StringKeyword
+      Parameter
+        Identifier: ' base'
+        StringKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' vpath'
+              Identifier: 'resolve'
+            Identifier: 'base'
+            Identifier: ' id'
+    MethodDeclaration
+      Identifier: '
+
+    import'
+      Parameter
+        Identifier: 'id'
+        StringKeyword
+      Parameter
+        Identifier: ' base'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fs'
+            Identifier: 'cwd'
+      Block
+        IfStatement
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'isExternalModuleNameRelative'
+              Identifier: 'id'
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'id'
+                  TemplateTail
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' file'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'resolve'
+                Identifier: 'id'
+                Identifier: ' base'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' module'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'load'
+                Identifier: 'file'
+        IfStatement
+          PrefixUnaryExpression
+            Identifier: 'module'
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'id'
+                  TemplateTail
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'getExports'
+            Identifier: 'module'
+  InterfaceDeclaration
+    Identifier: ' CommonJSModule'
+    PropertySignature
+      Identifier: '
+    exports'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' CommonJsLoader'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Loader'
+        TypeReference
+          Identifier: 'CommonJSModule'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' resolveAsFile'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      Block
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'isFile'
+            Identifier: 'file'
+          ReturnStatement
+            Identifier: ' file'
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'isFile'
+            BinaryExpression
+              Identifier: 'file'
+              PlusToken
+              StringLiteral
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' file'
+              PlusToken
+              StringLiteral
+        ReturnStatement
+          Identifier: ' undefined'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' resolveIndex'
+      Parameter
+        Identifier: 'dir'
+        StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' indexFile'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' vpath'
+                  Identifier: 'resolve'
+                Identifier: 'dir'
+                StringLiteral
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'isFile'
+            Identifier: 'indexFile'
+          ReturnStatement
+            Identifier: ' indexFile'
+        ReturnStatement
+          Identifier: ' undefined'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' resolveAsDirectory'
+      Parameter
+        Identifier: 'dir'
+        StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' packageFile'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' vpath'
+                  Identifier: 'resolve'
+                Identifier: 'dir'
+                StringLiteral
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'isFile'
+            Identifier: 'packageFile'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' text'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'fs'
+                      Identifier: 'readFileSync'
+                    Identifier: 'packageFile'
+                    StringLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' json'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' JSON'
+                      Identifier: 'parse'
+                    Identifier: 'text'
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'json'
+                Identifier: 'main'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' main'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' vpath'
+                          Identifier: 'resolve'
+                        Identifier: 'dir'
+                        PropertyAccessExpression
+                          Identifier: ' json'
+                          Identifier: 'main'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' result'
+                      BinaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'resolveAsFile'
+                          Identifier: 'main'
+                        BarBarToken
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'resolveIndex'
+                          Identifier: 'main'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'result'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' undefined'
+                  ThrowStatement
+                    NewExpression
+                      Identifier: ' Error'
+                      StringLiteral
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'resolveIndex'
+            Identifier: 'dir'
+    MethodDeclaration
+      ProtectedKeyword
+      OverrideKeyword
+      Identifier: ' resolve'
+      Parameter
+        Identifier: 'id'
+        StringKeyword
+      Parameter
+        Identifier: ' base'
+        StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' file'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' vpath'
+                  Identifier: 'resolve'
+                Identifier: 'base'
+                Identifier: ' id'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' resolved'
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'resolveAsFile'
+                  Identifier: 'file'
+                BarBarToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'resolveAsDirectory'
+                  Identifier: 'file'
+        IfStatement
+          PrefixUnaryExpression
+            Identifier: 'resolved'
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'id'
+                  TemplateTail
+        ReturnStatement
+          Identifier: ' resolved'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' createModule'
+      TypeReference
+        Identifier: ' CommonJSModule'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' exports'
+              ObjectLiteralExpression
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' getExports'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' CommonJSModule'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' module'
+            Identifier: 'exports'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' evaluate'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      Parameter
+        Identifier: ' file'
+        StringKeyword
+      Parameter
+        Identifier: ' module'
+        TypeReference
+          Identifier: ' CommonJSModule'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' globalNames'
+              ArrayType
+                StringKeyword
+              ArrayLiteralExpression
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' globalArgs'
+              ArrayType
+                AnyKeyword
+              ArrayLiteralExpression
+        ForInStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' name'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'globals'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'hasProperty'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'globals'
+                Identifier: ' name'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                globalNames'
+                      Identifier: 'push'
+                    Identifier: 'name'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                globalArgs'
+                      Identifier: 'push'
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'globals'
+                      Identifier: 'name'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' base'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' vpath'
+                  Identifier: 'dirname'
+                Identifier: 'file'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' localRequire'
+              ArrowFunction
+                Parameter
+                  Identifier: 'id'
+                  StringKeyword
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'import'
+                  Identifier: 'id'
+                  Identifier: ' base'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' evaluateText'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'globalNames'
+                      Identifier: 'join'
+                    StringLiteral
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'text'
+                  TemplateTail
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' evaluateThunk'
+              AsExpression
+                CallExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      VoidExpression
+                        NumericLiteral
+                      CommaToken
+                      Identifier: ' eval'
+                  Identifier: 'evaluateText'
+                FunctionType
+                  Parameter
+                    Identifier: 'module'
+                    AnyKeyword
+                  Parameter
+                    Identifier: ' exports'
+                    AnyKeyword
+                  Parameter
+                    Identifier: ' require'
+                    FunctionType
+                      Parameter
+                        Identifier: 'id'
+                        StringKeyword
+                      AnyKeyword
+                  Parameter
+                    Identifier: ' dirname'
+                    StringKeyword
+                  Parameter
+                    Identifier: ' filename'
+                    StringKeyword
+                  Parameter
+                    DotDotDotToken
+                    Identifier: 'globalArgs'
+                    ArrayType
+                      AnyKeyword
+                  VoidKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        evaluateThunk'
+              Identifier: 'call'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'globals'
+            Identifier: ' module'
+            PropertyAccessExpression
+              Identifier: ' module'
+              Identifier: 'exports'
+            Identifier: ' localRequire'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' vpath'
+                Identifier: 'dirname'
+              Identifier: 'file'
+            Identifier: ' file'
+            SpreadElement
+              Identifier: 'globalArgs'
+  InterfaceDeclaration
+    Identifier: ' SystemModule'
+    PropertySignature
+      Identifier: '
+    file'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    exports'
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    hasExports'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    state'
+      TypeReference
+        Identifier: ' SystemModuleState'
+    PropertySignature
+      Identifier: '
+    dependencies'
+      ArrayType
+        TypeReference
+          Identifier: ' SystemModule'
+    PropertySignature
+      Identifier: '
+    dependers'
+      ArrayType
+        TypeReference
+          Identifier: ' SystemModule'
+    PropertySignature
+      Identifier: '
+    setters'
+      ArrayType
+        TypeReference
+          Identifier: ' SystemModuleDependencySetter'
+    PropertySignature
+      Identifier: '
+    requestedDependencies'
+      QuestionToken
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    declaration'
+      QuestionToken
+      TypeReference
+        Identifier: ' SystemModuleDeclaration'
+    PropertySignature
+      Identifier: '
+    hasError'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    error'
+      QuestionToken
+      AnyKeyword
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' SystemModuleState'
+    EnumMember
+      Identifier: '
+    // Instantiation phases:
+    Uninstantiated'
+    EnumMember
+      Identifier: '
+    Instantiated'
+    EnumMember
+      Identifier: '
+
+    // Linker phases:
+    AddingDependencies'
+    EnumMember
+      Identifier: '
+    AllDependenciesAdded'
+    EnumMember
+      Identifier: '
+    AllDependenciesInstantiated'
+    EnumMember
+      Identifier: '
+    WiringSetters'
+    EnumMember
+      Identifier: '
+    Linked'
+    EnumMember
+      Identifier: '
+
+    // Evaluation phases:
+    Evaluating'
+    EnumMember
+      Identifier: '
+    Ready'
+  InterfaceDeclaration
+    Identifier: ' SystemModuleExporter'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+        ObjectKeyword
+      Parameter
+        Identifier: 'values'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' SystemModuleContext'
+    PropertySignature
+      Identifier: '
+    import'
+      FunctionType
+        Parameter
+          Identifier: 'id'
+          StringKeyword
+        TypeReference
+          Identifier: ' Promise'
+          AnyKeyword
+    PropertySignature
+      Identifier: '
+    meta'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' SystemModuleRegisterCallback'
+    FunctionType
+      Parameter
+        Identifier: 'exporter'
+        TypeReference
+          Identifier: ' SystemModuleExporter'
+      Parameter
+        Identifier: ' context'
+        TypeReference
+          Identifier: ' SystemModuleContext'
+      TypeReference
+        Identifier: ' SystemModuleDeclaration'
+  TypeAliasDeclaration
+    Identifier: ' SystemModuleDependencySetter'
+    FunctionType
+      Parameter
+        Identifier: 'dependency'
+        AnyKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' SystemModuleDeclaration'
+    PropertySignature
+      Identifier: '
+    setters'
+      ArrayType
+        TypeReference
+          Identifier: ' SystemModuleDependencySetter'
+    PropertySignature
+      Identifier: '
+    execute'
+      FunctionType
+        VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' SystemGlobal'
+    MethodSignature
+      Identifier: '
+    register'
+      Parameter
+        Identifier: 'dependencies'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' declare'
+        TypeReference
+          Identifier: ' SystemModuleRegisterCallback'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' SystemLoader'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Loader'
+        TypeReference
+          Identifier: 'SystemModule'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' createModule'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      TypeReference
+        Identifier: ' SystemModule'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: '
+            file'
+            PropertyAssignment
+              Identifier: '
+            // eslint-disable-next-line no-restricted-syntax
+            exports'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Object'
+                  Identifier: 'create'
+                NullKeyword
+            PropertyAssignment
+              Identifier: '
+            dependencies'
+              ArrayLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            dependers'
+              ArrayLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            setters'
+              ArrayLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            hasExports'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+            state'
+              PropertyAccessExpression
+                Identifier: ' SystemModuleState'
+                Identifier: 'Uninstantiated'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' getExports'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' SystemModule'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'module'
+              Identifier: 'state'
+            LessThanToken
+            PropertyAccessExpression
+              Identifier: ' SystemModuleState'
+              Identifier: 'Ready'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'resetDependers'
+                Identifier: 'module'
+                ArrayLiteralExpression
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'evaluateModule'
+                Identifier: 'module'
+                ArrayLiteralExpression
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'module'
+                  Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' SystemModuleState'
+                  Identifier: 'Ready'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' error'
+                      NewExpression
+                        Identifier: ' Error'
+                        StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'handleError'
+                    Identifier: 'module'
+                    Identifier: ' error'
+                ThrowStatement
+                  Identifier: ' error'
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'module'
+            Identifier: 'hasError'
+          Block
+            ThrowStatement
+              PropertyAccessExpression
+                Identifier: ' module'
+                Identifier: 'error'
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' module'
+            Identifier: 'exports'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' handleError'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' SystemModule'
+      Parameter
+        Identifier: ' error'
+        AnyKeyword
+      Block
+        IfStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'module'
+              Identifier: 'hasError'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'hasError'
+                EqualsToken
+                TrueKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'error'
+                EqualsToken
+                Identifier: ' error'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'state'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SystemModuleState'
+                  Identifier: 'Ready'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' evaluate'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      Parameter
+        Identifier: ' _file'
+        StringKeyword
+      Parameter
+        Identifier: ' module'
+        TypeReference
+          Identifier: ' SystemModule'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' globalNames'
+              ArrayType
+                StringKeyword
+              ArrayLiteralExpression
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' globalArgs'
+              ArrayType
+                AnyKeyword
+              ArrayLiteralExpression
+        ForInStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' name'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'globals'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'hasProperty'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'globals'
+                Identifier: ' name'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                globalNames'
+                      Identifier: 'push'
+                    Identifier: 'name'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                globalArgs'
+                      Identifier: 'push'
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'globals'
+                      Identifier: 'name'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' localSystem'
+              TypeReference
+                Identifier: ' SystemGlobal'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            register'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'dependencies'
+                    Parameter
+                      Identifier: ' declare'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'instantiateModule'
+                      Identifier: 'module'
+                      Identifier: ' dependencies'
+                      Identifier: ' declare'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' evaluateText'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'globalNames'
+                      Identifier: 'join'
+                    StringLiteral
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'text'
+                  TemplateTail
+        TryStatement
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' evaluateThunk'
+                  AsExpression
+                    CallExpression
+                      ParenthesizedExpression
+                        BinaryExpression
+                          VoidExpression
+                            NumericLiteral
+                          CommaToken
+                          Identifier: ' eval'
+                      Identifier: 'evaluateText'
+                    FunctionType
+                      Parameter
+                        Identifier: 'System'
+                        AnyKeyword
+                      Parameter
+                        DotDotDotToken
+                        Identifier: 'globalArgs'
+                        ArrayType
+                          AnyKeyword
+                      VoidKeyword
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            evaluateThunk'
+                  Identifier: 'call'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'globals'
+                Identifier: ' localSystem'
+                SpreadElement
+                  Identifier: 'globalArgs'
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'handleError'
+                  Identifier: 'module'
+                  Identifier: ' e'
+              ThrowStatement
+                Identifier: ' e'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' instantiateModule'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' SystemModule'
+      Parameter
+        Identifier: ' dependencies'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' registration'
+        QuestionToken
+        TypeReference
+          Identifier: ' SystemModuleRegisterCallback'
+      Block
+        FunctionDeclaration
+          Identifier: ' exporter'
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'name'
+            StringKeyword
+          Parameter
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        FunctionDeclaration
+          Identifier: ' exporter'
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        FunctionDeclaration
+          Identifier: ' exporter'
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            UnionType
+              TupleType
+                StringKeyword
+                TypeReference
+                  Identifier: ' T'
+              TupleType
+                TypeReference
+                  Identifier: 'T'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'hasExports'
+                EqualsToken
+                TrueKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' name'
+                  ConditionalExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' args'
+                        Identifier: 'length'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    QuestionToken
+                    Identifier: ' undefined'
+                    ColonToken
+                    ElementAccessExpression
+                      Identifier: ' args'
+                      NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' value'
+                  ConditionalExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' args'
+                        Identifier: 'length'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    QuestionToken
+                    ElementAccessExpression
+                      Identifier: ' args'
+                      NumericLiteral
+                    ColonToken
+                    ElementAccessExpression
+                      Identifier: ' args'
+                      NumericLiteral
+            IfStatement
+              BinaryExpression
+                Identifier: 'name'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                module'
+                        Identifier: 'exports'
+                      Identifier: 'name'
+                    EqualsToken
+                    Identifier: ' value'
+              Block
+                ForInStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' name'
+                  Identifier: ' value'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    module'
+                            Identifier: 'exports'
+                          Identifier: 'name'
+                        EqualsToken
+                        ElementAccessExpression
+                          Identifier: ' value'
+                          Identifier: 'name'
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' setter'
+              PropertyAccessExpression
+                Identifier: ' module'
+                Identifier: 'setters'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+                setter'
+                    PropertyAccessExpression
+                      Identifier: 'module'
+                      Identifier: 'exports'
+            ReturnStatement
+              Identifier: ' value'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' context'
+              TypeReference
+                Identifier: ' SystemModuleContext'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            import'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' _id'
+                    EqualsGreaterThanToken
+                    Block
+                      ThrowStatement
+                        NewExpression
+                          Identifier: ' Error'
+                          StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            meta'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                url'
+                      ConditionalExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'isUrl'
+                          PropertyAccessExpression
+                            Identifier: 'module'
+                            Identifier: 'file'
+                        QuestionToken
+                        PropertyAccessExpression
+                          Identifier: ' module'
+                          Identifier: 'file'
+                        ColonToken
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            CallExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'ts'
+                                                Identifier: 'normalizeSlashes'
+                                              PropertyAccessExpression
+                                                Identifier: 'module'
+                                                Identifier: 'file'
+                                            Identifier: 'replace'
+                                          RegularExpressionLiteral
+                                          StringLiteral
+                                        Identifier: 'split'
+                                      StringLiteral
+                                    Identifier: 'map'
+                                  Identifier: 'encodeURIComponent'
+                                Identifier: 'join'
+                              StringLiteral
+                            TemplateTail
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+
+        module'
+              Identifier: 'requestedDependencies'
+            EqualsToken
+            Identifier: ' dependencies'
+        TryStatement
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'declaration'
+                EqualsToken
+                CallExpression
+                  Identifier: ' registration'
+                  QuestionDotToken
+                  Identifier: 'exporter'
+                  Identifier: ' context'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'state'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SystemModuleState'
+                  Identifier: 'Instantiated'
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' depender'
+              PropertyAccessExpression
+                Identifier: ' module'
+                Identifier: 'dependers'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'linkModule'
+                    Identifier: 'depender'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'linkModule'
+                Identifier: 'module'
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'handleError'
+                  Identifier: 'module'
+                  Identifier: ' e'
+              ThrowStatement
+                Identifier: ' e'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' linkModule'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' SystemModule'
+      Block
+        TryStatement
+          Block
+            ForStatement
+              Block
+                SwitchStatement
+                  PropertyAccessExpression
+                    Identifier: 'module'
+                    Identifier: 'state'
+                  CaseBlock
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SystemModuleState'
+                        Identifier: 'Uninstantiated'
+                      Block
+                        ThrowStatement
+                          NewExpression
+                            Identifier: ' Error'
+                            StringLiteral
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SystemModuleState'
+                        Identifier: 'Instantiated'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        // Module has been instantiated, start requesting dependencies.
+                        // Set state so that re-entry while adding dependencies does nothing.
+                        module'
+                              Identifier: 'state'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SystemModuleState'
+                              Identifier: 'AddingDependencies'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' base'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' vpath'
+                                  Identifier: 'dirname'
+                                PropertyAccessExpression
+                                  Identifier: 'module'
+                                  Identifier: 'file'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' dependencies'
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: ' module'
+                                  Identifier: 'requestedDependencies'
+                                BarBarToken
+                                ArrayLiteralExpression
+                        ForOfStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' dependencyId'
+                          Identifier: ' dependencies'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' dependency'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'load'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        ThisKeyword
+                                        Identifier: 'resolve'
+                                      Identifier: 'dependencyId'
+                                      Identifier: ' base'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                            module'
+                                    Identifier: 'dependencies'
+                                  Identifier: 'push'
+                                Identifier: 'dependency'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                            dependency'
+                                    Identifier: 'dependers'
+                                  Identifier: 'push'
+                                Identifier: 'module'
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+
+                        // All dependencies have been added, switch state
+                        // to check whether all dependencies are instantiated
+                        module'
+                              Identifier: 'state'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SystemModuleState'
+                              Identifier: 'AllDependenciesAdded'
+                        ContinueStatement
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SystemModuleState'
+                        Identifier: 'AddingDependencies'
+                      Block
+                        ReturnStatement
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SystemModuleState'
+                        Identifier: 'AllDependenciesAdded'
+                      Block
+                        ForOfStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' dependency'
+                          PropertyAccessExpression
+                            Identifier: ' module'
+                            Identifier: 'dependencies'
+                          Block
+                            IfStatement
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'dependency'
+                                  Identifier: 'state'
+                                EqualsEqualsEqualsToken
+                                PropertyAccessExpression
+                                  Identifier: ' SystemModuleState'
+                                  Identifier: 'Uninstantiated'
+                              Block
+                                ReturnStatement
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+
+                        // indicate all dependencies are instantiated for this module.
+                        module'
+                              Identifier: 'state'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SystemModuleState'
+                              Identifier: 'AllDependenciesInstantiated'
+                        ForOfStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' depender'
+                          PropertyAccessExpression
+                            Identifier: ' module'
+                            Identifier: 'dependers'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'linkModule'
+                                Identifier: 'depender'
+                        ContinueStatement
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SystemModuleState'
+                        Identifier: 'AllDependenciesInstantiated'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        // all dependencies have been instantiated, start wiring setters
+                        module'
+                              Identifier: 'state'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SystemModuleState'
+                              Identifier: 'WiringSetters'
+                        ForStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' i'
+                              NumericLiteral
+                          BinaryExpression
+                            Identifier: ' i'
+                            LessThanToken
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' module'
+                                Identifier: 'dependencies'
+                              Identifier: 'length'
+                          PostfixUnaryExpression
+                            Identifier: ' i'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' dependency'
+                                  ElementAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' module'
+                                      Identifier: 'dependencies'
+                                    Identifier: 'i'
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' setter'
+                                  ElementAccessExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' module'
+                                        Identifier: 'declaration'
+                                      QuestionDotToken
+                                      Identifier: 'setters'
+                                    Identifier: 'i'
+                            IfStatement
+                              Identifier: 'setter'
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                                dependency'
+                                        Identifier: 'setters'
+                                      Identifier: 'push'
+                                    Identifier: 'setter'
+                                IfStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'dependency'
+                                      Identifier: 'hasExports'
+                                    BarBarToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' dependency'
+                                        Identifier: 'state'
+                                      EqualsEqualsEqualsToken
+                                      PropertyAccessExpression
+                                        Identifier: ' SystemModuleState'
+                                        Identifier: 'Ready'
+                                  Block
+                                    ExpressionStatement
+                                      CallExpression
+                                        Identifier: '
+                                    // wire hoisted exports or ready dependencies.
+                                    setter'
+                                        PropertyAccessExpression
+                                          Identifier: 'dependency'
+                                          Identifier: 'exports'
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+
+                        module'
+                              Identifier: 'state'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SystemModuleState'
+                              Identifier: 'Linked'
+                        ForOfStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' depender'
+                          PropertyAccessExpression
+                            Identifier: ' module'
+                            Identifier: 'dependers'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'linkModule'
+                                Identifier: 'depender'
+                        ContinueStatement
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SystemModuleState'
+                        Identifier: 'WiringSetters'
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SystemModuleState'
+                        Identifier: 'Linked'
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SystemModuleState'
+                        Identifier: 'Evaluating'
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SystemModuleState'
+                        Identifier: 'Ready'
+                      ReturnStatement
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'handleError'
+                  Identifier: 'module'
+                  Identifier: ' e'
+              ThrowStatement
+                Identifier: ' e'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' resetDependers'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' SystemModule'
+      Parameter
+        Identifier: ' stack'
+        ArrayType
+          TypeReference
+            Identifier: ' SystemModule'
+      Block
+        IfStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'stack'
+                Identifier: 'lastIndexOf'
+              Identifier: 'module'
+            ExclamationEqualsEqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          Block
+            ReturnStatement
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+
+        stack'
+              Identifier: 'push'
+            Identifier: 'module'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        module'
+                Identifier: 'dependers'
+              Identifier: 'length'
+            EqualsToken
+            NumericLiteral
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' dependency'
+          PropertyAccessExpression
+            Identifier: ' module'
+            Identifier: 'dependencies'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'resetDependers'
+                Identifier: 'dependency'
+                Identifier: ' stack'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        stack'
+              Identifier: 'pop'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' evaluateModule'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' SystemModule'
+      Parameter
+        Identifier: ' stack'
+        ArrayType
+          TypeReference
+            Identifier: ' SystemModule'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'module'
+              Identifier: 'state'
+            LessThanToken
+            PropertyAccessExpression
+              Identifier: ' SystemModuleState'
+              Identifier: 'Linked'
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              StringLiteral
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'module'
+              Identifier: 'state'
+            ExclamationEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' SystemModuleState'
+              Identifier: 'Linked'
+          ReturnStatement
+        IfStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'stack'
+                Identifier: 'lastIndexOf'
+              Identifier: 'module'
+            ExclamationEqualsEqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          Block
+            ReturnStatement
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+
+        stack'
+              Identifier: 'push'
+            Identifier: 'module'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        module'
+              Identifier: 'state'
+            EqualsToken
+            PropertyAccessExpression
+              Identifier: ' SystemModuleState'
+              Identifier: 'Evaluating'
+        TryStatement
+          Block
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' dependency'
+              PropertyAccessExpression
+                Identifier: ' module'
+                Identifier: 'dependencies'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'evaluateModule'
+                    Identifier: 'dependency'
+                    Identifier: ' stack'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            module'
+                    Identifier: 'declaration'
+                  QuestionDotToken
+                  Identifier: 'execute'
+                QuestionDotToken
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'state'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SystemModuleState'
+                  Identifier: 'Ready'
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'handleError'
+                  Identifier: 'module'
+                  Identifier: ' e'
+              ThrowStatement
+                Identifier: ' e'
+  InterfaceDeclaration
+    Identifier: ' AmdModule'
+    PropertySignature
+      Identifier: '
+    file'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    state'
+      TypeReference
+        Identifier: ' AmdModuleState'
+    PropertySignature
+      Identifier: '
+    dependencies'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            TypeReference
+              Identifier: 'AmdModule'
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+    PropertySignature
+      Identifier: '
+    dependers'
+      ArrayType
+        TypeReference
+          Identifier: ' AmdModule'
+    PropertySignature
+      Identifier: '
+    require'
+      FunctionType
+        Parameter
+          Identifier: 'id'
+          StringKeyword
+        AnyKeyword
+    PropertySignature
+      Identifier: '
+    requestedDependencies'
+      QuestionToken
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    declaration'
+      QuestionToken
+      TypeReference
+        Identifier: ' AmdModuleDefineCallback'
+    PropertySignature
+      Identifier: '
+    hasError'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    module'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' exports'
+          AnyKeyword
+    PropertySignature
+      Identifier: '
+    error'
+      QuestionToken
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' AmdModuleDefineCallback'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' AmdModuleDeclaration'
+    UnionType
+      TypeReference
+        Identifier: ' AmdModuleDefineCallback'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' AmdModuleState'
+    EnumMember
+      Identifier: '
+    // Instantiation phases:
+    Uninstantiated'
+    EnumMember
+      Identifier: '
+    Instantiated'
+    EnumMember
+      Identifier: '
+
+    // Linker phases:
+    AddingDependencies'
+    EnumMember
+      Identifier: '
+    AllDependenciesAdded'
+    EnumMember
+      Identifier: '
+    AllDependenciesInstantiated'
+    EnumMember
+      Identifier: '
+    Linked'
+    EnumMember
+      Identifier: '
+
+    // Evaluation phases:
+    Evaluating'
+    EnumMember
+      Identifier: '
+    Ready'
+  TypeAliasDeclaration
+    Identifier: ' AmdDefineArgsUnnamedModuleNoDependencies'
+    TupleType
+      NamedTupleMember
+        Identifier: 'declare'
+        TypeReference
+          Identifier: ' AmdModuleDeclaration'
+  TypeAliasDeclaration
+    Identifier: ' AmdDefineArgsUnnamedModule'
+    TupleType
+      NamedTupleMember
+        Identifier: 'dependencies'
+        ArrayType
+          StringKeyword
+      NamedTupleMember
+        Identifier: ' declare'
+        TypeReference
+          Identifier: ' AmdModuleDeclaration'
+  TypeAliasDeclaration
+    Identifier: ' AmdDefineArgsNamedModuleNoDependencies'
+    TupleType
+      NamedTupleMember
+        Identifier: 'id'
+        StringKeyword
+      NamedTupleMember
+        Identifier: ' declare'
+        TypeReference
+          Identifier: ' AmdModuleDeclaration'
+  TypeAliasDeclaration
+    Identifier: ' AmdDefineArgsNamedModule'
+    TupleType
+      NamedTupleMember
+        Identifier: 'id'
+        StringKeyword
+      NamedTupleMember
+        Identifier: ' dependencies'
+        ArrayType
+          StringKeyword
+      NamedTupleMember
+        Identifier: ' declare'
+        TypeReference
+          Identifier: ' AmdModuleDeclaration'
+  TypeAliasDeclaration
+    Identifier: ' AmdDefineArgs'
+    UnionType
+      TypeReference
+        Identifier: ' AmdDefineArgsUnnamedModuleNoDependencies'
+      TypeReference
+        Identifier: ' AmdDefineArgsUnnamedModule'
+      TypeReference
+        Identifier: ' AmdDefineArgsNamedModuleNoDependencies'
+      TypeReference
+        Identifier: ' AmdDefineArgsNamedModule'
+  FunctionDeclaration
+    Identifier: ' isAmdDefineArgsUnnamedModuleNoDependencies'
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' AmdDefineArgs'
+    TypePredicate
+      Identifier: ' args'
+      TypeReference
+        Identifier: ' AmdDefineArgsUnnamedModuleNoDependencies'
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' args'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' isAmdDefineArgsUnnamedModule'
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' AmdDefineArgs'
+    TypePredicate
+      Identifier: ' args'
+      TypeReference
+        Identifier: ' AmdDefineArgsUnnamedModule'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' args'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          AmpersandAmpersandToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Array'
+              Identifier: 'isArray'
+            ElementAccessExpression
+              Identifier: 'args'
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' isAmdDefineArgsNamedModuleNoDependencies'
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' AmdDefineArgs'
+    TypePredicate
+      Identifier: ' args'
+      TypeReference
+        Identifier: ' AmdDefineArgsNamedModuleNoDependencies'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' args'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              ElementAccessExpression
+                Identifier: ' args'
+                NumericLiteral
+            EqualsEqualsEqualsToken
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' isAmdDefineArgsNamedModule'
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' AmdDefineArgs'
+    TypePredicate
+      Identifier: ' args'
+      TypeReference
+        Identifier: ' AmdDefineArgsNamedModule'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' args'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              ElementAccessExpression
+                Identifier: ' args'
+                NumericLiteral
+            EqualsEqualsEqualsToken
+            StringLiteral
+  ClassDeclaration
+    Identifier: ' AmdLoader'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Loader'
+        TypeReference
+          Identifier: 'AmdModule'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' createModule'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      TypeReference
+        Identifier: ' AmdModule'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' base'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' vpath'
+                  Identifier: 'dirname'
+                Identifier: 'file'
+        ReturnStatement
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: '
+            file'
+            PropertyAssignment
+              Identifier: '
+            state'
+              PropertyAccessExpression
+                Identifier: ' AmdModuleState'
+                Identifier: 'Uninstantiated'
+            PropertyAssignment
+              Identifier: '
+            dependencies'
+              ArrayLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            dependers'
+              ArrayLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            module'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' exports'
+                  ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            require'
+              ArrowFunction
+                Parameter
+                  Identifier: 'id'
+                  StringKeyword
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'import'
+                  Identifier: 'id'
+                  Identifier: ' base'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' getExports'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' AmdModule'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'module'
+              Identifier: 'state'
+            LessThanToken
+            PropertyAccessExpression
+              Identifier: ' AmdModuleState'
+              Identifier: 'Ready'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'resetDependers'
+                Identifier: 'module'
+                ArrayLiteralExpression
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'evaluateModule'
+                Identifier: 'module'
+                ArrayLiteralExpression
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'module'
+                  Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' AmdModuleState'
+                  Identifier: 'Ready'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' error'
+                      NewExpression
+                        Identifier: ' Error'
+                        StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'handleError'
+                    Identifier: 'module'
+                    Identifier: ' error'
+                ThrowStatement
+                  Identifier: ' error'
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'module'
+            Identifier: 'hasError'
+          Block
+            ThrowStatement
+              PropertyAccessExpression
+                Identifier: ' module'
+                Identifier: 'error'
+        ReturnStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' module'
+              Identifier: 'module'
+            Identifier: 'exports'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' handleError'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' AmdModule'
+      Parameter
+        Identifier: ' error'
+        AnyKeyword
+      Block
+        IfStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'module'
+              Identifier: 'hasError'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'hasError'
+                EqualsToken
+                TrueKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'error'
+                EqualsToken
+                Identifier: ' error'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'state'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' AmdModuleState'
+                  Identifier: 'Ready'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' evaluate'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      Parameter
+        Identifier: ' _file'
+        StringKeyword
+      Parameter
+        Identifier: ' module'
+        TypeReference
+          Identifier: ' AmdModule'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' globalNames'
+              ArrayType
+                StringKeyword
+              ArrayLiteralExpression
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' globalArgs'
+              ArrayType
+                AnyKeyword
+              ArrayLiteralExpression
+        ForInStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' name'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'globals'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'hasProperty'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'globals'
+                Identifier: ' name'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                globalNames'
+                      Identifier: 'push'
+                    Identifier: 'name'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                globalArgs'
+                      Identifier: 'push'
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'globals'
+                      Identifier: 'name'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' localDefine'
+              ArrowFunction
+                Parameter
+                  DotDotDotToken
+                  Identifier: 'args'
+                  TypeReference
+                    Identifier: ' AmdDefineArgs'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    CallExpression
+                      Identifier: 'isAmdDefineArgsUnnamedModuleNoDependencies'
+                      Identifier: 'args'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ArrayBindingPattern
+                              BindingElement
+                                Identifier: 'declare'
+                            Identifier: ' args'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'instantiateModule'
+                          Identifier: 'module'
+                          ArrayLiteralExpression
+                          Identifier: ' declare'
+                    IfStatement
+                      CallExpression
+                        Identifier: 'isAmdDefineArgsUnnamedModule'
+                        Identifier: 'args'
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              ArrayBindingPattern
+                                BindingElement
+                                  Identifier: 'dependencies'
+                                BindingElement
+                                  Identifier: ' declare'
+                              Identifier: ' args'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'instantiateModule'
+                            Identifier: 'module'
+                            Identifier: ' dependencies'
+                            Identifier: ' declare'
+                      IfStatement
+                        BinaryExpression
+                          CallExpression
+                            Identifier: 'isAmdDefineArgsNamedModuleNoDependencies'
+                            Identifier: 'args'
+                          BarBarToken
+                          CallExpression
+                            Identifier: ' isAmdDefineArgsNamedModule'
+                            Identifier: 'args'
+                        Block
+                          ThrowStatement
+                            NewExpression
+                              Identifier: ' Error'
+                              StringLiteral
+                        Block
+                          ThrowStatement
+                            NewExpression
+                              Identifier: ' Error'
+                              StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        localDefine'
+              Identifier: 'amd'
+            EqualsToken
+            TrueKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' evaluateText'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'globalNames'
+                      Identifier: 'join'
+                    StringLiteral
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'text'
+                  TemplateTail
+        TryStatement
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' evaluateThunk'
+                  AsExpression
+                    CallExpression
+                      ParenthesizedExpression
+                        BinaryExpression
+                          VoidExpression
+                            NumericLiteral
+                          CommaToken
+                          Identifier: ' eval'
+                      Identifier: 'evaluateText'
+                    FunctionType
+                      Parameter
+                        Identifier: 'define'
+                        AnyKeyword
+                      Parameter
+                        DotDotDotToken
+                        Identifier: 'globalArgs'
+                        ArrayType
+                          AnyKeyword
+                      VoidKeyword
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            evaluateThunk'
+                  Identifier: 'call'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'globals'
+                Identifier: ' localDefine'
+                SpreadElement
+                  Identifier: 'globalArgs'
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'handleError'
+                  Identifier: 'module'
+                  Identifier: ' e'
+              ThrowStatement
+                Identifier: ' e'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' instantiateModule'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' AmdModule'
+      Parameter
+        Identifier: ' dependencies'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' callback'
+        QuestionToken
+        TypeReference
+          Identifier: ' AmdModuleDeclaration'
+      Block
+        TryStatement
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'requestedDependencies'
+                EqualsToken
+                Identifier: ' dependencies'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'declaration'
+                EqualsToken
+                ConditionalExpression
+                  BinaryExpression
+                    TypeOfExpression
+                      Identifier: ' callback'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  QuestionToken
+                  AsExpression
+                    Identifier: ' callback'
+                    TypeReference
+                      Identifier: ' AmdModuleDefineCallback'
+                  ColonToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Identifier: ' callback'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'state'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' AmdModuleState'
+                  Identifier: 'Instantiated'
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' depender'
+              PropertyAccessExpression
+                Identifier: ' module'
+                Identifier: 'dependers'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'linkModule'
+                    Identifier: 'depender'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'linkModule'
+                Identifier: 'module'
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'handleError'
+                  Identifier: 'module'
+                  Identifier: ' e'
+              ThrowStatement
+                Identifier: ' e'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' linkModule'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' AmdModule'
+      Block
+        TryStatement
+          Block
+            ForStatement
+              Block
+                SwitchStatement
+                  PropertyAccessExpression
+                    Identifier: 'module'
+                    Identifier: 'state'
+                  CaseBlock
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' AmdModuleState'
+                        Identifier: 'Uninstantiated'
+                      Block
+                        ThrowStatement
+                          NewExpression
+                            Identifier: ' Error'
+                            StringLiteral
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' AmdModuleState'
+                        Identifier: 'Instantiated'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        // Module has been instantiated, start requesting dependencies.
+                        // Set state so that re-entry while adding dependencies does nothing.
+                        module'
+                              Identifier: 'state'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' AmdModuleState'
+                              Identifier: 'AddingDependencies'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' base'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' vpath'
+                                  Identifier: 'dirname'
+                                PropertyAccessExpression
+                                  Identifier: 'module'
+                                  Identifier: 'file'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' dependencies'
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: ' module'
+                                  Identifier: 'requestedDependencies'
+                                BarBarToken
+                                ArrayLiteralExpression
+                        ForOfStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' dependencyId'
+                          Identifier: ' dependencies'
+                          Block
+                            IfStatement
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    Identifier: 'dependencyId'
+                                    EqualsEqualsEqualsToken
+                                    StringLiteral
+                                  BarBarToken
+                                  BinaryExpression
+                                    Identifier: ' dependencyId'
+                                    EqualsEqualsEqualsToken
+                                    StringLiteral
+                                BarBarToken
+                                BinaryExpression
+                                  Identifier: ' dependencyId'
+                                  EqualsEqualsEqualsToken
+                                  StringLiteral
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                                module'
+                                        Identifier: 'dependencies'
+                                      Identifier: 'push'
+                                    Identifier: 'dependencyId'
+                              Block
+                                VariableStatement
+                                  VariableDeclarationList
+                                    VariableDeclaration
+                                      Identifier: ' dependency'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          ThisKeyword
+                                          Identifier: 'load'
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            ThisKeyword
+                                            Identifier: 'resolve'
+                                          Identifier: 'dependencyId'
+                                          Identifier: ' base'
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                                module'
+                                        Identifier: 'dependencies'
+                                      Identifier: 'push'
+                                    Identifier: 'dependency'
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                                dependency'
+                                        Identifier: 'dependers'
+                                      Identifier: 'push'
+                                    Identifier: 'module'
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+
+                        // All dependencies have been added, switch state
+                        // to check whether all dependencies are instantiated
+                        module'
+                              Identifier: 'state'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' AmdModuleState'
+                              Identifier: 'AllDependenciesAdded'
+                        ContinueStatement
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' AmdModuleState'
+                        Identifier: 'AddingDependencies'
+                      Block
+                        ReturnStatement
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' AmdModuleState'
+                        Identifier: 'AllDependenciesAdded'
+                      Block
+                        ForOfStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' dependency'
+                          PropertyAccessExpression
+                            Identifier: ' module'
+                            Identifier: 'dependencies'
+                          Block
+                            IfStatement
+                              BinaryExpression
+                                BinaryExpression
+                                  TypeOfExpression
+                                    Identifier: ' dependency'
+                                  EqualsEqualsEqualsToken
+                                  StringLiteral
+                                AmpersandAmpersandToken
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' dependency'
+                                    Identifier: 'state'
+                                  EqualsEqualsEqualsToken
+                                  PropertyAccessExpression
+                                    Identifier: ' AmdModuleState'
+                                    Identifier: 'Uninstantiated'
+                              Block
+                                ReturnStatement
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+
+                        // indicate all dependencies are instantiated for this module.
+                        module'
+                              Identifier: 'state'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' AmdModuleState'
+                              Identifier: 'AllDependenciesInstantiated'
+                        ForOfStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' depender'
+                          PropertyAccessExpression
+                            Identifier: ' module'
+                            Identifier: 'dependers'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'linkModule'
+                                Identifier: 'depender'
+                        ContinueStatement
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' AmdModuleState'
+                        Identifier: 'AllDependenciesInstantiated'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        module'
+                              Identifier: 'state'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' AmdModuleState'
+                              Identifier: 'Linked'
+                        ForOfStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' depender'
+                          PropertyAccessExpression
+                            Identifier: ' module'
+                            Identifier: 'dependers'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'linkModule'
+                                Identifier: 'depender'
+                        ContinueStatement
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' AmdModuleState'
+                        Identifier: 'Linked'
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' AmdModuleState'
+                        Identifier: 'Evaluating'
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' AmdModuleState'
+                        Identifier: 'Ready'
+                      ReturnStatement
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'handleError'
+                  Identifier: 'module'
+                  Identifier: ' e'
+              ThrowStatement
+                Identifier: ' e'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' resetDependers'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' AmdModule'
+      Parameter
+        Identifier: ' stack'
+        ArrayType
+          TypeReference
+            Identifier: ' AmdModule'
+      Block
+        IfStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'stack'
+                Identifier: 'lastIndexOf'
+              Identifier: 'module'
+            ExclamationEqualsEqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          Block
+            ReturnStatement
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+
+        stack'
+              Identifier: 'push'
+            Identifier: 'module'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        module'
+                Identifier: 'dependers'
+              Identifier: 'length'
+            EqualsToken
+            NumericLiteral
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' dependency'
+          PropertyAccessExpression
+            Identifier: ' module'
+            Identifier: 'dependencies'
+          Block
+            IfStatement
+              BinaryExpression
+                TypeOfExpression
+                  Identifier: ' dependency'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'resetDependers'
+                    Identifier: 'dependency'
+                    Identifier: ' stack'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        stack'
+              Identifier: 'pop'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' evaluateModule'
+      Parameter
+        Identifier: 'module'
+        TypeReference
+          Identifier: ' AmdModule'
+      Parameter
+        Identifier: ' stack'
+        ArrayType
+          TypeReference
+            Identifier: ' AmdModule'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'module'
+              Identifier: 'state'
+            LessThanToken
+            PropertyAccessExpression
+              Identifier: ' AmdModuleState'
+              Identifier: 'Linked'
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              StringLiteral
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'module'
+              Identifier: 'state'
+            ExclamationEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' AmdModuleState'
+              Identifier: 'Linked'
+          ReturnStatement
+        IfStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'stack'
+                Identifier: 'lastIndexOf'
+              Identifier: 'module'
+            ExclamationEqualsEqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          Block
+            ReturnStatement
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+
+        stack'
+              Identifier: 'push'
+            Identifier: 'module'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        module'
+              Identifier: 'state'
+            EqualsToken
+            PropertyAccessExpression
+              Identifier: ' AmdModuleState'
+              Identifier: 'Evaluating'
+        TryStatement
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' args'
+                  ArrayType
+                    AnyKeyword
+                  ArrayLiteralExpression
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' dependency'
+              PropertyAccessExpression
+                Identifier: ' module'
+                Identifier: 'dependencies'
+              Block
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'dependency'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    args'
+                          Identifier: 'push'
+                        PropertyAccessExpression
+                          Identifier: 'module'
+                          Identifier: 'require'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'dependency'
+                      EqualsEqualsEqualsToken
+                      StringLiteral
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    args'
+                            Identifier: 'push'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'module'
+                              Identifier: 'module'
+                            Identifier: 'exports'
+                    IfStatement
+                      BinaryExpression
+                        Identifier: 'dependency'
+                        EqualsEqualsEqualsToken
+                        StringLiteral
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    args'
+                              Identifier: 'push'
+                            PropertyAccessExpression
+                              Identifier: 'module'
+                              Identifier: 'module'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'evaluateModule'
+                            Identifier: 'dependency'
+                            Identifier: ' stack'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    args'
+                              Identifier: 'push'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'dependency'
+                                Identifier: 'module'
+                              Identifier: 'exports'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            module'
+                    Identifier: 'module'
+                  Identifier: 'exports'
+                EqualsToken
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' module'
+                      Identifier: 'declaration'
+                    QuestionDotToken
+                    SpreadElement
+                      Identifier: 'args'
+                  QuestionQuestionToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' module'
+                      Identifier: 'module'
+                    Identifier: 'exports'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            module'
+                  Identifier: 'state'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' AmdModuleState'
+                  Identifier: 'Ready'
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'handleError'
+                  Identifier: 'module'
+                  Identifier: ' e'
+              ThrowStatement
+                Identifier: ' e'

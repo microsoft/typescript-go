@@ -1,0 +1,253 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' F'
+  ClassDeclaration
+    Identifier: ' Class'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' F'
+    Constructor
+      Block
+  ClassDeclaration
+    Identifier: ' SubClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Class'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      BooleanKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' F'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      BooleanKeyword
+    Constructor
+      Block
+  ClassDeclaration
+    Identifier: ' SubD'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  FunctionDeclaration
+    Identifier: ' d0'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Class'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'x'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NewExpression
+            Identifier: ' Class'
+    Block
+  FunctionDeclaration
+    Identifier: ' d1'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' F'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' F'
+    Block
+  FunctionDeclaration
+    Identifier: ' d2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Class'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' Class'
+    Block
+  FunctionDeclaration
+    Identifier: ' d3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' D'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'y'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' D'
+    Block
+  FunctionDeclaration
+    Identifier: ' d4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' D'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'y'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          NewExpression
+            Identifier: ' D'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        NewExpression
+          Identifier: ' Class'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d0'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d0'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d0'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+d1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NewExpression
+            Identifier: ' Class'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+d2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NewExpression
+            Identifier: ' SubClass'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+d3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          NewExpression
+            Identifier: ' SubD'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          NewExpression
+            Identifier: ' SubClass'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// Error
+d3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          NewExpression
+            Identifier: ' Class'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d3'
+      ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          StringLiteral

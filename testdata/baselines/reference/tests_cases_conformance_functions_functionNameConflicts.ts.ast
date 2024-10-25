@@ -1,0 +1,47 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' fn1'
+        Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn2'
+      FunctionDeclaration
+        Identifier: ' fn2'
+        Block
+  FunctionDeclaration
+    Identifier: ' fn3'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn3'
+  FunctionDeclaration
+    Identifier: ' func'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn4'
+      FunctionDeclaration
+        Identifier: ' fn4'
+        Block
+      FunctionDeclaration
+        Identifier: ' fn5'
+        Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn5'
+  FunctionDeclaration
+    Identifier: ' over'
+  FunctionDeclaration
+    Identifier: ' overrr'
+    Block

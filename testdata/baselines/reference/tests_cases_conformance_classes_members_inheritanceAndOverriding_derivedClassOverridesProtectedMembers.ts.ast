@@ -1,0 +1,197 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            StringKeyword
+          PropertySignature
+            Identifier: ' bar'
+            StringKeyword
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' a'
+      TypeQuery
+        Identifier: ' x'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' b'
+      Parameter
+        Identifier: 'a'
+        TypeQuery
+          Identifier: ' x'
+      Block
+    GetAccessor
+      ProtectedKeyword
+      Identifier: ' c'
+      Block
+        ReturnStatement
+          Identifier: ' x'
+    SetAccessor
+      ProtectedKeyword
+      Identifier: ' c'
+      Parameter
+        Identifier: 'v'
+        TypeQuery
+          Identifier: ' x'
+      Block
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' d'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeQuery
+            Identifier: ' x'
+        VoidKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' r'
+      TypeQuery
+        Identifier: ' x'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' s'
+      Parameter
+        Identifier: 'a'
+        TypeQuery
+          Identifier: ' x'
+      Block
+    GetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' t'
+      Block
+        ReturnStatement
+          Identifier: ' x'
+    SetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' t'
+      Parameter
+        Identifier: 'v'
+        TypeQuery
+          Identifier: ' x'
+      Block
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' u'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeQuery
+            Identifier: ' x'
+        VoidKeyword
+    Constructor
+      Parameter
+        Identifier: 'a'
+        TypeQuery
+          Identifier: ' x'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' a'
+      TypeQuery
+        Identifier: ' y'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' b'
+      Parameter
+        Identifier: 'a'
+        TypeQuery
+          Identifier: ' y'
+      Block
+    GetAccessor
+      ProtectedKeyword
+      Identifier: ' c'
+      Block
+        ReturnStatement
+          Identifier: ' y'
+    SetAccessor
+      ProtectedKeyword
+      Identifier: ' c'
+      Parameter
+        Identifier: 'v'
+        TypeQuery
+          Identifier: ' y'
+      Block
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' d'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeQuery
+            Identifier: ' y'
+        VoidKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' r'
+      TypeQuery
+        Identifier: ' y'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' s'
+      Parameter
+        Identifier: 'a'
+        TypeQuery
+          Identifier: ' y'
+      Block
+    GetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' t'
+      Block
+        ReturnStatement
+          Identifier: ' y'
+    SetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' t'
+      Parameter
+        Identifier: 'a'
+        TypeQuery
+          Identifier: ' y'
+      Block
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' u'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeQuery
+            Identifier: ' y'
+        VoidKeyword
+    Constructor
+      Parameter
+        Identifier: 'a'
+        TypeQuery
+          Identifier: ' y'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'x'

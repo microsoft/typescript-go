@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' a'
+  ExportAssignment
+    Identifier: ' a'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+a'

@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'decorator'
+      PublicKeyword
+      Identifier: ' field1'
+      LiteralType
+        PrefixUnaryExpression
+          NumericLiteral
+      PrefixUnaryExpression
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' decorator'
+    Parameter
+      Identifier: 'target'
+      AnyKeyword
+    Parameter
+      Identifier: ' field'
+      AnyKeyword
+    Block

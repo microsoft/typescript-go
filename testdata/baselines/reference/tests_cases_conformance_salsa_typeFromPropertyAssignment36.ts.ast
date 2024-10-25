@@ -1,0 +1,251 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    Block
+      FunctionDeclaration
+        Identifier: ' d'
+        Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    d'
+            Identifier: 'e'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    d'
+          Identifier: 'e'
+      IfStatement
+        Identifier: 'b'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        d'
+                Identifier: 'q'
+              EqualsToken
+              FalseKeyword
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    // error d.q might not be assigned
+    d'
+          Identifier: 'q'
+      IfStatement
+        Identifier: 'b'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        d'
+                Identifier: 'q'
+              EqualsToken
+              FalseKeyword
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        d'
+                Identifier: 'q'
+              EqualsToken
+              TrueKeyword
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    d'
+          Identifier: 'q'
+      IfStatement
+        Identifier: 'b'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        d'
+                Identifier: 'r'
+              EqualsToken
+              NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        d'
+                Identifier: 'r'
+              EqualsToken
+              NumericLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    d'
+          Identifier: 'r'
+      IfStatement
+        Identifier: 'b'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        d'
+                Identifier: 's'
+              EqualsToken
+              StringLiteral
+      ReturnStatement
+        Identifier: ' d'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' f'
+            TrueKeyword
+          Identifier: 's'
+  FunctionDeclaration
+    Identifier: ' d'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+d'
+        Identifier: 'e'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+d'
+      Identifier: 'e'
+  IfStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        FalseKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    d'
+            Identifier: 'q'
+          EqualsToken
+          FalseKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+d'
+      Identifier: 'q'
+  IfStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        FalseKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    d'
+            Identifier: 'q'
+          EqualsToken
+          FalseKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    d'
+            Identifier: 'q'
+          EqualsToken
+          TrueKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+d'
+      Identifier: 'q'
+  IfStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        FalseKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    d'
+            Identifier: 'r'
+          EqualsToken
+          NumericLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    d'
+            Identifier: 'r'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+d'
+      Identifier: 'r'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionExpression
+          Block
+  IfStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        FalseKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    g'
+            Identifier: 'expando'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+g'
+      Identifier: 'expando'
+  IfStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        FalseKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    g'
+            Identifier: 'both'
+          EqualsToken
+          StringLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    g'
+            Identifier: 'both'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+g'
+      Identifier: 'both'

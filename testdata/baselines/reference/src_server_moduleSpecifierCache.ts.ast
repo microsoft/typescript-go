@@ -1,0 +1,583 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    closeFileWatcher'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    FileWatcher'
+        ImportSpecifier
+          Identifier: '
+    ModulePath'
+        ImportSpecifier
+          Identifier: '
+    ModuleSpecifierCache'
+        ImportSpecifier
+          Identifier: '
+    ModuleSpecifierOptions'
+        ImportSpecifier
+          Identifier: '
+    nodeModulesPathPart'
+        ImportSpecifier
+          Identifier: '
+    Path'
+        ImportSpecifier
+          Identifier: '
+    ResolvedModuleSpecifierInfo'
+        ImportSpecifier
+          Identifier: '
+    UserPreferences'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ModuleSpecifierResolutionCacheHost'
+    MethodSignature
+      Identifier: '
+    watchNodeModulesForPackageJsonChanges'
+      Parameter
+        Identifier: 'directoryPath'
+        StringKeyword
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodSignature
+      Identifier: '
+    toPath'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' Path'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createModuleSpecifierCache'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionCacheHost'
+    TypeReference
+      Identifier: ' ModuleSpecifierCache'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' containedNodeModulesWatchers'
+            UnionType
+              TypeReference
+                Identifier: ' Map'
+                TypeReference
+                  Identifier: 'Path'
+                TypeReference
+                  Identifier: ' FileWatcher'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cache'
+            UnionType
+              TypeReference
+                Identifier: ' Map'
+                TypeReference
+                  Identifier: 'Path'
+                TypeReference
+                  Identifier: ' ResolvedModuleSpecifierInfo'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' currentKey'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            TypeReference
+              Identifier: ' ModuleSpecifierCache'
+            ObjectLiteralExpression
+              MethodDeclaration
+                Identifier: '
+        get'
+                Parameter
+                  Identifier: 'fromFileName'
+                Parameter
+                  Identifier: ' toFileName'
+                Parameter
+                  Identifier: ' preferences'
+                Parameter
+                  Identifier: ' options'
+                Block
+                  IfStatement
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        Identifier: 'cache'
+                      BarBarToken
+                      BinaryExpression
+                        Identifier: ' currentKey'
+                        ExclamationEqualsEqualsToken
+                        CallExpression
+                          Identifier: ' key'
+                          Identifier: 'fromFileName'
+                          Identifier: ' preferences'
+                          Identifier: ' options'
+                    ReturnStatement
+                      Identifier: ' undefined'
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' cache'
+                        Identifier: 'get'
+                      Identifier: 'toFileName'
+              MethodDeclaration
+                Identifier: '
+        set'
+                Parameter
+                  Identifier: 'fromFileName'
+                Parameter
+                  Identifier: ' toFileName'
+                Parameter
+                  Identifier: ' preferences'
+                Parameter
+                  Identifier: ' options'
+                Parameter
+                  Identifier: ' kind'
+                Parameter
+                  Identifier: ' modulePaths'
+                Parameter
+                  Identifier: ' moduleSpecifiers'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          Identifier: '
+            ensureCache'
+                          Identifier: 'fromFileName'
+                          Identifier: ' preferences'
+                          Identifier: ' options'
+                        Identifier: 'set'
+                      Identifier: 'toFileName'
+                      CallExpression
+                        Identifier: ' createInfo'
+                        Identifier: 'kind'
+                        Identifier: ' modulePaths'
+                        Identifier: ' moduleSpecifiers'
+                        Identifier: ' /*packageName*/ undefined'
+                        FalseKeyword
+                  IfStatement
+                    Identifier: 'moduleSpecifiers'
+                    Block
+                      ForOfStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' p'
+                        Identifier: ' modulePaths'
+                        Block
+                          IfStatement
+                            PropertyAccessExpression
+                              Identifier: 'p'
+                              Identifier: 'isInNodeModules'
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' nodeModulesPath'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' p'
+                                          Identifier: 'path'
+                                        Identifier: 'substring'
+                                      NumericLiteral
+                                      BinaryExpression
+                                        BinaryExpression
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' p'
+                                                Identifier: 'path'
+                                              Identifier: 'indexOf'
+                                            Identifier: 'nodeModulesPathPart'
+                                          PlusToken
+                                          PropertyAccessExpression
+                                            Identifier: ' nodeModulesPathPart'
+                                            Identifier: 'length'
+                                        MinusToken
+                                        NumericLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' key'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' host'
+                                        Identifier: 'toPath'
+                                      Identifier: 'nodeModulesPath'
+                              IfStatement
+                                PrefixUnaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'containedNodeModulesWatchers'
+                                      QuestionDotToken
+                                      Identifier: 'has'
+                                    Identifier: 'key'
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        ParenthesizedExpression
+                                          BinaryExpression
+                                            Identifier: 'containedNodeModulesWatchers'
+                                            BarBarEqualsToken
+                                            NewExpression
+                                              Identifier: ' Map'
+                                        Identifier: 'set'
+                                      Identifier: '
+                                key'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                                host'
+                                          Identifier: 'watchNodeModulesForPackageJsonChanges'
+                                        Identifier: 'nodeModulesPath'
+              MethodDeclaration
+                Identifier: '
+        setModulePaths'
+                Parameter
+                  Identifier: 'fromFileName'
+                Parameter
+                  Identifier: ' toFileName'
+                Parameter
+                  Identifier: ' preferences'
+                Parameter
+                  Identifier: ' options'
+                Parameter
+                  Identifier: ' modulePaths'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' cache'
+                        CallExpression
+                          Identifier: ' ensureCache'
+                          Identifier: 'fromFileName'
+                          Identifier: ' preferences'
+                          Identifier: ' options'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' info'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' cache'
+                            Identifier: 'get'
+                          Identifier: 'toFileName'
+                  IfStatement
+                    Identifier: 'info'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                info'
+                            Identifier: 'modulePaths'
+                          EqualsToken
+                          Identifier: ' modulePaths'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                cache'
+                            Identifier: 'set'
+                          Identifier: 'toFileName'
+                          CallExpression
+                            Identifier: ' createInfo'
+                            Identifier: '/*kind*/ undefined'
+                            Identifier: ' modulePaths'
+                            Identifier: ' /*moduleSpecifiers*/ undefined'
+                            Identifier: ' /*packageName*/ undefined'
+                            Identifier: ' /*isBlockedByPackageJsonDependencies*/ undefined'
+              MethodDeclaration
+                Identifier: '
+        setBlockedByPackageJsonDependencies'
+                Parameter
+                  Identifier: 'fromFileName'
+                Parameter
+                  Identifier: ' toFileName'
+                Parameter
+                  Identifier: ' preferences'
+                Parameter
+                  Identifier: ' options'
+                Parameter
+                  Identifier: ' packageName'
+                Parameter
+                  Identifier: ' isBlockedByPackageJsonDependencies'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' cache'
+                        CallExpression
+                          Identifier: ' ensureCache'
+                          Identifier: 'fromFileName'
+                          Identifier: ' preferences'
+                          Identifier: ' options'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' info'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' cache'
+                            Identifier: 'get'
+                          Identifier: 'toFileName'
+                  IfStatement
+                    Identifier: 'info'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                info'
+                            Identifier: 'isBlockedByPackageJsonDependencies'
+                          EqualsToken
+                          Identifier: ' isBlockedByPackageJsonDependencies'
+                      ExpressionStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                info'
+                            Identifier: 'packageName'
+                          EqualsToken
+                          Identifier: ' packageName'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                cache'
+                            Identifier: 'set'
+                          Identifier: 'toFileName'
+                          CallExpression
+                            Identifier: ' createInfo'
+                            Identifier: '/*kind*/ undefined'
+                            Identifier: ' /*modulePaths*/ undefined'
+                            Identifier: ' /*moduleSpecifiers*/ undefined'
+                            Identifier: ' packageName'
+                            Identifier: ' isBlockedByPackageJsonDependencies'
+              MethodDeclaration
+                Identifier: '
+        clear'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            containedNodeModulesWatchers'
+                        QuestionDotToken
+                        Identifier: 'forEach'
+                      Identifier: 'closeFileWatcher'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            cache'
+                        QuestionDotToken
+                        Identifier: 'clear'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            containedNodeModulesWatchers'
+                        QuestionDotToken
+                        Identifier: 'clear'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            currentKey'
+                      EqualsToken
+                      Identifier: ' undefined'
+              MethodDeclaration
+                Identifier: '
+        count'
+                Block
+                  ReturnStatement
+                    ConditionalExpression
+                      Identifier: ' cache'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' cache'
+                        Identifier: 'size'
+                      ColonToken
+                      NumericLiteral
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'Debug'
+          Identifier: 'isDebugging'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Object'
+                Identifier: 'defineProperty'
+              Identifier: 'result'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' get'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Identifier: ' cache'
+      ReturnStatement
+        Identifier: ' result'
+      FunctionDeclaration
+        Identifier: ' ensureCache'
+        Parameter
+          Identifier: 'fromFileName'
+          TypeReference
+            Identifier: ' Path'
+        Parameter
+          Identifier: ' preferences'
+          TypeReference
+            Identifier: ' UserPreferences'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' ModuleSpecifierOptions'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newKey'
+                CallExpression
+                  Identifier: ' key'
+                  Identifier: 'fromFileName'
+                  Identifier: ' preferences'
+                  Identifier: ' options'
+          IfStatement
+            BinaryExpression
+              Identifier: 'cache'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'currentKey'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' newKey'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            result'
+                    Identifier: 'clear'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        currentKey'
+              EqualsToken
+              Identifier: ' newKey'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' cache'
+              BarBarEqualsToken
+              NewExpression
+                Identifier: ' Map'
+      FunctionDeclaration
+        Identifier: ' key'
+        Parameter
+          Identifier: 'fromFileName'
+          TypeReference
+            Identifier: ' Path'
+        Parameter
+          Identifier: ' preferences'
+          TypeReference
+            Identifier: ' UserPreferences'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' ModuleSpecifierOptions'
+        Block
+          ReturnStatement
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'fromFileName'
+                TemplateMiddle
+              TemplateSpan
+                PropertyAccessExpression
+                  Identifier: 'preferences'
+                  Identifier: 'importModuleSpecifierEnding'
+                TemplateMiddle
+              TemplateSpan
+                PropertyAccessExpression
+                  Identifier: 'preferences'
+                  Identifier: 'importModuleSpecifierPreference'
+                TemplateMiddle
+              TemplateSpan
+                PropertyAccessExpression
+                  Identifier: 'options'
+                  Identifier: 'overrideImportMode'
+                TemplateTail
+      FunctionDeclaration
+        Identifier: ' createInfo'
+        Parameter
+          Identifier: '
+        kind'
+          UnionType
+            IndexedAccessType
+              TypeReference
+                Identifier: ' ResolvedModuleSpecifierInfo'
+              LiteralType
+                StringLiteral
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        modulePaths'
+          UnionType
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' ModulePath'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        moduleSpecifiers'
+          UnionType
+            TypeOperator
+              ArrayType
+                StringKeyword
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        packageName'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        isBlockedByPackageJsonDependencies'
+          UnionType
+            BooleanKeyword
+            UndefinedKeyword
+        TypeReference
+          Identifier: ' ResolvedModuleSpecifierInfo'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' kind'
+              ShorthandPropertyAssignment
+                Identifier: ' modulePaths'
+              ShorthandPropertyAssignment
+                Identifier: ' moduleSpecifiers'
+              ShorthandPropertyAssignment
+                Identifier: ' packageName'
+              ShorthandPropertyAssignment
+                Identifier: ' isBlockedByPackageJsonDependencies'

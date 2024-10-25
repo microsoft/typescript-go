@@ -1,0 +1,70 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' ElementClass'
+        PropertySignature
+          Identifier: '
+		render'
+          AnyKeyword
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+  InterfaceDeclaration
+    Identifier: ' Obj1type'
+    ConstructSignature
+      Parameter
+        Identifier: 'n'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Obj1'
+        TypeReference
+          Identifier: ' Obj1type'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Obj1'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' x'
+          JsxExpression
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' Obj2type'
+    CallSignature
+      Parameter
+        Identifier: 'n'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' render'
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Obj2'
+        TypeReference
+          Identifier: ' Obj2type'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Obj2'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' x'
+          JsxExpression
+            NumericLiteral
+        JsxAttribute
+          Identifier: ' render'
+          JsxExpression
+            NumericLiteral

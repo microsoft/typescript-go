@@ -1,0 +1,33 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' eaC'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' tF'
+      Block
+    SemicolonClassElement
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' tsF'
+      Parameter
+        Identifier: 'param'
+        AnyKeyword
+      Block
+    SemicolonClassElement
+  EmptyStatement
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' eaC2'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' tF'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' tsF'
+      Parameter
+        Identifier: 'param'
+        AnyKeyword
+  EmptyStatement

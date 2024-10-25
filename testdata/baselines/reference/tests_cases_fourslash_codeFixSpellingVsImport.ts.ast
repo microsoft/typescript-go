@@ -1,0 +1,33 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// Tests that the import fix is returned first.
+
+// @Filename: /a.ts
+////export const foo = 0;
+
+// @Filename: /b.ts
+////const foof = 0;
+////foo;
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFixAvailable'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            NoSubstitutionTemplateLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral

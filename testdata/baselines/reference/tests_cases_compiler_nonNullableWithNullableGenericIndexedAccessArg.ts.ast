@@ -1,0 +1,102 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' StateSchema'
+    PropertySignature
+      Identifier: '
+  states'
+      QuestionToken
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' StateSchema'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' StateNode'
+    TypeParameter
+      Identifier: 'TStateSchema'
+      TypeReference
+        Identifier: ' StateSchema'
+    PropertyDeclaration
+      Identifier: '
+  schema'
+      TypeReference
+        Identifier: ' TStateSchema'
+  TypeAliasDeclaration
+    Identifier: ' StateNodesConfig'
+    TypeParameter
+      Identifier: 'TStateSchema'
+      TypeReference
+        Identifier: ' StateSchema'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          IndexedAccessType
+            TypeReference
+              Identifier: ' TStateSchema'
+            LiteralType
+              StringLiteral
+      TypeReference
+        Identifier: ' StateNode'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'NonNullable'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'TStateSchema'
+              LiteralType
+                StringLiteral
+          TypeReference
+            Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' Ordering'
+    TypeParameter
+      Identifier: 'TOrderBy'
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    orderBy'
+        TypeReference
+          Identifier: ' TOrderBy'
+  TypeAliasDeclaration
+    Identifier: ' Query'
+    TypeParameter
+      Identifier: 'TOrderBy'
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    order'
+        QuestionToken
+        TypeReference
+          Identifier: ' Ordering'
+          TypeReference
+            Identifier: 'TOrderBy'
+  TypeAliasDeclaration
+    Identifier: ' QueryHandler'
+    TypeParameter
+      Identifier: '
+    TQuery'
+      TypeReference
+        Identifier: ' Query'
+        TypeReference
+          Identifier: 'TOrderBy'
+    TypeParameter
+      Identifier: '
+    TOrderBy'
+      StringKeyword
+      IndexedAccessType
+        TypeReference
+          Identifier: ' NonNullable'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'TQuery'
+            LiteralType
+              StringLiteral
+        LiteralType
+          StringLiteral
+    TypeLiteral

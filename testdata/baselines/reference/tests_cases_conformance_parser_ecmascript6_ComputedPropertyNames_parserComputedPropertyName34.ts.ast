@@ -1,0 +1,12 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      ComputedPropertyName
+        Identifier: 'e'
+      PostfixUnaryExpression
+        Identifier: ' id'
+    EnumMember
+      ComputedPropertyName
+        Identifier: 'e2'
+      NumericLiteral

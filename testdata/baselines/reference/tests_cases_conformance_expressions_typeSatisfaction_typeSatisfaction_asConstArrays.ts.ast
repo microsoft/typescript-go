@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr1'
+        SatisfiesExpression
+          AsExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            TypeReference
+              Identifier: ' const'
+          TypeOperator
+            ArrayType
+              UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr2'
+        SatisfiesExpression
+          AsExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            TypeReference
+              Identifier: ' const'
+          ArrayType
+            UnknownKeyword

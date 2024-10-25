@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    ExportKeyword
+    Identifier: ' Foo'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' Bar'
+      Block

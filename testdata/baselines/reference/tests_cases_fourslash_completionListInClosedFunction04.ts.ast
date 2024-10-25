@@ -1,0 +1,30 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////function foo(x: string, y: number, z: boolean) {
+////    function bar(a: number, b: string = /*1*/, c: typeof x = "hello") {
+////
+////    }
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    // Note: `b = b` or `b = c` would be a compile error
+    includes'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral

@@ -1,0 +1,73 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getSpecifier'
+    StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' whatToLoad'
+        BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' directory'
+        StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' moduleFile'
+        NumberKeyword
+  ExpressionStatement
+    CallExpression
+      ImportKeyword
+      CallExpression
+        Identifier: 'getSpecifier'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p0'
+        CallExpression
+          ImportKeyword
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'directory'
+              TemplateMiddle
+            TemplateSpan
+              Identifier: 'moduleFile'
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        CallExpression
+          ImportKeyword
+          CallExpression
+            Identifier: 'getSpecifier'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        CallExpression
+          ImportKeyword
+          ConditionalExpression
+            Identifier: 'whatToLoad'
+            QuestionToken
+            CallExpression
+              Identifier: ' getSpecifier'
+            ColonToken
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' returnDynamicLoad'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          ImportKeyword
+          Identifier: 'path'

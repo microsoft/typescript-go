@@ -1,0 +1,87 @@
+SourceFile
+  ContinueStatement
+  LabeledStatement
+    Identifier: '
+
+// non-existent label
+ONE'
+    ForInStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+      ObjectLiteralExpression
+      ContinueStatement
+        Identifier: ' TWO'
+  LabeledStatement
+    Identifier: '
+
+// continue from inside function
+TWO'
+    ForInStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+      ObjectLiteralExpression
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fn'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ContinueStatement
+                    Identifier: ' TWO'
+  LabeledStatement
+    Identifier: '
+
+THREE'
+    ForInStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+      ObjectLiteralExpression
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fn'
+              FunctionExpression
+                Block
+                  ContinueStatement
+                    Identifier: ' THREE'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ObjectLiteralExpression
+    Block
+      ContinueStatement
+        Identifier: ' FIVE'
+      LabeledStatement
+        Identifier: '
+    FIVE'
+        ForInStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+          ObjectLiteralExpression
+          Block
+  LabeledStatement
+    Identifier: '
+
+// label on non-loop statement
+NINE'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' y'
+          NumericLiteral
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ObjectLiteralExpression
+    Block
+      ContinueStatement
+        Identifier: ' NINE'

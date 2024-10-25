@@ -1,0 +1,43 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classesByRow'
+        TypeReference
+          Identifier: ' Record'
+          StringKeyword
+          ObjectKeyword
+        ObjectLiteralExpression
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' row'
+    ArrayLiteralExpression
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+    Block
+      ClassDeclaration
+        Identifier: ' RowClass'
+        PropertyDeclaration
+          Identifier: '
+    row'
+          Identifier: ' row'
+        PropertyDeclaration
+          StaticKeyword
+          Identifier: ' factory'
+          ArrowFunction
+            EqualsGreaterThanToken
+            NewExpression
+              Identifier: ' RowClass'
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+
+  classesByRow'
+            Identifier: 'row'
+          EqualsToken
+          Identifier: ' RowClass'

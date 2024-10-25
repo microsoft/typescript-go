@@ -1,0 +1,69 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertySignature
+      Identifier: '
+    y'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    z'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    y'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    z'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' // error
+    x'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    y'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    z'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'x'

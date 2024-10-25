@@ -1,0 +1,9 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' bar'
+        Block

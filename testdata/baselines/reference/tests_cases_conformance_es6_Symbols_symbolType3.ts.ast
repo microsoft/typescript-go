@@ -1,0 +1,52 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        CallExpression
+          Identifier: ' Symbol'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' Symbol'
+        Identifier: 'iterator'
+  ExpressionStatement
+    VoidExpression
+      PropertyAccessExpression
+        Identifier: ' Symbol'
+        Identifier: 'toPrimitive'
+  ExpressionStatement
+    TypeOfExpression
+      PropertyAccessExpression
+        Identifier: ' Symbol'
+        Identifier: 'toStringTag'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 's'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 's'
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        Identifier: ' Symbol'
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        Identifier: ' Symbol'
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        Identifier: ' Symbol'
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        Identifier: ' Symbol'
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          CallExpression
+            Identifier: 'Symbol'
+          BarBarToken
+          NumericLiteral

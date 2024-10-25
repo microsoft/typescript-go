@@ -1,0 +1,126 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' PS'
+    PropertySignature
+      Identifier: '
+    multi'
+      LiteralType
+        FalseKeyword
+    PropertySignature
+      Identifier: '
+    value'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    onChange'
+      FunctionType
+        Parameter
+          Identifier: 'selection'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' PM'
+    PropertySignature
+      Identifier: '
+    multi'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    value'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    onChange'
+      FunctionType
+        Parameter
+          Identifier: 'selection'
+          ArrayType
+            StringKeyword
+        VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' ComponentWithUnion'
+    Parameter
+      Identifier: 'props'
+      UnionType
+        TypeReference
+          Identifier: ' PM'
+        TypeReference
+          Identifier: ' PS'
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'h1'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'h1'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' HereIsTheError'
+    Block
+      ReturnStatement
+        ParenthesizedExpression
+          JsxSelfClosingElement
+            Identifier: 'ComponentWithUnion'
+            JsxAttributes
+              JsxAttribute
+                Identifier: '
+            multi'
+                JsxExpression
+                  FalseKeyword
+              JsxAttribute
+                Identifier: '
+            value'
+                JsxExpression
+                  StringLiteral
+              JsxAttribute
+                Identifier: '
+            onChange'
+                JsxExpression
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'val'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' console'
+                        Identifier: 'log'
+                      Identifier: 'val'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Usage with pure TypeScript
+ComponentWithUnion'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    multi'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: '
+    value'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    onChange'
+          ArrowFunction
+            Parameter
+              Identifier: ' val'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              Identifier: 'val'

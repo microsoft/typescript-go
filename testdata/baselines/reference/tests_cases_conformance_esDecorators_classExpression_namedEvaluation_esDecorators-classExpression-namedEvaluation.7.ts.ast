@@ -1,0 +1,38 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' obj'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        BinaryExpression
+          Identifier: 'x'
+          EqualsToken
+          ClassExpression
+            Decorator
+              Identifier: 'dec'
+      EqualsToken
+      Identifier: ' obj'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        BinaryExpression
+          Identifier: 'x'
+          EqualsToken
+          ClassExpression
+            PropertyDeclaration
+              Decorator
+                Identifier: 'dec'
+              Identifier: ' y'
+              AnyKeyword
+      EqualsToken
+      Identifier: ' obj'

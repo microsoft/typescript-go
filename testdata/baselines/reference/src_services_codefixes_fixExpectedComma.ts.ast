@@ -1,0 +1,309 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isArrayLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    isObjectLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' expectedErrorCode'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' Diagnostics'
+            Identifier: '_0_expected'
+          Identifier: 'code'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          Identifier: 'expectedErrorCode'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' info'
+                  CallExpression
+                    Identifier: ' getInfo'
+                    Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'span'
+                      Identifier: 'start'
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'errorCode'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'info'
+              ReturnStatement
+                Identifier: ' undefined'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' t'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' doChange'
+                        Identifier: 't'
+                        Identifier: ' sourceFile'
+                        Identifier: ' info'
+            ReturnStatement
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'createCodeFixAction'
+                  Identifier: '
+            fixId'
+                  Identifier: '
+            changes'
+                  ArrayLiteralExpression
+                    PropertyAccessExpression
+                      Identifier: 'Diagnostics'
+                      Identifier: 'Change_0_to_1'
+                    StringLiteral
+                    StringLiteral
+                  Identifier: '
+            fixId'
+                  ArrayLiteralExpression
+                    PropertyAccessExpression
+                      Identifier: 'Diagnostics'
+                      Identifier: 'Change_0_to_1'
+                    StringLiteral
+                    StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' info'
+                        CallExpression
+                          Identifier: ' getInfo'
+                          PropertyAccessExpression
+                            Identifier: 'diag'
+                            Identifier: 'file'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'start'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'code'
+                  IfStatement
+                    Identifier: 'info'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' doChange'
+                        Identifier: 'changes'
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'sourceFile'
+                        Identifier: ' info'
+  InterfaceDeclaration
+    Identifier: ' Info'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+  FunctionDeclaration
+    Identifier: ' getInfo'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' _'
+      NumberKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Info'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      ReturnStatement
+        ConditionalExpression
+          ParenthesizedExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'kind'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'SemicolonToken'
+                AmpersandAmpersandToken
+                PropertyAccessExpression
+                  Identifier: '
+            node'
+                  Identifier: 'parent'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'isObjectLiteralExpression'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                  BarBarToken
+                  CallExpression
+                    Identifier: '
+                isArrayLiteralExpression'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+          QuestionToken
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' node'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' node'
+      TypeReference
+        Identifier: ' Info'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newNode'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createToken'
+              PropertyAccessExpression
+                Identifier: 'SyntaxKind'
+                Identifier: 'CommaToken'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          Identifier: 'sourceFile'
+          Identifier: ' node'
+          Identifier: ' newNode'

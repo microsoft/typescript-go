@@ -1,0 +1,386 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' createBaseline'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createWatchCompilerHostOfConfigFileForBaseline'
+        ImportSpecifier
+          Identifier: '
+    runWatchBaseline'
+        ImportSpecifier
+          Identifier: '
+    TscWatchCompileChange'
+        ImportSpecifier
+          Identifier: '
+    verifyTscWatch'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' scenario'
+                StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' file'
+                TypeReference
+                  Identifier: ' File'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        path'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        content'
+                    StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' makeChangeToFile'
+                ArrayType
+                  TypeReference
+                    Identifier: ' TscWatchCompileChange'
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+        caption'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+        edit'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' sys'
+                            Identifier: 'modifyFile'
+                          PropertyAccessExpression
+                            Identifier: 'file'
+                            Identifier: 'path'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+        timeouts'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' sys'
+                            Identifier: 'runQueuedTimeoutCallbacks'
+          FunctionDeclaration
+            Identifier: ' checkConsoleClearingUsingCommandLineOptions'
+            Parameter
+              Identifier: 'subScenario'
+              StringKeyword
+            Parameter
+              Identifier: ' commandLineOptions'
+              QuestionToken
+              ArrayType
+                StringKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        verifyTscWatch'
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            scenario'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            subScenario'
+                    PropertyAssignment
+                      Identifier: '
+            commandLineArgs'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        PropertyAccessExpression
+                          Identifier: ' file'
+                          Identifier: 'path'
+                        SpreadElement
+                          BinaryExpression
+                            Identifier: 'commandLineOptions'
+                            BarBarToken
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'emptyArray'
+                    PropertyAssignment
+                      Identifier: '
+            sys'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createWatchedSystem'
+                          ArrayLiteralExpression
+                            Identifier: 'file'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' currentDirectory'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'getDirectoryPath'
+                                PropertyAccessExpression
+                                  Identifier: 'file'
+                                  Identifier: 'path'
+                    PropertyAssignment
+                      Identifier: '
+            edits'
+                      Identifier: ' makeChangeToFile'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    checkConsoleClearingUsingCommandLineOptions'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    checkConsoleClearingUsingCommandLineOptions'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    checkConsoleClearingUsingCommandLineOptions'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    checkConsoleClearingUsingCommandLineOptions'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' compilerOptions'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'CompilerOptions'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            preserveWatchOutput'
+                            TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' configFile'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            CallExpression
+                              Identifier: ' jsonToReadableText'
+                              ObjectLiteralExpression
+                                ShorthandPropertyAssignment
+                                  Identifier: ' compilerOptions'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' baseline'
+                                CallExpression
+                                  Identifier: ' createBaseline'
+                                  CallExpression
+                                    Identifier: 'sys'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' watch'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createWatchProgram'
+                                  CallExpression
+                                    Identifier: 'createWatchCompilerHostOfConfigFileForBaseline'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                system'
+                                        PropertyAccessExpression
+                                          Identifier: ' baseline'
+                                          Identifier: 'sys'
+                                      PropertyAssignment
+                                        Identifier: '
+                cb'
+                                        PropertyAccessExpression
+                                          Identifier: ' baseline'
+                                          Identifier: 'cb'
+                                      PropertyAssignment
+                                        Identifier: '
+                configFileName'
+                                        PropertyAccessExpression
+                                          Identifier: ' configFile'
+                                          Identifier: 'path'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            // Initially console is cleared if --preserveOutput is not provided since the config file is yet to be parsed
+            runWatchBaseline'
+                              ObjectLiteralExpression
+                                ShorthandPropertyAssignment
+                                  Identifier: '
+                scenario'
+                                PropertyAssignment
+                                  Identifier: '
+                subScenario'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                commandLineArgs'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                                    PropertyAccessExpression
+                                      Identifier: ' configFile'
+                                      Identifier: 'path'
+                                SpreadAssignment
+                                  Identifier: 'baseline'
+                                PropertyAssignment
+                                  Identifier: '
+                getPrograms'
+                                  ArrowFunction
+                                    EqualsGreaterThanToken
+                                    ArrayLiteralExpression
+                                      ArrayLiteralExpression
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'watch'
+                                                Identifier: 'getCurrentProgram'
+                                            Identifier: 'getProgram'
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' watch'
+                                            Identifier: 'getCurrentProgram'
+                                PropertyAssignment
+                                  Identifier: '
+                edits'
+                                  Identifier: ' makeChangeToFile'
+                                PropertyAssignment
+                                  Identifier: '
+                watchOrSolution'
+                                  Identifier: ' watch'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              Identifier: ' configFile'
+                              Identifier: 'path'
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            sys'
+                        PropertyAssignment
+                          Identifier: '
+            edits'
+                          Identifier: ' makeChangeToFile'
+                  FunctionDeclaration
+                    Identifier: ' sys'
+                    Block
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createWatchedSystem'
+                          ArrayLiteralExpression
+                            Identifier: 'file'
+                            Identifier: ' configFile'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' currentDirectory'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'getDirectoryPath'
+                                PropertyAccessExpression
+                                  Identifier: 'configFile'
+                                  Identifier: 'path'

@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// class C {}
+//// function f(v: number): void { }
+//// f(new C().add(1, 2))
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          CallExpression
+            Identifier: ' ignoreInterpolations'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Declare_method_0'
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

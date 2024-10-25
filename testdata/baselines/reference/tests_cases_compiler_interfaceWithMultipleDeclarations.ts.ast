@@ -1,0 +1,85 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    TypeParameter
+      Identifier: 'V'
+  InterfaceDeclaration
+    Identifier: ' I1'
+    TypeParameter
+      Identifier: 'S'
+  InterfaceDeclaration
+    Identifier: ' I1'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' I1'
+    TypeParameter
+      Identifier: 'V'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I1'
+    TypeParameter
+      Identifier: 'V'
+    TypeParameter
+      Identifier: ' X'
+      TypeReference
+        Identifier: ' V'
+  InterfaceDeclaration
+    Identifier: ' I1'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+      FunctionType
+        StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'U'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' Y'
+  InterfaceDeclaration
+    Identifier: ' I2'
+  InterfaceDeclaration
+    Identifier: ' I3'
+  InterfaceDeclaration
+    Identifier: ' I3'
+    TypeParameter
+      Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' I4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' I4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'

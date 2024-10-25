@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' app'
+        FunctionExpression
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' _this'
+                  ThisKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+    _this'
+                  Identifier: 'swap'
+                EqualsToken
+                FunctionExpression
+                  Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' app'
+  ExpressionStatement
+    Identifier: '
+a'

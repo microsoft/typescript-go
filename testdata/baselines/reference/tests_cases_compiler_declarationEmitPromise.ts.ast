@@ -1,0 +1,286 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' bluebird'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' all'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'bluebird'
+          AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' runSampleWorks'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    TypeParameter
+      Identifier: ' D'
+    TypeParameter
+      Identifier: ' E'
+    Parameter
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' bluebird'
+        TypeReference
+          Identifier: 'A'
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      TypeReference
+        Identifier: ' bluebird'
+        TypeReference
+          Identifier: 'B'
+    Parameter
+      Identifier: ' c'
+      QuestionToken
+      TypeReference
+        Identifier: ' bluebird'
+        TypeReference
+          Identifier: 'C'
+    Parameter
+      Identifier: ' d'
+      QuestionToken
+      TypeReference
+        Identifier: ' bluebird'
+        TypeReference
+          Identifier: 'D'
+    Parameter
+      Identifier: ' e'
+      QuestionToken
+      TypeReference
+        Identifier: ' bluebird'
+        TypeReference
+          Identifier: 'E'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            AwaitExpression
+              CallExpression
+                ParenthesizedExpression
+                  AsExpression
+                    PropertyAccessExpression
+                      Identifier: 'bluebird'
+                      Identifier: 'all'
+                    AnyKeyword
+                CallExpression
+                  PropertyAccessExpression
+                    ArrayLiteralExpression
+                      Identifier: 'a'
+                      Identifier: ' b'
+                      Identifier: ' c'
+                      Identifier: ' d'
+                      Identifier: ' e'
+                    Identifier: 'filter'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'el'
+                    EqualsGreaterThanToken
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        Identifier: 'el'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' func'
+            ArrowFunction
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'f'
+                FunctionType
+                  Parameter
+                    Identifier: 'a'
+                    TypeReference
+                      Identifier: ' A'
+                  Parameter
+                    Identifier: ' b'
+                    QuestionToken
+                    TypeReference
+                      Identifier: ' B'
+                  Parameter
+                    Identifier: ' c'
+                    QuestionToken
+                    TypeReference
+                      Identifier: ' C'
+                  Parameter
+                    Identifier: ' d'
+                    QuestionToken
+                    TypeReference
+                      Identifier: ' D'
+                  Parameter
+                    Identifier: ' e'
+                    QuestionToken
+                    TypeReference
+                      Identifier: ' E'
+                  TypeReference
+                    Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        f'
+                  Identifier: 'apply'
+                ThisKeyword
+                Identifier: ' result'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rfunc'
+            IntersectionType
+              TypeQuery
+                Identifier: ' func'
+              TypeLiteral
+            AsExpression
+              Identifier: ' func'
+              AnyKeyword
+      ReturnStatement
+        Identifier: ' rfunc'
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' runSampleBreaks'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    TypeParameter
+      Identifier: ' D'
+    TypeParameter
+      Identifier: ' E'
+    Parameter
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' bluebird'
+        TypeReference
+          Identifier: 'A'
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      TypeReference
+        Identifier: ' bluebird'
+        TypeReference
+          Identifier: 'B'
+    Parameter
+      Identifier: ' c'
+      QuestionToken
+      TypeReference
+        Identifier: ' bluebird'
+        TypeReference
+          Identifier: 'C'
+    Parameter
+      Identifier: ' d'
+      QuestionToken
+      TypeReference
+        Identifier: ' bluebird'
+        TypeReference
+          Identifier: 'D'
+    Parameter
+      Identifier: ' e'
+      QuestionToken
+      TypeReference
+        Identifier: ' bluebird'
+        TypeReference
+          Identifier: 'E'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            AwaitExpression
+              CallExpression
+                ParenthesizedExpression
+                  AsExpression
+                    PropertyAccessExpression
+                      Identifier: 'bluebird'
+                      Identifier: 'all'
+                    AnyKeyword
+                CallExpression
+                  PropertyAccessExpression
+                    ArrayLiteralExpression
+                      Identifier: 'a'
+                      Identifier: ' b'
+                      Identifier: ' c'
+                      Identifier: ' d'
+                      Identifier: ' e'
+                    Identifier: 'filter'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'el'
+                    EqualsGreaterThanToken
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        Identifier: 'el'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' func'
+            ArrowFunction
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'f'
+                FunctionType
+                  Parameter
+                    Identifier: 'a'
+                    TypeReference
+                      Identifier: ' A'
+                  Parameter
+                    Identifier: ' b'
+                    QuestionToken
+                    TypeReference
+                      Identifier: ' B'
+                  Parameter
+                    Identifier: ' c'
+                    QuestionToken
+                    TypeReference
+                      Identifier: ' C'
+                  Parameter
+                    Identifier: ' d'
+                    QuestionToken
+                    TypeReference
+                      Identifier: ' D'
+                  Parameter
+                    Identifier: ' e'
+                    QuestionToken
+                    TypeReference
+                      Identifier: ' E'
+                  TypeReference
+                    Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        f'
+                  Identifier: 'apply'
+                ThisKeyword
+                Identifier: ' result'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rfunc'
+            TypeQuery
+              Identifier: ' func'
+            AsExpression
+              Identifier: ' func'
+              AnyKeyword
+      ReturnStatement
+        Identifier: ' rfunc'

@@ -1,0 +1,61 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    Constructor
+      Parameter
+        Identifier: 'x'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+            EqualsToken
+            Identifier: ' x'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * 
+     * @param {T} x 
+     * @param {Id<T>} y
+     * @param {Id2} alpha
+     * @return {T}
+     */
+    foo'
+      Parameter
+        Identifier: 'x'
+      Parameter
+        Identifier: ' y'
+      Parameter
+        Identifier: ' alpha'
+      Block
+        ReturnStatement
+          CallExpression
+            Identifier: ' alpha'
+            CallExpression
+              Identifier: 'y'
+              Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        NewExpression
+          Identifier: ' Foo'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        NewExpression
+          Identifier: ' Foo'
+          FalseKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+f'
+        Identifier: 'a'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'a'

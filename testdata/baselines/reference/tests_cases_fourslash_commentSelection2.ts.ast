@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '// Common jsx insert comment.
+
+//@Filename: file.tsx
+//// const a = <MyContainer>
+////     [|<MyFirstComponent />
+////     <MySecondComponent />|]
+//// </MyContainer>;
+//// const b = <MyContainer>
+////     {/*<MyF[|irstComponent />*/}
+////     {/*<MySec|]ondComponent />*/}
+//// </MyContainer>;
+//// const c = <MyContainer>[|
+////     <MyFirstComponent />
+////     <MySecondCompo|]nent />
+//// </MyContainer>;
+
+verify'
+        Identifier: 'commentSelection'
+      NoSubstitutionTemplateLiteral

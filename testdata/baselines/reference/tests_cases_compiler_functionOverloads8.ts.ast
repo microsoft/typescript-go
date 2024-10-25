@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'foo'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'foo'
+      QuestionToken
+      AnyKeyword
+    Block
+      ReturnStatement
+        StringLiteral

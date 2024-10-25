@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Clod'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Clod'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            Identifier: ' x'

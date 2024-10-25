@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        FunctionExpression
+          Parameter
+            Identifier: 'val'
+            BooleanKeyword
+          Block
+            ReturnStatement
+              Identifier: ' val'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      BinaryExpression
+        StringLiteral
+        InKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword

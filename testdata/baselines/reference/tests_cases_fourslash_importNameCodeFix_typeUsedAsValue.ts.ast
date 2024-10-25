@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /a.ts
+////export class ReadonlyArray<T> {}
+
+// @Filename: /b.ts
+////[|new ReadonlyArray<string>();|]
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral

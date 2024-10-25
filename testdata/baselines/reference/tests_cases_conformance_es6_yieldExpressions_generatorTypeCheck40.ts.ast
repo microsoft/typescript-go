@@ -1,0 +1,12 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        HeritageClause
+          ExpressionWithTypeArguments
+            ParenthesizedExpression
+              YieldExpression
+                NumericLiteral

@@ -1,0 +1,4 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block

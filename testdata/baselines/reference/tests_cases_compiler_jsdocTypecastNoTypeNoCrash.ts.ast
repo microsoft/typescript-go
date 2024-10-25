@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Foo'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ParenthesizedExpression
+          Identifier: 'Foo'

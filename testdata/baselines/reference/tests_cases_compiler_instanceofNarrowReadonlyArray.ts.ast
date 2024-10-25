@@ -1,0 +1,26 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' narrow'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeOperator
+          ArrayType
+            NumberKeyword
+        NumberKeyword
+    TypeOperator
+      ArrayType
+        NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          InstanceOfKeyword
+          Identifier: ' Array'
+        Block
+          ReturnStatement
+            Identifier: ' x'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'x'

@@ -1,0 +1,28 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      PublicKeyword
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    IndexSignature
+      PublicKeyword
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' E'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      PublicKeyword
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'

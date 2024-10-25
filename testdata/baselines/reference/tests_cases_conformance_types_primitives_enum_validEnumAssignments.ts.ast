@@ -1,0 +1,127 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' E'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+n'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+n'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' n'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+e'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      Identifier: ' n'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      PrefixUnaryExpression
+        NumericLiteral

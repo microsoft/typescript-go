@@ -1,0 +1,148 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    BooleanKeyword
+    Block
+      ReturnStatement
+        TrueKeyword
+  EnumDeclaration
+    Identifier: ' E1'
+    EnumMember
+      Identifier: ' one'
+  EnumDeclaration
+    Identifier: ' E2'
+    EnumMember
+      Identifier: ' two'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        TupleType
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            StringKeyword
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TupleType
+          TypeReference
+            Identifier: 'E1'
+          TypeReference
+            Identifier: ' E2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        TupleType
+          NumberKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        TupleType
+          TypeReference
+            Identifier: 'E1'
+          TypeReference
+            Identifier: ' E2'
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// no error
+t1'
+      EqualsToken
+      ArrayLiteralExpression
+        Identifier: 'f1'
+        Identifier: ' f2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t2'
+      EqualsToken
+      ArrayLiteralExpression
+        PropertyAccessExpression
+          Identifier: 'E1'
+          Identifier: 'one'
+        PropertyAccessExpression
+          Identifier: ' E2'
+          Identifier: 'two'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t3'
+      EqualsToken
+      ArrayLiteralExpression
+        NumericLiteral
+        Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t4'
+      EqualsToken
+      ArrayLiteralExpression
+        PropertyAccessExpression
+          Identifier: 'E1'
+          Identifier: 'one'
+        PropertyAccessExpression
+          Identifier: ' E2'
+          Identifier: 'two'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        ElementAccessExpression
+          Identifier: ' t1'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        ElementAccessExpression
+          Identifier: ' t2'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e3'
+        ElementAccessExpression
+          Identifier: ' t3'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e4'
+        ElementAccessExpression
+          Identifier: ' t4'
+          NumericLiteral

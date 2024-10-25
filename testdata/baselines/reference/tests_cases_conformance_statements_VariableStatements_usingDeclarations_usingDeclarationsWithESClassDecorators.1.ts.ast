@@ -1,0 +1,18 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' before'
+        NullKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C'

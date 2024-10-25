@@ -1,0 +1,37 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'resolve'
+                  NumericLiteral
+                Identifier: 'then'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                Identifier: ' x'
+            Identifier: 'catch'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+                NumericLiteral
+      ReturnStatement
+        Identifier: ' x'

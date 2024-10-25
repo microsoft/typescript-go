@@ -1,0 +1,88 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Test'
+    TypeParameter
+      Identifier: 'K'
+      TypeOperator
+        AnyKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        UnionType
+          TypeReference
+            Identifier: ' K'
+          LiteralType
+            StringLiteral
+      ConditionalType
+        TypeReference
+          Identifier: ' P'
+        LiteralType
+          StringLiteral
+        LiteralType
+          TrueKeyword
+        FunctionType
+          AnyKeyword
+  FunctionDeclaration
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Test'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res1'
+        CallExpression
+          Identifier: ' test'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  foo'
+              TrueKeyword
+            MethodDeclaration
+              Identifier: '
+  bar'
+              Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res2'
+        CallExpression
+          Identifier: ' test'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  foo'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+  bar'
+              FunctionExpression
+                Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res3'
+        CallExpression
+          Identifier: ' test'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  foo'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+  bar'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block

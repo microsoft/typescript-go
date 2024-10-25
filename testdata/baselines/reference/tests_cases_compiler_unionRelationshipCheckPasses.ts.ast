@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' item'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              QuestionToken
+              UndefinedKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              NumberKeyword
+        AsExpression
+          AsExpression
+            NullKeyword
+            AnyKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              QuestionToken
+              UnionType
+                NumberKeyword
+                UndefinedKeyword

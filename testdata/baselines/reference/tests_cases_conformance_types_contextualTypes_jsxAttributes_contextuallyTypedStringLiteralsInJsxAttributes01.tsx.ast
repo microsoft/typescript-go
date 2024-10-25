@@ -1,0 +1,77 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          Identifier: '
+        span'
+          TypeLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Element'
+        PropertySignature
+          Identifier: '
+		something'
+          QuestionToken
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' FooComponent'
+        ArrowFunction
+          Parameter
+            Identifier: 'props'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                UnionType
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+          EqualsGreaterThanToken
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'span'
+              JsxAttributes
+            JsxExpression
+              PropertyAccessExpression
+                Identifier: 'props'
+                Identifier: 'foo'
+            JsxClosingElement
+              Identifier: 'span'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'FooComponent'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' foo'
+          JsxExpression
+            StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'FooComponent'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' foo'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'FooComponent'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' foo'
+          JsxExpression
+            StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'FooComponent'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' foo'
+          StringLiteral

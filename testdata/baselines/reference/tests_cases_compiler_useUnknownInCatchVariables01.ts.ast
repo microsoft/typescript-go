@@ -1,0 +1,95 @@
+SourceFile
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block
+        ExpressionStatement
+          VoidExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' e'
+                Identifier: 'toUpperCase'
+        ExpressionStatement
+          VoidExpression
+            PostfixUnaryExpression
+              Identifier: ' e'
+        ExpressionStatement
+          VoidExpression
+            CallExpression
+              Identifier: ' e'
+        IfStatement
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' e'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        // works!
+        // We've narrowed 'e' down to the type 'string'.
+        console'
+                  Identifier: 'log'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'e'
+                    Identifier: 'toUpperCase'
+        IfStatement
+          BinaryExpression
+            Identifier: 'e'
+            InstanceOfKeyword
+            Identifier: ' Error'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        e'
+                    Identifier: 'stack'
+                  QuestionDotToken
+                  Identifier: 'toUpperCase'
+        IfStatement
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' e'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        e'
+                  Identifier: 'toExponential'
+            ExpressionStatement
+              PostfixUnaryExpression
+                Identifier: '
+        e'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          VoidExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' e'
+                Identifier: 'toUpperCase'
+        ExpressionStatement
+          VoidExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' e'
+                Identifier: 'toExponential'
+        ExpressionStatement
+          VoidExpression
+            CallExpression
+              Identifier: ' e'

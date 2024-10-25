@@ -1,0 +1,14 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x'
+    StringLiteral
+  Block
+    ExpressionStatement
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'bar'
+        EqualsToken
+        NumericLiteral

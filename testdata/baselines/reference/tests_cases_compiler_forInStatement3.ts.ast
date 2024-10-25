@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expr'
+            TypeReference
+              Identifier: ' T'
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+        Identifier: ' expr'
+        Block

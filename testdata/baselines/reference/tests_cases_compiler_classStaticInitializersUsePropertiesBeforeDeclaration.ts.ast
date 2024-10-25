@@ -1,0 +1,44 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' enumMember'
+      PropertyAccessExpression
+        Identifier: ' Enum'
+        Identifier: 'A'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' objLiteralMember'
+      PropertyAccessExpression
+        Identifier: ' ObjLiteral'
+        Identifier: 'A'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' namespaceMember'
+      PropertyAccessExpression
+        Identifier: ' Namespace'
+        Identifier: 'A'
+  EnumDeclaration
+    Identifier: ' Enum'
+    EnumMember
+      Identifier: '
+    A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ObjLiteral'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    A'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Namespace'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' A'
+            NumericLiteral

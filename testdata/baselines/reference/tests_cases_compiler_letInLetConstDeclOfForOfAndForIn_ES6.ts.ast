@@ -1,0 +1,74 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' let'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' let'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' let'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' let'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+  Block
+    ForOfStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' let'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+      Block
+    ForOfStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' let'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+      Block
+    ForInStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' let'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+      Block
+    ForInStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' let'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+      Block

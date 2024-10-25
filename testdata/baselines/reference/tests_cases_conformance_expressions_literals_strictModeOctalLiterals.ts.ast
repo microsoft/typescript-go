@@ -1,0 +1,18 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' orbitol'
+        LiteralType
+          NumericLiteral
+        NumericLiteral

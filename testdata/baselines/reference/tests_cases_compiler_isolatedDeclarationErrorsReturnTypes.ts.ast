@@ -1,0 +1,1344 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExpressionConstVariable'
+        FunctionExpression
+          Identifier: ' foo'
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnArrowConstVariable'
+        ArrowFunction
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExpressionLetVariable'
+        FunctionExpression
+          Identifier: ' foo'
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnArrowLetVariable'
+        ArrowFunction
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExpressionVarVariable'
+        FunctionExpression
+          Identifier: ' foo'
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnArrowVarVariable'
+        ArrowFunction
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExpressionConstVariableOk'
+        FunctionExpression
+          Identifier: ' foo'
+          NumberKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnArrowConstVariableOk'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExpressionLetVariableOk'
+        FunctionExpression
+          Identifier: ' foo'
+          NumberKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnArrowLetVariableOk'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExpressionVarVariableOk'
+        FunctionExpression
+          Identifier: ' foo'
+          NumberKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnArrowVarVariableOk'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExpressionConstVariableInternal'
+        FunctionExpression
+          Identifier: ' foo'
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnArrowConstVariableInternal'
+        ArrowFunction
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExpressionLetVariableInternal'
+        FunctionExpression
+          Identifier: ' foo'
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnArrowLetVariableInternal'
+        ArrowFunction
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExpressionVarVariableInternal'
+        FunctionExpression
+          Identifier: ' foo'
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnArrowVarVariableInternal'
+        ArrowFunction
+          EqualsGreaterThanToken
+          StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ExportedClass'
+    PropertyDeclaration
+      Identifier: ' 
+    // Should Error
+    fnExpression'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    fnArrow'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnExpressionProtected'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnArrowProtected'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticExpression'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticArrow'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionProtected'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowProtected'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      Identifier: '
+
+    // Have annotation, so ok 
+    fnExpressionOk'
+      FunctionExpression
+        Identifier: ' foo'
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    fnArrowOK'
+      ArrowFunction
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnExpressionProtectedOk'
+      FunctionExpression
+        Identifier: ' foo'
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnArrowProtectedOK'
+      ArrowFunction
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticExpressionOk'
+      FunctionExpression
+        Identifier: ' foo'
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticArrowOk'
+      ArrowFunction
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionProtectedOk'
+      FunctionExpression
+        Identifier: ' foo'
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowProtectedOk'
+      ArrowFunction
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fnExpressionPrivate'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fnArrowPrivate'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionPrivate'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowPrivate'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' IndirectlyExportedClass'
+    PropertyDeclaration
+      Identifier: ' 
+    fnExpression'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    fnArrow'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticExpression'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticArrow'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionProtected'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowProtected'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fnExpressionPrivate'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fnArrowPrivate'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionPrivate'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowPrivate'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' instance'
+        TypeReference
+          Identifier: ' IndirectlyExportedClass'
+        NewExpression
+          Identifier: ' IndirectlyExportedClass'
+  ClassDeclaration
+    Identifier: ' InternalClass'
+    PropertyDeclaration
+      Identifier: ' 
+    fnExpression'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    fnArrow'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticExpression'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticArrow'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionProtected'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowProtected'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fnExpressionPrivate'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fnArrowPrivate'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionPrivate'
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowPrivate'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' internalInstance'
+        TypeReference
+          Identifier: ' InternalClass'
+        NewExpression
+          Identifier: ' InternalClass'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionConstVariable'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowConstVariable'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionLetVariable'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowLetVariable'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionVarVariable'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowVarVariable'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionConstVariableOwnerHasReturnType'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          NumberKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowConstVariableOwnerHasReturnType'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionLetVariableOwnerHasReturnType'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          NumberKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowLetVariableOwnerHasReturnType'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionVarVariableOwnerHasReturnType'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          NumberKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowVarVariableOwnerHasReturnType'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionConstVariableOk'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              VoidKeyword
+              Block
+          NumberKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowConstVariableOk'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              VoidKeyword
+              Block
+          StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionLetVariableOk'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              VoidKeyword
+              Block
+          NumberKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowLetVariableOk'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              VoidKeyword
+              Block
+          StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionVarVariableOk'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              VoidKeyword
+              Block
+          NumberKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowVarVariableOk'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              VoidKeyword
+              Block
+          StringKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionConstVariableInternal'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowConstVariableInternal'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionLetVariableInternal'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowLetVariableInternal'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamExpressionVarVariableInternal'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'cb'
+            FunctionExpression
+              Block
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnParamArrowVarVariableInternal'
+        ArrowFunction
+          Parameter
+            Identifier: 'cb'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+          EqualsGreaterThanToken
+          StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' FnParamsExportedClass'
+    PropertyDeclaration
+      Identifier: ' 
+    // Should Error
+    fnExpression'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    fnArrow'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnExpressionProtected'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnArrowProtected'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticExpression'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticArrow'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionProtected'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowProtected'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      Identifier: '
+
+    // Have annotation on owner
+    fnExpressionMethodHasReturn'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    fnArrowMethodHasReturn'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnExpressionProtectedMethodHasReturn'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnArrowProtectedMethodHasReturn'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticExpressionMethodHasReturn'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticArrowMethodHasReturn'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionProtectedMethodHasReturn'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowProtectedMethodHasReturn'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      Identifier: '
+
+    // Have annotation only on parameter
+    fnExpressionOnlyOnParam'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    fnArrowOnlyOnParam'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnExpressionProtectedOnlyOnParam'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnArrowProtectedOnlyOnParam'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticExpressionOnlyOnParam'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticArrowOnlyOnParam'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionProtectedOnlyOnParam'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowProtectedOnlyOnParam'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      Identifier: '
+
+    // Have annotation, so ok 
+    fnExpressionOk'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    fnArrowOK'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnExpressionProtectedOk'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' fnArrowProtectedOK'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticExpressionOk'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' fnStaticArrowOk'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionProtectedOk'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowProtectedOk'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            VoidKeyword
+            Block
+        StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fnExpressionPrivate'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fnArrowPrivate'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        EqualsGreaterThanToken
+        StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' fnStaticExpressionPrivate'
+      FunctionExpression
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        Block
+          ReturnStatement
+            NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' fnStaticArrowPrivate'
+      ArrowFunction
+        Parameter
+          Identifier: 'cb'
+          FunctionExpression
+            Block
+        EqualsGreaterThanToken
+        StringLiteral

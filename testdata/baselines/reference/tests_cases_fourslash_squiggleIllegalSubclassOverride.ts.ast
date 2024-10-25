@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////class Foo {
+////    public x: number;
+////}
+////
+////class Bar extends Foo {
+////    public /*1*/x/*2*/: string = 'hi';
+////}
+
+verify'
+        Identifier: 'errorExistsBetweenMarkers'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'numberOfErrorsInCurrentFile'
+      NumericLiteral

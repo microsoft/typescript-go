@@ -1,0 +1,477 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' preferences'
+        TypeReference
+          QualifiedName
+            Identifier: ' FourSlashInterface'
+            Identifier: 'UserPreferences'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    jsxAttributeCompletionStyle'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    includeCompletionsWithSnippetText'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: '
+    includeCompletionsWithInsertText'
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              Identifier: ' undefined'
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              Identifier: ' undefined'
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' preferences'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              Identifier: ' undefined'
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isSnippet'
+              Identifier: ' undefined'
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'

@@ -1,0 +1,41 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        FalseKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+  IfStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+    Block
+  IfStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+    Block
+  IfStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+    Block
+  IfStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+    Block
+  IfStatement
+    VoidExpression
+      Identifier: ' x'
+    Block
+  IfStatement
+    TypeOfExpression
+      Identifier: ' x'
+    Block
+  IfStatement
+    PrefixUnaryExpression
+      Identifier: 'y'
+    Block

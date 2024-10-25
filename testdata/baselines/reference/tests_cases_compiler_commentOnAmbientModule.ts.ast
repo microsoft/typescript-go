@@ -1,0 +1,27 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' D'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' bar'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' E'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' foobar'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' D'
+              Identifier: 'bar'
+        MethodDeclaration
+          Identifier: '
+        foo'

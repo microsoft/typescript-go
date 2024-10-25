@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+            TemplateTail

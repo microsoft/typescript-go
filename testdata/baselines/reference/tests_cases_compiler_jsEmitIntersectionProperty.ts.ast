@@ -1,0 +1,117 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' CoreObject'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' extend'
+      TypeParameter
+        Identifier: '
+    Statics'
+      TypeParameter
+        Identifier: '
+    Instance'
+        TypeReference
+          Identifier: ' B1'
+      TypeParameter
+        Identifier: '
+    T1'
+      TypeParameter
+        Identifier: '
+    B1'
+      Parameter
+        Identifier: '
+    this'
+        IntersectionType
+          TypeReference
+            Identifier: ' Statics'
+          TypeLiteral
+            ConstructSignature
+              TypeReference
+                Identifier: ' Instance'
+      Parameter
+        Identifier: '
+    arg1'
+        TypeReference
+          Identifier: ' T1'
+      IntersectionType
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'Statics'
+        TypeLiteral
+          ConstructSignature
+            IntersectionType
+              TypeReference
+                Identifier: ' T1'
+              TypeReference
+                Identifier: ' Instance'
+    MethodDeclaration
+      Identifier: '
+
+  toString'
+      StringKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Mixin'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' create'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: '
+      args'
+        QuestionToken
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' Mixin'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Observable'
+        TypeReference
+          Identifier: ' Mixin'
+          TypeLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' EmberObject'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' CoreObject'
+            Identifier: 'extend'
+          Identifier: 'Observable'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' CoreView'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' EmberObject'
+            Identifier: 'extend'
+          ObjectLiteralExpression
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Component'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' CoreView'
+            Identifier: 'extend'
+          ObjectLiteralExpression
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyComponent'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Component'

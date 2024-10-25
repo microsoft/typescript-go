@@ -1,0 +1,54 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' I'
+        CallSignature
+          Parameter
+            Identifier: 'i'
+            TypeReference
+              Identifier: ' I'
+          TypeReference
+            Identifier: ' I'
+      FunctionDeclaration
+        Identifier: ' f'
+        Parameter
+          Identifier: 'p'
+          TypeReference
+            Identifier: ' I'
+        Block
+          ReturnStatement
+            Identifier: ' f'
+      EmptyStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            TypeReference
+              Identifier: ' I'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+   f'
+          Identifier: 'i'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+   f'
+          CallExpression
+            Identifier: 'f'
+            Identifier: 'i'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+   f'
+          ParenthesizedExpression
+            CallExpression
+              Identifier: 'f'
+              CallExpression
+                Identifier: 'f'
+                Identifier: 'i'

@@ -1,0 +1,120 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' q'
+          StringKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' g'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' r'
+          StringKeyword
+  ClassDeclaration
+    Identifier: ' g'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' s'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        UnionType
+          TypeReference
+            Identifier: ' c'
+          TypeReference
+            QualifiedName
+              Identifier: ' m'
+              Identifier: 'c'
+        BinaryExpression
+          NewExpression
+            Identifier: ' c'
+          BarBarToken
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' m'
+              Identifier: 'c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        BinaryExpression
+          NewExpression
+            Identifier: ' c'
+          BarBarToken
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' m'
+              Identifier: 'c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          TypeReference
+            Identifier: ' g'
+            StringKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' m'
+              Identifier: 'g'
+            NumberKeyword
+          ParenthesizedType
+            FunctionType
+              TypeReference
+                Identifier: ' c'
+        BinaryExpression
+          BinaryExpression
+            NewExpression
+              Identifier: ' g'
+              StringKeyword
+            BarBarToken
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' m'
+                Identifier: 'g'
+              NumberKeyword
+          BarBarToken
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              NewExpression
+                Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        BinaryExpression
+          BinaryExpression
+            NewExpression
+              Identifier: ' g'
+              StringKeyword
+            BarBarToken
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' m'
+                Identifier: 'g'
+              NumberKeyword
+          BarBarToken
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              NewExpression
+                Identifier: ' c'

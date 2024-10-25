@@ -1,0 +1,28 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Foo'
+          ArrayType
+            NumberKeyword
+  FunctionDeclaration
+    Identifier: ' returnSomeGlobalValue'
+    Block
+      ReturnStatement
+        Identifier: ' x'

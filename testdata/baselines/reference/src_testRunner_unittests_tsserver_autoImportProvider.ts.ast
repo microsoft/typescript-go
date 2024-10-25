@@ -1,0 +1,2706 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    closeFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' angularFormsDts'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' angularFormsPackageJson'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' angularCoreDts'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' angularCorePackageJson'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tsconfig'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' packageJson'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' indexTs'
+        TypeReference
+          Identifier: ' File'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    path'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    content'
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: '
+            angularFormsDts'
+                            Identifier: '
+            angularFormsPackageJson'
+                            Identifier: '
+            tsconfig'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' path'
+                                PropertyAccessExpression
+                                  Identifier: ' packageJson'
+                                  Identifier: 'path'
+                              PropertyAssignment
+                                Identifier: ' content'
+                                NoSubstitutionTemplateLiteral
+                            Identifier: '
+            indexTs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isUndefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'session'
+                                          Identifier: 'getProjectService'
+                                      Identifier: 'configuredProjects'
+                                    Identifier: 'get'
+                                  PropertyAccessExpression
+                                    Identifier: 'tsconfig'
+                                    Identifier: 'path'
+                              Identifier: 'getLanguageService'
+                          Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: '
+            angularFormsDts'
+                            Identifier: '
+            angularFormsPackageJson'
+                            Identifier: '
+            tsconfig'
+                            Identifier: '
+            packageJson'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' path'
+                                PropertyAccessExpression
+                                  Identifier: ' indexTs'
+                                  Identifier: 'path'
+                              PropertyAssignment
+                                Identifier: ' content'
+                                StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isUndefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'session'
+                                          Identifier: 'getProjectService'
+                                      Identifier: 'configuredProjects'
+                                    Identifier: 'get'
+                                  PropertyAccessExpression
+                                    Identifier: 'tsconfig'
+                                    Identifier: 'path'
+                              Identifier: 'getLanguageService'
+                          Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: '
+            angularFormsDts'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' path'
+                                PropertyAccessExpression
+                                  Identifier: ' angularFormsPackageJson'
+                                  Identifier: 'path'
+                              PropertyAssignment
+                                Identifier: ' content'
+                                NoSubstitutionTemplateLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: ' content'
+                                NoSubstitutionTemplateLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: ' content'
+                                NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'angularFormsDts'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isUndefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+            session'
+                                        Identifier: 'getProjectService'
+                                    Identifier: 'getDefaultProjectForFile'
+                                  AsExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'angularFormsDts'
+                                      Identifier: 'path'
+                                    TypeReference
+                                      QualifiedName
+                                        QualifiedName
+                                          Identifier: ' ts'
+                                          Identifier: 'server'
+                                        Identifier: 'NormalizedPath'
+                                  TrueKeyword
+                              Identifier: 'getLanguageService'
+                          Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' updateFile'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: 'angularFormsDts'
+                            Identifier: ' angularFormsPackageJson'
+                            Identifier: ' tsconfig'
+                            Identifier: ' packageJson'
+                            Identifier: ' indexTs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'angularFormsDts'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        updateFile'
+                      PropertyAccessExpression
+                        Identifier: 'indexTs'
+                        Identifier: 'path'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isUndefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'session'
+                                          Identifier: 'getProjectService'
+                                      Identifier: 'configuredProjects'
+                                    Identifier: 'get'
+                                  PropertyAccessExpression
+                                    Identifier: 'tsconfig'
+                                    Identifier: 'path'
+                              Identifier: 'getLanguageService'
+                          Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' host'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: '
+            angularFormsDts'
+                            Identifier: '
+            angularFormsPackageJson'
+                            Identifier: '
+            tsconfig'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: ' content'
+                                StringLiteral
+                            Identifier: '
+            indexTs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isUndefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'session'
+                                          Identifier: 'getProjectService'
+                                      Identifier: 'configuredProjects'
+                                    Identifier: 'get'
+                                  PropertyAccessExpression
+                                    Identifier: 'tsconfig'
+                                    Identifier: 'path'
+                              Identifier: 'getLanguageService'
+                          Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        host'
+                        Identifier: 'writeFile'
+                      PropertyAccessExpression
+                        Identifier: 'packageJson'
+                        Identifier: 'path'
+                      PropertyAccessExpression
+                        Identifier: ' packageJson'
+                        Identifier: 'content'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'ok'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'session'
+                                          Identifier: 'getProjectService'
+                                      Identifier: 'configuredProjects'
+                                    Identifier: 'get'
+                                  PropertyAccessExpression
+                                    Identifier: 'tsconfig'
+                                    Identifier: 'path'
+                              Identifier: 'getLanguageService'
+                          Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' updateFile'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: '
+            angularFormsDts'
+                            Identifier: '
+            angularFormsPackageJson'
+                            Identifier: '
+            tsconfig'
+                            Identifier: '
+            packageJson'
+                            Identifier: '
+            indexTs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' autoImportProvider'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                NonNullExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' session'
+                                            Identifier: 'getProjectService'
+                                        Identifier: 'configuredProjects'
+                                      Identifier: 'get'
+                                    PropertyAccessExpression
+                                      Identifier: 'tsconfig'
+                                      Identifier: 'path'
+                                Identifier: 'getLanguageService'
+                            Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'ok'
+                      Identifier: 'autoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        updateFile'
+                      PropertyAccessExpression
+                        Identifier: 'indexTs'
+                        Identifier: 'path'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+            session'
+                                          Identifier: 'getProjectService'
+                                      Identifier: 'configuredProjects'
+                                    Identifier: 'get'
+                                  PropertyAccessExpression
+                                    Identifier: 'tsconfig'
+                                    Identifier: 'path'
+                              Identifier: 'getLanguageService'
+                          Identifier: 'getAutoImportProvider'
+                      Identifier: '
+            autoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: '
+            angularFormsDts'
+                            Identifier: '
+            angularFormsPackageJson'
+                            Identifier: '
+            tsconfig'
+                            Identifier: '
+            packageJson'
+                            Identifier: '
+            indexTs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' hostProject'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' session'
+                                    Identifier: 'getProjectService'
+                                Identifier: 'configuredProjects'
+                              Identifier: 'get'
+                            PropertyAccessExpression
+                              Identifier: 'tsconfig'
+                              Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        hostProject'
+                        Identifier: 'getPackageJsonAutoImportProvider'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' autoImportProviderProject'
+                        PropertyAccessExpression
+                          Identifier: ' hostProject'
+                          Identifier: 'autoImportProviderHost'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'ok'
+                      Identifier: 'autoImportProviderProject'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        closeFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            file'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            projectRootPath'
+                            StringLiteral
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'hostProject'
+                          Identifier: 'isClosed'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'ok'
+                      BinaryExpression
+                        Identifier: 'autoImportProviderProject'
+                        AmpersandAmpersandToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' autoImportProviderProject'
+                            Identifier: 'isClosed'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isUndefined'
+                      PropertyAccessExpression
+                        Identifier: 'hostProject'
+                        Identifier: 'autoImportProviderHost'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' host'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: '
+            angularFormsDts'
+                            Identifier: '
+            angularFormsPackageJson'
+                            Identifier: '
+            tsconfig'
+                            Identifier: '
+            indexTs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Create configured project only, ensure !session.getProjectService().pendingEnsureProjectForOpenFiles
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' hostProject'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' session'
+                                    Identifier: 'getProjectService'
+                                Identifier: 'configuredProjects'
+                              Identifier: 'get'
+                            PropertyAccessExpression
+                              Identifier: 'tsconfig'
+                              Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+        session'
+                            Identifier: 'getProjectService'
+                        Identifier: 'delayEnsureProjectForOpenFiles'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isFalse'
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'session'
+                            Identifier: 'getProjectService'
+                        Identifier: 'pendingEnsureProjectForOpenFiles'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Create auto import provider project, ensure still !session.getProjectService().pendingEnsureProjectForOpenFiles
+        host'
+                        Identifier: 'writeFile'
+                      PropertyAccessExpression
+                        Identifier: 'packageJson'
+                        Identifier: 'path'
+                      PropertyAccessExpression
+                        Identifier: ' packageJson'
+                        Identifier: 'content'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        hostProject'
+                        Identifier: 'getPackageJsonAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isFalse'
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'session'
+                            Identifier: 'getProjectService'
+                        Identifier: 'pendingEnsureProjectForOpenFiles'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' host'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: '
+            angularFormsDts'
+                            Identifier: '
+            angularFormsPackageJson'
+                            Identifier: '
+            angularCoreDts'
+                            Identifier: '
+            angularCorePackageJson'
+                            Identifier: '
+            tsconfig'
+                            Identifier: '
+            packageJson'
+                            Identifier: '
+            indexTs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' project'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' session'
+                                    Identifier: 'getProjectService'
+                                Identifier: 'configuredProjects'
+                              Identifier: 'get'
+                            PropertyAccessExpression
+                              Identifier: 'tsconfig'
+                              Identifier: 'path'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' completionsBefore'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' project'
+                                Identifier: 'getLanguageService'
+                            Identifier: 'getCompletionsAtPosition'
+                          PropertyAccessExpression
+                            Identifier: 'indexTs'
+                            Identifier: 'path'
+                          NumericLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' includeCompletionsForModuleExports'
+                              TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'completionsBefore'
+                            QuestionDotToken
+                            Identifier: 'entries'
+                          Identifier: 'some'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'c'
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' c'
+                              Identifier: 'name'
+                            EqualsEqualsEqualsToken
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Directory watchers only fire for add/remove, not change.
+        // This is ok since a real `npm install` will always trigger add/remove events.
+        host'
+                        Identifier: 'deleteFile'
+                      PropertyAccessExpression
+                        Identifier: 'angularFormsDts'
+                        Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'writeFile'
+                      PropertyAccessExpression
+                        Identifier: 'angularFormsDts'
+                        Identifier: 'path'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' autoImportProvider'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' project'
+                                Identifier: 'getLanguageService'
+                            Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' completionsAfter'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' project'
+                                Identifier: 'getLanguageService'
+                            Identifier: 'getCompletionsAtPosition'
+                          PropertyAccessExpression
+                            Identifier: 'indexTs'
+                            Identifier: 'path'
+                          NumericLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' includeCompletionsForModuleExports'
+                              TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      CallExpression
+                        PropertyAccessExpression
+                          NonNullExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                NonNullExpression
+                                  Identifier: 'autoImportProvider'
+                                Identifier: 'getSourceFile'
+                              PropertyAccessExpression
+                                Identifier: 'angularFormsDts'
+                                Identifier: 'path'
+                          Identifier: 'getText'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isFalse'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'completionsAfter'
+                            QuestionDotToken
+                            Identifier: 'entries'
+                          Identifier: 'some'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'c'
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' c'
+                              Identifier: 'name'
+                            EqualsEqualsEqualsToken
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' updateFile'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: '
+            angularFormsDts'
+                            Identifier: '
+            angularFormsPackageJson'
+                            Identifier: '
+            angularCoreDts'
+                            Identifier: '
+            angularCorePackageJson'
+                            Identifier: '
+            tsconfig'
+                            Identifier: '
+            packageJson'
+                            Identifier: '
+            indexTs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                        Identifier: ' angularFormsDts'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' project'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' session'
+                                    Identifier: 'getProjectService'
+                                Identifier: 'configuredProjects'
+                              Identifier: 'get'
+                            PropertyAccessExpression
+                              Identifier: 'tsconfig'
+                              Identifier: 'path'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' completionsBefore'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' project'
+                                Identifier: 'getLanguageService'
+                            Identifier: 'getCompletionsAtPosition'
+                          PropertyAccessExpression
+                            Identifier: 'indexTs'
+                            Identifier: 'path'
+                          NumericLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' includeCompletionsForModuleExports'
+                              TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'completionsBefore'
+                            QuestionDotToken
+                            Identifier: 'entries'
+                          Identifier: 'some'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'c'
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' c'
+                              Identifier: 'name'
+                            EqualsEqualsEqualsToken
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        updateFile'
+                      PropertyAccessExpression
+                        Identifier: 'angularFormsDts'
+                        Identifier: 'path'
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' completionsAfter'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' project'
+                                Identifier: 'getLanguageService'
+                            Identifier: 'getCompletionsAtPosition'
+                          PropertyAccessExpression
+                            Identifier: 'indexTs'
+                            Identifier: 'path'
+                          NumericLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' includeCompletionsForModuleExports'
+                              TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isFalse'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'completionsAfter'
+                            QuestionDotToken
+                            Identifier: 'entries'
+                          Identifier: 'some'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'c'
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' c'
+                              Identifier: 'name'
+                            EqualsEqualsEqualsToken
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'completionsAfter'
+                            QuestionDotToken
+                            Identifier: 'entries'
+                          Identifier: 'some'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'c'
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' c'
+                              Identifier: 'name'
+                            EqualsEqualsEqualsToken
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' host'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            Identifier: '
+            angularFormsDts'
+                            Identifier: '
+            angularFormsPackageJson'
+                            Identifier: '
+            tsconfig'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' path'
+                                PropertyAccessExpression
+                                  Identifier: ' packageJson'
+                                  Identifier: 'path'
+                              PropertyAssignment
+                                Identifier: ' content'
+                                StringLiteral
+                            Identifier: '
+            indexTs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isUndefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'session'
+                                          Identifier: 'getProjectService'
+                                      Identifier: 'configuredProjects'
+                                    Identifier: 'get'
+                                  PropertyAccessExpression
+                                    Identifier: 'tsconfig'
+                                    Identifier: 'path'
+                              Identifier: 'getLanguageService'
+                          Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        host'
+                        Identifier: 'writeFile'
+                      PropertyAccessExpression
+                        Identifier: 'packageJson'
+                        Identifier: 'path'
+                      PropertyAccessExpression
+                        Identifier: ' packageJson'
+                        Identifier: 'content'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'ok'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'session'
+                                          Identifier: 'getProjectService'
+                                      Identifier: 'configuredProjects'
+                                    Identifier: 'get'
+                                  PropertyAccessExpression
+                                    Identifier: 'tsconfig'
+                                    Identifier: 'path'
+                              Identifier: 'getLanguageService'
+                          Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' createPackage'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'i'
+                            NumberKeyword
+                          ArrayType
+                            TypeReference
+                              Identifier: ' File'
+                          EqualsGreaterThanToken
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' path'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'i'
+                                    TemplateTail
+                              PropertyAssignment
+                                Identifier: ' content'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'i'
+                                    TemplateTail
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' path'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'i'
+                                    TemplateTail
+                              PropertyAssignment
+                                Identifier: ' content'
+                                NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' packages'
+                        ArrayLiteralExpression
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' i'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' i'
+                      LessThanToken
+                      NumericLiteral
+                    PostfixUnaryExpression
+                      Identifier: ' i'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            packages'
+                            Identifier: 'push'
+                          CallExpression
+                            Identifier: 'createPackage'
+                            Identifier: 'i'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' dependencies'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' packages'
+                            Identifier: 'reduce'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'hash'
+                            Parameter
+                              Identifier: ' p'
+                            EqualsGreaterThanToken
+                            ParenthesizedExpression
+                              ObjectLiteralExpression
+                                SpreadAssignment
+                                  Identifier: 'hash'
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'JSON'
+                                          Identifier: 'parse'
+                                        PropertyAccessExpression
+                                          ElementAccessExpression
+                                            Identifier: 'p'
+                                            NumericLiteral
+                                          Identifier: 'content'
+                                      Identifier: 'name'
+                                  StringLiteral
+                          ObjectLiteralExpression
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' packageJson'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: ' content'
+                            CallExpression
+                              Identifier: ' jsonToReadableText'
+                              Identifier: 'dependencies'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          ArrayLiteralExpression
+                            SpreadElement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'flatten'
+                                Identifier: 'packages'
+                            Identifier: ' indexTs'
+                            Identifier: ' tsconfig'
+                            Identifier: ' packageJson'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'indexTs'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' project'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' session'
+                                    Identifier: 'getProjectService'
+                                Identifier: 'configuredProjects'
+                              Identifier: 'get'
+                            PropertyAccessExpression
+                              Identifier: 'tsconfig'
+                              Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isUndefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'project'
+                          Identifier: 'getPackageJsonAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' files'
+                        ArrayLiteralExpression
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              CallExpression
+                                Identifier: ' jsonToReadableText'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' name'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: ' version'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: ' types'
+                                    StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              CallExpression
+                                Identifier: ' jsonToReadableText'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' name'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: ' version'
+                                    StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' triggerCompletions'
+                        CallExpression
+                          Identifier: ' setup'
+                          Identifier: 'files'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        ElementAccessExpression
+                          Identifier: 'files'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'files'
+                              Identifier: 'length'
+                            MinusToken
+                            NumericLiteral
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' project'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' session'
+                                    Identifier: 'getProjectService'
+                                Identifier: 'configuredProjects'
+                              Identifier: 'get'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' autoImportProvider'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' project'
+                              Identifier: 'getPackageJsonAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isDefined'
+                      Identifier: 'autoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Trigger completions to ensure export info map is populated
+        triggerCompletions'
+                      StringLiteral
+                      NumericLiteral
+                      NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' exportInfoMap'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'getCachedExportInfoMap'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' seenSymbolNames'
+                        NewExpression
+                          Identifier: ' Set'
+                          StringKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        exportInfoMap'
+                        Identifier: 'search'
+                      AsExpression
+                        StringLiteral
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'Path'
+                      FalseKeyword
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'returnTrue'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'info'
+                        Parameter
+                          Identifier: ' symbolName'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'lengthOf'
+                              Identifier: 'info'
+                              NumericLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            seenSymbolNames'
+                                Identifier: 'add'
+                              Identifier: 'symbolName'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        Identifier: 'seenSymbolNames'
+                        Identifier: 'size'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'ok'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'seenSymbolNames'
+                          Identifier: 'has'
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'ok'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'seenSymbolNames'
+                          Identifier: 'has'
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' files'
+                        ArrayLiteralExpression
+                          Identifier: '
+            // node_modules
+            angularFormsDts'
+                          Identifier: '
+            angularFormsPackageJson'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              PropertyAccessExpression
+                                Identifier: ' tsconfig'
+                                Identifier: 'path'
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              PropertyAccessExpression
+                                Identifier: ' packageJson'
+                                Identifier: 'path'
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              PropertyAccessExpression
+                                Identifier: ' packageJson'
+                                Identifier: 'content'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              PropertyAccessExpression
+                                Identifier: ' packageJson'
+                                Identifier: 'content'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' findAllReferences'
+                        CallExpression
+                          Identifier: ' setup'
+                          Identifier: 'files'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'files'
+                              Identifier: 'find'
+                            ArrowFunction
+                              Parameter
+                                Identifier: 'f'
+                              EqualsGreaterThanToken
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: ' f'
+                                  Identifier: 'path'
+                                EqualsEqualsEqualsToken
+                                StringLiteral
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        findAllReferences'
+                      StringLiteral
+                      NumericLiteral
+                      BinaryExpression
+                        PropertyAccessExpression
+                          StringLiteral
+                          Identifier: 'length'
+                        MinusToken
+                        NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Project for A is created - ensure it doesn't have an autoImportProvider
+        assert'
+                        Identifier: 'isUndefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'session'
+                                          Identifier: 'getProjectService'
+                                      Identifier: 'configuredProjects'
+                                    Identifier: 'get'
+                                  StringLiteral
+                              Identifier: 'getLanguageService'
+                          Identifier: 'getAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' files'
+                        ArrayLiteralExpression
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' content'
+                              NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' session'
+                        CallExpression
+                          Identifier: ' setup'
+                          Identifier: 'files'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        ElementAccessExpression
+                          Identifier: 'files'
+                          NumericLiteral
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isDefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          NonNullExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'session'
+                                      Identifier: 'getProjectService'
+                                  Identifier: 'configuredProjects'
+                                Identifier: 'get'
+                              StringLiteral
+                          Identifier: 'getPackageJsonAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isDefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          NonNullExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'session'
+                                      Identifier: 'getProjectService'
+                                  Identifier: 'configuredProjects'
+                                Identifier: 'get'
+                              StringLiteral
+                          Identifier: 'getPackageJsonAutoImportProvider'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'host'
+                        Identifier: 'baselineHost'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' option'
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'sourceFileAffectingCompilerOptions'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            assert'
+                          PrefixUnaryExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'ts'
+                                Identifier: 'hasProperty'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'server'
+                                  Identifier: 'AutoImportProviderProject'
+                                Identifier: 'compilerOptionsOverrides'
+                              PropertyAccessExpression
+                                Identifier: ' option'
+                                Identifier: 'name'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              PropertyAccessExpression
+                                Identifier: 'option'
+                                Identifier: 'name'
+                              TemplateTail
+  FunctionDeclaration
+    Identifier: ' setup'
+    Parameter
+      Identifier: 'files'
+      ArrayType
+        TypeReference
+          Identifier: ' File'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' TestServerHost'
+                Identifier: 'createServerHost'
+              Identifier: 'files'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' session'
+            NewExpression
+              Identifier: ' TestSession'
+              Identifier: 'host'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    session'
+            Identifier: 'executeCommandSeq'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'server'
+                Identifier: 'protocol'
+              Identifier: 'ConfigureRequest'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        command'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'server'
+                    Identifier: 'protocol'
+                  Identifier: 'CommandTypes'
+                Identifier: 'Configure'
+            PropertyAssignment
+              Identifier: '
+        arguments'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            preferences'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                includePackageJsonAutoImports'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+                includeCompletionsForModuleExports'
+                      TrueKeyword
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        host'
+          ShorthandPropertyAssignment
+            Identifier: '
+        session'
+          ShorthandPropertyAssignment
+            Identifier: '
+        updateFile'
+          ShorthandPropertyAssignment
+            Identifier: '
+        findAllReferences'
+          ShorthandPropertyAssignment
+            Identifier: '
+        triggerCompletions'
+      FunctionDeclaration
+        Identifier: ' updateFile'
+        Parameter
+          Identifier: 'path'
+          StringKeyword
+        Parameter
+          Identifier: ' newText'
+          StringKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assertIsDefined'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'files'
+                  Identifier: 'find'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'f'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' f'
+                      Identifier: 'path'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' path'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        session'
+                Identifier: 'executeCommandSeq'
+              TypeReference
+                QualifiedName
+                  QualifiedName
+                    QualifiedName
+                      Identifier: 'ts'
+                      Identifier: 'server'
+                    Identifier: 'protocol'
+                  Identifier: 'ApplyChangedToOpenFilesRequest'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'ApplyChangedToOpenFiles'
+                PropertyAssignment
+                  Identifier: '
+            arguments'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                openFiles'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    fileName'
+                            Identifier: ' path'
+                          PropertyAssignment
+                            Identifier: '
+                    content'
+                            Identifier: ' newText'
+      FunctionDeclaration
+        Identifier: ' findAllReferences'
+        Parameter
+          Identifier: 'file'
+          StringKeyword
+        Parameter
+          Identifier: ' line'
+          NumberKeyword
+        Parameter
+          Identifier: ' offset'
+          NumberKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assertIsDefined'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'files'
+                  Identifier: 'find'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'f'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' f'
+                      Identifier: 'path'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' file'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        session'
+                Identifier: 'executeCommandSeq'
+              TypeReference
+                QualifiedName
+                  QualifiedName
+                    QualifiedName
+                      Identifier: 'ts'
+                      Identifier: 'server'
+                    Identifier: 'protocol'
+                  Identifier: 'ReferencesRequest'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'References'
+                PropertyAssignment
+                  Identifier: '
+            arguments'
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                file'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                line'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                offset'
+      FunctionDeclaration
+        Identifier: ' triggerCompletions'
+        Parameter
+          Identifier: 'file'
+          StringKeyword
+        Parameter
+          Identifier: ' line'
+          NumberKeyword
+        Parameter
+          Identifier: ' offset'
+          NumberKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        session'
+                Identifier: 'executeCommandSeq'
+              TypeReference
+                QualifiedName
+                  QualifiedName
+                    QualifiedName
+                      Identifier: 'ts'
+                      Identifier: 'server'
+                    Identifier: 'protocol'
+                  Identifier: 'CompletionsRequest'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'CompletionInfo'
+                PropertyAssignment
+                  Identifier: '
+            arguments'
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                file'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                line'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                offset'

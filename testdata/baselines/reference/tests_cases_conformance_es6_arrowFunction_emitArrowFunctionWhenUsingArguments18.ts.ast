@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' arguments'
+                Identifier: ' args'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' arguments'
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'Math'
+            Identifier: 'random'
+        Block
+          ReturnStatement
+            ArrowFunction
+              EqualsGreaterThanToken
+              Identifier: ' arguments'

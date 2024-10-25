@@ -1,0 +1,46 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BooleanKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      ComputedPropertyName
+        Identifier: 'b'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      ComputedPropertyName
+        TrueKeyword
+      Parameter
+        Identifier: 'v'
+      Block
+    GetAccessor
+      ComputedPropertyName
+        ArrayLiteralExpression
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      ComputedPropertyName
+        ObjectLiteralExpression
+      Parameter
+        Identifier: 'v'
+      Block
+    GetAccessor
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'undefined'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      ComputedPropertyName
+        NullKeyword
+      Parameter
+        Identifier: 'v'
+      Block

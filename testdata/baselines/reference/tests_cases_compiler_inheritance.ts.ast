@@ -1,0 +1,73 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B1'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' B2'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' D1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B1'
+  ClassDeclaration
+    Identifier: ' D2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B2'
+  ClassDeclaration
+    Identifier: ' N'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' y'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' ND'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' N'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' y'
+  ClassDeclaration
+    Identifier: ' Good'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' f'
+      FunctionType
+        NumberKeyword
+      FunctionExpression
+        Block
+          ReturnStatement
+            NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' g'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' Baad'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Good'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' g'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral

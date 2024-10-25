@@ -1,0 +1,171 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Dictionary'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' NumericDictionary'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' ObjectIterator'
+    TypeParameter
+      Identifier: 'TObject'
+    TypeParameter
+      Identifier: ' TResult'
+    FunctionType
+      Parameter
+        Identifier: '
+  value'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' TObject'
+          TypeOperator
+            TypeReference
+              Identifier: ' TObject'
+      Parameter
+        Identifier: '
+  key'
+        StringKeyword
+      Parameter
+        Identifier: '
+  collection'
+        TypeReference
+          Identifier: ' TObject'
+      TypeReference
+        Identifier: ' TResult'
+  TypeAliasDeclaration
+    Identifier: ' DictionaryIterator'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' TResult'
+    TypeReference
+      Identifier: ' ObjectIterator'
+      TypeReference
+        Identifier: 'Dictionary'
+        TypeReference
+          Identifier: 'T'
+      TypeReference
+        Identifier: ' TResult'
+  FunctionDeclaration
+    Identifier: ' mapValues'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' TResult'
+    Parameter
+      Identifier: '
+  obj'
+      UnionType
+        TypeReference
+          Identifier: ' Dictionary'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' NumericDictionary'
+          TypeReference
+            Identifier: 'T'
+        LiteralType
+          NullKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+  callback'
+      TypeReference
+        Identifier: ' DictionaryIterator'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' TResult'
+    TypeReference
+      Identifier: ' Dictionary'
+      TypeReference
+        Identifier: 'TResult'
+    Block
+      ReturnStatement
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+  foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+  bar'
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooToBar'
+    Parameter
+      Identifier: '
+  foos'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        TypeReference
+          Identifier: ' Foo'
+    TypeReference
+      Identifier: ' Record'
+      StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' Bar'
+        LiteralType
+          NullKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' wat'
+            CallExpression
+              Identifier: ' mapValues'
+              Identifier: 'foos'
+              ArrowFunction
+                Parameter
+                  Identifier: ' f'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' f'
+                  Identifier: 'foo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' foos'
+                EqualsEqualsToken
+                NullKeyword
+              QuestionToken
+              ObjectLiteralExpression
+              ColonToken
+              CallExpression
+                Identifier: ' mapValues'
+                Identifier: 'foos'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' f'
+                  EqualsGreaterThanToken
+                  PropertyAccessExpression
+                    Identifier: ' f'
+                    Identifier: 'foo'
+      ReturnStatement
+        Identifier: ' result'

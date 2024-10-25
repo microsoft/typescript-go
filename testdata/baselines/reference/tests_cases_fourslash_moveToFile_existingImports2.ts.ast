@@ -1,0 +1,38 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @filename: /common.ts
+////export const x = 1;
+
+// @filename: /a.ts
+////import { x } from "./common";
+////export const a = x;
+////[|export const b = x;|]
+
+// @filename: /b.ts
+////import { x } from "./common";
+////export const a = x;
+
+verify'
+        Identifier: 'moveToFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    interactiveRefactorArguments'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' targetFile'
+              StringLiteral

@@ -1,0 +1,72 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    MethodDeclaration
+      Identifier: '
+    M'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    MethodDeclaration
+      Identifier: '
+    M'
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        /*RENAME*/newFunction'
+        FunctionDeclaration
+          Identifier: ' newFunction'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    MethodDeclaration
+      Identifier: '
+    M'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '/*RENAME*/newMethod'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' newMethod'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    MethodDeclaration
+      Identifier: '
+    M'
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        /*RENAME*/newFunction'
+  FunctionDeclaration
+    Identifier: ' newFunction'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral

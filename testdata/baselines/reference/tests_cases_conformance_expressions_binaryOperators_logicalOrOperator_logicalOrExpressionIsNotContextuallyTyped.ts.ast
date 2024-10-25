@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            StringKeyword
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        BinaryExpression
+          Identifier: ' a'
+          BarBarToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'toLowerCase'

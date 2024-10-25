@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' greeter'
+    Constructor
+      Parameter
+        Identifier: 'param1'
+        StringKeyword
+      Parameter
+        Identifier: ' param2'
+        StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        param2'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' param2'
+              PlusToken
+              StringLiteral

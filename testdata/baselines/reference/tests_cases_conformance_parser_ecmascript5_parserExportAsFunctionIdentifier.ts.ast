@@ -1,0 +1,21 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    MethodSignature
+      Identifier: '
+       export'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' Foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' f'
+            Identifier: 'export'

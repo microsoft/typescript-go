@@ -1,0 +1,971 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' OtherDerived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bing'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'a'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'a2'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        ArrayType
+          StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'a3'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'a4'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' U'
+        StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'a5'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        Parameter
+          Identifier: 'x'
+          ConstructorType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' U'
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'a6'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Base'
+        Parameter
+          Identifier: 'x'
+          ConstructorType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' Derived'
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo11'
+    Parameter
+      Identifier: 'a11'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              TypeReference
+                Identifier: ' T'
+        Parameter
+          Identifier: ' y'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              TypeReference
+                Identifier: ' T'
+            PropertySignature
+              Identifier: ' bar'
+              TypeReference
+                Identifier: ' T'
+        TypeReference
+          Identifier: ' Base'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo11'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo15'
+    Parameter
+      Identifier: 'a15'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' T'
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' T'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo15'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo16'
+    Parameter
+      Identifier: 'a16'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Base'
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' T'
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' T'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo16'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo17'
+    Parameter
+      Identifier: 'a17'
+      TypeLiteral
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Derived'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo17'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo18'
+    Parameter
+      Identifier: 'a18'
+      TypeLiteral
+        ConstructSignature
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              ConstructSignature
+                TypeParameter
+                  Identifier: 'T'
+                  TypeReference
+                    Identifier: ' Derived'
+                Parameter
+                  Identifier: 'a'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T'
+              ConstructSignature
+                TypeParameter
+                  Identifier: 'T'
+                  TypeReference
+                    Identifier: ' Base'
+                Parameter
+                  Identifier: 'a'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T'
+          ArrayType
+            AnyKeyword
+        ConstructSignature
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              ConstructSignature
+                TypeParameter
+                  Identifier: 'T'
+                  TypeReference
+                    Identifier: ' Derived2'
+                Parameter
+                  Identifier: 'a'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T'
+              ConstructSignature
+                TypeParameter
+                  Identifier: 'T'
+                  TypeReference
+                    Identifier: ' Base'
+                Parameter
+                  Identifier: 'a'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T'
+          ArrayType
+            AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo18'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1arg'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1arg2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        CallExpression
+          Identifier: ' foo1'
+          Identifier: 'r1arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a'
+        ArrayLiteralExpression
+          Identifier: 'r1arg'
+          Identifier: ' r1arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b'
+        ArrayLiteralExpression
+          Identifier: 'r1arg2'
+          Identifier: ' r1arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2arg'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2arg2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' foo2'
+          Identifier: 'r2arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2a'
+        ArrayLiteralExpression
+          Identifier: 'r2arg'
+          Identifier: ' r2arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b'
+        ArrayLiteralExpression
+          Identifier: 'r2arg2'
+          Identifier: ' r2arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3arg'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3arg2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' foo3'
+          Identifier: 'r3arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3a'
+        ArrayLiteralExpression
+          Identifier: 'r3arg'
+          Identifier: ' r3arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b'
+        ArrayLiteralExpression
+          Identifier: 'r3arg2'
+          Identifier: ' r3arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4arg'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4arg2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo4'
+          Identifier: 'r4arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4a'
+        ArrayLiteralExpression
+          Identifier: 'r4arg'
+          Identifier: ' r4arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4b'
+        ArrayLiteralExpression
+          Identifier: 'r4arg2'
+          Identifier: ' r4arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5arg'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5arg2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          Identifier: ' foo5'
+          Identifier: 'r5arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5a'
+        ArrayLiteralExpression
+          Identifier: 'r5arg'
+          Identifier: ' r5arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5b'
+        ArrayLiteralExpression
+          Identifier: 'r5arg2'
+          Identifier: ' r5arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6arg'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' Derived'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6arg2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' Derived'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          Identifier: ' foo6'
+          Identifier: 'r6arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6a'
+        ArrayLiteralExpression
+          Identifier: 'r6arg'
+          Identifier: ' r6arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6b'
+        ArrayLiteralExpression
+          Identifier: 'r6arg2'
+          Identifier: ' r6arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11arg'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' U'
+              PropertySignature
+                Identifier: ' bar'
+                TypeReference
+                  Identifier: ' U'
+          TypeReference
+            Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11arg2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' bar'
+                TypeReference
+                  Identifier: ' T'
+          TypeReference
+            Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        CallExpression
+          Identifier: ' foo11'
+          Identifier: 'r11arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11a'
+        ArrayLiteralExpression
+          Identifier: 'r11arg'
+          Identifier: ' r11arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11b'
+        ArrayLiteralExpression
+          Identifier: 'r11arg2'
+          Identifier: ' r11arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r15arg'
+        ConstructorType
+          TypeParameter
+            Identifier: 'U'
+          TypeParameter
+            Identifier: ' V'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' U'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' V'
+          ArrayType
+            TypeReference
+              Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r15arg2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r15'
+        CallExpression
+          Identifier: ' foo15'
+          Identifier: 'r15arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r15a'
+        ArrayLiteralExpression
+          Identifier: 'r15arg'
+          Identifier: ' r15arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r15b'
+        ArrayLiteralExpression
+          Identifier: 'r15arg2'
+          Identifier: ' r15arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r16arg'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r16arg2'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Base'
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r16'
+        CallExpression
+          Identifier: ' foo16'
+          Identifier: 'r16arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r16a'
+        ArrayLiteralExpression
+          Identifier: 'r16arg'
+          Identifier: ' r16arg2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r16b'
+        ArrayLiteralExpression
+          Identifier: 'r16arg2'
+          Identifier: ' r16arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r17arg'
+        ConstructorType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r17'
+        CallExpression
+          Identifier: ' foo17'
+          Identifier: 'r17arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r18arg'
+        ConstructorType
+          Parameter
+            Identifier: 'x'
+            ConstructorType
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+          ArrayType
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r18'
+        CallExpression
+          Identifier: ' foo18'
+          Identifier: 'r18arg'

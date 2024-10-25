@@ -1,0 +1,55 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' Y'
+    TypeParameter
+      Identifier: ' Z'
+    FunctionType
+      TupleType
+        TypeReference
+          Identifier: 'X'
+        TypeReference
+          Identifier: ' Y'
+        TypeReference
+          Identifier: ' Z'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Baz'
+    TypeParameter
+      Identifier: 'M'
+    TypeParameter
+      Identifier: ' N'
+    TypeReference
+      Identifier: ' Bar'
+      TypeReference
+        Identifier: 'M'
+      StringKeyword
+      TypeReference
+        Identifier: ' N'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Baa'
+    TypeParameter
+      Identifier: 'Y'
+    TypeReference
+      Identifier: ' Baz'
+      BooleanKeyword
+      TypeReference
+        Identifier: ' Y'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Baa'
+              NumberKeyword
+          EqualsGreaterThanToken
+          NumericLiteral

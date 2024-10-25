@@ -1,0 +1,5 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' number'
+    TypeParameter
+      Identifier: 'T'

@@ -1,0 +1,48 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noImplicitAny: true
+
+// @Filename: /a.ts
+////var foobarfoobarfoobarfoobar;
+
+// @Filename: /b.ts
+////function bar() {
+////    let y = foobarfoobarfoobarfoobar/**/;
+////}
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              StringLiteral

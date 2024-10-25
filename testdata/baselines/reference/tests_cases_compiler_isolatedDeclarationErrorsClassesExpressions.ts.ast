@@ -1,0 +1,52 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cls'
+        ClassExpression
+          PropertyDeclaration
+            Identifier: '
+    foo'
+            StringKeyword
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' id'
+    TypeParameter
+      Identifier: 'T'
+      ConstructorType
+        Parameter
+          DotDotDotToken
+          Identifier: 'a'
+          ArrayType
+            AnyKeyword
+        AnyKeyword
+    Parameter
+      Identifier: 'cls'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' cls'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Base'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Mix'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' id'
+          Identifier: 'Base'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classes'
+        AsExpression
+          ArrayLiteralExpression
+            ClassExpression
+            ClassExpression
+          TypeReference
+            Identifier: ' const'

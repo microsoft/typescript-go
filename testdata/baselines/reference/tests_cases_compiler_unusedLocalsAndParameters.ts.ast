@@ -1,0 +1,178 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fexp'
+        FunctionExpression
+          Parameter
+            Identifier: 'a'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+fexp'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' farrow'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    // Method declaration paramter
+    method'
+      Parameter
+        Identifier: 'a'
+      Block
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'v'
+        NumberKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' E'
+        ClassExpression
+          MethodDeclaration
+            Identifier: '
+    // Method declaration paramter
+    method'
+            Parameter
+              Identifier: 'a'
+            Block
+          SetAccessor
+            Identifier: ' x'
+            Parameter
+              Identifier: 'v'
+              NumberKeyword
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    // Object literal method declaration paramter
+    method'
+            Parameter
+              Identifier: 'a'
+            Block
+          SetAccessor
+            Identifier: ' x'
+            Parameter
+              Identifier: 'v'
+              NumberKeyword
+            Block
+  ExpressionStatement
+    Identifier: '
+
+o'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+    Identifier: ' o'
+    Block
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' n'
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' condition'
+        FalseKeyword
+  IfStatement
+    Identifier: 'condition'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NumericLiteral
+  TryStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c'
+              NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' y'
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: '
+    z'
+    ParenthesizedExpression
+      Identifier: 'x'
+    Identifier: ''
+    ExpressionStatement
+      Identifier: ''

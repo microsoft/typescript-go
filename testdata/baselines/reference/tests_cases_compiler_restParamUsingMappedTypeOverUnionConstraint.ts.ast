@@ -1,0 +1,49 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' HomomorphicMappedType'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+        StringKeyword
+        BooleanKeyword
+        LiteralType
+          NullKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TupleType
+          NumberKeyword
+        TupleType
+          StringKeyword
+    Parameter
+      Identifier: '
+  args'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+  fn'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' HomomorphicMappedType'
+            TypeReference
+              Identifier: 'T'
+        VoidKeyword
+    VoidKeyword

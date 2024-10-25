@@ -1,0 +1,189 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Bullean'
+  InterfaceDeclaration
+    Identifier: ' BulleanConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'v1'
+        QuestionToken
+        AnyKeyword
+      TypeReference
+        Identifier: ' Bullean'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'v2'
+        QuestionToken
+        TypeReference
+          Identifier: ' T'
+      TypePredicate
+        Identifier: ' v2'
+        TypeReference
+          Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Ari'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    filter'
+      TypeParameter
+        Identifier: 'S'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: 'cb1'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypePredicate
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' S'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        AnyKeyword
+        TypeReference
+          Identifier: ' Ari'
+          AnyKeyword
+        TypeReference
+          Identifier: ' Ari'
+          TypeReference
+            Identifier: 'S'
+    MethodSignature
+      Identifier: '
+    filter'
+      Parameter
+        Identifier: 'cb2'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          UnknownKeyword
+      TypeReference
+        Identifier: ' Ari'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Bullean'
+        TypeReference
+          Identifier: ' BulleanConstructor'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anys'
+        TypeReference
+          Identifier: ' Ari'
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xs'
+        TypeReference
+          Identifier: ' Ari'
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xs'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' anys'
+            Identifier: 'filter'
+          Identifier: 'Bullean'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' realanys'
+        ArrayType
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ys'
+        ArrayType
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ys'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' realanys'
+            Identifier: 'filter'
+          Identifier: 'Boolean'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foor'
+        TypeReference
+          Identifier: ' Array'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'name'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foor'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'name'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foos'
+        TypeReference
+          Identifier: ' Array'
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foos'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              TrueKeyword
+              TrueKeyword
+              FalseKeyword
+              NullKeyword
+            Identifier: 'filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'thing'
+            TypePredicate
+              Identifier: ' thing'
+              BooleanKeyword
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' thing'
+              ExclamationEqualsEqualsToken
+              NullKeyword

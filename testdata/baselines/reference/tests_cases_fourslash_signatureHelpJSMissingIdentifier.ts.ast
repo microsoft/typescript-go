@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @allowJs: true
+// @checkJs: true
+
+// @Filename: test.js
+////log(/**/)
+
+verify'
+        Identifier: 'noSignatureHelp'
+      StringLiteral

@@ -1,0 +1,9 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        Identifier: 'public'
+      Block

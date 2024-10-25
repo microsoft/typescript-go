@@ -1,0 +1,132 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator'
+        FunctionExpression
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'Component'
+            TypeReference
+              QualifiedName
+                Identifier: ' React'
+                Identifier: 'StatelessComponent'
+              TypeReference
+                Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'StatelessComponent'
+            TypeReference
+              Identifier: 'T'
+          Block
+            ReturnStatement
+              ArrowFunction
+                Parameter
+                  Identifier: 'props'
+                EqualsGreaterThanToken
+                JsxElement
+                  JsxOpeningElement
+                    Identifier: 'Component'
+                    JsxAttributes
+                      JsxAttribute
+                        Identifier: 'props'
+                  JsxClosingElement
+                    Identifier: 'Component'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator2'
+        FunctionExpression
+          TypeParameter
+            Identifier: 'T'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+          Parameter
+            Identifier: 'Component'
+            TypeReference
+              QualifiedName
+                Identifier: ' React'
+                Identifier: 'StatelessComponent'
+              TypeReference
+                Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'StatelessComponent'
+            TypeReference
+              Identifier: 'T'
+          Block
+            ReturnStatement
+              ArrowFunction
+                Parameter
+                  Identifier: 'props'
+                EqualsGreaterThanToken
+                JsxElement
+                  JsxOpeningElement
+                    Identifier: 'Component'
+                    JsxAttributes
+                      JsxAttribute
+                        Identifier: 'props'
+                      JsxAttribute
+                        Identifier: ' x'
+                        JsxExpression
+                          NumericLiteral
+                  JsxClosingElement
+                    Identifier: 'Component'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator3'
+        FunctionExpression
+          TypeParameter
+            Identifier: 'T'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+          TypeParameter
+            Identifier: ' U'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+          Parameter
+            Identifier: 'Component'
+            TypeReference
+              QualifiedName
+                Identifier: ' React'
+                Identifier: 'StatelessComponent'
+              TypeReference
+                Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'StatelessComponent'
+            TypeReference
+              Identifier: 'T'
+          Block
+            ReturnStatement
+              ArrowFunction
+                Parameter
+                  Identifier: 'props'
+                EqualsGreaterThanToken
+                JsxElement
+                  JsxOpeningElement
+                    Identifier: 'Component'
+                    JsxAttributes
+                      JsxAttribute
+                        Identifier: ' x'
+                        JsxExpression
+                          NumericLiteral
+                      JsxAttribute
+                        Identifier: 'props'
+                  JsxClosingElement
+                    Identifier: 'Component'

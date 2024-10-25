@@ -1,0 +1,26 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p'
+      NumericLiteral
+  ExportAssignment
+    Identifier: ' C'
+  ImportEqualsDeclaration
+    Identifier: ' D'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          Identifier: ' d'
+          Identifier: 'p'

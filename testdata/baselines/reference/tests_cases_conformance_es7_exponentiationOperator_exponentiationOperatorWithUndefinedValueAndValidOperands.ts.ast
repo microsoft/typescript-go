@@ -1,0 +1,87 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    a'
+    EnumMember
+      Identifier: '
+    b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rk1'
+        BinaryExpression
+          Identifier: ' undefined'
+          AsteriskAsteriskToken
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rk2'
+        BinaryExpression
+          Identifier: ' undefined'
+          AsteriskAsteriskToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rk3'
+        BinaryExpression
+          Identifier: ' undefined'
+          AsteriskAsteriskToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rk4'
+        BinaryExpression
+          Identifier: ' undefined'
+          AsteriskAsteriskToken
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rk5'
+        BinaryExpression
+          Identifier: ' a'
+          AsteriskAsteriskToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rk6'
+        BinaryExpression
+          Identifier: ' b'
+          AsteriskAsteriskToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rk7'
+        BinaryExpression
+          NumericLiteral
+          AsteriskAsteriskToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rk8'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'b'
+          AsteriskAsteriskToken
+          Identifier: ' undefined'

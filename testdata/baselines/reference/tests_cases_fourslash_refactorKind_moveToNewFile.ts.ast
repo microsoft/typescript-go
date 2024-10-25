@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// /*a*/const moveMe = 1;/*b*/
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'refactorKindAvailable'
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' 
+    allowTextChangesInNewFiles'
+          TrueKeyword

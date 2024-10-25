@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C1'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C1'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C2'
+  InterfaceDeclaration
+    Identifier: ' C2'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C2'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C3'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C3'

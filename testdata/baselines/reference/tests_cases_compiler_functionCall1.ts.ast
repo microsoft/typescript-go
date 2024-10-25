@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    AnyKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' foo'

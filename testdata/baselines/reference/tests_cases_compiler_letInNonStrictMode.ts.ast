@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x'
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'a'
+            Identifier: ' y'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'a'
+            NumericLiteral

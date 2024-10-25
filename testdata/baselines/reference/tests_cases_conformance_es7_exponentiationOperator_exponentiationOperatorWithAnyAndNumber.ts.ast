@@ -1,0 +1,75 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        BinaryExpression
+          Identifier: ' a'
+          AsteriskAsteriskToken
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        BinaryExpression
+          Identifier: ' a'
+          AsteriskAsteriskToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        BinaryExpression
+          Identifier: ' a'
+          AsteriskAsteriskToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        BinaryExpression
+          NumericLiteral
+          AsteriskAsteriskToken
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        BinaryExpression
+          NumericLiteral
+          AsteriskAsteriskToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        BinaryExpression
+          Identifier: ' b'
+          AsteriskAsteriskToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        BinaryExpression
+          NumericLiteral
+          AsteriskAsteriskToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        BinaryExpression
+          Identifier: ' b'
+          AsteriskAsteriskToken
+          Identifier: ' b'

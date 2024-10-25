@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    ParenthesizedExpression
+      ArrowFunction
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'window'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' parts'
+        ArrayLiteralExpression
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+
+// Ensure that the generated code is correct
+parts'
+      NumericLiteral

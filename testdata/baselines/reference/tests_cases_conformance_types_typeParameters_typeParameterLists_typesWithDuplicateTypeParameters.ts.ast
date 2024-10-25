@@ -1,0 +1,45 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' T'
+    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' T'
+    Block

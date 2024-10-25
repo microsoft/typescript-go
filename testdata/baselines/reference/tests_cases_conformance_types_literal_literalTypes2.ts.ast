@@ -1,0 +1,1133 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cond'
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'p1'
+      NumericLiteral
+    Parameter
+      Identifier: ' p2'
+      StringLiteral
+    Parameter
+      Identifier: ' p3'
+      TrueKeyword
+    Parameter
+      Identifier: ' p4'
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'A'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v1'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v2'
+            PrefixUnaryExpression
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v3'
+            BinaryExpression
+              NumericLiteral
+              PlusToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v4'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v5'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v6'
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v7'
+            TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v8'
+            PropertyAccessExpression
+              Identifier: ' E'
+              Identifier: 'A'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            PrefixUnaryExpression
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            BinaryExpression
+              NumericLiteral
+              PlusToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x4'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x5'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x6'
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x7'
+            TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x8'
+            PropertyAccessExpression
+              Identifier: ' E'
+              Identifier: 'A'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            PrefixUnaryExpression
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            BinaryExpression
+              NumericLiteral
+              PlusToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c4'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c5'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c6'
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c7'
+            TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c8'
+            PropertyAccessExpression
+              Identifier: ' E'
+              Identifier: 'A'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'p1'
+      LiteralType
+        NumericLiteral
+      NumericLiteral
+    Parameter
+      Identifier: ' p2'
+      LiteralType
+        StringLiteral
+      StringLiteral
+    Parameter
+      Identifier: ' p3'
+      LiteralType
+        TrueKeyword
+      TrueKeyword
+    Parameter
+      Identifier: ' p4'
+      TypeReference
+        QualifiedName
+          Identifier: ' E'
+          Identifier: 'A'
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'A'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v1'
+            LiteralType
+              NumericLiteral
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v2'
+            LiteralType
+              PrefixUnaryExpression
+                NumericLiteral
+            PrefixUnaryExpression
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v3'
+            LiteralType
+              StringLiteral
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v4'
+            LiteralType
+              TrueKeyword
+            TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v5'
+            TypeReference
+              QualifiedName
+                Identifier: ' E'
+                Identifier: 'A'
+            PropertyAccessExpression
+              Identifier: ' E'
+              Identifier: 'A'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            LiteralType
+              NumericLiteral
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            LiteralType
+              PrefixUnaryExpression
+                NumericLiteral
+            PrefixUnaryExpression
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            LiteralType
+              StringLiteral
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x4'
+            LiteralType
+              TrueKeyword
+            TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x5'
+            TypeReference
+              QualifiedName
+                Identifier: ' E'
+                Identifier: 'A'
+            PropertyAccessExpression
+              Identifier: ' E'
+              Identifier: 'A'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            ConditionalExpression
+              Identifier: ' cond'
+              QuestionToken
+              NumericLiteral
+              ColonToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            ConditionalExpression
+              Identifier: ' cond'
+              QuestionToken
+              NumericLiteral
+              ColonToken
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            ConditionalExpression
+              Identifier: ' cond'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' E'
+                Identifier: 'A'
+              ColonToken
+              ConditionalExpression
+                Identifier: ' cond'
+                QuestionToken
+                TrueKeyword
+                ColonToken
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c4'
+            ConditionalExpression
+              Identifier: ' cond'
+              QuestionToken
+              StringLiteral
+              ColonToken
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c5'
+            ConditionalExpression
+              Identifier: ' cond'
+              QuestionToken
+              NumericLiteral
+              ColonToken
+              Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c6'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' kind'
+                LiteralType
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' kind'
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c7'
+            TupleType
+              UnionType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+              UnionType
+                LiteralType
+                  StringLiteral
+                LiteralType
+                  StringLiteral
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c8'
+            ConditionalExpression
+              Identifier: ' cond'
+              QuestionToken
+              Identifier: ' c6'
+              ColonToken
+              ConditionalExpression
+                Identifier: ' cond'
+                QuestionToken
+                Identifier: ' c7'
+                ColonToken
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            Identifier: ' c1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            Identifier: ' c2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            Identifier: ' c3'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x4'
+            Identifier: ' c4'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x5'
+            Identifier: ' c5'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x6'
+            Identifier: ' c6'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x7'
+            Identifier: ' c7'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x8'
+            Identifier: ' c8'
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    x1'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    x2'
+      PrefixUnaryExpression
+        NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    x3'
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    x4'
+      StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    x5'
+      StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    x6'
+      BinaryExpression
+        StringLiteral
+        PlusToken
+        StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    x7'
+      TrueKeyword
+    PropertyDeclaration
+      Identifier: '
+    x8'
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'A'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' c1'
+      NumericLiteral
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' c2'
+      PrefixUnaryExpression
+        NumericLiteral
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' c3'
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        NumericLiteral
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' c4'
+      StringLiteral
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' c5'
+      StringLiteral
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' c6'
+      BinaryExpression
+        StringLiteral
+        PlusToken
+        StringLiteral
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' c7'
+      TrueKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' c8'
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'A'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                UnionType
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+              PropertySignature
+                Identifier: ' b'
+                UnionType
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                UnionType
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+              PropertySignature
+                Identifier: ' b'
+                UnionType
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                StringLiteral
+  FunctionDeclaration
+    Identifier: ' f5'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            ArrayType
+              ParenthesizedType
+                UnionType
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    StringLiteral
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            TupleType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                StringLiteral
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            ArrayType
+              ParenthesizedType
+                UnionType
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    StringLiteral
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            TupleType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                StringLiteral
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' f6'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' c1'
+                TrueKeyword
+              BindingElement
+                Identifier: ' c2'
+                NumericLiteral
+              BindingElement
+                Identifier: ' c3'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' c1'
+                FalseKeyword
+              PropertyAssignment
+                Identifier: ' c2'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' c3'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x1'
+                TrueKeyword
+              BindingElement
+                Identifier: ' x2'
+                NumericLiteral
+              BindingElement
+                Identifier: ' x3'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x1'
+                FalseKeyword
+              PropertyAssignment
+                Identifier: ' x2'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' x3'
+                StringLiteral
+  FunctionDeclaration
+    Identifier: ' f10'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' f11'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' cond'
+          QuestionToken
+          NumericLiteral
+          ColonToken
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' f12'
+    Block
+      IfStatement
+        Identifier: 'cond'
+        Block
+          ReturnStatement
+            NumericLiteral
+        Block
+          ReturnStatement
+            StringLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ReturnStatement
+          ConditionalExpression
+            Identifier: ' cond'
+            QuestionToken
+            NumericLiteral
+            ColonToken
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f20'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f1'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f2'
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f3'
+            ArrowFunction
+              EqualsGreaterThanToken
+              TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f4'
+            ArrowFunction
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' E'
+                Identifier: 'C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f5'
+            ArrowFunction
+              LiteralType
+                StringLiteral
+              EqualsGreaterThanToken
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f6'
+            FunctionType
+              UnionType
+                LiteralType
+                  StringLiteral
+                LiteralType
+                  StringLiteral
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f7'
+            UnionType
+              ParenthesizedType
+                FunctionType
+                  LiteralType
+                    StringLiteral
+              ParenthesizedType
+                FunctionType
+                  LiteralType
+                    StringLiteral
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g3'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g5'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g6'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g7'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g8'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' f'
+      FunctionType
+        Parameter
+          Identifier: 'p'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrayType
+          ParenthesizedType
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        CallExpression
+          Identifier: ' g1'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        CallExpression
+          Identifier: ' g2'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        CallExpression
+          Identifier: ' g2'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        CallExpression
+          Identifier: ' g3'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        CallExpression
+          Identifier: ' g4'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        CallExpression
+          Identifier: ' g5'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x7'
+        CallExpression
+          Identifier: ' g6'
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x8'
+        CallExpression
+          Identifier: ' g6'
+          Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x9'
+        CallExpression
+          Identifier: ' g7'
+          Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x10'
+        CallExpression
+          Identifier: ' g8'
+          NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+        CallExpression
+          Identifier: ' g8'
+          NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' makeArray'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' append'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'slice'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    result'
+            Identifier: 'push'
+          Identifier: 'x'
+      ReturnStatement
+        Identifier: ' result'
+  TypeAliasDeclaration
+    Identifier: ' Bit'
+    UnionType
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa'
+        CallExpression
+          Identifier: ' makeArray'
+          TypeReference
+            Identifier: 'Bit'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+aa'
+      EqualsToken
+      CallExpression
+        Identifier: ' append'
+        Identifier: 'aa'
+        NumericLiteral

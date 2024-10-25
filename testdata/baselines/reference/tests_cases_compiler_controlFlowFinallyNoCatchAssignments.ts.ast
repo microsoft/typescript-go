@@ -1,0 +1,54 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' Math'
+          Identifier: 'random'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+  TryStatement
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        a'
+              EqualsToken
+              NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        a'
+              EqualsToken
+              NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      Identifier: 'a'

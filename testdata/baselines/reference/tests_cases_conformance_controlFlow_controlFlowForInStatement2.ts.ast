@@ -1,0 +1,89 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' keywordA'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' keywordB'
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'keywordA'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'keywordB'
+        StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+  IfStatement
+    BinaryExpression
+      StringLiteral
+      InKeyword
+      Identifier: ' c'
+    Block
+      ExpressionStatement
+        Identifier: '
+    c'
+  IfStatement
+    BinaryExpression
+      Identifier: 'keywordA'
+      InKeyword
+      Identifier: ' c'
+    Block
+      ExpressionStatement
+        Identifier: '
+    c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' stringB'
+        StringKeyword
+        StringLiteral
+  IfStatement
+    BinaryExpression
+      ParenthesizedExpression
+        AsExpression
+          Identifier: 'stringB'
+          LiteralType
+            StringLiteral
+      InKeyword
+      Identifier: ' c'
+    Block
+      ExpressionStatement
+        Identifier: '
+    c'
+  IfStatement
+    BinaryExpression
+      ParenthesizedExpression
+        AsExpression
+          Identifier: 'stringB'
+          ParenthesizedType
+            UnionType
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+      InKeyword
+      Identifier: ' c'
+    Block
+      ExpressionStatement
+        Identifier: '
+    c'

@@ -1,0 +1,144 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' itNum'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Parameter
+            DotDotDotToken
+            Identifier: 'rest'
+          Block
+      SpreadElement
+        Identifier: 'itNum'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Parameter
+            Identifier: 'a'
+          Parameter
+            DotDotDotToken
+            Identifier: 'rest'
+          Block
+      StringLiteral
+      SpreadElement
+        Identifier: 'itNum'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Parameter
+            Identifier: 'a'
+          Parameter
+            DotDotDotToken
+            Identifier: 'rest'
+          Block
+      StringLiteral
+      TrueKeyword
+      SpreadElement
+        Identifier: 'itNum'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn1'
+    TypeParameter
+      ConstKeyword
+      Identifier: ' T'
+      TypeOperator
+        ArrayType
+          UnknownKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res1'
+        CallExpression
+          Identifier: ' fn1'
+          SpreadElement
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res2'
+        CallExpression
+          Identifier: ' fn1'
+          SpreadElement
+            Identifier: 'itNum'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res3'
+        CallExpression
+          Identifier: ' fn1'
+          TrueKeyword
+          SpreadElement
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res4'
+        CallExpression
+          Identifier: ' fn1'
+          TrueKeyword
+          SpreadElement
+            Identifier: 'itNum'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        CallExpression
+          Identifier: ' foo'
+          SpreadElement
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        CallExpression
+          Identifier: ' foo'
+          SpreadElement
+            Identifier: 'itNum'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p3'
+        CallExpression
+          Identifier: ' foo'
+          TrueKeyword
+          SpreadElement
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p4'
+        CallExpression
+          Identifier: ' foo'
+          TrueKeyword
+          SpreadElement
+            Identifier: 'itNum'

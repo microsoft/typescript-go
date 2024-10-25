@@ -1,0 +1,113 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cond'
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' a'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          TrueKeyword
+      DoStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: ' // boolean | string
+        x'
+              EqualsToken
+              Identifier: ' undefined'
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' b'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          TrueKeyword
+      DoStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          IfStatement
+            Identifier: 'cond'
+            ContinueStatement
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              Identifier: ' undefined'
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' c'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      DoStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          IfStatement
+            Identifier: 'cond'
+            BreakStatement
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              Identifier: ' undefined'
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+      ExpressionStatement
+        Identifier: '
+    x'

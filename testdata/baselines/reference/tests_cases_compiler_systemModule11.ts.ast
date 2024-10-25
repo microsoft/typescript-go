@@ -1,0 +1,85 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+  ExportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'y'
+        Identifier: ' y1'
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+      ExportSpecifier
+        Identifier: ' y'
+        Identifier: ' z'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' foo'
+    Block
+  ExportDeclaration
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+      VariableDeclaration
+        Identifier: ' z1'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'z'
+      ExportSpecifier
+        Identifier: ' z1'
+        Identifier: ' z2'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 's'
+      ExportSpecifier
+        Identifier: ' s1'
+        Identifier: ' s2'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+  ExportDeclaration
+    StringLiteral

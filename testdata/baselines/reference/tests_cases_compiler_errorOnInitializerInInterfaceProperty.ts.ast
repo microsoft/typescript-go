@@ -1,0 +1,8 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    bar'
+      NumberKeyword
+      NumericLiteral

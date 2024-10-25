@@ -1,0 +1,66 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Foo'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeReference
+          Identifier: ' Foo'
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' source'
+      BooleanKeyword
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' source'
+      BooleanKeyword
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Foo'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeReference
+          Identifier: ' Foo'
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'o'

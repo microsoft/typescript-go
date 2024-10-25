@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'foo'
+        ObjectLiteralExpression
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'arguments'
+            EqualsToken
+            Identifier: ' foo'

@@ -1,0 +1,22 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' b'
+        BooleanKeyword
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        Identifier: 'a'
+        Identifier: ' b'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          TrueKeyword

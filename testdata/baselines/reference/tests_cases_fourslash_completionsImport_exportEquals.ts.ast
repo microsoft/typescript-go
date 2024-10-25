@@ -1,0 +1,134 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' preferences'
+        TypeReference
+          QualifiedName
+            Identifier: ' FourSlashInterface'
+            Identifier: 'UserPreferences'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' includeCompletionsForModuleExports'
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            source'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            hasAction'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+            sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'AutoImportSuggestions'
+        ShorthandPropertyAssignment
+          Identifier: '
+        preferences'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            source'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            hasAction'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+            sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'AutoImportSuggestions'
+        ShorthandPropertyAssignment
+          Identifier: '
+        preferences'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Import { b } first, or it will just add a qualified name from 'a' (which isn't what we're trying to test)
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

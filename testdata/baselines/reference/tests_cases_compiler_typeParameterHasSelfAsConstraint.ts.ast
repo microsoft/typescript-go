@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    NumberKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'

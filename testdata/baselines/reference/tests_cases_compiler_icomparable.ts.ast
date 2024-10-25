@@ -1,0 +1,48 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IComparable'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+       compareTo'
+      Parameter
+        Identifier: 'other'
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' sort'
+    TypeParameter
+      Identifier: 'U'
+      TypeReference
+        Identifier: ' IComparable'
+        AnyKeyword
+    Parameter
+      Identifier: 'items'
+      ArrayType
+        TypeReference
+          Identifier: ' U'
+    ArrayType
+      TypeReference
+        Identifier: ' U'
+  InterfaceDeclaration
+    Identifier: ' StringComparable'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IComparable'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sc'
+        ArrayType
+          TypeReference
+            Identifier: ' StringComparable'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' sort'
+          Identifier: 'sc'

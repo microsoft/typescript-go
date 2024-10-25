@@ -1,0 +1,52 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' foo1'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              Identifier: ' foo1'
+              Identifier: 'x'
+  ExportAssignment
+    Identifier: ' Foo'
+  ImportEqualsDeclaration
+    Identifier: ' foo2'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              Identifier: ' foo2'
+              Identifier: 'x'
+  ExportAssignment
+    Identifier: ' Foo'
+  ImportEqualsDeclaration
+    Identifier: ' foo0'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              Identifier: ' foo0'
+              Identifier: 'x'
+  ExportAssignment
+    Identifier: ' Foo'

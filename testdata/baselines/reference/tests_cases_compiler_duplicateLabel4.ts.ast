@@ -1,0 +1,16 @@
+SourceFile
+  LabeledStatement
+    Identifier: '// @allowUnusedLabels: true
+// @allowUnreachableCode: true
+
+target'
+    WhileStatement
+      TrueKeyword
+      Block
+  LabeledStatement
+    Identifier: '
+
+target'
+    WhileStatement
+      TrueKeyword
+      Block

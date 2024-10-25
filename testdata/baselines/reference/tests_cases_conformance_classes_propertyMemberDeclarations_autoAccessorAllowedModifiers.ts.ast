@@ -1,0 +1,96 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' C1'
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' a'
+      AnyKeyword
+    PropertyDeclaration
+      PublicKeyword
+      AccessorKeyword
+      Identifier: ' b'
+      AnyKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      AccessorKeyword
+      Identifier: ' c'
+      AnyKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      AccessorKeyword
+      Identifier: ' d'
+      AnyKeyword
+    PropertyDeclaration
+      AbstractKeyword
+      AccessorKeyword
+      Identifier: ' e'
+      AnyKeyword
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' f'
+      AnyKeyword
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' g'
+      AnyKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' h'
+      AnyKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' i'
+      AnyKeyword
+    PropertyDeclaration
+      AccessorKeyword
+      PrivateIdentifier
+      AnyKeyword
+    PropertyDeclaration
+      AccessorKeyword
+      StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      AccessorKeyword
+      NumericLiteral
+      AnyKeyword
+    PropertyDeclaration
+      AccessorKeyword
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' n'
+      ExclamationToken
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+    PropertyDeclaration
+      OverrideKeyword
+      AccessorKeyword
+      Identifier: ' e'
+      AnyKeyword
+    PropertyDeclaration
+      StaticKeyword
+      OverrideKeyword
+      AccessorKeyword
+      Identifier: ' i'
+      AnyKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C3'
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' a'
+      AnyKeyword

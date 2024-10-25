@@ -1,0 +1,94 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          Parameter
+            Identifier: ' _'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              DotDotDotToken
+              Identifier: '_'
+            EqualsGreaterThanToken
+            StringLiteral
+  ExpressionStatement
+    TaggedTemplateExpression
+      CallExpression
+        Identifier: '
+
+f'
+        ObjectLiteralExpression
+          SpreadAssignment
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    TaggedTemplateExpression
+      CallExpression
+        Identifier: '
+f'
+        ObjectLiteralExpression
+          SpreadAssignment
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    TaggedTemplateExpression
+      CallExpression
+        Identifier: '
+f'
+        ObjectLiteralExpression
+          SpreadAssignment
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          Identifier: 'f'
+          TemplateTail
+  ExpressionStatement
+    TaggedTemplateExpression
+      CallExpression
+        Identifier: '
+f'
+        ObjectLiteralExpression
+          SpreadAssignment
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            CallExpression
+              ParenthesizedExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  NumericLiteral
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    TaggedTemplateExpression
+      CallExpression
+        Identifier: '
+f'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            CallExpression
+              ParenthesizedExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  NumericLiteral
+          SpreadAssignment
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      NoSubstitutionTemplateLiteral

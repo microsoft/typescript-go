@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @allowNonTsExtensions: true
+// @Filename: Foo.js
+/////** @param {{b:number}} [a] */
+////function /**/f(a) { }
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

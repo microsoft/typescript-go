@@ -1,0 +1,146 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    MethodSignature
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    optionalMethod'
+      QuestionToken
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    property'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    optionalProperty'
+      QuestionToken
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    additionalProperty'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+
+    additionalMethod'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      StringKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'method'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'optionalProperty'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        NewExpression
+          Identifier: ' Bar'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+bar'
+        Identifier: 'method'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+bar'
+        Identifier: 'optionalMethod'
+      NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+bar'
+      Identifier: 'property'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+bar'
+      Identifier: 'optionalProperty'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+bar'
+      Identifier: 'additionalProperty'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+bar'
+        Identifier: 'additionalMethod'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    method'
+            Parameter
+              Identifier: 'a'
+              NumberKeyword
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    property'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    additionalProperty'
+            StringKeyword
+          MethodSignature
+            Identifier: '
+    additionalMethod'
+            Parameter
+              Identifier: 'a'
+              NumberKeyword
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+bar'
+      EqualsToken
+      Identifier: ' obj'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+obj'
+      EqualsToken
+      Identifier: ' bar'

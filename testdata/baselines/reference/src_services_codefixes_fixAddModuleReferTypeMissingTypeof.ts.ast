@@ -1,0 +1,274 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    ImportTypeNode'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixIdAddMissingTypeof'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        Identifier: ' fixIdAddMissingTypeof'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Module_0_does_not_refer_to_a_type_but_is_used_as_a_type_here_Did_you_mean_typeof_import_0'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToAddMissingTypeof'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' sourceFile'
+                      BindingElement
+                        Identifier: ' span'
+                    Identifier: ' context'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' importType'
+                    CallExpression
+                      Identifier: ' getImportTypeNode'
+                      Identifier: 'sourceFile'
+                      PropertyAccessExpression
+                        Identifier: ' span'
+                        Identifier: 'start'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' changes'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'ChangeTracker'
+                        Identifier: 'with'
+                      Identifier: 'context'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' t'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' doChange'
+                          Identifier: 't'
+                          Identifier: ' sourceFile'
+                          Identifier: ' importType'
+              ReturnStatement
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'createCodeFixAction'
+                    Identifier: 'fixId'
+                    Identifier: ' changes'
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Add_missing_typeof'
+                    Identifier: ' fixId'
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Add_missing_typeof'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' doChange'
+                  Identifier: 'changes'
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'sourceFile'
+                  CallExpression
+                    Identifier: ' getImportTypeNode'
+                    PropertyAccessExpression
+                      Identifier: 'diag'
+                      Identifier: 'file'
+                    PropertyAccessExpression
+                      Identifier: ' diag'
+                      Identifier: 'start'
+  FunctionDeclaration
+    Identifier: ' getImportTypeNode'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    TypeReference
+      Identifier: ' ImportTypeNode'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'token'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ImportKeyword'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'token'
+                Identifier: 'parent'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ImportType'
+          StringLiteral
+      ReturnStatement
+        AsExpression
+          PropertyAccessExpression
+            Identifier: ' token'
+            Identifier: 'parent'
+          TypeReference
+            Identifier: ' ImportTypeNode'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' importType'
+      TypeReference
+        Identifier: ' ImportTypeNode'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newTypeNode'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'updateImportTypeNode'
+              Identifier: 'importType'
+              PropertyAccessExpression
+                Identifier: ' importType'
+                Identifier: 'argument'
+              PropertyAccessExpression
+                Identifier: ' importType'
+                Identifier: 'attributes'
+              PropertyAccessExpression
+                Identifier: ' importType'
+                Identifier: 'qualifier'
+              PropertyAccessExpression
+                Identifier: ' importType'
+                Identifier: 'typeArguments'
+              TrueKeyword
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          Identifier: 'sourceFile'
+          Identifier: ' importType'
+          Identifier: ' newTypeNode'

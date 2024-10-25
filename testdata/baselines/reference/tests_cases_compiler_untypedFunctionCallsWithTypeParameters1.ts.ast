@@ -1,0 +1,163 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        FunctionExpression
+          Block
+            ReturnStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        CallExpression
+          Identifier: ' x'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        AnyKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' y'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' Function'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' c'
+          NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Function'
+    PropertyDeclaration
+      Identifier: '
+    prototype'
+      NullKeyword
+    PropertyDeclaration
+      Identifier: '
+    length'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    arguments'
+      NullKeyword
+    PropertyDeclaration
+      Identifier: '
+    caller'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' c2'
+          NumberKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Function'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        TypeReference
+          Identifier: ' C2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          Identifier: ' c3'
+          NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        Identifier: 'number'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          Identifier: ' z'
+          StringKeyword
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' callable2'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        TypeReference
+          Identifier: ' callable2'
+          NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+c4'
+      NumberKeyword
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' callable3'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5'
+        TypeReference
+          Identifier: ' callable3'
+          NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+c5'
+      StringKeyword
+      NumericLiteral

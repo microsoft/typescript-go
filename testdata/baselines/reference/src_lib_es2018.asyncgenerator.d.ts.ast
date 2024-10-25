@@ -1,0 +1,152 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' AsyncGenerator'
+    TypeParameter
+      Identifier: 'T'
+      UnknownKeyword
+    TypeParameter
+      Identifier: ' TReturn'
+      AnyKeyword
+    TypeParameter
+      Identifier: ' TNext'
+      AnyKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AsyncIteratorObject'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' TReturn'
+        TypeReference
+          Identifier: ' TNext'
+    MethodSignature
+      Identifier: '
+    // NOTE: 'next' is defined using a tuple to ensure we report the correct assignability errors in all places.
+    next'
+      Parameter
+        DotDotDotToken
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'value'
+        UnionType
+          TupleType
+          TupleType
+            TypeReference
+              Identifier: 'TNext'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'IteratorResult'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' TReturn'
+    MethodSignature
+      Identifier: '
+    return'
+      Parameter
+        Identifier: 'value'
+        UnionType
+          TypeReference
+            Identifier: ' TReturn'
+          TypeReference
+            Identifier: ' PromiseLike'
+            TypeReference
+              Identifier: 'TReturn'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'IteratorResult'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' TReturn'
+    MethodSignature
+      Identifier: '
+    throw'
+      Parameter
+        Identifier: 'e'
+        AnyKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'IteratorResult'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' TReturn'
+    MethodSignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'asyncIterator'
+      TypeReference
+        Identifier: ' AsyncGenerator'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' TReturn'
+        TypeReference
+          Identifier: ' TNext'
+  InterfaceDeclaration
+    Identifier: ' AsyncGeneratorFunction'
+    ConstructSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' AsyncGenerator'
+    CallSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' AsyncGenerator'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' length'
+      NumberKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' name'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' prototype'
+      TypeReference
+        Identifier: ' AsyncGenerator'
+  InterfaceDeclaration
+    Identifier: ' AsyncGeneratorFunctionConstructor'
+    ConstructSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          StringKeyword
+      TypeReference
+        Identifier: ' AsyncGeneratorFunction'
+    CallSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          StringKeyword
+      TypeReference
+        Identifier: ' AsyncGeneratorFunction'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' length'
+      NumberKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' name'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' prototype'
+      TypeReference
+        Identifier: ' AsyncGeneratorFunction'

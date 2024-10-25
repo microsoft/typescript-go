@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NullKeyword
+  ExportAssignment
+    Identifier: ' b'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' default'
+    StringLiteral

@@ -1,0 +1,69 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Outer'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: work.js
+Outer'
+        Identifier: 'Inner'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Outer'
+          Identifier: 'Inner'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    x'
+          NumericLiteral
+        MethodDeclaration
+          Identifier: '
+    m'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inner'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+inner'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+inner'
+        Identifier: 'm'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inno'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Outer'
+            Identifier: 'Inner'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+inno'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+inno'
+        Identifier: 'm'

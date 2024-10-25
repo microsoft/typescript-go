@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' let'
+        AnyKeyword
+        ObjectLiteralExpression
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: 'let'
+          NumericLiteral
+        EqualsToken
+        NumericLiteral

@@ -1,0 +1,59 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' N'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' S'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        TypeReference
+          Identifier: ' N'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        TypeReference
+          Identifier: ' S'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        StringKeyword
+        ElementAccessExpression
+          Identifier: ' n'
+          Identifier: 'undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+str'
+      EqualsToken
+      ElementAccessExpression
+        Identifier: ' n'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+        ElementAccessExpression
+          Identifier: ' s'
+          Identifier: 'undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+num'
+      EqualsToken
+      ElementAccessExpression
+        Identifier: ' s'
+        NullKeyword

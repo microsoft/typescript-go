@@ -1,0 +1,177 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' f1'
+    TypeReference
+      Identifier: ' Generator'
+      AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          LiteralType
+            StringLiteral
+      AnyKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            StringLiteral
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g1'
+    TypeReference
+      Identifier: ' Iterator'
+      AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          LiteralType
+            StringLiteral
+      AnyKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f2'
+    TypeReference
+      Identifier: ' AsyncGenerator'
+      AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          LiteralType
+            StringLiteral
+      AnyKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' g2'
+    TypeReference
+      Identifier: ' AsyncIterator'
+      AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          LiteralType
+            StringLiteral
+      AnyKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f3'
+    TypeReference
+      Identifier: ' AsyncGenerator'
+      AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          LiteralType
+            StringLiteral
+      AnyKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' g3'
+    TypeReference
+      Identifier: ' AsyncIterator'
+      AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          LiteralType
+            StringLiteral
+      AnyKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f4'
+    TypeReference
+      Identifier: ' AsyncGenerator'
+      AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          LiteralType
+            StringLiteral
+      AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ret'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                StringLiteral
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          Identifier: 'ret'
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' g4'
+    TypeReference
+      Identifier: ' AsyncIterator'
+      AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          LiteralType
+            StringLiteral
+      AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ret'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                StringLiteral
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          Identifier: 'ret'

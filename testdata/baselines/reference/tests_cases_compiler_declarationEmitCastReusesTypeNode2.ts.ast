@@ -1,0 +1,201 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vLet'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          IntersectionType
+            TypeLiteral
+            TypeLiteral
+              PropertySignature
+                Identifier: ' name'
+                StringKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vConst'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          IntersectionType
+            TypeLiteral
+            TypeLiteral
+              PropertySignature
+                Identifier: ' name'
+                StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'p'
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        IntersectionType
+          TypeLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnWithRequiredDefaultParam'
+    Parameter
+      Identifier: 'p'
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        IntersectionType
+          TypeLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+    Parameter
+      Identifier: ' req'
+      NumberKeyword
+    Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    field'
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        IntersectionType
+          TypeLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    optField'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        IntersectionType
+          TypeLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' roFiled'
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        IntersectionType
+          TypeLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'p'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          IntersectionType
+            TypeLiteral
+            TypeLiteral
+              PropertySignature
+                Identifier: ' name'
+                StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    methodWithRequiredDefault'
+      Parameter
+        Identifier: 'p'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          IntersectionType
+            TypeLiteral
+            TypeLiteral
+              PropertySignature
+                Identifier: ' name'
+                StringKeyword
+      Parameter
+        Identifier: ' req'
+        NumberKeyword
+      Block
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' ctorField'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          IntersectionType
+            TypeLiteral
+            TypeLiteral
+              PropertySignature
+                Identifier: ' name'
+                StringKeyword
+      Block
+    GetAccessor
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          AsExpression
+            NonNullExpression
+              NullKeyword
+            IntersectionType
+              TypeLiteral
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' name'
+                  StringKeyword
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'v'
+      Block
+  ExportAssignment
+    AsExpression
+      NonNullExpression
+        NullKeyword
+      IntersectionType
+        TypeLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnWithPartialAnnotationOnDefaultparam'
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            StringKeyword
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        IntersectionType
+          TypeLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    Block

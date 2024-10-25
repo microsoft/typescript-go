@@ -1,0 +1,85 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//@noEmit: true
+
+//@Filename: /package.json
+////{
+////  "devDependencies": {
+////    "@types/react": "*"
+////  }
+////}
+
+//@Filename: /node_modules/@types/react/index.d.ts
+////export declare var React: any;
+
+//@Filename: /node_modules/@types/react/package.json
+////{
+////  "name": "@types/react"
+////}
+
+//@Filename: /node_modules/@types/fake-react/index.d.ts
+////export declare var ReactFake: any;
+
+//@Filename: /node_modules/@types/fake-react/package.json
+////{
+////  "name": "@types/fake-react"
+////}
+
+//@Filename: /src/index.ts
+////const x = Re/**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'marker'
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+  isNewIdentifierLocation'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    hasAction'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    source'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+  excludes'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword

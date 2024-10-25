@@ -1,0 +1,51 @@
+SourceFile
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Map'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' potentiallyUndefinedIterable'
+        AsExpression
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              StringLiteral
+              NumericLiteral
+            ArrayLiteralExpression
+              StringLiteral
+              NumericLiteral
+          UnionType
+            TypeReference
+              Identifier: ' Iterable'
+              TupleType
+                StringKeyword
+                NumberKeyword
+            UndefinedKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Map'
+      Identifier: 'potentiallyUndefinedIterable'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' potentiallyNullIterable'
+        AsExpression
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              StringLiteral
+              NumericLiteral
+            ArrayLiteralExpression
+              StringLiteral
+              NumericLiteral
+          UnionType
+            TypeReference
+              Identifier: ' Iterable'
+              TupleType
+                StringKeyword
+                NumberKeyword
+            LiteralType
+              NullKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Map'
+      Identifier: 'potentiallyNullIterable'

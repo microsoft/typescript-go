@@ -1,0 +1,27 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' marker'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' test'
+        Identifier: 'markers'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'indentationAtPositionIs'
+          PropertyAccessExpression
+            Identifier: 'marker'
+            Identifier: 'fileName'
+          PropertyAccessExpression
+            Identifier: ' marker'
+            Identifier: 'position'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' marker'
+              Identifier: 'data'
+            Identifier: 'indentation'

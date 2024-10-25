@@ -1,0 +1,23 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' P'
+        ModuleDeclaration
+          Identifier: 'Q'
+          ModuleBlock
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' R'
+        ModuleDeclaration
+          Identifier: 'S'
+          ModuleBlock
+  ModuleDeclaration
+    Identifier: ' T'
+    ModuleDeclaration
+      Identifier: 'U'
+      ModuleBlock

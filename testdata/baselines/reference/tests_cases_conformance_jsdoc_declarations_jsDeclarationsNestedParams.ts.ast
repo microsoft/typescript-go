@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' cancel'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'reason'
+          BindingElement
+            Identifier: ' code'
+      Block
+  ClassDeclaration
+    Identifier: ' Y'
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' cancel'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'reason'
+          BindingElement
+            Identifier: ' suberr'
+      Block

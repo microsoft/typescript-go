@@ -1,0 +1,49 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'g0Def'
+          BindingElement
+            Identifier: ' g0'
+          BindingElement
+            Identifier: ' s0Def'
+          BindingElement
+            Identifier: ' s0'
+          BindingElement
+            Identifier: ' gs1Def'
+          BindingElement
+            Identifier: ' g1'
+          BindingElement
+            Identifier: ' s1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoAt'
+      Identifier: 'g0'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoAt'
+      Identifier: 's0'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral

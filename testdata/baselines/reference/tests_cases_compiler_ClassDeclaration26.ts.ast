@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      ConstKeyword
+      Identifier: ' var'
+    PropertyDeclaration
+      ExportKeyword
+      Identifier: ' foo'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' constructor'
+  ExpressionStatement
+    ArrowFunction
+      EqualsGreaterThanToken
+      Block

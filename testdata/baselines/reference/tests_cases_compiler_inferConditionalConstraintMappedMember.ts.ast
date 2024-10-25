@@ -1,0 +1,61 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' KeysWithoutStringIndex'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        ConditionalType
+          StringKeyword
+          TypeReference
+            Identifier: ' K'
+          NeverKeyword
+          TypeReference
+            Identifier: ' K'
+      MappedType
+        TypeParameter
+          Identifier: '_'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' test'
+    TypeReference
+      Identifier: ' KeysWithoutStringIndex'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'index'
+            StringKeyword
+          StringKeyword
+        PropertySignature
+          Identifier: ' foo'
+          StringKeyword
+        PropertySignature
+          Identifier: ' bar'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RemoveIdxSgn'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' KeysWithoutStringIndex'
+        TypeReference
+          Identifier: 'T'

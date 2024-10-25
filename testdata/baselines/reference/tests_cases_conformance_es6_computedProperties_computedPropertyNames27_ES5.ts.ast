@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      ComputedPropertyName
+        ParenthesizedExpression
+          BinaryExpression
+            CallExpression
+              SuperKeyword
+            CommaToken
+            StringLiteral
+      Block

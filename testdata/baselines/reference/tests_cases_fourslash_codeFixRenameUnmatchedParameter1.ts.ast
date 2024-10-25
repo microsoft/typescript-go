@@ -1,0 +1,56 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @filename: a.ts
+/////**
+//// * @param {number} a
+//// * @param {number} c
+//// */
+////function foo(a: number, b: string) {
+////    a;
+////    b;
+////}
+
+verify'
+        Identifier: 'codeFixAvailable'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Rename_param_tag_name_0_to_1'
+              Identifier: 'message'
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

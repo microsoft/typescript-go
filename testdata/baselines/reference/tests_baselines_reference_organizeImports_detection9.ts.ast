@@ -1,0 +1,45 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+        ImportSpecifier
+          Identifier: ' b'
+        ImportSpecifier
+          Identifier: ' A'
+        ImportSpecifier
+          Identifier: ' B'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'A'
+      Identifier: ' B'
+      Identifier: ' a'
+      Identifier: ' b'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+        ImportSpecifier
+          Identifier: ' A'
+        ImportSpecifier
+          Identifier: ' b'
+        ImportSpecifier
+          Identifier: ' B'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'A'
+      Identifier: ' B'
+      Identifier: ' a'
+      Identifier: ' b'

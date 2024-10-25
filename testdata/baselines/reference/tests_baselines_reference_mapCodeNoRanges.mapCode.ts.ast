@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' bar'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' baz'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' bar'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' baz'
+    Block
+      ReturnStatement
+        NumericLiteral

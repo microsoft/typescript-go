@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// [|f1/*0*/();|]
+
+// @Filename: jalapeño.ts
+//// export function f1() {}
+//// export var v1 = 5;
+
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral

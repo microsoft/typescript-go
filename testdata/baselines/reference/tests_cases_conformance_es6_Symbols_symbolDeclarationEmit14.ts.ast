@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toPrimitive'
+      Block
+        ReturnStatement
+          StringLiteral
+    GetAccessor
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      Block
+        ReturnStatement
+          StringLiteral

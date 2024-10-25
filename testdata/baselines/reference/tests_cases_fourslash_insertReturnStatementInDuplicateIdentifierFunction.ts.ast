@@ -1,0 +1,37 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// class foo { };
+//// function foo() { /**/ }
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Function with bodies can only merge with classes
+// Class declaration cannot implement overload list
+verify'
+        Identifier: 'numberOfErrorsInCurrentFile'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Shouldn't change the number of errors
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'numberOfErrorsInCurrentFile'
+      NumericLiteral

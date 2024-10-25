@@ -1,0 +1,141 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'a1'
+          BindingElement
+            Identifier: ' a2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a1'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' a2'
+            StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a1'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: ' a2'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a3'
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'a4'
+          BindingElement
+            Identifier: ' a5'
+        TupleType
+          NumberKeyword
+          TupleType
+            TupleType
+              StringKeyword
+          BooleanKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              FalseKeyword
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' temp'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' t1'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: ' t2'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'b0'
+            NumericLiteral
+          BindingElement
+            Identifier: ' b1'
+            TrueKeyword
+          BindingElement
+            Identifier: ' b2'
+            Identifier: ' temp'
+        ArrayLiteralExpression
+          NumericLiteral
+          FalseKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' t1'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: ' t2'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'c1'
+          BindingElement
+            Identifier: ' c2'
+          BindingElement
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' c3'
+                Identifier: ' c4'
+              BindingElement
+                Identifier: ' c5'
+          OmittedExpression
+          BindingElement
+            DotDotDotToken
+            Identifier: 'c6'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' c3'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' c5'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'd'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: 'd1'
+                ArrayLiteralExpression
+                  StringLiteral
+                  NullKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' d'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' d1'
+                ArrayType
+                  NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' d'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' d1'
+                ArrayLiteralExpression
+                  NumericLiteral
+                  NumericLiteral

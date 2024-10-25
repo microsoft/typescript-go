@@ -1,0 +1,108 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sab'
+        NewExpression
+          Identifier: ' SharedArrayBuffer'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'Int32Array'
+              Identifier: 'BYTES_PER_ELEMENT'
+            AsteriskToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' int32'
+        NewExpression
+          Identifier: ' Int32Array'
+          Identifier: 'sab'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sab64'
+        NewExpression
+          Identifier: ' SharedArrayBuffer'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'BigInt64Array'
+              Identifier: 'BYTES_PER_ELEMENT'
+            AsteriskToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' int64'
+        NewExpression
+          Identifier: ' BigInt64Array'
+          Identifier: 'sab64'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' waitValue'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Atomics'
+            Identifier: 'wait'
+          Identifier: 'int32'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' async'
+          BindingElement
+            Identifier: ' value'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Atomics'
+            Identifier: 'waitAsync'
+          Identifier: 'int32'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' async'
+            Identifier: ' async64'
+          BindingElement
+            Identifier: ' value'
+            Identifier: ' value64'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Atomics'
+            Identifier: 'waitAsync'
+          Identifier: 'int64'
+          NumericLiteral
+          CallExpression
+            Identifier: ' BigInt'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' main'
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              Identifier: 'async'
+              Block
+                ExpressionStatement
+                  AwaitExpression
+                    Identifier: ' value'
+            IfStatement
+              Identifier: 'async64'
+              Block
+                ExpressionStatement
+                  AwaitExpression
+                    Identifier: ' value64'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+main'

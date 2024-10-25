@@ -1,0 +1,8 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+    Identifier: ' X'
+    Block

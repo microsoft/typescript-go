@@ -1,0 +1,125 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' SS1'
+    StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TupleType
+          NamedTupleMember
+            Identifier: 't'
+            LiteralType
+              StringLiteral
+          NamedTupleMember
+            DotDotDotToken
+            Identifier: 'args'
+            IndexedAccessType
+              MappedType
+                TypeParameter
+                  Identifier: 'S'
+                  TypeReference
+                    Identifier: ' SS1'
+                TupleType
+                  NamedTupleMember
+                    Identifier: 'a'
+                    NumberKeyword
+              TypeReference
+                Identifier: 'SS1'
+        ArrayLiteralExpression
+          StringLiteral
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SS2'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TupleType
+          NamedTupleMember
+            Identifier: 't'
+            LiteralType
+              StringLiteral
+          NamedTupleMember
+            DotDotDotToken
+            Identifier: 'args'
+            IndexedAccessType
+              MappedType
+                TypeParameter
+                  Identifier: 'S'
+                  TypeReference
+                    Identifier: ' SS2'
+                TupleType
+                  NamedTupleMember
+                    Identifier: 'a'
+                    NumberKeyword
+              TypeReference
+                Identifier: 'SS2'
+        ArrayLiteralExpression
+          StringLiteral
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'SS'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    f'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' w'
+              TupleType
+                NamedTupleMember
+                  DotDotDotToken
+                  Identifier: 'args'
+                  IndexedAccessType
+                    MappedType
+                      TypeParameter
+                        Identifier: 'S'
+                        TypeReference
+                          Identifier: ' SS'
+                      TupleType
+                        NamedTupleMember
+                          Identifier: 'a'
+                          NumberKeyword
+                    TypeReference
+                      Identifier: 'SS'
+              ArrayLiteralExpression
+                NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TupleType
+                NamedTupleMember
+                  Identifier: 't'
+                  LiteralType
+                    StringLiteral
+                NamedTupleMember
+                  DotDotDotToken
+                  Identifier: 'args'
+                  IndexedAccessType
+                    MappedType
+                      TypeParameter
+                        Identifier: 'S'
+                        TypeReference
+                          Identifier: ' SS'
+                      TupleType
+                        NamedTupleMember
+                          Identifier: 'a'
+                          NumberKeyword
+                    TypeReference
+                      Identifier: 'SS'
+              ArrayLiteralExpression
+                StringLiteral
+                NumericLiteral

@@ -1,0 +1,7 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' public'
+    ExternalModuleReference
+      StringLiteral

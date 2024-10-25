@@ -1,0 +1,3806 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addRelatedInfo'
+        ImportSpecifier
+          Identifier: '
+    ArrayLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    ArrowFunction'
+        ImportSpecifier
+          Identifier: '
+    assertType'
+        ImportSpecifier
+          Identifier: '
+    BinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    BindingElement'
+        ImportSpecifier
+          Identifier: '
+    CallSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ClassExpression'
+        ImportSpecifier
+          Identifier: '
+    ComputedPropertyName'
+        ImportSpecifier
+          Identifier: '
+    ConstructorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ConstructSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    createDiagnosticForNode'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Declaration'
+        ImportSpecifier
+          Identifier: '
+    DeclarationName'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticMessage'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticWithLocation'
+        ImportSpecifier
+          Identifier: '
+    ElementAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    EmitResolver'
+        ImportSpecifier
+          Identifier: '
+    EntityNameOrEntityNameExpression'
+        ImportSpecifier
+          Identifier: '
+    ExportAssignment'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    ExpressionWithTypeArguments'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    FunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    FunctionExpression'
+        ImportSpecifier
+          Identifier: '
+    FunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    GetAccessorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    getAllAccessorDeclarations'
+        ImportSpecifier
+          Identifier: '
+    getNameOfDeclaration'
+        ImportSpecifier
+          Identifier: '
+    getTextOfNode'
+        ImportSpecifier
+          Identifier: '
+    hasSyntacticModifier'
+        ImportSpecifier
+          Identifier: '
+    ImportEqualsDeclaration'
+        ImportSpecifier
+          Identifier: '
+    IndexSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isAsExpression'
+        ImportSpecifier
+          Identifier: '
+    isBinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    isBindingElement'
+        ImportSpecifier
+          Identifier: '
+    isCallSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isClassDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isConstructorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isConstructSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isElementAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    isEntityName'
+        ImportSpecifier
+          Identifier: '
+    isEntityNameExpression'
+        ImportSpecifier
+          Identifier: '
+    isExportAssignment'
+        ImportSpecifier
+          Identifier: '
+    isExpressionWithTypeArguments'
+        ImportSpecifier
+          Identifier: '
+    isFunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isFunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isGetAccessor'
+        ImportSpecifier
+          Identifier: '
+    isHeritageClause'
+        ImportSpecifier
+          Identifier: '
+    isImportEqualsDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isIndexSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isJSDocTypeAlias'
+        ImportSpecifier
+          Identifier: '
+    isMethodDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isMethodSignature'
+        ImportSpecifier
+          Identifier: '
+    isParameter'
+        ImportSpecifier
+          Identifier: '
+    isParameterPropertyDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isParenthesizedExpression'
+        ImportSpecifier
+          Identifier: '
+    isPartOfTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isPropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    isPropertyDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isPropertySignature'
+        ImportSpecifier
+          Identifier: '
+    isReturnStatement'
+        ImportSpecifier
+          Identifier: '
+    isSetAccessor'
+        ImportSpecifier
+          Identifier: '
+    isStatement'
+        ImportSpecifier
+          Identifier: '
+    isStatic'
+        ImportSpecifier
+          Identifier: '
+    isTypeAliasDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isTypeAssertionExpression'
+        ImportSpecifier
+          Identifier: '
+    isTypeParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isTypeQueryNode'
+        ImportSpecifier
+          Identifier: '
+    isVariableDeclaration'
+        ImportSpecifier
+          Identifier: '
+    JSDocCallbackTag'
+        ImportSpecifier
+          Identifier: '
+    JSDocEnumTag'
+        ImportSpecifier
+          Identifier: '
+    JSDocTypedefTag'
+        ImportSpecifier
+          Identifier: '
+    MethodDeclaration'
+        ImportSpecifier
+          Identifier: '
+    MethodSignature'
+        ImportSpecifier
+          Identifier: '
+    ModifierFlags'
+        ImportSpecifier
+          Identifier: '
+    NamedDeclaration'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    ParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    PropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    PropertyAssignment'
+        ImportSpecifier
+          Identifier: '
+    PropertyDeclaration'
+        ImportSpecifier
+          Identifier: '
+    PropertySignature'
+        ImportSpecifier
+          Identifier: '
+    QualifiedName'
+        ImportSpecifier
+          Identifier: '
+    SetAccessorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ShorthandPropertyAssignment'
+        ImportSpecifier
+          Identifier: '
+    SpreadAssignment'
+        ImportSpecifier
+          Identifier: '
+    SpreadElement'
+        ImportSpecifier
+          Identifier: '
+    SymbolAccessibility'
+        ImportSpecifier
+          Identifier: '
+    SymbolAccessibilityResult'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    TypeAliasDeclaration'
+        ImportSpecifier
+          Identifier: '
+    TypeParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    VariableDeclaration'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' GetSymbolAccessibilityDiagnostic'
+    FunctionType
+      Parameter
+        Identifier: 'symbolAccessibilityResult'
+        TypeReference
+          Identifier: ' SymbolAccessibilityResult'
+      UnionType
+        TypeReference
+          Identifier: ' SymbolAccessibilityDiagnostic'
+        UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SymbolAccessibilityDiagnostic'
+    PropertySignature
+      Identifier: '
+    errorNode'
+      TypeReference
+        Identifier: ' Node'
+    PropertySignature
+      Identifier: '
+    diagnosticMessage'
+      TypeReference
+        Identifier: ' DiagnosticMessage'
+    PropertySignature
+      Identifier: '
+    typeName'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' DeclarationName'
+        TypeReference
+          Identifier: ' QualifiedName'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' DeclarationDiagnosticProducing'
+    UnionType
+      TypeReference
+        Identifier: ' VariableDeclaration'
+      TypeReference
+        Identifier: ' PropertyDeclaration'
+      TypeReference
+        Identifier: ' PropertySignature'
+      TypeReference
+        Identifier: ' BindingElement'
+      TypeReference
+        Identifier: ' SetAccessorDeclaration'
+      TypeReference
+        Identifier: ' GetAccessorDeclaration'
+      TypeReference
+        Identifier: ' ConstructSignatureDeclaration'
+      TypeReference
+        Identifier: ' CallSignatureDeclaration'
+      TypeReference
+        Identifier: ' MethodDeclaration'
+      TypeReference
+        Identifier: ' MethodSignature'
+      TypeReference
+        Identifier: ' FunctionDeclaration'
+      TypeReference
+        Identifier: ' ParameterDeclaration'
+      TypeReference
+        Identifier: ' TypeParameterDeclaration'
+      TypeReference
+        Identifier: ' ExpressionWithTypeArguments'
+      TypeReference
+        Identifier: ' ImportEqualsDeclaration'
+      TypeReference
+        Identifier: ' TypeAliasDeclaration'
+      TypeReference
+        Identifier: ' ConstructorDeclaration'
+      TypeReference
+        Identifier: ' IndexSignatureDeclaration'
+      TypeReference
+        Identifier: ' PropertyAccessExpression'
+      TypeReference
+        Identifier: ' ElementAccessExpression'
+      TypeReference
+        Identifier: ' BinaryExpression'
+      TypeReference
+        Identifier: ' JSDocTypedefTag'
+      TypeReference
+        Identifier: ' JSDocCallbackTag'
+      TypeReference
+        Identifier: ' JSDocEnumTag'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' canProduceDiagnostics'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' DeclarationDiagnosticProducing'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    BinaryExpression
+                                      BinaryExpression
+                                        BinaryExpression
+                                          BinaryExpression
+                                            BinaryExpression
+                                              BinaryExpression
+                                                BinaryExpression
+                                                  CallExpression
+                                                    Identifier: ' isVariableDeclaration'
+                                                    Identifier: 'node'
+                                                  BarBarToken
+                                                  CallExpression
+                                                    Identifier: '
+        isPropertyDeclaration'
+                                                    Identifier: 'node'
+                                                BarBarToken
+                                                CallExpression
+                                                  Identifier: '
+        isPropertySignature'
+                                                  Identifier: 'node'
+                                              BarBarToken
+                                              CallExpression
+                                                Identifier: '
+        isBindingElement'
+                                                Identifier: 'node'
+                                            BarBarToken
+                                            CallExpression
+                                              Identifier: '
+        isSetAccessor'
+                                              Identifier: 'node'
+                                          BarBarToken
+                                          CallExpression
+                                            Identifier: '
+        isGetAccessor'
+                                            Identifier: 'node'
+                                        BarBarToken
+                                        CallExpression
+                                          Identifier: '
+        isConstructSignatureDeclaration'
+                                          Identifier: 'node'
+                                      BarBarToken
+                                      CallExpression
+                                        Identifier: '
+        isCallSignatureDeclaration'
+                                        Identifier: 'node'
+                                    BarBarToken
+                                    CallExpression
+                                      Identifier: '
+        isMethodDeclaration'
+                                      Identifier: 'node'
+                                  BarBarToken
+                                  CallExpression
+                                    Identifier: '
+        isMethodSignature'
+                                    Identifier: 'node'
+                                BarBarToken
+                                CallExpression
+                                  Identifier: '
+        isFunctionDeclaration'
+                                  Identifier: 'node'
+                              BarBarToken
+                              CallExpression
+                                Identifier: '
+        isParameter'
+                                Identifier: 'node'
+                            BarBarToken
+                            CallExpression
+                              Identifier: '
+        isTypeParameterDeclaration'
+                              Identifier: 'node'
+                          BarBarToken
+                          CallExpression
+                            Identifier: '
+        isExpressionWithTypeArguments'
+                            Identifier: 'node'
+                        BarBarToken
+                        CallExpression
+                          Identifier: '
+        isImportEqualsDeclaration'
+                          Identifier: 'node'
+                      BarBarToken
+                      CallExpression
+                        Identifier: '
+        isTypeAliasDeclaration'
+                        Identifier: 'node'
+                    BarBarToken
+                    CallExpression
+                      Identifier: '
+        isConstructorDeclaration'
+                      Identifier: 'node'
+                  BarBarToken
+                  CallExpression
+                    Identifier: '
+        isIndexSignatureDeclaration'
+                    Identifier: 'node'
+                BarBarToken
+                CallExpression
+                  Identifier: '
+        isPropertyAccessExpression'
+                  Identifier: 'node'
+              BarBarToken
+              CallExpression
+                Identifier: '
+        isElementAccessExpression'
+                Identifier: 'node'
+            BarBarToken
+            CallExpression
+              Identifier: '
+        isBinaryExpression'
+              Identifier: 'node'
+          BarBarToken
+          CallExpression
+            Identifier: '
+        isJSDocTypeAlias'
+            Identifier: 'node'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createGetSymbolAccessibilityDiagnosticForNodeName'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' DeclarationDiagnosticProducing'
+    FunctionType
+      Parameter
+        Identifier: 'symbolAccessibilityResult'
+        TypeReference
+          Identifier: ' SymbolAccessibilityResult'
+      UnionType
+        TypeReference
+          Identifier: ' SymbolAccessibilityDiagnostic'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isSetAccessor'
+            Identifier: 'node'
+          BarBarToken
+          CallExpression
+            Identifier: ' isGetAccessor'
+            Identifier: 'node'
+        Block
+          ReturnStatement
+            Identifier: ' getAccessorNameVisibilityError'
+        IfStatement
+          BinaryExpression
+            CallExpression
+              Identifier: 'isMethodSignature'
+              Identifier: 'node'
+            BarBarToken
+            CallExpression
+              Identifier: ' isMethodDeclaration'
+              Identifier: 'node'
+          Block
+            ReturnStatement
+              Identifier: ' getMethodNameVisibilityError'
+          Block
+            ReturnStatement
+              CallExpression
+                Identifier: ' createGetSymbolAccessibilityDiagnosticForNode'
+                Identifier: 'node'
+      FunctionDeclaration
+        Identifier: ' getAccessorNameVisibilityError'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diagnosticMessage'
+                CallExpression
+                  Identifier: ' getAccessorNameVisibilityDiagnosticMessage'
+                  Identifier: 'symbolAccessibilityResult'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' diagnosticMessage'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+            diagnosticMessage'
+                PropertyAssignment
+                  Identifier: '
+            errorNode'
+                  Identifier: ' node'
+                PropertyAssignment
+                  Identifier: '
+            typeName'
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' NamedDeclaration'
+                    Identifier: 'name'
+              ColonToken
+              Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' getAccessorNameVisibilityDiagnosticMessage'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isStatic'
+              Identifier: 'node'
+            Block
+              ReturnStatement
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' symbolAccessibilityResult'
+                    Identifier: 'errorModuleName'
+                  QuestionToken
+                  ConditionalExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                symbolAccessibilityResult'
+                        Identifier: 'accessibility'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SymbolAccessibility'
+                        Identifier: 'CannotBeNamed'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Public_static_property_0_of_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Public_static_property_0_of_exported_class_has_or_is_using_name_1_from_private_module_2'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: '
+                Diagnostics'
+                    Identifier: 'Public_static_property_0_of_exported_class_has_or_is_using_private_name_1'
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'parent'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ClassDeclaration'
+              Block
+                ReturnStatement
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbolAccessibilityResult'
+                      Identifier: 'errorModuleName'
+                    QuestionToken
+                    ConditionalExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                symbolAccessibilityResult'
+                          Identifier: 'accessibility'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SymbolAccessibility'
+                          Identifier: 'CannotBeNamed'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Public_property_0_of_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Public_property_0_of_exported_class_has_or_is_using_name_1_from_private_module_2'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                Diagnostics'
+                      Identifier: 'Public_property_0_of_exported_class_has_or_is_using_private_name_1'
+              Block
+                ReturnStatement
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbolAccessibilityResult'
+                      Identifier: 'errorModuleName'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                Diagnostics'
+                      Identifier: 'Property_0_of_exported_interface_has_or_is_using_name_1_from_private_module_2'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                Diagnostics'
+                      Identifier: 'Property_0_of_exported_interface_has_or_is_using_private_name_1'
+      FunctionDeclaration
+        Identifier: ' getMethodNameVisibilityError'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        UnionType
+          TypeReference
+            Identifier: ' SymbolAccessibilityDiagnostic'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diagnosticMessage'
+                CallExpression
+                  Identifier: ' getMethodNameVisibilityDiagnosticMessage'
+                  Identifier: 'symbolAccessibilityResult'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' diagnosticMessage'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+            diagnosticMessage'
+                PropertyAssignment
+                  Identifier: '
+            errorNode'
+                  Identifier: ' node'
+                PropertyAssignment
+                  Identifier: '
+            typeName'
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' NamedDeclaration'
+                    Identifier: 'name'
+              ColonToken
+              Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' getMethodNameVisibilityDiagnosticMessage'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isStatic'
+              Identifier: 'node'
+            Block
+              ReturnStatement
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' symbolAccessibilityResult'
+                    Identifier: 'errorModuleName'
+                  QuestionToken
+                  ConditionalExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                symbolAccessibilityResult'
+                        Identifier: 'accessibility'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SymbolAccessibility'
+                        Identifier: 'CannotBeNamed'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Public_static_method_0_of_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Public_static_method_0_of_exported_class_has_or_is_using_name_1_from_private_module_2'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: '
+                Diagnostics'
+                    Identifier: 'Public_static_method_0_of_exported_class_has_or_is_using_private_name_1'
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'parent'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ClassDeclaration'
+              Block
+                ReturnStatement
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbolAccessibilityResult'
+                      Identifier: 'errorModuleName'
+                    QuestionToken
+                    ConditionalExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                symbolAccessibilityResult'
+                          Identifier: 'accessibility'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SymbolAccessibility'
+                          Identifier: 'CannotBeNamed'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Public_method_0_of_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Public_method_0_of_exported_class_has_or_is_using_name_1_from_private_module_2'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                Diagnostics'
+                      Identifier: 'Public_method_0_of_exported_class_has_or_is_using_private_name_1'
+              Block
+                ReturnStatement
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbolAccessibilityResult'
+                      Identifier: 'errorModuleName'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                Diagnostics'
+                      Identifier: 'Method_0_of_exported_interface_has_or_is_using_name_1_from_private_module_2'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                Diagnostics'
+                      Identifier: 'Method_0_of_exported_interface_has_or_is_using_private_name_1'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createGetSymbolAccessibilityDiagnosticForNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' DeclarationDiagnosticProducing'
+    TypeReference
+      Identifier: ' GetSymbolAccessibilityDiagnostic'
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      CallExpression
+                        Identifier: 'isVariableDeclaration'
+                        Identifier: 'node'
+                      BarBarToken
+                      CallExpression
+                        Identifier: ' isPropertyDeclaration'
+                        Identifier: 'node'
+                    BarBarToken
+                    CallExpression
+                      Identifier: ' isPropertySignature'
+                      Identifier: 'node'
+                  BarBarToken
+                  CallExpression
+                    Identifier: ' isPropertyAccessExpression'
+                    Identifier: 'node'
+                BarBarToken
+                CallExpression
+                  Identifier: ' isElementAccessExpression'
+                  Identifier: 'node'
+              BarBarToken
+              CallExpression
+                Identifier: ' isBinaryExpression'
+                Identifier: 'node'
+            BarBarToken
+            CallExpression
+              Identifier: ' isBindingElement'
+              Identifier: 'node'
+          BarBarToken
+          CallExpression
+            Identifier: ' isConstructorDeclaration'
+            Identifier: 'node'
+        Block
+          ReturnStatement
+            Identifier: ' getVariableDeclarationTypeVisibilityError'
+        IfStatement
+          BinaryExpression
+            CallExpression
+              Identifier: 'isSetAccessor'
+              Identifier: 'node'
+            BarBarToken
+            CallExpression
+              Identifier: ' isGetAccessor'
+              Identifier: 'node'
+          Block
+            ReturnStatement
+              Identifier: ' getAccessorDeclarationTypeVisibilityError'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      CallExpression
+                        Identifier: 'isConstructSignatureDeclaration'
+                        Identifier: 'node'
+                      BarBarToken
+                      CallExpression
+                        Identifier: ' isCallSignatureDeclaration'
+                        Identifier: 'node'
+                    BarBarToken
+                    CallExpression
+                      Identifier: ' isMethodDeclaration'
+                      Identifier: 'node'
+                  BarBarToken
+                  CallExpression
+                    Identifier: ' isMethodSignature'
+                    Identifier: 'node'
+                BarBarToken
+                CallExpression
+                  Identifier: ' isFunctionDeclaration'
+                  Identifier: 'node'
+              BarBarToken
+              CallExpression
+                Identifier: ' isIndexSignatureDeclaration'
+                Identifier: 'node'
+            Block
+              ReturnStatement
+                Identifier: ' getReturnTypeVisibilityError'
+            IfStatement
+              CallExpression
+                Identifier: 'isParameter'
+                Identifier: 'node'
+              Block
+                IfStatement
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'isParameterPropertyDeclaration'
+                      Identifier: 'node'
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'parent'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: ' hasSyntacticModifier'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'parent'
+                      PropertyAccessExpression
+                        Identifier: ' ModifierFlags'
+                        Identifier: 'Private'
+                  Block
+                    ReturnStatement
+                      Identifier: ' getVariableDeclarationTypeVisibilityError'
+                ReturnStatement
+                  Identifier: ' getParameterDeclarationTypeVisibilityError'
+              IfStatement
+                CallExpression
+                  Identifier: 'isTypeParameterDeclaration'
+                  Identifier: 'node'
+                Block
+                  ReturnStatement
+                    Identifier: ' getTypeParameterConstraintVisibilityError'
+                IfStatement
+                  CallExpression
+                    Identifier: 'isExpressionWithTypeArguments'
+                    Identifier: 'node'
+                  Block
+                    ReturnStatement
+                      Identifier: ' getHeritageClauseVisibilityError'
+                  IfStatement
+                    CallExpression
+                      Identifier: 'isImportEqualsDeclaration'
+                      Identifier: 'node'
+                    Block
+                      ReturnStatement
+                        Identifier: ' getImportEntityNameVisibilityError'
+                    IfStatement
+                      BinaryExpression
+                        CallExpression
+                          Identifier: 'isTypeAliasDeclaration'
+                          Identifier: 'node'
+                        BarBarToken
+                        CallExpression
+                          Identifier: ' isJSDocTypeAlias'
+                          Identifier: 'node'
+                      Block
+                        ReturnStatement
+                          Identifier: ' getTypeAliasDeclarationVisibilityError'
+                      Block
+                        ReturnStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' Debug'
+                              Identifier: 'assertNever'
+                            Identifier: 'node'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'Debug'
+                                    Identifier: 'formatSyntaxKind'
+                                  PropertyAccessExpression
+                                    ParenthesizedExpression
+                                      AsExpression
+                                        Identifier: 'node'
+                                        TypeReference
+                                          Identifier: ' Node'
+                                    Identifier: 'kind'
+                                TemplateTail
+      FunctionDeclaration
+        Identifier: ' getVariableDeclarationTypeVisibilityDiagnosticMessage'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'VariableDeclaration'
+              BarBarToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'BindingElement'
+            Block
+              ReturnStatement
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' symbolAccessibilityResult'
+                    Identifier: 'errorModuleName'
+                  QuestionToken
+                  ConditionalExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                symbolAccessibilityResult'
+                        Identifier: 'accessibility'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SymbolAccessibility'
+                        Identifier: 'CannotBeNamed'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Exported_variable_0_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Exported_variable_0_has_or_is_using_name_1_from_private_module_2'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: '
+                Diagnostics'
+                    Identifier: 'Exported_variable_0_has_or_is_using_private_name_1'
+            IfStatement
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            node'
+                            Identifier: 'kind'
+                          EqualsEqualsEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'PropertyDeclaration'
+                        BarBarToken
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' node'
+                            Identifier: 'kind'
+                          EqualsEqualsEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'PropertyAccessExpression'
+                      BarBarToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' node'
+                          Identifier: 'kind'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'ElementAccessExpression'
+                    BarBarToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'kind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'BinaryExpression'
+                  BarBarToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' node'
+                      Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'PropertySignature'
+                BarBarToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'kind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'Parameter'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: ' hasSyntacticModifier'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'parent'
+                      PropertyAccessExpression
+                        Identifier: ' ModifierFlags'
+                        Identifier: 'Private'
+              Block
+                IfStatement
+                  CallExpression
+                    Identifier: 'isStatic'
+                    Identifier: 'node'
+                  Block
+                    ReturnStatement
+                      ConditionalExpression
+                        PropertyAccessExpression
+                          Identifier: ' symbolAccessibilityResult'
+                          Identifier: 'errorModuleName'
+                        QuestionToken
+                        ConditionalExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    symbolAccessibilityResult'
+                              Identifier: 'accessibility'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SymbolAccessibility'
+                              Identifier: 'CannotBeNamed'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Public_static_property_0_of_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Public_static_property_0_of_exported_class_has_or_is_using_name_1_from_private_module_2'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: '
+                    Diagnostics'
+                          Identifier: 'Public_static_property_0_of_exported_class_has_or_is_using_private_name_1'
+                  IfStatement
+                    BinaryExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'node'
+                            Identifier: 'parent'
+                          Identifier: 'kind'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'ClassDeclaration'
+                      BarBarToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' node'
+                          Identifier: 'kind'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'Parameter'
+                    Block
+                      ReturnStatement
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            Identifier: ' symbolAccessibilityResult'
+                            Identifier: 'errorModuleName'
+                          QuestionToken
+                          ConditionalExpression
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    symbolAccessibilityResult'
+                                Identifier: 'accessibility'
+                              EqualsEqualsEqualsToken
+                              PropertyAccessExpression
+                                Identifier: ' SymbolAccessibility'
+                                Identifier: 'CannotBeNamed'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: '
+                        Diagnostics'
+                              Identifier: 'Public_property_0_of_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: '
+                        Diagnostics'
+                              Identifier: 'Public_property_0_of_exported_class_has_or_is_using_name_1_from_private_module_2'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: '
+                    Diagnostics'
+                            Identifier: 'Public_property_0_of_exported_class_has_or_is_using_private_name_1'
+                    Block
+                      ReturnStatement
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            Identifier: ' symbolAccessibilityResult'
+                            Identifier: 'errorModuleName'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: '
+                    Diagnostics'
+                            Identifier: 'Property_0_of_exported_interface_has_or_is_using_name_1_from_private_module_2'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: '
+                    Diagnostics'
+                            Identifier: 'Property_0_of_exported_interface_has_or_is_using_private_name_1'
+      FunctionDeclaration
+        Identifier: ' getVariableDeclarationTypeVisibilityError'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        UnionType
+          TypeReference
+            Identifier: ' SymbolAccessibilityDiagnostic'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diagnosticMessage'
+                CallExpression
+                  Identifier: ' getVariableDeclarationTypeVisibilityDiagnosticMessage'
+                  Identifier: 'symbolAccessibilityResult'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' diagnosticMessage'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+            diagnosticMessage'
+                PropertyAssignment
+                  Identifier: '
+            errorNode'
+                  Identifier: ' node'
+                PropertyAssignment
+                  Identifier: '
+            typeName'
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' NamedDeclaration'
+                    Identifier: 'name'
+              ColonToken
+              Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' getAccessorDeclarationTypeVisibilityError'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        TypeReference
+          Identifier: ' SymbolAccessibilityDiagnostic'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diagnosticMessage'
+                TypeReference
+                  Identifier: ' DiagnosticMessage'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'SetAccessor'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'isStatic'
+                  Identifier: 'node'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                diagnosticMessage'
+                      EqualsToken
+                      ConditionalExpression
+                        PropertyAccessExpression
+                          Identifier: ' symbolAccessibilityResult'
+                          Identifier: 'errorModuleName'
+                        QuestionToken
+                        PropertyAccessExpression
+                          Identifier: '
+                    Diagnostics'
+                          Identifier: 'Parameter_type_of_public_static_setter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: '
+                    Diagnostics'
+                          Identifier: 'Parameter_type_of_public_static_setter_0_from_exported_class_has_or_is_using_private_name_1'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                diagnosticMessage'
+                      EqualsToken
+                      ConditionalExpression
+                        PropertyAccessExpression
+                          Identifier: ' symbolAccessibilityResult'
+                          Identifier: 'errorModuleName'
+                        QuestionToken
+                        PropertyAccessExpression
+                          Identifier: '
+                    Diagnostics'
+                          Identifier: 'Parameter_type_of_public_setter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: '
+                    Diagnostics'
+                          Identifier: 'Parameter_type_of_public_setter_0_from_exported_class_has_or_is_using_private_name_1'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'isStatic'
+                  Identifier: 'node'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                diagnosticMessage'
+                      EqualsToken
+                      ConditionalExpression
+                        PropertyAccessExpression
+                          Identifier: ' symbolAccessibilityResult'
+                          Identifier: 'errorModuleName'
+                        QuestionToken
+                        ConditionalExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    symbolAccessibilityResult'
+                              Identifier: 'accessibility'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SymbolAccessibility'
+                              Identifier: 'CannotBeNamed'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: '
+                    Diagnostics'
+                          Identifier: 'Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_private_name_1'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                diagnosticMessage'
+                      EqualsToken
+                      ConditionalExpression
+                        PropertyAccessExpression
+                          Identifier: ' symbolAccessibilityResult'
+                          Identifier: 'errorModuleName'
+                        QuestionToken
+                        ConditionalExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    symbolAccessibilityResult'
+                              Identifier: 'accessibility'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SymbolAccessibility'
+                              Identifier: 'CannotBeNamed'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Return_type_of_public_getter_0_from_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Return_type_of_public_getter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: '
+                    Diagnostics'
+                          Identifier: 'Return_type_of_public_getter_0_from_exported_class_has_or_is_using_private_name_1'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+            diagnosticMessage'
+              PropertyAssignment
+                Identifier: '
+            errorNode'
+                NonNullExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' NamedDeclaration'
+                    Identifier: 'name'
+              PropertyAssignment
+                Identifier: '
+            typeName'
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      Identifier: 'node'
+                      TypeReference
+                        Identifier: ' NamedDeclaration'
+                  Identifier: 'name'
+      FunctionDeclaration
+        Identifier: ' getReturnTypeVisibilityError'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        TypeReference
+          Identifier: ' SymbolAccessibilityDiagnostic'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diagnosticMessage'
+                TypeReference
+                  Identifier: ' DiagnosticMessage'
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructSignature'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                // Interfaces cannot have return types that cannot be named
+                diagnosticMessage'
+                    EqualsToken
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' symbolAccessibilityResult'
+                        Identifier: 'errorModuleName'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_name_0_from_private_module_1'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_name_0'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CallSignature'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                // Interfaces cannot have return types that cannot be named
+                diagnosticMessage'
+                    EqualsToken
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' symbolAccessibilityResult'
+                        Identifier: 'errorModuleName'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Return_type_of_call_signature_from_exported_interface_has_or_is_using_name_0_from_private_module_1'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_name_0'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'IndexSignature'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                // Interfaces cannot have return types that cannot be named
+                diagnosticMessage'
+                    EqualsToken
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' symbolAccessibilityResult'
+                        Identifier: 'errorModuleName'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Return_type_of_index_signature_from_exported_interface_has_or_is_using_name_0_from_private_module_1'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_name_0'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodSignature'
+                IfStatement
+                  CallExpression
+                    Identifier: 'isStatic'
+                    Identifier: 'node'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    diagnosticMessage'
+                        EqualsToken
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            Identifier: ' symbolAccessibilityResult'
+                            Identifier: 'errorModuleName'
+                          QuestionToken
+                          ConditionalExpression
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                        symbolAccessibilityResult'
+                                Identifier: 'accessibility'
+                              EqualsEqualsEqualsToken
+                              PropertyAccessExpression
+                                Identifier: ' SymbolAccessibility'
+                                Identifier: 'CannotBeNamed'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: '
+                            Diagnostics'
+                              Identifier: 'Return_type_of_public_static_method_from_exported_class_has_or_is_using_name_0_from_external_module_1_but_cannot_be_named'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: '
+                            Diagnostics'
+                              Identifier: 'Return_type_of_public_static_method_from_exported_class_has_or_is_using_name_0_from_private_module_1'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_name_0'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'parent'
+                        Identifier: 'kind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'ClassDeclaration'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    diagnosticMessage'
+                          EqualsToken
+                          ConditionalExpression
+                            PropertyAccessExpression
+                              Identifier: ' symbolAccessibilityResult'
+                              Identifier: 'errorModuleName'
+                            QuestionToken
+                            ConditionalExpression
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                        symbolAccessibilityResult'
+                                  Identifier: 'accessibility'
+                                EqualsEqualsEqualsToken
+                                PropertyAccessExpression
+                                  Identifier: ' SymbolAccessibility'
+                                  Identifier: 'CannotBeNamed'
+                              QuestionToken
+                              PropertyAccessExpression
+                                Identifier: '
+                            Diagnostics'
+                                Identifier: 'Return_type_of_public_method_from_exported_class_has_or_is_using_name_0_from_external_module_1_but_cannot_be_named'
+                              ColonToken
+                              PropertyAccessExpression
+                                Identifier: '
+                            Diagnostics'
+                                Identifier: 'Return_type_of_public_method_from_exported_class_has_or_is_using_name_0_from_private_module_1'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: '
+                        Diagnostics'
+                              Identifier: 'Return_type_of_public_method_from_exported_class_has_or_is_using_private_name_0'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    // Interfaces cannot have return types that cannot be named
+                    diagnosticMessage'
+                          EqualsToken
+                          ConditionalExpression
+                            PropertyAccessExpression
+                              Identifier: ' symbolAccessibilityResult'
+                              Identifier: 'errorModuleName'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: '
+                        Diagnostics'
+                              Identifier: 'Return_type_of_method_from_exported_interface_has_or_is_using_name_0_from_private_module_1'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: '
+                        Diagnostics'
+                              Identifier: 'Return_type_of_method_from_exported_interface_has_or_is_using_private_name_0'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionDeclaration'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                diagnosticMessage'
+                    EqualsToken
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' symbolAccessibilityResult'
+                        Identifier: 'errorModuleName'
+                      QuestionToken
+                      ConditionalExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    symbolAccessibilityResult'
+                            Identifier: 'accessibility'
+                          EqualsEqualsEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' SymbolAccessibility'
+                            Identifier: 'CannotBeNamed'
+                        QuestionToken
+                        PropertyAccessExpression
+                          Identifier: '
+                        Diagnostics'
+                          Identifier: 'Return_type_of_exported_function_has_or_is_using_name_0_from_external_module_1_but_cannot_be_named'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: '
+                        Diagnostics'
+                          Identifier: 'Return_type_of_exported_function_has_or_is_using_name_0_from_private_module_1'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Return_type_of_exported_function_has_or_is_using_private_name_0'
+                BreakStatement
+              DefaultClause
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Debug'
+                      Identifier: 'fail'
+                    BinaryExpression
+                      StringLiteral
+                      PlusToken
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'kind'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+            diagnosticMessage'
+              PropertyAssignment
+                Identifier: '
+            errorNode'
+                BinaryExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' NamedDeclaration'
+                    Identifier: 'name'
+                  BarBarToken
+                  Identifier: ' node'
+      FunctionDeclaration
+        Identifier: ' getParameterDeclarationTypeVisibilityError'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        UnionType
+          TypeReference
+            Identifier: ' SymbolAccessibilityDiagnostic'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diagnosticMessage'
+                TypeReference
+                  Identifier: ' DiagnosticMessage'
+                CallExpression
+                  Identifier: ' getParameterDeclarationTypeVisibilityDiagnosticMessage'
+                  Identifier: 'symbolAccessibilityResult'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' diagnosticMessage'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+            diagnosticMessage'
+                PropertyAssignment
+                  Identifier: '
+            errorNode'
+                  Identifier: ' node'
+                PropertyAssignment
+                  Identifier: '
+            typeName'
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' NamedDeclaration'
+                    Identifier: 'name'
+              ColonToken
+              Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' getParameterDeclarationTypeVisibilityDiagnosticMessage'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        TypeReference
+          Identifier: ' DiagnosticMessage'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'parent'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'Constructor'
+                ReturnStatement
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbolAccessibilityResult'
+                      Identifier: 'errorModuleName'
+                    QuestionToken
+                    ConditionalExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    symbolAccessibilityResult'
+                          Identifier: 'accessibility'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SymbolAccessibility'
+                          Identifier: 'CannotBeNamed'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: '
+                        Diagnostics'
+                        Identifier: 'Parameter_0_of_constructor_from_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                        Diagnostics'
+                        Identifier: 'Parameter_0_of_constructor_from_exported_class_has_or_is_using_name_1_from_private_module_2'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Parameter_0_of_constructor_from_exported_class_has_or_is_using_private_name_1'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructSignature'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructorType'
+                ReturnStatement
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbolAccessibilityResult'
+                      Identifier: 'errorModuleName'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_name_1_from_private_module_2'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_name_1'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CallSignature'
+                ReturnStatement
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbolAccessibilityResult'
+                      Identifier: 'errorModuleName'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_name_1_from_private_module_2'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_name_1'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'IndexSignature'
+                ReturnStatement
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbolAccessibilityResult'
+                      Identifier: 'errorModuleName'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Parameter_0_of_index_signature_from_exported_interface_has_or_is_using_name_1_from_private_module_2'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Parameter_0_of_index_signature_from_exported_interface_has_or_is_using_private_name_1'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodSignature'
+                IfStatement
+                  CallExpression
+                    Identifier: 'isStatic'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                  Block
+                    ReturnStatement
+                      ConditionalExpression
+                        PropertyAccessExpression
+                          Identifier: ' symbolAccessibilityResult'
+                          Identifier: 'errorModuleName'
+                        QuestionToken
+                        ConditionalExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        symbolAccessibilityResult'
+                              Identifier: 'accessibility'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SymbolAccessibility'
+                              Identifier: 'CannotBeNamed'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: '
+                            Diagnostics'
+                            Identifier: 'Parameter_0_of_public_static_method_from_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: '
+                            Diagnostics'
+                            Identifier: 'Parameter_0_of_public_static_method_from_exported_class_has_or_is_using_name_1_from_private_module_2'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: '
+                        Diagnostics'
+                          Identifier: 'Parameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_name_1'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'node'
+                            Identifier: 'parent'
+                          Identifier: 'parent'
+                        Identifier: 'kind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'ClassDeclaration'
+                    Block
+                      ReturnStatement
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            Identifier: ' symbolAccessibilityResult'
+                            Identifier: 'errorModuleName'
+                          QuestionToken
+                          ConditionalExpression
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                        symbolAccessibilityResult'
+                                Identifier: 'accessibility'
+                              EqualsEqualsEqualsToken
+                              PropertyAccessExpression
+                                Identifier: ' SymbolAccessibility'
+                                Identifier: 'CannotBeNamed'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: '
+                            Diagnostics'
+                              Identifier: 'Parameter_0_of_public_method_from_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: '
+                            Diagnostics'
+                              Identifier: 'Parameter_0_of_public_method_from_exported_class_has_or_is_using_name_1_from_private_module_2'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Parameter_0_of_public_method_from_exported_class_has_or_is_using_private_name_1'
+                    Block
+                      ReturnStatement
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            Identifier: ' symbolAccessibilityResult'
+                            Identifier: 'errorModuleName'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Parameter_0_of_method_from_exported_interface_has_or_is_using_name_1_from_private_module_2'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Parameter_0_of_method_from_exported_interface_has_or_is_using_private_name_1'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionType'
+                ReturnStatement
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbolAccessibilityResult'
+                      Identifier: 'errorModuleName'
+                    QuestionToken
+                    ConditionalExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    symbolAccessibilityResult'
+                          Identifier: 'accessibility'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SymbolAccessibility'
+                          Identifier: 'CannotBeNamed'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: '
+                        Diagnostics'
+                        Identifier: 'Parameter_0_of_exported_function_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                        Diagnostics'
+                        Identifier: 'Parameter_0_of_exported_function_has_or_is_using_name_1_from_private_module_2'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Parameter_0_of_exported_function_has_or_is_using_private_name_1'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SetAccessor'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'GetAccessor'
+                ReturnStatement
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' symbolAccessibilityResult'
+                      Identifier: 'errorModuleName'
+                    QuestionToken
+                    ConditionalExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    symbolAccessibilityResult'
+                          Identifier: 'accessibility'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SymbolAccessibility'
+                          Identifier: 'CannotBeNamed'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: '
+                        Diagnostics'
+                        Identifier: 'Parameter_0_of_accessor_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                        Diagnostics'
+                        Identifier: 'Parameter_0_of_accessor_has_or_is_using_name_1_from_private_module_2'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Parameter_0_of_accessor_has_or_is_using_private_name_1'
+              DefaultClause
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Debug'
+                      Identifier: 'fail'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'Debug'
+                            Identifier: 'formatSyntaxKind'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'node'
+                              Identifier: 'parent'
+                            Identifier: 'kind'
+                        TemplateTail
+      FunctionDeclaration
+        Identifier: ' getTypeParameterConstraintVisibilityError'
+        TypeReference
+          Identifier: ' SymbolAccessibilityDiagnostic'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diagnosticMessage'
+                TypeReference
+                  Identifier: ' DiagnosticMessage'
+          SwitchStatement
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'parent'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ClassDeclaration'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                diagnosticMessage'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Type_parameter_0_of_exported_class_has_or_is_using_private_name_1'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'InterfaceDeclaration'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                diagnosticMessage'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Type_parameter_0_of_exported_interface_has_or_is_using_private_name_1'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MappedType'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                diagnosticMessage'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Type_parameter_0_of_exported_mapped_object_type_is_using_private_name_1'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructorType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructSignature'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                diagnosticMessage'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Type_parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_name_1'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CallSignature'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                diagnosticMessage'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Type_parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_name_1'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodSignature'
+                IfStatement
+                  CallExpression
+                    Identifier: 'isStatic'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    diagnosticMessage'
+                        EqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'Type_parameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_name_1'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'node'
+                            Identifier: 'parent'
+                          Identifier: 'parent'
+                        Identifier: 'kind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'ClassDeclaration'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    diagnosticMessage'
+                          EqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' Diagnostics'
+                            Identifier: 'Type_parameter_0_of_public_method_from_exported_class_has_or_is_using_private_name_1'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    diagnosticMessage'
+                          EqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' Diagnostics'
+                            Identifier: 'Type_parameter_0_of_method_from_exported_interface_has_or_is_using_private_name_1'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionDeclaration'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                diagnosticMessage'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Type_parameter_0_of_exported_function_has_or_is_using_private_name_1'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'InferType'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                diagnosticMessage'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Extends_clause_for_inferred_type_0_has_or_is_using_private_name_1'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TypeAliasDeclaration'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                diagnosticMessage'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Type_parameter_0_of_exported_type_alias_has_or_is_using_private_name_1'
+                BreakStatement
+              DefaultClause
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Debug'
+                      Identifier: 'fail'
+                    BinaryExpression
+                      StringLiteral
+                      PlusToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' node'
+                          Identifier: 'parent'
+                        Identifier: 'kind'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+            diagnosticMessage'
+              PropertyAssignment
+                Identifier: '
+            errorNode'
+                Identifier: ' node'
+              PropertyAssignment
+                Identifier: '
+            typeName'
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      Identifier: 'node'
+                      TypeReference
+                        Identifier: ' NamedDeclaration'
+                  Identifier: 'name'
+      FunctionDeclaration
+        Identifier: ' getHeritageClauseVisibilityError'
+        TypeReference
+          Identifier: ' SymbolAccessibilityDiagnostic'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diagnosticMessage'
+                TypeReference
+                  Identifier: ' DiagnosticMessage'
+          IfStatement
+            CallExpression
+              Identifier: 'isClassDeclaration'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'parent'
+                Identifier: 'parent'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            // Class or Interface implemented/extended is inaccessible
+            diagnosticMessage'
+                  EqualsToken
+                  ConditionalExpression
+                    BinaryExpression
+                      CallExpression
+                        Identifier: ' isHeritageClause'
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'parent'
+                      AmpersandAmpersandToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' node'
+                            Identifier: 'parent'
+                          Identifier: 'token'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'ImplementsKeyword'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                Diagnostics'
+                      Identifier: 'Implements_clause_of_exported_class_0_has_or_is_using_private_name_1'
+                    ColonToken
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                node'
+                            Identifier: 'parent'
+                          Identifier: 'parent'
+                        Identifier: 'name'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' Diagnostics'
+                        Identifier: 'extends_clause_of_exported_class_0_has_or_is_using_private_name_1'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                Diagnostics'
+                        Identifier: 'extends_clause_of_exported_class_has_or_is_using_private_name_0'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            // interface is inaccessible
+            diagnosticMessage'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'extends_clause_of_exported_interface_0_has_or_is_using_private_name_1'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+            diagnosticMessage'
+              PropertyAssignment
+                Identifier: '
+            errorNode'
+                Identifier: ' node'
+              PropertyAssignment
+                Identifier: '
+            typeName'
+                CallExpression
+                  Identifier: ' getNameOfDeclaration'
+                  AsExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'parent'
+                      Identifier: 'parent'
+                    TypeReference
+                      Identifier: ' Declaration'
+      FunctionDeclaration
+        Identifier: ' getImportEntityNameVisibilityError'
+        TypeReference
+          Identifier: ' SymbolAccessibilityDiagnostic'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            diagnosticMessage'
+                PropertyAccessExpression
+                  Identifier: ' Diagnostics'
+                  Identifier: 'Import_declaration_0_is_using_private_name_1'
+              PropertyAssignment
+                Identifier: '
+            errorNode'
+                Identifier: ' node'
+              PropertyAssignment
+                Identifier: '
+            typeName'
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      Identifier: 'node'
+                      TypeReference
+                        Identifier: ' NamedDeclaration'
+                  Identifier: 'name'
+      FunctionDeclaration
+        Identifier: ' getTypeAliasDeclarationVisibilityError'
+        Parameter
+          Identifier: 'symbolAccessibilityResult'
+          TypeReference
+            Identifier: ' SymbolAccessibilityResult'
+        TypeReference
+          Identifier: ' SymbolAccessibilityDiagnostic'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            diagnosticMessage'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' symbolAccessibilityResult'
+                    Identifier: 'errorModuleName'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Exported_type_alias_0_has_or_is_using_private_name_1_from_module_2'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Exported_type_alias_0_has_or_is_using_private_name_1'
+              PropertyAssignment
+                Identifier: '
+            errorNode'
+                ConditionalExpression
+                  CallExpression
+                    Identifier: ' isJSDocTypeAlias'
+                    Identifier: 'node'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Debug'
+                      Identifier: 'checkDefined'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'typeExpression'
+                  ColonToken
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' TypeAliasDeclaration'
+                    Identifier: 'type'
+              PropertyAssignment
+                Identifier: '
+            typeName'
+                ConditionalExpression
+                  CallExpression
+                    Identifier: ' isJSDocTypeAlias'
+                    Identifier: 'node'
+                  QuestionToken
+                  CallExpression
+                    Identifier: ' getNameOfDeclaration'
+                    Identifier: 'node'
+                  ColonToken
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'node'
+                        TypeReference
+                          Identifier: ' TypeAliasDeclaration'
+                    Identifier: 'name'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createGetIsolatedDeclarationErrors'
+    Parameter
+      Identifier: 'resolver'
+      TypeReference
+        Identifier: ' EmitResolver'
+    FunctionType
+      Parameter
+        Identifier: 'node'
+        TypeReference
+          Identifier: ' Node'
+      TypeReference
+        Identifier: ' DiagnosticWithLocation'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' relatedSuggestionByDeclarationKind'
+            SatisfiesExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'ArrowFunction'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_return_type_to_the_function_expression'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'FunctionExpression'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_return_type_to_the_function_expression'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'MethodDeclaration'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_return_type_to_the_method'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'GetAccessor'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_return_type_to_the_get_accessor_declaration'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'SetAccessor'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_type_to_parameter_of_the_set_accessor_declaration'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'FunctionDeclaration'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_return_type_to_the_function_declaration'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'ConstructSignature'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_return_type_to_the_function_declaration'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'Parameter'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_type_annotation_to_the_parameter_0'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'VariableDeclaration'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_type_annotation_to_the_variable_0'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'PropertyDeclaration'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_type_annotation_to_the_property_0'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'PropertySignature'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_a_type_annotation_to_the_property_0'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'ExportAssignment'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Move_the_expression_in_default_export_to_a_variable_and_add_a_type_annotation_to_it'
+              TypeReference
+                Identifier: ' Partial'
+                TypeReference
+                  Identifier: 'Record'
+                  TypeReference
+                    Identifier: 'SyntaxKind'
+                  TypeReference
+                    Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' errorByDeclarationKind'
+            SatisfiesExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'FunctionExpression'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Function_must_have_an_explicit_return_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'FunctionDeclaration'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Function_must_have_an_explicit_return_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'ArrowFunction'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Function_must_have_an_explicit_return_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'MethodDeclaration'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Method_must_have_an_explicit_return_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'ConstructSignature'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Method_must_have_an_explicit_return_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'GetAccessor'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'At_least_one_accessor_must_have_an_explicit_return_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'SetAccessor'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'At_least_one_accessor_must_have_an_explicit_return_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'Parameter'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Parameter_must_have_an_explicit_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'VariableDeclaration'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Variable_must_have_an_explicit_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'PropertyDeclaration'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Property_must_have_an_explicit_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'PropertySignature'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Property_must_have_an_explicit_type_annotation_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'ComputedPropertyName'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'SpreadAssignment'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Objects_that_contain_spread_assignments_can_t_be_inferred_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'ShorthandPropertyAssignment'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Objects_that_contain_shorthand_properties_can_t_be_inferred_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'ArrayLiteralExpression'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Only_const_arrays_can_be_inferred_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'ExportAssignment'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Default_exports_can_t_be_inferred_with_isolatedDeclarations'
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'SpreadElement'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Arrays_with_spread_elements_can_t_inferred_with_isolatedDeclarations'
+              TypeReference
+                Identifier: ' Partial'
+                TypeReference
+                  Identifier: 'Record'
+                  TypeReference
+                    Identifier: 'SyntaxKind'
+                  TypeReference
+                    Identifier: ' DiagnosticMessage'
+      ReturnStatement
+        Identifier: ' getDiagnostic'
+      TypeAliasDeclaration
+        Identifier: ' WithIsolatedDeclarationDiagnostic'
+        UnionType
+          TypeReference
+            Identifier: ' GetAccessorDeclaration'
+          TypeReference
+            Identifier: ' SetAccessorDeclaration'
+          TypeReference
+            Identifier: ' ShorthandPropertyAssignment'
+          TypeReference
+            Identifier: ' SpreadAssignment'
+          TypeReference
+            Identifier: ' ComputedPropertyName'
+          TypeReference
+            Identifier: ' ArrayLiteralExpression'
+          TypeReference
+            Identifier: ' SpreadElement'
+          TypeReference
+            Identifier: ' FunctionDeclaration'
+          TypeReference
+            Identifier: ' FunctionExpression'
+          TypeReference
+            Identifier: ' ArrowFunction'
+          TypeReference
+            Identifier: ' MethodDeclaration'
+          TypeReference
+            Identifier: ' ConstructSignatureDeclaration'
+          TypeReference
+            Identifier: ' BindingElement'
+          TypeReference
+            Identifier: ' VariableDeclaration'
+          TypeReference
+            Identifier: ' PropertyDeclaration'
+          TypeReference
+            Identifier: ' ParameterDeclaration'
+          TypeReference
+            Identifier: ' PropertyAssignment'
+          TypeReference
+            Identifier: ' ClassExpression'
+      FunctionDeclaration
+        Identifier: ' getDiagnostic'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' heritageClause'
+                CallExpression
+                  Identifier: ' findAncestor'
+                  Identifier: 'node'
+                  Identifier: ' isHeritageClause'
+          IfStatement
+            Identifier: 'heritageClause'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' createDiagnosticForNode'
+                  Identifier: 'node'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Extends_clause_can_t_contain_an_expression_with_isolatedDeclarations'
+          IfStatement
+            BinaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'isPartOfTypeNode'
+                    Identifier: 'node'
+                  BarBarToken
+                  CallExpression
+                    Identifier: ' isTypeQueryNode'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'isEntityName'
+                    Identifier: 'node'
+                  BarBarToken
+                  CallExpression
+                    Identifier: ' isEntityNameExpression'
+                    Identifier: 'node'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' createEntityInTypeNodeError'
+                  Identifier: 'node'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'type'
+              TypeReference
+                Identifier: 'WithIsolatedDeclarationDiagnostic'
+              Identifier: 'node'
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'GetAccessor'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SetAccessor'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createAccessorTypeError'
+                    Identifier: 'node'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ComputedPropertyName'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ShorthandPropertyAssignment'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SpreadAssignment'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createObjectLiteralError'
+                    Identifier: 'node'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ArrayLiteralExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SpreadElement'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createArrayLiteralError'
+                    Identifier: 'node'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructSignature'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ArrowFunction'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionDeclaration'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createReturnTypeError'
+                    Identifier: 'node'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'BindingElement'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createBindingElementError'
+                    Identifier: 'node'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'PropertyDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'VariableDeclaration'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createVariableOrPropertyError'
+                    Identifier: 'node'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'Parameter'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createParameterError'
+                    Identifier: 'node'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'PropertyAssignment'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createExpressionError'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'initializer'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ClassExpression'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createClassExpressionError'
+                    Identifier: 'node'
+              DefaultClause
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+                assertType'
+                    NeverKeyword
+                    Identifier: 'node'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createExpressionError'
+                    AsExpression
+                      Identifier: 'node'
+                      TypeReference
+                        Identifier: ' Expression'
+      FunctionDeclaration
+        Identifier: ' findNearestDeclaration'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' findAncestor'
+                  Identifier: 'node'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' n'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            CallExpression
+                              Identifier: ' isExportAssignment'
+                              Identifier: 'n'
+                            BarBarToken
+                            CallExpression
+                              Identifier: ' isStatement'
+                              Identifier: 'n'
+                          BarBarToken
+                          CallExpression
+                            Identifier: ' isVariableDeclaration'
+                            Identifier: 'n'
+                        BarBarToken
+                        CallExpression
+                          Identifier: ' isPropertyDeclaration'
+                          Identifier: 'n'
+                      BarBarToken
+                      CallExpression
+                        Identifier: ' isParameter'
+                        Identifier: 'n'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'result'
+            ReturnStatement
+              Identifier: ' undefined'
+          IfStatement
+            CallExpression
+              Identifier: 'isExportAssignment'
+              Identifier: 'result'
+            ReturnStatement
+              Identifier: ' result'
+          IfStatement
+            CallExpression
+              Identifier: 'isReturnStatement'
+              Identifier: 'result'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' findAncestor'
+                  Identifier: 'result'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'n'
+                    TypePredicate
+                      Identifier: ' n'
+                      TypeReference
+                        Identifier: ' Exclude'
+                        TypeReference
+                          Identifier: 'FunctionLikeDeclaration'
+                        TypeReference
+                          Identifier: ' ConstructorDeclaration'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      CallExpression
+                        Identifier: ' isFunctionLikeDeclaration'
+                        Identifier: 'n'
+                      AmpersandAmpersandToken
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'isConstructorDeclaration'
+                          Identifier: 'n'
+          ReturnStatement
+            AsExpression
+              ParenthesizedExpression
+                ConditionalExpression
+                  CallExpression
+                    Identifier: 'isStatement'
+                    Identifier: 'result'
+                  QuestionToken
+                  Identifier: ' undefined'
+                  ColonToken
+                  Identifier: ' result'
+              UnionType
+                TypeReference
+                  Identifier: ' VariableDeclaration'
+                TypeReference
+                  Identifier: ' PropertyDeclaration'
+                TypeReference
+                  Identifier: ' ParameterDeclaration'
+                TypeReference
+                  Identifier: ' ExportAssignment'
+                UndefinedKeyword
+      FunctionDeclaration
+        Identifier: ' createAccessorTypeError'
+        Parameter
+          Identifier: 'node'
+          UnionType
+            TypeReference
+              Identifier: ' GetAccessorDeclaration'
+            TypeReference
+              Identifier: ' SetAccessorDeclaration'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' getAccessor'
+                  BindingElement
+                    Identifier: ' setAccessor'
+                CallExpression
+                  Identifier: ' getAllAccessorDeclarations'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'symbol'
+                    Identifier: 'declarations'
+                  Identifier: ' node'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' targetNode'
+                BinaryExpression
+                  ParenthesizedExpression
+                    ConditionalExpression
+                      CallExpression
+                        Identifier: 'isSetAccessor'
+                        Identifier: 'node'
+                      QuestionToken
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' node'
+                          Identifier: 'parameters'
+                        NumericLiteral
+                      ColonToken
+                      Identifier: ' node'
+                  QuestionQuestionToken
+                  Identifier: ' node'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diag'
+                CallExpression
+                  Identifier: ' createDiagnosticForNode'
+                  Identifier: 'targetNode'
+                  ElementAccessExpression
+                    Identifier: ' errorByDeclarationKind'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'kind'
+          IfStatement
+            Identifier: 'setAccessor'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addRelatedInfo'
+                  Identifier: 'diag'
+                  CallExpression
+                    Identifier: ' createDiagnosticForNode'
+                    Identifier: 'setAccessor'
+                    ElementAccessExpression
+                      Identifier: ' relatedSuggestionByDeclarationKind'
+                      PropertyAccessExpression
+                        Identifier: 'setAccessor'
+                        Identifier: 'kind'
+          IfStatement
+            Identifier: 'getAccessor'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addRelatedInfo'
+                  Identifier: 'diag'
+                  CallExpression
+                    Identifier: ' createDiagnosticForNode'
+                    Identifier: 'getAccessor'
+                    ElementAccessExpression
+                      Identifier: ' relatedSuggestionByDeclarationKind'
+                      PropertyAccessExpression
+                        Identifier: 'getAccessor'
+                        Identifier: 'kind'
+          ReturnStatement
+            Identifier: ' diag'
+      FunctionDeclaration
+        Identifier: ' addParentDeclarationRelatedInfo'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' diag'
+          TypeReference
+            Identifier: ' DiagnosticWithLocation'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' parentDeclaration'
+                CallExpression
+                  Identifier: ' findNearestDeclaration'
+                  Identifier: 'node'
+          IfStatement
+            Identifier: 'parentDeclaration'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' targetStr'
+                    ConditionalExpression
+                      BinaryExpression
+                        CallExpression
+                          Identifier: ' isExportAssignment'
+                          Identifier: 'parentDeclaration'
+                        BarBarToken
+                        PrefixUnaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'parentDeclaration'
+                            Identifier: 'name'
+                      QuestionToken
+                      StringLiteral
+                      ColonToken
+                      CallExpression
+                        Identifier: ' getTextOfNode'
+                        PropertyAccessExpression
+                          Identifier: 'parentDeclaration'
+                          Identifier: 'name'
+                        FalseKeyword
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addRelatedInfo'
+                  Identifier: 'diag'
+                  CallExpression
+                    Identifier: ' createDiagnosticForNode'
+                    Identifier: 'parentDeclaration'
+                    ElementAccessExpression
+                      Identifier: ' relatedSuggestionByDeclarationKind'
+                      PropertyAccessExpression
+                        Identifier: 'parentDeclaration'
+                        Identifier: 'kind'
+                    Identifier: ' targetStr'
+          ReturnStatement
+            Identifier: ' diag'
+      FunctionDeclaration
+        Identifier: ' createObjectLiteralError'
+        Parameter
+          Identifier: 'node'
+          UnionType
+            TypeReference
+              Identifier: ' ShorthandPropertyAssignment'
+            TypeReference
+              Identifier: ' SpreadAssignment'
+            TypeReference
+              Identifier: ' ComputedPropertyName'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diag'
+                CallExpression
+                  Identifier: ' createDiagnosticForNode'
+                  Identifier: 'node'
+                  ElementAccessExpression
+                    Identifier: ' errorByDeclarationKind'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'kind'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addParentDeclarationRelatedInfo'
+              Identifier: 'node'
+              Identifier: ' diag'
+          ReturnStatement
+            Identifier: ' diag'
+      FunctionDeclaration
+        Identifier: ' createArrayLiteralError'
+        Parameter
+          Identifier: 'node'
+          UnionType
+            TypeReference
+              Identifier: ' ArrayLiteralExpression'
+            TypeReference
+              Identifier: ' SpreadElement'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diag'
+                CallExpression
+                  Identifier: ' createDiagnosticForNode'
+                  Identifier: 'node'
+                  ElementAccessExpression
+                    Identifier: ' errorByDeclarationKind'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'kind'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addParentDeclarationRelatedInfo'
+              Identifier: 'node'
+              Identifier: ' diag'
+          ReturnStatement
+            Identifier: ' diag'
+      FunctionDeclaration
+        Identifier: ' createReturnTypeError'
+        Parameter
+          Identifier: 'node'
+          UnionType
+            TypeReference
+              Identifier: ' FunctionDeclaration'
+            TypeReference
+              Identifier: ' FunctionExpression'
+            TypeReference
+              Identifier: ' ArrowFunction'
+            TypeReference
+              Identifier: ' MethodDeclaration'
+            TypeReference
+              Identifier: ' ConstructSignatureDeclaration'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diag'
+                CallExpression
+                  Identifier: ' createDiagnosticForNode'
+                  Identifier: 'node'
+                  ElementAccessExpression
+                    Identifier: ' errorByDeclarationKind'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'kind'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addParentDeclarationRelatedInfo'
+              Identifier: 'node'
+              Identifier: ' diag'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addRelatedInfo'
+              Identifier: 'diag'
+              CallExpression
+                Identifier: ' createDiagnosticForNode'
+                Identifier: 'node'
+                ElementAccessExpression
+                  Identifier: ' relatedSuggestionByDeclarationKind'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'kind'
+          ReturnStatement
+            Identifier: ' diag'
+      FunctionDeclaration
+        Identifier: ' createBindingElementError'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' BindingElement'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' createDiagnosticForNode'
+              Identifier: 'node'
+              PropertyAccessExpression
+                Identifier: ' Diagnostics'
+                Identifier: 'Binding_elements_can_t_be_exported_directly_with_isolatedDeclarations'
+      FunctionDeclaration
+        Identifier: ' createVariableOrPropertyError'
+        Parameter
+          Identifier: 'node'
+          UnionType
+            TypeReference
+              Identifier: ' VariableDeclaration'
+            TypeReference
+              Identifier: ' PropertyDeclaration'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diag'
+                CallExpression
+                  Identifier: ' createDiagnosticForNode'
+                  Identifier: 'node'
+                  ElementAccessExpression
+                    Identifier: ' errorByDeclarationKind'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'kind'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' targetStr'
+                CallExpression
+                  Identifier: ' getTextOfNode'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'name'
+                  FalseKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addRelatedInfo'
+              Identifier: 'diag'
+              CallExpression
+                Identifier: ' createDiagnosticForNode'
+                Identifier: 'node'
+                ElementAccessExpression
+                  Identifier: ' relatedSuggestionByDeclarationKind'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'kind'
+                Identifier: ' targetStr'
+          ReturnStatement
+            Identifier: ' diag'
+      FunctionDeclaration
+        Identifier: ' createParameterError'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' ParameterDeclaration'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isSetAccessor'
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'parent'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' createAccessorTypeError'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'parent'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' addUndefined'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' resolver'
+                    Identifier: 'requiresAddingImplicitUndefined'
+                  Identifier: 'node'
+                  Identifier: ' /*enclosingDeclaration*/ undefined'
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'addUndefined'
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'initializer'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' createExpressionError'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'initializer'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' message'
+                ConditionalExpression
+                  Identifier: ' addUndefined'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: '
+            Diagnostics'
+                    Identifier: 'Declaration_emit_for_this_parameter_requires_implicitly_adding_undefined_to_it_s_type_This_is_not_supported_with_isolatedDeclarations'
+                  ColonToken
+                  ElementAccessExpression
+                    Identifier: '
+            errorByDeclarationKind'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'kind'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diag'
+                CallExpression
+                  Identifier: ' createDiagnosticForNode'
+                  Identifier: 'node'
+                  Identifier: ' message'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' targetStr'
+                CallExpression
+                  Identifier: ' getTextOfNode'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'name'
+                  FalseKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addRelatedInfo'
+              Identifier: 'diag'
+              CallExpression
+                Identifier: ' createDiagnosticForNode'
+                Identifier: 'node'
+                ElementAccessExpression
+                  Identifier: ' relatedSuggestionByDeclarationKind'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'kind'
+                Identifier: ' targetStr'
+          ReturnStatement
+            Identifier: ' diag'
+      FunctionDeclaration
+        Identifier: ' createClassExpressionError'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' createExpressionError'
+              Identifier: 'node'
+              PropertyAccessExpression
+                Identifier: ' Diagnostics'
+                Identifier: 'Inference_from_class_expressions_is_not_supported_with_isolatedDeclarations'
+      FunctionDeclaration
+        Identifier: ' createEntityInTypeNodeError'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' EntityNameOrEntityNameExpression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diag'
+                CallExpression
+                  Identifier: ' createDiagnosticForNode'
+                  Identifier: 'node'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Type_containing_private_name_0_can_t_be_used_with_isolatedDeclarations'
+                  CallExpression
+                    Identifier: ' getTextOfNode'
+                    Identifier: 'node'
+                    FalseKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addParentDeclarationRelatedInfo'
+              Identifier: 'node'
+              Identifier: ' diag'
+          ReturnStatement
+            Identifier: ' diag'
+      FunctionDeclaration
+        Identifier: ' createExpressionError'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' diagnosticMessage'
+          QuestionToken
+          TypeReference
+            Identifier: ' DiagnosticMessage'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' parentDeclaration'
+                CallExpression
+                  Identifier: ' findNearestDeclaration'
+                  Identifier: 'node'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diag'
+                TypeReference
+                  Identifier: ' DiagnosticWithLocation'
+          IfStatement
+            Identifier: 'parentDeclaration'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' targetStr'
+                    ConditionalExpression
+                      BinaryExpression
+                        CallExpression
+                          Identifier: ' isExportAssignment'
+                          Identifier: 'parentDeclaration'
+                        BarBarToken
+                        PrefixUnaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'parentDeclaration'
+                            Identifier: 'name'
+                      QuestionToken
+                      StringLiteral
+                      ColonToken
+                      CallExpression
+                        Identifier: ' getTextOfNode'
+                        PropertyAccessExpression
+                          Identifier: 'parentDeclaration'
+                          Identifier: 'name'
+                        FalseKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' parent'
+                    CallExpression
+                      Identifier: ' findAncestor'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'parent'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' n'
+                        EqualsGreaterThanToken
+                        BinaryExpression
+                          CallExpression
+                            Identifier: ' isExportAssignment'
+                            Identifier: 'n'
+                          BarBarToken
+                          ParenthesizedExpression
+                            ConditionalExpression
+                              CallExpression
+                                Identifier: 'isStatement'
+                                Identifier: 'n'
+                              QuestionToken
+                              StringLiteral
+                              ColonToken
+                              BinaryExpression
+                                BinaryExpression
+                                  PrefixUnaryExpression
+                                    CallExpression
+                                      Identifier: 'isParenthesizedExpression'
+                                      Identifier: 'n'
+                                  AmpersandAmpersandToken
+                                  PrefixUnaryExpression
+                                    CallExpression
+                                      Identifier: 'isTypeAssertionExpression'
+                                      Identifier: 'n'
+                                AmpersandAmpersandToken
+                                PrefixUnaryExpression
+                                  CallExpression
+                                    Identifier: 'isAsExpression'
+                                    Identifier: 'n'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'parentDeclaration'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' parent'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                diag'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' createDiagnosticForNode'
+                        Identifier: 'node'
+                        BinaryExpression
+                          Identifier: ' diagnosticMessage'
+                          QuestionQuestionToken
+                          ElementAccessExpression
+                            Identifier: ' errorByDeclarationKind'
+                            PropertyAccessExpression
+                              Identifier: 'parentDeclaration'
+                              Identifier: 'kind'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                addRelatedInfo'
+                      Identifier: 'diag'
+                      CallExpression
+                        Identifier: ' createDiagnosticForNode'
+                        Identifier: 'parentDeclaration'
+                        ElementAccessExpression
+                          Identifier: ' relatedSuggestionByDeclarationKind'
+                          PropertyAccessExpression
+                            Identifier: 'parentDeclaration'
+                            Identifier: 'kind'
+                        Identifier: ' targetStr'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                diag'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' createDiagnosticForNode'
+                        Identifier: 'node'
+                        BinaryExpression
+                          Identifier: ' diagnosticMessage'
+                          QuestionQuestionToken
+                          PropertyAccessExpression
+                            Identifier: ' Diagnostics'
+                            Identifier: 'Expression_type_can_t_be_inferred_with_isolatedDeclarations'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                addRelatedInfo'
+                      Identifier: 'diag'
+                      CallExpression
+                        Identifier: ' createDiagnosticForNode'
+                        Identifier: 'parentDeclaration'
+                        ElementAccessExpression
+                          Identifier: ' relatedSuggestionByDeclarationKind'
+                          PropertyAccessExpression
+                            Identifier: 'parentDeclaration'
+                            Identifier: 'kind'
+                        Identifier: ' targetStr'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                addRelatedInfo'
+                      Identifier: 'diag'
+                      CallExpression
+                        Identifier: ' createDiagnosticForNode'
+                        Identifier: 'node'
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'Add_satisfies_and_a_type_assertion_to_this_expression_satisfies_T_as_T_to_make_the_type_explicit'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            diag'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' createDiagnosticForNode'
+                    Identifier: 'node'
+                    BinaryExpression
+                      Identifier: ' diagnosticMessage'
+                      QuestionQuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' Diagnostics'
+                        Identifier: 'Expression_type_can_t_be_inferred_with_isolatedDeclarations'
+          ReturnStatement
+            Identifier: ' diag'

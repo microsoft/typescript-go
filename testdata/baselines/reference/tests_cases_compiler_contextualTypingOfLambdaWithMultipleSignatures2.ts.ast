@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+f'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'asdf'

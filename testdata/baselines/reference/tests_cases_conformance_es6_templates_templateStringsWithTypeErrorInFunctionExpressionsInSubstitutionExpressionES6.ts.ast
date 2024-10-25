@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        FunctionExpression
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: ' x'
+                EqualsToken
+                StringLiteral
+        TemplateTail

@@ -1,0 +1,233 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' C1'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      UnknownKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      UnknownKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' C3'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      UnknownKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' C4'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      UnknownKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+      NeverKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f0'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C1'
+        TypeReference
+          Identifier: 'T'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C1'
+        TypeReference
+          Identifier: 'C2'
+          TypeReference
+            Identifier: 'T'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C1'
+        TypeReference
+          Identifier: 'C2'
+          TypeReference
+            Identifier: 'C3'
+            TypeReference
+              Identifier: 'T'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C1'
+        TypeReference
+          Identifier: 'C2'
+          TypeReference
+            Identifier: 'C3'
+            TypeReference
+              Identifier: 'C4'
+              TypeReference
+                Identifier: 'T'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c0'
+        CallExpression
+          Identifier: ' f0'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        CallExpression
+          Identifier: ' f1'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        CallExpression
+          Identifier: ' f2'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        CallExpression
+          Identifier: ' f3'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        CallExpression
+          Identifier: ' f4'
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' FormControl'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 't'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+          NeverKeyword
+          TypeReference
+            Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' FormControl'
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' FormControl2'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 't'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          StringKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' FormControl2'
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' FormControl3'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 't'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+          NeverKeyword
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            StringKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' FormControl3'
+          StringLiteral

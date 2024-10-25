@@ -1,0 +1,94 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' evaluator'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // https://github.com/Microsoft/TypeScript/issues/24722
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    AwaitExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' result'
+                          Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'instanceOf'
+                      CallExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'result'
+                              Identifier: 'output'
+                            NumericLiteral
+                          Identifier: 'a'
+                      PropertyAccessExpression
+                        Identifier: ' result'
+                        Identifier: 'A'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    // https://github.com/microsoft/TypeScript/issues/57897
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' output'
+                        AwaitExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' result'
+                              Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      Identifier: 'output'
+                      StringLiteral

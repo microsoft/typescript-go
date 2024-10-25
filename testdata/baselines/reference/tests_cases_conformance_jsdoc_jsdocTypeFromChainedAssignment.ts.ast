@@ -1,0 +1,119 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' A'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'first'
+          EqualsToken
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'second'
+            EqualsToken
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/** @param {number} n */
+A'
+          Identifier: 'prototype'
+        Identifier: 'y'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' A'
+            Identifier: 'prototype'
+          Identifier: 'z'
+        EqualsToken
+        FunctionExpression
+          Identifier: ' f'
+          Parameter
+            Identifier: 'n'
+          Block
+            ReturnStatement
+              BinaryExpression
+                Identifier: ' n'
+                PlusToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+/** @param {number} m */
+A'
+        Identifier: 's'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' A'
+          Identifier: 't'
+        EqualsToken
+        FunctionExpression
+          Identifier: ' g'
+          Parameter
+            Identifier: 'm'
+          Block
+            ReturnStatement
+              BinaryExpression
+                Identifier: ' m'
+                PlusToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' A'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+a'
+        Identifier: 'y'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // error
+a'
+        Identifier: 'z'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // error
+A'
+        Identifier: 's'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // error
+A'
+        Identifier: 't'
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // error
+a'
+        Identifier: 'first'
+      EqualsToken
+      NumericLiteral

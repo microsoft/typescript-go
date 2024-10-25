@@ -1,0 +1,44 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' methodName'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' accessorName'
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        Identifier: 'methodName'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'methodName'
+      Block
+    GetAccessor
+      ComputedPropertyName
+        Identifier: 'accessorName'
+      Block
+    SetAccessor
+      ComputedPropertyName
+        Identifier: 'accessorName'
+      Parameter
+        Identifier: 'v'
+      Block
+    GetAccessor
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'accessorName'
+      Block
+    SetAccessor
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'accessorName'
+      Parameter
+        Identifier: 'v'
+      Block

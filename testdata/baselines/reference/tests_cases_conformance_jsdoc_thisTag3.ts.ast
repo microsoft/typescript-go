@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * @this {T}
+     * @param {string} a
+     */
+    p'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'fn'
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            Identifier: ' a'

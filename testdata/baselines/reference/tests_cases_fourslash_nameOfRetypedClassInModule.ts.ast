@@ -1,0 +1,115 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// module M {
+//// }
+//// 
+//// module M {
+//// 	/*A*/class A {}
+////    /*B*/export class B {}
+////    class Check { /*check*/constructor(val) {} }
+////    export class Check2 { /*check2*/constructor(val) {} }
+//// }
+//// 
+
+edit'
+        Identifier: 'disableFormatting'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'quickInfos'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    check'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    check2'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'deleteAtCaret'
+      PropertyAccessExpression
+        StringLiteral
+        Identifier: 'length'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'moveLeft'
+      PropertyAccessExpression
+        StringLiteral
+        Identifier: 'length'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoIs'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'deleteAtCaret'
+      PropertyAccessExpression
+        StringLiteral
+        Identifier: 'length'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'moveLeft'
+      PropertyAccessExpression
+        StringLiteral
+        Identifier: 'length'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoIs'
+      StringLiteral

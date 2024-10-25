@@ -1,0 +1,143 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////declare function f(a: number, b: string, c: boolean): void; // ignored, not generic
+////declare function f<T extends number>(): void;
+////declare function f<T, U>(): void;
+////declare function f<T, U, V extends string>(): void;
+////f</*f0*/;
+////f<number, /*f1*/;
+////f<number, string, /*f2*/;
+////
+////declare const C: {
+////    new<T extends number>(): void;
+////    new<T, U>(): void;
+////    new<T, U, V extends string>(): void;
+////};
+////new C</*C0*/;
+////new C<number, /*C1*/;
+////new C<number, string, /*C2*/;
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        overloadsCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        overloadsCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        overloadsCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        overloadsCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral

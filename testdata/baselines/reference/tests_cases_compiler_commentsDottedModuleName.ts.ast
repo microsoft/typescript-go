@@ -1,0 +1,10 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' outerModule'
+    ModuleDeclaration
+      Identifier: 'InnerModule'
+      ModuleBlock
+        ClassDeclaration
+          ExportKeyword
+          Identifier: ' b'

@@ -1,0 +1,438 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              AnyKeyword
+            VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Robot'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    skill'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' MultiRobot'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    skills'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        primary'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        secondary'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robots'
+        ArrayType
+          TypeReference
+            Identifier: ' Robot'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' skill'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' skill'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobots'
+        ArrayType
+          TypeReference
+            Identifier: ' MultiRobot'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' skills'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' primary'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' secondary'
+                  StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' skills'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' primary'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' secondary'
+                  StringLiteral
+  FunctionDeclaration
+    Identifier: ' getRobots'
+    Block
+      ReturnStatement
+        Identifier: ' robots'
+  FunctionDeclaration
+    Identifier: ' getMultiRobots'
+    Block
+      ReturnStatement
+        Identifier: ' multiRobots'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'name'
+            Identifier: ' nameA'
+    Identifier: ' robots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'name'
+            Identifier: ' nameA'
+    CallExpression
+      Identifier: ' getRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'name'
+            Identifier: ' nameA'
+    ArrayLiteralExpression
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skill'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skill'
+          StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' skills'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' primary'
+                Identifier: ' primaryA'
+              BindingElement
+                Identifier: ' secondary'
+                Identifier: ' secondaryA'
+    Identifier: ' multiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'primaryA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' skills'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' primary'
+                Identifier: ' primaryA'
+              BindingElement
+                Identifier: ' secondary'
+                Identifier: ' secondaryA'
+    CallExpression
+      Identifier: ' getMultiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'primaryA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' skills'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' primary'
+                Identifier: ' primaryA'
+              BindingElement
+                Identifier: ' secondary'
+                Identifier: ' secondaryA'
+    ArrayLiteralExpression
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skills'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' primary'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' secondary'
+              StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skills'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' primary'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' secondary'
+              StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'primaryA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'name'
+            Identifier: ' nameA'
+          BindingElement
+            Identifier: ' skill'
+            Identifier: ' skillA'
+    Identifier: ' robots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'name'
+            Identifier: ' nameA'
+          BindingElement
+            Identifier: ' skill'
+            Identifier: ' skillA'
+    CallExpression
+      Identifier: ' getRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'name'
+            Identifier: ' nameA'
+          BindingElement
+            Identifier: ' skill'
+            Identifier: ' skillA'
+    ArrayLiteralExpression
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skill'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skill'
+          StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'name'
+            Identifier: ' nameA'
+          BindingElement
+            Identifier: ' skills'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' primary'
+                Identifier: ' primaryA'
+              BindingElement
+                Identifier: ' secondary'
+                Identifier: ' secondaryA'
+    Identifier: ' multiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'name'
+            Identifier: ' nameA'
+          BindingElement
+            Identifier: ' skills'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' primary'
+                Identifier: ' primaryA'
+              BindingElement
+                Identifier: ' secondary'
+                Identifier: ' secondaryA'
+    CallExpression
+      Identifier: ' getMultiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'name'
+            Identifier: ' nameA'
+          BindingElement
+            Identifier: ' skills'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' primary'
+                Identifier: ' primaryA'
+              BindingElement
+                Identifier: ' secondary'
+                Identifier: ' secondaryA'
+    ArrayLiteralExpression
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skills'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' primary'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' secondary'
+              StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skills'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' primary'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' secondary'
+              StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'

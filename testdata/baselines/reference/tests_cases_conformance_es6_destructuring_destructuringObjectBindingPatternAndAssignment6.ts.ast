@@ -1,0 +1,46 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            ComputedPropertyName
+              Identifier: 'a'
+            Identifier: ' aVal'
+          BindingElement
+            ComputedPropertyName
+              Identifier: 'b'
+            Identifier: ' bVal'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      ComputedPropertyName
+                        Identifier: 'a'
+                      NumericLiteral
+                    PropertyAssignment
+                      ComputedPropertyName
+                        Identifier: 'b'
+                      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'aVal'
+      Identifier: ' bVal'

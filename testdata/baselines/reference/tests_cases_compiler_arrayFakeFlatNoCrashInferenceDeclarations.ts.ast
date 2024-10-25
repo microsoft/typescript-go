@@ -1,0 +1,141 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' BadFlatArray'
+    TypeParameter
+      Identifier: 'Arr'
+    TypeParameter
+      Identifier: ' Depth'
+      NumberKeyword
+    IndexedAccessType
+      TypeLiteral
+        PropertySignature
+          Identifier: 'obj'
+          IndexedAccessType
+            TypeLiteral
+              PropertySignature
+                StringLiteral
+                TypeReference
+                  Identifier: ' Arr'
+              PropertySignature
+                StringLiteral
+                ConditionalType
+                  TypeReference
+                    Identifier: ' Arr'
+                  TypeReference
+                    Identifier: ' ReadonlyArray'
+                    InferType
+                      TypeParameter
+                        Identifier: ' InnerArr'
+                  TypeReference
+                    Identifier: ' BadFlatArray'
+                    TypeReference
+                      Identifier: 'InnerArr'
+                    IndexedAccessType
+                      TupleType
+                        LiteralType
+                          PrefixUnaryExpression
+                            NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                        LiteralType
+                          NumericLiteral
+                      TypeReference
+                        Identifier: 'Depth'
+                  TypeReference
+                    Identifier: ' Arr'
+            ConditionalType
+              TypeReference
+                Identifier: 'Depth'
+              LiteralType
+                PrefixUnaryExpression
+                  NumericLiteral
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' flat'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' D'
+      NumberKeyword
+      LiteralType
+        NumericLiteral
+    Parameter
+      Identifier: '
+    arr'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: '
+    depth'
+      QuestionToken
+      TypeReference
+        Identifier: ' D'
+    ArrayType
+      TypeReference
+        Identifier: ' BadFlatArray'
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' D'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'arr'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' depth'
+      NumberKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' flat'
+          Identifier: 'arr'
+          Identifier: ' depth'

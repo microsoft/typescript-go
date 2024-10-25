@@ -1,0 +1,40 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @lib: es2017
+
+////interface I<Species> {
+////    [Symbol.hasInstance](o: any): boolean;
+////    [Symbol.isConcatSpreadable]: boolean;
+////    [Symbol.iterator](): any;
+////    [Symbol.match]: boolean;
+////    [Symbol.replace](...args);
+////    [Symbol.search](str: string): number;
+////    [Symbol.species](): Species;
+////    [Symbol.split](str: string, limit?: number): string[];
+////    [Symbol.toPrimitive](hint: "number"): number;
+////    [Symbol.toPrimitive](hint: "default"): number;
+////    [Symbol.toPrimitive](hint: "string"): string;
+////    [Symbol.toStringTag]: string;
+////    [Symbol.unscopables]: any;
+////}
+////class C implements I<number> {}
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

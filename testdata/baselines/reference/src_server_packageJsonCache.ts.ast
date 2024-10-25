@@ -1,0 +1,387 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    combinePaths'
+        ImportSpecifier
+          Identifier: '
+    createPackageJsonInfo'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    forEachAncestorDirectoryStoppingAtGlobalCache'
+        ImportSpecifier
+          Identifier: '
+    getDirectoryPath'
+        ImportSpecifier
+          Identifier: '
+    Path'
+        ImportSpecifier
+          Identifier: '
+    ProjectPackageJsonInfo'
+        ImportSpecifier
+          Identifier: '
+    Ternary'
+        ImportSpecifier
+          Identifier: '
+    tryFileExists'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Project'
+        ImportSpecifier
+          Identifier: '
+    ProjectService'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PackageJsonCache'
+    MethodSignature
+      Identifier: '
+    addOrUpdate'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' path'
+        TypeReference
+          Identifier: ' Path'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    invalidate'
+      Parameter
+        Identifier: 'path'
+        TypeReference
+          Identifier: ' Path'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    delete'
+      Parameter
+        Identifier: 'fileName'
+        TypeReference
+          Identifier: ' Path'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getInDirectory'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' ProjectPackageJsonInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    directoryHasPackageJson'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      TypeReference
+        Identifier: ' Ternary'
+    MethodSignature
+      Identifier: '
+    searchDirectoryAndAncestors'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      Parameter
+        Identifier: ' project'
+        TypeReference
+          Identifier: ' Project'
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createPackageJsonCache'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' ProjectService'
+    TypeReference
+      Identifier: ' PackageJsonCache'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' packageJsons'
+            NewExpression
+              Identifier: ' Map'
+              TypeReference
+                Identifier: 'Path'
+              TypeReference
+                Identifier: ' ProjectPackageJsonInfo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' directoriesWithoutPackageJson'
+            NewExpression
+              Identifier: ' Map'
+              TypeReference
+                Identifier: 'Path'
+              LiteralType
+                TrueKeyword
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        addOrUpdate'
+          ShorthandPropertyAssignment
+            Identifier: '
+        invalidate'
+          PropertyAssignment
+            Identifier: '
+        delete'
+            ArrowFunction
+              Parameter
+                Identifier: ' fileName'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            packageJsons'
+                      Identifier: 'delete'
+                    Identifier: 'fileName'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            directoriesWithoutPackageJson'
+                      Identifier: 'set'
+                    CallExpression
+                      Identifier: 'getDirectoryPath'
+                      Identifier: 'fileName'
+                    TrueKeyword
+          PropertyAssignment
+            Identifier: '
+        getInDirectory'
+            ArrowFunction
+              Parameter
+                Identifier: ' directory'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' packageJsons'
+                        Identifier: 'get'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'host'
+                          Identifier: 'toPath'
+                        CallExpression
+                          Identifier: 'combinePaths'
+                          Identifier: 'directory'
+                          StringLiteral
+                    BarBarToken
+                    Identifier: ' undefined'
+          PropertyAssignment
+            Identifier: '
+        directoryHasPackageJson'
+            ArrowFunction
+              Parameter
+                Identifier: ' directory'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' directoryHasPackageJson'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'host'
+                    Identifier: 'toPath'
+                  Identifier: 'directory'
+          PropertyAssignment
+            Identifier: '
+        searchDirectoryAndAncestors'
+            ArrowFunction
+              Parameter
+                Identifier: 'directory'
+              Parameter
+                Identifier: ' project'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+            forEachAncestorDirectoryStoppingAtGlobalCache'
+                    Identifier: '
+                project'
+                    Identifier: '
+                directory'
+                    ArrowFunction
+                      Parameter
+                        Identifier: '
+                ancestor'
+                      EqualsGreaterThanToken
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' ancestorPath'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' host'
+                                  Identifier: 'toPath'
+                                Identifier: 'ancestor'
+                        IfStatement
+                          BinaryExpression
+                            CallExpression
+                              Identifier: 'directoryHasPackageJson'
+                              Identifier: 'ancestorPath'
+                            ExclamationEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' Ternary'
+                              Identifier: 'Maybe'
+                          Block
+                            ReturnStatement
+                              TrueKeyword
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' packageJsonFileName'
+                              CallExpression
+                                Identifier: ' combinePaths'
+                                Identifier: 'ancestor'
+                                StringLiteral
+                        IfStatement
+                          CallExpression
+                            Identifier: 'tryFileExists'
+                            Identifier: 'host'
+                            Identifier: ' packageJsonFileName'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: '
+                        addOrUpdate'
+                                Identifier: 'packageJsonFileName'
+                                AsExpression
+                                  CallExpression
+                                    Identifier: ' combinePaths'
+                                    Identifier: 'ancestorPath'
+                                    StringLiteral
+                                  TypeReference
+                                    Identifier: ' Path'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                        directoriesWithoutPackageJson'
+                                  Identifier: 'set'
+                                Identifier: 'ancestorPath'
+                                TrueKeyword
+      FunctionDeclaration
+        Identifier: ' addOrUpdate'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Parameter
+          Identifier: ' path'
+          TypeReference
+            Identifier: ' Path'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' packageJsonInfo'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Debug'
+                    Identifier: 'checkDefined'
+                  CallExpression
+                    Identifier: 'createPackageJsonInfo'
+                    Identifier: 'fileName'
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'host'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        packageJsons'
+                Identifier: 'set'
+              Identifier: 'path'
+              Identifier: ' packageJsonInfo'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        directoriesWithoutPackageJson'
+                Identifier: 'delete'
+              CallExpression
+                Identifier: 'getDirectoryPath'
+                Identifier: 'path'
+      FunctionDeclaration
+        Identifier: ' invalidate'
+        Parameter
+          Identifier: 'path'
+          TypeReference
+            Identifier: ' Path'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        packageJsons'
+                Identifier: 'delete'
+              Identifier: 'path'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        directoriesWithoutPackageJson'
+                Identifier: 'delete'
+              CallExpression
+                Identifier: 'getDirectoryPath'
+                Identifier: 'path'
+      FunctionDeclaration
+        Identifier: ' directoryHasPackageJson'
+        Parameter
+          Identifier: 'directory'
+          TypeReference
+            Identifier: ' Path'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' packageJsons'
+                  Identifier: 'has'
+                AsExpression
+                  CallExpression
+                    Identifier: 'combinePaths'
+                    Identifier: 'directory'
+                    StringLiteral
+                  TypeReference
+                    Identifier: ' Path'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' Ternary'
+                Identifier: 'True'
+              ColonToken
+              ConditionalExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            directoriesWithoutPackageJson'
+                    Identifier: 'has'
+                  Identifier: 'directory'
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' Ternary'
+                  Identifier: 'False'
+                ColonToken
+                PropertyAccessExpression
+                  Identifier: '
+            Ternary'
+                  Identifier: 'Maybe'

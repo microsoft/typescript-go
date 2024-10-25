@@ -1,0 +1,10 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        ObjectLiteralExpression
+  ExportAssignment
+    Identifier: ' Foo'

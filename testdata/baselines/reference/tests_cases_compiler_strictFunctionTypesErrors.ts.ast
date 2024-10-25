@@ -1,0 +1,850 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Object'
+          TypeReference
+            Identifier: ' Object'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Object'
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' Object'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+f1'
+      EqualsToken
+      Identifier: ' f2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+f1'
+      EqualsToken
+      Identifier: ' f3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+f1'
+      EqualsToken
+      Identifier: ' f4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+
+f2'
+      EqualsToken
+      Identifier: ' f1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+f2'
+      EqualsToken
+      Identifier: ' f3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+f2'
+      EqualsToken
+      Identifier: ' f4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+
+f3'
+      EqualsToken
+      Identifier: ' f1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+f3'
+      EqualsToken
+      Identifier: ' f2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+f3'
+      EqualsToken
+      Identifier: ' f4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+
+f4'
+      EqualsToken
+      Identifier: ' f1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+f4'
+      EqualsToken
+      Identifier: ' f2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+f4'
+      EqualsToken
+      Identifier: ' f3'
+  TypeAliasDeclaration
+    Identifier: ' Func'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g1'
+        TypeReference
+          Identifier: ' Func'
+          TypeReference
+            Identifier: 'Object'
+          TypeReference
+            Identifier: ' Object'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g2'
+        TypeReference
+          Identifier: ' Func'
+          TypeReference
+            Identifier: 'Object'
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g3'
+        TypeReference
+          Identifier: ' Func'
+          StringKeyword
+          TypeReference
+            Identifier: ' Object'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g4'
+        TypeReference
+          Identifier: ' Func'
+          StringKeyword
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+g1'
+      EqualsToken
+      Identifier: ' g2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+g1'
+      EqualsToken
+      Identifier: ' g3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+g1'
+      EqualsToken
+      Identifier: ' g4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+
+g2'
+      EqualsToken
+      Identifier: ' g1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+g2'
+      EqualsToken
+      Identifier: ' g3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+g2'
+      EqualsToken
+      Identifier: ' g4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+
+g3'
+      EqualsToken
+      Identifier: ' g1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+g3'
+      EqualsToken
+      Identifier: ' g2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+g3'
+      EqualsToken
+      Identifier: ' g4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+
+g4'
+      EqualsToken
+      Identifier: ' g1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+g4'
+      EqualsToken
+      Identifier: ' g2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+g4'
+      EqualsToken
+      Identifier: ' g3'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h1'
+        TypeReference
+          Identifier: ' Func'
+          TypeReference
+            Identifier: 'Func'
+            TypeReference
+              Identifier: 'Object'
+            VoidKeyword
+          TypeReference
+            Identifier: ' Object'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h2'
+        TypeReference
+          Identifier: ' Func'
+          TypeReference
+            Identifier: 'Func'
+            TypeReference
+              Identifier: 'Object'
+            VoidKeyword
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h3'
+        TypeReference
+          Identifier: ' Func'
+          TypeReference
+            Identifier: 'Func'
+            StringKeyword
+            VoidKeyword
+          TypeReference
+            Identifier: ' Object'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h4'
+        TypeReference
+          Identifier: ' Func'
+          TypeReference
+            Identifier: 'Func'
+            StringKeyword
+            VoidKeyword
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+h1'
+      EqualsToken
+      Identifier: ' h2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+h1'
+      EqualsToken
+      Identifier: ' h3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+h1'
+      EqualsToken
+      Identifier: ' h4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+
+h2'
+      EqualsToken
+      Identifier: ' h1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+h2'
+      EqualsToken
+      Identifier: ' h3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+h2'
+      EqualsToken
+      Identifier: ' h4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+
+h3'
+      EqualsToken
+      Identifier: ' h1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+h3'
+      EqualsToken
+      Identifier: ' h2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+h3'
+      EqualsToken
+      Identifier: ' h4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+
+h4'
+      EqualsToken
+      Identifier: ' h1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+h4'
+      EqualsToken
+      Identifier: ' h2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+h4'
+      EqualsToken
+      Identifier: ' h3'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i1'
+        TypeReference
+          Identifier: ' Func'
+          TypeReference
+            Identifier: 'Object'
+          TypeReference
+            Identifier: ' Func'
+            TypeReference
+              Identifier: 'Object'
+            VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        TypeReference
+          Identifier: ' Func'
+          TypeReference
+            Identifier: 'Object'
+          TypeReference
+            Identifier: ' Func'
+            StringKeyword
+            VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i3'
+        TypeReference
+          Identifier: ' Func'
+          StringKeyword
+          TypeReference
+            Identifier: ' Func'
+            TypeReference
+              Identifier: 'Object'
+            VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i4'
+        TypeReference
+          Identifier: ' Func'
+          StringKeyword
+          TypeReference
+            Identifier: ' Func'
+            StringKeyword
+            VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+i1'
+      EqualsToken
+      Identifier: ' i2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+i1'
+      EqualsToken
+      Identifier: ' i3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+i1'
+      EqualsToken
+      Identifier: ' i4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+
+i2'
+      EqualsToken
+      Identifier: ' i1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+i2'
+      EqualsToken
+      Identifier: ' i3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+i2'
+      EqualsToken
+      Identifier: ' i4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+
+i3'
+      EqualsToken
+      Identifier: ' i1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+i3'
+      EqualsToken
+      Identifier: ' i2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+i3'
+      EqualsToken
+      Identifier: ' i4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+
+i4'
+      EqualsToken
+      Identifier: ' i1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+i4'
+      EqualsToken
+      Identifier: ' i2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+i4'
+      EqualsToken
+      Identifier: ' i3'
+  InterfaceDeclaration
+    Identifier: ' Animal'
+    PropertySignature
+      Identifier: ' animal'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Dog'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Animal'
+    PropertySignature
+      Identifier: ' dog'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Cat'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Animal'
+    PropertySignature
+      Identifier: ' cat'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Comparer1'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    compare'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' animalComparer1'
+        TypeReference
+          Identifier: ' Comparer1'
+          TypeReference
+            Identifier: 'Animal'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dogComparer1'
+        TypeReference
+          Identifier: ' Comparer1'
+          TypeReference
+            Identifier: 'Dog'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+animalComparer1'
+      EqualsToken
+      Identifier: ' dogComparer1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+dogComparer1'
+      EqualsToken
+      Identifier: ' animalComparer1'
+  InterfaceDeclaration
+    Identifier: ' Comparer2'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    compare'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' b'
+          TypeReference
+            Identifier: ' T'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' animalComparer2'
+        TypeReference
+          Identifier: ' Comparer2'
+          TypeReference
+            Identifier: 'Animal'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dogComparer2'
+        TypeReference
+          Identifier: ' Comparer2'
+          TypeReference
+            Identifier: 'Dog'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+animalComparer2'
+      EqualsToken
+      Identifier: ' dogComparer2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+dogComparer2'
+      EqualsToken
+      Identifier: ' animalComparer2'
+  InterfaceDeclaration
+    Identifier: ' Crate'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    item'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    onSetItem'
+      FunctionType
+        Parameter
+          Identifier: 'item'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' animalCrate'
+        TypeReference
+          Identifier: ' Crate'
+          TypeReference
+            Identifier: 'Animal'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dogCrate'
+        TypeReference
+          Identifier: ' Crate'
+          TypeReference
+            Identifier: 'Dog'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Errors below should elaborate the reason for invariance
+
+animalCrate'
+      EqualsToken
+      Identifier: ' dogCrate'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+dogCrate'
+      EqualsToken
+      Identifier: ' animalCrate'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fc1'
+        FunctionType
+          Parameter
+            Identifier: 'f'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' Animal'
+              TypeReference
+                Identifier: ' Animal'
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fc2'
+        FunctionType
+          Parameter
+            Identifier: 'f'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' Dog'
+              TypeReference
+                Identifier: ' Dog'
+          VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+fc1'
+      EqualsToken
+      Identifier: ' fc2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+fc2'
+      EqualsToken
+      Identifier: ' fc1'
+  ModuleDeclaration
+    Identifier: ' n1'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Foo'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' f1'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Animal'
+          TypeReference
+            Identifier: ' Animal'
+          Block
+            ThrowStatement
+              StringLiteral
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' f2'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Dog'
+          TypeReference
+            Identifier: ' Animal'
+          Block
+            ThrowStatement
+              StringLiteral
+        SemicolonClassElement
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f1'
+            FunctionType
+              Parameter
+                Identifier: 'cb'
+                TypeQuery
+                  QualifiedName
+                    Identifier: ' Foo'
+                    Identifier: 'f1'
+              VoidKeyword
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f2'
+            FunctionType
+              Parameter
+                Identifier: 'cb'
+                TypeQuery
+                  QualifiedName
+                    Identifier: ' Foo'
+                    Identifier: 'f2'
+              VoidKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f1'
+          EqualsToken
+          Identifier: ' f2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f2'
+          EqualsToken
+          Identifier: ' f1'
+  ModuleDeclaration
+    Identifier: ' n2'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' BivariantHack'
+        TypeParameter
+          Identifier: 'Input'
+        TypeParameter
+          Identifier: ' Output'
+        IndexedAccessType
+          TypeLiteral
+            MethodSignature
+              Identifier: ' foo'
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' Input'
+              TypeReference
+                Identifier: ' Output'
+          LiteralType
+            StringLiteral
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f1'
+            FunctionType
+              Parameter
+                Identifier: 'cb'
+                TypeReference
+                  Identifier: ' BivariantHack'
+                  TypeReference
+                    Identifier: 'Animal'
+                  TypeReference
+                    Identifier: ' Animal'
+              VoidKeyword
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f2'
+            FunctionType
+              Parameter
+                Identifier: 'cb'
+                TypeReference
+                  Identifier: ' BivariantHack'
+                  TypeReference
+                    Identifier: 'Dog'
+                  TypeReference
+                    Identifier: ' Animal'
+              VoidKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f1'
+          EqualsToken
+          Identifier: ' f2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f2'
+          EqualsToken
+          Identifier: ' f1'

@@ -1,0 +1,5 @@
+SourceFile
+  ModuleDeclaration
+    ProtectedKeyword
+    Identifier: ' M'
+    ModuleBlock

@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createElement'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' lazy'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' useState'
+    Block
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral

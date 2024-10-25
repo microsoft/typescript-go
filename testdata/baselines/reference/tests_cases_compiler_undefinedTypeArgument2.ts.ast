@@ -1,0 +1,56 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Query'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    selectMany'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'selector'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' U'
+      TypeReference
+        Identifier: ' Query'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    selectMany'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'arraySelector'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' U'
+      Parameter
+        Identifier: ' resultSelector'
+        FunctionType
+          Parameter
+            Identifier: 'outer'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' inner'
+            TypeReference
+              Identifier: ' U'
+          TypeReference
+            Identifier: ' R'
+      TypeReference
+        Identifier: ' Query'
+        TypeReference
+          Identifier: 'R'

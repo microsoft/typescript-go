@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+//// type constructorType<T1, T2> = new <T/*1*/, /*2*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'markers'
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'

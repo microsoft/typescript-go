@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+obj'
+        Identifier: 'method'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'hunch'
+        Block
+          ReturnStatement
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' obj'
+            Identifier: 'method'

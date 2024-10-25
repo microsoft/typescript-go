@@ -1,0 +1,29 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' mappy'
+    Parameter
+      Identifier: 'map'
+    Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'assets'
+            EqualsToken
+            ObjectLiteralExpression
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        mappy'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'assets'

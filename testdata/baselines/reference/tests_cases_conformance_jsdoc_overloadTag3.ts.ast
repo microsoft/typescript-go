@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    Constructor
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    /**
+     * @param {T} value
+     */
+    bar'
+      Parameter
+        Identifier: 'value'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+foo'
+      EqualsToken
+      NewExpression
+        Identifier: ' Foo'

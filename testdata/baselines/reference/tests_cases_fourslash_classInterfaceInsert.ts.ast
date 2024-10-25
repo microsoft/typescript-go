@@ -1,0 +1,43 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// interface Intersection {
+////     dist: number;
+//// }
+//// /*interfaceGoesHere*/
+//// class /*className*/Sphere {
+////     constructor(private center) {
+////     }
+//// }
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

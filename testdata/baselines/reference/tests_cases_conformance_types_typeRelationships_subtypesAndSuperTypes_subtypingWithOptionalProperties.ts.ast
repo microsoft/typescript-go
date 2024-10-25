@@ -1,0 +1,46 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' s'
+                QuestionToken
+                NumberKeyword
+            Identifier: ' a'
+      ReturnStatement
+        Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' f'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' s'
+              NewExpression
+                Identifier: ' Object'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // ok
+r'
+        Identifier: 's'
+      AmpersandAmpersandToken
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' r'
+            Identifier: 's'
+          Identifier: 'toFixed'

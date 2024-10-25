@@ -1,0 +1,68 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f1'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        FunctionExpression
+          AsyncKeyword
+          Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f2'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+    Block
+      IfStatement
+        Identifier: 'x'
+        ReturnStatement
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f4'
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' voidFunc'
+    VoidKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' calltoVoidFunc'
+    Parameter
+      Identifier: 'x'
+    Block
+      IfStatement
+        Identifier: 'x'
+        ReturnStatement
+          CallExpression
+            Identifier: ' voidFunc'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' use'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: ' use'
+                StringLiteral

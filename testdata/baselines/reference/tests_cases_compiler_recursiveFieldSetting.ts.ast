@@ -1,0 +1,69 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Recursive1'
+    Constructor
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' parent'
+        QuestionToken
+        TypeReference
+          Identifier: ' Recursive1'
+      Block
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' depth'
+      NumberKeyword
+      ConditionalExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'parent'
+        QuestionToken
+        BinaryExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'parent'
+            Identifier: 'depth'
+          PlusToken
+          NumericLiteral
+        ColonToken
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' Recursive2'
+    PropertyDeclaration
+      Identifier: '
+    parent'
+      ExclamationToken
+      TypeReference
+        Identifier: ' Recursive2'
+    PropertyDeclaration
+      Identifier: '
+    depth'
+      NumberKeyword
+      PropertyAccessExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'parent'
+        Identifier: 'depth'
+  ClassDeclaration
+    Identifier: ' Recursive3'
+    PropertyDeclaration
+      Identifier: '
+    parent'
+      ExclamationToken
+      TypeReference
+        Identifier: ' Recursive3'
+    PropertyDeclaration
+      Identifier: '
+    depth'
+      NumberKeyword
+      PropertyAccessExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'parent'
+        Identifier: 'alpha'
+    PropertyDeclaration
+      Identifier: '
+    alpha'
+      NumericLiteral

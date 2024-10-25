@@ -1,0 +1,1807 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    __String'
+        ImportSpecifier
+          Identifier: '
+    AnonymousFunctionDefinition'
+        ImportSpecifier
+          Identifier: '
+    BinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    BindingElement'
+        ImportSpecifier
+          Identifier: '
+    Block'
+        ImportSpecifier
+          Identifier: '
+    CallExpression'
+        ImportSpecifier
+          Identifier: '
+    cast'
+        ImportSpecifier
+          Identifier: '
+    ClassLikeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ClassStaticBlockDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ExportAssignment'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    ExpressionStatement'
+        ImportSpecifier
+          Identifier: '
+    findIndex'
+        ImportSpecifier
+          Identifier: '
+    getOrCreateEmitNode'
+        ImportSpecifier
+          Identifier: '
+    getOriginalNode'
+        ImportSpecifier
+          Identifier: '
+    hasSyntacticModifier'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    isCallToHelper'
+        ImportSpecifier
+          Identifier: '
+    isClassDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isClassExpression'
+        ImportSpecifier
+          Identifier: '
+    isClassStaticBlockDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isClassThisAssignmentBlock'
+        ImportSpecifier
+          Identifier: '
+    isEmptyStringLiteral'
+        ImportSpecifier
+          Identifier: '
+    isExpressionStatement'
+        ImportSpecifier
+          Identifier: '
+    isFunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isPrivateIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isPropertyNameLiteral'
+        ImportSpecifier
+          Identifier: '
+    isStringLiteral'
+        ImportSpecifier
+          Identifier: '
+    ModifierFlags'
+        ImportSpecifier
+          Identifier: '
+    NamedEvaluation'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeArray'
+        ImportSpecifier
+          Identifier: '
+    NodeFactory'
+        ImportSpecifier
+          Identifier: '
+    ParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    PropertyAssignment'
+        ImportSpecifier
+          Identifier: '
+    PropertyDeclaration'
+        ImportSpecifier
+          Identifier: '
+    PropertyName'
+        ImportSpecifier
+          Identifier: '
+    setSourceMapRange'
+        ImportSpecifier
+          Identifier: '
+    setTextRange'
+        ImportSpecifier
+          Identifier: '
+    ShorthandPropertyAssignment'
+        ImportSpecifier
+          Identifier: '
+    skipOuterExpressions'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    Statement'
+        ImportSpecifier
+          Identifier: '
+    StringLiteral'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    TransformationContext'
+        ImportSpecifier
+          Identifier: '
+    VariableDeclaration'
+        ImportSpecifier
+          Identifier: '
+    WrappedExpression'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' getAssignedNameOfIdentifier'
+    Parameter
+      Identifier: 'factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    Parameter
+      Identifier: ' name'
+      TypeReference
+        Identifier: ' Identifier'
+    Parameter
+      Identifier: ' expression'
+      TypeReference
+        Identifier: ' WrappedExpression'
+        TypeReference
+          Identifier: 'AnonymousFunctionDefinition'
+    TypeReference
+      Identifier: ' StringLiteral'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' original'
+            CallExpression
+              Identifier: ' getOriginalNode'
+              CallExpression
+                Identifier: 'skipOuterExpressions'
+                Identifier: 'expression'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: 'isClassDeclaration'
+                  Identifier: 'original'
+                BarBarToken
+                CallExpression
+                  Identifier: ' isFunctionDeclaration'
+                  Identifier: 'original'
+            AmpersandAmpersandToken
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'original'
+                Identifier: 'name'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' hasSyntacticModifier'
+            Identifier: 'original'
+            PropertyAccessExpression
+              Identifier: ' ModifierFlags'
+              Identifier: 'Default'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createStringLiteral'
+              StringLiteral
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createStringLiteralFromNode'
+          Identifier: 'name'
+  FunctionDeclaration
+    Identifier: ' getAssignedNameOfPropertyName'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' name'
+      TypeReference
+        Identifier: ' PropertyName'
+    Parameter
+      Identifier: ' assignedNameText'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      IfStatement
+        BinaryExpression
+          Identifier: 'assignedNameText'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' assignedName'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createStringLiteral'
+                  Identifier: 'assignedNameText'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' assignedName'
+              ShorthandPropertyAssignment
+                Identifier: ' name'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isPropertyNameLiteral'
+            Identifier: 'name'
+          BarBarToken
+          CallExpression
+            Identifier: ' isPrivateIdentifier'
+            Identifier: 'name'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' assignedName'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createStringLiteralFromNode'
+                  Identifier: 'name'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' assignedName'
+              ShorthandPropertyAssignment
+                Identifier: ' name'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isPropertyNameLiteral'
+            PropertyAccessExpression
+              Identifier: 'name'
+              Identifier: 'expression'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isIdentifier'
+              PropertyAccessExpression
+                Identifier: 'name'
+                Identifier: 'expression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' assignedName'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createStringLiteralFromNode'
+                  PropertyAccessExpression
+                    Identifier: 'name'
+                    Identifier: 'expression'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' assignedName'
+              ShorthandPropertyAssignment
+                Identifier: ' name'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' assignedName'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'getGeneratedNameForNode'
+              Identifier: 'name'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    context'
+            Identifier: 'hoistVariableDeclaration'
+          Identifier: 'assignedName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' key'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'getEmitHelperFactory'
+                Identifier: 'createPropKeyHelper'
+              PropertyAccessExpression
+                Identifier: 'name'
+                Identifier: 'expression'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' assignment'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createAssignment'
+              Identifier: 'assignedName'
+              Identifier: ' key'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' updatedName'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'updateComputedPropertyName'
+              Identifier: 'name'
+              Identifier: ' assignment'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' assignedName'
+          PropertyAssignment
+            Identifier: ' name'
+            Identifier: ' updatedName'
+  FunctionDeclaration
+    Identifier: ' createClassNamedEvaluationHelperBlock'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' assignedName'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' thisExpression'
+      TypeReference
+        Identifier: ' Expression'
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' context'
+            Identifier: 'factory'
+          Identifier: 'createThis'
+    TypeReference
+      Identifier: ' ClassNamedEvaluationHelperBlock'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expression'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'getEmitHelperFactory'
+                Identifier: 'createSetFunctionNameHelper'
+              Identifier: 'thisExpression'
+              Identifier: ' assignedName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statement'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createExpressionStatement'
+              Identifier: 'expression'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' body'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createBlock'
+              ArrayLiteralExpression
+                Identifier: 'statement'
+              FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' block'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createClassStaticBlockDeclaration'
+              Identifier: 'body'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: '
+
+    // We use `emitNode.assignedName` to indicate this is a NamedEvaluation helper block
+    // and to stash the expression used to resolve the assigned name.
+    getOrCreateEmitNode'
+              Identifier: 'block'
+            Identifier: 'assignedName'
+          EqualsToken
+          Identifier: ' assignedName'
+      ReturnStatement
+        AsExpression
+          Identifier: ' block'
+          TypeReference
+            Identifier: ' ClassNamedEvaluationHelperBlock'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ClassNamedEvaluationHelperBlock'
+    IntersectionType
+      TypeReference
+        Identifier: ' ClassStaticBlockDeclaration'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' body'
+          IntersectionType
+            TypeReference
+              Identifier: ' Block'
+            TypeLiteral
+              PropertySignature
+                ReadonlyKeyword
+                Identifier: ' statements'
+                IntersectionType
+                  TypeReference
+                    Identifier: ' NodeArray'
+                    TypeReference
+                      Identifier: 'Statement'
+                  TypeOperator
+                    TupleType
+                      IntersectionType
+                        TypeReference
+                          Identifier: '
+                ExpressionStatement'
+                        TypeLiteral
+                          PropertySignature
+                            ReadonlyKeyword
+                            Identifier: ' expression'
+                            IntersectionType
+                              TypeReference
+                                Identifier: ' CallExpression'
+                              TypeLiteral
+                                PropertySignature
+                                  ReadonlyKeyword
+                                  Identifier: ' expression'
+                                  TypeReference
+                                    Identifier: ' Identifier'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isClassNamedEvaluationHelperBlock'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ClassNamedEvaluationHelperBlock'
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isClassStaticBlockDeclaration'
+              Identifier: 'node'
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'body'
+                Identifier: 'statements'
+              Identifier: 'length'
+            ExclamationEqualsEqualsToken
+            NumericLiteral
+        Block
+          ReturnStatement
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statement'
+            ElementAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'body'
+                Identifier: 'statements'
+              NumericLiteral
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              CallExpression
+                Identifier: ' isExpressionStatement'
+                Identifier: 'statement'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: '
+        isCallToHelper'
+                PropertyAccessExpression
+                  Identifier: 'statement'
+                  Identifier: 'expression'
+                AsExpression
+                  StringLiteral
+                  TypeReference
+                    Identifier: ' __String'
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      PropertyAccessExpression
+                        Identifier: 'statement'
+                        Identifier: 'expression'
+                      TypeReference
+                        Identifier: ' CallExpression'
+                  Identifier: 'arguments'
+                Identifier: 'length'
+              GreaterThanEqualsToken
+              NumericLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            ElementAccessExpression
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  AsExpression
+                    PropertyAccessExpression
+                      Identifier: 'statement'
+                      Identifier: 'expression'
+                    TypeReference
+                      Identifier: ' CallExpression'
+                Identifier: 'arguments'
+              NumericLiteral
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'emitNode'
+              QuestionDotToken
+              Identifier: 'assignedName'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' classHasExplicitlyAssignedName'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'emitNode'
+                QuestionDotToken
+                Identifier: 'assignedName'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' some'
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'members'
+            Identifier: ' isClassNamedEvaluationHelperBlock'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' classHasDeclaredOrExplicitlyAssignedName'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'name'
+          BarBarToken
+          CallExpression
+            Identifier: ' classHasExplicitlyAssignedName'
+            Identifier: 'node'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' injectClassNamedEvaluationHelperBlockIfMissing'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+    Parameter
+      Identifier: '
+    context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: '
+    node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+    assignedName'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: '
+    thisExpression'
+      QuestionToken
+      TypeReference
+        Identifier: ' Expression'
+    TypeReference
+      Identifier: ' Extract'
+      TypeReference
+        Identifier: 'ClassLikeDeclaration'
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'T'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' injectClassNamedEvaluationHelperBlockIfMissing'
+    Parameter
+      Identifier: '
+    context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: '
+    node'
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+    Parameter
+      Identifier: '
+    assignedName'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: '
+    thisExpression'
+      QuestionToken
+      TypeReference
+        Identifier: ' Expression'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'classHasExplicitlyAssignedName'
+          Identifier: 'node'
+        Block
+          ReturnStatement
+            Identifier: ' node'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' namedEvaluationBlock'
+            CallExpression
+              Identifier: ' createClassNamedEvaluationHelperBlock'
+              Identifier: 'context'
+              Identifier: ' assignedName'
+              Identifier: ' thisExpression'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'node'
+          Identifier: 'name'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        setSourceMapRange'
+              ElementAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'namedEvaluationBlock'
+                    Identifier: 'body'
+                  Identifier: 'statements'
+                NumericLiteral
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'name'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' insertionIndex'
+            BinaryExpression
+              CallExpression
+                Identifier: ' findIndex'
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'members'
+                Identifier: ' isClassThisAssignmentBlock'
+              PlusToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' leading'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'members'
+                Identifier: 'slice'
+              NumericLiteral
+              Identifier: ' insertionIndex'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' trailing'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'members'
+                Identifier: 'slice'
+              Identifier: 'insertionIndex'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' members'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createNodeArray'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'leading'
+                Identifier: ' namedEvaluationBlock'
+                SpreadElement
+                  Identifier: 'trailing'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTextRange'
+          Identifier: 'members'
+          PropertyAccessExpression
+            Identifier: ' node'
+            Identifier: 'members'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    node'
+          EqualsToken
+          ConditionalExpression
+            CallExpression
+              Identifier: ' isClassDeclaration'
+              Identifier: 'node'
+            QuestionToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        factory'
+                Identifier: 'updateClassDeclaration'
+              Identifier: '
+            node'
+              PropertyAccessExpression
+                Identifier: '
+            node'
+                Identifier: 'modifiers'
+              PropertyAccessExpression
+                Identifier: '
+            node'
+                Identifier: 'name'
+              PropertyAccessExpression
+                Identifier: '
+            node'
+                Identifier: 'typeParameters'
+              PropertyAccessExpression
+                Identifier: '
+            node'
+                Identifier: 'heritageClauses'
+              Identifier: '
+            members'
+            ColonToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        factory'
+                Identifier: 'updateClassExpression'
+              Identifier: '
+            node'
+              PropertyAccessExpression
+                Identifier: '
+            node'
+                Identifier: 'modifiers'
+              PropertyAccessExpression
+                Identifier: '
+            node'
+                Identifier: 'name'
+              PropertyAccessExpression
+                Identifier: '
+            node'
+                Identifier: 'typeParameters'
+              PropertyAccessExpression
+                Identifier: '
+            node'
+                Identifier: 'heritageClauses'
+              Identifier: '
+            members'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: '
+
+    getOrCreateEmitNode'
+              Identifier: 'node'
+            Identifier: 'assignedName'
+          EqualsToken
+          Identifier: ' assignedName'
+      ReturnStatement
+        Identifier: ' node'
+  FunctionDeclaration
+    Identifier: ' finishTransformNamedEvaluation'
+    Parameter
+      Identifier: '
+    context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: '
+    expression'
+      TypeReference
+        Identifier: ' WrappedExpression'
+        TypeReference
+          Identifier: 'AnonymousFunctionDefinition'
+    Parameter
+      Identifier: '
+    assignedName'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: '
+    ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' Expression'
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'ignoreEmptyStringLiteral'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isStringLiteral'
+              Identifier: 'assignedName'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isEmptyStringLiteral'
+            Identifier: 'assignedName'
+        Block
+          ReturnStatement
+            Identifier: ' expression'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' innerExpression'
+            CallExpression
+              Identifier: ' skipOuterExpressions'
+              Identifier: 'expression'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' updatedExpression'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isClassExpression'
+                Identifier: 'innerExpression'
+              QuestionToken
+              CallExpression
+                Identifier: '
+        cast'
+                CallExpression
+                  Identifier: 'injectClassNamedEvaluationHelperBlockIfMissing'
+                  Identifier: 'context'
+                  Identifier: ' innerExpression'
+                  Identifier: ' assignedName'
+                Identifier: ' isClassExpression'
+              ColonToken
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        context'
+                      Identifier: 'getEmitHelperFactory'
+                  Identifier: 'createSetFunctionNameHelper'
+                Identifier: 'innerExpression'
+                Identifier: ' assignedName'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'restoreOuterExpressions'
+          Identifier: 'expression'
+          Identifier: ' updatedExpression'
+  FunctionDeclaration
+    Identifier: ' transformNamedEvaluationOfPropertyAssignment'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' NamedEvaluation'
+        TypeReference
+          Identifier: ' PropertyAssignment'
+    Parameter
+      Identifier: ' ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' assignedNameText'
+      QuestionToken
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' assignedName'
+              BindingElement
+                Identifier: ' name'
+            CallExpression
+              Identifier: ' getAssignedNameOfPropertyName'
+              Identifier: 'context'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'name'
+              Identifier: ' assignedNameText'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' initializer'
+            CallExpression
+              Identifier: ' finishTransformNamedEvaluation'
+              Identifier: 'context'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'initializer'
+              Identifier: ' assignedName'
+              Identifier: ' ignoreEmptyStringLiteral'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'updatePropertyAssignment'
+          Identifier: '
+        node'
+          Identifier: '
+        name'
+          Identifier: '
+        initializer'
+  FunctionDeclaration
+    Identifier: ' transformNamedEvaluationOfShorthandAssignmentProperty'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' NamedEvaluation'
+        TypeReference
+          Identifier: ' ShorthandPropertyAssignment'
+    Parameter
+      Identifier: ' ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' assignedNameText'
+      QuestionToken
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' assignedName'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' assignedNameText'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createStringLiteral'
+                Identifier: 'assignedNameText'
+              ColonToken
+              CallExpression
+                Identifier: '
+        getAssignedNameOfIdentifier'
+                Identifier: 'factory'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'name'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'objectAssignmentInitializer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' objectAssignmentInitializer'
+            CallExpression
+              Identifier: ' finishTransformNamedEvaluation'
+              Identifier: 'context'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'objectAssignmentInitializer'
+              Identifier: ' assignedName'
+              Identifier: ' ignoreEmptyStringLiteral'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'updateShorthandPropertyAssignment'
+          Identifier: '
+        node'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'name'
+          Identifier: '
+        objectAssignmentInitializer'
+  FunctionDeclaration
+    Identifier: ' transformNamedEvaluationOfVariableDeclaration'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' NamedEvaluation'
+        TypeReference
+          Identifier: ' VariableDeclaration'
+    Parameter
+      Identifier: ' ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' assignedNameText'
+      QuestionToken
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' assignedName'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' assignedNameText'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createStringLiteral'
+                Identifier: 'assignedNameText'
+              ColonToken
+              CallExpression
+                Identifier: '
+        getAssignedNameOfIdentifier'
+                Identifier: 'factory'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'name'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'initializer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' initializer'
+            CallExpression
+              Identifier: ' finishTransformNamedEvaluation'
+              Identifier: 'context'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'initializer'
+              Identifier: ' assignedName'
+              Identifier: ' ignoreEmptyStringLiteral'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'updateVariableDeclaration'
+          Identifier: '
+        node'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'name'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'exclamationToken'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'type'
+          Identifier: '
+        initializer'
+  FunctionDeclaration
+    Identifier: ' transformNamedEvaluationOfParameterDeclaration'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' NamedEvaluation'
+        TypeReference
+          Identifier: ' ParameterDeclaration'
+    Parameter
+      Identifier: ' ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' assignedNameText'
+      QuestionToken
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' assignedName'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' assignedNameText'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createStringLiteral'
+                Identifier: 'assignedNameText'
+              ColonToken
+              CallExpression
+                Identifier: '
+        getAssignedNameOfIdentifier'
+                Identifier: 'factory'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'name'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'initializer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' initializer'
+            CallExpression
+              Identifier: ' finishTransformNamedEvaluation'
+              Identifier: 'context'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'initializer'
+              Identifier: ' assignedName'
+              Identifier: ' ignoreEmptyStringLiteral'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'updateParameterDeclaration'
+          Identifier: '
+        node'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'modifiers'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'dotDotDotToken'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'name'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'questionToken'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'type'
+          Identifier: '
+        initializer'
+  FunctionDeclaration
+    Identifier: ' transformNamedEvaluationOfBindingElement'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' NamedEvaluation'
+        TypeReference
+          Identifier: ' BindingElement'
+    Parameter
+      Identifier: ' ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' assignedNameText'
+      QuestionToken
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' assignedName'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' assignedNameText'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createStringLiteral'
+                Identifier: 'assignedNameText'
+              ColonToken
+              CallExpression
+                Identifier: '
+        getAssignedNameOfIdentifier'
+                Identifier: 'factory'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'name'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'initializer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' initializer'
+            CallExpression
+              Identifier: ' finishTransformNamedEvaluation'
+              Identifier: 'context'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'initializer'
+              Identifier: ' assignedName'
+              Identifier: ' ignoreEmptyStringLiteral'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'updateBindingElement'
+          Identifier: '
+        node'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'dotDotDotToken'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'propertyName'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'name'
+          Identifier: '
+        initializer'
+  FunctionDeclaration
+    Identifier: ' transformNamedEvaluationOfPropertyDeclaration'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' NamedEvaluation'
+        TypeReference
+          Identifier: ' PropertyDeclaration'
+    Parameter
+      Identifier: ' ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' assignedNameText'
+      QuestionToken
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' assignedName'
+              BindingElement
+                Identifier: ' name'
+            CallExpression
+              Identifier: ' getAssignedNameOfPropertyName'
+              Identifier: 'context'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'name'
+              Identifier: ' assignedNameText'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' initializer'
+            CallExpression
+              Identifier: ' finishTransformNamedEvaluation'
+              Identifier: 'context'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'initializer'
+              Identifier: ' assignedName'
+              Identifier: ' ignoreEmptyStringLiteral'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'updatePropertyDeclaration'
+          Identifier: '
+        node'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'modifiers'
+          Identifier: '
+        name'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        node'
+              Identifier: 'questionToken'
+            QuestionQuestionToken
+            PropertyAccessExpression
+              Identifier: ' node'
+              Identifier: 'exclamationToken'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'type'
+          Identifier: '
+        initializer'
+  FunctionDeclaration
+    Identifier: ' transformNamedEvaluationOfAssignmentExpression'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' NamedEvaluation'
+        TypeReference
+          Identifier: ' BinaryExpression'
+    Parameter
+      Identifier: ' ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' assignedNameText'
+      QuestionToken
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' assignedName'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' assignedNameText'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createStringLiteral'
+                Identifier: 'assignedNameText'
+              ColonToken
+              CallExpression
+                Identifier: '
+        getAssignedNameOfIdentifier'
+                Identifier: 'factory'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'left'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'right'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' right'
+            CallExpression
+              Identifier: ' finishTransformNamedEvaluation'
+              Identifier: 'context'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'right'
+              Identifier: ' assignedName'
+              Identifier: ' ignoreEmptyStringLiteral'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'updateBinaryExpression'
+          Identifier: '
+        node'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'left'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'operatorToken'
+          Identifier: '
+        right'
+  FunctionDeclaration
+    Identifier: ' transformNamedEvaluationOfExportAssignment'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' NamedEvaluation'
+        TypeReference
+          Identifier: ' ExportAssignment'
+    Parameter
+      Identifier: ' ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' assignedNameText'
+      QuestionToken
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' assignedName'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' assignedNameText'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createStringLiteral'
+                Identifier: 'assignedNameText'
+              ColonToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        factory'
+                  Identifier: 'createStringLiteral'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'isExportEquals'
+                  QuestionToken
+                  StringLiteral
+                  ColonToken
+                  StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expression'
+            CallExpression
+              Identifier: ' finishTransformNamedEvaluation'
+              Identifier: 'context'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'expression'
+              Identifier: ' assignedName'
+              Identifier: ' ignoreEmptyStringLiteral'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'updateExportAssignment'
+          Identifier: '
+        node'
+          PropertyAccessExpression
+            Identifier: '
+        node'
+            Identifier: 'modifiers'
+          Identifier: '
+        expression'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' transformNamedEvaluation'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' NamedEvaluation'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' assignedName'
+      QuestionToken
+      StringKeyword
+    TypeReference
+      Identifier: ' Extract'
+      TypeReference
+        Identifier: 'NamedEvaluation'
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'T'
+        UnionType
+          LiteralType
+            StringLiteral
+          IntersectionType
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+            LiteralType
+              StringLiteral
+          IntersectionType
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+            LiteralType
+              StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' transformNamedEvaluation'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' NamedEvaluation'
+    Parameter
+      Identifier: ' ignoreEmptyStringLiteral'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' assignedName'
+      QuestionToken
+      StringKeyword
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'node'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'PropertyAssignment'
+            ReturnStatement
+              CallExpression
+                Identifier: ' transformNamedEvaluationOfPropertyAssignment'
+                Identifier: 'context'
+                Identifier: ' node'
+                Identifier: ' ignoreEmptyStringLiteral'
+                Identifier: ' assignedName'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ShorthandPropertyAssignment'
+            ReturnStatement
+              CallExpression
+                Identifier: ' transformNamedEvaluationOfShorthandAssignmentProperty'
+                Identifier: 'context'
+                Identifier: ' node'
+                Identifier: ' ignoreEmptyStringLiteral'
+                Identifier: ' assignedName'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'VariableDeclaration'
+            ReturnStatement
+              CallExpression
+                Identifier: ' transformNamedEvaluationOfVariableDeclaration'
+                Identifier: 'context'
+                Identifier: ' node'
+                Identifier: ' ignoreEmptyStringLiteral'
+                Identifier: ' assignedName'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Parameter'
+            ReturnStatement
+              CallExpression
+                Identifier: ' transformNamedEvaluationOfParameterDeclaration'
+                Identifier: 'context'
+                Identifier: ' node'
+                Identifier: ' ignoreEmptyStringLiteral'
+                Identifier: ' assignedName'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'BindingElement'
+            ReturnStatement
+              CallExpression
+                Identifier: ' transformNamedEvaluationOfBindingElement'
+                Identifier: 'context'
+                Identifier: ' node'
+                Identifier: ' ignoreEmptyStringLiteral'
+                Identifier: ' assignedName'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'PropertyDeclaration'
+            ReturnStatement
+              CallExpression
+                Identifier: ' transformNamedEvaluationOfPropertyDeclaration'
+                Identifier: 'context'
+                Identifier: ' node'
+                Identifier: ' ignoreEmptyStringLiteral'
+                Identifier: ' assignedName'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'BinaryExpression'
+            ReturnStatement
+              CallExpression
+                Identifier: ' transformNamedEvaluationOfAssignmentExpression'
+                Identifier: 'context'
+                Identifier: ' node'
+                Identifier: ' ignoreEmptyStringLiteral'
+                Identifier: ' assignedName'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ExportAssignment'
+            ReturnStatement
+              CallExpression
+                Identifier: ' transformNamedEvaluationOfExportAssignment'
+                Identifier: 'context'
+                Identifier: ' node'
+                Identifier: ' ignoreEmptyStringLiteral'
+                Identifier: ' assignedName'

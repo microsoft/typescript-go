@@ -1,0 +1,128 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BOOLEAN'
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        TrueKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      BooleanKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          FalseKeyword
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objA'
+        NewExpression
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean1'
+        PrefixUnaryExpression
+          Identifier: 'BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean2'
+        PrefixUnaryExpression
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean3'
+        PrefixUnaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' y'
+              FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean4'
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'objA'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean5'
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'M'
+            Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean6'
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean7'
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'A'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean'
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: 'BOOLEAN'
+  ExpressionStatement
+    PrefixUnaryExpression
+      TrueKeyword
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'BOOLEAN'
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        Identifier: 'foo'
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        TrueKeyword
+      CommaToken
+      FalseKeyword
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'objA'
+        Identifier: 'a'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'M'
+        Identifier: 'n'

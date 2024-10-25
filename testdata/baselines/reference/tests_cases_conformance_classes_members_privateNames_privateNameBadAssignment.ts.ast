@@ -1,0 +1,55 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @target: es2015
+
+exports'
+        PrivateIdentifier
+      EqualsToken
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' A'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+A'
+          Identifier: 'prototype'
+        PrivateIdentifier
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+B'
+        PrivateIdentifier
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        exports'
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral

@@ -1,0 +1,55 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyClass'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'MyClass'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' MyClass'
+        Identifier: ' MyClass2'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyClass'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyClass2'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' MyClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' MyClass2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      Identifier: ' x'

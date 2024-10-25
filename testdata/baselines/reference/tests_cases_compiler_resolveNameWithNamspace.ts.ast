@@ -1,0 +1,62 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' require'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    AnyKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' equal'
+        Parameter
+          Identifier: 'actual'
+          AnyKeyword
+        Parameter
+          Identifier: ' expected'
+          AnyKeyword
+        Parameter
+          Identifier: ' message'
+          QuestionToken
+          UnionType
+            StringKeyword
+            TypeReference
+              Identifier: ' Error'
+        VoidKeyword
+  ModuleDeclaration
+    Identifier: ' myAssert'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' cool'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myAssert'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @filename: app.js
+exports'
+        Identifier: 'equal'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' myAssert'
+        Identifier: 'equal'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'equal'

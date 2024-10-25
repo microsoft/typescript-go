@@ -1,0 +1,63 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          AwaitExpression
+            NumericLiteral
+        ExpressionStatement
+          YieldExpression
+            NumericLiteral
+        ReturnStatement
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f1'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        ClassStaticBlockDeclaration
+          Block
+            ExpressionStatement
+              AwaitExpression
+                NumericLiteral
+            FunctionDeclaration
+              AsyncKeyword
+              Identifier: ' ff'
+              Block
+                ExpressionStatement
+                  AwaitExpression
+                    NumericLiteral
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' f2'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        ClassStaticBlockDeclaration
+          Block
+            ExpressionStatement
+              YieldExpression
+                NumericLiteral
+            FunctionDeclaration
+              AsteriskToken
+              Identifier: ' ff'
+              Block
+                ExpressionStatement
+                  YieldExpression
+                    NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        ClassStaticBlockDeclaration
+          Block
+            ReturnStatement
+              NumericLiteral
+            FunctionDeclaration
+              Identifier: ' ff'
+              Block
+                ReturnStatement
+                  NumericLiteral

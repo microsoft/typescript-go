@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ExportAssignment
+    ParenthesizedExpression
+      ClassExpression
+        Decorator
+          Identifier: 'dec'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ExportAssignment
+    ParenthesizedExpression
+      ClassExpression
+        PropertyDeclaration
+          Decorator
+            Identifier: 'dec'
+          Identifier: ' y'
+          AnyKeyword

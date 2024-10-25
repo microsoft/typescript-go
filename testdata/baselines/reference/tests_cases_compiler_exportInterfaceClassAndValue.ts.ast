@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' foo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' foo'

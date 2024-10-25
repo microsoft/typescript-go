@@ -1,0 +1,32 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' a'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' b'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' c'
+  ModuleDeclaration
+    Identifier: ' c'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' b'
+        QualifiedName
+          Identifier: ' a'
+          Identifier: 'b'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              QualifiedName
+                Identifier: ' b'
+                Identifier: 'c'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' b'
+                Identifier: 'c'

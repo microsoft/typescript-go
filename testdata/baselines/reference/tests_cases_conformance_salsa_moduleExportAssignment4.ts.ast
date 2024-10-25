@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @noEmit: true
+// @allowJs: true
+// @checkJs: true
+// @Filename: async.js
+exports'
+        Identifier: 'default'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' m'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ElementAccessExpression
+        Identifier: ' exports'
+        StringLiteral

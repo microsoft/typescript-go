@@ -1,0 +1,21 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IEventSourcedEntity'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' IEventSourcedEntity'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' DomainEntityConstructor'
+    TypeParameter
+      Identifier: 'TEntity'
+      TypeReference
+        Identifier: ' IEventSourcedEntity'
+    TypeLiteral
+      ConstructSignature
+        TypeReference
+          Identifier: ' TEntity'

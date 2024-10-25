@@ -1,0 +1,47 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// Repro https://github.com/Microsoft/TypeScript/issues/19395
+
+// @Filename: test.ts
+//// export const b = 2;
+//// interface Interface { }
+////
+//// async function handle(i: Interface) {
+////     /*a*/const x = 3, y = i;/*b*/
+//// }
+// @Filename: library.d.ts
+//// export as namespace NS;
+//// export const a = 1;
+
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newContent'
+          NoSubstitutionTemplateLiteral

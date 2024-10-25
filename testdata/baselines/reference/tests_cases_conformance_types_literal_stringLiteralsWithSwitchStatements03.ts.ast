@@ -1,0 +1,108 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' randBool'
+    BooleanKeyword
+  SwitchStatement
+    Identifier: 'x'
+    CaseBlock
+      CaseClause
+        ConditionalExpression
+          CallExpression
+            Identifier: ' randBool'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+        BreakStatement
+      CaseClause
+        ParenthesizedExpression
+          ConditionalExpression
+            CallExpression
+              Identifier: 'randBool'
+            QuestionToken
+            ParenthesizedExpression
+              StringLiteral
+            ColonToken
+            ConditionalExpression
+              StringLiteral
+              QuestionToken
+              StringLiteral
+              ColonToken
+              StringLiteral
+        BreakStatement
+      CaseClause
+        ParenthesizedExpression
+          ParenthesizedExpression
+            StringLiteral
+        BreakStatement
+      CaseClause
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'x'
+              CommaToken
+              Identifier: ' y'
+            CommaToken
+            ParenthesizedExpression
+              StringLiteral
+        ExpressionStatement
+          Identifier: '
+        x'
+        ExpressionStatement
+          Identifier: '
+        y'
+        BreakStatement
+      CaseClause
+        ParenthesizedExpression
+          ParenthesizedExpression
+            BinaryExpression
+              StringLiteral
+              BarBarToken
+              ParenthesizedExpression
+                StringLiteral
+        BreakStatement
+      CaseClause
+        ParenthesizedExpression
+          ParenthesizedExpression
+            BinaryExpression
+              StringLiteral
+              BarBarToken
+              ParenthesizedExpression
+                StringLiteral
+        BreakStatement
+      CaseClause
+        BinaryExpression
+          Identifier: ' z'
+          BarBarToken
+          StringLiteral
+      CaseClause
+        BinaryExpression
+          StringLiteral
+          BarBarToken
+          Identifier: ' z'
+        ExpressionStatement
+          Identifier: '
+        z'
+        BreakStatement

@@ -1,0 +1,226 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' TPromise'
+    TypeParameter
+      Identifier: 'ResolveType'
+    TypeParameter
+      Identifier: ' RejectType'
+      AnyKeyword
+    IntersectionType
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          Identifier: 'Promise'
+          TypeReference
+            Identifier: 'ResolveType'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeLiteral
+        MethodSignature
+          Identifier: '
+    then'
+          TypeParameter
+            Identifier: 'TResult1'
+            TypeReference
+              Identifier: ' ResolveType'
+          TypeParameter
+            Identifier: ' TResult2'
+            NeverKeyword
+          Parameter
+            Identifier: '
+        onfulfilled'
+            QuestionToken
+            UnionType
+              ParenthesizedType
+                FunctionType
+                  Parameter
+                    Identifier: 'value'
+                    TypeReference
+                      Identifier: ' ResolveType'
+                  UnionType
+                    TypeReference
+                      Identifier: ' TResult1'
+                    TypeReference
+                      Identifier: ' PromiseLike'
+                      TypeReference
+                        Identifier: 'TResult1'
+              UndefinedKeyword
+              LiteralType
+                NullKeyword
+          Parameter
+            Identifier: '
+        onrejected'
+            QuestionToken
+            UnionType
+              ParenthesizedType
+                FunctionType
+                  Parameter
+                    Identifier: 'reason'
+                    TypeReference
+                      Identifier: ' RejectType'
+                  UnionType
+                    TypeReference
+                      Identifier: ' TResult2'
+                    TypeReference
+                      Identifier: ' PromiseLike'
+                      TypeReference
+                        Identifier: 'TResult2'
+              UndefinedKeyword
+              LiteralType
+                NullKeyword
+          TypeReference
+            Identifier: ' TPromise'
+            UnionType
+              TypeReference
+                Identifier: 'TResult1'
+              TypeReference
+                Identifier: ' TResult2'
+            TypeReference
+              Identifier: ' RejectType'
+        MethodSignature
+          Identifier: '
+    catch'
+          TypeParameter
+            Identifier: 'TResult'
+            NeverKeyword
+          Parameter
+            Identifier: '
+        onrejected'
+            QuestionToken
+            UnionType
+              ParenthesizedType
+                FunctionType
+                  Parameter
+                    Identifier: 'reason'
+                    TypeReference
+                      Identifier: ' RejectType'
+                  UnionType
+                    TypeReference
+                      Identifier: ' TResult'
+                    TypeReference
+                      Identifier: ' PromiseLike'
+                      TypeReference
+                        Identifier: 'TResult'
+              UndefinedKeyword
+              LiteralType
+                NullKeyword
+          TypeReference
+            Identifier: ' TPromise'
+            UnionType
+              TypeReference
+                Identifier: 'ResolveType'
+              TypeReference
+                Identifier: ' TResult'
+            TypeReference
+              Identifier: ' RejectType'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' HttpResponse'
+    TypeParameter
+      Identifier: 'D'
+      UnknownKeyword
+    TypeParameter
+      Identifier: ' E'
+      UnknownKeyword
+      UnknownKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Response'
+    PropertySignature
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' D'
+    PropertySignature
+      Identifier: '
+    error'
+      TypeReference
+        Identifier: ' E'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' HttpClient'
+    TypeParameter
+      Identifier: 'SecurityDataType'
+      UnknownKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' request'
+      ArrowFunction
+        TypeParameter
+          Identifier: 'T'
+          AnyKeyword
+        TypeParameter
+          Identifier: ' E'
+          AnyKeyword
+        TypeReference
+          Identifier: ' TPromise'
+          TypeReference
+            Identifier: 'HttpResponse'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' E'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            AsExpression
+              StringLiteral
+              AnyKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' HttpClient'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Api'
+    TypeParameter
+      Identifier: 'SecurityDataType'
+      UnknownKeyword
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' http'
+        TypeReference
+          Identifier: ' HttpClient'
+          TypeReference
+            Identifier: 'SecurityDataType'
+      Block
+    PropertyDeclaration
+      Identifier: '
+
+    abc1'
+      ArrowFunction
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'http'
+            Identifier: 'request'
+    PropertyDeclaration
+      Identifier: '
+    abc2'
+      ArrowFunction
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'http'
+            Identifier: 'request'
+    PropertyDeclaration
+      Identifier: '
+    abc3'
+      ArrowFunction
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'http'
+            Identifier: 'request'

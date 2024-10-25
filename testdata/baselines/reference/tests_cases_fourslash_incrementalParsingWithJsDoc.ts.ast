@@ -1,0 +1,50 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////[|import a from 'a/aaaaaaa/aaaaaaa/aaaaaa/aaaaaaa';
+/////**/import b from 'b';
+////import c from 'c';|]
+////
+////[|/** @internal */|]
+////export class LanguageIdentifier[| { }|]
+
+// Force a syntax tree ot be created.
+verify'
+        Identifier: 'outliningSpansInCurrentFile'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'test'
+          Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'backspace'
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'test'
+            Identifier: 'marker'
+          StringLiteral
+        Identifier: 'position'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'outliningSpansInCurrentFile'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'test'
+          Identifier: 'ranges'

@@ -1,0 +1,208 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' ConstructSignature'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Base'
+        ConstructSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          VoidKeyword
+        ConstructSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            NumberKeyword
+          NumberKeyword
+      InterfaceDeclaration
+        Identifier: ' I'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+        ConstructSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          NumberKeyword
+        ConstructSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            NumberKeyword
+          BooleanKeyword
+      InterfaceDeclaration
+        Identifier: ' Base2'
+        ConstructSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          NumberKeyword
+      InterfaceDeclaration
+        Identifier: ' I2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        ConstructSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' I3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          StringKeyword
+  ModuleDeclaration
+    Identifier: ' MemberWithConstructSignature'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Base'
+        PropertySignature
+          Identifier: ' // T
+        // M's
+        a'
+          ConstructorType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            VoidKeyword
+        PropertySignature
+          Identifier: '
+        a2'
+          ConstructorType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            Parameter
+              Identifier: ' y'
+              NumberKeyword
+            VoidKeyword
+        PropertySignature
+          Identifier: '
+        a3'
+          ConstructorType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            TypeReference
+              Identifier: ' Base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' b'
+                Identifier: 'a'
+              NumericLiteral
+      InterfaceDeclaration
+        Identifier: ' I'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+        PropertySignature
+          Identifier: '
+        // N's
+        a'
+          ConstructorType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            NumberKeyword
+        PropertySignature
+          Identifier: ' // ok because base returns void
+        a2'
+          ConstructorType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            Parameter
+              Identifier: ' y'
+              NumberKeyword
+            BooleanKeyword
+        PropertySignature
+          Identifier: ' // ok because base returns void
+        a3'
+          ConstructorType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            StringKeyword
+      InterfaceDeclaration
+        Identifier: ' Base2'
+        PropertySignature
+          Identifier: ' // T
+        // M's
+        a'
+          ConstructorType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            NumberKeyword
+        PropertySignature
+          Identifier: '
+        a2'
+          ConstructorType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        // N's
+        a'
+          ConstructorType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            StringKeyword
+      InterfaceDeclaration
+        Identifier: ' I3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        // N's
+        a2'
+          ConstructorType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            StringKeyword

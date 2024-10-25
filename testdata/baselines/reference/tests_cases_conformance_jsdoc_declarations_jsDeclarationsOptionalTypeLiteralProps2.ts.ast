@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' a'
+        BindingElement
+          Identifier: ' b'
+        BindingElement
+          Identifier: ' c'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'b'
+                QuestionQuestionToken
+                NumericLiteral
+          PlusToken
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'c'
+              QuestionQuestionToken
+              NumericLiteral

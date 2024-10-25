@@ -1,0 +1,255 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f00'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+        BindingElement
+          Identifier: ' y'
+    Block
+  FunctionDeclaration
+    Identifier: ' f01'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+        BindingElement
+          Identifier: ' y'
+      ArrayLiteralExpression
+    Block
+  FunctionDeclaration
+    Identifier: ' f02'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+        BindingElement
+          Identifier: ' y'
+      ArrayLiteralExpression
+        NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' f03'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+        BindingElement
+          Identifier: ' y'
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' f10'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+    Block
+  FunctionDeclaration
+    Identifier: ' f11'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+      ArrayLiteralExpression
+    Block
+  FunctionDeclaration
+    Identifier: ' f12'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+      ArrayLiteralExpression
+        NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' f13'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' f20'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' f21'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+      ArrayLiteralExpression
+    Block
+  FunctionDeclaration
+    Identifier: ' f22'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+      ArrayLiteralExpression
+        NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' f23'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+    Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nx'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sx'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' f30'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' f31'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+      ArrayLiteralExpression
+    Block
+  FunctionDeclaration
+    Identifier: ' f32'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+      ArrayLiteralExpression
+        Identifier: 'nx'
+    Block
+  FunctionDeclaration
+    Identifier: ' f33'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+      ArrayLiteralExpression
+        Identifier: 'nx'
+        Identifier: ' sx'
+    Block
+  FunctionDeclaration
+    Identifier: ' f40'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' f41'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+      ArrayLiteralExpression
+    Block
+  FunctionDeclaration
+    Identifier: ' f42'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+      ArrayLiteralExpression
+        Identifier: 'sx'
+    Block
+  FunctionDeclaration
+    Identifier: ' f43'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+          NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          StringLiteral
+      ArrayLiteralExpression
+        Identifier: 'sx'
+        Identifier: ' nx'
+    Block

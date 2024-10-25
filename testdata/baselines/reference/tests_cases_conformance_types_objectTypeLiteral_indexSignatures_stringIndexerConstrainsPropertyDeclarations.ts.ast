@@ -1,0 +1,268 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' MyString'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' String'
+    PropertySignature
+      Identifier: '
+    foo'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    Constructor
+      Block
+    PropertyDeclaration
+      Identifier: ' // ok
+
+    a'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: ' // ok
+    b'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: ' // error
+    c'
+      FunctionType
+        TypeLiteral
+    PropertyDeclaration
+      StringLiteral
+      StringKeyword
+    PropertyDeclaration
+      StringLiteral
+      NumberKeyword
+    PropertyDeclaration
+      NumericLiteral
+      StringKeyword
+    PropertyDeclaration
+      NumericLiteral
+      NumberKeyword
+    PropertyDeclaration
+      StringLiteral
+      StringKeyword
+    PropertyDeclaration
+      StringLiteral
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: ' // error
+    f'
+      TypeReference
+        Identifier: ' MyString'
+    GetAccessor
+      Identifier: ' X'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' X'
+      Parameter
+        Identifier: 'v'
+      Block
+    MethodDeclaration
+      Identifier: ' // ok
+
+    foo'
+      Block
+        ReturnStatement
+          StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' sa'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' sb'
+      StringKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+    GetAccessor
+      StaticKeyword
+      Identifier: ' X'
+      Block
+        ReturnStatement
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+
+    a'
+      StringKeyword
+    PropertySignature
+      Identifier: ' // ok
+    b'
+      NumberKeyword
+    PropertySignature
+      Identifier: ' // error
+    c'
+      FunctionType
+        TypeLiteral
+    PropertySignature
+      StringLiteral
+      StringKeyword
+    PropertySignature
+      StringLiteral
+      NumberKeyword
+    PropertySignature
+      NumericLiteral
+      StringKeyword
+    PropertySignature
+      NumericLiteral
+      NumberKeyword
+    CallSignature
+      StringKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+      NumberKeyword
+    MethodSignature
+      Identifier: ' // ok
+    foo'
+      StringKeyword
+    PropertySignature
+      StringLiteral
+      StringKeyword
+    PropertySignature
+      StringLiteral
+      NumberKeyword
+    PropertySignature
+      Identifier: ' // error
+    f'
+      TypeReference
+        Identifier: ' MyString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+          PropertySignature
+            Identifier: '
+
+    a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' // ok
+    b'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' // error
+    c'
+            FunctionType
+              TypeLiteral
+          PropertySignature
+            StringLiteral
+            StringKeyword
+          PropertySignature
+            StringLiteral
+            NumberKeyword
+          PropertySignature
+            NumericLiteral
+            StringKeyword
+          PropertySignature
+            NumericLiteral
+            NumberKeyword
+          CallSignature
+            StringKeyword
+          CallSignature
+            Parameter
+              Identifier: 'x'
+            NumberKeyword
+          MethodSignature
+            Identifier: ' // ok
+    foo'
+            StringKeyword
+          PropertySignature
+            StringLiteral
+            StringKeyword
+          PropertySignature
+            StringLiteral
+            NumberKeyword
+          PropertySignature
+            Identifier: ' // error
+    f'
+            TypeReference
+              Identifier: ' MyString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    b'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' 
+    c'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' 
+    f'
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'MyString'
+              NullKeyword
+          GetAccessor
+            Identifier: ' X'
+            Block
+              ReturnStatement
+                StringLiteral
+          SetAccessor
+            Identifier: ' X'
+            Parameter
+              Identifier: 'v'
+            Block
+          MethodDeclaration
+            Identifier: ' 
+    foo'
+            Block
+              ReturnStatement
+                StringLiteral

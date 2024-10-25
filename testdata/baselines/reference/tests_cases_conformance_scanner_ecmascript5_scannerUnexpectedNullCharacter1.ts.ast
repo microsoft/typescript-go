@@ -1,0 +1,8 @@
+SourceFile
+  ExpressionStatement
+    Identifier: 'foo'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    Identifier: 'bar'

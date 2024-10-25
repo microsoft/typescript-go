@@ -1,0 +1,3871 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' fork'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' statSync'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Mocha'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' ms'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' os'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' path'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' readline'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' tty'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    configOption'
+        ImportSpecifier
+          Identifier: '
+    globalTimeout'
+        ImportSpecifier
+          Identifier: '
+    IO'
+        ImportSpecifier
+          Identifier: '
+    keepFailed'
+        ImportSpecifier
+          Identifier: '
+    lightMode'
+        ImportSpecifier
+          Identifier: '
+    noColors'
+        ImportSpecifier
+          Identifier: '
+    runners'
+        ImportSpecifier
+          Identifier: '
+    runUnitTests'
+        ImportSpecifier
+          Identifier: '
+    stackTraceLimit'
+        ImportSpecifier
+          Identifier: '
+    taskConfigsFolder'
+        ImportSpecifier
+          Identifier: '
+    TestConfig'
+        ImportSpecifier
+          Identifier: '
+    TestRunnerKind'
+        ImportSpecifier
+          Identifier: '
+    workerCount'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ErrorInfo'
+        ImportSpecifier
+          Identifier: '
+    ParallelClientMessage'
+        ImportSpecifier
+          Identifier: '
+    ParallelHostMessage'
+        ImportSpecifier
+          Identifier: '
+    shimNoopTestInterface'
+        ImportSpecifier
+          Identifier: '
+    Task'
+        ImportSpecifier
+          Identifier: '
+    TaskTimeout'
+        ImportSpecifier
+          Identifier: '
+    TestInfo'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Utils'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' start'
+    Parameter
+      Identifier: 'importTests'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          UnknownKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Base'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' Mocha'
+                Identifier: 'reporters'
+              Identifier: 'Base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' color'
+            PropertyAccessExpression
+              Identifier: ' Base'
+              Identifier: 'color'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cursor'
+            PropertyAccessExpression
+              Identifier: ' Base'
+              Identifier: 'cursor'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isatty'
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' tty'
+                  Identifier: 'isatty'
+                NumericLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' tty'
+                  Identifier: 'isatty'
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' FailedTestReporter'
+            AsExpression
+              CallExpression
+                Identifier: ' require'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Utils'
+                    Identifier: 'findUpFile'
+                  StringLiteral
+              ImportType
+                LiteralType
+                  StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' perfdataFileNameFragment'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' perfData'
+            CallExpression
+              Identifier: ' readSavedPerfData'
+              Identifier: 'configOption'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newTasks'
+            ArrayType
+              TypeReference
+                Identifier: ' Task'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tasks'
+            ArrayType
+              TypeReference
+                Identifier: ' Task'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unknownValue'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' totalCost'
+            NumericLiteral
+      ClassDeclaration
+        Identifier: ' RemoteSuite'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' Mocha'
+              Identifier: 'Suite'
+        PropertyDeclaration
+          Identifier: '
+        suiteMap'
+          NewExpression
+            Identifier: ' Map'
+            StringKeyword
+            TypeReference
+              Identifier: ' RemoteSuite'
+        Constructor
+          Parameter
+            Identifier: 'title'
+            StringKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                Identifier: 'title'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'pending'
+                EqualsToken
+                FalseKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'delayed'
+                EqualsToken
+                FalseKeyword
+        MethodDeclaration
+          OverrideKeyword
+          Identifier: ' addSuite'
+          Parameter
+            Identifier: 'suite'
+            TypeReference
+              Identifier: ' RemoteSuite'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'addSuite'
+                Identifier: 'suite'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'suiteMap'
+                  Identifier: 'set'
+                PropertyAccessExpression
+                  Identifier: 'suite'
+                  Identifier: 'title'
+                Identifier: ' suite'
+            ReturnStatement
+              ThisKeyword
+        MethodDeclaration
+          OverrideKeyword
+          Identifier: ' addTest'
+          Parameter
+            Identifier: 'test'
+            TypeReference
+              Identifier: ' RemoteTest'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'addTest'
+                Identifier: 'test'
+      ClassDeclaration
+        Identifier: ' RemoteTest'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' Mocha'
+              Identifier: 'Test'
+        PropertyDeclaration
+          Identifier: '
+        info'
+          UnionType
+            TypeReference
+              Identifier: ' ErrorInfo'
+            TypeReference
+              Identifier: ' TestInfo'
+        Constructor
+          Parameter
+            Identifier: 'info'
+            UnionType
+              TypeReference
+                Identifier: ' ErrorInfo'
+              TypeReference
+                Identifier: ' TestInfo'
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'info'
+                    Identifier: 'name'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'info'
+                        Identifier: 'name'
+                      Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'info'
+                EqualsToken
+                Identifier: ' info'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'state'
+                EqualsToken
+                ConditionalExpression
+                  BinaryExpression
+                    StringLiteral
+                    InKeyword
+                    Identifier: ' info'
+                  QuestionToken
+                  StringLiteral
+                  ColonToken
+                  StringLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'pending'
+                EqualsToken
+                FalseKeyword
+      InterfaceDeclaration
+        Identifier: ' Worker'
+        PropertySignature
+          Identifier: '
+        process'
+          ImportType
+            LiteralType
+              StringLiteral
+            Identifier: 'ChildProcess'
+        PropertySignature
+          Identifier: '
+        accumulatedOutput'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        currentTasks'
+          QuestionToken
+          ArrayType
+            TypeLiteral
+              PropertySignature
+                Identifier: ' file'
+                StringKeyword
+        PropertySignature
+          Identifier: '
+        timer'
+          QuestionToken
+          AnyKeyword
+      InterfaceDeclaration
+        Identifier: ' ProgressBarsOptions'
+        PropertySignature
+          Identifier: '
+        open'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        close'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        complete'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        incomplete'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        width'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        noColors'
+          BooleanKeyword
+      InterfaceDeclaration
+        Identifier: ' ProgressBar'
+        PropertySignature
+          Identifier: '
+        lastN'
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        title'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        progressColor'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        text'
+          QuestionToken
+          StringKeyword
+      ClassDeclaration
+        Identifier: ' ProgressBars'
+        PropertyDeclaration
+          PublicKeyword
+          ReadonlyKeyword
+          Identifier: ' _options'
+          TypeReference
+            Identifier: ' Readonly'
+            TypeReference
+              Identifier: 'ProgressBarsOptions'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' _enabled'
+          BooleanKeyword
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' _lineCount'
+          NumberKeyword
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' _progressBars'
+          ArrayType
+            TypeReference
+              Identifier: ' ProgressBar'
+        Constructor
+          Parameter
+            Identifier: 'options'
+            QuestionToken
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'ProgressBarsOptions'
+          Block
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'options'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: ' options'
+                  EqualsToken
+                  ObjectLiteralExpression
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' open'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' options'
+                      Identifier: 'open'
+                    BarBarToken
+                    StringLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' close'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' options'
+                      Identifier: 'close'
+                    BarBarToken
+                    StringLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' complete'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' options'
+                      Identifier: 'complete'
+                    BarBarToken
+                    StringLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' incomplete'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' options'
+                      Identifier: 'incomplete'
+                    BarBarToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' Base'
+                        Identifier: 'symbols'
+                      Identifier: 'dot'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' maxWidth'
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' Base'
+                            Identifier: 'window'
+                          Identifier: 'width'
+                        MinusToken
+                        PropertyAccessExpression
+                          Identifier: ' open'
+                          Identifier: 'length'
+                      MinusToken
+                      PropertyAccessExpression
+                        Identifier: ' close'
+                        Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' width'
+                  CallExpression
+                    Identifier: ' minMax'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'options'
+                        Identifier: 'width'
+                      BarBarToken
+                      Identifier: ' maxWidth'
+                    NumericLiteral
+                    Identifier: ' maxWidth'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_options'
+                EqualsToken
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                open'
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                complete'
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                incomplete'
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                close'
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                width'
+                  PropertyAssignment
+                    Identifier: '
+                noColors'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' options'
+                        Identifier: 'noColors'
+                      BarBarToken
+                      FalseKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_progressBars'
+                EqualsToken
+                ArrayLiteralExpression
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_lineCount'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_enabled'
+                EqualsToken
+                FalseKeyword
+        MethodDeclaration
+          Identifier: '
+        enable'
+          Block
+            IfStatement
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_enabled'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                process'
+                        Identifier: 'stdout'
+                      Identifier: 'write'
+                    PropertyAccessExpression
+                      Identifier: 'os'
+                      Identifier: 'EOL'
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: '_enabled'
+                    EqualsToken
+                    TrueKeyword
+        MethodDeclaration
+          Identifier: '
+        disable'
+          Block
+            IfStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: '_enabled'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                process'
+                        Identifier: 'stdout'
+                      Identifier: 'write'
+                    PropertyAccessExpression
+                      Identifier: 'os'
+                      Identifier: 'EOL'
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: '_enabled'
+                    EqualsToken
+                    FalseKeyword
+        MethodDeclaration
+          Identifier: '
+        update'
+          Parameter
+            Identifier: 'index'
+            NumberKeyword
+          Parameter
+            Identifier: ' percentComplete'
+            NumberKeyword
+          Parameter
+            Identifier: ' color'
+            StringKeyword
+          Parameter
+            Identifier: ' title'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+          Parameter
+            Identifier: ' titleColor'
+            QuestionToken
+            StringKeyword
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            percentComplete'
+                EqualsToken
+                CallExpression
+                  Identifier: ' minMax'
+                  Identifier: 'percentComplete'
+                  NumericLiteral
+                  NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' progressBar'
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: '_progressBars'
+                      Identifier: 'index'
+                    BarBarToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: '_progressBars'
+                          Identifier: 'index'
+                        EqualsToken
+                        ObjectLiteralExpression
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' width'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: '_options'
+                    Identifier: 'width'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' n'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Math'
+                      Identifier: 'floor'
+                    BinaryExpression
+                      Identifier: 'width'
+                      AsteriskToken
+                      Identifier: ' percentComplete'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  BinaryExpression
+                    Identifier: ' width'
+                    MinusToken
+                    Identifier: ' n'
+            IfStatement
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: 'n'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' progressBar'
+                      Identifier: 'lastN'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    Identifier: ' title'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' progressBar'
+                      Identifier: 'title'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  Identifier: ' color'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' progressBar'
+                    Identifier: 'progressColor'
+              Block
+                ReturnStatement
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+
+            progressBar'
+                  Identifier: 'lastN'
+                EqualsToken
+                Identifier: ' n'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            progressBar'
+                  Identifier: 'title'
+                EqualsToken
+                Identifier: ' title'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            progressBar'
+                  Identifier: 'progressColor'
+                EqualsToken
+                Identifier: ' color'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' progress'
+                  StringLiteral
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            progress'
+                PlusEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_color'
+                  StringLiteral
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: '_options'
+                    Identifier: 'open'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            progress'
+                PlusEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_color'
+                  Identifier: 'color'
+                  CallExpression
+                    Identifier: ' fill'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: '_options'
+                      Identifier: 'complete'
+                    Identifier: ' n'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            progress'
+                PlusEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_color'
+                  StringLiteral
+                  CallExpression
+                    Identifier: ' fill'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: '_options'
+                      Identifier: 'incomplete'
+                    Identifier: ' i'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            progress'
+                PlusEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_color'
+                  StringLiteral
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: '_options'
+                    Identifier: 'close'
+            IfStatement
+              Identifier: 'title'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                progress'
+                    PlusEqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: '_color'
+                      BinaryExpression
+                        Identifier: 'titleColor'
+                        BarBarToken
+                        StringLiteral
+                      BinaryExpression
+                        StringLiteral
+                        PlusToken
+                        Identifier: ' title'
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'progressBar'
+                  Identifier: 'text'
+                ExclamationEqualsEqualsToken
+                Identifier: ' progress'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                progressBar'
+                      Identifier: 'text'
+                    EqualsToken
+                    Identifier: ' progress'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: '_render'
+                    Identifier: 'index'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' _render'
+          Parameter
+            Identifier: 'index'
+            NumberKeyword
+          Block
+            IfStatement
+              BinaryExpression
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_enabled'
+                BarBarToken
+                PrefixUnaryExpression
+                  Identifier: 'isatty'
+              Block
+                ReturnStatement
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+
+            cursor'
+                  Identifier: 'hide'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            readline'
+                  Identifier: 'moveCursor'
+                PropertyAccessExpression
+                  Identifier: 'process'
+                  Identifier: 'stdout'
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'process'
+                      Identifier: 'stdout'
+                    Identifier: 'columns'
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_lineCount'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' lineCount'
+                  NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' numProgressBars'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: '_progressBars'
+                    Identifier: 'length'
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                Identifier: ' numProgressBars'
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'i'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' index'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    readline'
+                          Identifier: 'clearLine'
+                        PropertyAccessExpression
+                          Identifier: 'process'
+                          Identifier: 'stdout'
+                        NumericLiteral
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    process'
+                            Identifier: 'stdout'
+                          Identifier: 'write'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: '_progressBars'
+                              Identifier: 'i'
+                            Identifier: 'text'
+                          PlusToken
+                          PropertyAccessExpression
+                            Identifier: ' os'
+                            Identifier: 'EOL'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    readline'
+                          Identifier: 'moveCursor'
+                        PropertyAccessExpression
+                          Identifier: 'process'
+                          Identifier: 'stdout'
+                        PrefixUnaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'process'
+                              Identifier: 'stdout'
+                            Identifier: 'columns'
+                        PrefixUnaryExpression
+                          NumericLiteral
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    Identifier: '
+
+                lineCount'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_lineCount'
+                EqualsToken
+                Identifier: ' lineCount'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            cursor'
+                  Identifier: 'show'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' _color'
+          Parameter
+            Identifier: 'type'
+            StringKeyword
+          Parameter
+            Identifier: ' text'
+            StringKeyword
+          Block
+            ReturnStatement
+              ConditionalExpression
+                BinaryExpression
+                  Identifier: ' type'
+                  AmpersandAmpersandToken
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: '_options'
+                      Identifier: 'noColors'
+                QuestionToken
+                CallExpression
+                  Identifier: ' color'
+                  Identifier: 'type'
+                  Identifier: ' text'
+                ColonToken
+                Identifier: ' text'
+      FunctionDeclaration
+        Identifier: ' perfdataFileName'
+        Parameter
+          Identifier: 'target'
+          QuestionToken
+          StringKeyword
+        Block
+          ReturnStatement
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'perfdataFileNameFragment'
+                TemplateMiddle
+              TemplateSpan
+                ConditionalExpression
+                  Identifier: 'target'
+                  QuestionToken
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'target'
+                      TemplateTail
+                  ColonToken
+                  StringLiteral
+                TemplateTail
+      FunctionDeclaration
+        Identifier: ' readSavedPerfData'
+        Parameter
+          Identifier: 'target'
+          QuestionToken
+          StringKeyword
+        UnionType
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'testHash'
+                StringKeyword
+              NumberKeyword
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' perfDataContents'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' IO'
+                    Identifier: 'readFile'
+                  CallExpression
+                    Identifier: 'perfdataFileName'
+                    Identifier: 'target'
+          IfStatement
+            Identifier: 'perfDataContents'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' JSON'
+                    Identifier: 'parse'
+                  Identifier: 'perfDataContents'
+          ReturnStatement
+            Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' hashName'
+        Parameter
+          Identifier: 'runner'
+          UnionType
+            TypeReference
+              Identifier: ' TestRunnerKind'
+            LiteralType
+              StringLiteral
+        Parameter
+          Identifier: ' test'
+          StringKeyword
+        Block
+          ReturnStatement
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'runner'
+                TemplateMiddle
+              TemplateSpan
+                Identifier: 'test'
+                TemplateTail
+      FunctionDeclaration
+        Identifier: ' startDelayed'
+        Parameter
+          Identifier: 'perfData'
+          UnionType
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'testHash'
+                  StringKeyword
+                NumberKeyword
+            UndefinedKeyword
+        Parameter
+          Identifier: ' totalCost'
+          NumberKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              BinaryExpression
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    PropertyAccessExpression
+                      Identifier: 'tasks'
+                      Identifier: 'length'
+                    TemplateTail
+                PlusToken
+                ParenthesizedExpression
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: 'newTasks'
+                      Identifier: 'length'
+                    QuestionToken
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        PropertyAccessExpression
+                          Identifier: 'newTasks'
+                          Identifier: 'length'
+                        TemplateTail
+                    ColonToken
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' discoverStart'
+                PrefixUnaryExpression
+                  ParenthesizedExpression
+                    NewExpression
+                      Identifier: ' Date'
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' runner'
+            Identifier: ' runners'
+            Block
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' file'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' runner'
+                    Identifier: 'getTestFiles'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' size'
+                        NumberKeyword
+                  IfStatement
+                    PrefixUnaryExpression
+                      Identifier: 'perfData'
+                    Block
+                      TryStatement
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                        size'
+                              EqualsToken
+                              PropertyAccessExpression
+                                CallExpression
+                                  Identifier: ' statSync'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'path'
+                                      Identifier: 'join'
+                                    PropertyAccessExpression
+                                      Identifier: 'runner'
+                                      Identifier: 'workingDirectory'
+                                    Identifier: ' file'
+                                Identifier: 'size'
+                        CatchClause
+                          Block
+                            TryStatement
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    Identifier: '
+                            size'
+                                    EqualsToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' IO'
+                                            Identifier: 'listFiles'
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'path'
+                                              Identifier: 'join'
+                                            PropertyAccessExpression
+                                              Identifier: 'runner'
+                                              Identifier: 'workingDirectory'
+                                            Identifier: ' file'
+                                          RegularExpressionLiteral
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' recursive'
+                                              TrueKeyword
+                                        Identifier: 'reduce'
+                                      ArrowFunction
+                                        Parameter
+                                          Identifier: 'acc'
+                                        Parameter
+                                          Identifier: ' elem'
+                                        EqualsGreaterThanToken
+                                        BinaryExpression
+                                          Identifier: ' acc'
+                                          PlusToken
+                                          PropertyAccessExpression
+                                            CallExpression
+                                              Identifier: ' statSync'
+                                              Identifier: 'elem'
+                                            Identifier: 'size'
+                                      NumericLiteral
+                              CatchClause
+                                Block
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      Identifier: '
+                            // Unknown test kind, just return 0 and let the historical analysis take over after one run
+                            size'
+                                      EqualsToken
+                                      NumericLiteral
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' hashedName'
+                            CallExpression
+                              Identifier: ' hashName'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'runner'
+                                  Identifier: 'kind'
+                              Identifier: ' file'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    size'
+                          EqualsToken
+                          ElementAccessExpression
+                            Identifier: ' perfData'
+                            Identifier: 'hashedName'
+                      IfStatement
+                        BinaryExpression
+                          Identifier: 'size'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' undefined'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                        size'
+                              EqualsToken
+                              NumericLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                        unknownValue'
+                              EqualsToken
+                              Identifier: ' hashedName'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                        newTasks'
+                                Identifier: 'push'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' runner'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' runner'
+                                      Identifier: 'kind'
+                                ShorthandPropertyAssignment
+                                  Identifier: ' file'
+                                ShorthandPropertyAssignment
+                                  Identifier: ' size'
+                          ContinueStatement
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                tasks'
+                        Identifier: 'push'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' runner'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' runner'
+                              Identifier: 'kind'
+                        ShorthandPropertyAssignment
+                          Identifier: ' file'
+                        ShorthandPropertyAssignment
+                          Identifier: ' size'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                totalCost'
+                      PlusEqualsToken
+                      Identifier: ' size'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        tasks'
+                Identifier: 'sort'
+              ArrowFunction
+                Parameter
+                  Identifier: 'a'
+                Parameter
+                  Identifier: ' b'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' a'
+                    Identifier: 'size'
+                  MinusToken
+                  PropertyAccessExpression
+                    Identifier: ' b'
+                    Identifier: 'size'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        tasks'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' tasks'
+                  Identifier: 'concat'
+                Identifier: 'newTasks'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' batchCount'
+                Identifier: ' workerCount'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' packfraction'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' chunkSize'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' batchSize'
+                BinaryExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'totalCost'
+                      SlashToken
+                      Identifier: ' workerCount'
+                  AsteriskToken
+                  Identifier: ' packfraction'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' // Keep spare tests for unittest thread in reserve
+        console'
+                Identifier: 'log'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  PropertyAccessExpression
+                    Identifier: 'tasks'
+                    Identifier: 'length'
+                  TemplateMiddle
+                TemplateSpan
+                  BinaryExpression
+                    PrefixUnaryExpression
+                      ParenthesizedExpression
+                        NewExpression
+                          Identifier: ' Date'
+                    MinusToken
+                    Identifier: ' discoverStart'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'workerCount'
+                  TemplateTail
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' totalFiles'
+                PropertyAccessExpression
+                  Identifier: ' tasks'
+                  Identifier: 'length'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' passingFiles'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' failingFiles'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' errorResults'
+                ArrayType
+                  TypeReference
+                    Identifier: ' ErrorInfo'
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' passingResults'
+                ArrayType
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' name'
+                      ArrayType
+                        StringKeyword
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' totalPassing'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' startDate'
+                NewExpression
+                  Identifier: ' Date'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' progressBars'
+                NewExpression
+                  Identifier: ' ProgressBars'
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: ' noColors'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' progressUpdateInterval'
+                BinaryExpression
+                  NumericLiteral
+                  SlashToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' progressBars'
+                      Identifier: '_options'
+                    Identifier: 'width'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' nextProgress'
+                Identifier: ' progressUpdateInterval'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newPerfData'
+                TypeLiteral
+                  IndexSignature
+                    Parameter
+                      Identifier: 'testHash'
+                      StringKeyword
+                    NumberKeyword
+                ObjectLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' workers'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Worker'
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' closedWorkers'
+                NumericLiteral
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                NumericLiteral
+            BinaryExpression
+              Identifier: ' i'
+              LessThanToken
+              Identifier: ' workerCount'
+            PostfixUnaryExpression
+              Identifier: ' i'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' config'
+                    TypeReference
+                      Identifier: ' TestConfig'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' light'
+                        Identifier: ' lightMode'
+                      PropertyAssignment
+                        Identifier: ' listenForWork'
+                        TrueKeyword
+                      ShorthandPropertyAssignment
+                        Identifier: ' runUnitTests'
+                      ShorthandPropertyAssignment
+                        Identifier: ' stackTraceLimit'
+                      PropertyAssignment
+                        Identifier: ' timeout'
+                        Identifier: ' globalTimeout'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' configPath'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'combinePaths'
+                      Identifier: 'taskConfigsFolder'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'i'
+                          TemplateTail
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            IO'
+                    Identifier: 'writeFile'
+                  Identifier: 'configPath'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' JSON'
+                      Identifier: 'stringify'
+                    Identifier: 'config'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' worker'
+                    TypeReference
+                      Identifier: ' Worker'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                process'
+                        CallExpression
+                          Identifier: ' fork'
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'process'
+                              Identifier: 'argv'
+                            NumericLiteral
+                          ArrayLiteralExpression
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'configPath'
+                                TemplateTail
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' stdio'
+                              ArrayLiteralExpression
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                accumulatedOutput'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                currentTasks'
+                        Identifier: ' undefined'
+                      PropertyAssignment
+                        Identifier: '
+                timer'
+                        Identifier: ' undefined'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' appendOutput'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'd'
+                        TypeReference
+                          Identifier: ' Buffer'
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                worker'
+                              Identifier: 'accumulatedOutput'
+                            PlusEqualsToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' d'
+                                Identifier: 'toString'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                console'
+                              Identifier: 'log'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'i'
+                                TemplateTail
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' d'
+                                Identifier: 'toString'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            worker'
+                          Identifier: 'process'
+                        Identifier: 'stderr'
+                    Identifier: 'on'
+                  StringLiteral
+                  Identifier: ' appendOutput'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            worker'
+                          Identifier: 'process'
+                        Identifier: 'stdout'
+                    Identifier: 'on'
+                  StringLiteral
+                  Identifier: ' appendOutput'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' killChild'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'timeout'
+                        TypeReference
+                          Identifier: ' TaskTimeout'
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                worker'
+                                Identifier: 'process'
+                              Identifier: 'kill'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                console'
+                              Identifier: 'error'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                PropertyAccessExpression
+                                  Identifier: 'timeout'
+                                  Identifier: 'duration'
+                                TemplateMiddle
+                              TemplateSpan
+                                ConditionalExpression
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'worker'
+                                      Identifier: 'currentTasks'
+                                    AmpersandAmpersandToken
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' worker'
+                                        Identifier: 'currentTasks'
+                                      Identifier: 'length'
+                                  QuestionToken
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      PropertyAccessExpression
+                                        ElementAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'worker'
+                                            Identifier: 'currentTasks'
+                                          NumericLiteral
+                                        Identifier: 'file'
+                                      TemplateTail
+                                  ColonToken
+                                  NoSubstitutionTemplateLiteral
+                                TemplateTail
+                        ReturnStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' process'
+                              Identifier: 'exit'
+                            NumericLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            worker'
+                      Identifier: 'process'
+                    Identifier: 'on'
+                  StringLiteral
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' err'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                console'
+                            Identifier: 'error'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                console'
+                            Identifier: 'error'
+                          Identifier: 'err'
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' process'
+                            Identifier: 'exit'
+                          NumericLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            worker'
+                      Identifier: 'process'
+                    Identifier: 'on'
+                  StringLiteral
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'code'
+                    Parameter
+                      Identifier: ' _signal'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        BinaryExpression
+                          Identifier: 'code'
+                          ExclamationEqualsEqualsToken
+                          NumericLiteral
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    console'
+                                Identifier: 'error'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  PropertyAccessExpression
+                                    Identifier: 'worker'
+                                    Identifier: 'accumulatedOutput'
+                                  TemplateTail
+                          ReturnStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' process'
+                                Identifier: 'exit'
+                              NumericLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            worker'
+                      Identifier: 'process'
+                    Identifier: 'on'
+                  StringLiteral
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'data'
+                      TypeReference
+                        Identifier: ' ParallelClientMessage'
+                    EqualsGreaterThanToken
+                    Block
+                      SwitchStatement
+                        PropertyAccessExpression
+                          Identifier: 'data'
+                          Identifier: 'type'
+                        CaseBlock
+                          CaseClause
+                            StringLiteral
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        console'
+                                    Identifier: 'error'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      ConditionalExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'data'
+                                            Identifier: 'payload'
+                                          Identifier: 'name'
+                                        QuestionToken
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'data'
+                                                Identifier: 'payload'
+                                              Identifier: 'name'
+                                            TemplateTail
+                                        ColonToken
+                                        StringLiteral
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'data'
+                                          Identifier: 'payload'
+                                        Identifier: 'error'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'data'
+                                          Identifier: 'payload'
+                                        Identifier: 'stack'
+                                      TemplateTail
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' process'
+                                    Identifier: 'exit'
+                                  NumericLiteral
+                          CaseClause
+                            StringLiteral
+                            Block
+                              IfStatement
+                                PropertyAccessExpression
+                                  Identifier: 'worker'
+                                  Identifier: 'timer'
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      Identifier: '
+                            clearTimeout'
+                                      PropertyAccessExpression
+                                        Identifier: 'worker'
+                                        Identifier: 'timer'
+                              IfStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'data'
+                                      Identifier: 'payload'
+                                    Identifier: 'duration'
+                                  EqualsEqualsEqualsToken
+                                  StringLiteral
+                                Block
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            worker'
+                                        Identifier: 'timer'
+                                      EqualsToken
+                                      Identifier: ' undefined'
+                                Block
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            worker'
+                                        Identifier: 'timer'
+                                      EqualsToken
+                                      CallExpression
+                                        Identifier: ' setTimeout'
+                                        Identifier: 'killChild'
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' data'
+                                            Identifier: 'payload'
+                                          Identifier: 'duration'
+                                        PropertyAccessExpression
+                                          Identifier: ' data'
+                                          Identifier: 'payload'
+                              BreakStatement
+                          CaseClause
+                            StringLiteral
+                          CaseClause
+                            StringLiteral
+                            Block
+                              IfStatement
+                                PropertyAccessExpression
+                                  Identifier: 'worker'
+                                  Identifier: 'currentTasks'
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                            worker'
+                                          Identifier: 'currentTasks'
+                                        Identifier: 'shift'
+                              ExpressionStatement
+                                BinaryExpression
+                                  Identifier: '
+                        totalPassing'
+                                  PlusEqualsToken
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' data'
+                                      Identifier: 'payload'
+                                    Identifier: 'passing'
+                              IfStatement
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'data'
+                                      Identifier: 'payload'
+                                    Identifier: 'errors'
+                                  Identifier: 'length'
+                                Block
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      Identifier: '
+                            errorResults'
+                                      EqualsToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' errorResults'
+                                          Identifier: 'concat'
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'data'
+                                            Identifier: 'payload'
+                                          Identifier: 'errors'
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      Identifier: '
+                            passingResults'
+                                      EqualsToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' passingResults'
+                                          Identifier: 'concat'
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'data'
+                                            Identifier: 'payload'
+                                          Identifier: 'passes'
+                                  ExpressionStatement
+                                    PostfixUnaryExpression
+                                      Identifier: '
+                            failingFiles'
+                                Block
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      Identifier: '
+                            passingResults'
+                                      EqualsToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' passingResults'
+                                          Identifier: 'concat'
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'data'
+                                            Identifier: 'payload'
+                                          Identifier: 'passes'
+                                  ExpressionStatement
+                                    PostfixUnaryExpression
+                                      Identifier: '
+                            passingFiles'
+                              ExpressionStatement
+                                BinaryExpression
+                                  ElementAccessExpression
+                                    Identifier: '
+                        newPerfData'
+                                    CallExpression
+                                      Identifier: 'hashName'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'data'
+                                            Identifier: 'payload'
+                                          Identifier: 'task'
+                                        Identifier: 'runner'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' data'
+                                            Identifier: 'payload'
+                                          Identifier: 'task'
+                                        Identifier: 'file'
+                                  EqualsToken
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' data'
+                                      Identifier: 'payload'
+                                    Identifier: 'duration'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' progress'
+                                    BinaryExpression
+                                      ParenthesizedExpression
+                                        BinaryExpression
+                                          Identifier: 'failingFiles'
+                                          PlusToken
+                                          Identifier: ' passingFiles'
+                                      SlashToken
+                                      Identifier: ' totalFiles'
+                              IfStatement
+                                BinaryExpression
+                                  Identifier: 'progress'
+                                  GreaterThanEqualsToken
+                                  Identifier: ' nextProgress'
+                                Block
+                                  WhileStatement
+                                    BinaryExpression
+                                      Identifier: 'nextProgress'
+                                      LessThanToken
+                                      Identifier: ' progress'
+                                    Block
+                                      ExpressionStatement
+                                        BinaryExpression
+                                          Identifier: '
+                                nextProgress'
+                                          PlusEqualsToken
+                                          Identifier: ' progressUpdateInterval'
+                                  ExpressionStatement
+                                    CallExpression
+                                      Identifier: '
+                            updateProgress'
+                                      Identifier: 'progress'
+                                      ConditionalExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' errorResults'
+                                          Identifier: 'length'
+                                        QuestionToken
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            PropertyAccessExpression
+                                              Identifier: 'errorResults'
+                                              Identifier: 'length'
+                                            TemplateTail
+                                        ColonToken
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            Identifier: 'totalPassing'
+                                            TemplateTail
+                                      ConditionalExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' errorResults'
+                                          Identifier: 'length'
+                                        QuestionToken
+                                        StringLiteral
+                                        ColonToken
+                                        Identifier: ' undefined'
+                              IfStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'data'
+                                    Identifier: 'type'
+                                  EqualsEqualsEqualsToken
+                                  StringLiteral
+                                Block
+                                  IfStatement
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'tasks'
+                                        Identifier: 'length'
+                                      EqualsEqualsEqualsToken
+                                      NumericLiteral
+                                    Block
+                                      ExpressionStatement
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+                                // No more tasks to distribute
+                                worker'
+                                              Identifier: 'process'
+                                            Identifier: 'send'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' type'
+                                              StringLiteral
+                                      ExpressionStatement
+                                        PostfixUnaryExpression
+                                          Identifier: '
+                                closedWorkers'
+                                      IfStatement
+                                        BinaryExpression
+                                          Identifier: 'closedWorkers'
+                                          EqualsEqualsEqualsToken
+                                          Identifier: ' workerCount'
+                                        Block
+                                          ExpressionStatement
+                                            CallExpression
+                                              Identifier: '
+                                    outputFinalResult'
+                                      ReturnStatement
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' taskList'
+                                        ArrayLiteralExpression
+                                          NonNullExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'tasks'
+                                                Identifier: 'pop'
+                                  WhileStatement
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'tasks'
+                                        Identifier: 'length'
+                                      AmpersandAmpersandToken
+                                      BinaryExpression
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' taskList'
+                                            Identifier: 'reduce'
+                                          ArrowFunction
+                                            Parameter
+                                              Identifier: 'p'
+                                            Parameter
+                                              Identifier: ' c'
+                                            EqualsGreaterThanToken
+                                            BinaryExpression
+                                              Identifier: ' p'
+                                              PlusToken
+                                              PropertyAccessExpression
+                                                Identifier: ' c'
+                                                Identifier: 'size'
+                                          NumericLiteral
+                                        LessThanToken
+                                        Identifier: ' chunkSize'
+                                    Block
+                                      ExpressionStatement
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                                taskList'
+                                            Identifier: 'push'
+                                          NonNullExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'tasks'
+                                                Identifier: 'pop'
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            worker'
+                                        Identifier: 'currentTasks'
+                                      EqualsToken
+                                      Identifier: ' taskList'
+                                  IfStatement
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'taskList'
+                                        Identifier: 'length'
+                                      EqualsEqualsEqualsToken
+                                      NumericLiteral
+                                    Block
+                                      ExpressionStatement
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+                                worker'
+                                              Identifier: 'process'
+                                            Identifier: 'send'
+                                          SatisfiesExpression
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: ' type'
+                                                StringLiteral
+                                              PropertyAssignment
+                                                Identifier: ' payload'
+                                                ElementAccessExpression
+                                                  Identifier: ' taskList'
+                                                  NumericLiteral
+                                            TypeReference
+                                              Identifier: ' ParallelHostMessage'
+                                    Block
+                                      ExpressionStatement
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+                                worker'
+                                              Identifier: 'process'
+                                            Identifier: 'send'
+                                          SatisfiesExpression
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: ' type'
+                                                StringLiteral
+                                              PropertyAssignment
+                                                Identifier: ' payload'
+                                                Identifier: ' taskList'
+                                            TypeReference
+                                              Identifier: ' ParallelHostMessage'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            workers'
+                    Identifier: 'push'
+                  Identifier: 'worker'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'totalFiles'
+                GreaterThanToken
+                NumericLiteral
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' batchSize'
+                GreaterThanToken
+                NumericLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            console'
+                    Identifier: 'log'
+                  StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' batches'
+                    ArrayType
+                      ArrayType
+                        TypeLiteral
+                          PropertySignature
+                            Identifier: ' runner'
+                            UnionType
+                              TypeReference
+                                Identifier: ' TestRunnerKind'
+                              LiteralType
+                                StringLiteral
+                          PropertySignature
+                            Identifier: ' file'
+                            StringKeyword
+                          PropertySignature
+                            Identifier: ' size'
+                            NumberKeyword
+                    NewExpression
+                      Identifier: ' Array'
+                      Identifier: 'batchCount'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' doneBatching'
+                    NewExpression
+                      Identifier: ' Array'
+                      Identifier: 'batchCount'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' scheduledTotal'
+                    NumericLiteral
+              LabeledStatement
+                Identifier: '
+            batcher'
+                WhileStatement
+                  TrueKeyword
+                  Block
+                    ForStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' i'
+                          NumericLiteral
+                      BinaryExpression
+                        Identifier: ' i'
+                        LessThanToken
+                        Identifier: ' batchCount'
+                      PostfixUnaryExpression
+                        Identifier: ' i'
+                      Block
+                        IfStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'tasks'
+                              Identifier: 'length'
+                            LessThanEqualsToken
+                            Identifier: ' workerCount'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' // Keep a small reserve even in the suboptimally packed case
+                        console'
+                                  Identifier: 'log'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'packfraction'
+                                    TemplateTail
+                            BreakStatement
+                              Identifier: ' batcher'
+                        IfStatement
+                          ElementAccessExpression
+                            Identifier: 'doneBatching'
+                            Identifier: 'i'
+                          Block
+                            ContinueStatement
+                        IfStatement
+                          PrefixUnaryExpression
+                            ElementAccessExpression
+                              Identifier: 'batches'
+                              Identifier: 'i'
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                ElementAccessExpression
+                                  Identifier: '
+                        batches'
+                                  Identifier: 'i'
+                                EqualsToken
+                                ArrayLiteralExpression
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' total'
+                              CallExpression
+                                PropertyAccessExpression
+                                  ElementAccessExpression
+                                    Identifier: ' batches'
+                                    Identifier: 'i'
+                                  Identifier: 'reduce'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: 'p'
+                                  Parameter
+                                    Identifier: ' c'
+                                  EqualsGreaterThanToken
+                                  BinaryExpression
+                                    Identifier: ' p'
+                                    PlusToken
+                                    PropertyAccessExpression
+                                      Identifier: ' c'
+                                      Identifier: 'size'
+                                NumericLiteral
+                        IfStatement
+                          BinaryExpression
+                            Identifier: 'total'
+                            GreaterThanEqualsToken
+                            Identifier: ' batchSize'
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                ElementAccessExpression
+                                  Identifier: '
+                        doneBatching'
+                                  Identifier: 'i'
+                                EqualsToken
+                                TrueKeyword
+                            ContinueStatement
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' task'
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' tasks'
+                                    Identifier: 'pop'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              ElementAccessExpression
+                                Identifier: '
+                    batches'
+                                Identifier: 'i'
+                              Identifier: 'push'
+                            Identifier: 'task'
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                    scheduledTotal'
+                            PlusEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' task'
+                              Identifier: 'size'
+                    ForStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' j'
+                          NumericLiteral
+                      BinaryExpression
+                        Identifier: ' j'
+                        LessThanToken
+                        Identifier: ' batchCount'
+                      PostfixUnaryExpression
+                        Identifier: ' j'
+                      Block
+                        IfStatement
+                          PrefixUnaryExpression
+                            ElementAccessExpression
+                              Identifier: 'doneBatching'
+                              Identifier: 'j'
+                          Block
+                            ContinueStatement
+                              Identifier: ' batcher'
+                    BreakStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' prefix'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'batchCount'
+                        TemplateTail
+              IfStatement
+                Identifier: 'unknownValue'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                console'
+                        Identifier: 'log'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'prefix'
+                          TemplateMiddle
+                        TemplateSpan
+                          Identifier: 'unknownValue'
+                          TemplateTail
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                console'
+                        Identifier: 'log'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'prefix'
+                          TemplateMiddle
+                        TemplateSpan
+                          ConditionalExpression
+                            Identifier: 'perfData'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            StringLiteral
+                          TemplateMiddle
+                        TemplateSpan
+                          ConditionalExpression
+                            Identifier: 'perfData'
+                            QuestionToken
+                            CallExpression
+                              Identifier: ' ms'
+                              Identifier: 'batchSize'
+                            ColonToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'Math'
+                                    Identifier: 'floor'
+                                  Identifier: 'batchSize'
+                                TemplateTail
+                          TemplateMiddle
+                        TemplateSpan
+                          CallExpression
+                            PropertyAccessExpression
+                              ParenthesizedExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    Identifier: 'scheduledTotal'
+                                    SlashToken
+                                    Identifier: ' totalCost'
+                                  AsteriskToken
+                                  NumericLiteral
+                              Identifier: 'toFixed'
+                            NumericLiteral
+                          TemplateTail
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' worker'
+                Identifier: ' workers'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' payload'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' batches'
+                            Identifier: 'pop'
+                  IfStatement
+                    Identifier: 'payload'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    worker'
+                            Identifier: 'currentTasks'
+                          EqualsToken
+                          Identifier: ' payload'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    worker'
+                              Identifier: 'process'
+                            Identifier: 'send'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' type'
+                              StringLiteral
+                            ShorthandPropertyAssignment
+                              Identifier: ' payload'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' payload'
+                            NonNullExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' tasks'
+                                  Identifier: 'pop'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    ts'
+                              Identifier: 'Debug'
+                            Identifier: 'assert'
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              Identifier: 'payload'
+                      ExpressionStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' // The reserve kept above should ensure there is always an initial task available, even in suboptimal scenarios
+                    worker'
+                            Identifier: 'currentTasks'
+                          EqualsToken
+                          ArrayLiteralExpression
+                            Identifier: 'payload'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    worker'
+                              Identifier: 'process'
+                            Identifier: 'send'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' type'
+                              StringLiteral
+                            ShorthandPropertyAssignment
+                              Identifier: ' payload'
+            Block
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' i'
+                    NumericLiteral
+                BinaryExpression
+                  Identifier: ' i'
+                  LessThanToken
+                  Identifier: ' workerCount'
+                PostfixUnaryExpression
+                  Identifier: ' i'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' task'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' tasks'
+                              Identifier: 'pop'
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: '
+                workers'
+                          Identifier: 'i'
+                        Identifier: 'currentTasks'
+                      EqualsToken
+                      ArrayLiteralExpression
+                        Identifier: 'task'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: '
+                workers'
+                            Identifier: 'i'
+                          Identifier: 'process'
+                        Identifier: 'send'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' type'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: ' payload'
+                          Identifier: ' task'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        progressBars'
+                Identifier: 'enable'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        updateProgress'
+              NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' duration'
+                NumberKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' endDate'
+                TypeReference
+                  Identifier: ' Date'
+          FunctionDeclaration
+            Identifier: ' completeBar'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' isPartitionFail'
+                    BinaryExpression
+                      Identifier: ' failingFiles'
+                      ExclamationEqualsEqualsToken
+                      NumericLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' summaryColor'
+                    ConditionalExpression
+                      Identifier: ' isPartitionFail'
+                      QuestionToken
+                      StringLiteral
+                      ColonToken
+                      StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' summarySymbol'
+                    ConditionalExpression
+                      Identifier: ' isPartitionFail'
+                      QuestionToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' Base'
+                          Identifier: 'symbols'
+                        Identifier: 'err'
+                      ColonToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' Base'
+                          Identifier: 'symbols'
+                        Identifier: 'ok'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' summaryTests'
+                    BinaryExpression
+                      ParenthesizedExpression
+                        ConditionalExpression
+                          Identifier: 'isPartitionFail'
+                          QuestionToken
+                          BinaryExpression
+                            BinaryExpression
+                              Identifier: ' totalPassing'
+                              PlusToken
+                              StringLiteral
+                            PlusToken
+                            ParenthesizedExpression
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'errorResults'
+                                  Identifier: 'length'
+                                PlusToken
+                                Identifier: ' totalPassing'
+                          ColonToken
+                          Identifier: ' totalPassing'
+                      PlusToken
+                      StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' summaryDuration'
+                    BinaryExpression
+                      BinaryExpression
+                        StringLiteral
+                        PlusToken
+                        CallExpression
+                          Identifier: ' ms'
+                          Identifier: 'duration'
+                      PlusToken
+                      StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' savedUseColors'
+                    PropertyAccessExpression
+                      Identifier: ' Base'
+                      Identifier: 'useColors'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            Base'
+                    Identifier: 'useColors'
+                  EqualsToken
+                  PrefixUnaryExpression
+                    Identifier: 'noColors'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' summary'
+                    BinaryExpression
+                      BinaryExpression
+                        CallExpression
+                          Identifier: ' color'
+                          Identifier: 'summaryColor'
+                          BinaryExpression
+                            BinaryExpression
+                              Identifier: ' summarySymbol'
+                              PlusToken
+                              StringLiteral
+                            PlusToken
+                            Identifier: ' summaryTests'
+                        PlusToken
+                        StringLiteral
+                      PlusToken
+                      CallExpression
+                        Identifier: ' color'
+                        StringLiteral
+                        Identifier: ' summaryDuration'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            Base'
+                    Identifier: 'useColors'
+                  EqualsToken
+                  Identifier: ' savedUseColors'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+            updateProgress'
+                  NumericLiteral
+                  Identifier: ' summary'
+          FunctionDeclaration
+            Identifier: ' updateProgress'
+            Parameter
+              Identifier: 'percentComplete'
+              NumberKeyword
+            Parameter
+              Identifier: ' title'
+              QuestionToken
+              StringKeyword
+            Parameter
+              Identifier: ' titleColor'
+              QuestionToken
+              StringKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' progressColor'
+                    StringLiteral
+              IfStatement
+                Identifier: 'failingFiles'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                progressColor'
+                      EqualsToken
+                      StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            progressBars'
+                    Identifier: 'update'
+                  NumericLiteral
+                  Identifier: '
+                percentComplete'
+                  Identifier: '
+                progressColor'
+                  Identifier: '
+                title'
+                  Identifier: '
+                titleColor'
+          FunctionDeclaration
+            Identifier: ' outputFinalResult'
+            Block
+              FunctionDeclaration
+                Identifier: ' patchStats'
+                Parameter
+                  Identifier: 'stats'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' Mocha'
+                      Identifier: 'Stats'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                Object'
+                        Identifier: 'defineProperties'
+                      Identifier: 'stats'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    start'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                        configurable'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: '
+                        enumerable'
+                              TrueKeyword
+                            MethodDeclaration
+                              Identifier: '
+                        get'
+                              Block
+                                ReturnStatement
+                                  Identifier: ' startDate'
+                            MethodDeclaration
+                              Identifier: '
+                        set'
+                              Parameter
+                                Identifier: '_'
+                                TypeReference
+                                  Identifier: ' Date'
+                              Block
+                        PropertyAssignment
+                          Identifier: '
+                    end'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                        configurable'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: '
+                        enumerable'
+                              TrueKeyword
+                            MethodDeclaration
+                              Identifier: '
+                        get'
+                              Block
+                                ReturnStatement
+                                  Identifier: ' endDate'
+                            MethodDeclaration
+                              Identifier: '
+                        set'
+                              Parameter
+                                Identifier: '_'
+                                TypeReference
+                                  Identifier: ' Date'
+                              Block
+                        PropertyAssignment
+                          Identifier: '
+                    duration'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                        configurable'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: '
+                        enumerable'
+                              TrueKeyword
+                            MethodDeclaration
+                              Identifier: '
+                        get'
+                              Block
+                                ReturnStatement
+                                  Identifier: ' duration'
+                            MethodDeclaration
+                              Identifier: '
+                        set'
+                              Parameter
+                                Identifier: '_'
+                                NumberKeyword
+                              Block
+              FunctionDeclaration
+                Identifier: ' rebuildSuite'
+                Parameter
+                  Identifier: 'failures'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' ErrorInfo'
+                Parameter
+                  Identifier: ' passes'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' TestInfo'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' root'
+                        NewExpression
+                          Identifier: ' RemoteSuite'
+                          StringLiteral
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                    AsExpression
+                      ArrayLiteralExpression
+                        SpreadElement
+                          Identifier: 'failures'
+                        SpreadElement
+                          Identifier: 'passes'
+                      ArrayType
+                        ParenthesizedType
+                          UnionType
+                            TypeReference
+                              Identifier: 'ErrorInfo'
+                            TypeReference
+                              Identifier: ' TestInfo'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              Identifier: '
+                    getSuite'
+                              Identifier: 'root'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' result'
+                                    Identifier: 'name'
+                                  Identifier: 'slice'
+                                NumericLiteral
+                                PrefixUnaryExpression
+                                  NumericLiteral
+                            Identifier: 'addTest'
+                          NewExpression
+                            Identifier: ' RemoteTest'
+                            Identifier: 'result'
+                  ReturnStatement
+                    Identifier: ' root'
+                  FunctionDeclaration
+                    Identifier: ' getSuite'
+                    Parameter
+                      Identifier: 'parent'
+                      TypeReference
+                        Identifier: ' RemoteSuite'
+                    Parameter
+                      Identifier: ' titlePath'
+                      ArrayType
+                        StringKeyword
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Suite'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' title'
+                            ElementAccessExpression
+                              Identifier: ' titlePath'
+                              NumericLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' suite'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' parent'
+                                  Identifier: 'suiteMap'
+                                Identifier: 'get'
+                              Identifier: 'title'
+                      IfStatement
+                        PrefixUnaryExpression
+                          Identifier: 'suite'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' parent'
+                              Identifier: 'addSuite'
+                            BinaryExpression
+                              Identifier: 'suite'
+                              EqualsToken
+                              NewExpression
+                                Identifier: ' RemoteSuite'
+                                Identifier: 'title'
+                      ReturnStatement
+                        ConditionalExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' titlePath'
+                              Identifier: 'length'
+                            EqualsEqualsEqualsToken
+                            NumericLiteral
+                          QuestionToken
+                          Identifier: ' suite'
+                          ColonToken
+                          CallExpression
+                            Identifier: ' getSuite'
+                            Identifier: 'suite'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' titlePath'
+                                Identifier: 'slice'
+                              NumericLiteral
+              FunctionDeclaration
+                Identifier: ' rebuildError'
+                Parameter
+                  Identifier: 'result'
+                  TypeReference
+                    Identifier: ' ErrorInfo'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' error'
+                        NewExpression
+                          Identifier: ' Error'
+                          PropertyAccessExpression
+                            Identifier: 'result'
+                            Identifier: 'error'
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                error'
+                        Identifier: 'stack'
+                      EqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' result'
+                        Identifier: 'stack'
+                  ReturnStatement
+                    Identifier: ' error'
+              FunctionDeclaration
+                Identifier: ' replaySuite'
+                Parameter
+                  Identifier: 'runner'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' Mocha'
+                      Identifier: 'Runner'
+                Parameter
+                  Identifier: ' suite'
+                  TypeReference
+                    Identifier: ' RemoteSuite'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                runner'
+                        Identifier: 'emit'
+                      StringLiteral
+                      Identifier: ' suite'
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' test'
+                    PropertyAccessExpression
+                      Identifier: ' suite'
+                      Identifier: 'tests'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                    replayTest'
+                          Identifier: 'runner'
+                          AsExpression
+                            Identifier: ' test'
+                            TypeReference
+                              Identifier: ' RemoteTest'
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' child'
+                    PropertyAccessExpression
+                      Identifier: ' suite'
+                      Identifier: 'suites'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                    replaySuite'
+                          Identifier: 'runner'
+                          AsExpression
+                            Identifier: ' child'
+                            TypeReference
+                              Identifier: ' RemoteSuite'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                runner'
+                        Identifier: 'emit'
+                      StringLiteral
+                      Identifier: ' suite'
+              FunctionDeclaration
+                Identifier: ' replayTest'
+                Parameter
+                  Identifier: 'runner'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' Mocha'
+                      Identifier: 'Runner'
+                Parameter
+                  Identifier: ' test'
+                  TypeReference
+                    Identifier: ' RemoteTest'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                runner'
+                        Identifier: 'emit'
+                      StringLiteral
+                      Identifier: ' test'
+                  IfStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'test'
+                        Identifier: 'isFailed'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    runner'
+                            Identifier: 'emit'
+                          StringLiteral
+                          Identifier: ' test'
+                          ConditionalExpression
+                            BinaryExpression
+                              StringLiteral
+                              InKeyword
+                              PropertyAccessExpression
+                                Identifier: ' test'
+                                Identifier: 'info'
+                            QuestionToken
+                            CallExpression
+                              Identifier: ' rebuildError'
+                              PropertyAccessExpression
+                                Identifier: 'test'
+                                Identifier: 'info'
+                            ColonToken
+                            NewExpression
+                              Identifier: ' Error'
+                              StringLiteral
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    runner'
+                            Identifier: 'emit'
+                          StringLiteral
+                          Identifier: ' test'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                runner'
+                        Identifier: 'emit'
+                      StringLiteral
+                      Identifier: ' test'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            endDate'
+                  EqualsToken
+                  NewExpression
+                    Identifier: ' Date'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            duration'
+                  EqualsToken
+                  BinaryExpression
+                    PrefixUnaryExpression
+                      Identifier: 'endDate'
+                    MinusToken
+                    PrefixUnaryExpression
+                      Identifier: 'startDate'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            completeBar'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            progressBars'
+                    Identifier: 'disable'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' replayRunner'
+                    NewExpression
+                      PropertyAccessExpression
+                        Identifier: ' Mocha'
+                        Identifier: 'Runner'
+                      NewExpression
+                        PropertyAccessExpression
+                          Identifier: ' Mocha'
+                          Identifier: 'Suite'
+                        StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' delay'
+                          FalseKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            replayRunner'
+                    Identifier: 'started'
+                  EqualsToken
+                  TrueKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' createStatsCollector'
+                    CallExpression
+                      Identifier: ' require'
+                      StringLiteral
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            createStatsCollector'
+                  Identifier: 'replayRunner'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' consoleReporter'
+                    NewExpression
+                      Identifier: ' Base'
+                      Identifier: 'replayRunner'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            patchStats'
+                  PropertyAccessExpression
+                    Identifier: 'consoleReporter'
+                    Identifier: 'stats'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' xunitReporter'
+                    UnionType
+                      ImportType
+                        LiteralType
+                          StringLiteral
+                        QualifiedName
+                          Identifier: 'reporters'
+                          Identifier: 'XUnit'
+                      UndefinedKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' failedTestReporter'
+                    UnionType
+                      ImportType
+                        LiteralType
+                          StringLiteral
+                      UndefinedKeyword
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'process'
+                      Identifier: 'env'
+                    Identifier: 'CI'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                xunitReporter'
+                      EqualsToken
+                      NewExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' Mocha'
+                            Identifier: 'reporters'
+                          Identifier: 'XUnit'
+                        Identifier: 'replayRunner'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    reporterOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        suiteName'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                        output'
+                                StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                patchStats'
+                      PropertyAccessExpression
+                        Identifier: 'xunitReporter'
+                        Identifier: 'stats'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                xunitReporter'
+                        Identifier: 'write'
+                      NoSubstitutionTemplateLiteral
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                failedTestReporter'
+                      EqualsToken
+                      NewExpression
+                        Identifier: ' FailedTestReporter'
+                        Identifier: 'replayRunner'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    reporterOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        file'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' path'
+                                    Identifier: 'resolve'
+                                  StringLiteral
+                              ShorthandPropertyAssignment
+                                Identifier: '
+                        keepFailed'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' savedUseColors'
+                    PropertyAccessExpression
+                      Identifier: ' Base'
+                      Identifier: 'useColors'
+              IfStatement
+                Identifier: 'noColors'
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' Base'
+                      Identifier: 'useColors'
+                    EqualsToken
+                    FalseKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            replayRunner'
+                    Identifier: 'started'
+                  EqualsToken
+                  TrueKeyword
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            replayRunner'
+                    Identifier: 'emit'
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            replaySuite'
+                  Identifier: 'replayRunner'
+                  CallExpression
+                    Identifier: ' rebuildSuite'
+                    Identifier: 'errorResults'
+                    Identifier: ' passingResults'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            replayRunner'
+                    Identifier: 'emit'
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            consoleReporter'
+                    Identifier: 'epilogue'
+              IfStatement
+                Identifier: 'noColors'
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' Base'
+                      Identifier: 'useColors'
+                    EqualsToken
+                    Identifier: ' savedUseColors'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            // eslint-disable-next-line no-restricted-syntax
+            IO'
+                    Identifier: 'writeFile'
+                  CallExpression
+                    Identifier: 'perfdataFileName'
+                    Identifier: 'configOption'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' JSON'
+                      Identifier: 'stringify'
+                    Identifier: 'newPerfData'
+                    NullKeyword
+                    NumericLiteral
+              IfStatement
+                Identifier: 'xunitReporter'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                xunitReporter'
+                        Identifier: 'done'
+                      PropertyAccessExpression
+                        Identifier: 'errorResults'
+                        Identifier: 'length'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' failures'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' process'
+                            Identifier: 'exit'
+                          Identifier: 'failures'
+                IfStatement
+                  Identifier: 'failedTestReporter'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                failedTestReporter'
+                          Identifier: 'done'
+                        PropertyAccessExpression
+                          Identifier: 'errorResults'
+                          Identifier: 'length'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' failures'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' process'
+                              Identifier: 'exit'
+                            Identifier: 'failures'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                process'
+                          Identifier: 'exit'
+                        PropertyAccessExpression
+                          Identifier: 'errorResults'
+                          Identifier: 'length'
+      FunctionDeclaration
+        Identifier: ' fill'
+        Parameter
+          Identifier: 'ch'
+          StringKeyword
+        Parameter
+          Identifier: ' size'
+          NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s'
+                StringLiteral
+          WhileStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 's'
+                Identifier: 'length'
+              LessThanToken
+              Identifier: ' size'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            s'
+                  PlusEqualsToken
+                  Identifier: ' ch'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' s'
+                  Identifier: 'length'
+                GreaterThanToken
+                Identifier: ' size'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' s'
+                  Identifier: 'substr'
+                NumericLiteral
+                Identifier: ' size'
+              ColonToken
+              Identifier: ' s'
+      FunctionDeclaration
+        Identifier: ' minMax'
+        Parameter
+          Identifier: 'value'
+          NumberKeyword
+        Parameter
+          Identifier: ' min'
+          NumberKeyword
+        Parameter
+          Identifier: ' max'
+          NumberKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'value'
+              LessThanToken
+              Identifier: ' min'
+            ReturnStatement
+              Identifier: ' min'
+          IfStatement
+            BinaryExpression
+              Identifier: 'value'
+              GreaterThanToken
+              Identifier: ' max'
+            ReturnStatement
+              Identifier: ' max'
+          ReturnStatement
+            Identifier: ' value'
+      FunctionDeclaration
+        Identifier: ' shimDiscoveryInterface'
+        Parameter
+          Identifier: 'context'
+          TypeReference
+            QualifiedName
+              Identifier: ' Mocha'
+              Identifier: 'MochaGlobals'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        shimNoopTestInterface'
+              Identifier: 'context'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' perfData'
+                CallExpression
+                  Identifier: ' readSavedPerfData'
+                  Identifier: 'configOption'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'describe'
+              EqualsToken
+              AsExpression
+                Identifier: ' addSuite'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' Mocha'
+                    Identifier: 'SuiteFunction'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'it'
+              EqualsToken
+              AsExpression
+                Identifier: ' addSuite'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' Mocha'
+                    Identifier: 'TestFunction'
+          FunctionDeclaration
+            Identifier: ' addSuite'
+            Parameter
+              Identifier: 'title'
+              StringKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' size'
+                    NumericLiteral
+              IfStatement
+                Identifier: 'perfData'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                size'
+                      EqualsToken
+                      ElementAccessExpression
+                        Identifier: ' perfData'
+                        CallExpression
+                          Identifier: 'hashName'
+                          StringLiteral
+                          Identifier: ' title'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'size'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' undefined'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    newTasks'
+                            Identifier: 'push'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' runner'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' file'
+                              Identifier: ' title'
+                            PropertyAssignment
+                              Identifier: ' size'
+                              NumericLiteral
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    unknownValue'
+                          EqualsToken
+                          Identifier: ' title'
+                      ReturnStatement
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            tasks'
+                    Identifier: 'push'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' runner'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' file'
+                      Identifier: ' title'
+                    ShorthandPropertyAssignment
+                      Identifier: ' size'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            totalCost'
+                  PlusEqualsToken
+                  Identifier: ' size'
+      IfStatement
+        Identifier: 'runUnitTests'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        shimDiscoveryInterface'
+              Identifier: 'global'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        shimNoopTestInterface'
+              Identifier: 'global'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: '
+
+    importTests'
+            Identifier: 'then'
+          ArrowFunction
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' startDelayed'
+              Identifier: 'perfData'
+              Identifier: ' totalCost'

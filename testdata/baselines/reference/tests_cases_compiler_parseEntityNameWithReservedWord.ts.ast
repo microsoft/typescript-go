@@ -1,0 +1,16 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Bool'
+    EnumMember
+      Identifier: ' false'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          QualifiedName
+            Identifier: ' Bool'
+            Identifier: 'false'
+        PropertyAccessExpression
+          Identifier: ' Bool'
+          Identifier: 'false'

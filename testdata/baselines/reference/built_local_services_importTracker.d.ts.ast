@@ -1,0 +1,296 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CancellationToken'
+        ImportSpecifier
+          Identifier: ' FileReference'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' ModuleExportName'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' StringLiteral'
+        ImportSpecifier
+          Identifier: ' StringLiteralLike'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ImportsResult'
+    PropertySignature
+      Identifier: '
+    /** For every import of the symbol, the location and local symbol for the import. */
+    importSearches'
+      TypeOperator
+        ArrayType
+          TupleType
+            TypeReference
+              Identifier: 'ModuleExportName'
+            TypeReference
+              Identifier: ' Symbol'
+    PropertySignature
+      Identifier: '
+    /** For rename imports/exports `{ foo as bar }`, `foo` is not a local, so it may be added as a reference immediately without further searching. */
+    singleReferences'
+      TypeOperator
+        ArrayType
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'Identifier'
+              TypeReference
+                Identifier: ' StringLiteral'
+    PropertySignature
+      Identifier: '
+    /** List of source files that may (or may not) use the symbol via a namespace. (For UMD modules this is every file.) */
+    indirectUsers'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SourceFile'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ImportTracker'
+    FunctionType
+      Parameter
+        Identifier: 'exportSymbol'
+        TypeReference
+          Identifier: ' Symbol'
+      Parameter
+        Identifier: ' exportInfo'
+        TypeReference
+          Identifier: ' ExportInfo'
+      Parameter
+        Identifier: ' isForRename'
+        BooleanKeyword
+      TypeReference
+        Identifier: ' ImportsResult'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createImportTracker'
+    Parameter
+      Identifier: 'sourceFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' sourceFilesSet'
+      TypeReference
+        Identifier: ' ReadonlySet'
+        StringKeyword
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' cancellationToken'
+      UnionType
+        TypeReference
+          Identifier: ' CancellationToken'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' ImportTracker'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ExportInfo'
+    PropertySignature
+      Identifier: '
+    exportingModuleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    PropertySignature
+      Identifier: '
+    exportKind'
+      TypeReference
+        Identifier: ' ExportKind'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' ExportKind'
+    EnumMember
+      Identifier: '
+    Named'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Default'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ExportEquals'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' ImportExport'
+    EnumMember
+      Identifier: '
+    Import'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Export'
+      NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ModuleReference'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    kind'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: '
+    literal'
+          TypeReference
+            Identifier: ' StringLiteralLike'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    kind'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: '
+    referencingFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        PropertySignature
+          Identifier: '
+    ref'
+          TypeReference
+            Identifier: ' FileReference'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    kind'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: '
+    literal'
+          TypeReference
+            Identifier: ' StringLiteralLike'
+        PropertySignature
+          Identifier: '
+    referencingFile'
+          TypeReference
+            Identifier: ' SourceFile'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' findModuleReferences'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' sourceFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' searchModuleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    ArrayType
+      TypeReference
+        Identifier: ' ModuleReference'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ImportedSymbol'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' ImportExport'
+          Identifier: 'Import'
+    PropertySignature
+      Identifier: '
+    symbol'
+      TypeReference
+        Identifier: ' Symbol'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ExportedSymbol'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' ImportExport'
+          Identifier: 'Export'
+    PropertySignature
+      Identifier: '
+    symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    PropertySignature
+      Identifier: '
+    exportInfo'
+      TypeReference
+        Identifier: ' ExportInfo'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getImportOrExportSymbol'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' comingFromExport'
+      BooleanKeyword
+    UnionType
+      TypeReference
+        Identifier: ' ImportedSymbol'
+      TypeReference
+        Identifier: ' ExportedSymbol'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getExportInfo'
+    Parameter
+      Identifier: 'exportSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' exportKind'
+      TypeReference
+        Identifier: ' ExportKind'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeReference
+        Identifier: ' ExportInfo'
+      UndefinedKeyword

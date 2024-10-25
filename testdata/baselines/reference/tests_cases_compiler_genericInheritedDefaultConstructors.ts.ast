@@ -1,0 +1,49 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'T'
+    ConstructSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    prototype'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'U'
+    PropertyDeclaration
+      Identifier: ' a'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'V'
+    PropertyDeclaration
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' V'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: 'Constructor'
+          TypeReference
+            Identifier: 'B'
+            BooleanKeyword
+        Identifier: ' B'

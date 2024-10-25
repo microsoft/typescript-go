@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////// top-heavy region balance
+////// #region unmatched
+////
+////[|// #region matched
+////
+////// #endregion matched|]
+
+verify'
+        Identifier: 'outliningSpansInCurrentFile'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'test'
+          Identifier: 'ranges'
+      StringLiteral

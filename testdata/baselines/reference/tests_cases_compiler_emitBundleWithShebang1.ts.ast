@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      RegularExpressionLiteral
+      SlashToken
+      Identifier: 'env'
+  ExpressionStatement
+    Identifier: ' gjs'
+  ClassDeclaration
+    Identifier: ' Doo'
+  ClassDeclaration
+    Identifier: ' Scooby'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Doo'

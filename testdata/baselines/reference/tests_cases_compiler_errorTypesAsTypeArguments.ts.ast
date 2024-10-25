@@ -1,0 +1,18 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'A'
+    MethodSignature
+      Identifier: '
+  bar'
+      Parameter
+        Identifier: 'baz'
+        TypeReference
+          Identifier: ' Foo'
+          TypeReference
+            Identifier: 'B'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'C'

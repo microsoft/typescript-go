@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '/// <reference path='fourslash.ts' />
+
+// @checkJs: true
+// @allowJs: true
+// @filename: a.js
+////let x = /** @type {string} */ (100);
+
+verify'
+          Identifier: 'not'
+        Identifier: 'codeFixAvailable'
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'ts'
+            Identifier: 'Diagnostics'
+          Identifier: 'Add_unknown_conversion_for_non_overlapping_types'
+        Identifier: 'message'

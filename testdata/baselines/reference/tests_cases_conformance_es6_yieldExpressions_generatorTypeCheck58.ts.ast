@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        PropertyDeclaration
+          StaticKeyword
+          Identifier: ' x'
+          YieldExpression
+            NumericLiteral
+      EmptyStatement

@@ -1,0 +1,12 @@
+SourceFile
+  IfStatement
+    FalseKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            FunctionExpression
+              Parameter
+                Identifier: 's'
+              Block

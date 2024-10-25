@@ -1,0 +1,102 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringKeyword
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' y'
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        StringKeyword
+        Identifier: ' b'
+      VariableDeclaration
+        Identifier: ' d'
+        Identifier: ' c'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k'
+            Identifier: ' a'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' l'
+            StringKeyword
+            Identifier: ' b'
+          VariableDeclaration
+            Identifier: ' m'
+            Identifier: ' k'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            PropertyAccessExpression
+              Identifier: ' m1'
+              Identifier: 'k'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o'
+            StringKeyword
+            Identifier: ' n'
+          VariableDeclaration
+            Identifier: ' p'
+            Identifier: ' k'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k'
+            Identifier: ' a'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' l'
+            StringKeyword
+            Identifier: ' b'
+          VariableDeclaration
+            Identifier: ' m'
+            Identifier: ' k'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            PropertyAccessExpression
+              Identifier: ' m1'
+              Identifier: 'k'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o'
+            StringKeyword
+            Identifier: ' n'
+          VariableDeclaration
+            Identifier: ' p'
+            Identifier: ' k'

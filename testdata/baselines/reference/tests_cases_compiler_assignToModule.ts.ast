@@ -1,0 +1,10 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+A'
+      EqualsToken
+      Identifier: ' undefined'

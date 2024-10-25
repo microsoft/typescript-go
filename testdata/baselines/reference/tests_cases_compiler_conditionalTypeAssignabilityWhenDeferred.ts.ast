@@ -1,0 +1,649 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' FilterPropsByType'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' TT'
+    IndexedAccessType
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        ConditionalType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'K'
+          TypeReference
+            Identifier: ' TT'
+          TypeReference
+            Identifier: ' K'
+          NeverKeyword
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' select'
+    TypeParameter
+      Identifier: '
+  T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    TypeParameter
+      Identifier: '
+  TList'
+      ObjectKeyword
+    TypeParameter
+      Identifier: '
+  TValueProp'
+      TypeReference
+        Identifier: ' FilterPropsByType'
+        TypeReference
+          Identifier: 'TList'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'property'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' list'
+      ArrayType
+        TypeReference
+          Identifier: ' TList'
+    Parameter
+      Identifier: ' valueProp'
+      TypeReference
+        Identifier: ' TValueProp'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' func'
+    TypeParameter
+      Identifier: 'XX'
+      StringKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' XX'
+    Parameter
+      Identifier: ' tipos'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' XX'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  select'
+          Identifier: 'x'
+          Identifier: ' tipos'
+          StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' onlyNullablePlease'
+    TypeParameter
+      Identifier: 'T'
+      ConditionalType
+        LiteralType
+          NullKeyword
+        TypeReference
+          Identifier: ' T'
+        AnyKeyword
+        NeverKeyword
+    Parameter
+      Identifier: '
+  value'
+      TypeReference
+        Identifier: ' T'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' onlyNullablePlease2'
+    TypeParameter
+      Identifier: '
+  T'
+      ConditionalType
+        TupleType
+          LiteralType
+            NullKeyword
+        TupleType
+          TypeReference
+            Identifier: 'T'
+        AnyKeyword
+        NeverKeyword
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' T'
+    VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        UnionType
+          StringKeyword
+          LiteralType
+            NullKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+onlyNullablePlease'
+      Identifier: 'z'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // works as expected
+onlyNullablePlease2'
+      Identifier: 'z'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+onlyNullablePlease'
+      Identifier: 'y'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error as expected
+onlyNullablePlease2'
+      Identifier: 'y'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              TypeReference
+                Identifier: ' T'
+              LiteralType
+                NullKeyword
+            ConditionalExpression
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Math'
+                    Identifier: 'random'
+                GreaterThanToken
+                NumericLiteral
+              QuestionToken
+              NullKeyword
+              ColonToken
+              Identifier: ' t'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  onlyNullablePlease'
+          Identifier: 'x'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // should work
+  onlyNullablePlease2'
+          Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't1'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' t2'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+          PropertySignature
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+        NeverKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+  t1'
+          EqualsToken
+          Identifier: ' t2'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // OK
+  t2'
+          EqualsToken
+          Identifier: ' t1'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      LiteralType
+        TrueKeyword
+      StringKeyword
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' s'
+      StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+  x'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // Currently an error, should be ok
+  x'
+          EqualsToken
+          Identifier: ' s'
+  TypeAliasDeclaration
+    Identifier: ' Distributive'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+  FunctionDeclaration
+    Identifier: ' testAssignabilityToConditionalType'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ConditionalType
+              TupleType
+                TypeReference
+                  Identifier: 'T'
+              TupleType
+                StringKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' y'
+                  NumberKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  NumberKeyword
+                PropertySignature
+                  Identifier: ' b'
+                  NumberKeyword
+            NonNullExpression
+              Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o1'
+            ConditionalType
+              TupleType
+                TypeReference
+                  Identifier: 'T'
+              TupleType
+                NumberKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  NumberKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' b'
+                  NumberKeyword
+            Identifier: ' o'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            ConditionalType
+              TupleType
+                TypeReference
+                  Identifier: 'T'
+              TupleType
+                NumberKeyword
+              ParenthesizedType
+                ConditionalType
+                  TupleType
+                    TypeReference
+                      Identifier: 'T'
+                  TupleType
+                    StringKeyword
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' y'
+                      NumberKeyword
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' a'
+                      NumberKeyword
+              ParenthesizedType
+                ConditionalType
+                  TupleType
+                    TypeReference
+                      Identifier: 'T'
+                  TupleType
+                    StringKeyword
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' y'
+                      NumberKeyword
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' b'
+                      NumberKeyword
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o2'
+            ConditionalType
+              TupleType
+                TypeReference
+                  Identifier: 'T'
+              TupleType
+                TupleType
+                  InferType
+                    TypeParameter
+                      Identifier: ' U'
+              TypeReference
+                Identifier: ' U'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' b'
+                  NumberKeyword
+            Identifier: ' o'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o3'
+            TypeReference
+              Identifier: ' Distributive'
+              TypeReference
+                Identifier: 'T'
+            Identifier: ' o'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o4'
+            TypeReference
+              Identifier: ' Distributive'
+              IntersectionType
+                TypeReference
+                  Identifier: 'T'
+                StringKeyword
+            Identifier: ' o'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o5'
+            TypeReference
+              Identifier: ' Distributive'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  TypeReference
+                    Identifier: ' T'
+            Identifier: ' o'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o6'
+            TypeReference
+              Identifier: ' Distributive'
+              ConditionalType
+                TupleType
+                  TypeReference
+                    Identifier: 'T'
+                TupleType
+                  NeverKeyword
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' a'
+                    NumberKeyword
+                NeverKeyword
+            Identifier: ' o'
+  TypeAliasDeclaration
+    Identifier: ' Wrapped'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' ___secret'
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Unwrap'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' Wrapped'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' set'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: '
+  obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+  key'
+      TypeReference
+        Identifier: ' K'
+    Parameter
+      Identifier: '
+  value'
+      TypeReference
+        Identifier: ' Unwrap'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'K'
+    TypeReference
+      Identifier: ' Unwrap'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: 'K'
+  ClassDeclaration
+    Identifier: ' Foo2'
+    PropertyDeclaration
+      Identifier: '
+  prop'
+      ExclamationToken
+      TypeReference
+        Identifier: ' Wrapped'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+
+  method'
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+    set'
+            ThisKeyword
+            StringLiteral
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+set'
+      NewExpression
+        Identifier: ' Foo2'
+      StringLiteral
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' InferBecauseWhyNot'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'T'
+      TupleType
+        FunctionType
+          Parameter
+            Identifier: 'p'
+            InferType
+              TypeParameter
+                Identifier: ' P1'
+          AnyKeyword
+      UnionType
+        TypeReference
+          Identifier: ' P1'
+        TypeReference
+          Identifier: ' T'
+      NeverKeyword
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'Q'
+      FunctionType
+        Parameter
+          Identifier: 'arg'
+          AnyKeyword
+        AnyKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Q'
+    TypeReference
+      Identifier: ' InferBecauseWhyNot'
+      TypeReference
+        Identifier: 'Q'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  TypeAliasDeclaration
+    Identifier: ' InferBecauseWhyNotDistributive'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      FunctionType
+        Parameter
+          Identifier: 'p'
+          InferType
+            TypeParameter
+              Identifier: ' P1'
+        AnyKeyword
+      UnionType
+        TypeReference
+          Identifier: ' P1'
+        TypeReference
+          Identifier: ' T'
+      NeverKeyword
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'Q'
+      FunctionType
+        Parameter
+          Identifier: 'arg'
+          AnyKeyword
+        AnyKeyword
+    Parameter
+      Identifier: '
+  x'
+      TypeReference
+        Identifier: ' Q'
+    TypeReference
+      Identifier: ' InferBecauseWhyNotDistributive'
+      TypeReference
+        Identifier: 'Q'
+    Block
+      ReturnStatement
+        Identifier: ' x'

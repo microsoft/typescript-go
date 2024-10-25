@@ -1,0 +1,48 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' count'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+  FunctionDeclaration
+    Identifier: ' incr'
+    Block
+      ReturnStatement
+        PrefixUnaryExpression
+          Identifier: 'count'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oobj'
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+    obj'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+obj'
+        CallExpression
+          Identifier: 'incr'
+      QuestionQuestionEqualsToken
+      CallExpression
+        Identifier: ' incr'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        ElementAccessExpression
+          Identifier: '
+oobj'
+          StringLiteral
+        CallExpression
+          Identifier: 'incr'
+      QuestionQuestionEqualsToken
+      CallExpression
+        Identifier: ' incr'

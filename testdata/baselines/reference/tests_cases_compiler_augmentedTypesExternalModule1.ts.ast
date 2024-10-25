@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' c5'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  ModuleDeclaration
+    Identifier: ' c5'
+    ModuleBlock

@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      ReadonlyKeyword
+      ReadonlyKeyword
+      Identifier: ' x'
+      NumberKeyword
+    Constructor
+      Parameter
+        ReadonlyKeyword
+        ReadonlyKeyword
+        Identifier: ' y'
+        NumberKeyword
+      Block

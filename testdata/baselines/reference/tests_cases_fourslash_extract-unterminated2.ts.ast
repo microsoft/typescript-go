@@ -1,0 +1,36 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// Unterminated string literal:
+//// /*1*/const foo = "foo/*2*/
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newContent'
+          NoSubstitutionTemplateLiteral

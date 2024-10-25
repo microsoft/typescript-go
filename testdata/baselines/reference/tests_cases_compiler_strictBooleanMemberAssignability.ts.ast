@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Abc'
+    PropertyDeclaration
+      Identifier: '
+    def'
+      BooleanKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'def'
+            EqualsToken
+            TrueKeyword

@@ -1,0 +1,11 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' main'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+        ArrayLiteralExpression
+        Block

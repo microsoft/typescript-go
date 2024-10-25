@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Result'
+  ClassDeclaration
+    Identifier: ' Test'
+    GetAccessor
+      Identifier: ' Property'
+      TypeReference
+        Identifier: ' Result'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumericLiteral
+        ReturnStatement
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' Test2'
+    GetAccessor
+      Identifier: ' Property'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumericLiteral
+        ReturnStatement
+          NullKeyword

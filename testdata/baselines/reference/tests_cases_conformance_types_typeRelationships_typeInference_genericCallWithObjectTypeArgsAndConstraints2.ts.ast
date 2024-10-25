@@ -1,0 +1,187 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: ' bar'
+          TypeReference
+            Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            TypeReference
+              Identifier: ' T'
+      ReturnStatement
+        Identifier: ' r'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' f'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' foo'
+              NewExpression
+                Identifier: ' Base'
+            PropertyAssignment
+              Identifier: ' bar'
+              NewExpression
+                Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' f'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' foo'
+              NewExpression
+                Identifier: ' Derived'
+            PropertyAssignment
+              Identifier: ' bar'
+              NewExpression
+                Identifier: ' Derived'
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I'
+        TypeReference
+          Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            TypeReference
+              Identifier: ' T'
+      ReturnStatement
+        Identifier: ' r'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+          TypeReference
+            Identifier: 'Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' f2'
+          Identifier: 'i'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' y'
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' f3'
+          NewExpression
+            Identifier: ' Base'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          Identifier: ' f3'
+          NewExpression
+            Identifier: ' Derived'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          Identifier: ' f3'
+          NullKeyword
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          Identifier: ' f3'
+          NullKeyword
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            Identifier: ' x'

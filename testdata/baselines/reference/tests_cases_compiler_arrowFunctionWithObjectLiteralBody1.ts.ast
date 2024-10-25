@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ArrowFunction
+          Parameter
+            Identifier: ' a'
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            AnyKeyword
+            ObjectLiteralExpression

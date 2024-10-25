@@ -1,0 +1,182 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Narrowable'
+    UnionType
+      StringKeyword
+      NumberKeyword
+      BigIntKeyword
+      BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' Narrow'
+    TypeParameter
+      Identifier: 'A'
+    UnionType
+      ParenthesizedType
+        ConditionalType
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' Narrowable'
+          TypeReference
+            Identifier: ' A'
+          NeverKeyword
+      ParenthesizedType
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' A'
+          TypeReference
+            Identifier: ' Narrow'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'A'
+              TypeReference
+                Identifier: 'K'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' satisfies'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'TWide'
+          EqualsGreaterThanToken
+          ArrowFunction
+            TypeParameter
+              Identifier: 'TNarrow'
+              TypeReference
+                Identifier: ' TWide'
+            Parameter
+              Identifier: 'narrow'
+              TypeReference
+                Identifier: ' Narrow'
+                TypeReference
+                  Identifier: 'TNarrow'
+            EqualsGreaterThanToken
+            Identifier: '
+    narrow'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' isNotNull'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'value'
+            UnionType
+              TypeReference
+                Identifier: ' T'
+              LiteralType
+                NullKeyword
+          TypePredicate
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' value'
+            ExclamationEqualsEqualsToken
+            NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' Item'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' value'
+        UnionType
+          StringKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' item1'
+        CallExpression
+          CallExpression
+            Identifier: ' satisfies'
+            TypeReference
+              Identifier: 'Item'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' value'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' item2'
+        CallExpression
+          CallExpression
+            Identifier: ' satisfies'
+            TypeReference
+              Identifier: 'Item'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' value'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' item3'
+        CallExpression
+          CallExpression
+            Identifier: ' satisfies'
+            TypeReference
+              Identifier: 'Item'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' value'
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' values2'
+        TypeReference
+          Identifier: ' Array'
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              NullKeyword
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' filteredValues2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' values2'
+            Identifier: 'filter'
+          Identifier: 'isNotNull'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' values1'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              Identifier: 'item1'
+              Identifier: ' item2'
+              Identifier: ' item3'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'item'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' item'
+              Identifier: 'value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' filteredValues1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' values1'
+            Identifier: 'filter'
+          Identifier: 'isNotNull'

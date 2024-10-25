@@ -1,0 +1,645 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' c1'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooWithParameters'
+      Parameter
+        Identifier: '/** this is comment about a*/a'
+        StringKeyword
+      Parameter
+        Identifier: '
+        /** this is comment for b*/
+        b'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              Identifier: ' a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooWithRestParameters'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rests'
+        ArrayType
+          StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' rests'
+                Identifier: 'join'
+              StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      AnyKeyword
+      Block
+        ReturnStatement
+          Identifier: ' a'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFoo'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFooWithParameters'
+      Parameter
+        Identifier: '/** this is comment about a*/a'
+        StringKeyword
+      Parameter
+        Identifier: '
+        /** this is comment for b*/
+        b'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              Identifier: ' a'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFooWithRestParameters'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rests'
+        ArrayType
+          StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' rests'
+                Identifier: 'join'
+              StringLiteral
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      AnyKeyword
+      Block
+        ReturnStatement
+          Identifier: ' a'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFoo'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFooWithParameters'
+      Parameter
+        Identifier: '/** this is comment about a*/a'
+        StringKeyword
+      Parameter
+        Identifier: '
+        /** this is comment for b*/
+        b'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              Identifier: ' a'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFooWithRestParameters'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rests'
+        ArrayType
+          StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' rests'
+                Identifier: 'join'
+              StringLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      AnyKeyword
+      Block
+        ReturnStatement
+          Identifier: ' a'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFoo'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFooWithParameters'
+      Parameter
+        Identifier: '/** this is comment about a*/a'
+        StringKeyword
+      Parameter
+        Identifier: '
+        /** this is comment for b*/
+        b'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              Identifier: ' a'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFooWithRestParameters'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rests'
+        ArrayType
+          StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' rests'
+                Identifier: 'join'
+              StringLiteral
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      AnyKeyword
+      Block
+        ReturnStatement
+          Identifier: ' a'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I1'
+    MethodSignature
+      Identifier: '
+    /** This comment should appear for foo*/
+    foo'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** This is comment for function signature*/
+    fooWithParameters'
+      Parameter
+        Identifier: '/** this is comment about a*/a'
+        StringKeyword
+      Parameter
+        Identifier: '
+        /** this is comment for b*/
+        b'
+        NumberKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+
+    fooWithRestParameters'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rests'
+        ArrayType
+          StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    fooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    fooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' c2'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooWithParameters'
+      Parameter
+        Identifier: '/** this is comment about a*/a'
+        StringKeyword
+      Parameter
+        Identifier: '
+        /** this is comment for b*/
+        b'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              Identifier: ' a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooWithRestParameters'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rests'
+        ArrayType
+          StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' rests'
+                Identifier: 'join'
+              StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      AnyKeyword
+      Block
+        ReturnStatement
+          Identifier: ' a'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFoo'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFooWithParameters'
+      Parameter
+        Identifier: '/** this is comment about a*/a'
+        StringKeyword
+      Parameter
+        Identifier: '
+        /** this is comment for b*/
+        b'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              Identifier: ' a'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFooWithRestParameters'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rests'
+        ArrayType
+          StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' rests'
+                Identifier: 'join'
+              StringLiteral
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' privateFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      AnyKeyword
+      Block
+        ReturnStatement
+          Identifier: ' a'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFoo'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFooWithParameters'
+      Parameter
+        Identifier: '/** this is comment about a*/a'
+        StringKeyword
+      Parameter
+        Identifier: '
+        /** this is comment for b*/
+        b'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              Identifier: ' a'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFooWithRestParameters'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rests'
+        ArrayType
+          StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' rests'
+                Identifier: 'join'
+              StringLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      AnyKeyword
+      Block
+        ReturnStatement
+          Identifier: ' a'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFoo'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFooWithParameters'
+      Parameter
+        Identifier: '/** this is comment about a*/a'
+        StringKeyword
+      Parameter
+        Identifier: '
+        /** this is comment for b*/
+        b'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              Identifier: ' a'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFooWithRestParameters'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rests'
+        ArrayType
+          StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' rests'
+                Identifier: 'join'
+              StringLiteral
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateStaticFooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      AnyKeyword
+      Block
+        ReturnStatement
+          Identifier: ' a'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    MethodSignature
+      Identifier: '
+    /** This comment should appear for foo*/
+    foo'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** This is comment for function signature*/
+    fooWithParameters'
+      Parameter
+        Identifier: '/** this is comment about a*/a'
+        StringKeyword
+      Parameter
+        Identifier: '
+        /** this is comment for b*/
+        b'
+        NumberKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+
+    fooWithRestParameters'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rests'
+        ArrayType
+          StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    fooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    fooWithOverloads'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword

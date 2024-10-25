@@ -1,0 +1,108 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' get'
+    TypeParameter
+      Identifier: 'U'
+    TypeParameter
+      Identifier: ' Y'
+      TypeOperator
+        TypeReference
+          Identifier: ' U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Y'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' U'
+      TypeReference
+        Identifier: 'Y'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' find'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'o'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' K'
+  FunctionDeclaration
+    Identifier: ' impl'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+      TypeOperator
+        TypeReference
+          Identifier: ' A'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' item'
+            CallExpression
+              Identifier: ' get'
+              Identifier: 'a'
+              Identifier: ' b'
+      ReturnStatement
+        CallExpression
+          Identifier: ' find'
+          Identifier: 'item'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'x'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' impl'
+          Identifier: 'o'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        ElementAccessExpression
+          Identifier: '
+r'
+          NumericLiteral
+        ElementAccessExpression
+          Identifier: 'r'
+          NumericLiteral
+      EqualsToken
+      ElementAccessExpression
+        Identifier: ' o'
+        ElementAccessExpression
+          Identifier: 'r'
+          NumericLiteral

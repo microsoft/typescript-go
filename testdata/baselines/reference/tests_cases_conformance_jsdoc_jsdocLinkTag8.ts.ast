@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' remove'
+        ArrowFunction
+          Parameter
+            Identifier: 'map'
+          Parameter
+            Identifier: ' key'
+          EqualsGreaterThanToken
+          Block

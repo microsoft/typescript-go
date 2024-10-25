@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          ClassExpression
+            MethodDeclaration
+              Identifier: '
+    hi'
+              Block
+                ReturnStatement
+                  StringLiteral
+        Identifier: 'hi'

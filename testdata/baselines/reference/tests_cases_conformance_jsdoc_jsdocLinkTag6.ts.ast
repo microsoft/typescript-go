@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * @override {@link A.foo}
+     */
+    foo'
+      Block

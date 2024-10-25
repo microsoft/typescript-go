@@ -1,0 +1,56 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' ElementAttributesProperty'
+        PropertySignature
+          Identifier: ' props'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' React'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Component'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' base'
+            TypeReference
+              QualifiedName
+                Identifier: ' React'
+                Identifier: 'Component'
+              AnyKeyword
+              TypeLiteral
+      ExportAssignment
+        Identifier: ' base'
+  ImportEqualsDeclaration
+    Identifier: ' BaseComponent'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' TestComponent'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        AnyKeyword
+        TypeLiteral
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          JsxSelfClosingElement
+            Identifier: 'BaseComponent'
+            JsxAttributes

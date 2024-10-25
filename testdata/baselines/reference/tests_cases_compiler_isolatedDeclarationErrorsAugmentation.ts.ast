@@ -1,0 +1,71 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ParentThing'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' ParentThing'
+        PropertySignature
+          Identifier: '
+        add'
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              NumberKeyword
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' child1'
+    Parameter
+      Identifier: 'prototype'
+      TypeReference
+        Identifier: ' ParentThing'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    prototype'
+            Identifier: 'add'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+              NumberKeyword
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' a'
+              PlusToken
+              Identifier: ' b'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' child1'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ParentThing'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ParentThing'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+child1'
+      PropertyAccessExpression
+        Identifier: 'ParentThing'
+        Identifier: 'prototype'

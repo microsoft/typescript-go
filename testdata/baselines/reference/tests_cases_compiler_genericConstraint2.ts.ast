@@ -1,0 +1,105 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Comparable'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    comparer'
+      Parameter
+        Identifier: 'other'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' compare'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Comparable'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsToken
+          NullKeyword
+        ReturnStatement
+          ConditionalExpression
+            BinaryExpression
+              Identifier: ' y'
+              EqualsEqualsToken
+              NullKeyword
+            QuestionToken
+            NumericLiteral
+            ColonToken
+            PrefixUnaryExpression
+              NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          EqualsEqualsToken
+          NullKeyword
+        ReturnStatement
+          NumericLiteral
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'comparer'
+          Identifier: 'y'
+  ClassDeclaration
+    Identifier: ' ComparableString'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Comparable'
+        StringKeyword
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' currentValue'
+        StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    localeCompare'
+      Parameter
+        Identifier: 'other'
+      Block
+        ReturnStatement
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' ComparableString'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' ComparableString'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' compare'
+          TypeReference
+            Identifier: 'ComparableString'
+          Identifier: 'a'
+          Identifier: ' b'

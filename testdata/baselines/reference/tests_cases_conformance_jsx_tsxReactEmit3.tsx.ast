@@ -1,0 +1,48 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+      VariableDeclaration
+        Identifier: ' Bar'
+      VariableDeclaration
+        Identifier: ' baz'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'Foo'
+        JsxAttributes
+      JsxText
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'Bar'
+          JsxAttributes
+        JsxText
+        JsxClosingElement
+          Identifier: 'Bar'
+      JsxText
+      JsxSelfClosingElement
+        Identifier: 'Bar'
+        JsxAttributes
+      JsxText
+      JsxSelfClosingElement
+        Identifier: 'Bar'
+        JsxAttributes
+      JsxSelfClosingElement
+        Identifier: 'Bar'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: 'Foo'

@@ -1,0 +1,35 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newLocal'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            Identifier: ' /*RENAME*/newLocal'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newLocal'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            Identifier: ' /*RENAME*/newLocal'

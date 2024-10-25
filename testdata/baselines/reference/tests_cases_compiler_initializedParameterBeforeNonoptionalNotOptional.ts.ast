@@ -1,0 +1,79 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    a'
+          QuestionToken
+          StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' foo2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    a'
+            QuestionToken
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' foo3'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'c'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    a'
+            QuestionToken
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+          PropertySignature
+            Identifier: '
+    b'
+            QuestionToken
+            UnionType
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'c'
+                  QuestionToken
+                  UnionType
+                    StringKeyword
+                    UndefinedKeyword
+              UndefinedKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    VoidKeyword

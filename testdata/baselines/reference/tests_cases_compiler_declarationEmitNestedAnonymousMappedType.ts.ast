@@ -1,0 +1,59 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' enumFromStrings'
+    TypeParameter
+      ConstKeyword
+      Identifier: ' Members'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Block
+      TypeAliasDeclaration
+        Identifier: ' Part1'
+        MappedType
+          TypeParameter
+            Identifier: 'key'
+            TypeOperator
+              TypeReference
+                Identifier: ' Members'
+          ConditionalType
+            IndexedAccessType
+              TypeReference
+                Identifier: ' Members'
+              TypeReference
+                Identifier: 'key'
+            StringKeyword
+            IndexedAccessType
+              TypeReference
+                Identifier: ' Members'
+              TypeReference
+                Identifier: 'key'
+            NeverKeyword
+          IndexedAccessType
+            TypeReference
+              Identifier: ' Members'
+            TypeReference
+              Identifier: 'key'
+      TypeAliasDeclaration
+        Identifier: ' Part2'
+        MappedType
+          TypeParameter
+            Identifier: 'Property'
+            TypeOperator
+              TypeReference
+                Identifier: ' Part1'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' Part1'
+            TypeReference
+              Identifier: 'Property'
+      ReturnStatement
+        AsExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Object'
+              Identifier: 'create'
+            NullKeyword
+          TypeReference
+            Identifier: ' Part2'

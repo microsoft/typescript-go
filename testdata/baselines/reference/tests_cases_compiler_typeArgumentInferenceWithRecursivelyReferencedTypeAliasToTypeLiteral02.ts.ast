@@ -1,0 +1,45 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' TreeNode'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    name'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    parent'
+        TypeReference
+          Identifier: ' TreeNode'
+  TypeAliasDeclaration
+    Identifier: ' TreeNodeMiddleman'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    name'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    parent'
+        TypeReference
+          Identifier: ' TreeNode'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nodes'
+        ArrayType
+          TypeReference
+            Identifier: ' TreeNodeMiddleman'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+nodes'
+        Identifier: 'map'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          Identifier: ' n'
+          Identifier: 'name'

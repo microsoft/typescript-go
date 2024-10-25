@@ -1,0 +1,42 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noImplicitOverride: true
+// @allowJs: true
+// @checkJs: true
+
+// @Filename: a.js
+////class A {
+////    doSomething() {}
+////}
+////class B extends A {
+////    /** @override */
+////    [|doSomethang|]() {}
+////}
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Change_spelling_to_0'
+              Identifier: 'message'
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newRangeContent'
+          StringLiteral

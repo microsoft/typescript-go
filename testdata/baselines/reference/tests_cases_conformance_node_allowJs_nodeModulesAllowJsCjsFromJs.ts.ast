@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @module: node16,nodenext
+// @allowJs: true
+// @noEmit: true
+// @filename: foo.cjs
+exports'
+        Identifier: 'foo'
+      EqualsToken
+      StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' foo'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+foo'
+      Identifier: 'foo'

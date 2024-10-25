@@ -1,0 +1,47 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' range'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' test'
+        Identifier: 'ranges'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'navigateTo'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        pattern'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' range'
+                        Identifier: 'marker'
+                      Identifier: 'data'
+                    Identifier: 'name'
+                  Identifier: 'slice'
+                NumericLiteral
+            PropertyAssignment
+              Identifier: '
+        expected'
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  SpreadAssignment
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'range'
+                        Identifier: 'marker'
+                      Identifier: 'data'
+                  ShorthandPropertyAssignment
+                    Identifier: ' range'
+                  PropertyAssignment
+                    Identifier: ' matchKind'
+                    StringLiteral

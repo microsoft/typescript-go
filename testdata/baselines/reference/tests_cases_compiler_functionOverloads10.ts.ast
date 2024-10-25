@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'foo'
+      StringKeyword
+    Parameter
+      Identifier: ' bar'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'foo'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'foo'
+      AnyKeyword
+    Block

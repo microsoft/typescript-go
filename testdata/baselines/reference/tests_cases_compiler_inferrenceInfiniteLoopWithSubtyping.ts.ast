@@ -1,0 +1,154 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ObjMapReadOnly'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Readonly'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' Readonly'
+            TypeReference
+              Identifier: 'T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Thunk'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      ParenthesizedType
+        FunctionType
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ComposeOutputTypeDefinition'
+    TypeReference
+      Identifier: ' Readonly'
+      UnionType
+        TypeReference
+          Identifier: 'ObjectTypeComposer'
+          AnyKeyword
+          AnyKeyword
+        TypeReference
+          Identifier: ' EnumTypeComposer'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' EnumTypeComposer'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' setFields'
+      Parameter
+        Identifier: 'fields'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'name'
+              StringKeyword
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'key'
+                  StringKeyword
+                AnyKeyword
+      ThisType
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ObjectTypeComposer'
+    TypeParameter
+      Identifier: 'TSource'
+    TypeParameter
+      Identifier: ' TContext'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' setFields'
+      Parameter
+        Identifier: 'fields'
+        TypeReference
+          Identifier: ' ObjMapReadOnly'
+          TypeReference
+            Identifier: 'Resolver'
+      ThisType
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' addResolver'
+      TypeParameter
+        Identifier: 'TResolverSource'
+      Parameter
+        Identifier: 'opts'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' type'
+            QuestionToken
+            TypeReference
+              Identifier: ' Thunk'
+              TypeReference
+                Identifier: 'ComposeOutputTypeDefinition'
+      ThisType
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Resolver'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' wrapArgs'
+      TypeParameter
+        Identifier: 'NewContext'
+      Parameter
+        Identifier: '
+    cb'
+        FunctionType
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'argName'
+                StringKeyword
+              TypeReference
+                Identifier: ' Thunk'
+                TypeReference
+                  Identifier: 'Readonly'
+                  TypeReference
+                    Identifier: 'EnumTypeComposer'
+      VoidKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' wrapType'
+      Parameter
+        Identifier: 'cb'
+        FunctionType
+          TypeReference
+            Identifier: ' ComposeOutputTypeDefinition'
+      VoidKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ObjectTypeComposer'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' User'
+        TypeReference
+          Identifier: ' ObjectTypeComposer'
+          AnyKeyword
+          AnyKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+User'
+        Identifier: 'addResolver'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  type'
+          Identifier: ' User'

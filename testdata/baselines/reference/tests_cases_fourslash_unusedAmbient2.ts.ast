@@ -1,0 +1,143 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @noUnusedLocals: true
+// @noUnusedParameters: true
+
+// @Filename: /a.ts
+////export {};
+////declare var [|a|]: string;
+
+// @Filename: /b.d.ts
+////declare module 'b' {
+////  var [|b|]: string;
+////  function [|f|]([|p|]: string): any;
+////  export {};
+////}
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Diagnostics'
+                Identifier: '_0_is_declared_but_its_value_is_never_read'
+              Identifier: 'code'
+          PropertyAssignment
+            Identifier: '
+  message'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+  reportsUnnecessary'
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSemanticDiagnostics'
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  range'
+            ElementAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'rangesByText'
+                  Identifier: 'get'
+                StringLiteral
+              NumericLiteral
+          PropertyAssignment
+            Identifier: '
+  code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Diagnostics'
+                Identifier: '_0_is_declared_but_its_value_is_never_read'
+              Identifier: 'code'
+          PropertyAssignment
+            Identifier: '
+  message'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+  reportsUnnecessary'
+            TrueKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  range'
+            ElementAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'rangesByText'
+                  Identifier: 'get'
+                StringLiteral
+              NumericLiteral
+          PropertyAssignment
+            Identifier: '
+  code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Diagnostics'
+                Identifier: '_0_is_declared_but_its_value_is_never_read'
+              Identifier: 'code'
+          PropertyAssignment
+            Identifier: '
+  message'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+  reportsUnnecessary'
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'getSemanticDiagnostics'
+      ArrayLiteralExpression

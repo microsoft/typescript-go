@@ -1,0 +1,202 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      UnknownKeyword
+    PropertyDeclaration
+      Identifier: ' y'
+      QuestionToken
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      UnknownKeyword
+    PropertyDeclaration
+      Identifier: ' y'
+      QuestionToken
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab'
+        IntersectionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ab'
+        Identifier: 'y'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ab'
+      EqualsToken
+      ObjectLiteralExpression
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'node'
+            InstanceOfKeyword
+            Identifier: ' A'
+          BarBarToken
+          BinaryExpression
+            Identifier: ' node'
+            InstanceOfKeyword
+            Identifier: ' A'
+        Block
+          ExpressionStatement
+            Identifier: '
+    node'
+        Block
+          ExpressionStatement
+            Identifier: '
+    node'
+      ExpressionStatement
+        Identifier: '
+  node'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' ViewNode'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' ViewRefNode'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ViewNode'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' ViewRefFileNode'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ViewRefNode'
+  ClassDeclaration
+    Identifier: ' CommitFileNode'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ViewRefFileNode'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _id'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' ResultsFileNode'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ViewRefFileNode'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _id'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' StashFileNode'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CommitFileNode'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _id2'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' StatusFileNode'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ViewNode'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _id'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      PrivateKeyword
+      AsyncKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'node'
+        UnionType
+          TypeReference
+            Identifier: ' CommitFileNode'
+          TypeReference
+            Identifier: ' ResultsFileNode'
+          TypeReference
+            Identifier: ' StashFileNode'
+      Block
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'node'
+                    InstanceOfKeyword
+                    Identifier: ' CommitFileNode'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'node'
+                    InstanceOfKeyword
+                    Identifier: ' StashFileNode'
+            AmpersandAmpersandToken
+            PrefixUnaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'node'
+                  InstanceOfKeyword
+                  Identifier: ' ResultsFileNode'
+          Block
+            ReturnStatement
+        ExpressionStatement
+          AwaitExpression
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'bar'
+              Identifier: 'node'
+    MethodDeclaration
+      PrivateKeyword
+      AsyncKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'node'
+        UnionType
+          TypeReference
+            Identifier: ' CommitFileNode'
+          TypeReference
+            Identifier: ' ResultsFileNode'
+          TypeReference
+            Identifier: ' StashFileNode'
+          TypeReference
+            Identifier: ' StatusFileNode'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeLiteral
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'resolve'
+            Identifier: 'undefined'

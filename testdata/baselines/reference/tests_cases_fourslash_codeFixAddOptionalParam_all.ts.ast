@@ -1,0 +1,50 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////[|function f1() {}|]
+////
+////const a = 1;
+////const b = "";
+////f1(a, b, true);
+////
+////function f2() {}
+////f2("", { x: 1 }, [ "" ], true);
+////
+////class C {
+////    [|m1() {}|]
+////    m2(a: boolean) {
+////        this.m1(a);
+////    }
+////}
+////
+////function f3(a: string): string;
+////function f3(a: string, b?: number): string;
+////function f3(a: string, b?: number): string {
+////    return "";
+////}
+////f3("", "", 1);
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixAllDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_all_optional_parameters'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

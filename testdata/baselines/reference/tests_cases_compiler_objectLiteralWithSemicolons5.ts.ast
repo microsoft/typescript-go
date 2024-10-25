@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' foo'
+            Block
+          PropertyAssignment
+            Identifier: ' a'
+            Identifier: ' b'
+          GetAccessor
+            Identifier: ' baz'
+            Block

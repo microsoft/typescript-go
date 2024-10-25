@@ -1,0 +1,189 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * Ap docs
+     *
+     * @private
+     */
+    priv'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * Aq docs
+     *
+     * @protected
+     */
+    prot'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * Ar docs
+     *
+     * @public
+     */
+    pub'
+      NumericLiteral
+    GetAccessor
+      Identifier: ' ack'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'priv'
+    SetAccessor
+      Identifier: ' ack'
+      Parameter
+        Identifier: 'value'
+      Block
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'priv2'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'prot2'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'pub2'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    h'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'priv2'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'priv'
+              PlusToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'prot'
+            PlusToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'pub'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    n'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'priv2'
+              PlusToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'prot2'
+            PlusToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'pub2'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' A'
+          Identifier: 'priv'
+        PlusToken
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' A'
+          Identifier: 'prot'
+      PlusToken
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' A'
+        Identifier: 'pub'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' B'
+          Identifier: 'priv'
+        PlusToken
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' B'
+          Identifier: 'prot'
+      PlusToken
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' B'
+        Identifier: 'pub'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' C'
+          Identifier: 'priv2'
+        PlusToken
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' C'
+          Identifier: 'prot2'
+      PlusToken
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' C'
+        Identifier: 'pub2'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' D'
+          Identifier: 'priv2'
+        PlusToken
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' D'
+          Identifier: 'prot2'
+      PlusToken
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' D'
+        Identifier: 'pub2'

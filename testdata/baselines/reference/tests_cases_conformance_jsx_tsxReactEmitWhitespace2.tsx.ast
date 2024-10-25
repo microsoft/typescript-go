@@ -1,0 +1,62 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'code'
+          JsxAttributes
+        JsxText
+        JsxClosingElement
+          Identifier: 'code'
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'code'
+          JsxAttributes
+        JsxText
+        JsxClosingElement
+          Identifier: 'code'
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxSelfClosingElement
+        Identifier: 'code'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'

@@ -1,0 +1,119 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+// @Filename: /a.ts
+////export type x = number;
+////export class y {};
+
+// @Filename: /b.ts
+////import { /*0*/x, /*1*/y } from "./a";
+////const v: /*2*/x = /*3*/y;
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'm0'
+          BindingElement
+            Identifier: ' m1'
+          BindingElement
+            Identifier: ' m2'
+          BindingElement
+            Identifier: ' m3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'markers'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' classification'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'semanticClassificationsAre'
+      StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' 
+    c'
+          Identifier: 'typeAliasName'
+        StringLiteral
+        PropertyAccessExpression
+          Identifier: ' m0'
+          Identifier: 'position'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'className'
+        StringLiteral
+        PropertyAccessExpression
+          Identifier: ' m1'
+          Identifier: 'position'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'typeAliasName'
+        StringLiteral
+        PropertyAccessExpression
+          Identifier: ' m2'
+          Identifier: 'position'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'className'
+        StringLiteral
+        PropertyAccessExpression
+          Identifier: ' m3'
+          Identifier: 'position'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        CallExpression
+          Identifier: ' classification'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+    verify'
+        Identifier: 'semanticClassificationsAre'
+      StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+
+    c2'
+          Identifier: 'semanticToken'
+        StringLiteral
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' 
+    c2'
+          Identifier: 'semanticToken'
+        StringLiteral
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' 
+    c2'
+          Identifier: 'semanticToken'
+        StringLiteral
+        StringLiteral

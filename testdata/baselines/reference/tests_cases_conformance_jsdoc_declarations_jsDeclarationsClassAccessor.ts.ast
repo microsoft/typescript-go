@@ -1,0 +1,74 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Argument'
+        PropertySignature
+          Identifier: '
+        idlType'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        default'
+          LiteralType
+            NullKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Base'
+    Constructor
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    toJSON'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' json'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' type'
+                  Identifier: ' undefined'
+                PropertyAssignment
+                  Identifier: ' name'
+                  Identifier: ' undefined'
+                PropertyAssignment
+                  Identifier: ' inheritance'
+                  Identifier: ' undefined'
+        ReturnStatement
+          Identifier: ' json'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Base'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Argument'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' parse'
+      Parameter
+        Identifier: 'tokeniser'
+      Block
+        ReturnStatement
+    GetAccessor
+      Identifier: ' type'
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      AsteriskToken
+      Identifier: 'validate'
+      Parameter
+        Identifier: 'defs'
+      Block

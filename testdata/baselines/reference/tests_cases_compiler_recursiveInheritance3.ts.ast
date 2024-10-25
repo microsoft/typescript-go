@@ -1,0 +1,31 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Block
+        ReturnStatement
+          Identifier: ' x'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    MethodSignature
+      Identifier: '
+    other'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      AnyKeyword

@@ -1,0 +1,430 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' a'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: ' b'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' Object'
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      Identifier: ' a'
+      TypeReference
+        Identifier: ' Date'
+  FunctionDeclaration
+    Identifier: ' namedClasses'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Block
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' x'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'a'
+              EqualsToken
+              StringLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'b'
+              EqualsToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' multipleClasses'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+        TypeReference
+          Identifier: ' C'
+        TypeReference
+          Identifier: ' D'
+    Block
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' x'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                UnionType
+                  StringKeyword
+                  TypeReference
+                    Identifier: ' Date'
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'a'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+                UnionType
+                  NumberKeyword
+                  TypeReference
+                    Identifier: ' Object'
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'b'
+  FunctionDeclaration
+    Identifier: ' anonymousClasses'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' x'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                StringKeyword
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'a'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+                NumberKeyword
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'b'
+  ClassDeclaration
+    Identifier: ' AWithOptionalProp'
+    PropertyDeclaration
+      Identifier: ' a'
+      QuestionToken
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' BWithOptionalProp'
+    PropertyDeclaration
+      Identifier: ' b'
+      QuestionToken
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' positiveTestClassesWithOptionalProperties'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' AWithOptionalProp'
+        TypeReference
+          Identifier: ' BWithOptionalProp'
+    Block
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' x'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'a'
+              EqualsToken
+              StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                StringKeyword
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' x'
+                    InstanceOfKeyword
+                    Identifier: ' AWithOptionalProp'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'a'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'b'
+  FunctionDeclaration
+    Identifier: ' inParenthesizedExpression'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Block
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          ParenthesizedExpression
+            Identifier: 'x'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                StringKeyword
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'a'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+                NumberKeyword
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'b'
+  ClassDeclaration
+    Identifier: ' ClassWithUnionProp'
+    PropertyDeclaration
+      Identifier: ' prop'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' inProperty'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' ClassWithUnionProp'
+    Block
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'prop'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                StringKeyword
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'prop'
+                  Identifier: 'a'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+                NumberKeyword
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'prop'
+                  Identifier: 'b'
+  ClassDeclaration
+    Identifier: ' NestedClassWithProp'
+    PropertyDeclaration
+      Identifier: ' outer'
+      TypeReference
+        Identifier: ' ClassWithUnionProp'
+  FunctionDeclaration
+    Identifier: ' innestedProperty'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' NestedClassWithProp'
+    Block
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'outer'
+            Identifier: 'prop'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                StringKeyword
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'outer'
+                    Identifier: 'prop'
+                  Identifier: 'a'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+                NumberKeyword
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'outer'
+                    Identifier: 'prop'
+                  Identifier: 'b'
+  ClassDeclaration
+    Identifier: ' InMemberOfClass'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' prop'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    inThis'
+      Block
+        IfStatement
+          BinaryExpression
+            StringLiteral
+            InKeyword
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'prop'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y'
+                  StringKeyword
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'prop'
+                    Identifier: 'a'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' z'
+                  NumberKeyword
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'prop'
+                    Identifier: 'b'
+  ClassDeclaration
+    Identifier: ' SelfAssert'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    inThis'
+      Block
+        IfStatement
+          BinaryExpression
+            StringLiteral
+            InKeyword
+            ThisKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y'
+                  StringKeyword
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a'
+          Block
+  InterfaceDeclaration
+    Identifier: ' Indexed'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'i'
+      TypeReference
+        Identifier: ' Indexed'
+    Block
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' i'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' i'
+              Identifier: 'a'
+        IfStatement
+          BinaryExpression
+            StringLiteral
+            InKeyword
+            Identifier: ' i'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' i'
+                Identifier: 'b'
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            StringLiteral
+            InKeyword
+            Identifier: ' i'
+          AmpersandAmpersandToken
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'c'

@@ -1,0 +1,15 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' f'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        FunctionExpression
+          Identifier: ' f'
+          Block
+            ExpressionStatement
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'f'
+                Identifier: 'f'

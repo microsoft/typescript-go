@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+          VariableDeclaration
+            Identifier: ' b'
+          VariableDeclaration
+            Identifier: ' c'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'a'
+            LessThanToken
+            Identifier: ' b'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' b'
+            GreaterThanToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'c'
+                PlusToken
+                NumericLiteral
+        Block

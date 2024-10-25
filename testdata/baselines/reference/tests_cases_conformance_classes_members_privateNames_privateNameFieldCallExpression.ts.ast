@@ -1,0 +1,125 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'x'
+              EqualsToken
+              NumericLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      FunctionExpression
+        Parameter
+          Identifier: 'a'
+        Parameter
+          DotDotDotToken
+          Identifier: 'b'
+        Block
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    test'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            QuestionDotToken
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' func'
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        func'
+        ExpressionStatement
+          NewExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arr'
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            NumericLiteral
+            SpreadElement
+              Identifier: 'arr'
+            NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              NewExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+                NumericLiteral
+                SpreadElement
+                  Identifier: 'arr'
+                NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' str'
+              TaggedTemplateExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    NumericLiteral
+                    TemplateMiddle
+                  TemplateSpan
+                    NumericLiteral
+                    TemplateTail
+        ExpressionStatement
+          TaggedTemplateExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getInstance'
+              PrivateIdentifier
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                NumericLiteral
+                TemplateMiddle
+              TemplateSpan
+                NumericLiteral
+                TemplateTail
+    MethodDeclaration
+      Identifier: '
+    getInstance'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' A'

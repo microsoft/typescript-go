@@ -1,0 +1,217 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' D0'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        StringKeyword
+        StringKeyword
+  InterfaceDeclaration
+    Identifier: ' BaseConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+      TypeReference
+        Identifier: ' Base'
+        StringKeyword
+        StringKeyword
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' Base'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' T'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' Base'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' T'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' Base'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getBase'
+    TypeReference
+      Identifier: ' BaseConstructor'
+  ClassDeclaration
+    Identifier: ' D1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' getBase'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            StringLiteral
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+            EqualsToken
+            StringLiteral
+  ClassDeclaration
+    Identifier: ' D2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' getBase'
+        NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            NumericLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            NumericLiteral
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' D3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' getBase'
+        StringKeyword
+        NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            StringLiteral
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' D4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' getBase'
+        StringKeyword
+        StringKeyword
+        StringKeyword
+  InterfaceDeclaration
+    Identifier: ' BadBaseConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Base'
+        StringKeyword
+        StringKeyword
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Base'
+        NumberKeyword
+        NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getBadBase'
+    TypeReference
+      Identifier: ' BadBaseConstructor'
+  ClassDeclaration
+    Identifier: ' D5'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' getBadBase'

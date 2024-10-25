@@ -1,0 +1,69 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      FunctionType
+        Parameter
+          Identifier: 'y'
+          StringKeyword
+        FunctionType
+          Parameter
+            Identifier: 'y2'
+            NumberKeyword
+          VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Contextually type the parameter even if there is a return annotation
+foo'
+      ArrowFunction
+        Parameter
+          Identifier: 'y'
+        FunctionType
+          Parameter
+            Identifier: 'y2'
+            NumberKeyword
+          VoidKeyword
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' y'
+                    Identifier: 'charAt'
+                  NumericLiteral
+          ReturnStatement
+            NullKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ArrowFunction
+        Parameter
+          Identifier: 'y'
+          StringKeyword
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            ArrowFunction
+              Parameter
+                Identifier: ' y2'
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' z'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' y2'
+                          Identifier: 'toFixed'
+                ReturnStatement
+                  NumericLiteral

@@ -1,0 +1,1016 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' f'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        path'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        content'
+                    NoSubstitutionTemplateLiteral
+          FunctionDeclaration
+            Identifier: ' getDummyScriptInfo'
+            Parameter
+              Identifier: 'fileName'
+              StringKeyword
+            Block
+              ReturnStatement
+                AsExpression
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: ' fileName'
+                    PropertyAssignment
+                      Identifier: ' closeSourceMapFileWatcher'
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'noop'
+                    PropertyAssignment
+                      Identifier: ' isDynamicOrHasMixedContent'
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'returnFalse'
+                  TypeReference
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'ScriptInfo'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'f'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' ts1'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'TextStorage'
+                          Identifier: 'host'
+                          CallExpression
+                            Identifier: ' getDummyScriptInfo'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'asNormalizedPath'
+                              PropertyAccessExpression
+                                Identifier: 'f'
+                                Identifier: 'path'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' ts2'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'TextStorage'
+                          Identifier: 'host'
+                          CallExpression
+                            Identifier: ' getDummyScriptInfo'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'asNormalizedPath'
+                              PropertyAccessExpression
+                                Identifier: 'f'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        ts1'
+                        Identifier: 'switchToScriptVersionCache'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' lineMap'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'computeLineStarts'
+                          PropertyAccessExpression
+                            Identifier: 'f'
+                            Identifier: 'content'
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' line'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' line'
+                      LessThanToken
+                      PropertyAccessExpression
+                        Identifier: ' lineMap'
+                        Identifier: 'length'
+                    PostfixUnaryExpression
+                      Identifier: ' line'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' start'
+                            ElementAccessExpression
+                              Identifier: ' lineMap'
+                              Identifier: 'line'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' end'
+                            ConditionalExpression
+                              BinaryExpression
+                                Identifier: ' line'
+                                EqualsEqualsEqualsToken
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' lineMap'
+                                    Identifier: 'length'
+                                  MinusToken
+                                  NumericLiteral
+                              QuestionToken
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' f'
+                                  Identifier: 'path'
+                                Identifier: 'length'
+                              ColonToken
+                              ElementAccessExpression
+                                Identifier: ' lineMap'
+                                BinaryExpression
+                                  Identifier: 'line'
+                                  PlusToken
+                                  NumericLiteral
+                      ForStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' offset'
+                            NumericLiteral
+                        BinaryExpression
+                          Identifier: ' offset'
+                          LessThanToken
+                          BinaryExpression
+                            Identifier: ' end'
+                            MinusToken
+                            Identifier: ' start'
+                        PostfixUnaryExpression
+                          Identifier: ' offset'
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' pos1'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts1'
+                                    Identifier: 'lineOffsetToPosition'
+                                  BinaryExpression
+                                    Identifier: 'line'
+                                    PlusToken
+                                    NumericLiteral
+                                  BinaryExpression
+                                    Identifier: ' offset'
+                                    PlusToken
+                                    NumericLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' pos2'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts2'
+                                    Identifier: 'lineOffsetToPosition'
+                                  BinaryExpression
+                                    Identifier: 'line'
+                                    PlusToken
+                                    NumericLiteral
+                                  BinaryExpression
+                                    Identifier: ' offset'
+                                    PlusToken
+                                    NumericLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                assert'
+                                Identifier: 'strictEqual'
+                              Identifier: 'pos1'
+                              Identifier: ' pos2'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  BinaryExpression
+                                    Identifier: 'line'
+                                    PlusToken
+                                    NumericLiteral
+                                  TemplateMiddle
+                                TemplateSpan
+                                  BinaryExpression
+                                    Identifier: 'offset'
+                                    PlusToken
+                                    NumericLiteral
+                                  TemplateMiddle
+                                TemplateSpan
+                                  Identifier: 'pos1'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  Identifier: 'pos2'
+                                  TemplateTail
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' start'
+                                Identifier: ' start1'
+                              BindingElement
+                                Identifier: ' length'
+                                Identifier: ' length1'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts1'
+                                Identifier: 'lineToTextSpan'
+                              Identifier: 'line'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' start'
+                                Identifier: ' start2'
+                              BindingElement
+                                Identifier: ' length'
+                                Identifier: ' length2'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts2'
+                                Identifier: 'lineToTextSpan'
+                              Identifier: 'line'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'strictEqual'
+                          Identifier: 'start1'
+                          Identifier: ' start2'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'line'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'start1'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'start2'
+                              TemplateTail
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'strictEqual'
+                          Identifier: 'length1'
+                          Identifier: ' length2'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'line'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'length1'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'length2'
+                              TemplateTail
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' pos'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' pos'
+                      LessThanToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' f'
+                          Identifier: 'content'
+                        Identifier: 'length'
+                    PostfixUnaryExpression
+                      Identifier: ' pos'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' line'
+                                Identifier: ' line1'
+                              BindingElement
+                                Identifier: ' offset'
+                                Identifier: ' offset1'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts1'
+                                Identifier: 'positionToLineOffset'
+                              Identifier: 'pos'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' line'
+                                Identifier: ' line2'
+                              BindingElement
+                                Identifier: ' offset'
+                                Identifier: ' offset2'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts2'
+                                Identifier: 'positionToLineOffset'
+                              Identifier: 'pos'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'strictEqual'
+                          Identifier: 'line1'
+                          Identifier: ' line2'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'pos'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'line1'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'line2'
+                              TemplateTail
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'strictEqual'
+                          Identifier: 'offset1'
+                          Identifier: ' offset2'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'pos'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'offset1'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'offset2'
+                              TemplateTail
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'f'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' ts1'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'TextStorage'
+                          Identifier: 'host'
+                          CallExpression
+                            Identifier: ' getDummyScriptInfo'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'asNormalizedPath'
+                              PropertyAccessExpression
+                                Identifier: 'f'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        ts1'
+                        Identifier: 'getSnapshot'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isFalse'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts1'
+                          Identifier: 'hasScriptVersionCache_TestOnly'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        ts1'
+                        Identifier: 'edit'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts1'
+                          Identifier: 'hasScriptVersionCache_TestOnly'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        ts1'
+                        Identifier: 'useText'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isFalse'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts1'
+                          Identifier: 'hasScriptVersionCache_TestOnly'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        ts1'
+                        Identifier: 'getAbsolutePositionAndLineText'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isFalse'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts1'
+                          Identifier: 'hasScriptVersionCache_TestOnly'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'f'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' ts1'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'TextStorage'
+                          Identifier: 'host'
+                          CallExpression
+                            Identifier: ' getDummyScriptInfo'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'asNormalizedPath'
+                              PropertyAccessExpression
+                                Identifier: 'f'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'f'
+                          Identifier: 'content'
+                        Identifier: 'length'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts1'
+                          Identifier: 'getTelemetryFileSize'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'f'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' ts1'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'TextStorage'
+                          Identifier: 'host'
+                          CallExpression
+                            Identifier: ' getDummyScriptInfo'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'asNormalizedPath'
+                              PropertyAccessExpression
+                                Identifier: 'f'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        ts1'
+                        Identifier: 'useText'
+                      PropertyAccessExpression
+                        Identifier: 'f'
+                        Identifier: 'content'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isFalse'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts1'
+                          Identifier: 'hasScriptVersionCache_TestOnly'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'f'
+                          Identifier: 'content'
+                        Identifier: 'length'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts1'
+                          Identifier: 'getTelemetryFileSize'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'f'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' ts1'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'TextStorage'
+                          Identifier: 'host'
+                          CallExpression
+                            Identifier: ' getDummyScriptInfo'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'asNormalizedPath'
+                              PropertyAccessExpression
+                                Identifier: 'f'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        ts1'
+                        Identifier: 'switchToScriptVersionCache'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts1'
+                          Identifier: 'hasScriptVersionCache_TestOnly'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'f'
+                          Identifier: 'content'
+                        Identifier: 'length'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts1'
+                          Identifier: 'getTelemetryFileSize'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' largeFile'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            CallExpression
+                              PropertyAccessExpression
+                                StringLiteral
+                                Identifier: 'repeat'
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'server'
+                                  Identifier: 'maxFileSize'
+                                PlusToken
+                                NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'largeFile'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'largeFile'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' scriptInfo'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' session'
+                                Identifier: 'getProjectService'
+                            Identifier: 'getScriptInfo'
+                          PropertyAccessExpression
+                            Identifier: 'largeFile'
+                            Identifier: 'path'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' ts1'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'TextStorage'
+                          Identifier: 'host'
+                          NonNullExpression
+                            Identifier: ' scriptInfo'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'isTrue'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts1'
+                          Identifier: 'reloadWithFileText'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isFalse'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts1'
+                          Identifier: 'hasScriptVersionCache_TestOnly'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'largeFile'
+                          Identifier: 'content'
+                        Identifier: 'length'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts1'
+                          Identifier: 'getTelemetryFileSize'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' oldText'
+                        StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' newText'
+                        StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' changingFile'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            Identifier: ' oldText'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'changingFile'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' ts1'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'TextStorage'
+                          Identifier: 'host'
+                          CallExpression
+                            Identifier: ' getDummyScriptInfo'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'asNormalizedPath'
+                              PropertyAccessExpression
+                                Identifier: 'changingFile'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'isTrue'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts1'
+                          Identifier: 'reloadWithFileText'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Refresh the file and notify TextStorage
+        host'
+                        Identifier: 'writeFile'
+                      PropertyAccessExpression
+                        Identifier: 'changingFile'
+                        Identifier: 'path'
+                      Identifier: ' newText'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        ts1'
+                        Identifier: 'delayReloadFromFileIntoText'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'oldText'
+                        Identifier: 'length'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts1'
+                          Identifier: 'getTelemetryFileSize'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'isTrue'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts1'
+                          Identifier: 'reloadWithFileText'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'newText'
+                        Identifier: 'length'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts1'
+                          Identifier: 'getTelemetryFileSize'

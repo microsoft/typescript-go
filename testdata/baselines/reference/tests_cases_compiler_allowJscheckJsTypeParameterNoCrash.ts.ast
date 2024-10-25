@@ -1,0 +1,76 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ComponentOptions'
+    TypeParameter
+      Identifier: 'V'
+    PropertySignature
+      Identifier: '
+    watch'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        TypeReference
+          Identifier: ' WatchHandler'
+          AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' WatchHandler'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'val'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' extend'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' ComponentOptions'
+        TypeLiteral
+    VoidKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vextend'
+        Identifier: ' extend'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'vextend'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' vextend'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  watch'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  Identifier: '
+    data1'
+                  Parameter
+                    Identifier: 'val'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'data2'
+                        EqualsToken
+                        NumericLiteral
+                MethodDeclaration
+                  Identifier: '
+    data2'
+                  Parameter
+                    Identifier: 'val'
+                  Block

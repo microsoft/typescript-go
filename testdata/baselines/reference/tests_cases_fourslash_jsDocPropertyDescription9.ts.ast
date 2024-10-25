@@ -1,0 +1,40 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+//// class LiteralClass {
+////     /** Something generic */
+////     static [key: `prefix${string}`]: any;
+////     /** Something else */
+////     static [key: `prefix${number}`]: number;
+//// }
+//// function literalClass(e: typeof LiteralClass) {
+////     console.log(e./*literal1Class*/prefixMember); 
+////     console.log(e./*literal2Class*/anything);
+////     console.log(e./*literal3Class*/prefix0);
+//// }
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral
+      StringLiteral

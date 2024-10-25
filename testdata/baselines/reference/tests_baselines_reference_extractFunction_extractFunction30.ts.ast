@@ -1,0 +1,52 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    /*RENAME*/newFunction'
+      FunctionDeclaration
+        Identifier: ' newFunction'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' t'
+                TypeReference
+                  Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    /*RENAME*/newFunction'
+          TypeReference
+            Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' newFunction'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'

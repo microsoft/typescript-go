@@ -1,0 +1,79 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    n'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+    wrong'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mismatch'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    n'
+            NumericLiteral
+          GetAccessor
+            Identifier: ' x'
+            Parameter
+              Identifier: 'this'
+              TypeReference
+                Identifier: ' Foo'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'n'
+          SetAccessor
+            Identifier: ' x'
+            Parameter
+              Identifier: 'this'
+              TypeReference
+                Identifier: ' Bar'
+            Parameter
+              Identifier: ' n'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'wrong'
+                  EqualsToken
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' contextual'
+        TypeReference
+          Identifier: ' Foo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    n'
+            NumericLiteral
+          GetAccessor
+            Identifier: ' x'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'n'

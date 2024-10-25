@@ -1,0 +1,123 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            AnyKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            BooleanKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            TypeLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a1'
+            BinaryExpression
+              Identifier: ' a'
+              AsteriskAsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskAsteriskToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b1'
+            BinaryExpression
+              Identifier: ' b'
+              AsteriskAsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskAsteriskToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c1'
+            BinaryExpression
+              Identifier: ' c'
+              AsteriskAsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskAsteriskToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d1'
+            BinaryExpression
+              Identifier: ' d'
+              AsteriskAsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskAsteriskToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e1'
+            BinaryExpression
+              Identifier: ' e'
+              AsteriskAsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskAsteriskToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskAsteriskToken
+              Identifier: ' t'

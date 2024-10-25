@@ -1,0 +1,116 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '/// <reference path="fourslash.ts" />
+
+// @noLib: true
+
+// @Filename: /a.ts
+////export function Test1() {}
+////export function Test2() {}
+
+// @Filename: /b.ts
+////import { Test2 } from "./a";
+////t/**/
+
+verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    exact'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'globalsPlus'
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            name'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            text'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            kind'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            kindModifiers'
+                      StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            name'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            source'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            sourceDisplay'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            text'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            kind'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            kindModifiers'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            hasAction'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+            sortText'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' completion'
+                          Identifier: 'SortText'
+                        Identifier: 'AutoImportSuggestions'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' noLib'
+                    TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    preferences'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' includeCompletionsForModuleExports'
+                  TrueKeyword
+        Identifier: 'andApplyCodeAction'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

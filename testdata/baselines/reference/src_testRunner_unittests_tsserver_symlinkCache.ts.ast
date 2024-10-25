@@ -1,0 +1,329 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    SymLink'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' appTsconfigJson'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' appSrcIndexTs'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' depPackageJson'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' depTsconfigJson'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' depSrcIndexTs'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' depSrcSubFolderIndexTs'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' link'
+                        TypeReference
+                          Identifier: ' SymLink'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            symLink'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: '
+            appTsconfigJson'
+                            Identifier: '
+            appSrcIndexTs'
+                            Identifier: '
+            depPackageJson'
+                            Identifier: '
+            depTsconfigJson'
+                            Identifier: '
+            depSrcIndexTs'
+                            Identifier: '
+            depSrcSubFolderIndexTs'
+                            Identifier: '
+            link'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'appSrcIndexTs'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' project'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' session'
+                                    Identifier: 'getProjectService'
+                                Identifier: 'configuredProjects'
+                              Identifier: 'get'
+                            PropertyAccessExpression
+                              Identifier: 'appTsconfigJson'
+                              Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'logger'
+                        Identifier: 'log'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'JSON'
+                              Identifier: 'stringify'
+                            CallExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'project'
+                                        Identifier: 'getSymlinkCache'
+                                    QuestionDotToken
+                                    Identifier: 'getSymlinkedDirectories'
+                                QuestionDotToken
+                                Identifier: 'get'
+                              AsExpression
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'link'
+                                    Identifier: 'path'
+                                  PlusToken
+                                  StringLiteral
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'Path'
+                            Identifier: ' undefined'
+                            StringLiteral
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' cache'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createSymlinkCache'
+                          StringLiteral
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'createGetCanonicalFileName'
+                            FalseKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' map'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createModeAwareCache'
+                          TypeReference
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        map'
+                        Identifier: 'set'
+                      StringLiteral
+                      Identifier: ' /*mode*/ undefined'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            resolvedTypeReferenceDirective'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                primary'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: '
+                originalPath'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                resolvedFileName'
+                              StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        cache'
+                        Identifier: 'setSymlinksFromResolutions'
+                      PropertyAccessExpression
+                        Identifier: 'ts'
+                        Identifier: 'noop'
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'noop'
+                      Identifier: ' map'

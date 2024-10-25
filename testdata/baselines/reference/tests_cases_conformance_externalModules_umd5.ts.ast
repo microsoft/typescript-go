@@ -1,0 +1,52 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fn'
+    VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Thing'
+    PropertySignature
+      Identifier: ' n'
+      TypeQuery
+        Identifier: ' x'
+  NamespaceExportDeclaration
+    Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Bar'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Bar'
+        Identifier: 'fn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          QualifiedName
+            Identifier: ' Bar'
+            Identifier: 'Thing'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        Identifier: ' Foo'

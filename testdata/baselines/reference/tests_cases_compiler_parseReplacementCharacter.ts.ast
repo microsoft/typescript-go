@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        StringLiteral
+        TemplateTail

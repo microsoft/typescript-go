@@ -1,0 +1,219 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            QuestionToken
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' z'
+            QuestionToken
+            NumberKeyword
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' base'
+        TypeReference
+          Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' derived'
+        TypeReference
+          Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' derived2'
+        TypeReference
+          Identifier: ' Derived2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          NumericLiteral
+          ColonToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          NumericLiteral
+          ColonToken
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' a'
+          ColonToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' b'
+          ColonToken
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            EqualsGreaterThanToken
+            Block
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Object'
+            EqualsGreaterThanToken
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Object'
+          VoidKeyword
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            EqualsGreaterThanToken
+            Block
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Object'
+            EqualsGreaterThanToken
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Object'
+            EqualsGreaterThanToken
+            Block
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            EqualsGreaterThanToken
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        TypeReference
+          Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' derived'
+          ColonToken
+          Identifier: ' derived2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' base'
+          ColonToken
+          Identifier: ' derived2'
+  FunctionDeclaration
+    Identifier: ' foo5'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    TypeReference
+      Identifier: ' Object'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' t'
+          ColonToken
+          Identifier: ' u'

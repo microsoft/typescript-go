@@ -1,0 +1,166 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E1'
+    EnumMember
+      Identifier: ' ONE'
+    EnumMember
+      Identifier: ' TWO'
+    EnumMember
+      Identifier: ' THREE'
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E2'
+    EnumMember
+      Identifier: ' ONE'
+    EnumMember
+      Identifier: ' TWO'
+    EnumMember
+      Identifier: ' THREE'
+  TypeAliasDeclaration
+    Identifier: ' Bins1'
+    MappedType
+      TypeParameter
+        Identifier: 'k'
+        TypeReference
+          Identifier: ' E1'
+      QuestionToken
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Bins2'
+    MappedType
+      TypeParameter
+        Identifier: 'k'
+        TypeReference
+          Identifier: ' E2'
+      QuestionToken
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        TypeReference
+          Identifier: ' Bins1'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        TypeReference
+          Identifier: ' Bins2'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        TypeReference
+          Identifier: ' E1'
+        PropertyAccessExpression
+          Identifier: ' E1'
+          Identifier: 'ONE'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        TypeReference
+          Identifier: ' E2'
+        PropertyAccessExpression
+          Identifier: ' E2'
+          Identifier: 'ONE'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+b1'
+        NumericLiteral
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+b1'
+        Identifier: 'e1'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+b2'
+        NumericLiteral
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+b2'
+        Identifier: 'e2'
+      EqualsToken
+      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' val'
+    NumberKeyword
+  EnumDeclaration
+    Identifier: ' N1'
+    EnumMember
+      Identifier: ' A'
+      CallExpression
+        Identifier: ' val'
+    EnumMember
+      Identifier: ' B'
+      CallExpression
+        Identifier: ' val'
+  EnumDeclaration
+    Identifier: ' N2'
+    EnumMember
+      Identifier: ' C'
+      CallExpression
+        Identifier: ' val'
+    EnumMember
+      Identifier: ' D'
+      CallExpression
+        Identifier: ' val'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        UnionType
+          TypeReference
+            Identifier: ' N1'
+          TypeReference
+            Identifier: ' N2'
+      TypeReference
+        Identifier: ' K'
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' ONE'
+    EnumMember
+      Identifier: ' TWO'
+    EnumMember
+      Identifier: ' THREE'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' E'
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'ONE'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          QualifiedName
+            Identifier: ' E'
+            Identifier: 'ONE'
+        Identifier: ' e'

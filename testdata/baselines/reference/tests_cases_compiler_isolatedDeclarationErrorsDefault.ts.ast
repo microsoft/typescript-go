@@ -1,0 +1,57 @@
+SourceFile
+  ExportAssignment
+    BinaryExpression
+      NumericLiteral
+      PlusToken
+      NumericLiteral
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' foo'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+  ExportAssignment
+    ArrayLiteralExpression
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' foo'
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            NumericLiteral
+  ExportAssignment
+    AsExpression
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            BinaryExpression
+              NumericLiteral
+              PlusToken
+              NumericLiteral
+      TypeReference
+        Identifier: ' const'
+  ExportAssignment
+    AsExpression
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            BinaryExpression
+              NumericLiteral
+              PlusToken
+              NumericLiteral
+      TypeReference
+        Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            NumericLiteral
+  ExportAssignment
+    Identifier: ' a'

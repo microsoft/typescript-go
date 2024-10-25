@@ -1,0 +1,121 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' evaluator'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // https://github.com/microsoft/TypeScript/issues/31469
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'deepEqual'
+                      PropertyAccessExpression
+                        Identifier: 'result'
+                        Identifier: 'output'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' a'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' b'
+                          NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'deepEqual'
+                      PropertyAccessExpression
+                        Identifier: 'result'
+                        Identifier: 'output'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' a'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' b'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' c'
+                          NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'deepEqual'
+                      PropertyAccessExpression
+                        Identifier: 'result'
+                        Identifier: 'output'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' a'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' b'
+                          NumericLiteral

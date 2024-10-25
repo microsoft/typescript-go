@@ -1,0 +1,1161 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ApplyCodeActionCommandResult'
+        ImportSpecifier
+          Identifier: '
+    assertType'
+        ImportSpecifier
+          Identifier: '
+    createQueue'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    JsTyping'
+        ImportSpecifier
+          Identifier: '
+    MapLike'
+        ImportSpecifier
+          Identifier: '
+    server'
+        ImportSpecifier
+          Identifier: '
+    SortedReadonlyArray'
+        ImportSpecifier
+          Identifier: '
+    TypeAcquisition'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ActionInvalidate'
+        ImportSpecifier
+          Identifier: '
+    ActionPackageInstalled'
+        ImportSpecifier
+          Identifier: '
+    ActionSet'
+        ImportSpecifier
+          Identifier: '
+    ActionWatchTypingLocations'
+        ImportSpecifier
+          Identifier: '
+    BeginInstallTypes'
+        ImportSpecifier
+          Identifier: '
+    createInstallTypingsRequest'
+        ImportSpecifier
+          Identifier: '
+    DiscoverTypings'
+        ImportSpecifier
+          Identifier: '
+    EndInstallTypes'
+        ImportSpecifier
+          Identifier: '
+    Event'
+        ImportSpecifier
+          Identifier: '
+    EventBeginInstallTypes'
+        ImportSpecifier
+          Identifier: '
+    EventEndInstallTypes'
+        ImportSpecifier
+          Identifier: '
+    EventInitializationFailed'
+        ImportSpecifier
+          Identifier: '
+    EventTypesRegistry'
+        ImportSpecifier
+          Identifier: '
+    InitializationFailedResponse'
+        ImportSpecifier
+          Identifier: '
+    InstallPackageOptionsWithProject'
+        ImportSpecifier
+          Identifier: '
+    InstallPackageRequest'
+        ImportSpecifier
+          Identifier: '
+    InvalidateCachedTypings'
+        ImportSpecifier
+          Identifier: '
+    ITypingsInstaller'
+        ImportSpecifier
+          Identifier: '
+    Logger'
+        ImportSpecifier
+          Identifier: '
+    LogLevel'
+        ImportSpecifier
+          Identifier: '
+    PackageInstalledResponse'
+        ImportSpecifier
+          Identifier: '
+    Project'
+        ImportSpecifier
+          Identifier: '
+    ProjectService'
+        ImportSpecifier
+          Identifier: '
+    protocol'
+        ImportSpecifier
+          Identifier: '
+    ServerHost'
+        ImportSpecifier
+          Identifier: '
+    SetTypings'
+        ImportSpecifier
+          Identifier: '
+    stringifyIndented'
+        ImportSpecifier
+          Identifier: '
+    TypesRegistryResponse'
+        ImportSpecifier
+          Identifier: '
+    TypingInstallerRequestUnion'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TypingsInstallerWorkerProcess'
+    MethodSignature
+      Identifier: '
+    send'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' TypingInstallerRequestUnion'
+      Parameter
+        Identifier: 'rq'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' PackageInstallPromise'
+    MethodSignature
+      Identifier: '
+    resolve'
+      Parameter
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' ApplyCodeActionCommandResult'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    reject'
+      Parameter
+        Identifier: 'reason'
+        UnknownKeyword
+      VoidKeyword
+  ClassDeclaration
+    ExportKeyword
+    AbstractKeyword
+    Identifier: ' TypingsInstallerAdapter'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ITypingsInstaller'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' installer'
+      ExclamationToken
+      TypeReference
+        Identifier: ' TypingsInstallerWorkerProcess'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' projectService'
+      ExclamationToken
+      TypeReference
+        Identifier: ' ProjectService'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' activeRequestCount'
+      NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' requestQueue'
+      CallExpression
+        Identifier: ' createQueue'
+        TypeReference
+          Identifier: 'DiscoverTypings'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' requestMap'
+      NewExpression
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' DiscoverTypings'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' requestedRegistry'
+      FalseKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' typesRegistryCache'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          StringKeyword
+          TypeReference
+            Identifier: ' MapLike'
+            StringKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' requestDelayMillis'
+      NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' packageInstalledPromise'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          NumberKeyword
+          TypeReference
+            Identifier: ' PackageInstallPromise'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' packageInstallId'
+      NumericLiteral
+    Constructor
+      Parameter
+        ProtectedKeyword
+        ReadonlyKeyword
+        Identifier: ' telemetryEnabled'
+        BooleanKeyword
+      Parameter
+        ProtectedKeyword
+        ReadonlyKeyword
+        Identifier: ' logger'
+        TypeReference
+          Identifier: ' Logger'
+      Parameter
+        ProtectedKeyword
+        ReadonlyKeyword
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' ServerHost'
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' globalTypingsCacheLocation'
+        StringKeyword
+      Parameter
+        ProtectedKeyword
+        Identifier: ' event'
+        TypeReference
+          Identifier: ' Event'
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' maxActiveRequestCount'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    isKnownTypesPackageName'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      BooleanKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' validationResult'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' JsTyping'
+                  Identifier: 'validatePackageName'
+                Identifier: 'name'
+        IfStatement
+          BinaryExpression
+            Identifier: 'validationResult'
+            ExclamationEqualsEqualsToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' JsTyping'
+                Identifier: 'NameValidationResult'
+              Identifier: 'Ok'
+          Block
+            ReturnStatement
+              FalseKeyword
+        IfStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'requestedRegistry'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'requestedRegistry'
+                EqualsToken
+                TrueKeyword
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'installer'
+                  Identifier: 'send'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    StringLiteral
+        ReturnStatement
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'typesRegistryCache'
+                  QuestionDotToken
+                  Identifier: 'has'
+                Identifier: 'name'
+    MethodDeclaration
+      Identifier: '
+
+    installPackage'
+      Parameter
+        Identifier: 'options'
+        TypeReference
+          Identifier: ' InstallPackageOptionsWithProject'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'ApplyCodeActionCommandResult'
+      Block
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'packageInstallId'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' request'
+              TypeReference
+                Identifier: ' InstallPackageRequest'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral
+                SpreadAssignment
+                  Identifier: 'options'
+                PropertyAssignment
+                  Identifier: ' id'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'packageInstallId'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' promise'
+              NewExpression
+                Identifier: ' Promise'
+                TypeReference
+                  Identifier: 'ApplyCodeActionCommandResult'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'resolve'
+                  Parameter
+                    Identifier: ' reject'
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            BinaryExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'packageInstalledPromise'
+                              QuestionQuestionEqualsToken
+                              NewExpression
+                                Identifier: ' Map'
+                          Identifier: 'set'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'packageInstallId'
+                        ObjectLiteralExpression
+                          ShorthandPropertyAssignment
+                            Identifier: ' resolve'
+                          ShorthandPropertyAssignment
+                            Identifier: ' reject'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'installer'
+              Identifier: 'send'
+            Identifier: 'request'
+        ReturnStatement
+          Identifier: ' promise'
+    MethodDeclaration
+      Identifier: '
+
+    attach'
+      Parameter
+        Identifier: 'projectService'
+        TypeReference
+          Identifier: ' ProjectService'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'projectService'
+            EqualsToken
+            Identifier: ' projectService'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'installer'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'createInstallerProcess'
+    MethodDeclaration
+      Identifier: '
+
+    onProjectClosed'
+      Parameter
+        Identifier: 'p'
+        TypeReference
+          Identifier: ' Project'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'installer'
+              Identifier: 'send'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' projectName'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' p'
+                    Identifier: 'getProjectName'
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+    MethodDeclaration
+      Identifier: '
+
+    enqueueInstallTypingsRequest'
+      Parameter
+        Identifier: 'project'
+        TypeReference
+          Identifier: ' Project'
+      Parameter
+        Identifier: ' typeAcquisition'
+        TypeReference
+          Identifier: ' TypeAcquisition'
+      Parameter
+        Identifier: ' unresolvedImports'
+        TypeReference
+          Identifier: ' SortedReadonlyArray'
+          StringKeyword
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' request'
+              CallExpression
+                Identifier: ' createInstallTypingsRequest'
+                Identifier: 'project'
+                Identifier: ' typeAcquisition'
+                Identifier: ' unresolvedImports'
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'logger'
+              Identifier: 'hasLevel'
+            PropertyAccessExpression
+              Identifier: 'LogLevel'
+              Identifier: 'verbose'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'logger'
+                  Identifier: 'info'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    CallExpression
+                      Identifier: 'stringifyIndented'
+                      Identifier: 'request'
+                    TemplateTail
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'activeRequestCount'
+            LessThanToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'maxActiveRequestCount'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'scheduleRequest'
+                Identifier: 'request'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'logger'
+                  Identifier: 'hasLevel'
+                PropertyAccessExpression
+                  Identifier: 'LogLevel'
+                  Identifier: 'verbose'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'logger'
+                      Identifier: 'info'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        PropertyAccessExpression
+                          Identifier: 'request'
+                          Identifier: 'projectName'
+                        TemplateTail
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'requestQueue'
+                  Identifier: 'enqueue'
+                Identifier: 'request'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'requestMap'
+                  Identifier: 'set'
+                PropertyAccessExpression
+                  Identifier: 'request'
+                  Identifier: 'projectName'
+                Identifier: ' request'
+    MethodDeclaration
+      Identifier: '
+
+    handleMessage'
+      Parameter
+        Identifier: 'response'
+        UnionType
+          TypeReference
+            Identifier: ' TypesRegistryResponse'
+          TypeReference
+            Identifier: ' PackageInstalledResponse'
+          TypeReference
+            Identifier: ' SetTypings'
+          TypeReference
+            Identifier: ' InvalidateCachedTypings'
+          TypeReference
+            Identifier: ' BeginInstallTypes'
+          TypeReference
+            Identifier: ' EndInstallTypes'
+          TypeReference
+            Identifier: ' InitializationFailedResponse'
+          TypeReference
+            QualifiedName
+              Identifier: ' server'
+              Identifier: 'WatchTypingLocations'
+      VoidKeyword
+      Block
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'logger'
+              Identifier: 'hasLevel'
+            PropertyAccessExpression
+              Identifier: 'LogLevel'
+              Identifier: 'verbose'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'logger'
+                  Identifier: 'info'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    CallExpression
+                      Identifier: 'stringifyIndented'
+                      Identifier: 'response'
+                    TemplateTail
+        SwitchStatement
+          PropertyAccessExpression
+            Identifier: 'response'
+            Identifier: 'kind'
+          CaseBlock
+            CaseClause
+              Identifier: ' EventTypesRegistry'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'typesRegistryCache'
+                  EqualsToken
+                  NewExpression
+                    Identifier: ' Map'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'Object'
+                        Identifier: 'entries'
+                      PropertyAccessExpression
+                        Identifier: 'response'
+                        Identifier: 'typesRegistry'
+              BreakStatement
+            CaseClause
+              Identifier: ' ActionPackageInstalled'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' promise'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'packageInstalledPromise'
+                          QuestionDotToken
+                          Identifier: 'get'
+                        PropertyAccessExpression
+                          Identifier: 'response'
+                          Identifier: 'id'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                Debug'
+                      Identifier: 'assertIsDefined'
+                    Identifier: 'promise'
+                    StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'packageInstalledPromise'
+                      QuestionDotToken
+                      Identifier: 'delete'
+                    PropertyAccessExpression
+                      Identifier: 'response'
+                      Identifier: 'id'
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'response'
+                    Identifier: 'success'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    promise'
+                          Identifier: 'resolve'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' successMessage'
+                            PropertyAccessExpression
+                              Identifier: ' response'
+                              Identifier: 'message'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    promise'
+                          Identifier: 'reject'
+                        PropertyAccessExpression
+                          Identifier: 'response'
+                          Identifier: 'message'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'projectService'
+                      Identifier: 'updateTypingsForProject'
+                    Identifier: 'response'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'event'
+                    Identifier: 'response'
+                    StringLiteral
+                BreakStatement
+            CaseClause
+              Identifier: ' EventInitializationFailed'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' body'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' protocol'
+                          Identifier: 'TypesInstallerInitializationFailedEventBody'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    message'
+                          PropertyAccessExpression
+                            Identifier: ' response'
+                            Identifier: 'message'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' eventName'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' protocol'
+                          Identifier: 'TypesInstallerInitializationFailedEventName'
+                      StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'event'
+                    Identifier: 'body'
+                    Identifier: ' eventName'
+                BreakStatement
+            CaseClause
+              Identifier: ' EventBeginInstallTypes'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' body'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' protocol'
+                          Identifier: 'BeginInstallTypesEventBody'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    eventId'
+                          PropertyAccessExpression
+                            Identifier: ' response'
+                            Identifier: 'eventId'
+                        PropertyAssignment
+                          Identifier: '
+                    packages'
+                          PropertyAccessExpression
+                            Identifier: ' response'
+                            Identifier: 'packagesToInstall'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' eventName'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' protocol'
+                          Identifier: 'BeginInstallTypesEventName'
+                      StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'event'
+                    Identifier: 'body'
+                    Identifier: ' eventName'
+                BreakStatement
+            CaseClause
+              Identifier: ' EventEndInstallTypes'
+              Block
+                IfStatement
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'telemetryEnabled'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' body'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' protocol'
+                              Identifier: 'TypingsInstalledTelemetryEventBody'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                        telemetryEventName'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                        payload'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                            installedPackages'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' response'
+                                        Identifier: 'packagesToInstall'
+                                      Identifier: 'join'
+                                    StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                            installSuccess'
+                                  PropertyAccessExpression
+                                    Identifier: ' response'
+                                    Identifier: 'installSuccess'
+                                PropertyAssignment
+                                  Identifier: '
+                            typingsInstallerVersion'
+                                  PropertyAccessExpression
+                                    Identifier: ' response'
+                                    Identifier: 'typingsInstallerVersion'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' eventName'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' protocol'
+                              Identifier: 'TelemetryEventName'
+                          StringLiteral
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'event'
+                        Identifier: 'body'
+                        Identifier: ' eventName'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' body'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' protocol'
+                          Identifier: 'EndInstallTypesEventBody'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    eventId'
+                          PropertyAccessExpression
+                            Identifier: ' response'
+                            Identifier: 'eventId'
+                        PropertyAssignment
+                          Identifier: '
+                    packages'
+                          PropertyAccessExpression
+                            Identifier: ' response'
+                            Identifier: 'packagesToInstall'
+                        PropertyAssignment
+                          Identifier: '
+                    success'
+                          PropertyAccessExpression
+                            Identifier: ' response'
+                            Identifier: 'installSuccess'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' eventName'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' protocol'
+                          Identifier: 'EndInstallTypesEventName'
+                      StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'event'
+                    Identifier: 'body'
+                    Identifier: ' eventName'
+                BreakStatement
+            CaseClause
+              Identifier: ' ActionInvalidate'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'projectService'
+                      Identifier: 'updateTypingsForProject'
+                    Identifier: 'response'
+                BreakStatement
+            CaseClause
+              Identifier: ' ActionSet'
+              Block
+                IfStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'activeRequestCount'
+                    GreaterThanToken
+                    NumericLiteral
+                  Block
+                    ExpressionStatement
+                      PostfixUnaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'activeRequestCount'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    Debug'
+                          Identifier: 'fail'
+                        StringLiteral
+                WhileStatement
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'requestQueue'
+                        Identifier: 'isEmpty'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' queuedRequest'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'requestQueue'
+                              Identifier: 'dequeue'
+                    IfStatement
+                      BinaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'requestMap'
+                            Identifier: 'get'
+                          PropertyAccessExpression
+                            Identifier: 'queuedRequest'
+                            Identifier: 'projectName'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' queuedRequest'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'requestMap'
+                              Identifier: 'delete'
+                            PropertyAccessExpression
+                              Identifier: 'queuedRequest'
+                              Identifier: 'projectName'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'scheduleRequest'
+                            Identifier: 'queuedRequest'
+                        BreakStatement
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'logger'
+                          Identifier: 'hasLevel'
+                        PropertyAccessExpression
+                          Identifier: 'LogLevel'
+                          Identifier: 'verbose'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'logger'
+                              Identifier: 'info'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                PropertyAccessExpression
+                                  Identifier: 'queuedRequest'
+                                  Identifier: 'projectName'
+                                TemplateTail
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'projectService'
+                      Identifier: 'updateTypingsForProject'
+                    Identifier: 'response'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'event'
+                    Identifier: 'response'
+                    StringLiteral
+                BreakStatement
+            CaseClause
+              Identifier: ' ActionWatchTypingLocations'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'projectService'
+                    Identifier: 'watchTypingLocations'
+                  Identifier: 'response'
+              BreakStatement
+            DefaultClause
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+                assertType'
+                  NeverKeyword
+                  Identifier: 'response'
+    MethodDeclaration
+      Identifier: '
+
+    scheduleRequest'
+      Parameter
+        Identifier: 'request'
+        TypeReference
+          Identifier: ' DiscoverTypings'
+      VoidKeyword
+      Block
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'logger'
+              Identifier: 'hasLevel'
+            PropertyAccessExpression
+              Identifier: 'LogLevel'
+              Identifier: 'verbose'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'logger'
+                  Identifier: 'info'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    PropertyAccessExpression
+                      Identifier: 'request'
+                      Identifier: 'projectName'
+                    TemplateTail
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'activeRequestCount'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'host'
+              Identifier: 'setTimeout'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'logger'
+                      Identifier: 'hasLevel'
+                    PropertyAccessExpression
+                      Identifier: 'LogLevel'
+                      Identifier: 'verbose'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'logger'
+                          Identifier: 'info'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            CallExpression
+                              Identifier: 'stringifyIndented'
+                              Identifier: 'request'
+                            TemplateTail
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'installer'
+                      Identifier: 'send'
+                    Identifier: 'request'
+            PropertyAccessExpression
+              Identifier: '
+            TypingsInstallerAdapter'
+              Identifier: 'requestDelayMillis'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                PropertyAccessExpression
+                  Identifier: 'request'
+                  Identifier: 'projectName'
+                TemplateMiddle
+              TemplateSpan
+                PropertyAccessExpression
+                  Identifier: 'request'
+                  Identifier: 'kind'
+                TemplateTail
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' createInstallerProcess'
+      TypeReference
+        Identifier: ' TypingsInstallerWorkerProcess'

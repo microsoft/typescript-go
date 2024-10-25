@@ -1,0 +1,65 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' alias'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' cls'
+    QualifiedName
+      Identifier: ' alias'
+      Identifier: 'Class'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' cls2'
+    QualifiedName
+      Identifier: ' alias'
+      Identifier: 'Class'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' alias'
+            Identifier: 'Class'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NewExpression
+          Identifier: ' cls'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        NewExpression
+          Identifier: ' cls2'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' cls'
+        QualifiedName
+          Identifier: ' alias'
+          Identifier: 'Class'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' alias'
+                Identifier: 'Class'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NewExpression
+              Identifier: ' cls'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            NewExpression
+              Identifier: ' cls2'

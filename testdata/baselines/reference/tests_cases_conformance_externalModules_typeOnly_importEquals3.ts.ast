@@ -1,0 +1,59 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' A'
+    QualifiedName
+      Identifier: ' a'
+      Identifier: 'A'
+  ImportEqualsDeclaration
+    Identifier: ' aa'
+    Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+      ExportSpecifier
+        Identifier: ' A'
+      ExportSpecifier
+        Identifier: ' x'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' b'
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' A'
+    QualifiedName
+      QualifiedName
+        Identifier: ' b'
+        Identifier: 'a'
+      Identifier: 'A'
+  ImportEqualsDeclaration
+    Identifier: ' AA'
+    QualifiedName
+      Identifier: ' b'
+      Identifier: 'A'
+  ImportEqualsDeclaration
+    Identifier: ' x'
+    QualifiedName
+      Identifier: ' b'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'x'

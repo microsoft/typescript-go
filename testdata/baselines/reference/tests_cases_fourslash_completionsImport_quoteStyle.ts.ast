@@ -1,0 +1,49 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: esnext
+
+// @Filename: /a.ts
+////export const foo = 0;
+
+// @Filename: /b.ts
+////fo/**/
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        quotePreference'
+              StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

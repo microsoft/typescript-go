@@ -1,0 +1,16 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' mAmbient'
+    ModuleBlock
+      EnumDeclaration
+        Identifier: ' e'
+        EnumMember
+          Identifier: '
+        x'
+        EnumMember
+          Identifier: '
+        y'
+        EnumMember
+          Identifier: '
+        z'

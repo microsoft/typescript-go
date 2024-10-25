@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'bar'
+                NumericLiteral

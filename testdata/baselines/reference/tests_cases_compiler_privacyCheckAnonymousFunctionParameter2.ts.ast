@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' Iterator'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+  ModuleDeclaration
+    Identifier: ' Q'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' Iterator'
+                TypeReference
+                  Identifier: 'T'
+            NumberKeyword
+        Block
+          ReturnStatement
+            Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' Q'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' bar'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        foo'
+              NullKeyword

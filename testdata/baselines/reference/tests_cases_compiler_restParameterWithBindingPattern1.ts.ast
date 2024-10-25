@@ -1,0 +1,11 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' a'
+    Parameter
+      DotDotDotToken
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+    Block

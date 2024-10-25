@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec1'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' dec2'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec1'
+    Decorator
+      Identifier: 'dec2'
+    Identifier: ' C'

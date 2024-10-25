@@ -1,0 +1,94 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v0'
+        TypeReference
+          Identifier: ' T0'
+  TypeAliasDeclaration
+    Identifier: ' T0'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' I0'
+  InterfaceDeclaration
+    Identifier: ' I0'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        TypeReference
+          Identifier: ' T1'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' I1'
+  InterfaceDeclaration
+    Identifier: ' I1'
+    CallSignature
+      TypeReference
+        Identifier: ' T1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        TypeReference
+          Identifier: ' T2'
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' I2'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    ConstructSignature
+      TypeReference
+        Identifier: ' T2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        TypeReference
+          Identifier: ' T3'
+  TypeAliasDeclaration
+    Identifier: ' T3'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' I3'
+  InterfaceDeclaration
+    Identifier: ' I3'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        TypeReference
+          Identifier: ' T4'
+  TypeAliasDeclaration
+    Identifier: ' T4'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' I4'
+  InterfaceDeclaration
+    Identifier: ' I4'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T4'

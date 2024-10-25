@@ -1,0 +1,350 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' StringTo'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' NumberTo'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' StringAndNumberTo'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' StringTo'
+        TypeReference
+          Identifier: 'T'
+      ExpressionWithTypeArguments
+        Identifier: ' NumberTo'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' Obj'
+    PropertySignature
+      Identifier: '
+    hello'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    world'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'sToAny'
+      TypeReference
+        Identifier: ' StringTo'
+        AnyKeyword
+    Parameter
+      Identifier: ' nToAny'
+      TypeReference
+        Identifier: ' NumberTo'
+        AnyKeyword
+    Parameter
+      Identifier: ' bothToAny'
+      TypeReference
+        Identifier: ' StringAndNumberTo'
+        AnyKeyword
+    Parameter
+      Identifier: ' someObj'
+      TypeReference
+        Identifier: ' Obj'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    sToAny'
+          EqualsToken
+          Identifier: ' nToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    sToAny'
+          EqualsToken
+          Identifier: ' bothToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    sToAny'
+          EqualsToken
+          Identifier: ' someObj'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    nToAny'
+          EqualsToken
+          Identifier: ' sToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    nToAny'
+          EqualsToken
+          Identifier: ' bothToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    nToAny'
+          EqualsToken
+          Identifier: ' someObj'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    bothToAny'
+          EqualsToken
+          Identifier: ' sToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    bothToAny'
+          EqualsToken
+          Identifier: ' nToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    bothToAny'
+          EqualsToken
+          Identifier: ' someObj'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    someObj'
+          EqualsToken
+          Identifier: ' sToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someObj'
+          EqualsToken
+          Identifier: ' nToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someObj'
+          EqualsToken
+          Identifier: ' bothToAny'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'sToAny'
+      TypeReference
+        Identifier: ' StringTo'
+        AnyKeyword
+    Parameter
+      Identifier: ' nToAny'
+      TypeReference
+        Identifier: ' NumberTo'
+        AnyKeyword
+    Parameter
+      Identifier: ' bothToAny'
+      IntersectionType
+        TypeReference
+          Identifier: ' StringTo'
+          AnyKeyword
+        TypeReference
+          Identifier: ' NumberTo'
+          AnyKeyword
+    Parameter
+      Identifier: ' someObj'
+      TypeReference
+        Identifier: ' Obj'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    sToAny'
+          EqualsToken
+          Identifier: ' nToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    sToAny'
+          EqualsToken
+          Identifier: ' bothToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    sToAny'
+          EqualsToken
+          Identifier: ' someObj'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    nToAny'
+          EqualsToken
+          Identifier: ' sToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    nToAny'
+          EqualsToken
+          Identifier: ' bothToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    nToAny'
+          EqualsToken
+          Identifier: ' someObj'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    bothToAny'
+          EqualsToken
+          Identifier: ' sToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    bothToAny'
+          EqualsToken
+          Identifier: ' nToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    bothToAny'
+          EqualsToken
+          Identifier: ' someObj'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    someObj'
+          EqualsToken
+          Identifier: ' sToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someObj'
+          EqualsToken
+          Identifier: ' nToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someObj'
+          EqualsToken
+          Identifier: ' bothToAny'
+  TypeAliasDeclaration
+    Identifier: ' NumberToNumber'
+    TypeReference
+      Identifier: ' NumberTo'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' StringToAnyNumberToNumber'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' StringTo'
+        AnyKeyword
+      ExpressionWithTypeArguments
+        Identifier: ' NumberToNumber'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'sToAny'
+      TypeReference
+        Identifier: ' StringTo'
+        AnyKeyword
+    Parameter
+      Identifier: ' nToNumber'
+      TypeReference
+        Identifier: ' NumberToNumber'
+    Parameter
+      Identifier: ' strToAnyNumToNum'
+      TypeReference
+        Identifier: ' StringToAnyNumberToNumber'
+    Parameter
+      Identifier: ' someObj'
+      TypeReference
+        Identifier: ' Obj'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    sToAny'
+          EqualsToken
+          Identifier: ' nToNumber'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    sToAny'
+          EqualsToken
+          Identifier: ' strToAnyNumToNum'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    sToAny'
+          EqualsToken
+          Identifier: ' someObj'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    nToNumber'
+          EqualsToken
+          Identifier: ' sToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    nToNumber'
+          EqualsToken
+          Identifier: ' strToAnyNumToNum'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    nToNumber'
+          EqualsToken
+          Identifier: ' someObj'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    strToAnyNumToNum'
+          EqualsToken
+          Identifier: ' sToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    strToAnyNumToNum'
+          EqualsToken
+          Identifier: ' nToNumber'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    strToAnyNumToNum'
+          EqualsToken
+          Identifier: ' someObj'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    someObj'
+          EqualsToken
+          Identifier: ' sToAny'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someObj'
+          EqualsToken
+          Identifier: ' nToNumber'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someObj'
+          EqualsToken
+          Identifier: ' someObj'

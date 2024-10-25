@@ -1,0 +1,178 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: esnext
+// @noLib: true
+
+// @Filename: /global.d.ts
+// A local variable would prevent import completions (see `completionsImport_shadowedByLocal.ts`), but a global doesn't.
+////declare var foo: number;
+
+// @Filename: /a.ts
+////export const foo = 0;
+
+// @Filename: /b.ts
+////export const foo = 1;
+
+// @Filename: /c.ts
+////fo/**/
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            text'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            kind'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            kindModifiers'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'GlobalsOrKeywords'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            sourceDisplay'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            text'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            kind'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            kindModifiers'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            sourceDisplay'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            text'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            kind'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            kindModifiers'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' noLib'
+                TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

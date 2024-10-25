@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noUnusedLocals: true
+// @target: esnext
+////declare class greeter {
+////    #private;
+////    private name;
+////}
+
+verify'
+        Identifier: 'noErrors'

@@ -1,0 +1,9 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+   protected'
+    PropertySignature
+      Identifier: '
+   p'

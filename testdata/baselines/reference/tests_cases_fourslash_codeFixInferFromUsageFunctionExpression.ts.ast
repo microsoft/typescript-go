@@ -1,0 +1,17 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////var f = function ([|x |]) {
+////    return x
+////}
+////f(1)
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      StringLiteral
+      Identifier: '/*includeWhiteSpace*/ undefined'
+      Identifier: ' /*errorCode*/ undefined'
+      NumericLiteral

@@ -1,0 +1,71 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' staticProp'
+      NumericLiteral
+    GetAccessor
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'C1'
+          Identifier: 'staticProp'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'C1'
+          Identifier: 'staticProp'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              Identifier: ' x'
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'C1'
+          Identifier: 'staticProp'
+      Block
+  ExpressionStatement
+    ParenthesizedExpression
+      ClassExpression
+        Identifier: ' C2'
+        PropertyDeclaration
+          StaticKeyword
+          Identifier: ' staticProp'
+          NumericLiteral
+        GetAccessor
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'C2'
+              Identifier: 'staticProp'
+          Block
+            ReturnStatement
+              StringLiteral
+        SetAccessor
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'C2'
+              Identifier: 'staticProp'
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y'
+                  Identifier: ' x'
+        MethodDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'C2'
+              Identifier: 'staticProp'
+          Block

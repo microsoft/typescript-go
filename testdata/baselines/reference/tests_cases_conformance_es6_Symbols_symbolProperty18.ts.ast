@@ -1,0 +1,58 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'iterator'
+            NumericLiteral
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'toStringTag'
+            Block
+              ReturnStatement
+                StringLiteral
+          SetAccessor
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'toPrimitive'
+            Parameter
+              Identifier: 'p'
+              BooleanKeyword
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' it'
+        ElementAccessExpression
+          Identifier: ' i'
+          PropertyAccessExpression
+            Identifier: 'Symbol'
+            Identifier: 'iterator'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        CallExpression
+          ElementAccessExpression
+            Identifier: ' i'
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'toStringTag'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+i'
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toPrimitive'
+      EqualsToken
+      FalseKeyword

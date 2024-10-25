@@ -1,0 +1,4100 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' TypeScript'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' TokenID'
+        EnumMember
+          Identifier: '
+        // Keywords
+        Any'
+        EnumMember
+          Identifier: '
+        Bool'
+        EnumMember
+          Identifier: '
+        Break'
+        EnumMember
+          Identifier: '
+        Case'
+        EnumMember
+          Identifier: '
+        Catch'
+        EnumMember
+          Identifier: '
+        Class'
+        EnumMember
+          Identifier: '
+        Const'
+        EnumMember
+          Identifier: '
+        Continue'
+        EnumMember
+          Identifier: '
+        Debugger'
+        EnumMember
+          Identifier: '
+        Default'
+        EnumMember
+          Identifier: '
+        Delete'
+        EnumMember
+          Identifier: '
+        Do'
+        EnumMember
+          Identifier: '
+        Else'
+        EnumMember
+          Identifier: '
+        Enum'
+        EnumMember
+          Identifier: '
+        Export'
+        EnumMember
+          Identifier: '
+        Extends'
+        EnumMember
+          Identifier: '
+        Declare'
+        EnumMember
+          Identifier: '
+        False'
+        EnumMember
+          Identifier: '
+        Finally'
+        EnumMember
+          Identifier: '
+        For'
+        EnumMember
+          Identifier: '
+        Function'
+        EnumMember
+          Identifier: '
+        Constructor'
+        EnumMember
+          Identifier: '
+        Get'
+        EnumMember
+          Identifier: '
+        If'
+        EnumMember
+          Identifier: '
+        Implements'
+        EnumMember
+          Identifier: '
+        Import'
+        EnumMember
+          Identifier: '
+        In'
+        EnumMember
+          Identifier: '
+        InstanceOf'
+        EnumMember
+          Identifier: '
+        Interface'
+        EnumMember
+          Identifier: '
+        Let'
+        EnumMember
+          Identifier: '
+        Module'
+        EnumMember
+          Identifier: '
+        New'
+        EnumMember
+          Identifier: '
+        Number'
+        EnumMember
+          Identifier: '
+        Null'
+        EnumMember
+          Identifier: '
+        Package'
+        EnumMember
+          Identifier: '
+        Private'
+        EnumMember
+          Identifier: '
+        Protected'
+        EnumMember
+          Identifier: '
+        Public'
+        EnumMember
+          Identifier: '
+        Return'
+        EnumMember
+          Identifier: '
+        Set'
+        EnumMember
+          Identifier: '
+        Static'
+        EnumMember
+          Identifier: '
+        String'
+        EnumMember
+          Identifier: '
+        Super'
+        EnumMember
+          Identifier: '
+        Switch'
+        EnumMember
+          Identifier: '
+        This'
+        EnumMember
+          Identifier: '
+        Throw'
+        EnumMember
+          Identifier: '
+        True'
+        EnumMember
+          Identifier: '
+        Try'
+        EnumMember
+          Identifier: '
+        TypeOf'
+        EnumMember
+          Identifier: '
+        Var'
+        EnumMember
+          Identifier: '
+        Void'
+        EnumMember
+          Identifier: '
+        With'
+        EnumMember
+          Identifier: '
+        While'
+        EnumMember
+          Identifier: '
+        Yield'
+        EnumMember
+          Identifier: '
+        // Punctuation
+        Semicolon'
+        EnumMember
+          Identifier: '
+        OpenParen'
+        EnumMember
+          Identifier: '
+        CloseParen'
+        EnumMember
+          Identifier: '
+        OpenBracket'
+        EnumMember
+          Identifier: '
+        CloseBracket'
+        EnumMember
+          Identifier: '
+        OpenBrace'
+        EnumMember
+          Identifier: '
+        CloseBrace'
+        EnumMember
+          Identifier: '
+        Comma'
+        EnumMember
+          Identifier: '
+        Equals'
+        EnumMember
+          Identifier: '
+        PlusEquals'
+        EnumMember
+          Identifier: '
+        MinusEquals'
+        EnumMember
+          Identifier: '
+        AsteriskEquals'
+        EnumMember
+          Identifier: '
+        SlashEquals'
+        EnumMember
+          Identifier: '
+        PercentEquals'
+        EnumMember
+          Identifier: '
+        AmpersandEquals'
+        EnumMember
+          Identifier: '
+        CaretEquals'
+        EnumMember
+          Identifier: '
+        BarEquals'
+        EnumMember
+          Identifier: '
+        LessThanLessThanEquals'
+        EnumMember
+          Identifier: '
+        GreaterThanGreaterThanEquals'
+        EnumMember
+          Identifier: '
+        GreaterThanGreaterThanGreaterThanEquals'
+        EnumMember
+          Identifier: '
+        Question'
+        EnumMember
+          Identifier: '
+        Colon'
+        EnumMember
+          Identifier: '
+        BarBar'
+        EnumMember
+          Identifier: '
+        AmpersandAmpersand'
+        EnumMember
+          Identifier: '
+        Bar'
+        EnumMember
+          Identifier: '
+        Caret'
+        EnumMember
+          Identifier: '
+        And'
+        EnumMember
+          Identifier: '
+        EqualsEquals'
+        EnumMember
+          Identifier: '
+        ExclamationEquals'
+        EnumMember
+          Identifier: '
+        EqualsEqualsEquals'
+        EnumMember
+          Identifier: '
+        ExclamationEqualsEquals'
+        EnumMember
+          Identifier: '
+        LessThan'
+        EnumMember
+          Identifier: '
+        LessThanEquals'
+        EnumMember
+          Identifier: '
+        GreaterThan'
+        EnumMember
+          Identifier: '
+        GreaterThanEquals'
+        EnumMember
+          Identifier: '
+        LessThanLessThan'
+        EnumMember
+          Identifier: '
+        GreaterThanGreaterThan'
+        EnumMember
+          Identifier: '
+        GreaterThanGreaterThanGreaterThan'
+        EnumMember
+          Identifier: '
+        Plus'
+        EnumMember
+          Identifier: '
+        Minus'
+        EnumMember
+          Identifier: '
+        Asterisk'
+        EnumMember
+          Identifier: '
+        Slash'
+        EnumMember
+          Identifier: '
+        Percent'
+        EnumMember
+          Identifier: '
+        Tilde'
+        EnumMember
+          Identifier: '
+        Exclamation'
+        EnumMember
+          Identifier: '
+        PlusPlus'
+        EnumMember
+          Identifier: '
+        MinusMinus'
+        EnumMember
+          Identifier: '
+        Dot'
+        EnumMember
+          Identifier: '
+        DotDotDot'
+        EnumMember
+          Identifier: '
+        Error'
+        EnumMember
+          Identifier: '
+        EndOfFile'
+        EnumMember
+          Identifier: '
+        EqualsGreaterThan'
+        EnumMember
+          Identifier: '
+        Identifier'
+        EnumMember
+          Identifier: '
+        StringLiteral'
+        EnumMember
+          Identifier: '
+        RegularExpressionLiteral'
+        EnumMember
+          Identifier: '
+        NumberLiteral'
+        EnumMember
+          Identifier: '
+        Whitespace'
+        EnumMember
+          Identifier: '
+        Comment'
+        EnumMember
+          Identifier: '
+        Lim'
+        EnumMember
+          Identifier: '
+        LimFixed'
+          Identifier: ' EqualsGreaterThan'
+        EnumMember
+          Identifier: '
+        LimKeyword'
+          Identifier: ' Yield'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tokenTable'
+            NewExpression
+              ElementAccessExpression
+                Identifier: ' TokenInfo'
+                Identifier: ''
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nodeTypeTable'
+            NewExpression
+              ElementAccessExpression
+                Identifier: ' string'
+                Identifier: ''
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nodeTypeToTokTable'
+            NewExpression
+              ElementAccessExpression
+                Identifier: ' number'
+                Identifier: ''
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' noRegexTable'
+            NewExpression
+              ElementAccessExpression
+                Identifier: ' boolean'
+                Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'Identifier'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'StringLiteral'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'NumberLiteral'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'RegularExpressionLiteral'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'This'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'PlusPlus'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'MinusMinus'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'CloseParen'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'CloseBracket'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'CloseBrace'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'True'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    noRegexTable'
+            PropertyAccessExpression
+              Identifier: 'TokenID'
+              Identifier: 'False'
+          EqualsToken
+          TrueKeyword
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' OperatorPrecedence'
+        EnumMember
+          Identifier: '
+        None'
+        EnumMember
+          Identifier: '
+        Comma'
+        EnumMember
+          Identifier: '
+        Assignment'
+        EnumMember
+          Identifier: '
+        Conditional'
+        EnumMember
+          Identifier: '
+        LogicalOr'
+        EnumMember
+          Identifier: '
+        LogicalAnd'
+        EnumMember
+          Identifier: '
+        BitwiseOr'
+        EnumMember
+          Identifier: '
+        BitwiseExclusiveOr'
+        EnumMember
+          Identifier: '
+        BitwiseAnd'
+        EnumMember
+          Identifier: '
+        Equality'
+        EnumMember
+          Identifier: '
+        Relational'
+        EnumMember
+          Identifier: '
+        Shift'
+        EnumMember
+          Identifier: '
+        Additive'
+        EnumMember
+          Identifier: '
+        Multiplicative'
+        EnumMember
+          Identifier: '
+        Unary'
+        EnumMember
+          Identifier: '
+        Lim'
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' Reservation'
+        EnumMember
+          Identifier: '
+        None'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        Javascript'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        JavascriptFuture'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        TypeScript'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        JavascriptFutureStrict'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        TypeScriptAndJS'
+          BinaryExpression
+            Identifier: ' Javascript'
+            BarToken
+            Identifier: ' TypeScript'
+        EnumMember
+          Identifier: '
+        TypeScriptAndJSFuture'
+          BinaryExpression
+            Identifier: ' JavascriptFuture'
+            BarToken
+            Identifier: ' TypeScript'
+        EnumMember
+          Identifier: '
+        TypeScriptAndJSFutureStrict'
+          BinaryExpression
+            Identifier: ' JavascriptFutureStrict'
+            BarToken
+            Identifier: ' TypeScript'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' TokenInfo'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' tokenId'
+            TypeReference
+              Identifier: ' TokenID'
+          Parameter
+            PublicKeyword
+            Identifier: ' reservation'
+            TypeReference
+              Identifier: ' Reservation'
+          Parameter
+            PublicKeyword
+            Identifier: ' binopPrecedence'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' binopNodeType'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' unopPrecedence'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' unopNodeType'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' text'
+            StringKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' ers'
+            TypeReference
+              Identifier: ' ErrorRecoverySet'
+          Block
+      FunctionDeclaration
+        Identifier: ' setTokenInfo'
+        Parameter
+          Identifier: 'tokenId'
+          TypeReference
+            Identifier: ' TokenID'
+        Parameter
+          Identifier: ' reservation'
+          NumberKeyword
+        Parameter
+          Identifier: ' binopPrecedence'
+          NumberKeyword
+        Parameter
+          Identifier: '
+        binopNodeType'
+          NumberKeyword
+        Parameter
+          Identifier: ' unopPrecedence'
+          NumberKeyword
+        Parameter
+          Identifier: ' unopNodeType'
+          NumberKeyword
+        Parameter
+          Identifier: '
+        text'
+          StringKeyword
+        Parameter
+          Identifier: ' ers'
+          TypeReference
+            Identifier: ' ErrorRecoverySet'
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'tokenId'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: '
+            tokenTable'
+                    Identifier: 'tokenId'
+                  EqualsToken
+                  NewExpression
+                    Identifier: ' TokenInfo'
+                    Identifier: 'tokenId'
+                    Identifier: ' reservation'
+                    Identifier: ' binopPrecedence'
+                    Identifier: '
+                                              binopNodeType'
+                    Identifier: ' unopPrecedence'
+                    Identifier: ' unopNodeType'
+                    Identifier: ' text'
+                    Identifier: ' ers'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'binopNodeType'
+                  ExclamationEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' NodeType'
+                    Identifier: 'None'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+                nodeTypeTable'
+                        Identifier: 'binopNodeType'
+                      EqualsToken
+                      Identifier: ' text'
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+                nodeTypeToTokTable'
+                        Identifier: 'binopNodeType'
+                      EqualsToken
+                      Identifier: ' tokenId'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'unopNodeType'
+                  ExclamationEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' NodeType'
+                    Identifier: 'None'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+                nodeTypeTable'
+                        Identifier: 'unopNodeType'
+                      EqualsToken
+                      Identifier: ' text'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Any'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScript'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'PrimType'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Bool'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScript'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'PrimType'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Break'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Case'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'SCase'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Catch'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Catch'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Class'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFuture'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'TypeScriptS'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Const'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFuture'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Var'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Continue'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Debugger'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Debugger'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Default'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'SCase'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Delete'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Unary'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Delete'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Prefix'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Do'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Else'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Else'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Enum'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFuture'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'TypeScriptS'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Export'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFuture'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'TypeScriptS'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Extends'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFuture'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'None'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Declare'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScript'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'False'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'RLit'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Finally'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Catch'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'For'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Function'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Func'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Constructor'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFutureStrict'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Func'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Get'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScript'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Func'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Set'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScript'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Func'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'If'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Implements'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFutureStrict'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'None'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Import'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFuture'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'TypeScriptS'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'In'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Relational'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'In'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'None'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'InstanceOf'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Relational'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'InstOf'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Interface'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFutureStrict'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'TypeScriptS'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Let'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'JavascriptFutureStrict'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'None'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Module'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScript'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'TypeScriptS'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'New'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'PreOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Number'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScript'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'PrimType'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Null'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'RLit'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Package'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'JavascriptFutureStrict'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'None'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Private'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFutureStrict'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'TypeScriptS'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Protected'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'JavascriptFutureStrict'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'None'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Public'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFutureStrict'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'TypeScriptS'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Return'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Static'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFutureStrict'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'None'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'String'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScript'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'PrimType'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Super'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJSFuture'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'RLit'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Switch'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'This'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'RLit'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Throw'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'True'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'RLit'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Try'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'TypeOf'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Unary'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Typeof'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Prefix'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Var'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Var'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Void'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Unary'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Void'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Prefix'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'With'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'With'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Stmt'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'While'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'TypeScriptAndJS'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'While'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Yield'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'JavascriptFutureStrict'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'None'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Identifier'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'ID'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'NumberLiteral'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Literal'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'RegularExpressionLiteral'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'RegExp'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'StringLiteral'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Literal'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    // Non-operator non-identifier tokens
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Semicolon'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'SColon'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ;
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'CloseParen'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'RParen'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // )
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'CloseBracket'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'RBrack'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ]
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'OpenBrace'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'LCurly'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // {
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'CloseBrace'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'RCurly'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // }
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'DotDotDot'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'None'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ...
+
+    // Operator non-identifier tokens
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Comma'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Comma'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Comma'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Comma'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ,
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Equals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Asg'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Asg'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // =
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'PlusEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgAdd'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // +=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'MinusEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgSub'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // -=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'AsteriskEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgMul'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // *=
+
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'SlashEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgDiv'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // /=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'PercentEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgMod'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // %=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'AmpersandEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgAnd'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // &=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'CaretEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgXor'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ^=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'BarEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgOr'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // |=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'LessThanLessThanEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgLsh'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // <<=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'GreaterThanGreaterThanEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgRsh'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // >>=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'GreaterThanGreaterThanGreaterThanEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Assignment'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'AsgRs2'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // >>>=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Question'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Conditional'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'ConditionalExpression'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ?
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Colon'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Colon'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // :
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'BarBar'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'LogicalOr'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'LogOr'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ||
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'AmpersandAmpersand'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'LogicalAnd'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'LogAnd'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // &&
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Bar'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'BitwiseOr'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Or'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // |
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Caret'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'BitwiseExclusiveOr'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Xor'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ^
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'And'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'BitwiseAnd'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'And'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // &
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'EqualsEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Equality'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Eq'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ==
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'ExclamationEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Equality'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Ne'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // !=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'EqualsEqualsEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Equality'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Eqv'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ===
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'ExclamationEqualsEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Equality'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'NEqv'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // !==
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'LessThan'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Relational'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Lt'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // <
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'LessThanEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Relational'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Le'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // <=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'GreaterThan'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Relational'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Gt'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // >
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'GreaterThanEquals'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Relational'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Ge'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // >=
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'LessThanLessThan'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Shift'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Lsh'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // <<
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'GreaterThanGreaterThan'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Shift'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Rsh'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // >>
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'GreaterThanGreaterThanGreaterThan'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Shift'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Rs2'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // >>>
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Plus'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Additive'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Add'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Unary'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Pos'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'AddOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // +
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Minus'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Additive'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Sub'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Unary'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Neg'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'AddOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // -
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Asterisk'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Multiplicative'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Mul'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // *
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Slash'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Multiplicative'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Div'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // /
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Percent'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Multiplicative'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Mod'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'BinOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // %
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Tilde'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Unary'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'Not'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'PreOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ~
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Exclamation'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Unary'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'LogNot'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'PreOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // !
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'PlusPlus'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Unary'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'IncPre'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'PreOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // ++
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'MinusMinus'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Unary'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'DecPre'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'PreOp'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // --
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'OpenParen'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'LParen'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // (
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'OpenBracket'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'LBrack'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // [
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'Dot'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'Unary'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'Dot'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // .
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'EndOfFile'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'EOF'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // EOF
+    setTokenInfo'
+          PropertyAccessExpression
+            Identifier: 'TokenID'
+            Identifier: 'EqualsGreaterThan'
+          PropertyAccessExpression
+            Identifier: ' Reservation'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' OperatorPrecedence'
+            Identifier: 'None'
+          PropertyAccessExpression
+            Identifier: ' NodeType'
+            Identifier: 'None'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' ErrorRecoverySet'
+            Identifier: 'None'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' lookupToken'
+        Parameter
+          Identifier: 'tokenId'
+          TypeReference
+            Identifier: ' TokenID'
+        TypeReference
+          Identifier: ' TokenInfo'
+        Block
+          ReturnStatement
+            ElementAccessExpression
+              Identifier: ' tokenTable'
+              Identifier: 'tokenId'
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' TokenClass'
+        EnumMember
+          Identifier: '
+        Punctuation'
+        EnumMember
+          Identifier: '
+        Keyword'
+        EnumMember
+          Identifier: '
+        Operator'
+        EnumMember
+          Identifier: '
+        Comment'
+        EnumMember
+          Identifier: '
+        Whitespace'
+        EnumMember
+          Identifier: '
+        Identifier'
+        EnumMember
+          Identifier: '
+        Literal'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' SavedToken'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' tok'
+            TypeReference
+              Identifier: ' Token'
+          Parameter
+            PublicKeyword
+            Identifier: ' minChar'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' limChar'
+            NumberKeyword
+          Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Token'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' tokenId'
+            TypeReference
+              Identifier: ' TokenID'
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' toString'
+          Block
+            ReturnStatement
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          StringLiteral
+                          PlusToken
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'tokenId'
+                        PlusToken
+                        StringLiteral
+                      PlusToken
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'getText'
+                    PlusToken
+                    StringLiteral
+                  PlusToken
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        TypeAssertionExpression
+                          AnyKeyword
+                          Identifier: 'TokenID'
+                      Identifier: '_map'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'tokenId'
+                PlusToken
+                StringLiteral
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' print'
+          Parameter
+            Identifier: 'line'
+            NumberKeyword
+          Parameter
+            Identifier: ' outfile'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            outfile'
+                  Identifier: 'WriteLine'
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'toString'
+                    PlusToken
+                    StringLiteral
+                  PlusToken
+                  Identifier: ' line'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getText'
+          StringKeyword
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: ' tokenTable'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'tokenId'
+                Identifier: 'text'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' classification'
+          TypeReference
+            Identifier: ' TokenClass'
+          Block
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'tokenId'
+                LessThanEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' TokenID'
+                  Identifier: 'LimKeyword'
+              Block
+                ReturnStatement
+                  PropertyAccessExpression
+                    Identifier: ' TokenClass'
+                    Identifier: 'Keyword'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' tokenInfo'
+                      CallExpression
+                        Identifier: ' lookupToken'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'tokenId'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'tokenInfo'
+                    ExclamationEqualsToken
+                    Identifier: ' undefined'
+                  Block
+                    IfStatement
+                      BinaryExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'tokenInfo'
+                              Identifier: 'unopNodeType'
+                            ExclamationEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' NodeType'
+                              Identifier: 'None'
+                        BarBarToken
+                        ParenthesizedExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'tokenInfo'
+                              Identifier: 'binopNodeType'
+                            ExclamationEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' NodeType'
+                              Identifier: 'None'
+                      Block
+                        ReturnStatement
+                          PropertyAccessExpression
+                            Identifier: ' TokenClass'
+                            Identifier: 'Operator'
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' TokenClass'
+                Identifier: 'Punctuation'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' NumberLiteralToken'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Token'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' value'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' hasEmptyFraction'
+            QuestionToken
+            BooleanKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                PropertyAccessExpression
+                  Identifier: 'TokenID'
+                  Identifier: 'NumberLiteral'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getText'
+          StringKeyword
+          Block
+            ReturnStatement
+              ConditionalExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'hasEmptyFraction'
+                QuestionToken
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'value'
+                      Identifier: 'toString'
+                  PlusToken
+                  StringLiteral
+                ColonToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'value'
+                    Identifier: 'toString'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' classification'
+          TypeReference
+            Identifier: ' TokenClass'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' TokenClass'
+                Identifier: 'Literal'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' StringLiteralToken'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Token'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' value'
+            StringKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                PropertyAccessExpression
+                  Identifier: 'TokenID'
+                  Identifier: 'StringLiteral'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getText'
+          StringKeyword
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'value'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' classification'
+          TypeReference
+            Identifier: ' TokenClass'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' TokenClass'
+                Identifier: 'Literal'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' IdentifierToken'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Token'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' value'
+            StringKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' hasEscapeSequence'
+            BooleanKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                PropertyAccessExpression
+                  Identifier: 'TokenID'
+                  Identifier: 'Identifier'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getText'
+          StringKeyword
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'value'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' classification'
+          TypeReference
+            Identifier: ' TokenClass'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' TokenClass'
+                Identifier: 'Identifier'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' WhitespaceToken'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Token'
+        Constructor
+          Parameter
+            Identifier: 'tokenId'
+            TypeReference
+              Identifier: ' TokenID'
+          Parameter
+            PublicKeyword
+            Identifier: ' value'
+            StringKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                Identifier: 'tokenId'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getText'
+          StringKeyword
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'value'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' classification'
+          TypeReference
+            Identifier: ' TokenClass'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' TokenClass'
+                Identifier: 'Whitespace'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' CommentToken'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Token'
+        Constructor
+          Parameter
+            Identifier: 'tokenID'
+            TypeReference
+              Identifier: ' TokenID'
+          Parameter
+            PublicKeyword
+            Identifier: ' value'
+            StringKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' isBlock'
+            BooleanKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' startPos'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' line'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' endsLine'
+            BooleanKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                Identifier: 'tokenID'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getText'
+          StringKeyword
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'value'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' classification'
+          TypeReference
+            Identifier: ' TokenClass'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' TokenClass'
+                Identifier: 'Comment'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' RegularExpressionLiteralToken'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Token'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' regex'
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                PropertyAccessExpression
+                  Identifier: 'TokenID'
+                  Identifier: 'RegularExpressionLiteral'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getText'
+          StringKeyword
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'regex'
+                  Identifier: 'toString'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' classification'
+          TypeReference
+            Identifier: ' TokenClass'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' TokenClass'
+                Identifier: 'Literal'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' staticTokens'
+            NewExpression
+              ElementAccessExpression
+                Identifier: ' Token'
+                Identifier: ''
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' initializeStaticTokens'
+        Block
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                NumericLiteral
+            BinaryExpression
+              Identifier: ' i'
+              LessThanEqualsToken
+              PropertyAccessExpression
+                Identifier: ' TokenID'
+                Identifier: 'LimFixed'
+            PostfixUnaryExpression
+              Identifier: ' i'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: '
+            staticTokens'
+                    Identifier: 'i'
+                  EqualsToken
+                  NewExpression
+                    Identifier: ' Token'
+                    Identifier: 'i'

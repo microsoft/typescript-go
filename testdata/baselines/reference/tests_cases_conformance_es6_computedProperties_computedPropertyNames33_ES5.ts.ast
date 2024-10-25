@@ -1,0 +1,30 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      ReturnStatement
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' obj'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    CallExpression
+                      Identifier: 'foo'
+                      TypeReference
+                        Identifier: 'T'
+                  Block
+        ReturnStatement
+          NumericLiteral

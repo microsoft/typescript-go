@@ -1,0 +1,17 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '// @noEmit: true
+// @allowJs: true
+// @checkJs: true
+// @Filename: bug24492.js
+module'
+          Identifier: 'exports'
+        Identifier: 'D'
+      EqualsToken
+      ClassExpression
+  ExpressionStatement
+    NewExpression
+      Identifier: ' D'

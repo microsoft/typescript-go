@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' yield'
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            TypeQuery
+              Identifier: ' yield'

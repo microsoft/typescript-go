@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' pvar'
+      NumericLiteral
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' n'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pvar'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' meth'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' q'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pvar'

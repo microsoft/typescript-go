@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _path'
+      StringLiteral
+    MethodDeclaration
+      Identifier: '
+
+	dynamic'
+      Block
+        ReturnStatement
+          CallExpression
+            ImportKeyword
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_path'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'dynamic'

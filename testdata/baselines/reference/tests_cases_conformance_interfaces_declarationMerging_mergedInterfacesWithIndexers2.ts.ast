@@ -1,0 +1,44 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' length'
+          StringKeyword
+  InterfaceDeclaration
+    Identifier: ' A2'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+    PropertySignature
+      StringLiteral
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' A2'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' length'
+          NumberKeyword
+    PropertySignature
+      NumericLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' length'
+          NumberKeyword

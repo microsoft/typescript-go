@@ -1,0 +1,60 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' acceptNum'
+    Parameter
+      Identifier: 'num'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn1'
+        FunctionExpression
+          Identifier: ' self'
+          Parameter
+            Identifier: 'a'
+          Parameter
+            Identifier: ' b'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+    acceptNum'
+                Identifier: 'b'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' // error
+    self'
+                StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+    self'
+                StringLiteral
+                Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn2'
+        FunctionExpression
+          Identifier: ' self'
+          Parameter
+            Identifier: 'a'
+          Parameter
+            Identifier: ' b'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+    acceptNum'
+                Identifier: 'b'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' // error
+    self'
+                StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+    self'
+                StringLiteral
+                Identifier: ' undefined'

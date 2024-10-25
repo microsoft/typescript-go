@@ -1,0 +1,57 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'x'
+    StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' use'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+use'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'toExponential'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'x'
+          Identifier: ' a'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'y'
+          Identifier: ' b'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' b'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumberKeyword

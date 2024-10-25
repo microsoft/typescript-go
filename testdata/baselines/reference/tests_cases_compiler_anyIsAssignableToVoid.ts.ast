@@ -1,0 +1,16 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' P'
+    PropertySignature
+      Identifier: '
+    p'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Q'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' P'
+    PropertySignature
+      Identifier: ' // check assignability here. any is assignable to void.
+    p'
+      AnyKeyword

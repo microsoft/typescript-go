@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'a'
+      EqualsToken
+      BinaryExpression
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+        BarBarToken
+        Identifier: ' a'

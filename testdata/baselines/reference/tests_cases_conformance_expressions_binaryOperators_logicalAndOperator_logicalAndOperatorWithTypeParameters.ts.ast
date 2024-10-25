@@ -1,0 +1,107 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' V'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            BinaryExpression
+              Identifier: ' t'
+              AmpersandAmpersandToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            BinaryExpression
+              Identifier: ' u'
+              AmpersandAmpersandToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            BinaryExpression
+              Identifier: ' v'
+              AmpersandAmpersandToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r4'
+            BinaryExpression
+              Identifier: ' t'
+              AmpersandAmpersandToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r5'
+            BinaryExpression
+              Identifier: ' u'
+              AmpersandAmpersandToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r6'
+            BinaryExpression
+              Identifier: ' v'
+              AmpersandAmpersandToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r7'
+            BinaryExpression
+              Identifier: ' t'
+              AmpersandAmpersandToken
+              Identifier: ' v'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r8'
+            BinaryExpression
+              Identifier: ' u'
+              AmpersandAmpersandToken
+              Identifier: ' v'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r9'
+            BinaryExpression
+              Identifier: ' v'
+              AmpersandAmpersandToken
+              Identifier: ' v'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r10'
+            BinaryExpression
+              Identifier: ' t'
+              AmpersandAmpersandToken
+              Identifier: ' a'

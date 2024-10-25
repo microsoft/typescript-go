@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' A'
+        ObjectLiteralExpression
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' AA'
+        ObjectLiteralExpression
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' AA'
+    StringLiteral

@@ -1,0 +1,67 @@
+SourceFile
+  ForStatement
+    Block
+      BreakStatement
+  LabeledStatement
+    Identifier: '
+
+ONE'
+    ForStatement
+      Block
+        BreakStatement
+          Identifier: ' ONE'
+  LabeledStatement
+    Identifier: '
+
+TWO'
+    LabeledStatement
+      Identifier: '
+THREE'
+      ForStatement
+        Block
+          BreakStatement
+            Identifier: ' THREE'
+  LabeledStatement
+    Identifier: '
+
+FOUR'
+    ForStatement
+      Block
+        LabeledStatement
+          Identifier: '
+    FIVE'
+          ForStatement
+            Block
+              BreakStatement
+                Identifier: ' FOUR'
+  ForStatement
+    Block
+      LabeledStatement
+        Identifier: '
+    SIX'
+        ForStatement
+          BreakStatement
+            Identifier: ' SIX'
+  LabeledStatement
+    Identifier: '
+
+SEVEN'
+    ForStatement
+      ForStatement
+        ForStatement
+          BreakStatement
+            Identifier: ' SEVEN'
+  LabeledStatement
+    Identifier: '
+
+EIGHT'
+    ForStatement
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fn'
+              FunctionExpression
+                Block
+        BreakStatement
+          Identifier: ' EIGHT'

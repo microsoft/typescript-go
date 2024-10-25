@@ -1,0 +1,23 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' f'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnumber'
+        NumberKeyword
+        Identifier: ' f'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ExportAssignment
+    NumericLiteral

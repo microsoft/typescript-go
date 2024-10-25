@@ -1,0 +1,62 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l2'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l3'
+      VariableDeclaration
+        Identifier: ' l4'
+      VariableDeclaration
+        Identifier: ' l5'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' l6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l7'
+        FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l8'
+        NumberKeyword
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l9'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' l10'
+        StringKeyword
+        StringLiteral
+      VariableDeclaration
+        Identifier: ' l11'
+        NullKeyword
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l11'
+    ObjectLiteralExpression
+    Block
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l12'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' l12'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' l12'
+    Block

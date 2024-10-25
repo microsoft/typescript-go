@@ -1,0 +1,15 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'key'
+          BindingElement
+            Identifier: ' entry'
+    NewExpression
+      Identifier: ' FormData'
+    Block
+      ExpressionStatement
+        Identifier: '
+    entry'

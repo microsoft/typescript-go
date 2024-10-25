@@ -1,0 +1,8 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' thing'
+    Parameter
+      Identifier: 'list'
+    Block
+      ReturnStatement
+        Identifier: ' list'

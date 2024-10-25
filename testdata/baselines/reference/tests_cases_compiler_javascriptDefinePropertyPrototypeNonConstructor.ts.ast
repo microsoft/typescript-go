@@ -1,0 +1,23 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Graphic'
+    Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Object'
+        Identifier: 'defineProperty'
+      PropertyAccessExpression
+        Identifier: 'Graphic'
+        Identifier: 'prototype'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  get'
+          FunctionExpression
+            Block
+              ReturnStatement
+                ThisKeyword

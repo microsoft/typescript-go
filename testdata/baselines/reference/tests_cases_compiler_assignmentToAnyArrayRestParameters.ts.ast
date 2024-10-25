@@ -1,0 +1,138 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: '
+    fa'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            StringKeyword
+        StringKeyword
+    Parameter
+      Identifier: '
+    fb'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' T'
+        StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f1'
+            FunctionType
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                AnyKeyword
+              StringKeyword
+            Identifier: ' fa'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f2'
+            FunctionType
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                ArrayType
+                  AnyKeyword
+              StringKeyword
+            Identifier: ' fa'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f3'
+            FunctionType
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                AnyKeyword
+              StringKeyword
+            Identifier: ' fb'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f4'
+            FunctionType
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                ArrayType
+                  AnyKeyword
+              StringKeyword
+            Identifier: ' fb'
+  FunctionDeclaration
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        StringKeyword
+    TypeParameter
+      Identifier: ' K'
+      NumberKeyword
+    Block
+      TypeAliasDeclaration
+        Identifier: ' T00'
+        IndexedAccessType
+          ArrayType
+            StringKeyword
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' T01'
+        IndexedAccessType
+          ArrayType
+            StringKeyword
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' T02'
+        IndexedAccessType
+          ArrayType
+            StringKeyword
+          UnionType
+            TypeReference
+              Identifier: 'K'
+            LiteralType
+              StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' T10'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' T11'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' T12'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          UnionType
+            TypeReference
+              Identifier: 'K'
+            LiteralType
+              StringLiteral

@@ -1,0 +1,22 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            AnyKeyword
+          Parameter
+            Identifier: ' b'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    is'
+      BooleanKeyword

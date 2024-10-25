@@ -1,0 +1,11 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+   x'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+   x'
+      NumberKeyword

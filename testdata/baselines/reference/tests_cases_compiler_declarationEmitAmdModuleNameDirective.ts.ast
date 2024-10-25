@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'foo'
+    StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' foo'

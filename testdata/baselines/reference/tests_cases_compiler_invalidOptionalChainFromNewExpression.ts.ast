@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    b'
+      Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' A'
+        QuestionDotToken
+        Identifier: 'b'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' A'
+        QuestionDotToken
+        Identifier: 'b'

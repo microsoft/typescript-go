@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'foo'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'bar'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'quux'

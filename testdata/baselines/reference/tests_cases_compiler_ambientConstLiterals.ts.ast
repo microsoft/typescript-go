@@ -1,0 +1,140 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      Identifier: ' C'
+    EnumMember
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        Identifier: ' c1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        Identifier: ' c2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5'
+        CallExpression
+          Identifier: ' f'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c6'
+        CallExpression
+          Identifier: ' f'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c7'
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c8'
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c8b'
+        ElementAccessExpression
+          Identifier: ' E'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c9'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c10'
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c11'
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c13'
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Math'
+                Identifier: 'random'
+            GreaterThanToken
+            NumericLiteral
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c14'
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Math'
+                Identifier: 'random'
+            GreaterThanToken
+            NumericLiteral
+          QuestionToken
+          NumericLiteral
+          ColonToken
+          NumericLiteral

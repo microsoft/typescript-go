@@ -1,0 +1,46 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' a'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+a'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' a'
+        VoidKeyword
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' a'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' _a'
+                TypeQuery
+                  Identifier: ' a'
+          ExportDeclaration
+            NamedExports
+              ExportSpecifier
+                Identifier: ' _a'
+                Identifier: ' default'
+      ExportAssignment
+        Identifier: ' a'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportDeclaration
+        ImportClause
+          NamedImports
+            ImportSpecifier
+              Identifier: ' a'
+        StringLiteral
+      ExportAssignment
+        Identifier: ' a'

@@ -1,0 +1,10 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'a'
+            DotDotDotToken
+            Identifier: ' b'
+        ObjectLiteralExpression

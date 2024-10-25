@@ -1,0 +1,8 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' X'
+    Block

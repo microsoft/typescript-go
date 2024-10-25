@@ -1,0 +1,15 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'foo'
+    Block

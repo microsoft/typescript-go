@@ -1,0 +1,38 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    Parameter
+      Identifier: '
+  arg'
+      UnionType
+        TypeReference
+          Identifier: ' Record'
+          StringKeyword
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              StringKeyword
+            VoidKeyword
+        TypeReference
+          Identifier: ' Array'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              NumberKeyword
+            VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ArrayLiteralExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'arg'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              Identifier: '
+    arg'

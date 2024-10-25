@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'A'
+    PropertyDeclaration
+      Identifier: '
+	prop'
+      TypeReference
+        Identifier: ' X'
+        FunctionType
+          TypeParameter
+            Identifier: 'Tany'
+          TypeReference
+            Identifier: ' Tany'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' X'
+          BooleanKeyword

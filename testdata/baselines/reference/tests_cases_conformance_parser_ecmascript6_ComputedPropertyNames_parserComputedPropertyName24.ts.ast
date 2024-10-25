@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    SetAccessor
+      ComputedPropertyName
+        Identifier: 'e'
+      Parameter
+        Identifier: 'v'
+      Block

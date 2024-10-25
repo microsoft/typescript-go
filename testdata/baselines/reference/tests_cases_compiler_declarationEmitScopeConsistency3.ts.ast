@@ -1,0 +1,40 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        ArrowFunction
+          Parameter
+            Identifier: 'v'
+            LiteralType
+              StringLiteral
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' f'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'v'
+                      LiteralType
+                        StringLiteral
+                    EqualsGreaterThanToken
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      AsExpression
+                        NonNullExpression
+                          NullKeyword
+                        TypeQuery
+                          Identifier: ' v'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' r'
+                  CallExpression
+                    Identifier: ' f'
+                    NonNullExpression
+                      NullKeyword
+            ReturnStatement
+              Identifier: ' r'

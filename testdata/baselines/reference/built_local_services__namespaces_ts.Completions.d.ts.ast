@@ -1,0 +1,12 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' StringCompletions'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' StringCompletions'

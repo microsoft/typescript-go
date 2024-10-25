@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier

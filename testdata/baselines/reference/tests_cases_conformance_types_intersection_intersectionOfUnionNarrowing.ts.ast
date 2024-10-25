@@ -1,0 +1,70 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' X'
+    PropertySignature
+      Identifier: '
+  a'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' aProp'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+  b'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' bProp'
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' AorB'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          ObjectKeyword
+        PropertySignature
+          Identifier: ' b'
+          UndefinedKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          UndefinedKeyword
+        PropertySignature
+          Identifier: ' b'
+          ObjectKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q'
+        IntersectionType
+          TypeReference
+            Identifier: ' X'
+          TypeReference
+            Identifier: ' AorB'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'q'
+        Identifier: 'a'
+      ExclamationEqualsEqualsToken
+      Identifier: ' undefined'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+  q'
+            Identifier: 'a'
+          Identifier: 'aProp'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+  // q.b is previously incorrectly inferred as potentially undefined
+  q'
+            Identifier: 'b'
+          Identifier: 'bProp'

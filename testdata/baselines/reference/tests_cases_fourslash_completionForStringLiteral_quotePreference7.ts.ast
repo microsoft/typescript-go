@@ -1,0 +1,60 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @filename: /a.ts
+////export const a = null;
+
+// @filename: /b.ts
+////import { a } from './a';
+////
+////const foo = { '#': null };
+////foo[|./**/|]
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeInsertTextCompletions'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        quotePreference'
+              StringLiteral

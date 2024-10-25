@@ -1,0 +1,255 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BOOLEAN'
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        TrueKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      BooleanKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          TrueKeyword
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objA'
+        NewExpression
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber1'
+        PrefixUnaryExpression
+          Identifier: 'BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber2'
+        PostfixUnaryExpression
+          Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber3'
+        PrefixUnaryExpression
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber4'
+        PrefixUnaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' y'
+              FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber5'
+        PrefixUnaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' y'
+              ArrowFunction
+                Parameter
+                  Identifier: 'n'
+                  BooleanKeyword
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber6'
+        PostfixUnaryExpression
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber7'
+        PostfixUnaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' y'
+              FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber8'
+        PostfixUnaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' y'
+              ArrowFunction
+                Parameter
+                  Identifier: 'n'
+                  BooleanKeyword
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber9'
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'objA'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber10'
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'M'
+            Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber11'
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber12'
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'A'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber13'
+        PostfixUnaryExpression
+          CallExpression
+            Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber14'
+        PostfixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' A'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber15'
+        PostfixUnaryExpression
+          PropertyAccessExpression
+            Identifier: ' objA'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber16'
+        PostfixUnaryExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'n'
+  ExpressionStatement
+    PrefixUnaryExpression
+      TrueKeyword
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'BOOLEAN'
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        Identifier: 'foo'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'objA'
+        Identifier: 'a'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'M'
+        Identifier: 'n'
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        PropertyAccessExpression
+          Identifier: 'objA'
+          Identifier: 'a'
+      CommaToken
+      PropertyAccessExpression
+        Identifier: ' M'
+        Identifier: 'n'
+  ExpressionStatement
+    PostfixUnaryExpression
+      TrueKeyword
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+BOOLEAN'
+  ExpressionStatement
+    PostfixUnaryExpression
+      CallExpression
+        Identifier: '
+foo'
+  ExpressionStatement
+    PostfixUnaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objA'
+        Identifier: 'a'
+  ExpressionStatement
+    PostfixUnaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'n'
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        PropertyAccessExpression
+          Identifier: '
+objA'
+          Identifier: 'a'
+      CommaToken
+      PostfixUnaryExpression
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'n'

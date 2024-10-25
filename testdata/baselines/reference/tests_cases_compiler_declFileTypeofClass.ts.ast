@@ -1,0 +1,46 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' y'
+      NumberKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x3'
+      StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' y3'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeQuery
+          Identifier: ' c'
+  ClassDeclaration
+    Identifier: ' genericC'
+    TypeParameter
+      Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' genericX'
+        Identifier: ' genericC'

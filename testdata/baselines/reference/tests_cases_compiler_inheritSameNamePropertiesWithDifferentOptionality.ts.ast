@@ -1,0 +1,25 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' C'
+    PropertySignature
+      Identifier: '
+    x'
+      QuestionToken
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' C2'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+      ExpressionWithTypeArguments
+        Identifier: ' C2'
+    PropertySignature
+      Identifier: ' // error
+    y'
+      StringKeyword

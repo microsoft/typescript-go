@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' key'
+        CallExpression
+          Identifier: ' Symbol'
+      VariableDeclaration
+        Identifier: ' value'
+        NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'key'
+      Identifier: ' value'

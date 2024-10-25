@@ -1,0 +1,64 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Int8ArrayConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' Int8Array'
+        TypeReference
+          Identifier: 'ArrayBuffer'
+  InterfaceDeclaration
+    Identifier: ' Uint8ArrayConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' Uint8Array'
+        TypeReference
+          Identifier: 'ArrayBuffer'
+  InterfaceDeclaration
+    Identifier: ' Uint8ClampedArrayConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' Uint8ClampedArray'
+        TypeReference
+          Identifier: 'ArrayBuffer'
+  InterfaceDeclaration
+    Identifier: ' Int16ArrayConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' Int16Array'
+        TypeReference
+          Identifier: 'ArrayBuffer'
+  InterfaceDeclaration
+    Identifier: ' Uint16ArrayConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' Uint16Array'
+        TypeReference
+          Identifier: 'ArrayBuffer'
+  InterfaceDeclaration
+    Identifier: ' Int32ArrayConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' Int32Array'
+        TypeReference
+          Identifier: 'ArrayBuffer'
+  InterfaceDeclaration
+    Identifier: ' Uint32ArrayConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' Uint32Array'
+        TypeReference
+          Identifier: 'ArrayBuffer'
+  InterfaceDeclaration
+    Identifier: ' Float32ArrayConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' Float32Array'
+        TypeReference
+          Identifier: 'ArrayBuffer'
+  InterfaceDeclaration
+    Identifier: ' Float64ArrayConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' Float64Array'
+        TypeReference
+          Identifier: 'ArrayBuffer'

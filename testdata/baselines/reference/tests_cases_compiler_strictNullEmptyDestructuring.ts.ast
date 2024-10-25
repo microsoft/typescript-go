@@ -1,0 +1,109 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+        NullKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+        EqualsToken
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+        Identifier: ' undefined'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+        EqualsToken
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Math'
+              Identifier: 'random'
+          QuestionToken
+          ObjectLiteralExpression
+          ColonToken
+          NullKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+        EqualsToken
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Math'
+              Identifier: 'random'
+          QuestionToken
+          ObjectLiteralExpression
+          ColonToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Math'
+              Identifier: 'random'
+          QuestionToken
+          ObjectLiteralExpression
+          ColonToken
+          Identifier: ' undefined'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+        EqualsToken
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Math'
+              Identifier: 'random'
+          QuestionToken
+          ObjectLiteralExpression
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Math'
+              Identifier: 'random'
+          QuestionToken
+          NullKeyword
+          ColonToken
+          Identifier: ' undefined'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+        EqualsToken
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Math'
+              Identifier: 'random'
+          QuestionToken
+          NullKeyword
+          ColonToken
+          Identifier: ' undefined'

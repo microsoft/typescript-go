@@ -1,0 +1,50 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cond'
+        BooleanKeyword
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'x'
+          EqualsToken
+          StringLiteral
+      AmpersandAmpersandToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // string | number
+
+x'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+cond'
+      AmpersandAmpersandToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    Identifier: '
+x'

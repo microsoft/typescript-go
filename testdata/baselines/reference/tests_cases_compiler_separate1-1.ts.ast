@@ -1,0 +1,6 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'X'
+        Identifier: 'f'

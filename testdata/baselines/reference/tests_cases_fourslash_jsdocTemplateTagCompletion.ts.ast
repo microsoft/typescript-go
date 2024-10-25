@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+/////**
+//// * @template {/**/} T
+//// * @typedef {Object} Foo
+//// * @property {T} foo
+//// */
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          PropertyAccessExpression
+            Identifier: ' completion'
+            Identifier: 'globalTypes'

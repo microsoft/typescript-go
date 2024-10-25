@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' alpha'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' beta'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringKeyword
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' alpha'
+            Identifier: 'a'
+          PlusToken
+          PropertyAccessExpression
+            Identifier: ' beta'
+            Identifier: 'b'

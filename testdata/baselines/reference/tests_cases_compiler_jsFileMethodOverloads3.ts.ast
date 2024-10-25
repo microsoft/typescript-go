@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' id'
+    Parameter
+      Identifier: 'x'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' id'
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' id'
+          StringLiteral

@@ -1,0 +1,59 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ComponentType'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Elem'
+        TypeReference
+          Identifier: ' ComponentType'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' someKey'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bad'
+        JsxSelfClosingElement
+          Identifier: 'Elem'
+          JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' good'
+        JsxSelfClosingElement
+          Identifier: 'Elem'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' someKey'
+              StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Elem2'
+        TypeReference
+          Identifier: ' ComponentType'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' opt'
+              QuestionToken
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' alsoOk'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Elem2'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'Elem2'

@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// interface I1 {
+////     x: number;
+//// }
+//// interface I2 {
+////     x: string;
+//// }
+////
+//// class C implements I1,I2 {[| |]}
+
+verify'
+        Identifier: 'codeFixAvailable'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral

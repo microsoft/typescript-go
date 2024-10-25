@@ -1,0 +1,39 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowJs: true
+// @checkJs: true
+// @noImplicitThis: true
+
+// @Filename: /a.js
+////class C {
+////    q() {
+////        function i() {
+////            this;
+////        }
+////    }
+////    m() {
+////        function h() {
+////            this;
+////        }
+////    }
+////}
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixAllDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

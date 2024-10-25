@@ -1,0 +1,40 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' simple'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        Parameter
+          Identifier: ' b'
+          NumberKeyword
+        VoidKeyword
+    TypeLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+simple'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        Parameter
+          Identifier: ' b'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+simple'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        Parameter
+          Identifier: ' b'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Block

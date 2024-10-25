@@ -1,0 +1,45 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' NS1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' NS2'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            NumberKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'NS1'
+      ExportSpecifier
+        Identifier: ' NS1'
+        Identifier: ' NNS1'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'NS2'
+      ExportSpecifier
+        Identifier: ' NS2'
+        Identifier: ' NNS2'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'NS1'
+        Identifier: ' NNNS1'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'NS2'
+        Identifier: ' NNNS2'

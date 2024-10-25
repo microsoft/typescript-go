@@ -1,0 +1,12 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' istring'
+      ImportEqualsDeclaration
+        Identifier: ' string'
+        QualifiedName
+          Identifier: ' test'
+          Identifier: 'istring'

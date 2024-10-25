@@ -1,0 +1,85 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'T'
+    ConstructorType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' Tagged'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Constructor'
+        TypeLiteral
+    Parameter
+      Identifier: 'Base'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' Base'
+          PropertyDeclaration
+            Identifier: '
+    _tag'
+            StringKeyword
+          Constructor
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              ArrayType
+                AnyKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  SuperKeyword
+                  SpreadElement
+                    Identifier: 'args'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_tag'
+                  EqualsToken
+                  StringLiteral
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+  toString'
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' Tagged'
+          Identifier: 'A'
+    MethodDeclaration
+      Identifier: '
+  toString'
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+  toString'
+      Block
+        ReturnStatement
+          StringLiteral

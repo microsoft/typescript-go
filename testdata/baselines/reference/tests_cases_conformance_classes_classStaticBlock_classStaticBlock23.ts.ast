@@ -1,0 +1,61 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nums'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+              Identifier: 'n'
+  ClassDeclaration
+    Identifier: ' C'
+    ClassStaticBlockDeclaration
+      Block
+        ForOfStatement
+          AwaitKeyword
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' nn'
+          Identifier: ' nums'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        console'
+                  Identifier: 'log'
+                Identifier: 'nn'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        ClassStaticBlockDeclaration
+          Block
+            ForOfStatement
+              AwaitKeyword
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' nn'
+              Identifier: ' nums'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+          console'
+                      Identifier: 'log'
+                    Identifier: 'nn'

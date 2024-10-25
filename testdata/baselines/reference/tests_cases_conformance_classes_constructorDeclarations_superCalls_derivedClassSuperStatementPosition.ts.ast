@@ -1,0 +1,250 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' DerivedBasic'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedAfterParameterDefault'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    PropertyDeclaration
+      Identifier: '
+    x1'
+      BooleanKeyword
+    PropertyDeclaration
+      Identifier: '
+    x2'
+      BooleanKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        FalseKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x1'
+            EqualsToken
+            Identifier: ' x'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x2'
+            EqualsToken
+            Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' DerivedAfterRestParameter'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    PropertyDeclaration
+      Identifier: '
+    x1'
+      ArrayType
+        BooleanKeyword
+    PropertyDeclaration
+      Identifier: '
+    x2'
+      ArrayType
+        BooleanKeyword
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        ArrayType
+          BooleanKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x1'
+            EqualsToken
+            Identifier: ' x'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x2'
+            EqualsToken
+            Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' DerivedComments'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      AnyKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        // c1
+        console'
+              Identifier: 'log'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' DerivedCommentsInvalidThis'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      AnyKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          ThisKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        // c1
+        console'
+              Identifier: 'log'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' DerivedInConditional'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          ConditionalExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Math'
+                Identifier: 'random'
+            QuestionToken
+            CallExpression
+              SuperKeyword
+              NumericLiteral
+            ColonToken
+            CallExpression
+              SuperKeyword
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' DerivedInIf'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      NumericLiteral
+    Constructor
+      Block
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                NumericLiteral
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                NumericLiteral
+  ClassDeclaration
+    Identifier: ' DerivedInBlockWithProperties'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      NumericLiteral
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' paramProp'
+        NumericLiteral
+      Block
+        Block
+          ExpressionStatement
+            CallExpression
+              SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedInConditionalWithProperties'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      NumericLiteral
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' paramProp'
+        NumericLiteral
+      Block
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                NumericLiteral
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                NumericLiteral

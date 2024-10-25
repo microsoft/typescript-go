@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' identity'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    TypeReference
+      Identifier: ' A'
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ElementAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+              Identifier: 'map'
+            Identifier: 'identity'
+          NumericLiteral

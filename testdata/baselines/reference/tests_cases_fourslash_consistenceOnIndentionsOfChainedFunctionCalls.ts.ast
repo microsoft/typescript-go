@@ -1,0 +1,45 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////interface ig {
+////  module(data): ig;
+////   requires(data): ig;
+////   defines(data): ig;
+////}
+////
+////var ig: ig;
+////ig.module(
+////   'mything'
+////).requires(
+////   'otherstuff'
+////).defines(/*0*//*1*/
+////});
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+// Won't-fixed: Smart indent during chained function calls
+verify'
+        Identifier: 'indentationIs'
+      NumericLiteral

@@ -1,0 +1,17 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Alpha'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' Beta'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' Alpha'
+          Identifier: 'x'

@@ -1,0 +1,198 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NumberKeyword
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            Identifier: ' b'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m2'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' c'
+          EmptyStatement
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                NewExpression
+                  Identifier: ' c'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fooExport'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' foo'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo2Export'
+        Parameter
+          Identifier: '/**hm*/ a'
+          StringKeyword
+        Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo3Export'
+        Block
+      FunctionDeclaration
+        Identifier: ' foo4Export'
+        Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // trailing comment module
+m1'
+        Identifier: 'fooExport'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myvar'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' m1'
+              Identifier: 'm2'
+            Identifier: 'c'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleDeclaration
+      Identifier: 'm3'
+      ModuleBlock
+        ClassDeclaration
+          ExportKeyword
+          Identifier: ' c'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' m2'
+          Identifier: 'm3'
+        Identifier: 'c'
+  ModuleDeclaration
+    Identifier: ' m3'
+    ModuleDeclaration
+      Identifier: 'm4'
+      ModuleDeclaration
+        Identifier: 'm5'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' c'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' m3'
+            Identifier: 'm4'
+          Identifier: 'm5'
+        Identifier: 'c'
+  ModuleDeclaration
+    Identifier: ' m4'
+    ModuleDeclaration
+      Identifier: 'm5'
+      ModuleDeclaration
+        Identifier: 'm6'
+        ModuleBlock
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' m7'
+            ModuleBlock
+              ClassDeclaration
+                ExportKeyword
+                Identifier: ' c'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' m4'
+              Identifier: 'm5'
+            Identifier: 'm6'
+          Identifier: 'm7'
+        Identifier: 'c'
+  ModuleDeclaration
+    Identifier: ' m5'
+    ModuleDeclaration
+      Identifier: 'm6'
+      ModuleDeclaration
+        Identifier: 'm7'
+        ModuleBlock
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' m8'
+            ModuleBlock
+              ClassDeclaration
+                ExportKeyword
+                Identifier: ' c'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' m5'
+              Identifier: 'm6'
+            Identifier: 'm7'
+          Identifier: 'm8'
+        Identifier: 'c'
+  ModuleDeclaration
+    Identifier: ' m6'
+    ModuleDeclaration
+      Identifier: 'm7'
+      ModuleBlock
+        ModuleDeclaration
+          ExportKeyword
+          Identifier: ' m8'
+          ModuleBlock
+            ClassDeclaration
+              ExportKeyword
+              Identifier: ' c'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' m6'
+            Identifier: 'm7'
+          Identifier: 'm8'
+        Identifier: 'c'
+  ModuleDeclaration
+    Identifier: ' m7'
+    ModuleDeclaration
+      Identifier: 'm8'
+      ModuleBlock
+        ModuleDeclaration
+          ExportKeyword
+          Identifier: ' m9'
+          ModuleBlock
+            ClassDeclaration
+              ExportKeyword
+              Identifier: ' c'
+            ClassDeclaration
+              Identifier: ' d'
+            ClassDeclaration
+              ExportKeyword
+              Identifier: ' e'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' m7'
+            Identifier: 'm8'
+          Identifier: 'm9'
+        Identifier: 'c'

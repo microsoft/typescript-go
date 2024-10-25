@@ -1,0 +1,43 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' RegExpMatchArray'
+    PropertySignature
+      Identifier: '
+    indices'
+      QuestionToken
+      TypeReference
+        Identifier: ' RegExpIndicesArray'
+  InterfaceDeclaration
+    Identifier: ' RegExpExecArray'
+    PropertySignature
+      Identifier: '
+    indices'
+      QuestionToken
+      TypeReference
+        Identifier: ' RegExpIndicesArray'
+  InterfaceDeclaration
+    Identifier: ' RegExpIndicesArray'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+    PropertySignature
+      Identifier: '
+    groups'
+      QuestionToken
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TupleType
+            NumberKeyword
+            NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' RegExp'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' hasIndices'
+      BooleanKeyword

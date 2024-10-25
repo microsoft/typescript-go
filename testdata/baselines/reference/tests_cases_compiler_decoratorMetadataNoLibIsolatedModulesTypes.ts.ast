@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'Decorate'
+      Identifier: '
+    member'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        NumberKeyword

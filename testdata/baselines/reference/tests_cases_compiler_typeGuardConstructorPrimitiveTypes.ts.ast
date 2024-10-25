@@ -1,0 +1,149 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' var1'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+          ArrayType
+            AnyKeyword
+          SymbolKeyword
+          BigIntKeyword
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var1'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' String'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var1'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var1'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' Number'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var1'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var1'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' Boolean'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var1'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var1'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' Array'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var1'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var1'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' Symbol'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var1'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var1'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' BigInt'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' var2'
+        UnionType
+          TypeReference
+            Identifier: ' String'
+          TypeReference
+            Identifier: ' Number'
+          TypeReference
+            Identifier: ' Boolean'
+          TypeReference
+            Identifier: ' Symbol'
+          TypeReference
+            Identifier: ' BigInt'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var2'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' String'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var2'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var2'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' Number'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var2'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var2'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' Boolean'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var2'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var2'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' Symbol'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var2'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var2'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' BigInt'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var2'

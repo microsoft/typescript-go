@@ -1,0 +1,206 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' a'
+    EnumMember
+      Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        BooleanKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      PlusEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      PlusEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      PlusEqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      PlusEqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      PlusEqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      PlusEqualsToken
+      Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      PlusEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      PlusEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      PlusEqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      PlusEqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      PlusEqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      PlusEqualsToken
+      Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      PlusEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      PlusEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      PlusEqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      PlusEqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      PlusEqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      PlusEqualsToken
+      Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      PlusEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      PlusEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      PlusEqualsToken
+      ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        TypeReference
+          Identifier: ' E'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x5'
+      PlusEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x5'
+      PlusEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x5'
+      PlusEqualsToken
+      ObjectLiteralExpression

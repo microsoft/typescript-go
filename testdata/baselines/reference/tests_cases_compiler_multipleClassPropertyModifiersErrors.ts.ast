@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      PublicKeyword
+      Identifier: ' p1'
+    PropertyDeclaration
+      PrivateKeyword
+      PrivateKeyword
+      Identifier: ' p2'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' static'
+    PropertyDeclaration
+      Identifier: ' p3'
+    PropertyDeclaration
+      PublicKeyword
+      PrivateKeyword
+      Identifier: ' p4'
+    PropertyDeclaration
+      PrivateKeyword
+      PublicKeyword
+      Identifier: ' p5'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' p6'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' p7'

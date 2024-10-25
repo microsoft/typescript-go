@@ -1,0 +1,57 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  ClassDeclaration
+    Identifier: ' b'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _this'
+              NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'foo'
+  ClassDeclaration
+    Identifier: ' b2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' _this'
+                        NumericLiteral
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: 'foo'

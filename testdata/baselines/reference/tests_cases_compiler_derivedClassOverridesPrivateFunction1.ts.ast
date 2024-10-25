@@ -1,0 +1,31 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' BaseClass'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_init'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' _init'
+      Block
+  ClassDeclaration
+    Identifier: ' DerivedClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BaseClass'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' _init'
+      Block
+  ExpressionStatement
+    NewExpression
+      Identifier: ' DerivedClass'

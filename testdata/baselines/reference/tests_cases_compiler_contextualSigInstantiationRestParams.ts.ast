@@ -1,0 +1,36 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' toInstantiate'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    Parameter
+      Identifier: 'a'
+      QuestionToken
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      TypeReference
+        Identifier: ' B'
+    TypeReference
+      Identifier: ' B'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' contextual'
+    Parameter
+      DotDotDotToken
+      Identifier: 's'
+      ArrayType
+        StringKeyword
+    StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sig'
+        TypeQuery
+          Identifier: ' contextual'
+        Identifier: ' toInstantiate'

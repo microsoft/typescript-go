@@ -1,0 +1,18 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' file'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Bun'
+            Identifier: 'file'
+          StringLiteral

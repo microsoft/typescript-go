@@ -1,0 +1,2353 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ArrowFunction'
+        ImportSpecifier
+          Identifier: '
+    Block'
+        ImportSpecifier
+          Identifier: '
+    CallExpression'
+        ImportSpecifier
+          Identifier: '
+    CancellationToken'
+        ImportSpecifier
+          Identifier: '
+    CaseClause'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromBounds'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromNode'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromRange'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    DefaultClause'
+        ImportSpecifier
+          Identifier: '
+    findChildOfKind'
+        ImportSpecifier
+          Identifier: '
+    getLeadingCommentRanges'
+        ImportSpecifier
+          Identifier: '
+    ImportAttributes'
+        ImportSpecifier
+          Identifier: '
+    isAnyImportSyntax'
+        ImportSpecifier
+          Identifier: '
+    isArrayLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    isBinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    isBindingElement'
+        ImportSpecifier
+          Identifier: '
+    isBlock'
+        ImportSpecifier
+          Identifier: '
+    isCallExpression'
+        ImportSpecifier
+          Identifier: '
+    isCallOrNewExpression'
+        ImportSpecifier
+          Identifier: '
+    isClassLike'
+        ImportSpecifier
+          Identifier: '
+    isDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isFunctionLike'
+        ImportSpecifier
+          Identifier: '
+    isIfStatement'
+        ImportSpecifier
+          Identifier: '
+    isInComment'
+        ImportSpecifier
+          Identifier: '
+    isInterfaceDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isJsxText'
+        ImportSpecifier
+          Identifier: '
+    isModuleBlock'
+        ImportSpecifier
+          Identifier: '
+    isNodeArrayMultiLine'
+        ImportSpecifier
+          Identifier: '
+    isParenthesizedExpression'
+        ImportSpecifier
+          Identifier: '
+    isPropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    isReturnStatement'
+        ImportSpecifier
+          Identifier: '
+    isTupleTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isVariableStatement'
+        ImportSpecifier
+          Identifier: '
+    JsxAttributes'
+        ImportSpecifier
+          Identifier: '
+    JsxElement'
+        ImportSpecifier
+          Identifier: '
+    JsxFragment'
+        ImportSpecifier
+          Identifier: '
+    JsxOpeningLikeElement'
+        ImportSpecifier
+          Identifier: '
+    NamedExports'
+        ImportSpecifier
+          Identifier: '
+    NamedImports'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeArray'
+        ImportSpecifier
+          Identifier: '
+    NoSubstitutionTemplateLiteral'
+        ImportSpecifier
+          Identifier: '
+    OutliningSpan'
+        ImportSpecifier
+          Identifier: '
+    OutliningSpanKind'
+        ImportSpecifier
+          Identifier: '
+    ParenthesizedExpression'
+        ImportSpecifier
+          Identifier: '
+    positionsAreOnSameLine'
+        ImportSpecifier
+          Identifier: '
+    SignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    startsWith'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    TemplateExpression'
+        ImportSpecifier
+          Identifier: '
+    TextSpan'
+        ImportSpecifier
+          Identifier: '
+    TryStatement'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' collectElements'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    ArrayType
+      TypeReference
+        Identifier: ' OutliningSpan'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' res'
+            ArrayType
+              TypeReference
+                Identifier: ' OutliningSpan'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    addNodeOutliningSpans'
+          Identifier: 'sourceFile'
+          Identifier: ' cancellationToken'
+          Identifier: ' res'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    addRegionOutliningSpans'
+          Identifier: 'sourceFile'
+          Identifier: ' res'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    res'
+            Identifier: 'sort'
+          ArrowFunction
+            Parameter
+              Identifier: 'span1'
+            Parameter
+              Identifier: ' span2'
+            EqualsGreaterThanToken
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' span1'
+                  Identifier: 'textSpan'
+                Identifier: 'start'
+              MinusToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' span2'
+                  Identifier: 'textSpan'
+                Identifier: 'start'
+      ReturnStatement
+        Identifier: ' res'
+  FunctionDeclaration
+    Identifier: ' addNodeOutliningSpans'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: ' out'
+      ArrayType
+        TypeReference
+          Identifier: ' OutliningSpan'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' depthRemaining'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' current'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statements'
+            ArrayLiteralExpression
+              SpreadElement
+                PropertyAccessExpression
+                  Identifier: 'sourceFile'
+                  Identifier: 'statements'
+              PropertyAccessExpression
+                Identifier: ' sourceFile'
+                Identifier: 'endOfFileToken'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            PropertyAccessExpression
+              Identifier: ' statements'
+              Identifier: 'length'
+      WhileStatement
+        BinaryExpression
+          Identifier: 'current'
+          LessThanToken
+          Identifier: ' n'
+        Block
+          WhileStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'current'
+                LessThanToken
+                Identifier: ' n'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'isAnyImportSyntax'
+                  ElementAccessExpression
+                    Identifier: 'statements'
+                    Identifier: 'current'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitNode'
+                  ElementAccessExpression
+                    Identifier: 'statements'
+                    Identifier: 'current'
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            current'
+          IfStatement
+            BinaryExpression
+              Identifier: 'current'
+              EqualsEqualsEqualsToken
+              Identifier: ' n'
+            BreakStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' firstImport'
+                Identifier: ' current'
+          WhileStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'current'
+                LessThanToken
+                Identifier: ' n'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isAnyImportSyntax'
+                ElementAccessExpression
+                  Identifier: 'statements'
+                  Identifier: 'current'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitNode'
+                  ElementAccessExpression
+                    Identifier: 'statements'
+                    Identifier: 'current'
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            current'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lastImport'
+                BinaryExpression
+                  Identifier: ' current'
+                  MinusToken
+                  NumericLiteral
+          IfStatement
+            BinaryExpression
+              Identifier: 'lastImport'
+              ExclamationEqualsEqualsToken
+              Identifier: ' firstImport'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            out'
+                    Identifier: 'push'
+                  CallExpression
+                    Identifier: 'createOutliningSpanFromBounds'
+                    CallExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          CallExpression
+                            Identifier: 'findChildOfKind'
+                            ElementAccessExpression
+                              Identifier: 'statements'
+                              Identifier: 'firstImport'
+                            PropertyAccessExpression
+                              Identifier: ' SyntaxKind'
+                              Identifier: 'ImportKeyword'
+                            Identifier: ' sourceFile'
+                        Identifier: 'getStart'
+                      Identifier: 'sourceFile'
+                    CallExpression
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: ' statements'
+                          Identifier: 'lastImport'
+                        Identifier: 'getEnd'
+                    PropertyAccessExpression
+                      Identifier: ' OutliningSpanKind'
+                      Identifier: 'Imports'
+      FunctionDeclaration
+        Identifier: ' visitNode'
+        Parameter
+          Identifier: 'n'
+          TypeReference
+            Identifier: ' Node'
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'depthRemaining'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            ReturnStatement
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        cancellationToken'
+                Identifier: 'throwIfCancellationRequested'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'isDeclaration'
+                      Identifier: 'n'
+                    BarBarToken
+                    CallExpression
+                      Identifier: ' isVariableStatement'
+                      Identifier: 'n'
+                  BarBarToken
+                  CallExpression
+                    Identifier: ' isReturnStatement'
+                    Identifier: 'n'
+                BarBarToken
+                CallExpression
+                  Identifier: ' isCallOrNewExpression'
+                  Identifier: 'n'
+              BarBarToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' n'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'EndOfFileToken'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addOutliningForLeadingCommentsForNode'
+                  Identifier: 'n'
+                  Identifier: ' sourceFile'
+                  Identifier: ' cancellationToken'
+                  Identifier: ' out'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: 'isFunctionLike'
+                  Identifier: 'n'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' isBinaryExpression'
+                  PropertyAccessExpression
+                    Identifier: 'n'
+                    Identifier: 'parent'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isPropertyAccessExpression'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'n'
+                    Identifier: 'parent'
+                  Identifier: 'left'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addOutliningForLeadingCommentsForNode'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'parent'
+                    Identifier: 'left'
+                  Identifier: ' sourceFile'
+                  Identifier: ' cancellationToken'
+                  Identifier: ' out'
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isBlock'
+                Identifier: 'n'
+              BarBarToken
+              CallExpression
+                Identifier: ' isModuleBlock'
+                Identifier: 'n'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addOutliningForLeadingCommentsForPos'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'statements'
+                    Identifier: 'end'
+                  Identifier: ' sourceFile'
+                  Identifier: ' cancellationToken'
+                  Identifier: ' out'
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isClassLike'
+                Identifier: 'n'
+              BarBarToken
+              CallExpression
+                Identifier: ' isInterfaceDeclaration'
+                Identifier: 'n'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addOutliningForLeadingCommentsForPos'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'members'
+                    Identifier: 'end'
+                  Identifier: ' sourceFile'
+                  Identifier: ' cancellationToken'
+                  Identifier: ' out'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' span'
+                CallExpression
+                  Identifier: ' getOutliningSpanForNode'
+                  Identifier: 'n'
+                  Identifier: ' sourceFile'
+          IfStatement
+            Identifier: 'span'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' out'
+                  Identifier: 'push'
+                Identifier: 'span'
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+
+        depthRemaining'
+          IfStatement
+            CallExpression
+              Identifier: 'isCallExpression'
+              Identifier: 'n'
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            depthRemaining'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitNode'
+                  PropertyAccessExpression
+                    Identifier: 'n'
+                    Identifier: 'expression'
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            depthRemaining'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            n'
+                      Identifier: 'arguments'
+                    Identifier: 'forEach'
+                  Identifier: 'visitNode'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            n'
+                      Identifier: 'typeArguments'
+                    QuestionDotToken
+                    Identifier: 'forEach'
+                  Identifier: 'visitNode'
+            IfStatement
+              BinaryExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'isIfStatement'
+                    Identifier: 'n'
+                  AmpersandAmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' n'
+                    Identifier: 'elseStatement'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' isIfStatement'
+                  PropertyAccessExpression
+                    Identifier: 'n'
+                    Identifier: 'elseStatement'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+            // Consider an 'else if' to be on the same depth as the 'if'.
+            visitNode'
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'expression'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+            visitNode'
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'thenStatement'
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    Identifier: '
+            depthRemaining'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+            visitNode'
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'elseStatement'
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    Identifier: '
+            depthRemaining'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            n'
+                      Identifier: 'forEachChild'
+                    Identifier: 'visitNode'
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+        depthRemaining'
+  FunctionDeclaration
+    Identifier: ' addRegionOutliningSpans'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' out'
+      ArrayType
+        TypeReference
+          Identifier: ' OutliningSpan'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' regions'
+            ArrayType
+              TypeReference
+                Identifier: ' OutliningSpan'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lineStarts'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' sourceFile'
+                Identifier: 'getLineStarts'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' currentLineStart'
+        Identifier: ' lineStarts'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineEnd'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' sourceFile'
+                    Identifier: 'getLineEndOfPosition'
+                  Identifier: 'currentLineStart'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' sourceFile'
+                      Identifier: 'text'
+                    Identifier: 'substring'
+                  Identifier: 'currentLineStart'
+                  Identifier: ' lineEnd'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' parseRegionDelimiter'
+                  Identifier: 'lineText'
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'result'
+              BarBarToken
+              CallExpression
+                Identifier: ' isInComment'
+                Identifier: 'sourceFile'
+                Identifier: ' currentLineStart'
+            Block
+              ContinueStatement
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'result'
+              Identifier: 'isStart'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' span'
+                    CallExpression
+                      Identifier: ' createTextSpanFromBounds'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'sourceFile'
+                            Identifier: 'text'
+                          Identifier: 'indexOf'
+                        StringLiteral
+                        Identifier: ' currentLineStart'
+                      Identifier: ' lineEnd'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            regions'
+                    Identifier: 'push'
+                  CallExpression
+                    Identifier: 'createOutliningSpan'
+                    Identifier: 'span'
+                    PropertyAccessExpression
+                      Identifier: ' OutliningSpanKind'
+                      Identifier: 'Region'
+                    Identifier: ' span'
+                    FalseKeyword
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' result'
+                        Identifier: 'name'
+                      BarBarToken
+                      StringLiteral
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' region'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' regions'
+                        Identifier: 'pop'
+              IfStatement
+                Identifier: 'region'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                region'
+                          Identifier: 'textSpan'
+                        Identifier: 'length'
+                      EqualsToken
+                      BinaryExpression
+                        Identifier: ' lineEnd'
+                        MinusToken
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' region'
+                            Identifier: 'textSpan'
+                          Identifier: 'start'
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                region'
+                          Identifier: 'hintSpan'
+                        Identifier: 'length'
+                      EqualsToken
+                      BinaryExpression
+                        Identifier: ' lineEnd'
+                        MinusToken
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' region'
+                            Identifier: 'textSpan'
+                          Identifier: 'start'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                out'
+                        Identifier: 'push'
+                      Identifier: 'region'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' regionDelimiterRegExp'
+        RegularExpressionLiteral
+  FunctionDeclaration
+    Identifier: ' parseRegionDelimiter'
+    Parameter
+      Identifier: 'lineText'
+      StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    // We trim the leading whitespace and // without the regex since the
+    // multiple potential whitespace matches can make for some gnarly backtracking behavior
+    lineText'
+          EqualsToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' lineText'
+              Identifier: 'trimStart'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'startsWith'
+            Identifier: 'lineText'
+            StringLiteral
+        Block
+          ReturnStatement
+            NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    lineText'
+          EqualsToken
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' lineText'
+                  Identifier: 'slice'
+                NumericLiteral
+              Identifier: 'trim'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' regionDelimiterRegExp'
+                Identifier: 'exec'
+              Identifier: 'lineText'
+      IfStatement
+        Identifier: 'result'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' isStart'
+                PrefixUnaryExpression
+                  ElementAccessExpression
+                    Identifier: 'result'
+                    NumericLiteral
+              PropertyAssignment
+                Identifier: ' name'
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: ' result'
+                      NumericLiteral
+                    Identifier: 'trim'
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' addOutliningForLeadingCommentsForPos'
+    Parameter
+      Identifier: 'pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: ' out'
+      ArrayType
+        TypeReference
+          Identifier: ' OutliningSpan'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' comments'
+            CallExpression
+              Identifier: ' getLeadingCommentRanges'
+              PropertyAccessExpression
+                Identifier: 'sourceFile'
+                Identifier: 'text'
+              Identifier: ' pos'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'comments'
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' firstSingleLineCommentStart'
+            PrefixUnaryExpression
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lastSingleLineCommentEnd'
+            PrefixUnaryExpression
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' singleLineCommentCount'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceText'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' sourceFile'
+                Identifier: 'getFullText'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' kind'
+              BindingElement
+                Identifier: ' pos'
+              BindingElement
+                Identifier: ' end'
+        Identifier: ' comments'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        cancellationToken'
+                Identifier: 'throwIfCancellationRequested'
+          SwitchStatement
+            Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SingleLineCommentTrivia'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' commentText'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' sourceText'
+                          Identifier: 'slice'
+                        Identifier: 'pos'
+                        Identifier: ' end'
+                IfStatement
+                  CallExpression
+                    Identifier: 'parseRegionDelimiter'
+                    Identifier: 'commentText'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                    combineAndAddMultipleSingleLineComments'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    singleLineCommentCount'
+                        EqualsToken
+                        NumericLiteral
+                    BreakStatement
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'singleLineCommentCount'
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    firstSingleLineCommentStart'
+                        EqualsToken
+                        Identifier: ' pos'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                lastSingleLineCommentEnd'
+                    EqualsToken
+                    Identifier: ' end'
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    Identifier: '
+                singleLineCommentCount'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MultiLineCommentTrivia'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+                combineAndAddMultipleSingleLineComments'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                out'
+                      Identifier: 'push'
+                    CallExpression
+                      Identifier: 'createOutliningSpanFromBounds'
+                      Identifier: 'pos'
+                      Identifier: ' end'
+                      PropertyAccessExpression
+                        Identifier: ' OutliningSpanKind'
+                        Identifier: 'Comment'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                singleLineCommentCount'
+                    EqualsToken
+                    NumericLiteral
+                BreakStatement
+              DefaultClause
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                Debug'
+                      Identifier: 'assertNever'
+                    Identifier: 'kind'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    combineAndAddMultipleSingleLineComments'
+      FunctionDeclaration
+        Identifier: ' combineAndAddMultipleSingleLineComments'
+        VoidKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'singleLineCommentCount'
+              GreaterThanToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            out'
+                    Identifier: 'push'
+                  CallExpression
+                    Identifier: 'createOutliningSpanFromBounds'
+                    Identifier: 'firstSingleLineCommentStart'
+                    Identifier: ' lastSingleLineCommentEnd'
+                    PropertyAccessExpression
+                      Identifier: ' OutliningSpanKind'
+                      Identifier: 'Comment'
+  FunctionDeclaration
+    Identifier: ' addOutliningForLeadingCommentsForNode'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: ' out'
+      ArrayType
+        TypeReference
+          Identifier: ' OutliningSpan'
+    VoidKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isJsxText'
+          Identifier: 'n'
+        ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    addOutliningForLeadingCommentsForPos'
+          PropertyAccessExpression
+            Identifier: 'n'
+            Identifier: 'pos'
+          Identifier: ' sourceFile'
+          Identifier: ' cancellationToken'
+          Identifier: ' out'
+  FunctionDeclaration
+    Identifier: ' createOutliningSpanFromBounds'
+    Parameter
+      Identifier: 'pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' end'
+      NumberKeyword
+    Parameter
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' OutliningSpanKind'
+    TypeReference
+      Identifier: ' OutliningSpan'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' createOutliningSpan'
+          CallExpression
+            Identifier: 'createTextSpanFromBounds'
+            Identifier: 'pos'
+            Identifier: ' end'
+          Identifier: ' kind'
+  FunctionDeclaration
+    Identifier: ' getOutliningSpanForNode'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    UnionType
+      TypeReference
+        Identifier: ' OutliningSpan'
+      UndefinedKeyword
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'n'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Block'
+            IfStatement
+              CallExpression
+                Identifier: 'isFunctionLike'
+                PropertyAccessExpression
+                  Identifier: 'n'
+                  Identifier: 'parent'
+              Block
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' functionSpan'
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'parent'
+                    AsExpression
+                      Identifier: ' n'
+                      TypeReference
+                        Identifier: ' Block'
+                    Identifier: ' sourceFile'
+            SwitchStatement
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'n'
+                  Identifier: 'parent'
+                Identifier: 'kind'
+              CaseBlock
+                CaseClause
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'DoStatement'
+                CaseClause
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'ForInStatement'
+                CaseClause
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'ForOfStatement'
+                CaseClause
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'ForStatement'
+                CaseClause
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'IfStatement'
+                CaseClause
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'WhileStatement'
+                CaseClause
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'WithStatement'
+                CaseClause
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'CatchClause'
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' spanForNode'
+                      PropertyAccessExpression
+                        Identifier: 'n'
+                        Identifier: 'parent'
+                CaseClause
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'TryStatement'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' tryStatement'
+                        AsExpression
+                          PropertyAccessExpression
+                            Identifier: ' n'
+                            Identifier: 'parent'
+                          TypeReference
+                            Identifier: ' TryStatement'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'tryStatement'
+                        Identifier: 'tryBlock'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' n'
+                    Block
+                      ReturnStatement
+                        CallExpression
+                          Identifier: ' spanForNode'
+                          PropertyAccessExpression
+                            Identifier: 'n'
+                            Identifier: 'parent'
+                    IfStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'tryStatement'
+                          Identifier: 'finallyBlock'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' n'
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' node'
+                              CallExpression
+                                Identifier: ' findChildOfKind'
+                                Identifier: 'tryStatement'
+                                PropertyAccessExpression
+                                  Identifier: ' SyntaxKind'
+                                  Identifier: 'FinallyKeyword'
+                                Identifier: ' sourceFile'
+                        IfStatement
+                          Identifier: 'node'
+                          ReturnStatement
+                            CallExpression
+                              Identifier: ' spanForNode'
+                              Identifier: 'node'
+                DefaultClause
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' createOutliningSpan'
+                      CallExpression
+                        Identifier: 'createTextSpanFromNode'
+                        Identifier: 'n'
+                        Identifier: ' sourceFile'
+                      PropertyAccessExpression
+                        Identifier: ' OutliningSpanKind'
+                        Identifier: 'Code'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ModuleBlock'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForNode'
+                PropertyAccessExpression
+                  Identifier: 'n'
+                  Identifier: 'parent'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ClassDeclaration'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ClassExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'InterfaceDeclaration'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'EnumDeclaration'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CaseBlock'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'TypeLiteral'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ObjectBindingPattern'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForNode'
+                Identifier: 'n'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'TupleType'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForNode'
+                Identifier: 'n'
+                FalseKeyword
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isTupleTypeNode'
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'parent'
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'OpenBracketToken'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CaseClause'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'DefaultClause'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForNodeArray'
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      Identifier: 'n'
+                      UnionType
+                        TypeReference
+                          Identifier: ' CaseClause'
+                        TypeReference
+                          Identifier: ' DefaultClause'
+                  Identifier: 'statements'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ObjectLiteralExpression'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForObjectOrArrayLiteral'
+                Identifier: 'n'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ArrayLiteralExpression'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForObjectOrArrayLiteral'
+                Identifier: 'n'
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'OpenBracketToken'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'JsxElement'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForJSXElement'
+                AsExpression
+                  Identifier: 'n'
+                  TypeReference
+                    Identifier: ' JsxElement'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'JsxFragment'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForJSXFragment'
+                AsExpression
+                  Identifier: 'n'
+                  TypeReference
+                    Identifier: ' JsxFragment'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'JsxSelfClosingElement'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'JsxOpeningElement'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForJSXAttributes'
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      Identifier: 'n'
+                      TypeReference
+                        Identifier: ' JsxOpeningLikeElement'
+                  Identifier: 'attributes'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'TemplateExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'NoSubstitutionTemplateLiteral'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForTemplateLiteral'
+                AsExpression
+                  Identifier: 'n'
+                  UnionType
+                    TypeReference
+                      Identifier: ' TemplateExpression'
+                    TypeReference
+                      Identifier: ' NoSubstitutionTemplateLiteral'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ArrayBindingPattern'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForNode'
+                Identifier: 'n'
+                FalseKeyword
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isBindingElement'
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'parent'
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'OpenBracketToken'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ArrowFunction'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForArrowFunction'
+                AsExpression
+                  Identifier: 'n'
+                  TypeReference
+                    Identifier: ' ArrowFunction'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CallExpression'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForCallExpression'
+                AsExpression
+                  Identifier: 'n'
+                  TypeReference
+                    Identifier: ' CallExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ParenthesizedExpression'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForParenthesizedExpression'
+                AsExpression
+                  Identifier: 'n'
+                  TypeReference
+                    Identifier: ' ParenthesizedExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'NamedImports'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'NamedExports'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ImportAttributes'
+            ReturnStatement
+              CallExpression
+                Identifier: ' spanForImportExportElements'
+                AsExpression
+                  Identifier: 'n'
+                  UnionType
+                    TypeReference
+                      Identifier: ' NamedImports'
+                    TypeReference
+                      Identifier: ' NamedExports'
+                    TypeReference
+                      Identifier: ' ImportAttributes'
+      FunctionDeclaration
+        Identifier: ' spanForImportExportElements'
+        Parameter
+          Identifier: 'node'
+          UnionType
+            TypeReference
+              Identifier: ' NamedImports'
+            TypeReference
+              Identifier: ' NamedExports'
+            TypeReference
+              Identifier: ' ImportAttributes'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'elements'
+                Identifier: 'length'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' openToken'
+                CallExpression
+                  Identifier: ' findChildOfKind'
+                  Identifier: 'node'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'OpenBraceToken'
+                  Identifier: ' sourceFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' closeToken'
+                CallExpression
+                  Identifier: ' findChildOfKind'
+                  Identifier: 'node'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'CloseBraceToken'
+                  Identifier: ' sourceFile'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'openToken'
+                BarBarToken
+                PrefixUnaryExpression
+                  Identifier: 'closeToken'
+              BarBarToken
+              CallExpression
+                Identifier: ' positionsAreOnSameLine'
+                PropertyAccessExpression
+                  Identifier: 'openToken'
+                  Identifier: 'pos'
+                PropertyAccessExpression
+                  Identifier: ' closeToken'
+                  Identifier: 'pos'
+                Identifier: ' sourceFile'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          ReturnStatement
+            CallExpression
+              Identifier: ' spanBetweenTokens'
+              Identifier: 'openToken'
+              Identifier: ' closeToken'
+              Identifier: ' node'
+              Identifier: ' sourceFile'
+              FalseKeyword
+              FalseKeyword
+      FunctionDeclaration
+        Identifier: ' spanForCallExpression'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' CallExpression'
+        UnionType
+          TypeReference
+            Identifier: ' OutliningSpan'
+          UndefinedKeyword
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'arguments'
+                Identifier: 'length'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' openToken'
+                CallExpression
+                  Identifier: ' findChildOfKind'
+                  Identifier: 'node'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'OpenParenToken'
+                  Identifier: ' sourceFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' closeToken'
+                CallExpression
+                  Identifier: ' findChildOfKind'
+                  Identifier: 'node'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'CloseParenToken'
+                  Identifier: ' sourceFile'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'openToken'
+                BarBarToken
+                PrefixUnaryExpression
+                  Identifier: 'closeToken'
+              BarBarToken
+              CallExpression
+                Identifier: ' positionsAreOnSameLine'
+                PropertyAccessExpression
+                  Identifier: 'openToken'
+                  Identifier: 'pos'
+                PropertyAccessExpression
+                  Identifier: ' closeToken'
+                  Identifier: 'pos'
+                Identifier: ' sourceFile'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          ReturnStatement
+            CallExpression
+              Identifier: ' spanBetweenTokens'
+              Identifier: 'openToken'
+              Identifier: ' closeToken'
+              Identifier: ' node'
+              Identifier: ' sourceFile'
+              FalseKeyword
+              TrueKeyword
+      FunctionDeclaration
+        Identifier: ' spanForArrowFunction'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' ArrowFunction'
+        UnionType
+          TypeReference
+            Identifier: ' OutliningSpan'
+          UndefinedKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: 'isBlock'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'body'
+                BarBarToken
+                CallExpression
+                  Identifier: ' isParenthesizedExpression'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'body'
+              BarBarToken
+              CallExpression
+                Identifier: ' positionsAreOnSameLine'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'body'
+                    Identifier: 'getFullStart'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' node'
+                      Identifier: 'body'
+                    Identifier: 'getEnd'
+                Identifier: ' sourceFile'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' textSpan'
+                CallExpression
+                  Identifier: ' createTextSpanFromBounds'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'body'
+                      Identifier: 'getFullStart'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'body'
+                      Identifier: 'getEnd'
+          ReturnStatement
+            CallExpression
+              Identifier: ' createOutliningSpan'
+              Identifier: 'textSpan'
+              PropertyAccessExpression
+                Identifier: ' OutliningSpanKind'
+                Identifier: 'Code'
+              CallExpression
+                Identifier: ' createTextSpanFromNode'
+                Identifier: 'node'
+      FunctionDeclaration
+        Identifier: ' spanForJSXElement'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' JsxElement'
+        UnionType
+          TypeReference
+            Identifier: ' OutliningSpan'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' textSpan'
+                CallExpression
+                  Identifier: ' createTextSpanFromBounds'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'openingElement'
+                      Identifier: 'getStart'
+                    Identifier: 'sourceFile'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'closingElement'
+                      Identifier: 'getEnd'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' tagName'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'openingElement'
+                      Identifier: 'tagName'
+                    Identifier: 'getText'
+                  Identifier: 'sourceFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' bannerText'
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        StringLiteral
+                        PlusToken
+                        Identifier: ' tagName'
+                      PlusToken
+                      StringLiteral
+                    PlusToken
+                    Identifier: ' tagName'
+                  PlusToken
+                  StringLiteral
+          ReturnStatement
+            CallExpression
+              Identifier: ' createOutliningSpan'
+              Identifier: 'textSpan'
+              PropertyAccessExpression
+                Identifier: ' OutliningSpanKind'
+                Identifier: 'Code'
+              Identifier: ' textSpan'
+              FalseKeyword
+              Identifier: ' bannerText'
+      FunctionDeclaration
+        Identifier: ' spanForJSXFragment'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' JsxFragment'
+        UnionType
+          TypeReference
+            Identifier: ' OutliningSpan'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' textSpan'
+                CallExpression
+                  Identifier: ' createTextSpanFromBounds'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'openingFragment'
+                      Identifier: 'getStart'
+                    Identifier: 'sourceFile'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'closingFragment'
+                      Identifier: 'getEnd'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' bannerText'
+                StringLiteral
+          ReturnStatement
+            CallExpression
+              Identifier: ' createOutliningSpan'
+              Identifier: 'textSpan'
+              PropertyAccessExpression
+                Identifier: ' OutliningSpanKind'
+                Identifier: 'Code'
+              Identifier: ' textSpan'
+              FalseKeyword
+              Identifier: ' bannerText'
+      FunctionDeclaration
+        Identifier: ' spanForJSXAttributes'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' JsxAttributes'
+        UnionType
+          TypeReference
+            Identifier: ' OutliningSpan'
+          UndefinedKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'properties'
+                Identifier: 'length'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          ReturnStatement
+            CallExpression
+              Identifier: ' createOutliningSpanFromBounds'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'getStart'
+                Identifier: 'sourceFile'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'getEnd'
+              PropertyAccessExpression
+                Identifier: ' OutliningSpanKind'
+                Identifier: 'Code'
+      FunctionDeclaration
+        Identifier: ' spanForTemplateLiteral'
+        Parameter
+          Identifier: 'node'
+          UnionType
+            TypeReference
+              Identifier: ' TemplateExpression'
+            TypeReference
+              Identifier: ' NoSubstitutionTemplateLiteral'
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'NoSubstitutionTemplateLiteral'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'text'
+                  Identifier: 'length'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          ReturnStatement
+            CallExpression
+              Identifier: ' createOutliningSpanFromBounds'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'getStart'
+                Identifier: 'sourceFile'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'getEnd'
+              PropertyAccessExpression
+                Identifier: ' OutliningSpanKind'
+                Identifier: 'Code'
+      FunctionDeclaration
+        Identifier: ' spanForObjectOrArrayLiteral'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' open'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' SyntaxKind'
+                Identifier: 'OpenBraceToken'
+            TypeReference
+              QualifiedName
+                Identifier: ' SyntaxKind'
+                Identifier: 'OpenBracketToken'
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'OpenBraceToken'
+        UnionType
+          TypeReference
+            Identifier: ' OutliningSpan'
+          UndefinedKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' spanForNode'
+              Identifier: 'node'
+              FalseKeyword
+              BinaryExpression
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isArrayLiteralExpression'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                AmpersandAmpersandToken
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isCallExpression'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+              Identifier: ' open'
+      FunctionDeclaration
+        Identifier: ' spanForNode'
+        Parameter
+          Identifier: 'hintSpanNode'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' autoCollapse'
+          FalseKeyword
+        Parameter
+          Identifier: ' useFullStart'
+          TrueKeyword
+        Parameter
+          Identifier: ' open'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' SyntaxKind'
+                Identifier: 'OpenBraceToken'
+            TypeReference
+              QualifiedName
+                Identifier: ' SyntaxKind'
+                Identifier: 'OpenBracketToken'
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'OpenBraceToken'
+        Parameter
+          Identifier: ' close'
+          TypeReference
+            Identifier: ' SyntaxKind'
+          ConditionalExpression
+            BinaryExpression
+              Identifier: ' open'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'OpenBraceToken'
+            QuestionToken
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CloseBraceToken'
+            ColonToken
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CloseBracketToken'
+        UnionType
+          TypeReference
+            Identifier: ' OutliningSpan'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' openToken'
+                CallExpression
+                  Identifier: ' findChildOfKind'
+                  Identifier: 'n'
+                  Identifier: ' open'
+                  Identifier: ' sourceFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' closeToken'
+                CallExpression
+                  Identifier: ' findChildOfKind'
+                  Identifier: 'n'
+                  Identifier: ' close'
+                  Identifier: ' sourceFile'
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' openToken'
+                AmpersandAmpersandToken
+                Identifier: ' closeToken'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' spanBetweenTokens'
+                Identifier: 'openToken'
+                Identifier: ' closeToken'
+                Identifier: ' hintSpanNode'
+                Identifier: ' sourceFile'
+                Identifier: ' autoCollapse'
+                Identifier: ' useFullStart'
+      FunctionDeclaration
+        Identifier: ' spanForNodeArray'
+        Parameter
+          Identifier: 'nodeArray'
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+        UnionType
+          TypeReference
+            Identifier: ' OutliningSpan'
+          UndefinedKeyword
+        Block
+          ReturnStatement
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' nodeArray'
+                Identifier: 'length'
+              QuestionToken
+              CallExpression
+                Identifier: ' createOutliningSpan'
+                CallExpression
+                  Identifier: 'createTextSpanFromRange'
+                  Identifier: 'nodeArray'
+                PropertyAccessExpression
+                  Identifier: ' OutliningSpanKind'
+                  Identifier: 'Code'
+              ColonToken
+              Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' spanForParenthesizedExpression'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' ParenthesizedExpression'
+        UnionType
+          TypeReference
+            Identifier: ' OutliningSpan'
+          UndefinedKeyword
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'positionsAreOnSameLine'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'getStart'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'getEnd'
+              Identifier: ' sourceFile'
+            ReturnStatement
+              Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' textSpan'
+                CallExpression
+                  Identifier: ' createTextSpanFromBounds'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'getStart'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' node'
+                      Identifier: 'getEnd'
+          ReturnStatement
+            CallExpression
+              Identifier: ' createOutliningSpan'
+              Identifier: 'textSpan'
+              PropertyAccessExpression
+                Identifier: ' OutliningSpanKind'
+                Identifier: 'Code'
+              CallExpression
+                Identifier: ' createTextSpanFromNode'
+                Identifier: 'node'
+  FunctionDeclaration
+    Identifier: ' functionSpan'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' SignatureDeclaration'
+    Parameter
+      Identifier: ' body'
+      TypeReference
+        Identifier: ' Block'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    UnionType
+      TypeReference
+        Identifier: ' OutliningSpan'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' openToken'
+            CallExpression
+              Identifier: ' tryGetFunctionOpenToken'
+              Identifier: 'node'
+              Identifier: ' body'
+              Identifier: ' sourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' closeToken'
+            CallExpression
+              Identifier: ' findChildOfKind'
+              Identifier: 'body'
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'CloseBraceToken'
+              Identifier: ' sourceFile'
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' openToken'
+            AmpersandAmpersandToken
+            Identifier: ' closeToken'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' spanBetweenTokens'
+            Identifier: 'openToken'
+            Identifier: ' closeToken'
+            Identifier: ' node'
+            Identifier: ' sourceFile'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' /*autoCollapse*/ node'
+                Identifier: 'kind'
+              ExclamationEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'ArrowFunction'
+  FunctionDeclaration
+    Identifier: ' spanBetweenTokens'
+    Parameter
+      Identifier: 'openToken'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' closeToken'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' hintSpanNode'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' autoCollapse'
+      FalseKeyword
+    Parameter
+      Identifier: ' useFullStart'
+      TrueKeyword
+    TypeReference
+      Identifier: ' OutliningSpan'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' textSpan'
+            CallExpression
+              Identifier: ' createTextSpanFromBounds'
+              ConditionalExpression
+                Identifier: 'useFullStart'
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' openToken'
+                    Identifier: 'getFullStart'
+                ColonToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' openToken'
+                    Identifier: 'getStart'
+                  Identifier: 'sourceFile'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' closeToken'
+                  Identifier: 'getEnd'
+      ReturnStatement
+        CallExpression
+          Identifier: ' createOutliningSpan'
+          Identifier: 'textSpan'
+          PropertyAccessExpression
+            Identifier: ' OutliningSpanKind'
+            Identifier: 'Code'
+          CallExpression
+            Identifier: ' createTextSpanFromNode'
+            Identifier: 'hintSpanNode'
+            Identifier: ' sourceFile'
+          Identifier: ' autoCollapse'
+  FunctionDeclaration
+    Identifier: ' createOutliningSpan'
+    Parameter
+      Identifier: 'textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' OutliningSpanKind'
+    Parameter
+      Identifier: ' hintSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+      Identifier: ' textSpan'
+    Parameter
+      Identifier: ' autoCollapse'
+      FalseKeyword
+    Parameter
+      Identifier: ' bannerText'
+      StringLiteral
+    TypeReference
+      Identifier: ' OutliningSpan'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' textSpan'
+          ShorthandPropertyAssignment
+            Identifier: ' kind'
+          ShorthandPropertyAssignment
+            Identifier: ' hintSpan'
+          ShorthandPropertyAssignment
+            Identifier: ' bannerText'
+          ShorthandPropertyAssignment
+            Identifier: ' autoCollapse'
+  FunctionDeclaration
+    Identifier: ' tryGetFunctionOpenToken'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' SignatureDeclaration'
+    Parameter
+      Identifier: ' body'
+      TypeReference
+        Identifier: ' Block'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    UnionType
+      TypeReference
+        Identifier: ' Node'
+      UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isNodeArrayMultiLine'
+          PropertyAccessExpression
+            Identifier: 'node'
+            Identifier: 'parameters'
+          Identifier: ' sourceFile'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' openParenToken'
+                CallExpression
+                  Identifier: ' findChildOfKind'
+                  Identifier: 'node'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'OpenParenToken'
+                  Identifier: ' sourceFile'
+          IfStatement
+            Identifier: 'openParenToken'
+            Block
+              ReturnStatement
+                Identifier: ' openParenToken'
+      ReturnStatement
+        CallExpression
+          Identifier: ' findChildOfKind'
+          Identifier: 'body'
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'OpenBraceToken'
+          Identifier: ' sourceFile'

@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' x'
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: ' x'

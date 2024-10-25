@@ -1,0 +1,39 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    AbstractKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' a'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' B'
+          Identifier: 'a'
+        Identifier: 'toExponential'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' A'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' C'
+          Identifier: 'a'
+        Identifier: 'toExponential'

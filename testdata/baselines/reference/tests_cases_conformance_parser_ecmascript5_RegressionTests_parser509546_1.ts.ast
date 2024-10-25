@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Logger'
+    PropertyDeclaration
+      Identifier: ' 
+     public'

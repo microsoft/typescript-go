@@ -1,0 +1,64 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////interface I {
+////    [|[|{| "contextRangeIndex": 0 |}property1|]: number;|]
+////    property2: string;
+////}
+////var elems: I[];
+////
+////var [|[|{| "contextRangeIndex": 2 |}property1|]: number|], p2: number;
+////for ([|{ [|{| "contextRangeIndex": 4 |}property1|] } of elems|]) {
+////    [|property1|]++;
+////}
+////for ([|{ [|{| "contextRangeIndex": 7 |}property1|]: p2 } of elems|]) {
+////}
+
+verify'
+        Identifier: 'noErrors'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ranges'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0Def'
+          BindingElement
+            Identifier: ' r0'
+          BindingElement
+            Identifier: ' r1Def'
+          BindingElement
+            Identifier: ' r1'
+          BindingElement
+            Identifier: ' r2Def'
+          BindingElement
+            Identifier: ' r2'
+          BindingElement
+            Identifier: ' r3'
+          BindingElement
+            Identifier: ' r4Def'
+          BindingElement
+            Identifier: ' r4'
+        Identifier: ' ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      ArrayLiteralExpression
+        Identifier: 'r0'
+        Identifier: ' r4'
+        Identifier: ' r1'
+        Identifier: ' r2'
+        Identifier: ' r3'

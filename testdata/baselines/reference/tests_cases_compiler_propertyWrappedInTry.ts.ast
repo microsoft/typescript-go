@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+  TryStatement
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' bar'
+          EqualsToken
+          CallExpression
+            Identifier: ' someInitThatMightFail'
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' baz'
+  Block
+    ReturnStatement
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'bar'

@@ -1,0 +1,37 @@
+SourceFile
+  TryStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' \u0078x'
+            NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'xx'
+          ExclamationEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    $ERROR'
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                ParenthesizedExpression
+                  Identifier: 'xx'
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+    $ERROR'
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              ParenthesizedExpression
+                Identifier: 'xx'

@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        CallExpression
+          Identifier: ' Symbol'
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      OverrideKeyword
+      ComputedPropertyName
+        Identifier: 'foo'
+      Block

@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '//// "// HACK 1";
+
+verify'
+        Identifier: 'todoCommentsInCurrentFile'
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral

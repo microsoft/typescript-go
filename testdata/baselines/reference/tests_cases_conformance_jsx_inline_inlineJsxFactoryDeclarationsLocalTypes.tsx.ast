@@ -1,0 +1,588 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' dom'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' JSX'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' IntrinsicElements'
+            IndexSignature
+              Parameter
+                Identifier: 'e'
+                StringKeyword
+              TypeLiteral
+          InterfaceDeclaration
+            Identifier: ' Element'
+            PropertySignature
+              Identifier: '
+            __domBrand'
+              VoidKeyword
+            PropertySignature
+              Identifier: '
+            props'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+                children'
+                  QuestionToken
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Element'
+          InterfaceDeclaration
+            Identifier: ' ElementClass'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Element'
+            MethodSignature
+              Identifier: '
+            render'
+              TypeReference
+                Identifier: ' Element'
+          InterfaceDeclaration
+            Identifier: ' ElementAttributesProperty'
+            PropertySignature
+              Identifier: ' props'
+              AnyKeyword
+          InterfaceDeclaration
+            Identifier: ' ElementChildrenAttribute'
+            PropertySignature
+              Identifier: ' children'
+              AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' dom'
+    TypeReference
+      QualifiedName
+        QualifiedName
+          Identifier: ' dom'
+          Identifier: 'JSX'
+        Identifier: 'Element'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' predom'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' JSX'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' IntrinsicElements'
+            IndexSignature
+              Parameter
+                Identifier: 'e'
+                StringKeyword
+              TypeLiteral
+          InterfaceDeclaration
+            Identifier: ' Element'
+            PropertySignature
+              Identifier: '
+            __predomBrand'
+              VoidKeyword
+            PropertySignature
+              Identifier: '
+            props'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+                children'
+                  QuestionToken
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Element'
+          InterfaceDeclaration
+            Identifier: ' ElementClass'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Element'
+            MethodSignature
+              Identifier: '
+            render'
+              TypeReference
+                Identifier: ' Element'
+          InterfaceDeclaration
+            Identifier: ' ElementAttributesProperty'
+            PropertySignature
+              Identifier: ' props'
+              AnyKeyword
+          InterfaceDeclaration
+            Identifier: ' ElementChildrenAttribute'
+            PropertySignature
+              Identifier: ' children'
+              AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' predom'
+    TypeReference
+      QualifiedName
+        QualifiedName
+          Identifier: ' predom'
+          Identifier: 'JSX'
+        Identifier: 'Element'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' predom'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MySFC'
+        ArrowFunction
+          Parameter
+            Identifier: 'props'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'x'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' y'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' children'
+                QuestionToken
+                ArrayType
+                  TypeReference
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' predom'
+                        Identifier: 'JSX'
+                      Identifier: 'Element'
+          EqualsGreaterThanToken
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'p'
+              JsxAttributes
+            JsxExpression
+              PropertyAccessExpression
+                Identifier: 'props'
+                Identifier: 'x'
+            JsxText
+            JsxExpression
+              PropertyAccessExpression
+                Identifier: 'props'
+                Identifier: 'y'
+            JsxText
+            JsxExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'props'
+                  Identifier: 'x'
+                PlusToken
+                PropertyAccessExpression
+                  Identifier: ' props'
+                  Identifier: 'y'
+            JsxExpression
+              DotDotDotToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'props'
+                Identifier: 'children'
+            JsxClosingElement
+              Identifier: 'p'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' predom'
+            Identifier: 'JSX'
+          Identifier: 'Element'
+    PropertyDeclaration
+      Identifier: '
+    __predomBrand'
+      ExclamationToken
+      VoidKeyword
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' props'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' children'
+            QuestionToken
+            ArrayType
+              TypeReference
+                QualifiedName
+                  QualifiedName
+                    Identifier: ' predom'
+                    Identifier: 'JSX'
+                  Identifier: 'Element'
+      Block
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'p'
+              JsxAttributes
+            JsxText
+            JsxExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'props'
+                Identifier: 'x'
+            JsxText
+            JsxExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'props'
+                Identifier: 'y'
+            JsxText
+            JsxExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'props'
+                  Identifier: 'x'
+                PlusToken
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'props'
+                  Identifier: 'y'
+            JsxText
+            JsxExpression
+              DotDotDotToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'props'
+                Identifier: 'children'
+            JsxText
+            JsxClosingElement
+              Identifier: 'p'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tree'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'MySFC'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' y'
+                JsxExpression
+                  NumericLiteral
+          JsxSelfClosingElement
+            Identifier: 'MyClass'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' y'
+                JsxExpression
+                  NumericLiteral
+          JsxSelfClosingElement
+            Identifier: 'MyClass'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' y'
+                JsxExpression
+                  NumericLiteral
+          JsxClosingElement
+            Identifier: 'MySFC'
+  ExportAssignment
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'h'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: 'h'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dom'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' prerendered'
+      NamedImports
+        ImportSpecifier
+          Identifier: 'MySFC'
+        ImportSpecifier
+          Identifier: ' MyClass'
+        ImportSpecifier
+          Identifier: ' tree'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elem'
+        Identifier: ' prerendered'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+elem'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'h'
+          JsxAttributes
+        JsxClosingElement
+          Identifier: 'h'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' DOMSFC'
+        ArrowFunction
+          Parameter
+            Identifier: 'props'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'x'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' y'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' children'
+                QuestionToken
+                ArrayType
+                  TypeReference
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' dom'
+                        Identifier: 'JSX'
+                      Identifier: 'Element'
+          EqualsGreaterThanToken
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'p'
+              JsxAttributes
+            JsxExpression
+              PropertyAccessExpression
+                Identifier: 'props'
+                Identifier: 'x'
+            JsxText
+            JsxExpression
+              PropertyAccessExpression
+                Identifier: 'props'
+                Identifier: 'y'
+            JsxText
+            JsxExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'props'
+                  Identifier: 'x'
+                PlusToken
+                PropertyAccessExpression
+                  Identifier: ' props'
+                  Identifier: 'y'
+            JsxExpression
+              PropertyAccessExpression
+                Identifier: 'props'
+                Identifier: 'children'
+            JsxClosingElement
+              Identifier: 'p'
+  ClassDeclaration
+    Identifier: ' DOMClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' dom'
+            Identifier: 'JSX'
+          Identifier: 'Element'
+    PropertyDeclaration
+      Identifier: '
+    __domBrand'
+      ExclamationToken
+      VoidKeyword
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' props'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' children'
+            QuestionToken
+            ArrayType
+              TypeReference
+                QualifiedName
+                  QualifiedName
+                    Identifier: ' dom'
+                    Identifier: 'JSX'
+                  Identifier: 'Element'
+      Block
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'p'
+              JsxAttributes
+            JsxExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'props'
+                Identifier: 'x'
+            JsxText
+            JsxExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'props'
+                Identifier: 'y'
+            JsxText
+            JsxExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'props'
+                  Identifier: 'x'
+                PlusToken
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'props'
+                  Identifier: 'y'
+            JsxExpression
+              DotDotDotToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'props'
+                Identifier: 'children'
+            JsxClosingElement
+              Identifier: 'p'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _tree'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'DOMSFC'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' y'
+                JsxExpression
+                  NumericLiteral
+          JsxSelfClosingElement
+            Identifier: 'DOMClass'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' y'
+                JsxExpression
+                  NumericLiteral
+          JsxSelfClosingElement
+            Identifier: 'DOMClass'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' y'
+                JsxExpression
+                  NumericLiteral
+          JsxClosingElement
+            Identifier: 'DOMSFC'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _brokenTree'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'MySFC'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' y'
+                JsxExpression
+                  NumericLiteral
+          JsxSelfClosingElement
+            Identifier: 'MyClass'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' y'
+                JsxExpression
+                  NumericLiteral
+          JsxSelfClosingElement
+            Identifier: 'MyClass'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' y'
+                JsxExpression
+                  NumericLiteral
+          JsxClosingElement
+            Identifier: 'MySFC'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _brokenTree2'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'DOMSFC'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' y'
+                JsxExpression
+                  NumericLiteral
+          JsxExpression
+            Identifier: 'tree'
+          JsxExpression
+            Identifier: 'tree'
+          JsxClosingElement
+            Identifier: 'DOMSFC'

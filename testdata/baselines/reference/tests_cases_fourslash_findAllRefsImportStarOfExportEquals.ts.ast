@@ -1,0 +1,123 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @allowSyntheticDefaultimports: true
+// @Filename: /node_modules/a/index.d.ts
+////[|declare function /*a0*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 0 |}a|](): void;|]
+////[|declare namespace /*a1*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 2 |}a|] {
+////    export const x: number;
+////}|]
+////[|export = /*a2*/[|{| "contextRangeIndex": 4 |}a|];|]
+
+// Import with different name and we find local refs
+// @Filename: /b.ts
+////[|import /*b0*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 6 |}b|] from "a";|]
+/////*b1*/[|b|]();
+////[|b|].x;
+
+// Import with same name and we find all refs
+// @Filename: /c.ts
+////[|import /*c0*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 10 |}a|] from "a";|]
+/////*c1*/[|a|]();
+/////*c2*/[|a|].x;
+
+verify'
+        Identifier: 'noErrors'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a0Def'
+          BindingElement
+            Identifier: ' a0'
+          BindingElement
+            Identifier: ' a1Def'
+          BindingElement
+            Identifier: ' a1'
+          BindingElement
+            Identifier: ' a2Def'
+          BindingElement
+            Identifier: ' a2'
+          BindingElement
+            Identifier: ' b0Def'
+          BindingElement
+            Identifier: ' b0'
+          BindingElement
+            Identifier: ' b1'
+          BindingElement
+            Identifier: ' b2'
+          BindingElement
+            Identifier: ' c0Def'
+          BindingElement
+            Identifier: ' c0'
+          BindingElement
+            Identifier: ' c1'
+          BindingElement
+            Identifier: ' c2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aRanges'
+        ArrayLiteralExpression
+          Identifier: 'a0'
+          Identifier: ' a1'
+          Identifier: ' a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bRanges'
+        ArrayLiteralExpression
+          Identifier: 'b0'
+          Identifier: ' b1'
+          Identifier: ' b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cRanges'
+        ArrayLiteralExpression
+          Identifier: 'c0'
+          Identifier: ' c1'
+          Identifier: ' c2'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      Identifier: 'aRanges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      Identifier: 'bRanges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      Identifier: 'cRanges'

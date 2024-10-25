@@ -1,0 +1,172 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' MissingGlobalType'
+        NonNullExpression
+          NullKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' MissingGlobalType'
+          TypeReference
+            Identifier: ' MissingGlobalType'
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn2'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' MissingGlobalType'
+          EqualsGreaterThanToken
+          AsExpression
+            NonNullExpression
+              NullKeyword
+            TypeReference
+              Identifier: ' MissingGlobalType'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeQuery
+          Identifier: ' missingGlobalValue'
+        NonNullExpression
+          NullKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn3'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            TypeQuery
+              Identifier: ' missingGlobalValue'
+          TypeQuery
+            Identifier: ' missingGlobalValue'
+          EqualsGreaterThanToken
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn4'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            TypeQuery
+              Identifier: ' missingGlobalValue'
+          EqualsGreaterThanToken
+          AsExpression
+            NonNullExpression
+              NullKeyword
+            TypeQuery
+              Identifier: ' missingGlobalValue'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeLiteral
+          PropertySignature
+            ComputedPropertyName
+              Identifier: 'missingGlobalValue'
+            StringKeyword
+        NonNullExpression
+          NullKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' MissingGlobalType'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' MissingGlobalType'
+          TypeReference
+            Identifier: ' MissingGlobalType'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn2'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' MissingGlobalType'
+          TypeReference
+            Identifier: ' MissingGlobalType'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeQuery
+          Identifier: ' missingGlobalValue'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn3'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeQuery
+              Identifier: ' missingGlobalValue'
+          TypeQuery
+            Identifier: ' missingGlobalValue'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn4'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeQuery
+              Identifier: ' missingGlobalValue'
+          TypeQuery
+            Identifier: ' missingGlobalValue'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeLiteral
+          PropertySignature
+            ComputedPropertyName
+              Identifier: 'missingGlobalValue'
+            StringKeyword

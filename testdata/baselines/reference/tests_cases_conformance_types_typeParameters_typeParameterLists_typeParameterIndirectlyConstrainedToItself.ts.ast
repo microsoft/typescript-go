@@ -1,0 +1,173 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'U'
+      TypeReference
+        Identifier: ' T'
+    TypeParameter
+      Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'U'
+      TypeReference
+        Identifier: ' T'
+    TypeParameter
+      Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'U'
+      TypeReference
+        Identifier: ' T'
+    TypeParameter
+      Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' T'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'U'
+              TypeReference
+                Identifier: ' T'
+            TypeParameter
+              Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+            VoidKeyword
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' U'
+            TypeParameter
+              Identifier: ' U'
+              TypeReference
+                Identifier: ' V'
+            TypeParameter
+              Identifier: ' V'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'U'
+            TypeReference
+              Identifier: ' T'
+          TypeParameter
+            Identifier: ' T'
+            TypeReference
+              Identifier: ' U'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' U'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' V'
+          TypeParameter
+            Identifier: ' V'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'U'
+      TypeReference
+        Identifier: ' T'
+    TypeParameter
+      Identifier: ' T'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'T'
+      TupleType
+        NumberKeyword
+      TypeLiteral
+      TypeLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'S'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'S'
+    Block

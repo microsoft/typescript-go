@@ -1,0 +1,69 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Component'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Button'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' App'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        AnyKeyword
+        AnyKeyword
+    MethodDeclaration
+      Identifier: '
+
+    render'
+      Block
+        ReturnStatement
+          JsxSelfClosingElement
+            Identifier: 'Button'
+            JsxAttributes
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Button'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        AnyKeyword
+        AnyKeyword
+    MethodDeclaration
+      Identifier: '
+
+    render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'button'
+              JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'button'

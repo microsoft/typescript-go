@@ -1,0 +1,93 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Ref'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    prop'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Container'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    m1'
+      TypeReference
+        Identifier: ' Container'
+        TypeReference
+          Identifier: 'Ref'
+          TypeReference
+            Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    m2'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      FunctionType
+        TypeReference
+          Identifier: ' Container'
+          TypeReference
+            Identifier: 'Ref'
+            NumberKeyword
+    VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        FunctionType
+          TypeReference
+            Identifier: ' Container'
+            TypeReference
+              Identifier: 'Ref'
+              StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'a'
+  FunctionDeclaration
+    Identifier: ' test'
+    MappedType
+      TypeParameter
+        Identifier: 'A'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' A'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'foo'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' bar'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    Identifier: 'foo'
+                    Identifier: 'bar'
+                Identifier: ' c'
+          EqualsGreaterThanToken
+          Identifier: ' undefined'

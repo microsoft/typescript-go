@@ -1,0 +1,41 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' TypeScript'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' CompilerDiagnostics'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' IDiagnosticWriter'
+            MethodSignature
+              Identifier: '
+            Alert'
+              Parameter
+                Identifier: 'output'
+                StringKeyword
+              VoidKeyword
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diagnosticWriter'
+                NullKeyword
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' Alert'
+            Parameter
+              Identifier: 'output'
+              StringKeyword
+            Block
+              IfStatement
+                Identifier: 'diagnosticWriter'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                diagnosticWriter'
+                        Identifier: 'Alert'
+                      Identifier: 'output'

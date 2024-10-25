@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      NumberKeyword

@@ -1,0 +1,60 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        a'
+  InterfaceDeclaration
+    Identifier: ' B'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        a'
+        PropertySignature
+          Identifier: '
+        b'
+  InterfaceDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+  InterfaceDeclaration
+    Identifier: ' D'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      TypeLiteral
+  InterfaceDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+  InterfaceDeclaration
+    Identifier: ' F'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        a'

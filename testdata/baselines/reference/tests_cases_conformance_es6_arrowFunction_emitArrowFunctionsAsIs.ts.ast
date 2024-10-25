@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrow1'
+        ArrowFunction
+          Parameter
+            Identifier: ' a'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrow2'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrow3'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          Parameter
+            Identifier: ' b'
+          EqualsGreaterThanToken
+          Block

@@ -1,0 +1,53 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: '
+  date'
+        ArrowFunction
+          Parameter
+            Identifier: 'inspectedElement'
+            AnyKeyword
+          EqualsGreaterThanToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+date'
+        Identifier: 'toISOString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: '
+  date2'
+        ArrowFunction
+          Parameter
+            Identifier: 'inspectedElement'
+            AnyKeyword
+          EqualsGreaterThanToken
+          Identifier: ''
+      VariableDeclaration
+        Identifier: 'props'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+date2'
+        Identifier: 'toISOString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' constructor'
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          Block

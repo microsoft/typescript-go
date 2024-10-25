@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' gen'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            AnyKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' foo'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' bar'
+                NumericLiteral
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' key'
+        Identifier: ' obj'
+        Block
+          ExpressionStatement
+            YieldExpression
+              Identifier: ' key'
+          ExpressionStatement
+            DeleteExpression
+              PropertyAccessExpression
+                Identifier: ' obj'
+                Identifier: 'bar'

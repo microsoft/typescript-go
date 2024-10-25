@@ -1,0 +1,9 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' A'
+  InterfaceDeclaration
+    Identifier: ' B'
+  ExportAssignment
+    Identifier: ' B'

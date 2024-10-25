@@ -1,0 +1,53 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////declare const Symbol: () => symbol;
+////namespace M {
+////    export const sym = Symbol();
+////}
+////namespace N {
+////    const sym = Symbol();
+////    export interface I {
+////        [sym]: number;
+////        [M.sym]: number;
+////    }
+////}
+////
+////declare const i: N.I;
+////i[|./**/|];
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' replacementSpan'
+              ElementAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' test'
+                    Identifier: 'ranges'
+                NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' includeInsertTextCompletions'
+              TrueKeyword

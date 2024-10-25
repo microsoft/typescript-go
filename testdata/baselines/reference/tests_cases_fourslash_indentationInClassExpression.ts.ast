@@ -1,0 +1,69 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' verifyIndentation'
+    Parameter
+      Identifier: 'level'
+      NumberKeyword
+    Parameter
+      Identifier: ' count'
+      NumberKeyword
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          Identifier: ' count'
+        PrefixUnaryExpression
+          Identifier: 'i'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        goTo'
+                Identifier: 'marker'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'level'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'i'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        edit'
+                Identifier: 'insertLine'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        verify'
+                Identifier: 'indentationIs'
+              Identifier: 'level'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+verifyIndentation'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyIndentation'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyIndentation'
+      NumericLiteral
+      NumericLiteral

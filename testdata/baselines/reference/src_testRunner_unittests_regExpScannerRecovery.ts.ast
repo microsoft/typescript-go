@@ -1,0 +1,232 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' testCases'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' whiteSpaceSequences'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' testCase'
+            Identifier: ' testCases'
+            Block
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' whiteSpaces'
+                Identifier: ' whiteSpaceSequences'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' testCaseWithWhiteSpaces'
+                        BinaryExpression
+                          Identifier: ' testCase'
+                          PlusToken
+                          Identifier: ' whiteSpaces'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' sources'
+                        ArrayLiteralExpression
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'testCaseWithWhiteSpaces'
+                              TemplateTail
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'testCaseWithWhiteSpaces'
+                              TemplateTail
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'testCaseWithWhiteSpaces'
+                              TemplateTail
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'testCaseWithWhiteSpaces'
+                              TemplateTail
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'testCaseWithWhiteSpaces'
+                              TemplateTail
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'testCaseWithWhiteSpaces'
+                              TemplateTail
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' source'
+                    Identifier: ' sources'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                it'
+                          BinaryExpression
+                            StringLiteral
+                            PlusToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' JSON'
+                                Identifier: 'stringify'
+                              Identifier: 'source'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    ObjectBindingPattern
+                                      BindingElement
+                                        Identifier: ' parseDiagnostics'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'createLanguageServiceSourceFile'
+                                      StringLiteral
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                        ts'
+                                            Identifier: 'ScriptSnapshot'
+                                          Identifier: 'fromString'
+                                        Identifier: 'source'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                        ts'
+                                          Identifier: 'ScriptTarget'
+                                        Identifier: 'Latest'
+                                      StringLiteral
+                                      FalseKeyword
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' diagnostic'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'find'
+                                      Identifier: 'parseDiagnostics'
+                                      ArrowFunction
+                                        Parameter
+                                          ObjectBindingPattern
+                                            BindingElement
+                                              Identifier: ' code'
+                                        EqualsGreaterThanToken
+                                        BinaryExpression
+                                          Identifier: ' code'
+                                          EqualsEqualsEqualsToken
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'Diagnostics'
+                                              Identifier: 'Unterminated_regular_expression_literal'
+                                            Identifier: 'code'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                    assert'
+                                  Identifier: 'diagnostic'
+                                  StringLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    assert'
+                                    Identifier: 'equal'
+                                  PropertyAccessExpression
+                                    Identifier: 'diagnostic'
+                                    Identifier: 'start'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' source'
+                                      Identifier: 'indexOf'
+                                    StringLiteral
+                                  StringLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    assert'
+                                    Identifier: 'equal'
+                                  PropertyAccessExpression
+                                    Identifier: 'diagnostic'
+                                    Identifier: 'length'
+                                  PropertyAccessExpression
+                                    Identifier: ' testCase'
+                                    Identifier: 'length'
+                                  StringLiteral

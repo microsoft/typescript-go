@@ -1,0 +1,29 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    someOtherProperty'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'args'
+      UnionType
+        TupleType
+          LiteralType
+            StringLiteral
+        TypeReference
+          Identifier: ' I'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      ArrayLiteralExpression
+        StringLiteral

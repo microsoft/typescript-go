@@ -1,0 +1,229 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'foo'
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' a'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' b'
+      BinaryExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'a'
+        PlusToken
+        NumericLiteral
+  ClassDeclaration
+    Decorator
+      Identifier: 'foo'
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' c'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' d'
+      BinaryExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'c'
+        PlusToken
+        NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' e'
+      BinaryExpression
+        BinaryExpression
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'a'
+          PlusToken
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'c'
+        PlusToken
+        NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'c'
+          PlusToken
+          NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' ff'
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'c'
+              PlusToken
+              NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            PlusToken
+            NumericLiteral
+    GetAccessor
+      StaticKeyword
+      Identifier: ' fa'
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            PlusToken
+            NumericLiteral
+    SetAccessor
+      StaticKeyword
+      Identifier: ' fa'
+      Parameter
+        Identifier: 'v'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' v'
+              PlusToken
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' CC'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' a'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' b'
+      BinaryExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'a'
+        PlusToken
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' DD'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CC'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' c'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' d'
+      BinaryExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'c'
+        PlusToken
+        NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' e'
+      BinaryExpression
+        BinaryExpression
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'a'
+          PlusToken
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'c'
+        PlusToken
+        NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'c'
+          PlusToken
+          NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' ff'
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'c'
+              PlusToken
+              NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            PlusToken
+            NumericLiteral
+    GetAccessor
+      StaticKeyword
+      Identifier: ' fa'
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            PlusToken
+            NumericLiteral
+    SetAccessor
+      StaticKeyword
+      Identifier: ' fa'
+      Parameter
+        Identifier: 'v'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' v'
+              PlusToken
+              NumericLiteral

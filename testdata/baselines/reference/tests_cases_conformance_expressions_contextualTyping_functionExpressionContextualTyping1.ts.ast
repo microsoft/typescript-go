@@ -1,0 +1,351 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' red'
+    EnumMember
+      Identifier: ' blue'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a0'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          Parameter
+            Identifier: ' s'
+            StringKeyword
+          NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'num'
+          Parameter
+            Identifier: ' str'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+    num'
+                  Identifier: 'toExponential'
+            ReturnStatement
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' Class'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        FunctionType
+          Parameter
+            Identifier: 'c'
+            TypeReference
+              Identifier: ' Class'
+              TypeReference
+                Identifier: 'Number'
+          NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'a1'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+    a1'
+                  Identifier: 'foo'
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              Parameter
+                Identifier: ' w'
+                BooleanKeyword
+              VoidKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              Parameter
+                Identifier: ' w'
+                BooleanKeyword
+              StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b1'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'k'
+        Parameter
+          Identifier: ' h'
+        EqualsGreaterThanToken
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        UnionType
+          TypeQuery
+            Identifier: ' a0'
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              Parameter
+                Identifier: ' s'
+                StringKeyword
+              StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'foo'
+        Parameter
+          Identifier: ' bar'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' foo'
+              PlusToken
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'foo'
+        Parameter
+          Identifier: ' bar'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        FunctionType
+          Parameter
+            Identifier: 'name'
+            StringKeyword
+          Parameter
+            Identifier: ' num'
+            NumberKeyword
+          Parameter
+            Identifier: ' boo'
+            BooleanKeyword
+          VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'name'
+        Parameter
+          Identifier: ' number'
+        EqualsGreaterThanToken
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            TypeReference
+              Identifier: ' E'
+          StringKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'number'
+            NumericLiteral
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b5'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+          StringKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'number'
+            StringLiteral
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b6'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              Parameter
+                Identifier: ' w'
+                BooleanKeyword
+              VoidKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b7'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              Parameter
+                Identifier: ' w'
+                BooleanKeyword
+              VoidKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              Parameter
+                Identifier: ' w'
+                NumberKeyword
+              StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b6'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'k'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' k'
+                Identifier: 'toLowerCase'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b6'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'i'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    i'
+                Identifier: 'toExponential'
+          ReturnStatement
+            Identifier: ' i'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '                   // Per spec, no contextual signature can be extracted in this case. (Otherwise clause)
+b7'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'j'
+        Parameter
+          Identifier: ' m'
+        EqualsGreaterThanToken
+        Block
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' k'
+              UnionType
+                ParenthesizedType
+                  FunctionType
+                    Parameter
+                      Identifier: 'j'
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' k'
+                      TypeReference
+                        Identifier: ' U'
+                    ArrayType
+                      ParenthesizedType
+                        UnionType
+                          TypeReference
+                            Identifier: 'T'
+                          TypeReference
+                            Identifier: 'U'
+                ParenthesizedType
+                  FunctionType
+                    Parameter
+                      Identifier: 'j'
+                      NumberKeyword
+                    Parameter
+                      Identifier: 'k'
+                      TypeReference
+                        Identifier: 'U'
+                    ArrayType
+                      NumberKeyword
+              ArrowFunction
+                Parameter
+                  Identifier: 'j'
+                Parameter
+                  Identifier: ' k'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'j'
+                      Identifier: ' k'

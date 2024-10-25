@@ -1,0 +1,60 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          CallExpression
+            Identifier: '
+f'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                ArrayLiteralExpression
+                  NullKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                ArrayLiteralExpression
+                  NumericLiteral
+          Identifier: 'x'
+        NumericLiteral
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' // ok
+f'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                ArrayLiteralExpression
+                  NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                ArrayLiteralExpression
+                  NullKeyword
+          Identifier: 'x'
+        NumericLiteral
+      EqualsToken
+      StringLiteral

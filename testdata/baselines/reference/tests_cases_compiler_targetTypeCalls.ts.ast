@@ -1,0 +1,84 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fra1'
+        FunctionType
+          Parameter
+            Identifier: 'v'
+            AnyKeyword
+          StringKeyword
+        CallExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                FunctionExpression
+                  Parameter
+                    Identifier: 'v'
+                    StringKeyword
+                  Block
+                    ReturnStatement
+                      Identifier: ' v'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fra2'
+        FunctionType
+          Parameter
+            Identifier: 'v'
+            AnyKeyword
+          NumberKeyword
+        CallExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                FunctionExpression
+                  Block
+                    ReturnStatement
+                      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fra3'
+        FunctionType
+          Parameter
+            Identifier: 'v'
+            AnyKeyword
+          StringKeyword
+        CallExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                CallExpression
+                  FunctionExpression
+                    Block
+                      ReturnStatement
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'v'
+                          Block
+                            ReturnStatement
+                              Identifier: ' v'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fra4'
+        FunctionType
+          Parameter
+            Identifier: 'v'
+            AnyKeyword
+          VoidKeyword
+        CallExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                CallExpression
+                  FunctionExpression
+                    Block
+                      ReturnStatement
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'v'
+                          Block
+                            ReturnStatement
+                              Identifier: ' v'

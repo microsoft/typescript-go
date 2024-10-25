@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Factory'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Parameter
+        Identifier: 'c'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _t'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'i'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' s'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            t'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_t'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' i'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Factory'
+                  Identifier: 'create'
+                Identifier: 's'

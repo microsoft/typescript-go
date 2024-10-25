@@ -1,0 +1,65 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' JSX'
+        ModuleBlock
+          TypeAliasDeclaration
+            Identifier: ' Element'
+            AnyKeyword
+          InterfaceDeclaration
+            Identifier: ' ElementAttributesProperty'
+            PropertySignature
+              Identifier: '
+            __properties__'
+              TypeLiteral
+          InterfaceDeclaration
+            Identifier: ' IntrinsicElements'
+            IndexSignature
+              Parameter
+                Identifier: 'key'
+                StringKeyword
+              StringKeyword
+          InterfaceDeclaration
+            Identifier: ' ElementChildrenAttribute'
+            PropertySignature
+              Identifier: '
+            __children__'
+              TypeLiteral
+  InterfaceDeclaration
+    Identifier: ' MockComponentInterface'
+    ConstructSignature
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        __properties__'
+          IntersectionType
+            TypeLiteral
+              PropertySignature
+                Identifier: ' bar'
+                QuestionToken
+                NumberKeyword
+            TypeLiteral
+              PropertySignature
+                Identifier: ' __children__'
+                FunctionType
+                  NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MockComponent'
+        TypeReference
+          Identifier: ' MockComponentInterface'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'MockComponent'
+        JsxAttributes
+      JsxExpression
+      JsxClosingElement
+        Identifier: 'MockComponent'

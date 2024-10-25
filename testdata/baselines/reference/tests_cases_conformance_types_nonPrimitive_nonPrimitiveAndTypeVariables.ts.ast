@@ -1,0 +1,117 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' V'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+        TypeReference
+          Identifier: ' V'
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' V'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+        UnionType
+          TypeReference
+            Identifier: ' V'
+          ObjectKeyword
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              UnionType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+          LiteralType
+            NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              UnionType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+          LiteralType
+            NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ObjectKeyword
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            UnionType
+              TypeReference
+                Identifier: ' U'
+              ObjectKeyword
+            Identifier: ' x'

@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '// ==ORIGINAL==
+/*[#|*/x'
+          Identifier: 'y'
+        Identifier: 'z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'y'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+/*RENAME*/y'
+        Identifier: 'z'

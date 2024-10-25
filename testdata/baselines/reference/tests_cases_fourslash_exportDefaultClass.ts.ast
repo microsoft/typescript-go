@@ -1,0 +1,35 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='./fourslash.ts'/>
+
+////export default class C {
+////    method() { /*1*/ }
+////}
+//// /*2*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'markers'
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral

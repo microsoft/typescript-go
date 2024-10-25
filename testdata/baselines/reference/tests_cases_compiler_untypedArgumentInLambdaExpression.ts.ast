@@ -1,0 +1,27 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'fn'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          StringKeyword
+        StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+ 
+f'
+      ArrowFunction
+        Parameter
+          Identifier: 'input'
+        StringKeyword
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              Identifier: ' input'

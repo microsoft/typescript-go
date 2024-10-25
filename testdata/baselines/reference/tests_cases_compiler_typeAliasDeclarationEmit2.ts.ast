@@ -1,0 +1,11 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'a'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' a'

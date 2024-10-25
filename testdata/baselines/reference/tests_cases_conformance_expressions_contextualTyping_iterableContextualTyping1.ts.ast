@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' iter'
+        TypeReference
+          Identifier: ' Iterable'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            NumberKeyword
+        ArrayLiteralExpression
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' s'
+              Identifier: 'length'

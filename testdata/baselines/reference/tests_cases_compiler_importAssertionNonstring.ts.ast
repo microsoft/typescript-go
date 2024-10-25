@@ -1,0 +1,96 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing1'
+    StringLiteral
+    ImportAttributes
+  ExpressionStatement
+    Identifier: ' assert'
+  Block
+    LabeledStatement
+      Identifier: 'field'
+      ExpressionStatement
+        NumericLiteral
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing2'
+    StringLiteral
+    ImportAttributes
+  ExpressionStatement
+    Identifier: ' assert'
+  Block
+    LabeledStatement
+      Identifier: 'field'
+      ExpressionStatement
+        NoSubstitutionTemplateLiteral
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing3'
+    StringLiteral
+    ImportAttributes
+  ExpressionStatement
+    Identifier: ' assert'
+  Block
+    LabeledStatement
+      Identifier: 'field'
+      ExpressionStatement
+        RegularExpressionLiteral
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing4'
+    StringLiteral
+    ImportAttributes
+  ExpressionStatement
+    Identifier: ' assert'
+  Block
+    LabeledStatement
+      Identifier: 'field'
+      ExpressionStatement
+        ArrayLiteralExpression
+          StringLiteral
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing5'
+    StringLiteral
+    ImportAttributes
+  ExpressionStatement
+    Identifier: ' assert'
+  Block
+    LabeledStatement
+      Identifier: 'field'
+      Block
+        LabeledStatement
+          Identifier: ' a'
+          ExpressionStatement
+            NumericLiteral
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing6'
+    StringLiteral
+    ImportAttributes
+  ExpressionStatement
+    Identifier: ' assert'
+  Block
+    LabeledStatement
+      Identifier: 'type'
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          Identifier: ' field'
+    ExpressionStatement
+      CallExpression
+        PropertyAccessExpression
+          NumericLiteral
+          Identifier: 'toString'

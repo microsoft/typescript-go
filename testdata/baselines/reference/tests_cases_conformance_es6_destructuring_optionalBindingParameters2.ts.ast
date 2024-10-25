@@ -1,0 +1,53 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' x'
+        BindingElement
+          Identifier: ' y'
+        BindingElement
+          Identifier: ' z'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          StringKeyword
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' z'
+          BooleanKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' y'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' z'
+          FalseKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: ' y'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' z'
+          StringLiteral

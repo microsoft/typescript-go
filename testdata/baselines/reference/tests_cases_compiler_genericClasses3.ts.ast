@@ -1,0 +1,57 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'T'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        TypeReference
+          Identifier: ' C'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        PropertyAccessExpression
+          Identifier: ' v2'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u'
+        PropertyAccessExpression
+          Identifier: ' v2'
+          Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        PropertyAccessExpression
+          Identifier: ' v2'
+          Identifier: 'b'

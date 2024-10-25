@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' George'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ClassExpression
+          MethodDeclaration
+            Identifier: ' reset'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

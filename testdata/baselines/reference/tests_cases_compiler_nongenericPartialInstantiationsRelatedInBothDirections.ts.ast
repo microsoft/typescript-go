@@ -1,0 +1,65 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    bar'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' ObjectContaining'
+    TypeParameter
+      Identifier: 'T'
+    ConstructSignature
+      Parameter
+        Identifier: 'sample'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cafoo'
+        TypeReference
+          Identifier: ' ObjectContaining'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' foo'
+              NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cfoo'
+        TypeReference
+          Identifier: ' ObjectContaining'
+          TypeReference
+            Identifier: 'Foo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+cfoo'
+      EqualsToken
+      Identifier: ' cafoo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+cafoo'
+      EqualsToken
+      Identifier: ' cfoo'

@@ -1,0 +1,75 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' I'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: ' c0'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'a'
+                StringLiteral
+        TupleType
+          OptionalType
+            TypeReference
+              Identifier: 'I'
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: ' x1'
+          BindingElement
+            Identifier: ' c1'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'a'
+                StringLiteral
+        TupleType
+          NumberKeyword
+          OptionalType
+            TypeReference
+              Identifier: ' I'
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: ' c_'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'a'
+                StringLiteral
+        ArrayType
+          TypeReference
+            Identifier: ' I'
+        ArrayLiteralExpression
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: 'length'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: 'a'
+                    NumericLiteral
+            TupleType
+              NumberKeyword
+            ArrayLiteralExpression
+              NumericLiteral
+      ReturnStatement
+        Identifier: ' length'

@@ -1,0 +1,55 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ReturnVal'
+    MethodSignature
+      Identifier: '
+    something'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        TypeReference
+          Identifier: ' ReturnVal'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' something'
+            Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' val'
+        TypeReference
+          Identifier: ' ReturnVal'
+  FunctionDeclaration
+    Identifier: ' run'
+    Parameter
+      Identifier: 'options'
+      TypeLiteral
+        MethodSignature
+          Identifier: ' something'
+          QuestionToken
+          Parameter
+            Identifier: 'b'
+            QuestionToken
+            StringKeyword
+          VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' something'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' options'
+                Identifier: 'something'
+              QuestionQuestionToken
+              PropertyAccessExpression
+                Identifier: ' val'
+                Identifier: 'something'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    something'
+          StringLiteral

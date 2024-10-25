@@ -1,0 +1,614 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    noChangeRun'
+        ImportSpecifier
+          Identifier: '
+    verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    TscWatchCompileChange'
+        ImportSpecifier
+          Identifier: '
+    verifyTscWatch'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' getSysForNoEmitOnError'
+    Parameter
+      Identifier: '
+    mainErrorContent'
+      StringKeyword
+    Parameter
+      Identifier: '
+    outFile'
+      BooleanKeyword
+    Parameter
+      Identifier: '
+    declaration'
+      UnionType
+        LiteralType
+          TrueKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    incremental'
+      UnionType
+        LiteralType
+          TrueKeyword
+        UndefinedKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' TestServerHost'
+            Identifier: 'createWatchedSystem'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      SpreadAssignment
+                        ConditionalExpression
+                          Identifier: 'outFile'
+                          QuestionToken
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' outFile'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' module'
+                              StringLiteral
+                          ColonToken
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' outDir'
+                              StringLiteral
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                declaration'
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                incremental'
+                      PropertyAssignment
+                        Identifier: '
+                noEmitOnError'
+                        TrueKeyword
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              Identifier: ' mainErrorContent'
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' currentDirectory'
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' forEachNoEmitOnErrorScenario'
+    Parameter
+      Identifier: '
+    subScenario'
+      StringKeyword
+    Parameter
+      Identifier: '
+    action'
+      FunctionType
+        Parameter
+          Identifier: '
+        subScenario'
+          StringKeyword
+        Parameter
+          Identifier: '
+        fsContents'
+          FunctionType
+            Parameter
+              Identifier: 'mainErrorContent'
+              StringKeyword
+            TypeReference
+              Identifier: ' TestServerHost'
+        VoidKeyword
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' outFile'
+        ArrayLiteralExpression
+          FalseKeyword
+          TrueKeyword
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' declaration'
+            AsExpression
+              ArrayLiteralExpression
+                Identifier: 'undefined'
+                TrueKeyword
+              TypeReference
+                Identifier: ' const'
+            Block
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' incremental'
+                AsExpression
+                  ArrayLiteralExpression
+                    Identifier: 'undefined'
+                    TrueKeyword
+                  TypeReference
+                    Identifier: ' const'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                action'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          ConditionalExpression
+                            Identifier: 'outFile'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            StringLiteral
+                          TemplateMiddle
+                        TemplateSpan
+                          Identifier: 'subScenario'
+                          TemplateMiddle
+                        TemplateSpan
+                          ConditionalExpression
+                            Identifier: 'declaration'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            StringLiteral
+                          TemplateMiddle
+                        TemplateSpan
+                          ConditionalExpression
+                            Identifier: 'incremental'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            StringLiteral
+                          TemplateTail
+                      ArrowFunction
+                        Parameter
+                          Identifier: '
+                    mainErrorContent'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: '
+                        getSysForNoEmitOnError'
+                          Identifier: '
+                            mainErrorContent'
+                          Identifier: '
+                            outFile'
+                          Identifier: '
+                            declaration'
+                          Identifier: '
+                            incremental'
+  FunctionDeclaration
+    Identifier: ' getNoEmitOnErrorErrorsType'
+    ArrayType
+      TupleType
+        NamedTupleMember
+          Identifier: 'subScenario'
+          StringKeyword
+        NamedTupleMember
+          Identifier: ' mainErrorContent'
+          StringKeyword
+        NamedTupleMember
+          Identifier: ' fixedErrorContent'
+          StringKeyword
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+            TaggedTemplateExpression
+              Identifier: '
+            dedent'
+              NoSubstitutionTemplateLiteral
+            TaggedTemplateExpression
+              Identifier: '
+            dedent'
+              NoSubstitutionTemplateLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            TaggedTemplateExpression
+              Identifier: '
+            dedent'
+              NoSubstitutionTemplateLiteral
+            TaggedTemplateExpression
+              Identifier: '
+            dedent'
+              NoSubstitutionTemplateLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            TaggedTemplateExpression
+              Identifier: '
+            dedent'
+              NoSubstitutionTemplateLiteral
+            TaggedTemplateExpression
+              Identifier: '
+            dedent'
+              NoSubstitutionTemplateLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachNoEmitOnErrorScenarioTsc'
+    Parameter
+      Identifier: 'commandLineArgs'
+      ArrayType
+        StringKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: '
+    getNoEmitOnErrorErrorsType'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              ArrayBindingPattern
+                BindingElement
+                  Identifier: 'subScenario'
+                BindingElement
+                  Identifier: ' mainErrorContent'
+                BindingElement
+                  Identifier: ' fixedErrorContent'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        forEachNoEmitOnErrorScenario'
+              Identifier: '
+            subScenario'
+              ArrowFunction
+                Parameter
+                  Identifier: 'subScenario'
+                Parameter
+                  Identifier: ' sys'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                describe'
+                      Identifier: 'subScenario'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                    verifyTsc'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                        scenario'
+                                  StringLiteral
+                                ShorthandPropertyAssignment
+                                  Identifier: '
+                        subScenario'
+                                PropertyAssignment
+                                  Identifier: '
+                        sys'
+                                  ArrowFunction
+                                    EqualsGreaterThanToken
+                                    CallExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'mainErrorContent'
+                                ShorthandPropertyAssignment
+                                  Identifier: '
+                        commandLineArgs'
+                                PropertyAssignment
+                                  Identifier: '
+                        edits'
+                                  ArrayLiteralExpression
+                                    Identifier: '
+                            noChangeRun'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                                caption'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                                edit'
+                                        ArrowFunction
+                                          Parameter
+                                            Identifier: ' sys'
+                                          EqualsGreaterThanToken
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' sys'
+                                              Identifier: 'writeFile'
+                                            StringLiteral
+                                            Identifier: ' fixedErrorContent'
+                                    Identifier: '
+                            noChangeRun'
+                                PropertyAssignment
+                                  Identifier: '
+                        baselinePrograms'
+                                  TrueKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachNoEmitOnErrorScenarioTscWatch'
+    Parameter
+      Identifier: 'commandLineArgs'
+      ArrayType
+        StringKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' errorTypes'
+            CallExpression
+              Identifier: ' getNoEmitOnErrorErrorsType'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachNoEmitOnErrorScenario'
+          StringLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'subScenario'
+            Parameter
+              Identifier: ' sys'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+            verifyTscWatch'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+                scenario'
+                  StringLiteral
+                ShorthandPropertyAssignment
+                  Identifier: '
+                subScenario'
+                PropertyAssignment
+                  Identifier: '
+                commandLineArgs'
+                  ArrayLiteralExpression
+                    SpreadElement
+                      Identifier: 'commandLineArgs'
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+                sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' sys'
+                      ElementAccessExpression
+                        ElementAccessExpression
+                          Identifier: 'errorTypes'
+                          NumericLiteral
+                        NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+                edits'
+                  CallExpression
+                    Identifier: ' getEdits'
+                    Identifier: 'errorTypes'
+      FunctionDeclaration
+        Identifier: ' getEdits'
+        Parameter
+          Identifier: 'errorTypes'
+          TypeReference
+            Identifier: ' ReturnType'
+            TypeQuery
+              Identifier: ' getNoEmitOnErrorErrorsType'
+        ArrayType
+          TypeReference
+            Identifier: ' TscWatchCompileChange'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' edits'
+                ArrayType
+                  TypeReference
+                    Identifier: ' TscWatchCompileChange'
+                ArrayLiteralExpression
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'subScenario'
+                  BindingElement
+                    Identifier: ' mainErrorContent'
+                  BindingElement
+                    Identifier: ' fixedErrorContent'
+            Identifier: ' errorTypes'
+            Block
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'edits'
+                  Identifier: 'length'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                edits'
+                        Identifier: 'push'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                        caption'
+                          Identifier: ' subScenario'
+                        PropertyAssignment
+                          Identifier: '
+                        edit'
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' sys'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' sys'
+                                Identifier: 'writeFile'
+                              NoSubstitutionTemplateLiteral
+                              Identifier: ' mainErrorContent'
+                        PropertyAssignment
+                          Identifier: '
+                        timeouts'
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' sys'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' sys'
+                                Identifier: 'runQueuedTimeoutCallbacks'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            edits'
+                    Identifier: 'push'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                    caption'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+                    edit'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' sys'
+                            Identifier: 'writeFile'
+                          NoSubstitutionTemplateLiteral
+                          NonNullExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' sys'
+                                Identifier: 'readFile'
+                              NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      Identifier: '
+                    timeouts'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' sys'
+                            Identifier: 'runQueuedTimeoutCallbacks'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                    caption'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'subScenario'
+                          TemplateTail
+                    PropertyAssignment
+                      Identifier: '
+                    edit'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' sys'
+                            Identifier: 'writeFile'
+                          NoSubstitutionTemplateLiteral
+                          Identifier: ' fixedErrorContent'
+                    PropertyAssignment
+                      Identifier: '
+                    timeouts'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' sys'
+                            Identifier: 'runQueuedTimeoutCallbacks'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                    caption'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+                    edit'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' sys'
+                            Identifier: 'writeFile'
+                          NoSubstitutionTemplateLiteral
+                          NonNullExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' sys'
+                                Identifier: 'readFile'
+                              NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      Identifier: '
+                    timeouts'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' sys'
+                            Identifier: 'runQueuedTimeoutCallbacks'
+          ReturnStatement
+            Identifier: ' edits'

@@ -1,0 +1,4 @@
+SourceFile
+  IfStatement
+    Identifier: 'foo'
+    Block

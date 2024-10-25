@@ -1,0 +1,7 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' yieldString'
+    Block
+      ExpressionStatement
+        YieldExpression
+          StringLiteral

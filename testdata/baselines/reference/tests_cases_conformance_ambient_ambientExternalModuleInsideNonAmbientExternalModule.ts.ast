@@ -1,0 +1,6 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock

@@ -1,0 +1,194 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Cls'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Cls'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          TypeAssertionExpression
+            AnyKeyword
+            PropertyAccessExpression
+              Identifier: 'Cls'
+              Identifier: 'prototype'
+        Identifier: 'foo'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          TypeAssertionExpression
+            AnyKeyword
+            PropertyAccessExpression
+              Identifier: 'Cls'
+              Identifier: 'prototype'
+        Identifier: 'bar'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Cls'
+        MethodSignature
+          Identifier: '
+        foo'
+          NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Cls'
+        MethodSignature
+          Identifier: '
+        bar'
+          StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: ' x'
+      NumberKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: ' x'
+      StringKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Cls'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'C1'
+        ImportSpecifier
+          Identifier: ' C2'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          TypeAssertionExpression
+            AnyKeyword
+            PropertyAccessExpression
+              Identifier: 'Cls'
+              Identifier: 'prototype'
+        Identifier: 'baz1'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          TypeAssertionExpression
+            AnyKeyword
+            PropertyAccessExpression
+              Identifier: 'Cls'
+              Identifier: 'prototype'
+        Identifier: 'baz2'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Cls'
+        MethodSignature
+          Identifier: '
+        baz1'
+          TypeReference
+            Identifier: ' C1'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Cls'
+        MethodSignature
+          Identifier: '
+        baz2'
+          TypeReference
+            Identifier: ' C2'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Cls'
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' Cls'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+c'
+            Identifier: 'foo'
+        Identifier: 'toExponential'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+c'
+            Identifier: 'bar'
+        Identifier: 'toLowerCase'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+c'
+              Identifier: 'baz1'
+          Identifier: 'x'
+        Identifier: 'toExponential'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+c'
+              Identifier: 'baz2'
+          Identifier: 'x'
+        Identifier: 'toLowerCase'

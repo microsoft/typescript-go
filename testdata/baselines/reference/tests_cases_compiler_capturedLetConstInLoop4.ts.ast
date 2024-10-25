@@ -1,0 +1,727 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' exportedFoo'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          Identifier: ' v0'
+                          PlusToken
+                          Identifier: ' v00'
+                        PlusToken
+                        Identifier: ' v1'
+                      PlusToken
+                      Identifier: ' v2'
+                    PlusToken
+                    Identifier: ' v3'
+                  PlusToken
+                  Identifier: ' v4'
+                PlusToken
+                Identifier: ' v5'
+              PlusToken
+              Identifier: ' v6'
+            PlusToken
+            Identifier: ' v7'
+          PlusToken
+          Identifier: ' v8'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ArrayLiteralExpression
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v0'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v0'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ArrayLiteralExpression
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v00'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v00'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' x'
+      LessThanToken
+      NumericLiteral
+    PrefixUnaryExpression
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v1'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v1'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  WhileStatement
+    BinaryExpression
+      NumericLiteral
+      EqualsEqualsEqualsToken
+      NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v2'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v2'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  DoStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v3'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v3'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+    BinaryExpression
+      NumericLiteral
+      EqualsEqualsEqualsToken
+      NumericLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' y'
+      LessThanToken
+      NumericLiteral
+    PrefixUnaryExpression
+      Identifier: 'y'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v4'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v4'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' x'
+      LessThanToken
+      NumericLiteral
+    PrefixUnaryExpression
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v5'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' x'
+                    PlusToken
+                    Identifier: ' y'
+                  PlusToken
+                  Identifier: ' v5'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+  WhileStatement
+    BinaryExpression
+      NumericLiteral
+      EqualsEqualsEqualsToken
+      NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+          VariableDeclaration
+            Identifier: ' y'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v6'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' x'
+                    PlusToken
+                    Identifier: ' y'
+                  PlusToken
+                  Identifier: ' v6'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+  DoStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+          VariableDeclaration
+            Identifier: ' y'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v7'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' x'
+                    PlusToken
+                    Identifier: ' y'
+                  PlusToken
+                  Identifier: ' v7'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+    BinaryExpression
+      NumericLiteral
+      EqualsEqualsEqualsToken
+      NumericLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' y'
+      LessThanToken
+      NumericLiteral
+    PrefixUnaryExpression
+      Identifier: 'y'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v8'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' x'
+                    PlusToken
+                    Identifier: ' y'
+                  PlusToken
+                  Identifier: ' v8'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' exportedFoo2'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          Identifier: ' v0_c'
+                          PlusToken
+                          Identifier: ' v00_c'
+                        PlusToken
+                        Identifier: ' v1_c'
+                      PlusToken
+                      Identifier: ' v2_c'
+                    PlusToken
+                    Identifier: ' v3_c'
+                  PlusToken
+                  Identifier: ' v4_c'
+                PlusToken
+                Identifier: ' v5_c'
+              PlusToken
+              Identifier: ' v6_c'
+            PlusToken
+            Identifier: ' v7_c'
+          PlusToken
+          Identifier: ' v8_c'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ArrayLiteralExpression
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v0_c'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v0_c'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ArrayLiteralExpression
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v00_c'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v00'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' x'
+      LessThanToken
+      NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v1_c'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v1_c'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  WhileStatement
+    BinaryExpression
+      NumericLiteral
+      EqualsEqualsEqualsToken
+      NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v2_c'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v2_c'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  DoStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v3_c'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v3_c'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+    BinaryExpression
+      NumericLiteral
+      EqualsEqualsEqualsToken
+      NumericLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' y'
+      LessThanToken
+      NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v4_c'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v4_c'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' x'
+      LessThanToken
+      NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v5_c'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' x'
+                    PlusToken
+                    Identifier: ' y'
+                  PlusToken
+                  Identifier: ' v5_c'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+  WhileStatement
+    BinaryExpression
+      NumericLiteral
+      EqualsEqualsEqualsToken
+      NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v6_c'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' x'
+                    PlusToken
+                    Identifier: ' y'
+                  PlusToken
+                  Identifier: ' v6_c'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+  DoStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v7_c'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' x'
+                    PlusToken
+                    Identifier: ' y'
+                  PlusToken
+                  Identifier: ' v7_c'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+    BinaryExpression
+      NumericLiteral
+      EqualsEqualsEqualsToken
+      NumericLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' y'
+      LessThanToken
+      NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v8_c'
+            Identifier: ' x'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' x'
+                    PlusToken
+                    Identifier: ' y'
+                  PlusToken
+                  Identifier: ' v8_c'
+      ExpressionStatement
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'

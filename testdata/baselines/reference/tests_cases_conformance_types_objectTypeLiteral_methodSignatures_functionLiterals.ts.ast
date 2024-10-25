@@ -1,0 +1,314 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    func1'
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            NumberKeyword
+          PropertySignature
+            Identifier: '         // Method signature
+    func2'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              NumberKeyword
+          PropertySignature
+            Identifier: '     // Function type literal
+    func3'
+            TypeLiteral
+              CallSignature
+                Parameter
+                  Identifier: 'x'
+                  NumberKeyword
+                NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// no errors
+b'
+        Identifier: 'func1'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'func2'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'func1'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'func3'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'func2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'func1'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'func2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'func3'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'func3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'func1'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'func3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'func2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    func4'
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            NumberKeyword
+          MethodSignature
+            Identifier: '
+    func4'
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    func5'
+            TypeLiteral
+              CallSignature
+                Parameter
+                  Identifier: 'x'
+                  NumberKeyword
+                NumberKeyword
+              CallSignature
+                Parameter
+                  Identifier: 's'
+                  StringKeyword
+                StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// no errors
+c'
+        Identifier: 'func4'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' c'
+        Identifier: 'func5'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'func5'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' c'
+        Identifier: 'func4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    func1'
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            NumberKeyword
+          PropertySignature
+            Identifier: '         // Method signature
+    func2'
+            FunctionType
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              NumberKeyword
+          PropertySignature
+            Identifier: '     // Function type literal
+    func3'
+            TypeLiteral
+              CallSignature
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// no errors
+b2'
+        Identifier: 'func1'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b2'
+        Identifier: 'func2'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+b2'
+        Identifier: 'func1'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b2'
+        Identifier: 'func3'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+b2'
+        Identifier: 'func2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b2'
+        Identifier: 'func1'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+b2'
+        Identifier: 'func2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b2'
+        Identifier: 'func3'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+b2'
+        Identifier: 'func3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b2'
+        Identifier: 'func1'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+b2'
+        Identifier: 'func3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b2'
+        Identifier: 'func2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    func4'
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            NumberKeyword
+          MethodSignature
+            Identifier: '
+    func4'
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 's'
+              TypeReference
+                Identifier: ' T'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    func5'
+            TypeLiteral
+              CallSignature
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                NumberKeyword
+              CallSignature
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 's'
+                  TypeReference
+                    Identifier: ' T'
+                StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// no errors
+c2'
+        Identifier: 'func4'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' c2'
+        Identifier: 'func5'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c2'
+        Identifier: 'func5'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' c2'
+        Identifier: 'func4'

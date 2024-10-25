@@ -1,0 +1,75 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 's'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      Block
+  ClassDeclaration
+    Identifier: ' SymbolIterator'
+    MethodDeclaration
+      Identifier: '
+    next'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            value'
+              CallExpression
+                Identifier: ' Symbol'
+            PropertyAssignment
+              Identifier: '
+            done'
+              FalseKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Block
+        ReturnStatement
+          ThisKeyword
+  ClassDeclaration
+    Identifier: ' _StringIterator'
+    MethodDeclaration
+      Identifier: '
+    next'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            value'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            done'
+              FalseKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Block
+        ReturnStatement
+          ThisKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Foo'
+      SpreadElement
+        ArrayLiteralExpression
+          SpreadElement
+            NewExpression
+              Identifier: ' SymbolIterator'
+          SpreadElement
+            ArrayLiteralExpression
+              SpreadElement
+                NewExpression
+                  Identifier: ' _StringIterator'

@@ -1,0 +1,319 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' PromiseOrValue'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' mapAsyncIterable'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' R'
+      UndefinedKeyword
+    Parameter
+      Identifier: '
+  iterable'
+      UnionType
+        TypeReference
+          Identifier: ' AsyncGenerator'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' R'
+          UndefinedKeyword
+        TypeReference
+          Identifier: ' AsyncIterable'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' R'
+          UndefinedKeyword
+    Parameter
+      Identifier: '
+  callback'
+      FunctionType
+        Parameter
+          Identifier: 'value'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' PromiseOrValue'
+          TypeReference
+            Identifier: 'U'
+    TypeReference
+      Identifier: ' AsyncGenerator'
+      TypeReference
+        Identifier: 'U'
+      TypeReference
+        Identifier: ' R'
+      VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' iterator'
+            CallExpression
+              ElementAccessExpression
+                Identifier: ' iterable'
+                PropertyAccessExpression
+                  Identifier: 'Symbol'
+                  Identifier: 'asyncIterator'
+      FunctionDeclaration
+        AsyncKeyword
+        Identifier: ' mapResult'
+        Parameter
+          Identifier: '
+    result'
+          TypeReference
+            Identifier: ' IteratorResult'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' R'
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'IteratorResult'
+            TypeReference
+              Identifier: 'U'
+            TypeReference
+              Identifier: ' R'
+        Block
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'result'
+              Identifier: 'done'
+            Block
+              ReturnStatement
+                Identifier: ' result'
+          TryStatement
+            Block
+              ReturnStatement
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' value'
+                    AwaitExpression
+                      CallExpression
+                        Identifier: ' callback'
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'value'
+                  PropertyAssignment
+                    Identifier: ' done'
+                    FalseKeyword
+            CatchClause
+              VariableDeclaration
+                Identifier: 'error'
+              Block
+                IfStatement
+                  BinaryExpression
+                    TypeOfExpression
+                      PropertyAccessExpression
+                        Identifier: ' iterator'
+                        Identifier: 'return'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  Block
+                    TryStatement
+                      Block
+                        ExpressionStatement
+                          AwaitExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' iterator'
+                                Identifier: 'return'
+                      CatchClause
+                        VariableDeclaration
+                          Identifier: '_e'
+                        Block
+                ThrowStatement
+                  Identifier: ' error'
+      ReturnStatement
+        ObjectLiteralExpression
+          MethodDeclaration
+            AsyncKeyword
+            Identifier: ' next'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' mapResult'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' iterator'
+                        Identifier: 'next'
+          MethodDeclaration
+            AsyncKeyword
+            Identifier: ' return'
+            Parameter
+              Identifier: 'value'
+              TypeReference
+                Identifier: ' R'
+            TypeReference
+              Identifier: ' Promise'
+              TypeReference
+                Identifier: 'IteratorResult'
+                TypeReference
+                  Identifier: 'U'
+                TypeReference
+                  Identifier: ' R'
+            Block
+              ReturnStatement
+                ConditionalExpression
+                  BinaryExpression
+                    TypeOfExpression
+                      PropertyAccessExpression
+                        Identifier: ' iterator'
+                        Identifier: 'return'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  QuestionToken
+                  CallExpression
+                    Identifier: ' mapResult'
+                    AwaitExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' iterator'
+                          Identifier: 'return'
+                        Identifier: 'value'
+                  ColonToken
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' value'
+                      AsExpression
+                        Identifier: ' undefined'
+                        AnyKeyword
+                    PropertyAssignment
+                      Identifier: ' done'
+                      TrueKeyword
+          MethodDeclaration
+            AsyncKeyword
+            Identifier: ' throw'
+            Parameter
+              Identifier: 'error'
+              QuestionToken
+              UnknownKeyword
+            Block
+              IfStatement
+                BinaryExpression
+                  TypeOfExpression
+                    PropertyAccessExpression
+                      Identifier: ' iterator'
+                      Identifier: 'throw'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' mapResult'
+                      AwaitExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' iterator'
+                            Identifier: 'throw'
+                          Identifier: 'error'
+              ThrowStatement
+                Identifier: ' error'
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'asyncIterator'
+            Block
+              ReturnStatement
+                ThisKeyword
+          MethodDeclaration
+            AsyncKeyword
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'asyncDispose'
+            Block
+              ExpressionStatement
+                AwaitExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'return'
+                    NonNullExpression
+                      Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' items'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' iterable'
+        ObjectLiteralExpression
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'asyncIterator'
+            Block
+              ReturnStatement
+                ThisKeyword
+          MethodDeclaration
+            Identifier: '
+  next'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' value'
+                    ElementAccessExpression
+                      Identifier: ' items'
+                      NumericLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+    items'
+                    Identifier: 'shift'
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'resolve'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+      done'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' items'
+                          Identifier: 'length'
+                        EqualsEqualsEqualsToken
+                        NumericLiteral
+                    ShorthandPropertyAssignment
+                      Identifier: '
+      value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' doubles'
+        CallExpression
+          Identifier: ' mapAsyncIterable'
+          Identifier: 'iterable'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' x'

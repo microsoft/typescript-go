@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ImportType
+          TypeLiteral
+            PropertySignature
+              Identifier: 'x'
+              LiteralType
+                NumericLiteral
+        AsExpression
+          Identifier: ' undefined'
+          AnyKeyword

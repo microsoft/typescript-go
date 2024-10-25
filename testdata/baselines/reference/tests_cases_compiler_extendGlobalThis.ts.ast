@@ -1,0 +1,39 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' globalThis'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' test'
+                StringKeyword
+  ExportDeclaration
+    NamedExports
+  ImportDeclaration
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+globalThis'
+        Identifier: 'tests'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'globalThis'
+            Identifier: 'test'
+          Identifier: 'split'
+        StringLiteral

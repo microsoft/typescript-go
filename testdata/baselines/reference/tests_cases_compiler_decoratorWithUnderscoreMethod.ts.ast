@@ -1,0 +1,54 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' log'
+            Parameter
+              Identifier: 'arg'
+              StringKeyword
+            VoidKeyword
+  FunctionDeclaration
+    Identifier: ' dec'
+    TypeReference
+      Identifier: ' Function'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Parameter
+            Identifier: 'target'
+            AnyKeyword
+          Parameter
+            Identifier: ' propKey'
+            StringKeyword
+          Parameter
+            Identifier: ' descr'
+            TypeReference
+              Identifier: ' PropertyDescriptor'
+          VoidKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        console'
+                  Identifier: 'log'
+                ElementAccessExpression
+                  Identifier: 'target'
+                  Identifier: 'propKey'
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+      PrivateKeyword
+      Identifier: ' __foo'
+      Parameter
+        Identifier: 'bar'
+        StringKeyword
+      VoidKeyword
+      Block

@@ -1,0 +1,51 @@
+SourceFile
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanEqualsToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+	verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              CallExpression
+                Identifier: ' String'
+                Identifier: 'i'
+            PropertyAssignment
+              Identifier: ' exact'
+              Identifier: ' undefined'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'GlobalsOrKeywords'

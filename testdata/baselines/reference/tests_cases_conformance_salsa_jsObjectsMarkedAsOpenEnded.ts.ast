@@ -1,0 +1,131 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' variable'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+variable'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    initializedMember'
+      ObjectLiteralExpression
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'member'
+            EqualsToken
+            ObjectLiteralExpression
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'member'
+              Identifier: 'a'
+            EqualsToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    property'
+            ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+obj'
+          Identifier: 'property'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+  FunctionDeclaration
+    Identifier: ' getObj'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+// @filename: b.ts
+variable'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            NewExpression
+              Identifier: ' C'
+          Identifier: 'member'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            NewExpression
+              Identifier: ' C'
+          Identifier: 'initializedMember'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+obj'
+          Identifier: 'property'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ElementAccessExpression
+          Identifier: '
+arr'
+          NumericLiteral
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        CallExpression
+          Identifier: '
+getObj'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral

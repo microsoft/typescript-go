@@ -1,0 +1,47 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' _provider'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' UsefulClass'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' foo'
+          Block
+  ModuleDeclaration
+    Identifier: ' consumer'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' provider'
+        Identifier: ' _provider'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            TypeReference
+              QualifiedName
+                Identifier: 'provider'
+                Identifier: 'UsefulClass'
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' use'
+        TypeReference
+          QualifiedName
+            Identifier: 'provider'
+            Identifier: 'UsefulClass'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' p2'
+                TypeReference
+                  QualifiedName
+                    Identifier: 'provider'
+                    Identifier: 'UsefulClass'
+                NewExpression
+                  PropertyAccessExpression
+                    Identifier: ' provider'
+                    Identifier: 'UsefulClass'
+          ReturnStatement
+            Identifier: ' p2'

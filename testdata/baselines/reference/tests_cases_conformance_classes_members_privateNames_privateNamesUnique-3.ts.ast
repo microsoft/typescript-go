@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      TrueKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      TrueKeyword
+    MethodDeclaration
+      Identifier: '
+    test'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' B'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        x'
+            PrivateIdentifier

@@ -1,0 +1,1149 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m3'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m4'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m5'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m6'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m7'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m8'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m9'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m10'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m11'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m12'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m13'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m14'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m15'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m16'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m17'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m18'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m19'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m20'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m21'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m22'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m23'
+    StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m1'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m2'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m3'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m4'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m5'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m6'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m7'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m8'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m9'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m10'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m11'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m12'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m13'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m14'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m15'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m16'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m17'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m18'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m19'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m20'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m21'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m22'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m23'
+  ImportEqualsDeclaration
+    Identifier: ' m24'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m25'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m26'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m27'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m28'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m29'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m30'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m31'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m32'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m33'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m34'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m24'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m25'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m26'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m27'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m28'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m29'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m30'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m31'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m32'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m33'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m34'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m35'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m36'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m37'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m38'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m39'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m40'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m41'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m42'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m43'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m44'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m45'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m3'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m4'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m5'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m6'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m7'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m8'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m9'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m10'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m11'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m12'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m13'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m14'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m15'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m16'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m17'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m18'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m19'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m20'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m21'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m22'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m23'
+    StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m1'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m2'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m3'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m4'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m5'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m6'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m7'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m8'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m9'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m10'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m11'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m12'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m13'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m14'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m15'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m16'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m17'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m18'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m19'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m20'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m21'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m22'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m23'
+  ImportEqualsDeclaration
+    Identifier: ' m24'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m25'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m26'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m27'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m28'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m29'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m30'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m31'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m32'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m33'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m34'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m24'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m25'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m26'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m27'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m28'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m29'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m30'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m31'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m32'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m33'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m34'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m35'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m36'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m37'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m38'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m39'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m40'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m41'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m42'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m43'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m44'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m45'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m3'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m4'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m5'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m6'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m7'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m8'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m9'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m10'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m11'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m12'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m13'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m14'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m15'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m16'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m17'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m18'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m19'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m20'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m21'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m22'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m23'
+    StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m1'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m2'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m3'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m4'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m5'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m6'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m7'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m8'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m9'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m10'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m11'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m12'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m13'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m14'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m15'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m16'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m17'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m18'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m19'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m20'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m21'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m22'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m23'
+  ImportEqualsDeclaration
+    Identifier: ' m24'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m25'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m26'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m27'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m28'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m29'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m30'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m31'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m32'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m33'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' m34'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m24'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m25'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m26'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m27'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m28'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m29'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m30'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m31'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m32'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m33'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' m34'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m35'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m36'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m37'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m38'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m39'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m40'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m41'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m42'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m43'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m44'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _m45'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral

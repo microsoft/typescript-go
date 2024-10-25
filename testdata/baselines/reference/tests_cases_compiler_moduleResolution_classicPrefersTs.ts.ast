@@ -1,0 +1,9 @@
+SourceFile
+  ExportAssignment
+    StringLiteral
+  ExportAssignment
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' a'
+    StringLiteral

@@ -1,0 +1,22 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' f'
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' f'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    Block

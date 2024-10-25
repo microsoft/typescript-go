@@ -1,0 +1,89 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+	b'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+	c'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+	d'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'x'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+  ExportAssignment
+    Identifier: ' Foo'
+  ImportEqualsDeclaration
+    Identifier: ' foo'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+x'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+x'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        StringKeyword
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'b'
+  IfStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'c'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+z'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' x'
+        Identifier: 'd'

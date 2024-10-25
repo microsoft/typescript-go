@@ -1,0 +1,41 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// function f(templateStrings, x, y, z) { return 10; }
+//// function g(templateStrings, x, y, z) { return ""; }
+////
+//// f `   ${      } ${/*1*/  /*2*/
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'markers'
+        PropertyAssignment
+          Identifier: '
+    text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    argumentCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    parameterCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    parameterSpan'
+          StringLiteral

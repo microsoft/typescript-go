@@ -1,0 +1,255 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getLogLevel'
+    Parameter
+      Identifier: 'level'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'LogLevel'
+      UndefinedKeyword
+    Block
+      IfStatement
+        Identifier: 'level'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' l'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' level'
+                    Identifier: 'toLowerCase'
+          ForInStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' name'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'server'
+              Identifier: 'LogLevel'
+            Block
+              IfStatement
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'isNaN'
+                    PrefixUnaryExpression
+                      Identifier: 'name'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    Identifier: ' l'
+                    EqualsEqualsEqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' name'
+                        Identifier: 'toLowerCase'
+                Block
+                  ReturnStatement
+                    AsExpression
+                      AsExpression
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'LogLevel'
+                          Identifier: 'name'
+                        AnyKeyword
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'server'
+                          Identifier: 'LogLevel'
+      ReturnStatement
+        Identifier: ' undefined'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' StartSessionOptions'
+    PropertySignature
+      Identifier: '
+    globalPlugins'
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'server'
+            Identifier: 'SessionOptions'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    pluginProbeLocations'
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'server'
+            Identifier: 'SessionOptions'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    allowLocalPluginLoads'
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'server'
+            Identifier: 'SessionOptions'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    useSingleInferredProject'
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'server'
+            Identifier: 'SessionOptions'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    useInferredProjectPerProjectRoot'
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'server'
+            Identifier: 'SessionOptions'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    suppressDiagnosticEvents'
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'server'
+            Identifier: 'SessionOptions'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    noGetErrOnBackgroundUpdate'
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'server'
+            Identifier: 'SessionOptions'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    canUseWatchEvents'
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'server'
+            Identifier: 'SessionOptions'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    serverMode'
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'server'
+            Identifier: 'SessionOptions'
+        LiteralType
+          StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' StartInput'
+    PropertySignature
+      Identifier: '
+    args'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    logger'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'Logger'
+    PropertySignature
+      Identifier: '
+    cancellationToken'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'ServerCancellationToken'
+    PropertySignature
+      Identifier: '
+    serverMode'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'LanguageServiceMode'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    unknownServerMode'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    startSession'
+      FunctionType
+        Parameter
+          Identifier: 'option'
+          TypeReference
+            Identifier: ' StartSessionOptions'
+        Parameter
+          Identifier: ' logger'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'server'
+              Identifier: 'Logger'
+        Parameter
+          Identifier: ' cancellationToken'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'server'
+              Identifier: 'ServerCancellationToken'
+        VoidKeyword

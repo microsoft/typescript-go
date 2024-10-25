@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ExportAssignment
+    Identifier: ' a'
+  ImportEqualsDeclaration
+    Identifier: ' a'
+    ExternalModuleReference
+      StringLiteral

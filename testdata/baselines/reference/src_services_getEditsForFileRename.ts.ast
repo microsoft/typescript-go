@@ -1,0 +1,1753 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    combinePaths'
+        ImportSpecifier
+          Identifier: '
+    createGetCanonicalFileName'
+        ImportSpecifier
+          Identifier: '
+    createModuleSpecifierResolutionHost'
+        ImportSpecifier
+          Identifier: '
+    createRange'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    endsWith'
+        ImportSpecifier
+          Identifier: '
+    ensurePathIsNonModuleName'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    FileTextChanges'
+        ImportSpecifier
+          Identifier: '
+    find'
+        ImportSpecifier
+          Identifier: '
+    forEach'
+        ImportSpecifier
+          Identifier: '
+    formatting'
+        ImportSpecifier
+          Identifier: '
+    GetCanonicalFileName'
+        ImportSpecifier
+          Identifier: '
+    getDirectoryPath'
+        ImportSpecifier
+          Identifier: '
+    getFileMatcherPatterns'
+        ImportSpecifier
+          Identifier: '
+    getOptionFromName'
+        ImportSpecifier
+          Identifier: '
+    getRegexFromPattern'
+        ImportSpecifier
+          Identifier: '
+    getRelativePathFromDirectory'
+        ImportSpecifier
+          Identifier: '
+    getRelativePathFromFile'
+        ImportSpecifier
+          Identifier: '
+    getTsConfigObjectLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    hostUsesCaseSensitiveFileNames'
+        ImportSpecifier
+          Identifier: '
+    isAmbientModule'
+        ImportSpecifier
+          Identifier: '
+    isArrayLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    isObjectLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    isPropertyAssignment'
+        ImportSpecifier
+          Identifier: '
+    isSourceFile'
+        ImportSpecifier
+          Identifier: '
+    isStringLiteral'
+        ImportSpecifier
+          Identifier: '
+    LanguageServiceHost'
+        ImportSpecifier
+          Identifier: '
+    last'
+        ImportSpecifier
+          Identifier: '
+    mapDefined'
+        ImportSpecifier
+          Identifier: '
+    ModuleResolutionHost'
+        ImportSpecifier
+          Identifier: '
+    moduleSpecifiers'
+        ImportSpecifier
+          Identifier: '
+    normalizePath'
+        ImportSpecifier
+          Identifier: '
+    pathIsRelative'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    PropertyAssignment'
+        ImportSpecifier
+          Identifier: '
+    ResolvedModuleWithFailedLookupLocations'
+        ImportSpecifier
+          Identifier: '
+    resolveModuleName'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SourceFileLike'
+        ImportSpecifier
+          Identifier: '
+    SourceMapper'
+        ImportSpecifier
+          Identifier: '
+    StringLiteralLike'
+        ImportSpecifier
+          Identifier: '
+    Symbol'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TextRange'
+        ImportSpecifier
+          Identifier: '
+    tryRemoveDirectoryPrefix'
+        ImportSpecifier
+          Identifier: '
+    UserPreferences'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getEditsForFileRename'
+    Parameter
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: '
+    oldFileOrDirPath'
+      StringKeyword
+    Parameter
+      Identifier: '
+    newFileOrDirPath'
+      StringKeyword
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: '
+    formatContext'
+      TypeReference
+        QualifiedName
+          Identifier: ' formatting'
+          Identifier: 'FormatContext'
+    Parameter
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: '
+    sourceMapper'
+      TypeReference
+        Identifier: ' SourceMapper'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' useCaseSensitiveFileNames'
+            CallExpression
+              Identifier: ' hostUsesCaseSensitiveFileNames'
+              Identifier: 'host'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' getCanonicalFileName'
+            CallExpression
+              Identifier: ' createGetCanonicalFileName'
+              Identifier: 'useCaseSensitiveFileNames'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' oldToNew'
+            CallExpression
+              Identifier: ' getPathUpdater'
+              Identifier: 'oldFileOrDirPath'
+              Identifier: ' newFileOrDirPath'
+              Identifier: ' getCanonicalFileName'
+              Identifier: ' sourceMapper'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newToOld'
+            CallExpression
+              Identifier: ' getPathUpdater'
+              Identifier: 'newFileOrDirPath'
+              Identifier: ' oldFileOrDirPath'
+              Identifier: ' getCanonicalFileName'
+              Identifier: ' sourceMapper'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' textChanges'
+              Identifier: 'ChangeTracker'
+            Identifier: 'with'
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' host'
+            ShorthandPropertyAssignment
+              Identifier: ' formatContext'
+            ShorthandPropertyAssignment
+              Identifier: ' preferences'
+          ArrowFunction
+            Parameter
+              Identifier: ' changeTracker'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        updateTsconfigFiles'
+                  Identifier: 'program'
+                  Identifier: ' changeTracker'
+                  Identifier: ' oldToNew'
+                  Identifier: ' oldFileOrDirPath'
+                  Identifier: ' newFileOrDirPath'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'getCurrentDirectory'
+                  Identifier: ' useCaseSensitiveFileNames'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        updateImports'
+                  Identifier: 'program'
+                  Identifier: ' changeTracker'
+                  Identifier: ' oldToNew'
+                  Identifier: ' newToOld'
+                  Identifier: ' host'
+                  Identifier: ' getCanonicalFileName'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PathUpdater'
+    FunctionType
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getPathUpdater'
+    Parameter
+      Identifier: 'oldFileOrDirPath'
+      StringKeyword
+    Parameter
+      Identifier: ' newFileOrDirPath'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    Parameter
+      Identifier: ' sourceMapper'
+      UnionType
+        TypeReference
+          Identifier: ' SourceMapper'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' PathUpdater'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' canonicalOldPath'
+            CallExpression
+              Identifier: ' getCanonicalFileName'
+              Identifier: 'oldFileOrDirPath'
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' path'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' originalPath'
+                  BinaryExpression
+                    Identifier: ' sourceMapper'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' sourceMapper'
+                        Identifier: 'tryGetSourcePosition'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' fileName'
+                          Identifier: ' path'
+                        PropertyAssignment
+                          Identifier: ' pos'
+                          NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' updatedPath'
+                  CallExpression
+                    Identifier: ' getUpdatedPath'
+                    ConditionalExpression
+                      Identifier: 'originalPath'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' originalPath'
+                        Identifier: 'fileName'
+                      ColonToken
+                      Identifier: ' path'
+            ReturnStatement
+              ConditionalExpression
+                Identifier: ' originalPath'
+                QuestionToken
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' updatedPath'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' undefined'
+                  QuestionToken
+                  Identifier: ' undefined'
+                  ColonToken
+                  CallExpression
+                    Identifier: ' makeCorrespondingRelativeChange'
+                    PropertyAccessExpression
+                      Identifier: 'originalPath'
+                      Identifier: 'fileName'
+                    Identifier: ' updatedPath'
+                    Identifier: ' path'
+                    Identifier: ' getCanonicalFileName'
+                ColonToken
+                Identifier: ' updatedPath'
+      FunctionDeclaration
+        Identifier: ' getUpdatedPath'
+        Parameter
+          Identifier: 'pathToUpdate'
+          StringKeyword
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'getCanonicalFileName'
+                Identifier: 'pathToUpdate'
+              EqualsEqualsEqualsToken
+              Identifier: ' canonicalOldPath'
+            ReturnStatement
+              Identifier: ' newFileOrDirPath'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' suffix'
+                CallExpression
+                  Identifier: ' tryRemoveDirectoryPrefix'
+                  Identifier: 'pathToUpdate'
+                  Identifier: ' canonicalOldPath'
+                  Identifier: ' getCanonicalFileName'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' suffix'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              Identifier: ' undefined'
+              ColonToken
+              BinaryExpression
+                BinaryExpression
+                  Identifier: ' newFileOrDirPath'
+                  PlusToken
+                  StringLiteral
+                PlusToken
+                Identifier: ' suffix'
+  FunctionDeclaration
+    Identifier: ' makeCorrespondingRelativeChange'
+    Parameter
+      Identifier: 'a0'
+      StringKeyword
+    Parameter
+      Identifier: ' b0'
+      StringKeyword
+    Parameter
+      Identifier: ' a1'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rel'
+            CallExpression
+              Identifier: ' getRelativePathFromFile'
+              Identifier: 'a0'
+              Identifier: ' b0'
+              Identifier: ' getCanonicalFileName'
+      ReturnStatement
+        CallExpression
+          Identifier: ' combinePathsSafe'
+          CallExpression
+            Identifier: 'getDirectoryPath'
+            Identifier: 'a1'
+          Identifier: ' rel'
+  FunctionDeclaration
+    Identifier: ' updateTsconfigFiles'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' changeTracker'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' oldToNew'
+      TypeReference
+        Identifier: ' PathUpdater'
+    Parameter
+      Identifier: ' oldFileOrDirPath'
+      StringKeyword
+    Parameter
+      Identifier: ' newFileOrDirPath'
+      StringKeyword
+    Parameter
+      Identifier: ' currentDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' useCaseSensitiveFileNames'
+      BooleanKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' configFile'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getCompilerOptions'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'configFile'
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' configDir'
+            CallExpression
+              Identifier: ' getDirectoryPath'
+              PropertyAccessExpression
+                Identifier: 'configFile'
+                Identifier: 'fileName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' jsonObjectLiteral'
+            CallExpression
+              Identifier: ' getTsConfigObjectLiteralExpression'
+              Identifier: 'configFile'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'jsonObjectLiteral'
+        ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    forEachProperty'
+          Identifier: 'jsonObjectLiteral'
+          ArrowFunction
+            Parameter
+              Identifier: 'property'
+            Parameter
+              Identifier: ' propertyName'
+            EqualsGreaterThanToken
+            Block
+              SwitchStatement
+                Identifier: 'propertyName'
+                CaseBlock
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' foundExactMatch'
+                            CallExpression
+                              Identifier: ' updatePaths'
+                              Identifier: 'property'
+                      IfStatement
+                        BinaryExpression
+                          BinaryExpression
+                            Identifier: 'foundExactMatch'
+                            BarBarToken
+                            BinaryExpression
+                              Identifier: ' propertyName'
+                              ExclamationEqualsEqualsToken
+                              StringLiteral
+                          BarBarToken
+                          PrefixUnaryExpression
+                            CallExpression
+                              Identifier: 'isArrayLiteralExpression'
+                              PropertyAccessExpression
+                                Identifier: 'property'
+                                Identifier: 'initializer'
+                        ReturnStatement
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' includes'
+                            CallExpression
+                              Identifier: ' mapDefined'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'property'
+                                  Identifier: 'initializer'
+                                Identifier: 'elements'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: ' e'
+                                EqualsGreaterThanToken
+                                ConditionalExpression
+                                  CallExpression
+                                    Identifier: ' isStringLiteral'
+                                    Identifier: 'e'
+                                  QuestionToken
+                                  PropertyAccessExpression
+                                    Identifier: ' e'
+                                    Identifier: 'text'
+                                  ColonToken
+                                  Identifier: ' undefined'
+                      IfStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'includes'
+                            Identifier: 'length'
+                          EqualsEqualsEqualsToken
+                          NumericLiteral
+                        ReturnStatement
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' matchers'
+                            CallExpression
+                              Identifier: ' getFileMatcherPatterns'
+                              Identifier: 'configDir'
+                              ArrayLiteralExpression
+                              Identifier: ' includes'
+                              Identifier: ' useCaseSensitiveFileNames'
+                              Identifier: ' currentDirectory'
+                      IfStatement
+                        BinaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              CallExpression
+                                Identifier: '
+                    getRegexFromPattern'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'Debug'
+                                    Identifier: 'checkDefined'
+                                  PropertyAccessExpression
+                                    Identifier: 'matchers'
+                                    Identifier: 'includeFilePattern'
+                                Identifier: ' useCaseSensitiveFileNames'
+                              Identifier: 'test'
+                            Identifier: 'oldFileOrDirPath'
+                          AmpersandAmpersandToken
+                          PrefixUnaryExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  Identifier: 'getRegexFromPattern'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'Debug'
+                                      Identifier: 'checkDefined'
+                                    PropertyAccessExpression
+                                      Identifier: 'matchers'
+                                      Identifier: 'includeFilePattern'
+                                  Identifier: ' useCaseSensitiveFileNames'
+                                Identifier: 'test'
+                              Identifier: 'newFileOrDirPath'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    changeTracker'
+                                Identifier: 'insertNodeAfter'
+                              Identifier: 'configFile'
+                              CallExpression
+                                Identifier: ' last'
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'property'
+                                    Identifier: 'initializer'
+                                  Identifier: 'elements'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' factory'
+                                  Identifier: 'createStringLiteral'
+                                CallExpression
+                                  Identifier: 'relativePath'
+                                  Identifier: 'newFileOrDirPath'
+                      ReturnStatement
+                  CaseClause
+                    StringLiteral
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                forEachProperty'
+                        PropertyAccessExpression
+                          Identifier: 'property'
+                          Identifier: 'initializer'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'property'
+                          Parameter
+                            Identifier: ' propertyName'
+                          EqualsGreaterThanToken
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' option'
+                                  CallExpression
+                                    Identifier: ' getOptionFromName'
+                                    Identifier: 'propertyName'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    Debug'
+                                  Identifier: 'assert'
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'option'
+                                    QuestionDotToken
+                                    Identifier: 'type'
+                                  ExclamationEqualsEqualsToken
+                                  StringLiteral
+                            IfStatement
+                              BinaryExpression
+                                Identifier: 'option'
+                                AmpersandAmpersandToken
+                                ParenthesizedExpression
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'isFilePath'
+                                    BarBarToken
+                                    BinaryExpression
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' option'
+                                          Identifier: 'type'
+                                        EqualsEqualsEqualsToken
+                                        StringLiteral
+                                      AmpersandAmpersandToken
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' option'
+                                          Identifier: 'element'
+                                        Identifier: 'isFilePath'
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    Identifier: '
+                        updatePaths'
+                                    Identifier: 'property'
+                              IfStatement
+                                BinaryExpression
+                                  Identifier: 'propertyName'
+                                  EqualsEqualsEqualsToken
+                                  StringLiteral
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      Identifier: '
+                        forEachProperty'
+                                      PropertyAccessExpression
+                                        Identifier: 'property'
+                                        Identifier: 'initializer'
+                                      ArrowFunction
+                                        Parameter
+                                          Identifier: ' pathsProperty'
+                                        EqualsGreaterThanToken
+                                        Block
+                                          IfStatement
+                                            PrefixUnaryExpression
+                                              CallExpression
+                                                Identifier: 'isArrayLiteralExpression'
+                                                PropertyAccessExpression
+                                                  Identifier: 'pathsProperty'
+                                                  Identifier: 'initializer'
+                                            ReturnStatement
+                                          ForOfStatement
+                                            VariableDeclarationList
+                                              VariableDeclaration
+                                                Identifier: ' e'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' pathsProperty'
+                                                Identifier: 'initializer'
+                                              Identifier: 'elements'
+                                            Block
+                                              ExpressionStatement
+                                                CallExpression
+                                                  Identifier: '
+                                tryUpdateString'
+                                                  Identifier: 'e'
+                    ReturnStatement
+      FunctionDeclaration
+        Identifier: ' updatePaths'
+        Parameter
+          Identifier: 'property'
+          TypeReference
+            Identifier: ' PropertyAssignment'
+        BooleanKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' elements'
+                ConditionalExpression
+                  CallExpression
+                    Identifier: ' isArrayLiteralExpression'
+                    PropertyAccessExpression
+                      Identifier: 'property'
+                      Identifier: 'initializer'
+                  QuestionToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' property'
+                      Identifier: 'initializer'
+                    Identifier: 'elements'
+                  ColonToken
+                  ArrayLiteralExpression
+                    PropertyAccessExpression
+                      Identifier: 'property'
+                      Identifier: 'initializer'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' foundExactMatch'
+                FalseKeyword
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' element'
+            Identifier: ' elements'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            foundExactMatch'
+                  EqualsToken
+                  BinaryExpression
+                    CallExpression
+                      Identifier: ' tryUpdateString'
+                      Identifier: 'element'
+                    BarBarToken
+                    Identifier: ' foundExactMatch'
+          ReturnStatement
+            Identifier: ' foundExactMatch'
+      FunctionDeclaration
+        Identifier: ' tryUpdateString'
+        Parameter
+          Identifier: 'element'
+          TypeReference
+            Identifier: ' Expression'
+        BooleanKeyword
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'isStringLiteral'
+                Identifier: 'element'
+            ReturnStatement
+              FalseKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' elementFileName'
+                CallExpression
+                  Identifier: ' combinePathsSafe'
+                  Identifier: 'configDir'
+                  PropertyAccessExpression
+                    Identifier: ' element'
+                    Identifier: 'text'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' updated'
+                CallExpression
+                  Identifier: ' oldToNew'
+                  Identifier: 'elementFileName'
+          IfStatement
+            BinaryExpression
+              Identifier: 'updated'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            changeTracker'
+                    Identifier: 'replaceRangeWithText'
+                  NonNullExpression
+                    Identifier: 'configFile'
+                  CallExpression
+                    Identifier: ' createStringRange'
+                    Identifier: 'element'
+                    NonNullExpression
+                      Identifier: ' configFile'
+                  CallExpression
+                    Identifier: ' relativePath'
+                    Identifier: 'updated'
+              ReturnStatement
+                TrueKeyword
+          ReturnStatement
+            FalseKeyword
+      FunctionDeclaration
+        Identifier: ' relativePath'
+        Parameter
+          Identifier: 'path'
+          StringKeyword
+        StringKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' getRelativePathFromDirectory'
+              Identifier: 'configDir'
+              Identifier: ' path'
+              PrefixUnaryExpression
+                Identifier: 'useCaseSensitiveFileNames'
+  FunctionDeclaration
+    Identifier: ' updateImports'
+    Parameter
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: '
+    changeTracker'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: '
+    oldToNew'
+      TypeReference
+        Identifier: ' PathUpdater'
+    Parameter
+      Identifier: '
+    newToOld'
+      TypeReference
+        Identifier: ' PathUpdater'
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: '
+    getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' allFiles'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getSourceFiles'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceFile'
+        Identifier: ' allFiles'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newFromOld'
+                CallExpression
+                  Identifier: ' oldToNew'
+                  PropertyAccessExpression
+                    Identifier: 'sourceFile'
+                    Identifier: 'fileName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newImportFromPath'
+                BinaryExpression
+                  Identifier: ' newFromOld'
+                  QuestionQuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' sourceFile'
+                    Identifier: 'fileName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newImportFromDirectory'
+                CallExpression
+                  Identifier: ' getDirectoryPath'
+                  Identifier: 'newImportFromPath'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' oldFromNew'
+                UnionType
+                  StringKeyword
+                  UndefinedKeyword
+                CallExpression
+                  Identifier: ' newToOld'
+                  PropertyAccessExpression
+                    Identifier: 'sourceFile'
+                    Identifier: 'fileName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' oldImportFromPath'
+                StringKeyword
+                BinaryExpression
+                  Identifier: ' oldFromNew'
+                  BarBarToken
+                  PropertyAccessExpression
+                    Identifier: ' sourceFile'
+                    Identifier: 'fileName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' oldImportFromDirectory'
+                CallExpression
+                  Identifier: ' getDirectoryPath'
+                  Identifier: 'oldImportFromPath'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' importingSourceFileMoved'
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' newFromOld'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' undefined'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' oldFromNew'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        updateImportsWorker'
+              Identifier: 'sourceFile'
+              Identifier: ' changeTracker'
+              ArrowFunction
+                Parameter
+                  Identifier: ' referenceText'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    PrefixUnaryExpression
+                      CallExpression
+                        Identifier: 'pathIsRelative'
+                        Identifier: 'referenceText'
+                    ReturnStatement
+                      Identifier: ' undefined'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' oldAbsolute'
+                        CallExpression
+                          Identifier: ' combinePathsSafe'
+                          Identifier: 'oldImportFromDirectory'
+                          Identifier: ' referenceText'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' newAbsolute'
+                        CallExpression
+                          Identifier: ' oldToNew'
+                          Identifier: 'oldAbsolute'
+                  ReturnStatement
+                    ConditionalExpression
+                      BinaryExpression
+                        Identifier: ' newAbsolute'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' undefined'
+                      QuestionToken
+                      Identifier: ' undefined'
+                      ColonToken
+                      CallExpression
+                        Identifier: ' ensurePathIsNonModuleName'
+                        CallExpression
+                          Identifier: 'getRelativePathFromDirectory'
+                          Identifier: 'newImportFromDirectory'
+                          Identifier: ' newAbsolute'
+                          Identifier: ' getCanonicalFileName'
+              ArrowFunction
+                Parameter
+                  Identifier: ' importLiteral'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' importedModuleSymbol'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' program'
+                                Identifier: 'getTypeChecker'
+                            Identifier: 'getSymbolAtLocation'
+                          Identifier: 'importLiteral'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'importedModuleSymbol'
+                        QuestionDotToken
+                        Identifier: 'declarations'
+                      AmpersandAmpersandToken
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' importedModuleSymbol'
+                            Identifier: 'declarations'
+                          Identifier: 'some'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'd'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            Identifier: ' isAmbientModule'
+                            Identifier: 'd'
+                    ReturnStatement
+                      Identifier: ' undefined'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' toImport'
+                        ConditionalExpression
+                          BinaryExpression
+                            Identifier: ' oldFromNew'
+                            ExclamationEqualsEqualsToken
+                            Identifier: ' undefined'
+                          QuestionToken
+                          CallExpression
+                            Identifier: ' getSourceFileToImportFromResolved'
+                            Identifier: 'importLiteral'
+                            CallExpression
+                              Identifier: ' resolveModuleName'
+                              PropertyAccessExpression
+                                Identifier: 'importLiteral'
+                                Identifier: 'text'
+                              Identifier: ' oldImportFromPath'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' program'
+                                  Identifier: 'getCompilerOptions'
+                              AsExpression
+                                Identifier: ' host'
+                                TypeReference
+                                  Identifier: ' ModuleResolutionHost'
+                            Identifier: ' oldToNew'
+                            Identifier: ' allFiles'
+                          ColonToken
+                          CallExpression
+                            Identifier: ' getSourceFileToImport'
+                            Identifier: 'importedModuleSymbol'
+                            Identifier: ' importLiteral'
+                            Identifier: ' sourceFile'
+                            Identifier: ' program'
+                            Identifier: ' host'
+                            Identifier: ' oldToNew'
+                  ReturnStatement
+                    ConditionalExpression
+                      BinaryExpression
+                        BinaryExpression
+                          Identifier: ' toImport'
+                          ExclamationEqualsEqualsToken
+                          Identifier: ' undefined'
+                        AmpersandAmpersandToken
+                        ParenthesizedExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'toImport'
+                              Identifier: 'updated'
+                            BarBarToken
+                            ParenthesizedExpression
+                              BinaryExpression
+                                Identifier: 'importingSourceFileMoved'
+                                AmpersandAmpersandToken
+                                CallExpression
+                                  Identifier: ' pathIsRelative'
+                                  PropertyAccessExpression
+                                    Identifier: 'importLiteral'
+                                    Identifier: 'text'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' moduleSpecifiers'
+                          Identifier: 'updateModuleSpecifier'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'program'
+                            Identifier: 'getCompilerOptions'
+                        Identifier: ' sourceFile'
+                        Identifier: ' newImportFromPath'
+                        PropertyAccessExpression
+                          Identifier: ' toImport'
+                          Identifier: 'newFileName'
+                        CallExpression
+                          Identifier: ' createModuleSpecifierResolutionHost'
+                          Identifier: 'program'
+                          Identifier: ' host'
+                        PropertyAccessExpression
+                          Identifier: ' importLiteral'
+                          Identifier: 'text'
+                      ColonToken
+                      Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' combineNormal'
+    Parameter
+      Identifier: 'pathA'
+      StringKeyword
+    Parameter
+      Identifier: ' pathB'
+      StringKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' normalizePath'
+          CallExpression
+            Identifier: 'combinePaths'
+            Identifier: 'pathA'
+            Identifier: ' pathB'
+  FunctionDeclaration
+    Identifier: ' combinePathsSafe'
+    Parameter
+      Identifier: 'pathA'
+      StringKeyword
+    Parameter
+      Identifier: ' pathB'
+      StringKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' ensurePathIsNonModuleName'
+          CallExpression
+            Identifier: 'combineNormal'
+            Identifier: 'pathA'
+            Identifier: ' pathB'
+  InterfaceDeclaration
+    Identifier: ' ToImport'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' newFileName'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' updated'
+      BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' getSourceFileToImport'
+    Parameter
+      Identifier: '
+    importedModuleSymbol'
+      UnionType
+        TypeReference
+          Identifier: ' Symbol'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    importLiteral'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+    Parameter
+      Identifier: '
+    importingSourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: '
+    oldToNew'
+      TypeReference
+        Identifier: ' PathUpdater'
+    UnionType
+      TypeReference
+        Identifier: ' ToImport'
+      UndefinedKeyword
+    Block
+      IfStatement
+        Identifier: 'importedModuleSymbol'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' oldFileName'
+                PropertyAccessExpression
+                  NonNullExpression
+                    CallExpression
+                      Identifier: ' find'
+                      PropertyAccessExpression
+                        Identifier: 'importedModuleSymbol'
+                        Identifier: 'declarations'
+                      Identifier: ' isSourceFile'
+                  Identifier: 'fileName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newFileName'
+                CallExpression
+                  Identifier: ' oldToNew'
+                  Identifier: 'oldFileName'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' newFileName'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' newFileName'
+                  Identifier: ' oldFileName'
+                PropertyAssignment
+                  Identifier: ' updated'
+                  FalseKeyword
+              ColonToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' newFileName'
+                PropertyAssignment
+                  Identifier: ' updated'
+                  TrueKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' mode'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getModeForUsageLocation'
+                  Identifier: 'importingSourceFile'
+                  Identifier: ' importLiteral'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' resolved'
+                ConditionalExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'resolveModuleNameLiterals'
+                    BarBarToken
+                    PrefixUnaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'host'
+                        Identifier: 'resolveModuleNames'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            program'
+                      Identifier: 'getResolvedModuleFromModuleSpecifier'
+                    Identifier: 'importLiteral'
+                    Identifier: ' importingSourceFile'
+                  ColonToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            host'
+                      Identifier: 'getResolvedModuleWithFailedLookupLocationsFromCache'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' host'
+                        Identifier: 'getResolvedModuleWithFailedLookupLocationsFromCache'
+                      PropertyAccessExpression
+                        Identifier: 'importLiteral'
+                        Identifier: 'text'
+                      PropertyAccessExpression
+                        Identifier: ' importingSourceFile'
+                        Identifier: 'fileName'
+                      Identifier: ' mode'
+          ReturnStatement
+            CallExpression
+              Identifier: ' getSourceFileToImportFromResolved'
+              Identifier: 'importLiteral'
+              Identifier: ' resolved'
+              Identifier: ' oldToNew'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' program'
+                  Identifier: 'getSourceFiles'
+  FunctionDeclaration
+    Identifier: ' getSourceFileToImportFromResolved'
+    Parameter
+      Identifier: 'importLiteral'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+    Parameter
+      Identifier: ' resolved'
+      UnionType
+        TypeReference
+          Identifier: ' ResolvedModuleWithFailedLookupLocations'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' oldToNew'
+      TypeReference
+        Identifier: ' PathUpdater'
+    Parameter
+      Identifier: ' sourceFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SourceFile'
+    UnionType
+      TypeReference
+        Identifier: ' ToImport'
+      UndefinedKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'resolved'
+        ReturnStatement
+          Identifier: ' undefined'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'resolved'
+          Identifier: 'resolvedModule'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' tryChange'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'resolved'
+                      Identifier: 'resolvedModule'
+                    Identifier: 'resolvedFileName'
+          IfStatement
+            Identifier: 'result'
+            ReturnStatement
+              Identifier: ' result'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            BinaryExpression
+              CallExpression
+                Identifier: ' forEach'
+                PropertyAccessExpression
+                  Identifier: 'resolved'
+                  Identifier: 'failedLookupLocations'
+                Identifier: ' tryChangeWithIgnoringPackageJsonExisting'
+              BarBarToken
+              BinaryExpression
+                CallExpression
+                  Identifier: ' pathIsRelative'
+                  PropertyAccessExpression
+                    Identifier: 'importLiteral'
+                    Identifier: 'text'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' forEach'
+                  PropertyAccessExpression
+                    Identifier: 'resolved'
+                    Identifier: 'failedLookupLocations'
+                  Identifier: ' tryChangeWithIgnoringPackageJson'
+      IfStatement
+        Identifier: 'result'
+        ReturnStatement
+          Identifier: ' result'
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' resolved'
+            Identifier: 'resolvedModule'
+          AmpersandAmpersandToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' newFileName'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' resolved'
+                  Identifier: 'resolvedModule'
+                Identifier: 'resolvedFileName'
+            PropertyAssignment
+              Identifier: ' updated'
+              FalseKeyword
+      FunctionDeclaration
+        Identifier: ' tryChangeWithIgnoringPackageJsonExisting'
+        Parameter
+          Identifier: 'oldFileName'
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newFileName'
+                CallExpression
+                  Identifier: ' oldToNew'
+                  Identifier: 'oldFileName'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' newFileName'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' find'
+                  Identifier: 'sourceFiles'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' src'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' src'
+                        Identifier: 'fileName'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' newFileName'
+              QuestionToken
+              CallExpression
+                Identifier: ' tryChangeWithIgnoringPackageJson'
+                Identifier: 'oldFileName'
+              ColonToken
+              Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' tryChangeWithIgnoringPackageJson'
+        Parameter
+          Identifier: 'oldFileName'
+          StringKeyword
+        Block
+          ReturnStatement
+            ConditionalExpression
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'endsWith'
+                  Identifier: 'oldFileName'
+                  StringLiteral
+              QuestionToken
+              CallExpression
+                Identifier: ' tryChange'
+                Identifier: 'oldFileName'
+              ColonToken
+              Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' tryChange'
+        Parameter
+          Identifier: 'oldFileName'
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newFileName'
+                CallExpression
+                  Identifier: ' oldToNew'
+                  Identifier: 'oldFileName'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' newFileName'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' newFileName'
+                PropertyAssignment
+                  Identifier: ' updated'
+                  TrueKeyword
+  FunctionDeclaration
+    Identifier: ' updateImportsWorker'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' changeTracker'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' updateRef'
+      FunctionType
+        Parameter
+          Identifier: 'refText'
+          StringKeyword
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+    Parameter
+      Identifier: ' updateImport'
+      FunctionType
+        Parameter
+          Identifier: 'importLiteral'
+          TypeReference
+            Identifier: ' StringLiteralLike'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ref'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' sourceFile'
+            Identifier: 'referencedFiles'
+          BarBarToken
+          Identifier: ' emptyArray'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' updated'
+                CallExpression
+                  Identifier: ' updateRef'
+                  PropertyAccessExpression
+                    Identifier: 'ref'
+                    Identifier: 'fileName'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'updated'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' updated'
+                ExclamationEqualsEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' sourceFile'
+                      Identifier: 'text'
+                    Identifier: 'slice'
+                  PropertyAccessExpression
+                    Identifier: 'ref'
+                    Identifier: 'pos'
+                  PropertyAccessExpression
+                    Identifier: ' ref'
+                    Identifier: 'end'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' changeTracker'
+                  Identifier: 'replaceRangeWithText'
+                Identifier: 'sourceFile'
+                Identifier: ' ref'
+                Identifier: ' updated'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importStringLiteral'
+        PropertyAccessExpression
+          Identifier: ' sourceFile'
+          Identifier: 'imports'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' updated'
+                CallExpression
+                  Identifier: ' updateImport'
+                  Identifier: 'importStringLiteral'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'updated'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' updated'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' importStringLiteral'
+                  Identifier: 'text'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' changeTracker'
+                  Identifier: 'replaceRangeWithText'
+                Identifier: 'sourceFile'
+                CallExpression
+                  Identifier: ' createStringRange'
+                  Identifier: 'importStringLiteral'
+                  Identifier: ' sourceFile'
+                Identifier: ' updated'
+  FunctionDeclaration
+    Identifier: ' createStringRange'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFileLike'
+    TypeReference
+      Identifier: ' TextRange'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' createRange'
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'getStart'
+              Identifier: 'sourceFile'
+            PlusToken
+            NumericLiteral
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' node'
+              Identifier: 'end'
+            MinusToken
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' forEachProperty'
+    Parameter
+      Identifier: 'objectLiteral'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'property'
+          TypeReference
+            Identifier: ' PropertyAssignment'
+        Parameter
+          Identifier: ' propertyName'
+          StringKeyword
+        VoidKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isObjectLiteralExpression'
+            Identifier: 'objectLiteral'
+        ReturnStatement
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' property'
+        PropertyAccessExpression
+          Identifier: ' objectLiteral'
+          Identifier: 'properties'
+        Block
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isPropertyAssignment'
+                Identifier: 'property'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isStringLiteral'
+                PropertyAccessExpression
+                  Identifier: 'property'
+                  Identifier: 'name'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            cb'
+                  Identifier: 'property'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' property'
+                      Identifier: 'name'
+                    Identifier: 'text'

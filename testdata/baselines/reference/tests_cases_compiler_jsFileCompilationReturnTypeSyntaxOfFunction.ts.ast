@@ -1,0 +1,5 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' F'
+    NumberKeyword
+    Block

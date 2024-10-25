@@ -1,0 +1,119 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        StringKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        VoidKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeQuery
+          Identifier: ' undefined'
+        Identifier: ' x'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' E'
+        Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' C'
+        Identifier: ' x'
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: ' bar'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        TypeReference
+          Identifier: ' I'
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        TypeLiteral
+          CallSignature
+            StringKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h2'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' toString'
+            StringKeyword
+        Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+M'
+      EqualsToken
+      Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' i'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+i'
+      EqualsToken
+      Identifier: ' x'

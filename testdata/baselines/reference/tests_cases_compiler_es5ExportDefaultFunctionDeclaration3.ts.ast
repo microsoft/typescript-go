@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' before'
+        TypeQuery
+          Identifier: ' func'
+        CallExpression
+          Identifier: ' func'
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' func'
+    TypeQuery
+      Identifier: ' func'
+    Block
+      ReturnStatement
+        Identifier: ' func'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' after'
+        TypeQuery
+          Identifier: ' func'
+        CallExpression
+          Identifier: ' func'

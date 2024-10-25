@@ -1,0 +1,21 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Outer'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' Inner'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' m'
+                TypeQuery
+                  Identifier: ' Inner'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            TypeQuery
+              Identifier: ' Inner'

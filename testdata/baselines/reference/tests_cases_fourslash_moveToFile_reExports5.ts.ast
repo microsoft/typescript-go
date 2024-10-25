@@ -1,0 +1,42 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @module: esnext
+
+//@Filename: /a.ts
+////export function a() { }
+
+//@Filename: /b.ts
+////export function foo() { }
+////[|export function bar() {}|]
+
+// @Filename: /c.ts
+////export function baz() { }
+////export * from "./a";
+////export {
+////    bar,
+////} from "./b";
+
+verify'
+        Identifier: 'moveToFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    interactiveRefactorArguments'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' targetFile'
+              StringLiteral

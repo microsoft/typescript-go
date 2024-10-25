@@ -1,0 +1,7 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock

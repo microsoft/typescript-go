@@ -1,0 +1,33 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' TreeNode'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    name'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    parent'
+        TypeReference
+          Identifier: ' TreeNode'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nodes'
+        ArrayType
+          TypeReference
+            Identifier: ' TreeNode'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+nodes'
+        Identifier: 'map'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          Identifier: ' n'
+          Identifier: 'name'

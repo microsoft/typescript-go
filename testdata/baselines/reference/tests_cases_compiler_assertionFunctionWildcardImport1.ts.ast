@@ -1,0 +1,78 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Debug'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' Debug'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' assert'
+    Parameter
+      Identifier: 'expression'
+      UnknownKeyword
+    TypePredicate
+      AssertsKeyword
+      Identifier: ' expression'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Debug'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+ts'
+          Identifier: 'Debug'
+        Identifier: 'assert'
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Debug'
+        Identifier: 'assert'
+      TrueKeyword
+  ExportDeclaration
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Debug'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+ts'
+          Identifier: 'Debug'
+        Identifier: 'assert'
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Debug'
+        Identifier: 'assert'
+      TrueKeyword

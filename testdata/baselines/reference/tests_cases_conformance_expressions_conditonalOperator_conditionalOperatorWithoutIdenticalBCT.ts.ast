@@ -1,0 +1,219 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    PropertyDeclaration
+      Identifier: ' propertyX'
+      AnyKeyword
+    PropertyDeclaration
+      Identifier: ' propertyX1'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: ' propertyX2'
+      StringKeyword
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' X'
+    PropertyDeclaration
+      Identifier: ' propertyA'
+      NumberKeyword
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' X'
+    PropertyDeclaration
+      Identifier: ' propertyB'
+      StringKeyword
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' X'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  ExpressionStatement
+    ConditionalExpression
+      TrueKeyword
+      QuestionToken
+      Identifier: ' a'
+      ColonToken
+      Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result1'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' a'
+          ColonToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result2'
+        TypeReference
+          Identifier: ' A'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' a'
+          ColonToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result3'
+        TypeReference
+          Identifier: ' B'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' a'
+          ColonToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result31'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' a'
+          ColonToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result4'
+        FunctionType
+          Parameter
+            Identifier: 't'
+            TypeReference
+              Identifier: ' X'
+          NumberKeyword
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'm'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' m'
+              Identifier: 'propertyX1'
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' n'
+              Identifier: 'propertyX2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result5'
+        FunctionType
+          Parameter
+            Identifier: 't'
+            TypeReference
+              Identifier: ' X'
+          StringKeyword
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'm'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' m'
+              Identifier: 'propertyX1'
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' n'
+              Identifier: 'propertyX2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result6'
+        FunctionType
+          Parameter
+            Identifier: 't'
+            TypeReference
+              Identifier: ' X'
+          BooleanKeyword
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'm'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' m'
+              Identifier: 'propertyX1'
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' n'
+              Identifier: 'propertyX2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result61'
+        FunctionType
+          Parameter
+            Identifier: 't'
+            TypeReference
+              Identifier: ' X'
+          UnionType
+            NumberKeyword
+            StringKeyword
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'm'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' m'
+              Identifier: 'propertyX1'
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' n'
+              Identifier: 'propertyX2'

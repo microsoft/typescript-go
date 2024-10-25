@@ -1,0 +1,57 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn'
+    TypeParameter
+      Identifier: 'a'
+    Parameter
+      Identifier: 'y'
+      TypeReference
+        Identifier: ' Y'
+    Parameter
+      Identifier: ' set'
+      FunctionType
+        Parameter
+          Identifier: 'y'
+          TypeReference
+            Identifier: ' Y'
+        Parameter
+          Identifier: ' x'
+          NumberKeyword
+        VoidKeyword
+    TypeReference
+      Identifier: ' a'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  InterfaceDeclaration
+    Identifier: ' Y'
+    PropertySignature
+      Identifier: ' x'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: '
+        y'
+        TypeReference
+          Identifier: ' Y'
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' fn'
+          Identifier: 'y'
+          ArrowFunction
+            Parameter
+              Identifier: 'y'
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' y'
+                Identifier: 'x'
+              EqualsToken
+              Identifier: ' x'
+      Block

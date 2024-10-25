@@ -1,0 +1,40 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' range'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' test'
+        Identifier: 'ranges'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'matchingBracePositionInCurrentFile'
+          PropertyAccessExpression
+            Identifier: 'range'
+            Identifier: 'pos'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' range'
+              Identifier: 'end'
+            MinusToken
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'matchingBracePositionInCurrentFile'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'range'
+              Identifier: 'end'
+            MinusToken
+            NumericLiteral
+          PropertyAccessExpression
+            Identifier: ' range'
+            Identifier: 'pos'

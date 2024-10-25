@@ -1,0 +1,29 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'DateTimeFormat'
+        Identifier: 'formatRange'
+      NewExpression
+        Identifier: ' Date'
+        NumericLiteral
+      NewExpression
+        Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: ' part'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'DateTimeFormat'
+            Identifier: 'formatRangeToParts'
+          NumericLiteral
+          NumericLiteral

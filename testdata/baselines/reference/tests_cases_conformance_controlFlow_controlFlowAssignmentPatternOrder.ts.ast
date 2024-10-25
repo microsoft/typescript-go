@@ -1,0 +1,713 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    VoidKeyword
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'a'
+                      EqualsToken
+                      NumericLiteral
+                Identifier: ' b'
+            EqualsToken
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                Identifier: ' a'
+              TypeReference
+                Identifier: ' const'
+        EqualsToken
+        ArrayLiteralExpression
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          LiteralType
+            NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  Identifier: 'a'
+                Identifier: ' b'
+            EqualsToken
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                BinaryExpression
+                  Identifier: ' a'
+                  EqualsToken
+                  NumericLiteral
+              TypeReference
+                Identifier: ' const'
+        EqualsToken
+        ArrayLiteralExpression
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          LiteralType
+            NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'a'
+                      EqualsToken
+                      NumericLiteral
+                Identifier: ' b'
+            EqualsToken
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                Identifier: ' a'
+              TypeReference
+                Identifier: ' const'
+        EqualsToken
+        ArrayLiteralExpression
+          AsExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+            TypeReference
+              Identifier: ' const'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  Identifier: 'a'
+                Identifier: ' b'
+            EqualsToken
+            AsExpression
+              ArrayLiteralExpression
+                BinaryExpression
+                  Identifier: 'a'
+                  EqualsToken
+                  NumericLiteral
+                NumericLiteral
+              TypeReference
+                Identifier: ' const'
+        EqualsToken
+        ArrayLiteralExpression
+          AsExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+            TypeReference
+              Identifier: ' const'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        BinaryExpression
+          ArrayLiteralExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    ParenthesizedExpression
+                      BinaryExpression
+                        Identifier: 'a'
+                        EqualsToken
+                        NumericLiteral
+                  Identifier: ' b'
+              EqualsToken
+              AsExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  Identifier: ' a'
+                TypeReference
+                  Identifier: ' const'
+          EqualsToken
+          ArrayLiteralExpression
+        CommaToken
+        CallExpression
+          Identifier: ' f'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          LiteralType
+            NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        BinaryExpression
+          ArrayLiteralExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    Identifier: 'a'
+                  Identifier: ' b'
+              EqualsToken
+              AsExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  BinaryExpression
+                    Identifier: ' a'
+                    EqualsToken
+                    NumericLiteral
+                TypeReference
+                  Identifier: ' const'
+          EqualsToken
+          ArrayLiteralExpression
+        CommaToken
+        CallExpression
+          Identifier: ' f'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          LiteralType
+            NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        BinaryExpression
+          ArrayLiteralExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    ParenthesizedExpression
+                      BinaryExpression
+                        Identifier: 'a'
+                        EqualsToken
+                        NumericLiteral
+                  Identifier: ' b'
+              EqualsToken
+              AsExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  Identifier: ' a'
+                TypeReference
+                  Identifier: ' const'
+          EqualsToken
+          ArrayLiteralExpression
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+              TypeReference
+                Identifier: ' const'
+        CommaToken
+        CallExpression
+          Identifier: ' f'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        BinaryExpression
+          ArrayLiteralExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    Identifier: 'a'
+                  Identifier: ' b'
+              EqualsToken
+              AsExpression
+                ArrayLiteralExpression
+                  BinaryExpression
+                    Identifier: 'a'
+                    EqualsToken
+                    NumericLiteral
+                  NumericLiteral
+                TypeReference
+                  Identifier: ' const'
+          EqualsToken
+          ArrayLiteralExpression
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+              TypeReference
+                Identifier: ' const'
+        CommaToken
+        CallExpression
+          Identifier: ' f'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        CallExpression
+          Identifier: '
+    f'
+        CommaToken
+        BinaryExpression
+          ArrayLiteralExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    ParenthesizedExpression
+                      BinaryExpression
+                        Identifier: 'a'
+                        EqualsToken
+                        NumericLiteral
+                  Identifier: ' b'
+              EqualsToken
+              AsExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  Identifier: ' a'
+                TypeReference
+                  Identifier: ' const'
+          EqualsToken
+          ArrayLiteralExpression
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          LiteralType
+            NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        CallExpression
+          Identifier: '
+    f'
+        CommaToken
+        BinaryExpression
+          ArrayLiteralExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    Identifier: 'a'
+                  Identifier: ' b'
+              EqualsToken
+              AsExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  BinaryExpression
+                    Identifier: ' a'
+                    EqualsToken
+                    NumericLiteral
+                TypeReference
+                  Identifier: ' const'
+          EqualsToken
+          ArrayLiteralExpression
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          LiteralType
+            NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        CallExpression
+          Identifier: '
+    f'
+        CommaToken
+        BinaryExpression
+          ArrayLiteralExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    ParenthesizedExpression
+                      BinaryExpression
+                        Identifier: 'a'
+                        EqualsToken
+                        NumericLiteral
+                  Identifier: ' b'
+              EqualsToken
+              AsExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  Identifier: ' a'
+                TypeReference
+                  Identifier: ' const'
+          EqualsToken
+          ArrayLiteralExpression
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+              TypeReference
+                Identifier: ' const'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          Identifier: ' b'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        CallExpression
+          Identifier: '
+    f'
+        CommaToken
+        BinaryExpression
+          ArrayLiteralExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    Identifier: 'a'
+                  Identifier: ' b'
+              EqualsToken
+              AsExpression
+                ArrayLiteralExpression
+                  BinaryExpression
+                    Identifier: 'a'
+                    EqualsToken
+                    NumericLiteral
+                  NumericLiteral
+                TypeReference
+                  Identifier: ' const'
+          EqualsToken
+          ArrayLiteralExpression
+            AsExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+              TypeReference
+                Identifier: ' const'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' bb'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          Identifier: ' b'

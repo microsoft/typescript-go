@@ -1,0 +1,92 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Foo'
+        Constructor
+          Block
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' S'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' Bar'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+	// Emit M.Foo
+	Foo'
+          CommaToken
+          JsxSelfClosingElement
+            Identifier: 'Foo'
+            JsxAttributes
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' S'
+        ModuleBlock
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+		// Emit M.Foo
+		Foo'
+              CommaToken
+              JsxSelfClosingElement
+                Identifier: 'Foo'
+                JsxAttributes
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+		// Emit S.Bar
+		Bar'
+              CommaToken
+              JsxSelfClosingElement
+                Identifier: 'Bar'
+                JsxAttributes
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+	// Emit M.S.Bar
+	S'
+            Identifier: 'Bar'
+          CommaToken
+          JsxSelfClosingElement
+            PropertyAccessExpression
+              Identifier: 'S'
+              Identifier: 'Bar'
+            JsxAttributes
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' M'
+            NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+	// Emit M_1.Foo
+	Foo'
+          CommaToken
+          JsxSelfClosingElement
+            Identifier: 'Foo'
+            JsxAttributes

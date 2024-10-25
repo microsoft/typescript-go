@@ -1,0 +1,6 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: 'Foo'
+      PrefixUnaryExpression
+        RegularExpressionLiteral

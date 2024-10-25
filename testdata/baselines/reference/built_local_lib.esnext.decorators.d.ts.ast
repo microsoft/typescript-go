@@ -1,0 +1,20 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' SymbolConstructor'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' metadata'
+      TypeOperator
+        SymbolKeyword
+  InterfaceDeclaration
+    Identifier: ' Function'
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'metadata'
+      UnionType
+        TypeReference
+          Identifier: ' DecoratorMetadata'
+        LiteralType
+          NullKeyword

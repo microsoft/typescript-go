@@ -1,0 +1,6 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block

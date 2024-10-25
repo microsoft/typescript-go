@@ -1,0 +1,144 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' /* trailing comment of function */
+foo'
+  FunctionDeclaration
+    Identifier: ' fooWithParameters'
+    Parameter
+      Identifier: '/** this is comment about a*/a'
+      StringKeyword
+    Parameter
+      Identifier: '
+    /** this is comment for b*/
+    b'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            Identifier: ' a'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // trailing comment of function
+fooWithParameters'
+      StringLiteral
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooFunc'
+        FunctionExpression
+          Identifier: ' FooFunctionValue'
+          Parameter
+            Identifier: '/** fooFunctionValue param */ b'
+            StringKeyword
+          Block
+            ReturnStatement
+              Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambdaFoo'
+        ArrowFunction
+          Parameter
+            Identifier: '/**param a*/a'
+            NumberKeyword
+          Parameter
+            Identifier: ' /**param b*/b'
+            NumberKeyword
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lambddaNoVarComment'
+        ArrowFunction
+          Parameter
+            Identifier: '/**param a*/a'
+            NumberKeyword
+          Parameter
+            Identifier: ' /**param b*/b'
+            NumberKeyword
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' a'
+            AsteriskToken
+            Identifier: ' b'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+lambdaFoo'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+lambddaNoVarComment'
+      NumericLiteral
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' blah'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' blah2'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' blah3'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+lambdaFoo'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        Parameter
+          Identifier: ' b'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' a'
+          AsteriskToken
+          Identifier: ' b'
+  ExpressionStatement
+    ArrowFunction
+      EqualsGreaterThanToken
+      NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' blah4'
+    Parameter
+      Identifier: '/*1*/a'
+      StringKeyword
+    Parameter
+      Identifier: '/*3*/b'
+      StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Block

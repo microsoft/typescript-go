@@ -1,0 +1,45 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' myRandBool'
+    BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        LiteralType
+          StringLiteral
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BinaryExpression
+          Identifier: ' a'
+          BarBarToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        LiteralType
+          StringLiteral
+        Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        BinaryExpression
+          Identifier: ' b'
+          BarBarToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+        Identifier: ' d'

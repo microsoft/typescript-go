@@ -1,0 +1,180 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+      StringKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    GetAccessor
+      ProtectedKeyword
+      Identifier: ' y'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    SetAccessor
+      ProtectedKeyword
+      Identifier: ' y'
+      Parameter
+        Identifier: 'x'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    GetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' y'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    SetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' y'
+      Parameter
+        Identifier: 'x'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' bar'
+      Block
+        ClassDeclaration
+          Identifier: ' D'
+          MethodDeclaration
+            ProtectedKeyword
+            Identifier: ' foo'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' c'
+                    NewExpression
+                      Identifier: ' C'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' c1'
+                    PropertyAccessExpression
+                      Identifier: ' c'
+                      Identifier: 'y'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' c2'
+                    PropertyAccessExpression
+                      Identifier: ' c'
+                      Identifier: 'x'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' c3'
+                    PropertyAccessExpression
+                      Identifier: ' c'
+                      Identifier: 'foo'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' c4'
+                    PropertyAccessExpression
+                      Identifier: ' c'
+                      Identifier: 'bar'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' c5'
+                    PropertyAccessExpression
+                      Identifier: ' c'
+                      Identifier: 'z'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sc1'
+                    PropertyAccessExpression
+                      Identifier: ' C'
+                      Identifier: 'x'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sc2'
+                    PropertyAccessExpression
+                      Identifier: ' C'
+                      Identifier: 'y'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sc3'
+                    PropertyAccessExpression
+                      Identifier: ' C'
+                      Identifier: 'foo'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sc4'
+                    PropertyAccessExpression
+                      Identifier: ' C'
+                      Identifier: 'bar'
+  ClassDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' z'
+      StringKeyword

@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' regExpExecArrayValue'
+        TypeReference
+          Identifier: ' RegExpExecArray'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+regExpExecArrayValue'
+        Identifier: 'slice'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+regExpExecArrayValue'
+        Identifier: 'slice'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+regExpExecArrayValue'
+        Identifier: 'slice'
+      NumericLiteral
+      NumericLiteral

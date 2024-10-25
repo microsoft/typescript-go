@@ -1,0 +1,58 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' StaticToString'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' toString'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'staticToString'
+      TypeReference
+        Identifier: ' StaticToString'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' staticToString'
+          InstanceOfKeyword
+          Identifier: ' StaticToString'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' StaticToNumber'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' toNumber'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'staticToNumber'
+      TypeReference
+        Identifier: ' StaticToNumber'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' staticToNumber'
+          InstanceOfKeyword
+          Identifier: ' StaticToNumber'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' NormalToString'
+    MethodDeclaration
+      Identifier: '
+    toString'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' baz'
+    Parameter
+      Identifier: 'normal'
+      TypeReference
+        Identifier: ' NormalToString'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' normal'
+          InstanceOfKeyword
+          Identifier: ' NormalToString'

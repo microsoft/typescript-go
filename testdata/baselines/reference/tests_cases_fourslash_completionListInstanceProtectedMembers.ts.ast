@@ -1,0 +1,74 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////class Base {
+////    private privateMethod() { }
+////    private privateProperty;
+////
+////    protected protectedMethod() { }
+////    protected protectedProperty;
+////
+////    public publicMethod() { }
+////    public publicProperty;
+////
+////    protected protectedOverriddenMethod() { }
+////    protected protectedOverriddenProperty;
+////
+////    test() {
+////        this./*1*/;
+////
+////        var b: Base;
+////        var c: C1;
+////
+////        b./*2*/;
+////        c./*3*/;
+////    }
+////}
+////
+////class C1 extends Base {
+////    protected  protectedOverriddenMethod() { }
+////    protected  protectedOverriddenProperty;
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        // Can not access protected properties overridden in subclass
+        unsorted'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral

@@ -1,0 +1,58 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+//@jsx:preserve
+//@Filename:test.tsx
+//// export class Test { }
+
+//@Filename:module.tsx
+////import { Test } from ".//**/"
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'name'
+              StringLiteral
+        PropertyAssignment
+          Identifier: ' preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'importModuleSpecifierEnding'
+              StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'name'
+              StringLiteral
+        PropertyAssignment
+          Identifier: ' preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'importModuleSpecifierEnding'
+              StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword

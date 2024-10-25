@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+  myFunc'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Foo'
+      Parameter
+        Identifier: 'arg'
+        TypeReference
+          Identifier: ' T'
+      Block
+  ClassDeclaration
+    Identifier: ' Bar'
+    MethodDeclaration
+      Identifier: '
+  myFunc'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Bar'
+      Parameter
+        Identifier: 'arg'
+        TypeReference
+          Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myVar'
+        TypeReference
+          Identifier: ' Foo'
+        NewExpression
+          Identifier: ' Bar'

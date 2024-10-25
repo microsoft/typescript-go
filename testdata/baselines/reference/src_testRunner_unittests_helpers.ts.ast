@@ -1,0 +1,1296 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' ChangedPart'
+    EnumMember
+      Identifier: '
+    none'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    references'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    importsAndExports'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    program'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newLine'
+        StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SourceFileWithText'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' ts'
+          Identifier: 'SourceFile'
+    PropertySignature
+      Identifier: '
+    sourceText'
+      QuestionToken
+      TypeReference
+        Identifier: ' SourceText'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' NamedSourceText'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    text'
+      TypeReference
+        Identifier: ' SourceText'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ProgramWithSourceTexts'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' ts'
+          Identifier: 'Program'
+    PropertySignature
+      Identifier: '
+    sourceTexts'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' NamedSourceText'
+    PropertySignature
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' TestCompilerHost'
+    PropertySignature
+      Identifier: '
+    version'
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TestCompilerHost'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' ts'
+          Identifier: 'CompilerHost'
+    MethodSignature
+      Identifier: '
+    getTrace'
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    clearTrace'
+      VoidKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' SourceText'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' ts'
+          Identifier: 'IScriptSnapshot'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fullText'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' references'
+        StringKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' importsAndExports'
+        StringKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' program'
+        StringKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' changedPart'
+        TypeReference
+          Identifier: ' ChangedPart'
+        PropertyAccessExpression
+          Identifier: ' ChangedPart'
+          Identifier: 'none'
+      Parameter
+        PrivateKeyword
+        Identifier: ' version'
+        NumericLiteral
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' New'
+      Parameter
+        Identifier: 'references'
+        StringKeyword
+      Parameter
+        Identifier: ' importsAndExports'
+        StringKeyword
+      Parameter
+        Identifier: ' program'
+        StringKeyword
+      TypeReference
+        Identifier: ' SourceText'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        ts'
+                Identifier: 'Debug'
+              Identifier: 'assert'
+            BinaryExpression
+              Identifier: 'references'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        ts'
+                Identifier: 'Debug'
+              Identifier: 'assert'
+            BinaryExpression
+              Identifier: 'importsAndExports'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        ts'
+                Identifier: 'Debug'
+              Identifier: 'assert'
+            BinaryExpression
+              Identifier: 'program'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+        ReturnStatement
+          NewExpression
+            Identifier: ' SourceText'
+            BinaryExpression
+              Identifier: 'references'
+              PlusToken
+              Identifier: ' newLine'
+            BinaryExpression
+              Identifier: ' importsAndExports'
+              PlusToken
+              Identifier: ' newLine'
+            BinaryExpression
+              Identifier: ' program'
+              BarBarToken
+              StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getVersion'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'version'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' updateReferences'
+      Parameter
+        Identifier: 'newReferences'
+        StringKeyword
+      TypeReference
+        Identifier: ' SourceText'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        ts'
+                Identifier: 'Debug'
+              Identifier: 'assert'
+            BinaryExpression
+              Identifier: 'newReferences'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+        ReturnStatement
+          NewExpression
+            Identifier: ' SourceText'
+            BinaryExpression
+              Identifier: 'newReferences'
+              PlusToken
+              Identifier: ' newLine'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'importsAndExports'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'program'
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'changedPart'
+              BarToken
+              PropertyAccessExpression
+                Identifier: ' ChangedPart'
+                Identifier: 'references'
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'version'
+              PlusToken
+              NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' updateImportsAndExports'
+      Parameter
+        Identifier: 'newImportsAndExports'
+        StringKeyword
+      TypeReference
+        Identifier: ' SourceText'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        ts'
+                Identifier: 'Debug'
+              Identifier: 'assert'
+            BinaryExpression
+              Identifier: 'newImportsAndExports'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+        ReturnStatement
+          NewExpression
+            Identifier: ' SourceText'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'references'
+            BinaryExpression
+              Identifier: ' newImportsAndExports'
+              PlusToken
+              Identifier: ' newLine'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'program'
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'changedPart'
+              BarToken
+              PropertyAccessExpression
+                Identifier: ' ChangedPart'
+                Identifier: 'importsAndExports'
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'version'
+              PlusToken
+              NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' updateProgram'
+      Parameter
+        Identifier: 'newProgram'
+        StringKeyword
+      TypeReference
+        Identifier: ' SourceText'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        ts'
+                Identifier: 'Debug'
+              Identifier: 'assert'
+            BinaryExpression
+              Identifier: 'newProgram'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+        ReturnStatement
+          NewExpression
+            Identifier: ' SourceText'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'references'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'importsAndExports'
+            Identifier: ' newProgram'
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'changedPart'
+              BarToken
+              PropertyAccessExpression
+                Identifier: ' ChangedPart'
+                Identifier: 'program'
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'version'
+              PlusToken
+              NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getFullText'
+      StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fullText'
+            BarBarToken
+            ParenthesizedExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'fullText'
+                EqualsToken
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'references'
+                    PlusToken
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'importsAndExports'
+                  PlusToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'program'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getText'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        NumberKeyword
+      StringKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getFullText'
+              Identifier: 'substring'
+            Identifier: 'start'
+            Identifier: ' end'
+    MethodDeclaration
+      Identifier: '
+
+    getLength'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'getFullText'
+            Identifier: 'length'
+    MethodDeclaration
+      Identifier: '
+
+    getChangeRange'
+      Parameter
+        Identifier: 'oldSnapshot'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'IScriptSnapshot'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'TextChangeRange'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' oldText'
+              AsExpression
+                Identifier: ' oldSnapshot'
+                TypeReference
+                  Identifier: ' SourceText'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' oldSpan'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'TextSpan'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' newLength'
+              NumberKeyword
+        SwitchStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'oldText'
+              Identifier: 'changedPart'
+            CaretToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'changedPart'
+          CaseBlock
+            CaseClause
+              PropertyAccessExpression
+                Identifier: ' ChangedPart'
+                Identifier: 'references'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+                oldSpan'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'createTextSpan'
+                    NumericLiteral
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' oldText'
+                        Identifier: 'references'
+                      Identifier: 'length'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+                newLength'
+                  EqualsToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'references'
+                    Identifier: 'length'
+              BreakStatement
+            CaseClause
+              PropertyAccessExpression
+                Identifier: ' ChangedPart'
+                Identifier: 'importsAndExports'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+                oldSpan'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'createTextSpan'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'oldText'
+                        Identifier: 'references'
+                      Identifier: 'length'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' oldText'
+                        Identifier: 'importsAndExports'
+                      Identifier: 'length'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+                newLength'
+                  EqualsToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'importsAndExports'
+                    Identifier: 'length'
+              BreakStatement
+            CaseClause
+              PropertyAccessExpression
+                Identifier: ' ChangedPart'
+                Identifier: 'program'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+                oldSpan'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'createTextSpan'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'oldText'
+                          Identifier: 'references'
+                        Identifier: 'length'
+                      PlusToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' oldText'
+                          Identifier: 'importsAndExports'
+                        Identifier: 'length'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' oldText'
+                        Identifier: 'program'
+                      Identifier: 'length'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+                newLength'
+                  EqualsToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'program'
+                    Identifier: 'length'
+              BreakStatement
+            DefaultClause
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'Debug'
+                    Identifier: 'fail'
+                  StringLiteral
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'createTextChangeRange'
+            Identifier: 'oldSpan'
+            Identifier: ' newLength'
+  FunctionDeclaration
+    Identifier: ' createSourceFileWithText'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' sourceText'
+      TypeReference
+        Identifier: ' SourceText'
+    Parameter
+      Identifier: ' target'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ScriptTarget'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' file'
+            AsExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'createSourceFile'
+                Identifier: 'fileName'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' sourceText'
+                    Identifier: 'getFullText'
+                Identifier: ' target'
+              TypeReference
+                Identifier: ' SourceFileWithText'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    file'
+            Identifier: 'sourceText'
+          EqualsToken
+          Identifier: ' sourceText'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    file'
+            Identifier: 'version'
+          EqualsToken
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' sourceText'
+                Identifier: 'getVersion'
+      ReturnStatement
+        Identifier: ' file'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createTestCompilerHost'
+    Parameter
+      Identifier: 'texts'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' NamedSourceText'
+    Parameter
+      Identifier: ' target'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ScriptTarget'
+    Parameter
+      Identifier: ' oldProgram'
+      QuestionToken
+      TypeReference
+        Identifier: ' ProgramWithSourceTexts'
+    Parameter
+      Identifier: ' useGetSourceFileByPath'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' useCaseSensitiveFileNames'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' TestCompilerHost'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' files'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'arrayToMap'
+              Identifier: 'texts'
+              ArrowFunction
+                Parameter
+                  Identifier: ' t'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' t'
+                  Identifier: 'name'
+              ArrowFunction
+                Parameter
+                  Identifier: ' t'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    Identifier: 'oldProgram'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' oldFile'
+                            AsExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' oldProgram'
+                                  Identifier: 'getSourceFile'
+                                PropertyAccessExpression
+                                  Identifier: 't'
+                                  Identifier: 'name'
+                              TypeReference
+                                Identifier: ' SourceFileWithText'
+                      IfStatement
+                        BinaryExpression
+                          Identifier: 'oldFile'
+                          AmpersandAmpersandToken
+                          PropertyAccessExpression
+                            Identifier: ' oldFile'
+                            Identifier: 'redirectInfo'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                oldFile'
+                              EqualsToken
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' oldFile'
+                                  Identifier: 'redirectInfo'
+                                Identifier: 'unredirected'
+                      IfStatement
+                        BinaryExpression
+                          Identifier: 'oldFile'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                NonNullExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' oldFile'
+                                    Identifier: 'sourceText'
+                                Identifier: 'getVersion'
+                            EqualsEqualsEqualsToken
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' t'
+                                  Identifier: 'text'
+                                Identifier: 'getVersion'
+                        Block
+                          ReturnStatement
+                            Identifier: ' oldFile'
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' createSourceFileWithText'
+                      PropertyAccessExpression
+                        Identifier: 't'
+                        Identifier: 'name'
+                      PropertyAccessExpression
+                        Identifier: ' t'
+                        Identifier: 'text'
+                      Identifier: ' target'
+      IfStatement
+        BinaryExpression
+          Identifier: 'useCaseSensitiveFileNames'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' useCaseSensitiveFileNames'
+            EqualsToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'sys'
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'sys'
+                Identifier: 'useCaseSensitiveFileNames'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' getCanonicalFileName'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createGetCanonicalFileName'
+              Identifier: 'useCaseSensitiveFileNames'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' currentDirectory'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' filesByPath'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'mapEntries'
+              Identifier: 'files'
+              ArrowFunction
+                Parameter
+                  Identifier: 'fileName'
+                Parameter
+                  Identifier: ' file'
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'ts'
+                      Identifier: 'toPath'
+                    Identifier: 'fileName'
+                    Identifier: ' currentDirectory'
+                    Identifier: ' getCanonicalFileName'
+                  Identifier: ' file'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' trace'
+            ArrayType
+              StringKeyword
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            TypeReference
+              Identifier: ' TestCompilerHost'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        trace'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' s'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' trace'
+                      Identifier: 'push'
+                    Identifier: 's'
+              PropertyAssignment
+                Identifier: '
+        getTrace'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' trace'
+              PropertyAssignment
+                Identifier: '
+        clearTrace'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' trace'
+                      Identifier: 'length'
+                    EqualsToken
+                    NumericLiteral
+              PropertyAssignment
+                Identifier: '
+        getSourceFile'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' fileName'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' filesByPath'
+                      Identifier: 'get'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'ts'
+                        Identifier: 'toPath'
+                      Identifier: 'fileName'
+                      Identifier: ' currentDirectory'
+                      Identifier: ' getCanonicalFileName'
+              PropertyAssignment
+                Identifier: '
+        getDefaultLibFileName'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  StringLiteral
+              PropertyAssignment
+                Identifier: '
+        writeFile'
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'notImplemented'
+              PropertyAssignment
+                Identifier: '
+        getCurrentDirectory'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' currentDirectory'
+              PropertyAssignment
+                Identifier: '
+        getDirectories'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ArrayLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+        getCanonicalFileName'
+              PropertyAssignment
+                Identifier: '
+        useCaseSensitiveFileNames'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' useCaseSensitiveFileNames'
+              PropertyAssignment
+                Identifier: '
+        getNewLine'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'sys'
+                    QuestionToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'sys'
+                      Identifier: 'newLine'
+                    ColonToken
+                    Identifier: ' newLine'
+              PropertyAssignment
+                Identifier: '
+        fileExists'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' fileName'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' filesByPath'
+                      Identifier: 'has'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'ts'
+                        Identifier: 'toPath'
+                      Identifier: 'fileName'
+                      Identifier: ' currentDirectory'
+                      Identifier: ' getCanonicalFileName'
+              PropertyAssignment
+                Identifier: '
+        readFile'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' fileName'
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' file'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' filesByPath'
+                              Identifier: 'get'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'ts'
+                                Identifier: 'toPath'
+                              Identifier: 'fileName'
+                              Identifier: ' currentDirectory'
+                              Identifier: ' getCanonicalFileName'
+                    ReturnStatement
+                      BinaryExpression
+                        Identifier: ' file'
+                        AmpersandAmpersandToken
+                        PropertyAccessExpression
+                          Identifier: ' file'
+                          Identifier: 'text'
+      IfStatement
+        Identifier: 'useGetSourceFileByPath'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        result'
+                Identifier: 'getSourceFileByPath'
+              EqualsToken
+              ArrowFunction
+                Parameter
+                  Identifier: '_fileName'
+                Parameter
+                  Identifier: ' path'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' filesByPath'
+                    Identifier: 'get'
+                  Identifier: 'path'
+      ReturnStatement
+        Identifier: ' result'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' newProgram'
+    Parameter
+      Identifier: 'texts'
+      ArrayType
+        TypeReference
+          Identifier: ' NamedSourceText'
+    Parameter
+      Identifier: ' rootNames'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'CompilerOptions'
+    Parameter
+      Identifier: ' useGetSourceFileByPath'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' useCaseSensitiveFileNames'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' ProgramWithSourceTexts'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              Identifier: ' createTestCompilerHost'
+              Identifier: 'texts'
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: ' options'
+                  Identifier: 'target'
+              Identifier: ' /*oldProgram*/ undefined'
+              Identifier: ' useGetSourceFileByPath'
+              Identifier: ' useCaseSensitiveFileNames'
+      ReturnStatement
+        CallExpression
+          Identifier: ' programToProgramWithSourceTexts'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        ts'
+              Identifier: 'createProgram'
+            Identifier: 'rootNames'
+            Identifier: ' options'
+            Identifier: ' host'
+          Identifier: '
+        texts'
+          Identifier: '
+        host'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' programToProgramWithSourceTexts'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Program'
+    Parameter
+      Identifier: ' texts'
+      ArrayType
+        TypeReference
+          Identifier: ' NamedSourceText'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' TestCompilerHost'
+    Parameter
+      Identifier: ' version'
+      NumberKeyword
+    TypeReference
+      Identifier: ' ProgramWithSourceTexts'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            AsExpression
+              Identifier: ' program'
+              TypeReference
+                Identifier: ' ProgramWithSourceTexts'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    result'
+            Identifier: 'sourceTexts'
+          EqualsToken
+          Identifier: ' texts'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    result'
+            Identifier: 'host'
+          EqualsToken
+          Identifier: ' host'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    result'
+            Identifier: 'version'
+          EqualsToken
+          Identifier: ' version'
+      ReturnStatement
+        Identifier: ' result'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' updateProgram'
+    Parameter
+      Identifier: 'oldProgram'
+      TypeReference
+        Identifier: ' ProgramWithSourceTexts'
+    Parameter
+      Identifier: ' rootNames'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'CompilerOptions'
+    Parameter
+      Identifier: ' updater'
+      FunctionType
+        Parameter
+          Identifier: 'files'
+          ArrayType
+            TypeReference
+              Identifier: ' NamedSourceText'
+        VoidKeyword
+    Parameter
+      Identifier: ' newTexts'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' NamedSourceText'
+    Parameter
+      Identifier: ' useGetSourceFileByPath'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' useCaseSensitiveFileNames'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' ProgramWithSourceTexts'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'newTexts'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        newTexts'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  NonNullExpression
+                    PropertyAccessExpression
+                      Identifier: ' oldProgram'
+                      Identifier: 'sourceTexts'
+                  Identifier: 'slice'
+                NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    updater'
+          Identifier: 'newTexts'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              Identifier: ' createTestCompilerHost'
+              Identifier: 'newTexts'
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: ' options'
+                  Identifier: 'target'
+              Identifier: ' oldProgram'
+              Identifier: ' useGetSourceFileByPath'
+              Identifier: ' useCaseSensitiveFileNames'
+      ReturnStatement
+        CallExpression
+          Identifier: ' programToProgramWithSourceTexts'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        ts'
+              Identifier: 'createProgram'
+            Identifier: 'rootNames'
+            Identifier: ' options'
+            Identifier: ' host'
+            Identifier: ' oldProgram'
+          Identifier: '
+        newTexts'
+          Identifier: '
+        host'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        oldProgram'
+              Identifier: 'version'
+            PlusToken
+            NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' updateProgramText'
+    Parameter
+      Identifier: 'files'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' NamedSourceText'
+    Parameter
+      Identifier: ' fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' newProgramText'
+      StringKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' file'
+            NonNullExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'find'
+                Identifier: 'files'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' f'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' f'
+                      Identifier: 'name'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' fileName'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    file'
+            Identifier: 'text'
+          EqualsToken
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' file'
+                Identifier: 'text'
+              Identifier: 'updateProgram'
+            Identifier: 'newProgramText'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' jsonToReadableText'
+    Parameter
+      Identifier: 'json'
+      AnyKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' JSON'
+            Identifier: 'stringify'
+          Identifier: 'json'
+          Identifier: ' undefined'
+          NumericLiteral

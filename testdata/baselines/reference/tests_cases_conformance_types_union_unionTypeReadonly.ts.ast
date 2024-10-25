@@ -1,0 +1,113 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' value'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Identical'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' value'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Mutable'
+    PropertySignature
+      Identifier: '
+    value'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' DifferentType'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' value'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' DifferentName'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' other'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' base'
+        TypeReference
+          Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+base'
+        Identifier: 'value'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' identical'
+        UnionType
+          TypeReference
+            Identifier: ' Base'
+          TypeReference
+            Identifier: ' Identical'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+identical'
+        Identifier: 'value'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mutable'
+        UnionType
+          TypeReference
+            Identifier: ' Base'
+          TypeReference
+            Identifier: ' Mutable'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+mutable'
+        Identifier: 'value'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' differentType'
+        UnionType
+          TypeReference
+            Identifier: ' Base'
+          TypeReference
+            Identifier: ' DifferentType'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+differentType'
+        Identifier: 'value'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' differentName'
+        UnionType
+          TypeReference
+            Identifier: ' Base'
+          TypeReference
+            Identifier: ' DifferentName'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+differentName'
+        Identifier: 'value'
+      EqualsToken
+      NumericLiteral

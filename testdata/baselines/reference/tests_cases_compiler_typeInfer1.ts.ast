@@ -1,0 +1,56 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ITextWriter2'
+    MethodSignature
+      Identifier: '
+    Write'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    WriteLine'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' ITextWriter2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    Write'
+            FunctionExpression
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              VoidKeyword
+              Block
+          PropertyAssignment
+            Identifier: '
+    WriteLine'
+            FunctionExpression
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              VoidKeyword
+              Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' yyyyyyyy'
+        TypeReference
+          Identifier: ' ITextWriter2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    Moo'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  StringLiteral

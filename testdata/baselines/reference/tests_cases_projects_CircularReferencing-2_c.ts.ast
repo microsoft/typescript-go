@@ -1,0 +1,18 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' B'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' B'
+          Identifier: 'B'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

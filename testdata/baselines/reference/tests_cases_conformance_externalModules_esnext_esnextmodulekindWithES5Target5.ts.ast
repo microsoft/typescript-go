@@ -1,0 +1,14 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' E1'
+    EnumMember
+      Identifier: '
+    value1'
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' E2'
+    EnumMember
+      Identifier: '
+    value1'

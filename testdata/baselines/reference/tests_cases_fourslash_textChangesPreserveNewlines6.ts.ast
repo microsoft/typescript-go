@@ -1,0 +1,43 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// /*1*/f // call expression
+//// (arg)(
+////     /** @type {number} */
+////     blah, /* another param */ blah // TODO: name variable not 'blah'
+////
+//// );/*2*/
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Note: the loss of `// TODO: name variable not 'blah'`
+// is not desirable, but not related to this test.
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newContent'
+          NoSubstitutionTemplateLiteral

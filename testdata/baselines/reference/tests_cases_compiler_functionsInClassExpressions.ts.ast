@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        ClassExpression
+          Constructor
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'bar'
+          PropertyDeclaration
+            Identifier: '
+    bar'
+            NumericLiteral
+          PropertyDeclaration
+            Identifier: '
+    inc'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'bar'
+          MethodDeclaration
+            Identifier: '
+    m'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'bar'

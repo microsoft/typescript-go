@@ -1,0 +1,24 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' axios'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' axios'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' // both assignments should be ok
+module'
+          Identifier: 'exports'
+        Identifier: 'default'
+      EqualsToken
+      Identifier: ' axios'

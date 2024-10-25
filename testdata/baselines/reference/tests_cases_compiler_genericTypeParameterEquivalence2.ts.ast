@@ -1,0 +1,282 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' compose'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'b'
+          TypeReference
+            Identifier: ' B'
+        TypeReference
+          Identifier: ' C'
+    Parameter
+      Identifier: ' g'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: 'A'
+        TypeReference
+          Identifier: ' B'
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: 'A'
+      TypeReference
+        Identifier: ' C'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: 'A'
+          TypeReference
+            Identifier: ' C'
+          Block
+            ReturnStatement
+              CallExpression
+                Identifier: ' f'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'g'
+                    Identifier: 'apply'
+                  NullKeyword
+                  Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' forEach'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'list'
+      ArrayType
+        TypeReference
+          Identifier: ' A'
+    Parameter
+      Identifier: ' f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        Parameter
+          Identifier: ' n'
+          QuestionToken
+          NumberKeyword
+        VoidKeyword
+    VoidKeyword
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' list'
+            Identifier: 'length'
+        PrefixUnaryExpression
+          Identifier: 'i'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        f'
+              ElementAccessExpression
+                Identifier: 'list'
+                Identifier: 'i'
+              Identifier: ' i'
+  FunctionDeclaration
+    Identifier: ' filter'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        BooleanKeyword
+    Parameter
+      Identifier: ' ar'
+      ArrayType
+        TypeReference
+          Identifier: ' A'
+    ArrayType
+      TypeReference
+        Identifier: ' A'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ret'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEach'
+          Identifier: 'ar'
+          ArrowFunction
+            Parameter
+              Identifier: 'el'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'f'
+                  Identifier: 'el'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            ret'
+                        Identifier: 'push'
+                      Identifier: 'el'
+      ReturnStatement
+        Identifier: ' ret'
+  FunctionDeclaration
+    Identifier: ' length2'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'ar'
+      ArrayType
+        TypeReference
+          Identifier: ' A'
+    NumberKeyword
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' ar'
+          Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' curry1'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        Parameter
+          Identifier: ' b'
+          TypeReference
+            Identifier: ' B'
+        TypeReference
+          Identifier: ' C'
+    FunctionType
+      Parameter
+        Identifier: 'ax'
+        TypeReference
+          Identifier: ' A'
+      FunctionType
+        Parameter
+          Identifier: 'bx'
+          TypeReference
+            Identifier: ' B'
+        TypeReference
+          Identifier: ' C'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Parameter
+            Identifier: 'ay'
+            TypeReference
+              Identifier: ' A'
+          Block
+            ReturnStatement
+              FunctionExpression
+                Parameter
+                  Identifier: 'by'
+                  TypeReference
+                    Identifier: ' B'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' f'
+                      Identifier: 'ay'
+                      Identifier: ' by'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cfilter'
+        CallExpression
+          Identifier: ' curry1'
+          Identifier: 'filter'
+  FunctionDeclaration
+    Identifier: ' countWhere_1'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'pred'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        BooleanKeyword
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        ArrayType
+          TypeReference
+            Identifier: ' A'
+      NumberKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' compose'
+          Identifier: 'length2'
+          CallExpression
+            Identifier: ' cfilter'
+            Identifier: 'pred'
+  FunctionDeclaration
+    Identifier: ' countWhere_2'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'pred'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        BooleanKeyword
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        ArrayType
+          TypeReference
+            Identifier: ' A'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' where'
+            CallExpression
+              Identifier: ' cfilter'
+              Identifier: 'pred'
+      ReturnStatement
+        CallExpression
+          Identifier: ' compose'
+          Identifier: 'length2'
+          Identifier: ' where'

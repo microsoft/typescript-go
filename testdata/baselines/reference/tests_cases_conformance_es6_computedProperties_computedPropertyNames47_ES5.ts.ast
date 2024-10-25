@@ -1,0 +1,25 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E1'
+    EnumMember
+      Identifier: ' x'
+  EnumDeclaration
+    Identifier: ' E2'
+    EnumMember
+      Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'E1'
+                  Identifier: 'x'
+                BarBarToken
+                PropertyAccessExpression
+                  Identifier: ' E2'
+                  Identifier: 'x'
+            NumericLiteral

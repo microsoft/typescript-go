@@ -1,0 +1,308 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' BaseProps'
+    PropertySignature
+      Identifier: '
+  when'
+      QuestionToken
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'value'
+              StringKeyword
+            BooleanKeyword
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+  error'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' Props'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BaseProps'
+  ClassDeclaration
+    Identifier: ' FieldFeedback'
+    TypeParameter
+      Identifier: 'P'
+      TypeReference
+        Identifier: ' Props'
+      TypeReference
+        Identifier: ' BaseProps'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'P'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' defaultProps'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    when'
+          ArrowFunction
+            EqualsGreaterThanToken
+            TrueKeyword
+    MethodDeclaration
+      Identifier: '
+
+  render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Test1'
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'FieldFeedback'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' when'
+                JsxExpression
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'value'
+                    EqualsGreaterThanToken
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        Identifier: 'value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Test2'
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'FieldFeedback'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' when'
+                JsxExpression
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'value'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' console'
+                        Identifier: 'log'
+                      Identifier: 'value'
+  ClassDeclaration
+    Identifier: ' FieldFeedbackBeta'
+    TypeParameter
+      Identifier: 'P'
+      TypeReference
+        Identifier: ' Props'
+      TypeReference
+        Identifier: ' BaseProps'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'P'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' defaultProps'
+      TypeReference
+        Identifier: ' BaseProps'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    when'
+          ArrowFunction
+            EqualsGreaterThanToken
+            TrueKeyword
+    MethodDeclaration
+      Identifier: '
+
+  render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Test1a'
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'FieldFeedbackBeta'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' when'
+                  JsxExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'value'
+                      EqualsGreaterThanToken
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          Identifier: 'value'
+                JsxAttribute
+                  Identifier: ' error'
+            JsxText
+            JsxClosingElement
+              Identifier: 'FieldFeedbackBeta'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Test2a'
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'FieldFeedbackBeta'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' when'
+                  JsxExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'value'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' console'
+                          Identifier: 'log'
+                        Identifier: 'value'
+                JsxAttribute
+                  Identifier: ' error'
+            JsxText
+            JsxClosingElement
+              Identifier: 'FieldFeedbackBeta'
+  InterfaceDeclaration
+    Identifier: ' MyPropsProps'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Props'
+    PropertySignature
+      Identifier: '
+  when'
+      FunctionType
+        Parameter
+          Identifier: 'value'
+          StringKeyword
+        BooleanKeyword
+  ClassDeclaration
+    Identifier: ' FieldFeedback2'
+    TypeParameter
+      Identifier: 'P'
+      TypeReference
+        Identifier: ' MyPropsProps'
+      TypeReference
+        Identifier: ' MyPropsProps'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' FieldFeedback'
+        TypeReference
+          Identifier: 'P'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' defaultProps'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    when'
+          ArrowFunction
+            EqualsGreaterThanToken
+            TrueKeyword
+    MethodDeclaration
+      Identifier: '
+
+  render'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'props'
+              Identifier: 'when'
+            StringLiteral
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Test3'
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'FieldFeedback2'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' when'
+                JsxExpression
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'value'
+                    EqualsGreaterThanToken
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        Identifier: 'value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Test4'
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'FieldFeedback2'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' when'
+                JsxExpression
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'value'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' console'
+                        Identifier: 'log'
+                      Identifier: 'value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Test5'
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'FieldFeedback2'
+            JsxAttributes

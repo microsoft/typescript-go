@@ -1,0 +1,39 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f0'
+    VoidKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            AnyKeyword
+            CallExpression
+              Identifier: ' f0'
+  FunctionDeclaration
+    Identifier: ' f2'
+    AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f3'
+    StringKeyword
+    Block
+      ReturnStatement
+  FunctionDeclaration
+    Identifier: ' f4'
+    StringKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+      ReturnStatement
+  FunctionDeclaration
+    Identifier: ' f5'
+    StringKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+      ReturnStatement
+        Identifier: ' undefined'

@@ -1,0 +1,49 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' parent'
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' parent2'
+        TrueKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' use'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' a'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' parent'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' parent2'
+            NumericLiteral
+      FunctionDeclaration
+        Identifier: ' b'
+        Parameter
+          Identifier: 'parent'
+          StringKeyword
+        Parameter
+          Identifier: ' parent2'
+          NumberKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        use'
+              Identifier: 'parent'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        use'
+              Identifier: 'parent2'

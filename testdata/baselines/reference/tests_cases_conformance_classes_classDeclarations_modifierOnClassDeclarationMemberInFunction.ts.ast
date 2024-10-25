@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' baz'
+          NumericLiteral
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' foo'
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' bar'
+          Block

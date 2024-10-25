@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    VoidKeyword
+    Block
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+          StringLiteral

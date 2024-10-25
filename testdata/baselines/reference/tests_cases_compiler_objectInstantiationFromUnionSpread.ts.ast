@@ -1,0 +1,84 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Success'
+    PropertySignature
+      Identifier: '
+  isSuccess'
+      LiteralType
+        TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' Fail'
+    PropertySignature
+      Identifier: '
+  isSuccess'
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' Item'
+    UnionType
+      TypeReference
+        Identifier: ' Success'
+      TypeReference
+        Identifier: ' Fail'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'a'
+      ArrayType
+        TypeReference
+          Identifier: ' Item'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+  a'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'item'
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+                    SpreadAssignment
+                      Identifier: 'item'
+            Identifier: 'filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            EqualsGreaterThanToken
+            Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      ArrayType
+        TypeReference
+          Identifier: ' Item'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+  a'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'item'
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+                    SpreadAssignment
+                      Identifier: 'item'
+            Identifier: 'filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            EqualsGreaterThanToken
+            Block

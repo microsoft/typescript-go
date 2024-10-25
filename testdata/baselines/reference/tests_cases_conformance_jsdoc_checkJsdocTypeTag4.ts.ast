@@ -1,0 +1,19 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'

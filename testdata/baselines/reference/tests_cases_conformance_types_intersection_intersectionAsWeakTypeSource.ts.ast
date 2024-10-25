@@ -1,0 +1,119 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' X'
+    PropertySignature
+      Identifier: ' x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Y'
+    PropertySignature
+      Identifier: ' y'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Z'
+    PropertySignature
+      Identifier: ' z'
+      QuestionToken
+      BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' XY'
+    IntersectionType
+      TypeReference
+        Identifier: ' X'
+      TypeReference
+        Identifier: ' Y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xy'
+        TypeReference
+          Identifier: ' XY'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'x'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z1'
+        TypeReference
+          Identifier: ' Z'
+        Identifier: ' xy'
+  InterfaceDeclaration
+    Identifier: ' ViewStyle'
+    PropertySignature
+      Identifier: '
+    view'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    styleMedia'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Brand'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' __brand'
+          TypeReference
+            Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' create'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          TypeReference
+            Identifier: ' ViewStyle'
+    Parameter
+      Identifier: 'styles'
+      TypeReference
+        Identifier: ' T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' Brand'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wrapped'
+        CallExpression
+          Identifier: ' create'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' first'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' view'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' styleMedia'
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vs'
+        TypeReference
+          Identifier: ' ViewStyle'
+        PropertyAccessExpression
+          Identifier: ' wrapped'
+          Identifier: 'first'

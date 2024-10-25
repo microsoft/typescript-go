@@ -1,0 +1,37 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @filename: /A.ts
+////export interface A {}
+////export function bFuncA(a: A) {}
+
+// @filename: /B.ts
+////export interface B {}
+////export function bFuncB(b: B) {}
+
+// @filename: /C.ts
+////export interface C {}
+////export function bFuncC(c: C) {}
+
+// @filename: /test.ts
+////export { C } from "./C";
+////export { B } from "./B";
+////export { A } from "./A";
+////
+////export { bFuncC } from "./C";
+////export { bFuncB } from "./B";
+////export { bFuncA } from "./A";
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral

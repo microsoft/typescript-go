@@ -1,0 +1,195 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        ThisType
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            ThisType
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        ArrayType
+          ThisType
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      ThisType
+    ThisType
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            ThisType
+      ReturnStatement
+        ThisKeyword
+  InterfaceDeclaration
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    a'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          ThisType
+    PropertySignature
+      Identifier: '
+    b'
+      TypeLiteral
+        CallSignature
+          ThisType
+    PropertySignature
+      Identifier: '
+    c'
+      TypeLiteral
+        ConstructSignature
+          ThisType
+    PropertySignature
+      Identifier: '
+    d'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          ThisType
+    PropertySignature
+      Identifier: '
+    e'
+      TypeLiteral
+        MethodSignature
+          Identifier: ' f'
+          Parameter
+            Identifier: 'x'
+            ThisType
+          ThisType
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          ThisType
+    PropertyDeclaration
+      Identifier: '
+    b'
+      TypeLiteral
+        CallSignature
+          ThisType
+    PropertyDeclaration
+      Identifier: '
+    c'
+      TypeLiteral
+        ConstructSignature
+          ThisType
+    PropertyDeclaration
+      Identifier: '
+    d'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          ThisType
+    PropertyDeclaration
+      Identifier: '
+    e'
+      TypeLiteral
+        MethodSignature
+          Identifier: ' f'
+          Parameter
+            Identifier: 'x'
+            ThisType
+          ThisType
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      ThisType
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y'
+      TypeAssertionExpression
+        ThisType
+        Identifier: 'undefined'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        ThisType
+      ThisType
+      Block
+        ReturnStatement
+          Identifier: ' undefined'
+  ModuleDeclaration
+    Identifier: ' N1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ThisType
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            ThisKeyword
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      Identifier: '
+    x1'
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+        g'
+          Parameter
+            Identifier: 'x'
+            ThisType
+          ThisType
+          Block
+            ReturnStatement
+              Identifier: ' undefined'
+    MethodDeclaration
+      Identifier: '
+    f'
+      Block
+        FunctionDeclaration
+          Identifier: ' g'
+          Parameter
+            Identifier: 'x'
+            ThisType
+          ThisType
+          Block
+            ReturnStatement
+              Identifier: ' undefined'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x2'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  Identifier: '
+            h'
+                  Parameter
+                    Identifier: 'x'
+                    ThisType
+                  ThisType
+                  Block
+                    ReturnStatement
+                      Identifier: ' undefined'

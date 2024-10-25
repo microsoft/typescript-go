@@ -1,0 +1,95 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    MethodDeclaration
+      Identifier: '
+    g'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Number'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' T'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        x'
+              Identifier: 'toFixed'
+    MethodDeclaration
+      Identifier: '
+
+    h'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' T'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        x'
+              Identifier: 'getDate'
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Date'
+    MethodDeclaration
+      Identifier: '
+    g'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Number'
+      TypeParameter
+        Identifier: ' U'
+        TypeReference
+          Identifier: ' Number'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' U'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        x'
+              Identifier: 'toFixed'
+    MethodDeclaration
+      Identifier: '
+
+    h'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' U'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        x'
+              Identifier: 'getDate'

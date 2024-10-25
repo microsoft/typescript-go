@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' X'
+        FunctionType
+          NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' X'
+        FunctionType
+          NumberKeyword

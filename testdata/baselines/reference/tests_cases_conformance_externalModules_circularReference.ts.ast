@@ -1,0 +1,137 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' foo2'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' M1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C1'
+        PropertyDeclaration
+          Identifier: '
+		m1'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                Identifier: ' foo2'
+                Identifier: 'M1'
+              Identifier: 'C1'
+        PropertyDeclaration
+          Identifier: '
+		x'
+          NumberKeyword
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'm1'
+                EqualsToken
+                NewExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' foo2'
+                      Identifier: 'M1'
+                    Identifier: 'C1'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'm1'
+                  Identifier: 'y'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'm1'
+                  Identifier: 'x'
+                EqualsToken
+                NumericLiteral
+  ImportEqualsDeclaration
+    Identifier: ' foo1'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' M1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C1'
+        PropertyDeclaration
+          Identifier: '
+		m1'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                Identifier: ' foo1'
+                Identifier: 'M1'
+              Identifier: 'C1'
+        PropertyDeclaration
+          Identifier: '
+		y'
+          NumberKeyword
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'm1'
+                EqualsToken
+                NewExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' foo1'
+                      Identifier: 'M1'
+                    Identifier: 'C1'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'm1'
+                  Identifier: 'y'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'm1'
+                  Identifier: 'x'
+                EqualsToken
+                NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' tmp'
+                  NewExpression
+                    PropertyAccessExpression
+                      Identifier: ' M1'
+                      Identifier: 'C1'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+			tmp'
+                  Identifier: 'y'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' // OK
+			tmp'
+                  Identifier: 'x'
+                EqualsToken
+                NumericLiteral

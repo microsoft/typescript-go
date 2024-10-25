@@ -1,0 +1,51 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    GetAccessor
+      Identifier: ' p'
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    p'
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    _secret'
+      NumericLiteral
+    GetAccessor
+      Identifier: ' p'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: '_secret'
+    SetAccessor
+      Identifier: ' p'
+      Parameter
+        Identifier: 'value'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_secret'
+            EqualsToken
+            Identifier: ' value'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    p'
+      NumericLiteral

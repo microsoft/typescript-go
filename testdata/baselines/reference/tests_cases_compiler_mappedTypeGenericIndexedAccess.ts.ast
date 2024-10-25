@@ -1,0 +1,219 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Types'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    first'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a1'
+            LiteralType
+              TrueKeyword
+      PropertySignature
+        Identifier: '
+    second'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a2'
+            LiteralType
+              TrueKeyword
+      PropertySignature
+        Identifier: '
+    third'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a3'
+            LiteralType
+              TrueKeyword
+  ClassDeclaration
+    Identifier: ' Test'
+    PropertyDeclaration
+      Identifier: '
+    entries'
+      MappedType
+        TypeParameter
+          Identifier: 'T'
+          TypeOperator
+            TypeReference
+              Identifier: ' Types'
+        QuestionToken
+        ArrayType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' Types'
+            TypeReference
+              Identifier: 'T'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'entries'
+            EqualsToken
+            ObjectLiteralExpression
+    MethodDeclaration
+      Identifier: '
+
+    addEntry'
+      TypeParameter
+        Identifier: 'T'
+        TypeOperator
+          TypeReference
+            Identifier: ' Types'
+      Parameter
+        Identifier: 'name'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' entry'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' Types'
+          TypeReference
+            Identifier: 'T'
+      Block
+        IfStatement
+          PrefixUnaryExpression
+            ElementAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'entries'
+              Identifier: 'name'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'entries'
+                  Identifier: 'name'
+                EqualsToken
+                ArrayLiteralExpression
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ElementAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'entries'
+                Identifier: 'name'
+              QuestionDotToken
+              Identifier: 'push'
+            Identifier: 'entry'
+  TypeAliasDeclaration
+    Identifier: ' TypesMap'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          NumericLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            LiteralType
+              StringLiteral
+      PropertySignature
+        ComputedPropertyName
+          NumericLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            LiteralType
+              StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' P'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        TypeReference
+          Identifier: ' TypesMap'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' t'
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' TypesMap'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' TypeHandlers'
+    MappedType
+      TypeParameter
+        Identifier: 'T'
+        TypeOperator
+          TypeReference
+            Identifier: ' TypesMap'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'p'
+          TypeReference
+            Identifier: ' P'
+            TypeReference
+              Identifier: 'T'
+        VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typeHandlers'
+        TypeReference
+          Identifier: ' TypeHandlers'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: 'p'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                PropertyAccessExpression
+                  Identifier: 'p'
+                  Identifier: 'foo'
+          PropertyAssignment
+            ComputedPropertyName
+              NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: 'p'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                PropertyAccessExpression
+                  Identifier: 'p'
+                  Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' onSomeEvent'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeOperator
+              TypeReference
+                Identifier: ' TypesMap'
+          Parameter
+            Identifier: 'p'
+            TypeReference
+              Identifier: ' P'
+              TypeReference
+                Identifier: 'T'
+          EqualsGreaterThanToken
+          CallExpression
+            ElementAccessExpression
+              Identifier: '
+    typeHandlers'
+              PropertyAccessExpression
+                Identifier: 'p'
+                Identifier: 't'
+            QuestionDotToken
+            Identifier: 'p'

@@ -1,0 +1,5 @@
+SourceFile
+  ExpressionStatement
+    Identifier: 'a'
+  ExpressionStatement
+    Identifier: 'u'

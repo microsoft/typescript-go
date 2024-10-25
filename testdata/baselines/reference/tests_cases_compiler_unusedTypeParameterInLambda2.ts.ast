@@ -1,0 +1,24 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f1'
+      Block
+        ReturnStatement
+          ArrowFunction
+            TypeParameter
+              Identifier: 'T'
+            TypeParameter
+              Identifier: ' X'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' a'
+                    TypeReference
+                      Identifier: ' X'
+              ExpressionStatement
+                Identifier: '
+            a'

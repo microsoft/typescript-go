@@ -1,0 +1,40 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' blah1'
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+C'
+        Identifier: 'blah2'
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+    console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'blah1'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+    console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'blah2'

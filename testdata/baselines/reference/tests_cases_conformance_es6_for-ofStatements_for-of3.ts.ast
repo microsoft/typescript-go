@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        AnyKeyword
+  ForOfStatement
+    PostfixUnaryExpression
+      Identifier: 'v'
+    ArrayLiteralExpression
+    Block

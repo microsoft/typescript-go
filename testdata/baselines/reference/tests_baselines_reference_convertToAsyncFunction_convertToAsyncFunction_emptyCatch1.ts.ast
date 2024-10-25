@@ -1,0 +1,21 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+            Identifier: 'catch'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'

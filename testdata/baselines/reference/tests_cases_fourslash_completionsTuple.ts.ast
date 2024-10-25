@@ -1,0 +1,57 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' replacementSpan'
+        ElementAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'ranges'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' insertText'
+                StringLiteral
+              ShorthandPropertyAssignment
+                Identifier: ' replacementSpan'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' insertText'
+                StringLiteral
+              ShorthandPropertyAssignment
+                Identifier: ' replacementSpan'
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    excludes'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeInsertTextCompletions'
+              TrueKeyword

@@ -1,0 +1,139 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+      NumberKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' f'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    SetAccessor
+      ProtectedKeyword
+      Identifier: ' accessor'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    GetAccessor
+      ProtectedKeyword
+      Identifier: ' accessor'
+      Block
+        ReturnStatement
+          NumericLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' sx'
+      NumberKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' sf'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'sx'
+    SetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' staticSetter'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    GetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' staticGetter'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' f'
+      Block
+        ReturnStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'f'
+            PlusToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' sf'
+      Block
+        ReturnStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'sf'
+            PlusToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'sx'
+  ClassDeclaration
+    Identifier: ' C3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' sx'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    f'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'f'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' sf'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'sf'
+    GetAccessor
+      StaticKeyword
+      Identifier: ' staticGetter'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' C4'
+    Constructor
+      Parameter
+        ProtectedKeyword
+        Identifier: ' a'
+        NumberKeyword
+      Parameter
+        ProtectedKeyword
+        Identifier: ' b'
+      Block

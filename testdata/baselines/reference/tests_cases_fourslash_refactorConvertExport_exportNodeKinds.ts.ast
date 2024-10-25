@@ -1,0 +1,133 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tests'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'fileName'
+              StringKeyword
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    fn'
+            NoSubstitutionTemplateLiteral
+          PropertyAssignment
+            Identifier: '
+
+    cls'
+            NoSubstitutionTemplateLiteral
+          PropertyAssignment
+            Identifier: '
+
+    interface'
+            NoSubstitutionTemplateLiteral
+          PropertyAssignment
+            Identifier: '
+
+    enum'
+            NoSubstitutionTemplateLiteral
+          PropertyAssignment
+            Identifier: '
+
+    namespace'
+            NoSubstitutionTemplateLiteral
+          PropertyAssignment
+            Identifier: '
+
+    type'
+            NoSubstitutionTemplateLiteral
+          PropertyAssignment
+            Identifier: '
+
+    var_unused'
+            NoSubstitutionTemplateLiteral
+          PropertyAssignment
+            Identifier: '
+
+    var_unused_noInitializer'
+            Identifier: ' undefined'
+          PropertyAssignment
+            Identifier: '
+
+    var_used'
+            NoSubstitutionTemplateLiteral
+          PropertyAssignment
+            Identifier: '
+
+    var_with_type'
+            NoSubstitutionTemplateLiteral
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' name'
+    Identifier: ' tests'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newContent'
+            ElementAccessExpression
+              Identifier: ' tests'
+              Identifier: 'name'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fileName'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'name'
+                TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'selectAllInFile'
+          Identifier: 'fileName'
+      IfStatement
+        BinaryExpression
+          Identifier: 'newContent'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        verify'
+                Identifier: 'refactorsAvailable'
+              ArrayLiteralExpression
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        edit'
+                Identifier: 'applyRefactor'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            refactorName'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            actionName'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            actionDescription'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            newContent'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      ComputedPropertyName
+                        Identifier: 'fileName'
+                      Identifier: ' newContent'

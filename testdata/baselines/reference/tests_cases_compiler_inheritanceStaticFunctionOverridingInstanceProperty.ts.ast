@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' a'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' b'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' b'
+            Identifier: 'x'

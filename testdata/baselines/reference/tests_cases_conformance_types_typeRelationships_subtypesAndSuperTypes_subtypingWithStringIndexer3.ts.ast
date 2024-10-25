@@ -1,0 +1,144 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    PropertySignature
+      Identifier: ' foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: ' bar'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertySignature
+      Identifier: ' baz'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Derived'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Base'
+  ClassDeclaration
+    Identifier: ' B2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Derived2'
+  ModuleDeclaration
+    Identifier: ' Generics'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' A'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Derived'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+            TypeReference
+              Identifier: 'Base'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' Derived'
+      ClassDeclaration
+        Identifier: ' B2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+            TypeReference
+              Identifier: 'Derived'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' Derived2'
+      ClassDeclaration
+        Identifier: ' B3'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Derived'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' Base'
+      ClassDeclaration
+        Identifier: ' B4'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Derived'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' Derived'
+      ClassDeclaration
+        Identifier: ' B5'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Derived2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' Derived2'

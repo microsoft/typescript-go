@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+   method'
+      Block
+        FunctionDeclaration
+          Identifier: ' other'
+          Block
+        FunctionDeclaration
+          AsyncKeyword
+          Identifier: ' fn'
+          Block
+            ExpressionStatement
+              AwaitExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' other'
+                    Identifier: 'apply'
+                  ThisKeyword
+                  Identifier: ' arguments'

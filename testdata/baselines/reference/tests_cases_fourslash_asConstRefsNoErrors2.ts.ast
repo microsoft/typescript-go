@@ -1,0 +1,19 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////class Tex {
+////    type = </**/const>'Text';
+////}
+
+verify'
+        Identifier: 'baselineGoToDefinition'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'noErrors'

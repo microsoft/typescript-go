@@ -1,0 +1,6 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' My'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Set'

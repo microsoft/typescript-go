@@ -1,0 +1,177 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            TypeLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    obj'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    obj'
+          EqualsToken
+          Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'x'
+                  StringKeyword
+                AnyKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    obj'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    obj'
+          EqualsToken
+          Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ObjectLiteralExpression
+  InterfaceDeclaration
+    Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          AnyKeyword
+    PropertySignature
+      Identifier: '
+    bar'
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    baz'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' E1'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Something'
+    PropertySignature
+      Identifier: ' name'
+      StringKeyword
+    PropertySignature
+      Identifier: ' value'
+      StringKeyword
+  EmptyStatement
+  InterfaceDeclaration
+    Identifier: ' E2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'Something'
+  InterfaceDeclaration
+    Identifier: ' E3'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' Form'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' values'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        QuestionToken
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+      ObjectLiteralExpression

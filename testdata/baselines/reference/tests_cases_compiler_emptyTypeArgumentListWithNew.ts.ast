@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' foo'
+  ClassDeclaration
+    Identifier: ' noParams'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' noParams'

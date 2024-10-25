@@ -1,0 +1,571 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'U'
+    TypeParameter
+      Identifier: ' V'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+      Block
+        ReturnStatement
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'V'
+    TypeParameter
+      Identifier: ' W'
+    TypeParameter
+      Identifier: ' X'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' V'
+      TypeReference
+        Identifier: ' V'
+      Block
+        ReturnStatement
+          NullKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' Y'
+    TypeParameter
+      Identifier: ' Z'
+    TypeParameter
+      Identifier: ' A'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' X'
+      TypeReference
+        Identifier: ' X'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    MethodSignature
+      Identifier: '
+    foo'
+      TypeParameter
+        Identifier: 'Y'
+      TypeParameter
+        Identifier: ' Z'
+      TypeParameter
+        Identifier: ' A'
+      TypeParameter
+        Identifier: ' B'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' Y'
+      TypeReference
+        Identifier: ' Y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' foo'
+            TypeParameter
+              Identifier: 'Z'
+            TypeParameter
+              Identifier: ' A'
+            TypeParameter
+              Identifier: ' B'
+            TypeParameter
+              Identifier: ' C'
+            TypeParameter
+              Identifier: ' D'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Z'
+            TypeReference
+              Identifier: ' Z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' foo'
+            TypeParameter
+              Identifier: 'A'
+            TypeParameter
+              Identifier: ' B'
+            TypeParameter
+              Identifier: ' C'
+            TypeParameter
+              Identifier: ' D'
+            TypeParameter
+              Identifier: ' E'
+            TypeParameter
+              Identifier: ' F'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' A'
+            Block
+              ReturnStatement
+                Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo1b'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' B'
+        StringKeyword
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo1b'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' B'
+        StringKeyword
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo1b'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo1c'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo1c'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo1c'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I'
+        StringKeyword
+        BooleanKeyword
+        NumberKeyword
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I'
+        StringKeyword
+        BooleanKeyword
+        NumberKeyword
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' B'
+        StringKeyword
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo5b'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo5b'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo5b'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I'
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+        TypeReference
+          Identifier: ' Date'
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo8'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' B'
+        StringKeyword
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo8'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I'
+        StringKeyword
+        StringKeyword
+        BooleanKeyword
+        TypeReference
+          Identifier: ' Date'
+  FunctionDeclaration
+    Identifier: ' foo8'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo9'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' B'
+        StringKeyword
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo9'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        StringKeyword
+        NumberKeyword
+        TypeReference
+          Identifier: ' B'
+          StringKeyword
+          StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo9'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo10'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' B'
+        StringKeyword
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo10'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' foo10'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo11'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' B'
+        StringKeyword
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo11'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' foo11'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo12'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I'
+        TypeReference
+          Identifier: 'B'
+          StringKeyword
+          NumberKeyword
+        NumberKeyword
+        TypeReference
+          Identifier: ' Date'
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo12'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        TypeReference
+          Identifier: 'B'
+          StringKeyword
+          NumberKeyword
+        NumberKeyword
+        TypeReference
+          Identifier: ' Date'
+  FunctionDeclaration
+    Identifier: ' foo12'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo12b'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I2'
+  FunctionDeclaration
+    Identifier: ' foo12b'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        StringKeyword
+        StringKeyword
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo12b'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo13'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I'
+        StringKeyword
+        TypeReference
+          Identifier: ' Date'
+        TypeReference
+          Identifier: ' RegExp'
+        TypeReference
+          Identifier: ' Date'
+  FunctionDeclaration
+    Identifier: ' foo13'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' foo13'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo14'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I'
+        StringKeyword
+        TypeReference
+          Identifier: ' Date'
+        TypeReference
+          Identifier: ' RegExp'
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo14'
+    Parameter
+      Identifier: 'x'
+      TypeQuery
+        Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' foo14'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo15'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I2'
+  FunctionDeclaration
+    Identifier: ' foo15'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        NumberKeyword
+        TypeReference
+          Identifier: ' B'
+          StringKeyword
+          StringKeyword
+        TypeReference
+          Identifier: ' B'
+          NumberKeyword
+          StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo15'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block

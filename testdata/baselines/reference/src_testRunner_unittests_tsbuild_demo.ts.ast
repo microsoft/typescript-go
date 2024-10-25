@@ -1,0 +1,136 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    getFsContentsForDemoProjectReferencesCoreConfig'
+        ImportSpecifier
+          Identifier: '
+    getSysForDemoProjectReferences'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTsc'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getSysForDemoProjectReferences'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getSysForDemoProjectReferences'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            sys'
+                        Identifier: 'writeFile'
+                      StringLiteral
+                      CallExpression
+                        Identifier: '
+                getFsContentsForDemoProjectReferencesCoreConfig'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    references'
+                            ArrayLiteralExpression
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                        path'
+                                  StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getSysForDemoProjectReferences'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            sys'
+                        Identifier: 'prependFile'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral

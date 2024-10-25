@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' X'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        NewExpression
+          Identifier: ' C1'
+          NumericLiteral

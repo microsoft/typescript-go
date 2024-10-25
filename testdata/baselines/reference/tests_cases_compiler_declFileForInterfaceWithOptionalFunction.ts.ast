@@ -1,0 +1,19 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    foo'
+      QuestionToken
+      Parameter
+        Identifier: 'x'
+        QuestionToken
+    MethodSignature
+      Identifier: '
+    foo2'
+      QuestionToken
+      Parameter
+        Identifier: 'x'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword

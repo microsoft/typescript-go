@@ -1,0 +1,537 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              AnyKeyword
+            VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Robot'
+    TupleType
+      NumberKeyword
+      StringKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' MultiSkilledRobot'
+    TupleType
+      StringKeyword
+      TupleType
+        StringKeyword
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robotA'
+        TypeReference
+          Identifier: ' Robot'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robotB'
+        TypeReference
+          Identifier: ' Robot'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robots'
+        ArrayLiteralExpression
+          Identifier: 'robotA'
+          Identifier: ' robotB'
+  FunctionDeclaration
+    Identifier: ' getRobots'
+    Block
+      ReturnStatement
+        Identifier: ' robots'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobotA'
+        TypeReference
+          Identifier: ' MultiSkilledRobot'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobotB'
+        TypeReference
+          Identifier: ' MultiSkilledRobot'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobots'
+        ArrayLiteralExpression
+          Identifier: 'multiRobotA'
+          Identifier: ' multiRobotB'
+  FunctionDeclaration
+    Identifier: ' getMultiRobots'
+    Block
+      ReturnStatement
+        Identifier: ' multiRobots'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          BindingElement
+            Identifier: ' nameA'
+    Identifier: ' robots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          BindingElement
+            Identifier: ' nameA'
+    CallExpression
+      Identifier: ' getRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          BindingElement
+            Identifier: ' nameA'
+    ArrayLiteralExpression
+      Identifier: 'robotA'
+      Identifier: ' robotB'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'primarySkillA'
+              BindingElement
+                Identifier: ' secondarySkillA'
+    Identifier: ' multiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'primarySkillA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'primarySkillA'
+              BindingElement
+                Identifier: ' secondarySkillA'
+    CallExpression
+      Identifier: ' getMultiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'primarySkillA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'primarySkillA'
+              BindingElement
+                Identifier: ' secondarySkillA'
+    ArrayLiteralExpression
+      Identifier: 'multiRobotA'
+      Identifier: ' multiRobotB'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'primarySkillA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'numberB'
+    Identifier: ' robots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberB'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'numberB'
+    CallExpression
+      Identifier: ' getRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberB'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'numberB'
+    ArrayLiteralExpression
+      Identifier: 'robotA'
+      Identifier: ' robotB'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberB'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameB'
+    Identifier: ' multiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameB'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameB'
+    CallExpression
+      Identifier: ' getMultiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameB'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameB'
+    ArrayLiteralExpression
+      Identifier: 'multiRobotA'
+      Identifier: ' multiRobotB'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameB'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'numberA2'
+          BindingElement
+            Identifier: ' nameA2'
+          BindingElement
+            Identifier: ' skillA2'
+    Identifier: ' robots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA2'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'numberA2'
+          BindingElement
+            Identifier: ' nameA2'
+          BindingElement
+            Identifier: ' skillA2'
+    CallExpression
+      Identifier: ' getRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA2'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'numberA2'
+          BindingElement
+            Identifier: ' nameA2'
+          BindingElement
+            Identifier: ' skillA2'
+    ArrayLiteralExpression
+      Identifier: 'robotA'
+      Identifier: ' robotB'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA2'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameMA'
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'primarySkillA'
+              BindingElement
+                Identifier: ' secondarySkillA'
+    Identifier: ' multiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameMA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameMA'
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'primarySkillA'
+              BindingElement
+                Identifier: ' secondarySkillA'
+    CallExpression
+      Identifier: ' getMultiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameMA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameMA'
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'primarySkillA'
+              BindingElement
+                Identifier: ' secondarySkillA'
+    ArrayLiteralExpression
+      Identifier: 'multiRobotA'
+      Identifier: ' multiRobotB'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameMA'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'numberA3'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'robotAInfo'
+    Identifier: ' robots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberA3'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'numberA3'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'robotAInfo'
+    CallExpression
+      Identifier: ' getRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberA3'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'numberA3'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'robotAInfo'
+    ArrayLiteralExpression
+      Identifier: 'robotA'
+      Identifier: ' robotB'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberA3'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'multiRobotAInfo'
+    Identifier: ' multiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'multiRobotAInfo'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'multiRobotAInfo'
+    CallExpression
+      Identifier: ' getMultiRobots'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'multiRobotAInfo'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'multiRobotAInfo'
+    ArrayLiteralExpression
+      Identifier: 'multiRobotA'
+      Identifier: ' multiRobotB'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'multiRobotAInfo'

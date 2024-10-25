@@ -1,0 +1,27 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' TypeGuards'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' IsObject'
+        Parameter
+          Identifier: 'value'
+          AnyKeyword
+        TypePredicate
+          Identifier: ' value'
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'index'
+                StringKeyword
+              AnyKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              TypeOfExpression
+                ParenthesizedExpression
+                  Identifier: 'value'
+              EqualsEqualsEqualsToken
+              StringLiteral

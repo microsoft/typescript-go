@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    a'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    PropertyDeclaration
+      Identifier: ' // error: duplicate identifier
+    a'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' K'
+    PropertyDeclaration
+      Identifier: '
+    b'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: ' // error: duplicate identifier
+    b'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      Identifier: '
+    c'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    c'
+      StringKeyword

@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xs'
+        ArrayType
+          TypeQuery
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xs2'
+        TypeQuery
+          Identifier: ' Array'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xs3'
+        TypeQuery
+          Identifier: ' Array'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xs4'
+        TypeQuery
+          Identifier: ' Array'
+          TypeQuery
+            Identifier: ' x'

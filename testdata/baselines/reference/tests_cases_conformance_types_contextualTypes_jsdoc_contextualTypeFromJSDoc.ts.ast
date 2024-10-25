@@ -1,0 +1,59 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'value'
+      Block
+    GetAccessor
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' x'
+                  NumericLiteral
+            ArrayLiteralExpression
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' y'
+                  NumericLiteral

@@ -1,0 +1,112 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' foo'
+    StringLiteral
+  EnumDeclaration
+    Identifier: ' A'
+    EnumMember
+      Identifier: '
+    a'
+      Identifier: ' foo'
+    EnumMember
+      Identifier: '
+    b'
+    EnumMember
+      Identifier: '
+    c'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    d'
+      AsExpression
+        SatisfiesExpression
+          NonNullExpression
+            ParenthesizedExpression
+              Identifier: 'c'
+          NumberKeyword
+        AnyKeyword
+    EnumMember
+      Identifier: '
+    e'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' foo'
+    StringLiteral
+  EnumDeclaration
+    Identifier: ' A'
+    EnumMember
+      Identifier: '
+    a'
+      Identifier: ' foo'
+    EnumMember
+      Identifier: '
+    b'
+      NumericLiteral
+  EnumDeclaration
+    Identifier: ' B'
+    EnumMember
+      Identifier: '
+    a'
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+  EnumDeclaration
+    Identifier: ' C'
+    EnumMember
+      Identifier: '
+    a'
+      PrefixUnaryExpression
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+  EnumDeclaration
+    Identifier: ' D'
+    EnumMember
+      Identifier: '
+    a'
+      ParenthesizedExpression
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    a'
+    EnumMember
+      Identifier: '
+    b'
+    EnumMember
+      Identifier: '
+    c'
+      Identifier: ' a'
+    EnumMember
+      Identifier: '
+    d'
+    EnumMember
+      Identifier: '
+    e'
+      BinaryExpression
+        Identifier: ' d'
+        BarToken
+        Identifier: ' b'
+    EnumMember
+      Identifier: '
+    f'

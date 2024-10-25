@@ -1,0 +1,87 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      EqualsToken
+      Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' fn1'
+    Parameter
+      Identifier: 'x2'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x2'
+          EqualsToken
+          Identifier: ' value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x3'
+        Identifier: 'a'
+      EqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+x3'
+        StringLiteral
+      EqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'x1'
+      EqualsToken
+      Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' fn2'
+    Parameter
+      Identifier: 'x4'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            Identifier: 'x4'
+          EqualsToken
+          Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'x3'
+          Identifier: 'a'
+      EqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ElementAccessExpression
+          Identifier: 'x3'
+          StringLiteral
+      EqualsToken
+      Identifier: ' value'

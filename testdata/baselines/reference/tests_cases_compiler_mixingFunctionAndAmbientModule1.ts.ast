@@ -1,0 +1,123 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ModuleDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumberKeyword
+      FunctionDeclaration
+        Identifier: ' My'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        Block
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      ModuleDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumberKeyword
+      FunctionDeclaration
+        Identifier: ' My'
+        Parameter
+          Identifier: 's'
+          BooleanKeyword
+      FunctionDeclaration
+        Identifier: ' My'
+        Parameter
+          Identifier: 's'
+          AnyKeyword
+        Block
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      ModuleDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumberKeyword
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        Parameter
+          Identifier: 's'
+          BooleanKeyword
+  ModuleDeclaration
+    Identifier: ' D'
+    ModuleBlock
+      ModuleDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumberKeyword
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        Parameter
+          Identifier: 's'
+          BooleanKeyword
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        Parameter
+          Identifier: 's'
+          AnyKeyword
+  ModuleDeclaration
+    Identifier: ' E'
+    ModuleBlock
+      ModuleDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumberKeyword
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        Parameter
+          Identifier: 's'
+          BooleanKeyword
+      ModuleDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                NumberKeyword
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' My'
+        Parameter
+          Identifier: 's'
+          AnyKeyword

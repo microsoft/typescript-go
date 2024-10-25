@@ -1,0 +1,50 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' NullLogger'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ILogger'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' information'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' debug'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' warning'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' error'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fatal'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' log'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+      Block

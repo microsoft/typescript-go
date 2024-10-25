@@ -1,0 +1,19 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noUnusedLocals: true
+//// [| namespace greeter {
+////   // Do not remove
+////   /**
+////    * JSDoc Comment
+////    */
+////   class /* comment2 */ class1 {
+////   }
+//// } |]
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      NoSubstitutionTemplateLiteral

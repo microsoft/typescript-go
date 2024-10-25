@@ -1,0 +1,173 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    MethodDeclaration
+      Identifier: '
+    f'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' T'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              CallExpression
+                ElementAccessExpression
+                  Identifier: ' x'
+                  StringLiteral
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'notHere'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' C'
+                TypeReference
+                  Identifier: 'Date'
+            Identifier: 'f'
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+          TypeReference
+            Identifier: 'Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' i'
+              Identifier: 'foo'
+            Identifier: 'notHere'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b'
+        CallExpression
+          ElementAccessExpression
+            PropertyAccessExpression
+              Identifier: ' i'
+              Identifier: 'foo'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' Date'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        StringKeyword
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' a'
+            Identifier: 'notHere'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b'
+        StringKeyword
+        CallExpression
+          ElementAccessExpression
+            CallExpression
+              Identifier: ' a'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    foo'
+            ArrowFunction
+              TypeParameter
+                Identifier: 'T'
+                TypeReference
+                  Identifier: ' Date'
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' a'
+                      CallExpression
+                        ElementAccessExpression
+                          Identifier: ' x'
+                          StringLiteral
+                ReturnStatement
+                  BinaryExpression
+                    Identifier: ' a'
+                    PlusToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'notHere'
+          PropertyAssignment
+            Identifier: '
+    bar'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' b'
+                    Identifier: 'foo'
+                Identifier: 'notHere'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' b'
+            Identifier: 'foo'
+          NewExpression
+            Identifier: ' Date'

@@ -1,0 +1,61 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @Filename: /a.tsx
+////var x: Array<numb/*a*/;
+////[].map<numb/*b*/;
+////1 < Infini/*c*/;
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'GlobalsOrKeywords'
+        PropertyAssignment
+          Identifier: '
+    excludes'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'GlobalsOrKeywords'

@@ -1,0 +1,20 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' A'
+        ModuleBlock
+          ClassDeclaration
+            Identifier: ' C'
+      ClassDeclaration
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' E'
+      ImportEqualsDeclaration
+        Identifier: ' E'
+        QualifiedName
+          Identifier: ' A'
+          Identifier: 'C'

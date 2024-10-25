@@ -1,0 +1,42 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CancellationToken'
+        ImportSpecifier
+          Identifier: ' NavigationBarItem'
+        ImportSpecifier
+          Identifier: ' NavigationTree'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNavigationBarItems'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    ArrayType
+      TypeReference
+        Identifier: ' NavigationBarItem'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNavigationTree'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    TypeReference
+      Identifier: ' NavigationTree'

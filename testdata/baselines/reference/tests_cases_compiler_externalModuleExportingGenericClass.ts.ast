@@ -1,0 +1,43 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ExportAssignment
+    Identifier: ' C'
+  ImportEqualsDeclaration
+    Identifier: ' a'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeReference
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        AnyKeyword
+        PropertyAccessExpression
+          ParenthesizedExpression
+            NewExpression
+              Identifier: ' a'
+          Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        NumberKeyword
+        PropertyAccessExpression
+          ParenthesizedExpression
+            NewExpression
+              Identifier: ' a'
+              NumberKeyword
+          Identifier: 'foo'

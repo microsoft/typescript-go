@@ -1,0 +1,81 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0'
+          BindingElement
+            Identifier: ' r1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+        PropertyAssignment
+          Identifier: '
+        isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+        PropertyAssignment
+          Identifier: '
+        isNewIdentifierLocation'
+          TrueKeyword

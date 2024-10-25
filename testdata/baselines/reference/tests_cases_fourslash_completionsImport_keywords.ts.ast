@@ -1,0 +1,117 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' preferences'
+        TypeReference
+          QualifiedName
+            Identifier: ' FourSlashInterface'
+            Identifier: 'UserPreferences'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' includeCompletionsForModuleExports'
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          PropertyAccessExpression
+            Identifier: ' completion'
+            Identifier: 'globals'
+        ShorthandPropertyAssignment
+          Identifier: '
+        preferences'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          PropertyAccessExpression
+            Identifier: ' completion'
+            Identifier: 'globals'
+        ShorthandPropertyAssignment
+          Identifier: '
+        preferences'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              Identifier: '
+            completion'
+              Identifier: 'globalThisEntry'
+            SpreadElement
+              PropertyAccessExpression
+                Identifier: 'completion'
+                Identifier: 'globalsVars'
+            PropertyAccessExpression
+              Identifier: '
+            completion'
+              Identifier: 'undefinedVarEntry'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+                name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+                source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+                sourceDisplay'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+                text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+                hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+                sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'AutoImportSuggestions'
+            SpreadElement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'completion'
+                    Identifier: 'globalKeywords'
+                  Identifier: 'filter'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'e'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' e'
+                      Identifier: 'name'
+                    ExclamationEqualsEqualsToken
+                    StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: '
+        preferences'

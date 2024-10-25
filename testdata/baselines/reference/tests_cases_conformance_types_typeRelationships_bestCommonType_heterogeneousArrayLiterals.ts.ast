@@ -1,0 +1,732 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ArrayLiteralExpression
+          NumericLiteral
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+          ArrayLiteralExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            NumericLiteral
+          ArrayLiteralExpression
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' foo'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' bar'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' foo'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' foo'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' bar'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' foo'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        ArrayLiteralExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        ArrayLiteralExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        ArrayLiteralExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        ArrayLiteralExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            StringLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+          ArrayLiteralExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' base'
+        TypeReference
+          Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' derived'
+        TypeReference
+          Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' derived2'
+        TypeReference
+          Identifier: ' Derived2'
+  ModuleDeclaration
+    Identifier: ' Derived'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' h'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' foo'
+                  Identifier: ' base'
+                PropertyAssignment
+                  Identifier: ' basear'
+                  Identifier: ' derived'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' foo'
+                  Identifier: ' base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' foo'
+                  Identifier: ' base'
+                PropertyAssignment
+                  Identifier: ' basear'
+                  Identifier: ' derived'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' foo'
+                  Identifier: ' derived'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' base'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' derived'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' base'
+              ArrowFunction
+                EqualsGreaterThanToken
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' l'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' base'
+              ArrowFunction
+                EqualsGreaterThanToken
+                NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' m'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' base'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' derived'
+              ArrowFunction
+                EqualsGreaterThanToken
+                NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            ArrayLiteralExpression
+              ArrayLiteralExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' base'
+              ArrayLiteralExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' derived'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o'
+            ArrayLiteralExpression
+              Identifier: 'derived'
+              Identifier: ' derived2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            ArrayLiteralExpression
+              Identifier: 'derived'
+              Identifier: ' derived2'
+              Identifier: ' base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' q'
+            ArrayLiteralExpression
+              ArrayLiteralExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' derived2'
+              ArrayLiteralExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' derived'
+  ModuleDeclaration
+    Identifier: ' WithContextualType'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+            ArrayLiteralExpression
+              Identifier: 'derived'
+              Identifier: ' derived2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrayType
+              TypeReference
+                Identifier: ' Derived'
+            ArrayLiteralExpression
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            ArrayType
+              TypeReference
+                Identifier: ' Derived'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            ArrayType
+              TypeLiteral
+                CallSignature
+                  TypeReference
+                    Identifier: ' Base'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' derived'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' derived2'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrayLiteralExpression
+              Identifier: 't'
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            ArrayLiteralExpression
+              Identifier: 't'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' t'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' t'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' u'
+              ArrowFunction
+                EqualsGreaterThanToken
+                NullKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Derived'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrayLiteralExpression
+              Identifier: 't'
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            ArrayLiteralExpression
+              Identifier: 't'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' t'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' t'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' u'
+              ArrowFunction
+                EqualsGreaterThanToken
+                NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' h'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' derived'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            ArrayLiteralExpression
+              Identifier: 'u'
+              Identifier: ' base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            ArrayLiteralExpression
+              Identifier: 'u'
+              Identifier: ' derived'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Derived'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Derived'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrayLiteralExpression
+              Identifier: 't'
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            ArrayLiteralExpression
+              Identifier: 't'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' t'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' t'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' u'
+              ArrowFunction
+                EqualsGreaterThanToken
+                NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' h'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' derived'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            ArrayLiteralExpression
+              Identifier: 'u'
+              Identifier: ' base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            ArrayLiteralExpression
+              Identifier: 'u'
+              Identifier: ' derived'
+  FunctionDeclaration
+    Identifier: ' foo4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Base'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrayLiteralExpression
+              Identifier: 't'
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            ArrayLiteralExpression
+              Identifier: 't'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' t'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' t'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' u'
+              ArrowFunction
+                EqualsGreaterThanToken
+                NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' h'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' derived'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            ArrayLiteralExpression
+              Identifier: 'u'
+              Identifier: ' base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            ArrayLiteralExpression
+              Identifier: 'u'
+              Identifier: ' derived'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' u'

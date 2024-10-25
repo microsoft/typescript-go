@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b'
+          StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          AnyKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'a'
+            StringLiteral

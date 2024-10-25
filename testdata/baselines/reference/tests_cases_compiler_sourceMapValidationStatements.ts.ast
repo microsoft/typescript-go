@@ -1,0 +1,321 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              PlusEqualsToken
+              Identifier: ' i'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              AsteriskEqualsToken
+              NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          GreaterThanToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              SlashEqualsToken
+              NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              PlusEqualsToken
+              NumericLiteral
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+        x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        z'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: '
+        q'
+                StringLiteral
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+        Identifier: ' a'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'z'
+              EqualsToken
+              ElementAccessExpression
+                Identifier: ' a'
+                Identifier: 'j'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' v'
+                NumericLiteral
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        obj'
+                Identifier: 'q'
+              EqualsToken
+              StringLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'obj'
+                  Identifier: 'z'
+                LessThanToken
+                NumericLiteral
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            obj'
+                      Identifier: 'z'
+                    EqualsToken
+                    NumericLiteral
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            obj'
+                      Identifier: 'q'
+                    EqualsToken
+                    StringLiteral
+      TryStatement
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e1'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' b'
+                  Identifier: ' e1'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        y'
+              EqualsToken
+              NumericLiteral
+      WithStatement
+        Identifier: 'obj'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        i'
+              EqualsToken
+              NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        z'
+              EqualsToken
+              NumericLiteral
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'obj'
+          Identifier: 'z'
+        CaseBlock
+          CaseClause
+            NumericLiteral
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            x'
+              BreakStatement
+          CaseClause
+            NumericLiteral
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            x'
+              BreakStatement
+          DefaultClause
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            x'
+                  AsteriskEqualsToken
+                  NumericLiteral
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            x'
+                  EqualsToken
+                  NumericLiteral
+              BreakStatement
+      WhileStatement
+        BinaryExpression
+          Identifier: 'x'
+          LessThanToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+        x'
+      DoStatement
+        Block
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+        x'
+        BinaryExpression
+          Identifier: 'x'
+          GreaterThanToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            ConditionalExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'x'
+                  EqualsEqualsToken
+                  NumericLiteral
+              QuestionToken
+              BinaryExpression
+                Identifier: ' x'
+                PlusToken
+                NumericLiteral
+              ColonToken
+              BinaryExpression
+                Identifier: ' x'
+                MinusToken
+                NumericLiteral
+      ExpressionStatement
+        ConditionalExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'x'
+              EqualsEqualsToken
+              NumericLiteral
+          QuestionToken
+          BinaryExpression
+            Identifier: ' x'
+            PlusToken
+            NumericLiteral
+          ColonToken
+          BinaryExpression
+            Identifier: ' x'
+            MinusToken
+            NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' z'
+            EqualsToken
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    eval'
+          StringLiteral
+      ReturnStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        FunctionExpression
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+    x'
+                EqualsToken
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'

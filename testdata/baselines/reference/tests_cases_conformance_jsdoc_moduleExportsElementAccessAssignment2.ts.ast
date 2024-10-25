@@ -1,0 +1,43 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' GlobalThing'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'type'
+    Parameter
+      Identifier: ' ctor'
+    Parameter
+      Identifier: ' exports'
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' exports'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+        exports'
+                BinaryExpression
+                  StringLiteral
+                  PlusToken
+                  Identifier: ' type'
+              EqualsToken
+              Identifier: ' ctor'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// @Filename: ref.js
+GlobalThing'
+      Identifier: 'x'

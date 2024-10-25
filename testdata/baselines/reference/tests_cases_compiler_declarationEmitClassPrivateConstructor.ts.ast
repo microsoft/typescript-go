@@ -1,0 +1,54 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' PrivateInterface'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ExportedClass1'
+    Constructor
+      PrivateKeyword
+      Parameter
+        Identifier: 'data'
+        TypeReference
+          Identifier: ' PrivateInterface'
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ExportedClass2'
+    Constructor
+      PrivateKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' PrivateInterface'
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ExportedClass3'
+    Constructor
+      PrivateKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' PrivateInterface'
+      Parameter
+        PrivateKeyword
+        Identifier: ' n'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ExportedClass4'
+    Constructor
+      PrivateKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' PrivateInterface'
+      Parameter
+        PublicKeyword
+        Identifier: ' n'
+        NumberKeyword
+      Block

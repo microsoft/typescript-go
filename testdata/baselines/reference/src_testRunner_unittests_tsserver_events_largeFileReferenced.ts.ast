@@ -1,0 +1,322 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' getFileType'
+            Parameter
+              Identifier: 'useLargeTsFile'
+              BooleanKeyword
+            Block
+              ReturnStatement
+                ConditionalExpression
+                  Identifier: ' useLargeTsFile'
+                  QuestionToken
+                  StringLiteral
+                  ColonToken
+                  StringLiteral
+          FunctionDeclaration
+            Identifier: ' getLargeFile'
+            Parameter
+              Identifier: 'useLargeTsFile'
+              BooleanKeyword
+            Block
+              ReturnStatement
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    CallExpression
+                      Identifier: 'getFileType'
+                      Identifier: 'useLargeTsFile'
+                    TemplateTail
+          FunctionDeclaration
+            Identifier: ' createSessionWithEventHandler'
+            Parameter
+              Identifier: 'files'
+              ArrayType
+                TypeReference
+                  Identifier: ' File'
+            Parameter
+              Identifier: ' useLargeTsFile'
+              BooleanKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' largeFile'
+                    TypeReference
+                      Identifier: ' File'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            path'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            CallExpression
+                              Identifier: 'getLargeFile'
+                              Identifier: 'useLargeTsFile'
+                            TemplateTail
+                      PropertyAssignment
+                        Identifier: '
+            content'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            fileSize'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'maxFileSize'
+                          PlusToken
+                          NumericLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        files'
+                    Identifier: 'push'
+                  Identifier: 'largeFile'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' host'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' TestServerHost'
+                        Identifier: 'createServerHost'
+                      Identifier: 'files'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' session'
+                    NewExpression
+                      Identifier: ' TestSession'
+                      Identifier: 'host'
+              ReturnStatement
+                Identifier: ' session'
+          FunctionDeclaration
+            Identifier: ' verifyLargeFile'
+            Parameter
+              Identifier: 'useLargeTsFile'
+              BooleanKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        it'
+                  StringLiteral
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' file'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                NoSubstitutionTemplateLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' tsconfig'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                NoSubstitutionTemplateLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                CallExpression
+                                  Identifier: ' jsonToReadableText'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' files'
+                                      ArrayLiteralExpression
+                                        StringLiteral
+                                        CallExpression
+                                          Identifier: ' getLargeFile'
+                                          Identifier: 'useLargeTsFile'
+                                    PropertyAssignment
+                                      Identifier: ' compilerOptions'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' target'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: ' allowJs'
+                                          TrueKeyword
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' files'
+                            ArrayLiteralExpression
+                              Identifier: 'file'
+                              Identifier: ' tsconfig'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' session'
+                            CallExpression
+                              Identifier: ' createSessionWithEventHandler'
+                              Identifier: 'files'
+                              Identifier: ' useLargeTsFile'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            openFilesForSession'
+                          ArrayLiteralExpression
+                            Identifier: 'file'
+                          Identifier: ' session'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            baselineTsserverLogs'
+                          StringLiteral
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              CallExpression
+                                Identifier: 'getFileType'
+                                Identifier: 'useLargeTsFile'
+                              TemplateTail
+                          Identifier: ' session'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+        it'
+                  StringLiteral
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' file'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                NoSubstitutionTemplateLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                NoSubstitutionTemplateLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' files'
+                            ArrayLiteralExpression
+                              Identifier: 'file'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' session'
+                            CallExpression
+                              Identifier: ' createSessionWithEventHandler'
+                              Identifier: 'files'
+                              Identifier: ' useLargeTsFile'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            openFilesForSession'
+                          ArrayLiteralExpression
+                            Identifier: 'file'
+                          Identifier: ' session'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            baselineTsserverLogs'
+                          StringLiteral
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              CallExpression
+                                Identifier: 'getFileType'
+                                Identifier: 'useLargeTsFile'
+                              TemplateTail
+                          Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyLargeFile'
+                      TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyLargeFile'
+                      FalseKeyword

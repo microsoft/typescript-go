@@ -1,0 +1,36 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' P'
+    TypeParameter
+      Identifier: 'R'
+    Constructor
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            Identifier: 'resolve'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' R'
+              VoidKeyword
+          VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' P'
+    TypeParameter
+      Identifier: 'R'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' P'
+      StringKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'r'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: ' r'
+              StringLiteral

@@ -1,0 +1,103 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Outer'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' instantiated'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' uninstantiated'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' P'
+  ImportEqualsDeclaration
+    Identifier: ' importInst'
+    QualifiedName
+      Identifier: ' Outer'
+      Identifier: 'instantiated'
+  ImportEqualsDeclaration
+    Identifier: ' importUninst'
+    QualifiedName
+      Identifier: ' Outer'
+      Identifier: 'uninstantiated'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        TypeQuery
+          QualifiedName
+            Identifier: ' importInst'
+            Identifier: 'C'
+        PropertyAccessExpression
+          Identifier: ' importInst'
+          Identifier: 'C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeReference
+          QualifiedName
+            Identifier: ' importInst'
+            Identifier: 'C'
+        NewExpression
+          Identifier: ' x1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeQuery
+          QualifiedName
+            Identifier: ' importUninst'
+            Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        TypeReference
+          Identifier: ' Outer'
+        Identifier: ' Outer'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        TypeQuery
+          Identifier: ' importInst'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x5'
+      EqualsToken
+      Identifier: ' Outer'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x5'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' Outer'
+        Identifier: 'instantiated'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        TypeQuery
+          Identifier: ' importUninst'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x7'
+        TypeQuery
+          Identifier: ' Outer'
+        Identifier: ' Outer'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x7'
+      EqualsToken
+      Identifier: ' importInst'

@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+  ForInStatement
+    ArrayLiteralExpression
+      Identifier: 'a'
+      Identifier: ' b'
+    ArrayLiteralExpression
+    Block

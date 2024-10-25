@@ -1,0 +1,7 @@
+SourceFile
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'foo'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' data'

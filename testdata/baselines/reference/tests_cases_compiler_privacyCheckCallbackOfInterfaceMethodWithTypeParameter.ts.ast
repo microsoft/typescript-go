@@ -1,0 +1,27 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    f1'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            Identifier: 'p'
+            TypeReference
+              Identifier: ' T'
+          AnyKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'

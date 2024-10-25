@@ -1,0 +1,87 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PositiveInfinity'
+    LiteralType
+      NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' NegativeInfinity'
+    LiteralType
+      PrefixUnaryExpression
+        NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TypeOfInfinity'
+    TypeQuery
+      Identifier: ' Infinity'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TypeOfNaN'
+    TypeQuery
+      Identifier: ' NaN'
+  TypeAliasDeclaration
+    Identifier: ' A'
+    LiteralType
+      NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' B'
+    LiteralType
+      NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' Infinity'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Oops'
+    LiteralType
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oops'
+        NumericLiteral

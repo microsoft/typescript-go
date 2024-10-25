@@ -1,0 +1,34 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Thing'
+    GetAccessor
+      Identifier: ' style'
+      TypeReference
+        Identifier: ' Foo'
+    SetAccessor
+      Identifier: ' style'
+      Parameter
+        Identifier: 'cssText'
+        UnionType
+          StringKeyword
+          TypeReference
+            Identifier: ' Bar'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    hello'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    world'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    extra'
+      AnyKeyword

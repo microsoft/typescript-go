@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                Identifier: ' foo'

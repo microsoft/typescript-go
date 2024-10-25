@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' metadata'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Decorator
+        Identifier: 'metadata'
+      Identifier: ' m'
+      Block

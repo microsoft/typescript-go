@@ -1,0 +1,8 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' parse1'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+      Identifier: ''
+    Block

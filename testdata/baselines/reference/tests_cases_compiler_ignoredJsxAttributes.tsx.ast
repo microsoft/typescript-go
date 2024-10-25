@@ -1,0 +1,70 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Props'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'dataProp'
+        StringKeyword
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Yadda'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' Props'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' props'
+        TypeReference
+          Identifier: ' Props'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    foo'
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        JsxSelfClosingElement
+          Identifier: 'Yadda'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' data-yadda'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        JsxSelfClosingElement
+          Identifier: 'Yadda'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' data-yadda'
+              JsxExpression
+                NumericLiteral

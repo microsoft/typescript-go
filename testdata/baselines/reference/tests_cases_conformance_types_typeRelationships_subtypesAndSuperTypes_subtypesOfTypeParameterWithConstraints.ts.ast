@@ -1,0 +1,838 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C3'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D1'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'U'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' D4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'U'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' D5'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D6'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'U'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D7'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'V'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' V'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D8'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' D9'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'U'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' D10'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'V'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' V'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' D11'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' V'
+  ClassDeclaration
+    Identifier: ' D12'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'U'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' V'
+  ClassDeclaration
+    Identifier: ' D13'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'V'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' V'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' V'
+  ClassDeclaration
+    Identifier: ' D14'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'Date'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Date'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D15'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D16'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'U'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D17'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'V'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' V'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D18'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'Date'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Date'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D19'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' D20'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'U'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' D21'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'V'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' V'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' D22'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'Date'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Date'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D23'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' V'
+  ClassDeclaration
+    Identifier: ' D24'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'U'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' V'
+  ClassDeclaration
+    Identifier: ' D25'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'V'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' V'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' V'
+  ClassDeclaration
+    Identifier: ' D26'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'Date'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Date'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Date'
+  ClassDeclaration
+    Identifier: ' D27'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Date'
+  ClassDeclaration
+    Identifier: ' D28'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'U'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Date'
+  ClassDeclaration
+    Identifier: ' D29'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'V'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' V'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Date'

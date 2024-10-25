@@ -1,0 +1,24 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' default'
+        Identifier: ' A'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' default'
+    StringLiteral
+  ExportAssignment
+    ObjectLiteralExpression
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' __importDefault'
+        Parameter
+          Identifier: 'm'
+          AnyKeyword
+        VoidKeyword

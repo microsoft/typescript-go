@@ -1,0 +1,19 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts"/>
+
+////switch (x) {
+////    case[]:
+////}
+
+format'
+        Identifier: 'document'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'currentFileContentIs'
+      NoSubstitutionTemplateLiteral

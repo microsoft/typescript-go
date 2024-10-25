@@ -1,0 +1,27 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' $'
+    PropertySignature
+      Identifier: ' x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' $'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' $'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Identifier: ' x'

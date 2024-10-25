@@ -1,0 +1,32 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: ' blub'
+      StringKeyword
+  EmptyStatement
+  FunctionDeclaration
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'this'
+      TypeReference
+        Identifier: ' Foo'
+    Block
+  TypeAliasDeclaration
+    Identifier: ' Test'
+    TypeReference
+      Identifier: ' ThisParameterType'
+      TypeQuery
+        Identifier: ' fn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fb'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' fn'
+            Identifier: 'bind'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' blub'
+              StringLiteral

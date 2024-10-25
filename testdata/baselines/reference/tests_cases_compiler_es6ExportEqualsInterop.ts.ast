@@ -1,0 +1,640 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Foo'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+      ExportAssignment
+        Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Foo'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+        a'
+                NumberKeyword
+              PropertySignature
+                Identifier: '
+        b'
+                NumberKeyword
+      ExportAssignment
+        Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Foo'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Foo'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+        a'
+                NumberKeyword
+              PropertySignature
+                Identifier: '
+        b'
+                NumberKeyword
+      ExportAssignment
+        Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' Foo'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                NumberKeyword
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+                NumberKeyword
+      ExportAssignment
+        Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Foo'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+      ModuleDeclaration
+        Identifier: ' Foo'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                NumberKeyword
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+                NumberKeyword
+      ExportAssignment
+        Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' Foo'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' Bar'
+            PropertySignature
+              Identifier: '
+            x'
+              NumberKeyword
+            PropertySignature
+              Identifier: '
+            y'
+              NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Foo'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+        a'
+                NumberKeyword
+              PropertySignature
+                Identifier: '
+        b'
+                NumberKeyword
+      ExportAssignment
+        Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+      ExportAssignment
+        Identifier: ' foo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+      ModuleDeclaration
+        Identifier: ' foo'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                NumberKeyword
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+                NumberKeyword
+      ExportAssignment
+        Identifier: ' foo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Foo'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertyDeclaration
+          Identifier: '
+        y'
+          NumberKeyword
+      ExportAssignment
+        Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Foo'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertyDeclaration
+          Identifier: '
+        y'
+          NumberKeyword
+      ModuleDeclaration
+        Identifier: ' Foo'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                NumberKeyword
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+                NumberKeyword
+      ExportAssignment
+        Identifier: ' Foo'
+  ImportEqualsDeclaration
+    Identifier: ' z1'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' z2'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' z3'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' z4'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' z5'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' z6'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' z7'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' z8'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' z9'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' z0'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+z1'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z2'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z3'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z4'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z5'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z6'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z7'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z8'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z9'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z0'
+      Identifier: 'a'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x3'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x4'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x5'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x6'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x7'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x8'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x9'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' x0'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' y1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' y2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' y3'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' y4'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' y5'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' y6'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' y7'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' y8'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' y9'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' y0'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+y1'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+y2'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+y3'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+y4'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+y5'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+y6'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+y7'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+y8'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+y9'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+y0'
+      Identifier: 'a'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a3'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a4'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a5'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a6'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a7'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a8'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a9'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a0'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+
+a1'
+  ExpressionStatement
+    Identifier: '
+a2'
+  ExpressionStatement
+    Identifier: '
+a3'
+  ExpressionStatement
+    Identifier: '
+a4'
+  ExpressionStatement
+    Identifier: '
+a5'
+  ExpressionStatement
+    Identifier: '
+a6'
+  ExpressionStatement
+    Identifier: '
+a7'
+  ExpressionStatement
+    Identifier: '
+a8'
+  ExpressionStatement
+    Identifier: '
+a9'
+  ExpressionStatement
+    Identifier: '
+a0'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+        Identifier: ' a1'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+        Identifier: ' a2'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+        Identifier: ' a3'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+        Identifier: ' a4'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+        Identifier: ' a5'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+        Identifier: ' a6'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+        Identifier: ' a7'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+        Identifier: ' a8'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+        Identifier: ' a9'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' a'
+        Identifier: ' a0'
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral

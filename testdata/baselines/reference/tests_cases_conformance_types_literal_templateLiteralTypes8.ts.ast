@@ -1,0 +1,43 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+  a'
+      StringLiteral
+    EnumMember
+      Identifier: '
+  b'
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Stringify'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'T'
+        TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z1'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'E'
+            TemplateTail
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z2'
+        TypeReference
+          Identifier: ' Stringify'
+          TypeReference
+            Identifier: 'E'
+        StringLiteral

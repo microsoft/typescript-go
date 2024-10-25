@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' $'
+            Identifier: 'extend'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' workItem'
+              AnyKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' workItem'
+              AnyKeyword
+            PropertySignature
+              Identifier: ' width'
+              StringKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' workItem'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: '_workItem'
+          ObjectLiteralExpression

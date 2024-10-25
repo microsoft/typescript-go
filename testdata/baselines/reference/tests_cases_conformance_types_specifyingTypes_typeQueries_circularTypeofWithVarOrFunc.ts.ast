@@ -1,0 +1,85 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' typeAlias1'
+    TypeQuery
+      Identifier: ' varOfAliasedType1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' varOfAliasedType1'
+        TypeReference
+          Identifier: ' typeAlias1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' varOfAliasedType2'
+        TypeReference
+          Identifier: ' typeAlias2'
+  TypeAliasDeclaration
+    Identifier: ' typeAlias2'
+    TypeQuery
+      Identifier: ' varOfAliasedType2'
+  FunctionDeclaration
+    Identifier: ' func'
+    TypeReference
+      Identifier: ' typeAlias3'
+    Block
+      ReturnStatement
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' varOfAliasedType3'
+        CallExpression
+          Identifier: ' func'
+  TypeAliasDeclaration
+    Identifier: ' typeAlias3'
+    TypeQuery
+      Identifier: ' varOfAliasedType3'
+  InterfaceDeclaration
+    Identifier: ' Input'
+    PropertySignature
+      Identifier: '
+  a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+  b'
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' R'
+    TypeReference
+      Identifier: ' ReturnType'
+      TypeQuery
+        Identifier: ' mul'
+  FunctionDeclaration
+    Identifier: ' mul'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' Input'
+    TypeReference
+      Identifier: ' R'
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' input'
+            Identifier: 'a'
+          AsteriskToken
+          PropertyAccessExpression
+            Identifier: ' input'
+            Identifier: 'b'
+  TypeAliasDeclaration
+    Identifier: ' R2'
+    TypeReference
+      Identifier: ' ReturnType'
+      TypeQuery
+        Identifier: ' f'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeReference
+      Identifier: ' R2'
+    Block
+      ReturnStatement
+        NumericLiteral

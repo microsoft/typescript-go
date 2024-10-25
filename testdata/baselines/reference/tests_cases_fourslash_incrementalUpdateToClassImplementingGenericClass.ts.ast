@@ -1,0 +1,44 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////declare function alert(message?: string): void;
+////class Animal<T> {
+////    constructor(public name: T) { }
+////    move(meters: number) {
+////        alert(this.name + " moved " + meters + "m.");
+////    }
+////}
+////class Animal2 extends Animal<string> {
+////    constructor(name: string) { super(name); }
+////    /*1*/get name2() { return this.name; }
+////}
+////var a = new Animal2('eprst');
+
+
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'noErrors'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'noErrors'

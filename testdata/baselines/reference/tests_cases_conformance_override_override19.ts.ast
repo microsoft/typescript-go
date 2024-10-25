@@ -1,0 +1,78 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    ConstructorType
+      AbstractKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        AnyKeyword
+      AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' CreateMixin'
+    TypeParameter
+      Identifier: 'C'
+      TypeReference
+        Identifier: ' Foo'
+    TypeParameter
+      Identifier: ' T'
+      TypeReference
+        Identifier: ' Foo'
+    Parameter
+      Identifier: 'Context'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: ' Base'
+      TypeReference
+        Identifier: ' T'
+    IntersectionType
+      TypeReference
+        Identifier: ' T'
+      TypeLiteral
+        ConstructSignature
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' context'
+              TypeReference
+                Identifier: ' InstanceType'
+                TypeReference
+                  Identifier: 'C'
+  ClassDeclaration
+    Identifier: ' Context'
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    doSomething'
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' CreateMixin'
+          Identifier: 'Context'
+          Identifier: ' A'
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' foo'
+      Block
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' CreateMixin'
+          Identifier: 'Context'
+          Identifier: ' A'
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' doSomethang'
+      Block

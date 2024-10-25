@@ -1,0 +1,288 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Book'
+    PropertySignature
+      Identifier: '
+    foreword'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Cover'
+    PropertySignature
+      Identifier: '
+    color'
+      QuestionToken
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        TypeReference
+          Identifier: ' Book'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' forword'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        UnionType
+          TypeReference
+            Identifier: ' Book'
+          StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foreward'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        UnionType
+          TypeReference
+            Identifier: ' Book'
+          ParenthesizedType
+            ArrayType
+              TypeReference
+                Identifier: 'Book'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' foreword'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' forwards'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        IntersectionType
+          TypeReference
+            Identifier: ' Book'
+          TypeReference
+            Identifier: ' Cover'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foreword'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' colour'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b5'
+        IntersectionType
+          TypeReference
+            Identifier: ' Book'
+          TypeReference
+            Identifier: ' Cover'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foreward'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' color'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b6'
+        IntersectionType
+          TypeReference
+            Identifier: ' Book'
+          TypeReference
+            Identifier: ' Cover'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foreword'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' color'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' price'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b7'
+        IntersectionType
+          TypeReference
+            Identifier: ' Book'
+          NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foreword'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' price'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b8'
+        UnionType
+          TypeReference
+            Identifier: ' Cover'
+          ArrayType
+            TypeReference
+              Identifier: ' Cover'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' couleur'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b9'
+        UnionType
+          TypeReference
+            Identifier: ' Book'
+          ArrayType
+            TypeReference
+              Identifier: ' Book'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' forewarned'
+            StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Indexed'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Cover'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b10'
+        TypeReference
+          Identifier: ' Indexed'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b11'
+        TypeReference
+          Identifier: ' Indexed'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' colour'
+                StringLiteral
+  FunctionDeclaration
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' IFoo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj1'
+            TypeReference
+              Identifier: ' T'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj2'
+            IntersectionType
+              TypeReference
+                Identifier: ' T'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' prop'
+                  BooleanKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' prop'
+                TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj3'
+            UnionType
+              TypeReference
+                Identifier: ' T'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' prop'
+                  BooleanKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' prop'
+                TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj4'
+            UnionType
+              IntersectionType
+                TypeReference
+                  Identifier: ' T'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' prop'
+                    BooleanKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' name'
+                  StringKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' prop'
+                TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj5'
+            UnionType
+              ObjectKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  StringKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' z'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj6'
+            IntersectionType
+              ObjectKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  StringKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' z'
+                StringLiteral

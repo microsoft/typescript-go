@@ -1,0 +1,9 @@
+SourceFile
+  EmptyStatement
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  EmptyStatement

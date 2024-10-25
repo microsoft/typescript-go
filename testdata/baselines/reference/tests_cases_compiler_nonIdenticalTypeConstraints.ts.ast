@@ -1,0 +1,121 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Different'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    b'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    c'
+      BooleanKeyword
+  ClassDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Function'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Different'
+    PropertySignature
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Qux'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Different'
+    PropertySignature
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' Qux'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Function'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Function'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Function'
+    PropertySignature
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Baz'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Function'
+    PropertySignature
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' Baz'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Function'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' Quux'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Quux'
+    TypeParameter
+      Identifier: 'U'
+    PropertySignature
+      Identifier: '
+    m'
+      TypeReference
+        Identifier: ' U'

@@ -1,0 +1,34 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Type'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Enum'
+                Identifier: 'A'
+            LiteralType
+              NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Type'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ObjectLiteralExpression
+          SpreadAssignment
+            ParenthesizedExpression
+              AsExpression
+                ObjectLiteralExpression
+                TypeReference
+                  Identifier: ' Type'

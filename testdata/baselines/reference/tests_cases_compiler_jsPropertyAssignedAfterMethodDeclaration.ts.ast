@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    a'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a'
+                  EqualsToken
+                  NumericLiteral

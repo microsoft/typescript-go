@@ -1,0 +1,103 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    PropertySignature
+      Identifier: ' type'
+      LiteralType
+        StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    PropertySignature
+      Identifier: ' type'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' AB'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' itemId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' items'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'id'
+              StringKeyword
+            TypeReference
+              Identifier: ' AB'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            ComputedPropertyName
+              Identifier: 'itemId'
+            Identifier: ' itemOk1'
+        Identifier: ' items'
+  ExpressionStatement
+    TypeOfExpression
+      Identifier: ' itemOk1'
+  InterfaceDeclaration
+    Identifier: ' ObjWithItems'
+    PropertySignature
+      Identifier: '
+    items'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          TypeReference
+            Identifier: ' AB'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objWithItems'
+        TypeReference
+          Identifier: ' ObjWithItems'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' items'
+            ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' itemOk2'
+        ElementAccessExpression
+          PropertyAccessExpression
+            Identifier: ' objWithItems'
+            Identifier: 'items'
+          Identifier: 'itemId'
+  ExpressionStatement
+    TypeOfExpression
+      Identifier: ' itemOk2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: '
+    items'
+            ObjectBindingPattern
+              BindingElement
+                ComputedPropertyName
+                  Identifier: 'itemId'
+                Identifier: ' itemWithTSError'
+            ObjectLiteralExpression
+        Identifier: ' objWithItems'
+  ExpressionStatement
+    TypeOfExpression
+      Identifier: ' itemWithTSError'

@@ -1,0 +1,29 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getSomething'
+    TypeReference
+      Identifier: ' Something'
+    Block
+      ReturnStatement
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Something'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Thing'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' getSomething'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' instance'
+        CallExpression
+          Identifier: ' getSomething'

@@ -1,0 +1,26 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    m'
+      TypeParameter
+        Identifier: 'U'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'U'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+        AnyKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

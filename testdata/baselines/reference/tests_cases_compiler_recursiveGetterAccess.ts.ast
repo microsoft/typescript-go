@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyClass'
+    GetAccessor
+      Identifier: ' testProp'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'testProp'

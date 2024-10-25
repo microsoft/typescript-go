@@ -1,0 +1,42 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' get'
+    StringKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' get'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' real'
+    Parameter
+      Identifier: 'arg'
+      QuestionToken
+      StringKeyword
+    AnyKeyword
+    Block
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' get'
+        UnionType
+          StringKeyword
+          LiteralType
+            NullKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' real'
+        Parameter
+          Identifier: 'arg'
+          StringKeyword
+        StringKeyword

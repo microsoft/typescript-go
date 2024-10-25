@@ -1,0 +1,36 @@
+SourceFile
+  ExpressionStatement
+    Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'a'
+          BindingElement
+            Identifier: ' b'
+            Identifier: ' a'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            NumericLiteral
+  ExpressionStatement
+    Identifier: '
+b'
+  FunctionDeclaration
+    Identifier: ' test'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'c'
+        BindingElement
+          Identifier: ' d'
+          Identifier: ' c'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        NumberKeyword
+    Block

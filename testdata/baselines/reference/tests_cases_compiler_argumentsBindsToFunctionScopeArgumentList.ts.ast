@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arguments'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arguments'
+          EqualsToken
+          NumericLiteral

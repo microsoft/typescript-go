@@ -1,0 +1,140 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Maybe'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      LiteralType
+        NullKeyword
+      UndefinedKeyword
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' GraphQLError'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Error'
+    PropertyDeclaration
+      Identifier: '
+  originalError'
+      TypeReference
+        Identifier: ' Error'
+  InterfaceDeclaration
+    Identifier: ' ExecutionArgs'
+    PropertySignature
+      Identifier: '
+  variableValues'
+      QuestionToken
+      TypeReference
+        Identifier: ' Maybe'
+        TypeLiteral
+          IndexSignature
+            ReadonlyKeyword
+            Parameter
+              Identifier: 'variable'
+              StringKeyword
+            UnknownKeyword
+  InterfaceDeclaration
+    Identifier: ' ExecutionContext'
+    PropertySignature
+      Identifier: '
+  variableValues'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'variable'
+            StringKeyword
+          UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' CoercedVariableValues'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' errors'
+          TypeReference
+            Identifier: ' ReadonlyArray'
+            TypeReference
+              Identifier: 'GraphQLError'
+        PropertySignature
+          Identifier: ' coerced'
+          QuestionToken
+          NeverKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' coerced'
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'variable'
+                StringKeyword
+              UnknownKeyword
+        PropertySignature
+          Identifier: ' errors'
+          QuestionToken
+          NeverKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getVariableValues'
+    Parameter
+      Identifier: 'inputs'
+      TypeLiteral
+        IndexSignature
+          ReadonlyKeyword
+          Parameter
+            Identifier: 'variable'
+            StringKeyword
+          UnknownKeyword
+    TypeReference
+      Identifier: ' CoercedVariableValues'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' buildExecutionContext'
+    Parameter
+      Identifier: '
+  args'
+      TypeReference
+        Identifier: ' ExecutionArgs'
+    UnionType
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        TypeReference
+          Identifier: 'GraphQLError'
+      TypeReference
+        Identifier: ' ExecutionContext'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' variableValues'
+                Identifier: ' rawVariableValues'
+            Identifier: ' args'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' coercedVariableValues'
+            CallExpression
+              Identifier: ' getVariableValues'
+              BinaryExpression
+                Identifier: 'rawVariableValues'
+                QuestionQuestionToken
+                ObjectLiteralExpression
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'coercedVariableValues'
+          Identifier: 'errors'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' coercedVariableValues'
+              Identifier: 'errors'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    variableValues'
+            PropertyAccessExpression
+              Identifier: ' coercedVariableValues'
+              Identifier: 'coerced'

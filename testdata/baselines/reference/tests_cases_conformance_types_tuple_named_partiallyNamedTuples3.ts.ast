@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tuple'
+        TupleType
+          NumberKeyword
+          NamedTupleMember
+            Identifier: ' name'
+            StringKeyword
+          BooleanKeyword
+          NamedTupleMember
+            Identifier: ' value'
+            NumberKeyword
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' output'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+              EqualsGreaterThanToken
+              Identifier: ' args'
+          SpreadElement
+            Identifier: 'tuple'

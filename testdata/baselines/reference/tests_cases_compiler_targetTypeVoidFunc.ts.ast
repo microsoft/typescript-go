@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeLiteral
+      ConstructSignature
+        NumberKeyword
+    Block
+      ReturnStatement
+        FunctionExpression
+          Block
+            ReturnStatement
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' f1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NewExpression
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        NewExpression
+          ParenthesizedExpression
+            CallExpression
+              Identifier: 'f1'

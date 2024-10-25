@@ -1,0 +1,21 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Namespace'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Namespace'
+            Identifier: 'Foo'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+	member'
+      StringKeyword

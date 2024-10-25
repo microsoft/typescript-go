@@ -1,0 +1,10 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: ' item'
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C1'

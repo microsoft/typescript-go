@@ -1,0 +1,78 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' asdf'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' asdf'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'asdf'
+              Identifier: 'x'
+      IfStatement
+        Identifier: 'asdf'
+        Block
+        IfStatement
+          Identifier: 'qwerty'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'asdf'
+          Block
+      SwitchStatement
+        Identifier: 'asdf'
+        CaseBlock
+          CaseClause
+            Identifier: ' qwerty'
+            BreakStatement
+          DefaultClause
+            BreakStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Identifier: ' asdf'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrowFunction
+              Parameter
+                Identifier: 'asdf'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  Identifier: ' qwerty'
+      ModuleDeclaration
+        Identifier: ' N'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+      ImportEqualsDeclaration
+        Identifier: ' c'
+        Identifier: ' N'
+      ImportEqualsDeclaration
+        Identifier: ' d'
+        Identifier: ' asdf'

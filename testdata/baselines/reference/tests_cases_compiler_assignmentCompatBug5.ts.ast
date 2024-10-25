@@ -1,0 +1,63 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      ArrayType
+        NumberKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo2'
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        NumberKeyword
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo3'
+      ArrowFunction
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo3'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement

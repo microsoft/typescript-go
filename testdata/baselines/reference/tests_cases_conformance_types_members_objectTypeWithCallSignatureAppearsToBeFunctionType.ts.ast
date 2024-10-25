@@ -1,0 +1,64 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        VoidKeyword
+        CallExpression
+          Identifier: ' i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            AnyKeyword
+          Parameter
+            Identifier: ' y'
+            QuestionToken
+            AnyKeyword
+          AnyKeyword
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'apply'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          CallSignature
+            VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        VoidKeyword
+        CallExpression
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb4'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            AnyKeyword
+          Parameter
+            Identifier: ' y'
+            QuestionToken
+            AnyKeyword
+          AnyKeyword
+        PropertyAccessExpression
+          Identifier: ' b'
+          Identifier: 'apply'

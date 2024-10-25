@@ -1,0 +1,4 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' a'
+    Identifier: ' A'

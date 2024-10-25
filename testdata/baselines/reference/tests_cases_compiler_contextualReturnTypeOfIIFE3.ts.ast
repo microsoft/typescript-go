@@ -1,0 +1,55 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' app'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+    bar'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: '
+      someFun'
+                    FunctionType
+                      Parameter
+                        Identifier: 'arg'
+                        NumberKeyword
+                      VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+app'
+          Identifier: 'foo'
+        Identifier: 'bar'
+      EqualsToken
+      CallExpression
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                ObjectLiteralExpression
+                  MethodDeclaration
+                    Identifier: ' someFun'
+                    Parameter
+                      Identifier: 'arg'
+                    Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+
+app'
+            Identifier: 'foo'
+          Identifier: 'bar'
+        Identifier: 'someFun'
+      NumericLiteral

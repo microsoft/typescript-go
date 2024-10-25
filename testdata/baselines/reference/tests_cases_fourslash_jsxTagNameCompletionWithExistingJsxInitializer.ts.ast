@@ -1,0 +1,60 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @filename: /foo.tsx
+////declare namespace JSX {
+////    interface Element { }
+////    interface IntrinsicElements {
+////        foo: {
+////            className: string;
+////        }
+////    }
+////}
+////<foo cl/**/={""} />
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        insertText'
+              Identifier: ' undefined'
+            PropertyAssignment
+              Identifier: '
+        isSnippet'
+              Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        jsxAttributeCompletionStyle'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithSnippetText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithInsertText'
+              TrueKeyword

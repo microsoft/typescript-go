@@ -1,0 +1,78 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Box'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    value'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' maybeBox'
+        UnknownKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+maybeBox'
+      InstanceOfKeyword
+      Identifier: ' Box'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+
+maybeBox'
+      InstanceOfKeyword
+      ExpressionWithTypeArguments
+        Identifier: ' Box'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+maybeBox'
+      InstanceOfKeyword
+      ParenthesizedExpression
+        ExpressionWithTypeArguments
+          Identifier: 'Box'
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+maybeBox'
+      InstanceOfKeyword
+      ParenthesizedExpression
+        ParenthesizedExpression
+          ExpressionWithTypeArguments
+            Identifier: 'Box'
+            NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      ExpressionWithTypeArguments
+        Identifier: ' // error
+
+Box'
+        NumberKeyword
+      InstanceOfKeyword
+      Identifier: ' Object'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ExpressionWithTypeArguments
+          Identifier: 'Box'
+          NumberKeyword
+      InstanceOfKeyword
+      Identifier: ' Object'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ParenthesizedExpression
+          ExpressionWithTypeArguments
+            Identifier: 'Box'
+            NumberKeyword
+      InstanceOfKeyword
+      Identifier: ' Object'

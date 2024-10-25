@@ -1,0 +1,58 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    VoidKeyword
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' i'
+        TypeAliasDeclaration
+          Identifier: ' foo'
+          TupleType
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+        console'
+            Identifier: 'log'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    VoidKeyword
+    Block
+      WhileStatement
+        TrueKeyword
+        TypeAliasDeclaration
+          Identifier: ' foo'
+          TupleType
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+        console'
+            Identifier: 'log'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    VoidKeyword
+    Block
+      IfStatement
+        TrueKeyword
+        TypeAliasDeclaration
+          Identifier: ' foo'
+          TupleType
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+        console'
+            Identifier: 'log'
+          StringLiteral

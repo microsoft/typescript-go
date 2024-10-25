@@ -1,0 +1,2917 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' IncrementalVerifierCallbacks'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' LoggerWithInMemoryLogs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    logDiagnostics'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    setCompilerOptionsForInferredProjectsRequestForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    Folder'
+        ImportSpecifier
+          Identifier: '
+    SymLink'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          TypeAliasDeclaration
+            Identifier: ' CalledMapsWithSingleArg'
+            UnionType
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+          TypeAliasDeclaration
+            Identifier: ' CalledMapsWithFiveArgs'
+            LiteralType
+              StringLiteral
+          TypeAliasDeclaration
+            Identifier: ' CalledMaps'
+            UnionType
+              TypeReference
+                Identifier: ' CalledMapsWithSingleArg'
+              TypeReference
+                Identifier: ' CalledMapsWithFiveArgs'
+          TypeAliasDeclaration
+            Identifier: ' CalledWithFiveArgs'
+            TupleType
+              TypeOperator
+                ArrayType
+                  StringKeyword
+              TypeOperator
+                ArrayType
+                  StringKeyword
+              TypeOperator
+                ArrayType
+                  StringKeyword
+              NumberKeyword
+          FunctionDeclaration
+            Identifier: ' createLoggerTrackingHostCalls'
+            Parameter
+              Identifier: 'host'
+              TypeReference
+                Identifier: ' TestServerHost'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' originals'
+                    TypeReference
+                      Identifier: ' Record'
+                      TypeReference
+                        Identifier: 'CalledMaps'
+                      AnyKeyword
+                    AsExpression
+                      ObjectLiteralExpression
+                      AnyKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' calledMaps'
+                    IntersectionType
+                      TypeReference
+                        Identifier: ' Record'
+                        TypeReference
+                          Identifier: 'CalledMapsWithSingleArg'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'MultiMap'
+                          StringKeyword
+                          LiteralType
+                            TrueKeyword
+                      TypeReference
+                        Identifier: ' Record'
+                        TypeReference
+                          Identifier: 'CalledMapsWithFiveArgs'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'MultiMap'
+                          StringKeyword
+                          TypeReference
+                            Identifier: ' CalledWithFiveArgs'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            fileExists'
+                        CallExpression
+                          Identifier: ' setCallsTrackingWithSingleArgFn'
+                          StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            directoryExists'
+                        CallExpression
+                          Identifier: ' setCallsTrackingWithSingleArgFn'
+                          StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            getDirectories'
+                        CallExpression
+                          Identifier: ' setCallsTrackingWithSingleArgFn'
+                          StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            readFile'
+                        CallExpression
+                          Identifier: ' setCallsTrackingWithSingleArgFn'
+                          StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            readDirectory'
+                        CallExpression
+                          Identifier: ' setCallsTrackingWithFiveArgFn'
+                          StringLiteral
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'host'
+                        TypeReference
+                          Identifier: ' IncrementalVerifierCallbacks'
+                    Identifier: 'beforeVerification'
+                  EqualsToken
+                  Identifier: ' storeAndSetToOriginal'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'host'
+                        TypeReference
+                          Identifier: ' IncrementalVerifierCallbacks'
+                    Identifier: 'afterVerification'
+                  EqualsToken
+                  Identifier: ' revertCallbacks'
+              FunctionDeclaration
+                Identifier: ' storeAndSetToOriginal'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' current'
+                        TypeReference
+                          Identifier: ' Record'
+                          TypeReference
+                            Identifier: 'CalledMaps'
+                          AnyKeyword
+                        AsExpression
+                          ObjectLiteralExpression
+                          AnyKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            forEachHostProperty'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'prop'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              ElementAccessExpression
+                                Identifier: '
+                current'
+                                Identifier: 'prop'
+                              EqualsToken
+                              ElementAccessExpression
+                                Identifier: ' host'
+                                Identifier: 'prop'
+                          ExpressionStatement
+                            BinaryExpression
+                              ElementAccessExpression
+                                Identifier: '
+                host'
+                                Identifier: 'prop'
+                              EqualsToken
+                              ElementAccessExpression
+                                Identifier: ' originals'
+                                Identifier: 'prop'
+                  ReturnStatement
+                    Identifier: ' current'
+              FunctionDeclaration
+                Identifier: ' revertCallbacks'
+                Parameter
+                  Identifier: 'storage'
+                  TypeReference
+                    Identifier: ' Record'
+                    TypeReference
+                      Identifier: 'CalledMaps'
+                    AnyKeyword
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            forEachHostProperty'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'prop'
+                        EqualsGreaterThanToken
+                        BinaryExpression
+                          ElementAccessExpression
+                            Identifier: ' host'
+                            Identifier: 'prop'
+                          EqualsToken
+                          ElementAccessExpression
+                            Identifier: ' storage'
+                            Identifier: 'prop'
+              ReturnStatement
+                Identifier: ' logCacheAndClear'
+              FunctionDeclaration
+                Identifier: ' setCallsTrackingWithSingleArgFn'
+                Parameter
+                  Identifier: 'prop'
+                  TypeReference
+                    Identifier: ' CalledMapsWithSingleArg'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' calledMap'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createMultiMap'
+                          StringKeyword
+                          LiteralType
+                            TrueKeyword
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+            originals'
+                        Identifier: 'prop'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            ParenthesizedExpression
+                              AsExpression
+                                Identifier: 'host'
+                                AnyKeyword
+                            Identifier: 'prop'
+                          Identifier: 'bind'
+                        Identifier: 'host'
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'host'
+                            AnyKeyword
+                        Identifier: 'prop'
+                      EqualsToken
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'f'
+                          StringKeyword
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                calledMap'
+                                Identifier: 'add'
+                              Identifier: 'f'
+                              TrueKeyword
+                          ReturnStatement
+                            CallExpression
+                              ElementAccessExpression
+                                Identifier: ' originals'
+                                Identifier: 'prop'
+                              Identifier: 'f'
+                  ReturnStatement
+                    Identifier: ' calledMap'
+              FunctionDeclaration
+                Identifier: ' setCallsTrackingWithFiveArgFn'
+                TypeParameter
+                  Identifier: 'U'
+                TypeParameter
+                  Identifier: ' V'
+                TypeParameter
+                  Identifier: ' W'
+                TypeParameter
+                  Identifier: ' X'
+                Parameter
+                  Identifier: 'prop'
+                  TypeReference
+                    Identifier: ' CalledMapsWithFiveArgs'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' calledMap'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createMultiMap'
+                          StringKeyword
+                          TupleType
+                            TypeReference
+                              Identifier: 'U'
+                            TypeReference
+                              Identifier: ' V'
+                            TypeReference
+                              Identifier: ' W'
+                            TypeReference
+                              Identifier: ' X'
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+            originals'
+                        Identifier: 'prop'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            ParenthesizedExpression
+                              AsExpression
+                                Identifier: 'host'
+                                AnyKeyword
+                            Identifier: 'prop'
+                          Identifier: 'bind'
+                        Identifier: 'host'
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'host'
+                            AnyKeyword
+                        Identifier: 'prop'
+                      EqualsToken
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'f'
+                          StringKeyword
+                        Parameter
+                          Identifier: ' arg1'
+                          QuestionToken
+                          TypeReference
+                            Identifier: ' U'
+                        Parameter
+                          Identifier: ' arg2'
+                          QuestionToken
+                          TypeReference
+                            Identifier: ' V'
+                        Parameter
+                          Identifier: ' arg3'
+                          QuestionToken
+                          TypeReference
+                            Identifier: ' W'
+                        Parameter
+                          Identifier: ' arg4'
+                          QuestionToken
+                          TypeReference
+                            Identifier: ' X'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                calledMap'
+                                Identifier: 'add'
+                              Identifier: 'f'
+                              ArrayLiteralExpression
+                                NonNullExpression
+                                  Identifier: 'arg1'
+                                NonNullExpression
+                                  Identifier: ' arg2'
+                                NonNullExpression
+                                  Identifier: ' arg3'
+                                NonNullExpression
+                                  Identifier: ' arg4'
+                          ReturnStatement
+                            CallExpression
+                              ElementAccessExpression
+                                Identifier: ' originals'
+                                Identifier: 'prop'
+                              Identifier: 'f'
+                              Identifier: ' arg1'
+                              Identifier: ' arg2'
+                              Identifier: ' arg3'
+                              Identifier: ' arg4'
+                  ReturnStatement
+                    Identifier: ' calledMap'
+              FunctionDeclaration
+                Identifier: ' logCacheEntry'
+                Parameter
+                  Identifier: 'logger'
+                  TypeReference
+                    Identifier: ' LoggerWithInMemoryLogs'
+                Parameter
+                  Identifier: ' callback'
+                  TypeReference
+                    Identifier: ' CalledMaps'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' Array'
+                            Identifier: 'from'
+                          TupleType
+                            StringKeyword
+                            ArrayType
+                              ParenthesizedType
+                                UnionType
+                                  LiteralType
+                                    TrueKeyword
+                                  TypeReference
+                                    Identifier: ' CalledWithFiveArgs'
+                          TypeLiteral
+                            PropertySignature
+                              Identifier: ' key'
+                              StringKeyword
+                            PropertySignature
+                              Identifier: ' count'
+                              NumberKeyword
+                          CallExpression
+                            PropertyAccessExpression
+                              ElementAccessExpression
+                                Identifier: 'calledMaps'
+                                Identifier: 'callback'
+                              Identifier: 'entries'
+                          ArrowFunction
+                            Parameter
+                              ArrayBindingPattern
+                                BindingElement
+                                  Identifier: 'key'
+                                BindingElement
+                                  Identifier: ' arr'
+                            EqualsGreaterThanToken
+                            ParenthesizedExpression
+                              ObjectLiteralExpression
+                                ShorthandPropertyAssignment
+                                  Identifier: ' key'
+                                PropertyAssignment
+                                  Identifier: ' count'
+                                  PropertyAccessExpression
+                                    Identifier: ' arr'
+                                    Identifier: 'length'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            logger'
+                        Identifier: 'info'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'callback'
+                          TemplateMiddle
+                        TemplateSpan
+                          CallExpression
+                            Identifier: 'jsonToReadableText'
+                            Identifier: 'result'
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: '
+            calledMaps'
+                          Identifier: 'callback'
+                        Identifier: 'clear'
+              FunctionDeclaration
+                Identifier: ' logCacheAndClear'
+                Parameter
+                  Identifier: 'logger'
+                  TypeReference
+                    Identifier: ' LoggerWithInMemoryLogs'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            forEachHostProperty'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'prop'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' logCacheEntry'
+                          Identifier: 'logger'
+                          Identifier: ' prop'
+              FunctionDeclaration
+                Identifier: ' forEachHostProperty'
+                Parameter
+                  Identifier: 'callback'
+                  FunctionType
+                    Parameter
+                      Identifier: 'prop'
+                      TypeReference
+                        Identifier: ' CalledMaps'
+                    VoidKeyword
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            callback'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            callback'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            callback'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            callback'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            callback'
+                      StringLiteral
+          FunctionDeclaration
+            Identifier: ' logSemanticDiagnostics'
+            Parameter
+              Identifier: 'session'
+              TypeReference
+                Identifier: ' TestSession'
+            Parameter
+              Identifier: ' project'
+              TypeReference
+                QualifiedName
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'Project'
+            Parameter
+              Identifier: ' file'
+              TypeReference
+                Identifier: ' File'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        logDiagnostics'
+                  Identifier: '
+            session'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'file'
+                        Identifier: 'path'
+                      TemplateTail
+                  Identifier: '
+            project'
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            project'
+                          Identifier: 'getLanguageService'
+                      Identifier: 'getSemanticDiagnostics'
+                    PropertyAccessExpression
+                      Identifier: 'file'
+                      Identifier: 'path'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' rootContent'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' root'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            Identifier: ' rootContent'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' imported'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'root'
+                            Identifier: ' imported'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        setCompilerOptionsForInferredProjectsRequestForSession'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'AMD'
+                        PropertyAssignment
+                          Identifier: '
+            noLib'
+                          TrueKeyword
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'root'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' project'
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' session'
+                                Identifier: 'getProjectService'
+                            Identifier: 'inferredProjects'
+                          NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' rootScriptInfo'
+                        ElementAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' project'
+                              Identifier: 'getRootScriptInfos'
+                          NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        Identifier: 'rootScriptInfo'
+                        Identifier: 'fileName'
+                      PropertyAccessExpression
+                        Identifier: ' root'
+                        Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // ensure that imported file was found
+        logSemanticDiagnostics'
+                      Identifier: 'session'
+                      Identifier: ' project'
+                      Identifier: ' imported'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' logCacheAndClear'
+                        CallExpression
+                          Identifier: ' createLoggerTrackingHostCalls'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // trigger synchronization to make sure that import will be fetched from the cache
+        // ensure file has correct number of errors after edit
+        editContent'
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logSemanticDiagnostics'
+                      Identifier: 'session'
+                      Identifier: ' project'
+                      Identifier: ' imported'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logCacheAndClear'
+                      PropertyAccessExpression
+                        Identifier: 'session'
+                        Identifier: 'logger'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // trigger synchronization to make sure that the host will try to find 'f2' module on disk
+        editContent'
+                      NoSubstitutionTemplateLiteral
+                  TryStatement
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            // trigger synchronization to make sure that the host will try to find 'f2' module on disk
+            logSemanticDiagnostics'
+                          Identifier: 'session'
+                          Identifier: ' project'
+                          Identifier: ' imported'
+                    CatchClause
+                      VariableDeclaration
+                        Identifier: 'e'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            session'
+                                Identifier: 'logger'
+                              Identifier: 'info'
+                            PropertyAccessExpression
+                              Identifier: 'e'
+                              Identifier: 'message'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logCacheAndClear'
+                      PropertyAccessExpression
+                        Identifier: 'session'
+                        Identifier: 'logger'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        editContent'
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logSemanticDiagnostics'
+                      Identifier: 'session'
+                      Identifier: ' project'
+                      Identifier: ' imported'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logCacheAndClear'
+                      PropertyAccessExpression
+                        Identifier: 'session'
+                        Identifier: 'logger'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // setting compiler options discards module resolution cache
+        setCompilerOptionsForInferredProjectsRequestForSession'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'AMD'
+                        PropertyAssignment
+                          Identifier: '
+            noLib'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+            target'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ES5'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logSemanticDiagnostics'
+                      Identifier: 'session'
+                      Identifier: ' project'
+                      Identifier: ' imported'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logCacheAndClear'
+                      PropertyAccessExpression
+                        Identifier: 'session'
+                        Identifier: 'logger'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+                  FunctionDeclaration
+                    Identifier: ' editContent'
+                    Parameter
+                      Identifier: 'newContent'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            rootScriptInfo'
+                            Identifier: 'editContent'
+                          NumericLiteral
+                          PropertyAccessExpression
+                            Identifier: ' rootContent'
+                            Identifier: 'length'
+                          Identifier: ' newContent'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+            rootContent'
+                          EqualsToken
+                          Identifier: ' newContent'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' root'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' imported'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'root'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        setCompilerOptionsForInferredProjectsRequestForSession'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'AMD'
+                        PropertyAssignment
+                          Identifier: '
+            noLib'
+                          TrueKeyword
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' logCacheAndClear'
+                        CallExpression
+                          Identifier: ' createLoggerTrackingHostCalls'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'root'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' project'
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' session'
+                                Identifier: 'getProjectService'
+                            Identifier: 'inferredProjects'
+                          NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' rootScriptInfo'
+                        ElementAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' project'
+                              Identifier: 'getRootScriptInfos'
+                          NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      PropertyAccessExpression
+                        Identifier: 'rootScriptInfo'
+                        Identifier: 'fileName'
+                      PropertyAccessExpression
+                        Identifier: ' root'
+                        Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        logSemanticDiagnostics'
+                      Identifier: 'session'
+                      Identifier: ' project'
+                      Identifier: ' root'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logCacheAndClear'
+                      PropertyAccessExpression
+                        Identifier: 'session'
+                        Identifier: 'logger'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        host'
+                        Identifier: 'writeFile'
+                      PropertyAccessExpression
+                        Identifier: 'imported'
+                        Identifier: 'path'
+                      PropertyAccessExpression
+                        Identifier: ' imported'
+                        Identifier: 'content'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logSemanticDiagnostics'
+                      Identifier: 'session'
+                      Identifier: ' project'
+                      Identifier: ' root'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logCacheAndClear'
+                      PropertyAccessExpression
+                        Identifier: 'session'
+                        Identifier: 'logger'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' clientFile'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' anotherModuleFile'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' moduleFile'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' tsconfigFile'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            CallExpression
+                              Identifier: ' jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                compilerOptions'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    target'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    module'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    baseUrl'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: ' // all paths are relative to the baseUrl
+                    paths'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          StringLiteral
+                                          ArrayLiteralExpression
+                                            StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                exclude'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                                    StringLiteral
+                                    StringLiteral
+                                    StringLiteral
+                                    StringLiteral
+                                    StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' projectFiles'
+                        ArrayLiteralExpression
+                          Identifier: 'clientFile'
+                          Identifier: ' anotherModuleFile'
+                          Identifier: ' moduleFile'
+                          Identifier: ' tsconfigFile'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          Identifier: 'projectFiles'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'clientFile'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' logCacheAndClear'
+                        CallExpression
+                          Identifier: ' createLoggerTrackingHostCalls'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Get definitions shouldnt make host requests
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'DefinitionRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'Definition'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                file'
+                              PropertyAccessExpression
+                                Identifier: ' clientFile'
+                                Identifier: 'path'
+                            PropertyAssignment
+                              Identifier: '
+                position'
+                              BinaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' clientFile'
+                                      Identifier: 'content'
+                                    Identifier: 'indexOf'
+                                  StringLiteral
+                                PlusToken
+                                NumericLiteral
+                            PropertyAssignment
+                              Identifier: '
+                line'
+                              NonNullExpression
+                                Identifier: ' undefined'
+                            PropertyAssignment
+                              Identifier: ' // TODO: GH#18217
+                offset'
+                              NonNullExpression
+                                Identifier: ' undefined'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logCacheAndClear'
+                      PropertyAccessExpression
+                        Identifier: 'session'
+                        Identifier: 'logger'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Open the file should call only file exists on module directory and use cached value for parental directory
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'moduleFile'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logCacheAndClear'
+                      PropertyAccessExpression
+                        Identifier: 'session'
+                        Identifier: 'logger'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  FunctionDeclaration
+                    Identifier: ' verifyWatchDirectoriesCaseSensitivity'
+                    Parameter
+                      Identifier: 'useCaseSensitiveFileNames'
+                      BooleanKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              ConditionalExpression
+                                Identifier: 'useCaseSensitiveFileNames'
+                                QuestionToken
+                                StringLiteral
+                                ColonToken
+                                StringLiteral
+                              TemplateTail
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' frontendDir'
+                                    StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' file1'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            Identifier: 'frontendDir'
+                                            TemplateTail
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' file2'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            Identifier: 'frontendDir'
+                                            TemplateTail
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' file3'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            Identifier: 'frontendDir'
+                                            TemplateTail
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' typeRoots'
+                                    ArrayLiteralExpression
+                                      StringLiteral
+                                      StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' types'
+                                    ArrayLiteralExpression
+                                      StringLiteral
+                                      StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' tsconfigFile'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            Identifier: 'frontendDir'
+                                            TemplateTail
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        CallExpression
+                                          Identifier: ' jsonToReadableText'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: '
+                        compilerOptions'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  Identifier: '
+                            strict'
+                                                  TrueKeyword
+                                                PropertyAssignment
+                                                  Identifier: '
+                            strictNullChecks'
+                                                  TrueKeyword
+                                                PropertyAssignment
+                                                  Identifier: '
+                            target'
+                                                  StringLiteral
+                                                PropertyAssignment
+                                                  Identifier: '
+                            module'
+                                                  StringLiteral
+                                                PropertyAssignment
+                                                  Identifier: '
+                            moduleResolution'
+                                                  StringLiteral
+                                                PropertyAssignment
+                                                  Identifier: '
+                            sourceMap'
+                                                  TrueKeyword
+                                                PropertyAssignment
+                                                  Identifier: '
+                            noEmitOnError'
+                                                  TrueKeyword
+                                                PropertyAssignment
+                                                  Identifier: '
+                            experimentalDecorators'
+                                                  TrueKeyword
+                                                PropertyAssignment
+                                                  Identifier: '
+                            emitDecoratorMetadata'
+                                                  TrueKeyword
+                                                ShorthandPropertyAssignment
+                                                  Identifier: '
+                            types'
+                                                PropertyAssignment
+                                                  Identifier: '
+                            noUnusedLocals'
+                                                  TrueKeyword
+                                                PropertyAssignment
+                                                  Identifier: '
+                            outDir'
+                                                  StringLiteral
+                                                ShorthandPropertyAssignment
+                                                  Identifier: '
+                            typeRoots'
+                                                PropertyAssignment
+                                                  Identifier: '
+                            baseUrl'
+                                                  StringLiteral
+                                                PropertyAssignment
+                                                  Identifier: '
+                            paths'
+                                                  ObjectLiteralExpression
+                                                    PropertyAssignment
+                                                      StringLiteral
+                                                      ArrayLiteralExpression
+                                                        StringLiteral
+                                            PropertyAssignment
+                                              Identifier: '
+                        include'
+                                              ArrayLiteralExpression
+                                                StringLiteral
+                                            PropertyAssignment
+                                              Identifier: '
+                        exclude'
+                                              ArrayLiteralExpression
+                                                StringLiteral
+                                                StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' projectFiles'
+                                    ArrayLiteralExpression
+                                      Identifier: 'file1'
+                                      Identifier: ' file2'
+                                      Identifier: ' tsconfigFile'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' host'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHost'
+                                        Identifier: 'createServerHost'
+                                      Identifier: 'projectFiles'
+                                      ObjectLiteralExpression
+                                        ShorthandPropertyAssignment
+                                          Identifier: ' useCaseSensitiveFileNames'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' session'
+                                    NewExpression
+                                      Identifier: ' TestSession'
+                                      Identifier: 'host'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                openFilesForSession'
+                                  ArrayLiteralExpression
+                                    Identifier: 'file1'
+                                  Identifier: ' session'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' logCacheAndClear'
+                                    CallExpression
+                                      Identifier: ' createLoggerTrackingHostCalls'
+                                      Identifier: 'host'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+
+                // Create file cookie.ts
+                host'
+                                    Identifier: 'writeFile'
+                                  PropertyAccessExpression
+                                    Identifier: 'file3'
+                                    Identifier: 'path'
+                                  PropertyAccessExpression
+                                    Identifier: ' file3'
+                                    Identifier: 'content'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                host'
+                                    Identifier: 'runQueuedTimeoutCallbacks'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                logCacheAndClear'
+                                  PropertyAccessExpression
+                                    Identifier: 'session'
+                                    Identifier: 'logger'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+
+                openFilesForSession'
+                                  ArrayLiteralExpression
+                                    Identifier: 'file3'
+                                  Identifier: ' session'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                logCacheAndClear'
+                                  PropertyAccessExpression
+                                    Identifier: 'session'
+                                    Identifier: 'logger'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                baselineTsserverLogs'
+                                  StringLiteral
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      ConditionalExpression
+                                        Identifier: 'useCaseSensitiveFileNames'
+                                        QuestionToken
+                                        StringLiteral
+                                        ColonToken
+                                        StringLiteral
+                                      TemplateTail
+                                  Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyWatchDirectoriesCaseSensitivity'
+                      FalseKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyWatchDirectoriesCaseSensitivity'
+                      TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  FunctionDeclaration
+                    Identifier: ' runFailedLookupTest'
+                    Parameter
+                      Identifier: 'resolution'
+                      UnionType
+                        LiteralType
+                          StringLiteral
+                        LiteralType
+                          StringLiteral
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' projectLocation'
+                            StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' file1'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'projectLocation'
+                                    TemplateTail
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                NoSubstitutionTemplateLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' file2'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'projectLocation'
+                                    TemplateTail
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                NoSubstitutionTemplateLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' tsconfig'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'projectLocation'
+                                    TemplateTail
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                CallExpression
+                                  Identifier: ' jsonToReadableText'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    files'
+                                      ArrayLiteralExpression
+                                        StringLiteral
+                                        StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    moduleResolution'
+                                      Identifier: ' resolution'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' files'
+                            ArrayLiteralExpression
+                              Identifier: 'file1'
+                              Identifier: ' file2'
+                              Identifier: ' tsconfig'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' host'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' TestServerHost'
+                                Identifier: 'createServerHost'
+                              Identifier: 'files'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' session'
+                            NewExpression
+                              Identifier: ' TestSession'
+                              Identifier: 'host'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            openFilesForSession'
+                          ArrayLiteralExpression
+                            Identifier: 'file1'
+                          Identifier: ' session'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' project'
+                            NonNullExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' session'
+                                        Identifier: 'getProjectService'
+                                    Identifier: 'configuredProjects'
+                                  Identifier: 'get'
+                                PropertyAccessExpression
+                                  Identifier: 'tsconfig'
+                                  Identifier: 'path'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            logSemanticDiagnostics'
+                          Identifier: 'session'
+                          Identifier: ' project'
+                          Identifier: ' file1'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            logSemanticDiagnostics'
+                          Identifier: 'session'
+                          Identifier: ' project'
+                          Identifier: ' file2'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' debugTypesFile'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'projectLocation'
+                                    TemplateTail
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            host'
+                            Identifier: 'writeFile'
+                          PropertyAccessExpression
+                            Identifier: 'debugTypesFile'
+                            Identifier: 'path'
+                          PropertyAccessExpression
+                            Identifier: ' debugTypesFile'
+                            Identifier: 'content'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            host'
+                            Identifier: 'runQueuedTimeoutCallbacks'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' // Scheduled invalidation of resolutions
+            host'
+                            Identifier: 'runQueuedTimeoutCallbacks'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: ' // Actual update
+
+            logSemanticDiagnostics'
+                          Identifier: 'session'
+                          Identifier: ' project'
+                          Identifier: ' file1'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            logSemanticDiagnostics'
+                          Identifier: 'session'
+                          Identifier: ' project'
+                          Identifier: ' file2'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            baselineTsserverLogs'
+                          StringLiteral
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'resolution'
+                              TemplateTail
+                          Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            runFailedLookupTest'
+                              StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            runFailedLookupTest'
+                              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  FunctionDeclaration
+                    Identifier: ' verifyNpmInstall'
+                    Parameter
+                      Identifier: 'timeoutDuringPartialInstallation'
+                      BooleanKeyword
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' root'
+                            StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' getRootedFileOrFolder'
+                            ArrowFunction
+                              TypeParameter
+                                Identifier: 'T'
+                                UnionType
+                                  TypeReference
+                                    Identifier: ' File'
+                                  TypeReference
+                                    Identifier: ' Folder'
+                              Parameter
+                                Identifier: 'fileOrFolder'
+                                TypeReference
+                                  Identifier: ' T'
+                              EqualsGreaterThanToken
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                fileOrFolder'
+                                      Identifier: 'path'
+                                    EqualsToken
+                                    BinaryExpression
+                                      Identifier: ' root'
+                                      PlusToken
+                                      PropertyAccessExpression
+                                        Identifier: ' fileOrFolder'
+                                        Identifier: 'path'
+                                ReturnStatement
+                                  Identifier: ' fileOrFolder'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' app'
+                            TypeReference
+                              Identifier: ' File'
+                            CallExpression
+                              Identifier: ' getRootedFileOrFolder'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                path'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                content'
+                                  StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' tsconfigJson'
+                            TypeReference
+                              Identifier: ' File'
+                            CallExpression
+                              Identifier: ' getRootedFileOrFolder'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                path'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                content'
+                                  StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' packageJson'
+                            TypeReference
+                              Identifier: ' File'
+                            CallExpression
+                              Identifier: ' getRootedFileOrFolder'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                path'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                content'
+                                  NoSubstitutionTemplateLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' host'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' TestServerHost'
+                                Identifier: 'createServerHost'
+                              ArrayLiteralExpression
+                                Identifier: 'app'
+                                Identifier: ' tsconfigJson'
+                                Identifier: ' packageJson'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' session'
+                            NewExpression
+                              Identifier: ' TestSession'
+                              Identifier: 'host'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'ConfigureRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'CommandTypes'
+                                Identifier: 'Configure'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' preferences'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' includePackageJsonAutoImports'
+                                      StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            openFilesForSession'
+                          ArrayLiteralExpression
+                            Identifier: 'app'
+                          Identifier: ' session'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' npmInstallComplete'
+                            FalseKeyword
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' filesAndFoldersToAdd'
+                            ArrayType
+                              ParenthesizedType
+                                UnionType
+                                  TypeReference
+                                    Identifier: 'File'
+                                  TypeReference
+                                    Identifier: ' Folder'
+                            CallExpression
+                              PropertyAccessExpression
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: ' content'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: ' content'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    content'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    content'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: ' content'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: ' content'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: ' content'
+                                      StringLiteral
+                                Identifier: 'map'
+                              Identifier: 'getRootedFileOrFolder'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifyAfterPartialOrCompleteNpmInstall'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+
+            filesAndFoldersToAdd'
+                            Identifier: 'push'
+                          SpreadElement
+                            CallExpression
+                              PropertyAccessExpression
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    content'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: ' content'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: ' content'
+                                      StringLiteral
+                                Identifier: 'map'
+                              Identifier: 'getRootedFileOrFolder'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            // Since we added/removed in .staging no timeout
+            verifyAfterPartialOrCompleteNpmInstall'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+
+            // Remove file "/user/username/projects/project/a/b/node_modules/.staging/typescript-8493ea5d/package.json.3017591594"
+            host'
+                            Identifier: 'deleteFile'
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'ts'
+                                Identifier: 'last'
+                              Identifier: 'filesAndFoldersToAdd'
+                            Identifier: 'path'
+                      ExpressionStatement
+                        PostfixUnaryExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            filesAndFoldersToAdd'
+                            Identifier: 'length'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifyAfterPartialOrCompleteNpmInstall'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+
+            filesAndFoldersToAdd'
+                            Identifier: 'push'
+                          SpreadElement
+                            CallExpression
+                              PropertyAccessExpression
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: ' content'
+                                      StringLiteral
+                                Identifier: 'map'
+                              Identifier: 'getRootedFileOrFolder'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifyAfterPartialOrCompleteNpmInstall'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+
+            filesAndFoldersToAdd'
+                            Identifier: 'push'
+                          SpreadElement
+                            CallExpression
+                              PropertyAccessExpression
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    path'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    content'
+                                      StringLiteral
+                                Identifier: 'map'
+                              Identifier: 'getRootedFileOrFolder'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifyAfterPartialOrCompleteNpmInstall'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+
+            // remove /a/b/node_modules/.staging/rxjs-22375c61/package.json.2252192041
+            host'
+                            Identifier: 'deleteFile'
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'ts'
+                                Identifier: 'last'
+                              Identifier: 'filesAndFoldersToAdd'
+                            Identifier: 'path'
+                      ExpressionStatement
+                        PostfixUnaryExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            filesAndFoldersToAdd'
+                            Identifier: 'length'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            // and add few more folders/files
+            filesAndFoldersToAdd'
+                            Identifier: 'push'
+                          SpreadElement
+                            CallExpression
+                              PropertyAccessExpression
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                Identifier: 'map'
+                              Identifier: 'getRootedFileOrFolder'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            // From the type root update
+            verifyAfterPartialOrCompleteNpmInstall'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+
+            ts'
+                            Identifier: 'forEach'
+                          Identifier: 'filesAndFoldersToAdd'
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' f'
+                            EqualsGreaterThanToken
+                            Block
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                f'
+                                    Identifier: 'path'
+                                  EqualsToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' f'
+                                            Identifier: 'path'
+                                          Identifier: 'replace'
+                                        StringLiteral
+                                        StringLiteral
+                                      Identifier: 'replace'
+                                    RegularExpressionLiteral
+                                    StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+
+            host'
+                            Identifier: 'deleteFolder'
+                          BinaryExpression
+                            Identifier: 'root'
+                            PlusToken
+                            StringLiteral
+                          TrueKeyword
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+            // npm installation complete, timeout after reload fs
+            npmInstallComplete'
+                          EqualsToken
+                          TrueKeyword
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifyAfterPartialOrCompleteNpmInstall'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+
+            baselineTsserverLogs'
+                          StringLiteral
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              ConditionalExpression
+                                Identifier: 'timeoutDuringPartialInstallation'
+                                QuestionToken
+                                StringLiteral
+                                ColonToken
+                                StringLiteral
+                              TemplateTail
+                          Identifier: '
+                session'
+                      FunctionDeclaration
+                        Identifier: ' verifyAfterPartialOrCompleteNpmInstall'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                filesAndFoldersToAdd'
+                                Identifier: 'forEach'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: 'f'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' host'
+                                    Identifier: 'ensureFileOrFolder'
+                                  Identifier: 'f'
+                          IfStatement
+                            BinaryExpression
+                              Identifier: 'npmInstallComplete'
+                              BarBarToken
+                              Identifier: ' timeoutDuringPartialInstallation'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    host'
+                                    Identifier: 'runQueuedTimeoutCallbacks'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' // Scheduled invalidation of resolutions
+                    host'
+                                    Identifier: 'runQueuedTimeoutCallbacks'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                    session'
+                                      Identifier: 'host'
+                                    Identifier: 'baselineHost'
+                                  StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            verifyNpmInstall'
+                              TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            verifyNpmInstall'
+                              FalseKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' projectLocation'
+                        StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' app'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'projectLocation'
+                                TemplateTail
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' tsconfig'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'projectLocation'
+                                TemplateTail
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' files'
+                        ArrayLiteralExpression
+                          Identifier: 'app'
+                          Identifier: ' tsconfig'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          Identifier: 'files'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'app'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' project'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' session'
+                                    Identifier: 'getProjectService'
+                                Identifier: 'configuredProjects'
+                              Identifier: 'get'
+                            PropertyAccessExpression
+                              Identifier: 'tsconfig'
+                              Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logSemanticDiagnostics'
+                      Identifier: 'session'
+                      Identifier: ' project'
+                      Identifier: ' app'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' debugTypesFile'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'projectLocation'
+                                TemplateTail
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' invoker'
+                        PropertyAccessExpression
+                          Identifier: ' host'
+                          Identifier: 'invokeFsWatchesRecursiveCallbacks'
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'invokeFsWatchesRecursiveCallbacks'
+                      EqualsToken
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'fullPath'
+                        Parameter
+                          Identifier: ' eventName'
+                        Parameter
+                          Identifier: ' entryFullPath'
+                        EqualsGreaterThanToken
+                        Block
+                          IfStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'fullPath'
+                                Identifier: 'endsWith'
+                              StringLiteral
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                invoker'
+                                    Identifier: 'call'
+                                  Identifier: 'host'
+                                  Identifier: ' fullPath'
+                                  Identifier: ' eventName'
+                                  Identifier: ' entryFullPath'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'writeFile'
+                      PropertyAccessExpression
+                        Identifier: 'debugTypesFile'
+                        Identifier: 'path'
+                      PropertyAccessExpression
+                        Identifier: ' debugTypesFile'
+                        Identifier: 'content'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        logSemanticDiagnostics'
+                      Identifier: 'session'
+                      Identifier: ' project'
+                      Identifier: ' app'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' module1'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' module2'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' symlink'
+                        TypeReference
+                          Identifier: ' SymLink'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+            symLink'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' config'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            CallExpression
+                              Identifier: ' jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                compilerOptions'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    baseUrl'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    paths'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          StringLiteral
+                                          ArrayLiteralExpression
+                                            StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'module1'
+                            Identifier: ' module2'
+                            Identifier: ' symlink'
+                            Identifier: ' config'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            PropertyAccessExpression
+                              Identifier: 'symlink'
+                              Identifier: 'path'
+                            TemplateTail
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'writeFile'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          PropertyAccessExpression
+                            Identifier: 'symlink'
+                            Identifier: 'path'
+                          TemplateTail
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'

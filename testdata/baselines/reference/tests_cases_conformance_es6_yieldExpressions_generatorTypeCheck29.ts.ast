@@ -1,0 +1,29 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g2'
+    TypeReference
+      Identifier: ' Iterator'
+      TypeReference
+        Identifier: 'Iterable'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          CallExpression
+            FunctionExpression
+              AsteriskToken
+              Block
+                ExpressionStatement
+                  YieldExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' x'
+                      EqualsGreaterThanToken
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'length'

@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' k'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          SpreadAssignment
+            Identifier: 'o'
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'k'
+            NumericLiteral

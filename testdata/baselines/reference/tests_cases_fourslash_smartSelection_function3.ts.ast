@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////const f3 = function () {
+////    /**/
+////}
+
+verify'
+        Identifier: 'baselineSmartSelection'

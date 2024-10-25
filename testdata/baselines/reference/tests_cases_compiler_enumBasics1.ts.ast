@@ -1,0 +1,56 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+	A'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+	B'
+    EnumMember
+      Identifier: '
+	C'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+
+/*
+var a: E;
+var b = E["B"]; // shouldn't error
+
+
+function foo(e: E) {}
+
+foo(a); // shouldn't error
+
+
+class C {
+	public e: E;
+
+	public m(): E { return this.e; } // shouldn't error
+}
+
+
+var e = E; // shouldn't error
+*/
+E'
+        Identifier: 'A'
+      Identifier: 'A'
+  EnumDeclaration
+    Identifier: ' E2'
+    EnumMember
+      Identifier: '
+	A'
+    EnumMember
+      Identifier: '
+	B'
+  EnumDeclaration
+    Identifier: ' E2'
+    EnumMember
+      Identifier: ' // should error for continued autonumbering
+	C'
+    EnumMember
+      Identifier: '
+	D'

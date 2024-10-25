@@ -1,0 +1,36 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' FuncOrGeneratorFunc'
+    FunctionType
+      ParenthesizedType
+        UnionType
+          NumberKeyword
+          TypeReference
+            Identifier: ' Generator'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                NumberKeyword
+              VoidKeyword
+            AnyKeyword
+            VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' FuncOrGeneratorFunc'
+        FunctionExpression
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'num'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' console'
+                      Identifier: 'log'
+                    Identifier: 'num'

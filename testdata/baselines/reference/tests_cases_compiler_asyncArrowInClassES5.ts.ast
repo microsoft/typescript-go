@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      ArrowFunction
+        AsyncKeyword
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        EqualsGreaterThanToken
+        Block

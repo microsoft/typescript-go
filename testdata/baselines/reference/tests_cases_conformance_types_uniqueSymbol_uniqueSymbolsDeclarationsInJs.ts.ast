@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' readonlyStaticCall'
+      CallExpression
+        Identifier: ' Symbol'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' readonlyStaticType'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' readonlyStaticTypeAndCall'
+      CallExpression
+        Identifier: ' Symbol'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' readwriteStaticCall'
+      CallExpression
+        Identifier: ' Symbol'
+    PropertyDeclaration
+      Identifier: '
+
+    /**
+     * @readonly
+     */
+    readonlyCall'
+      CallExpression
+        Identifier: ' Symbol'
+    PropertyDeclaration
+      Identifier: '
+    readwriteCall'
+      CallExpression
+        Identifier: ' Symbol'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' Symbol'

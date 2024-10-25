@@ -1,0 +1,1083 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CharacterCodes'
+        ImportSpecifier
+          Identifier: ' CommentDirective'
+        ImportSpecifier
+          Identifier: ' CommentKind'
+        ImportSpecifier
+          Identifier: ' CommentRange'
+        ImportSpecifier
+          Identifier: ' DiagnosticMessage'
+        ImportSpecifier
+          Identifier: ' JSDocParsingMode'
+        ImportSpecifier
+          Identifier: ' JSDocSyntaxKind'
+        ImportSpecifier
+          Identifier: ' JsxTokenSyntaxKind'
+        ImportSpecifier
+          Identifier: ' KeywordSyntaxKind'
+        ImportSpecifier
+          Identifier: ' LanguageVariant'
+        ImportSpecifier
+          Identifier: ' LineAndCharacter'
+        ImportSpecifier
+          Identifier: ' MapLike'
+        ImportSpecifier
+          Identifier: ' PunctuationOrKeywordSyntaxKind'
+        ImportSpecifier
+          Identifier: ' RegularExpressionFlags'
+        ImportSpecifier
+          Identifier: ' ScriptKind'
+        ImportSpecifier
+          Identifier: ' ScriptTarget'
+        ImportSpecifier
+          Identifier: ' SourceFileLike'
+        ImportSpecifier
+          Identifier: ' SyntaxKind'
+        ImportSpecifier
+          Identifier: ' TokenFlags'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ErrorCallback'
+    FunctionType
+      Parameter
+        Identifier: 'message'
+        TypeReference
+          Identifier: ' DiagnosticMessage'
+      Parameter
+        Identifier: ' length'
+        NumberKeyword
+      Parameter
+        Identifier: ' arg0'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' tokenIsIdentifierOrKeyword'
+    Parameter
+      Identifier: 'token'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' tokenIsIdentifierOrKeywordOrGreaterThan'
+    Parameter
+      Identifier: 'token'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Scanner'
+    MethodSignature
+      Identifier: '
+    /** @deprecated use {@link getTokenFullStart} */
+    getStartPos'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    getToken'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    getTokenFullStart'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    getTokenStart'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    getTokenEnd'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** @deprecated use {@link getTokenEnd} */
+    getTextPos'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** @deprecated use {@link getTokenStart} */
+    getTokenPos'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    getTokenText'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    getTokenValue'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    hasUnicodeEscape'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    hasExtendedUnicodeEscape'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    hasPrecedingLineBreak'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    hasPrecedingJSDocComment'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    hasPrecedingJSDocLeadingAsterisks'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    isIdentifier'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    isReservedWord'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    isUnterminated'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    getNumericLiteralFlags'
+      TypeReference
+        Identifier: ' TokenFlags'
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    getCommentDirectives'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' CommentDirective'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    getTokenFlags'
+      TypeReference
+        Identifier: ' TokenFlags'
+    MethodSignature
+      Identifier: '
+    reScanGreaterToken'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    reScanSlashToken'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    reScanSlashToken'
+      Parameter
+        Identifier: 'reportErrors'
+        QuestionToken
+        BooleanKeyword
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    reScanAsteriskEqualsToken'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    reScanTemplateToken'
+      Parameter
+        Identifier: 'isTaggedTemplate'
+        BooleanKeyword
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    /** @deprecated use {@link reScanTemplateToken}(false) */
+    reScanTemplateHeadOrNoSubstitutionTemplate'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    scanJsxIdentifier'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    scanJsxAttributeValue'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    reScanJsxAttributeValue'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    reScanJsxToken'
+      Parameter
+        Identifier: 'allowMultilineJsxText'
+        QuestionToken
+        BooleanKeyword
+      TypeReference
+        Identifier: ' JsxTokenSyntaxKind'
+    MethodSignature
+      Identifier: '
+    reScanLessThanToken'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    reScanHashToken'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    reScanQuestionToken'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    reScanInvalidIdentifier'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    scanJsxToken'
+      TypeReference
+        Identifier: ' JsxTokenSyntaxKind'
+    MethodSignature
+      Identifier: '
+    scanJsDocToken'
+      TypeReference
+        Identifier: ' JSDocSyntaxKind'
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    scanJSDocCommentTextToken'
+      Parameter
+        Identifier: 'inBackticks'
+        BooleanKeyword
+      UnionType
+        TypeReference
+          Identifier: ' JSDocSyntaxKind'
+        TypeReference
+          QualifiedName
+            Identifier: ' SyntaxKind'
+            Identifier: 'JSDocCommentTextToken'
+    MethodSignature
+      Identifier: '
+    scan'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    MethodSignature
+      Identifier: '
+    getText'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    clearCommentDirectives'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    setText'
+      Parameter
+        Identifier: 'text'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' start'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' length'
+        QuestionToken
+        NumberKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    setOnError'
+      Parameter
+        Identifier: 'onError'
+        UnionType
+          TypeReference
+            Identifier: ' ErrorCallback'
+          UndefinedKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    setScriptTarget'
+      Parameter
+        Identifier: 'scriptTarget'
+        TypeReference
+          Identifier: ' ScriptTarget'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    setLanguageVariant'
+      Parameter
+        Identifier: 'variant'
+        TypeReference
+          Identifier: ' LanguageVariant'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    setScriptKind'
+      Parameter
+        Identifier: 'scriptKind'
+        TypeReference
+          Identifier: ' ScriptKind'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    setJSDocParsingMode'
+      Parameter
+        Identifier: 'kind'
+        TypeReference
+          Identifier: ' JSDocParsingMode'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /** @deprecated use {@link resetTokenState} */
+    setTextPos'
+      Parameter
+        Identifier: 'textPos'
+        NumberKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    resetTokenState'
+      Parameter
+        Identifier: 'pos'
+        NumberKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    setSkipJsDocLeadingAsterisks'
+      Parameter
+        Identifier: 'skip'
+        BooleanKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    lookAhead'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    scanRange'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' length'
+        NumberKeyword
+      Parameter
+        Identifier: ' callback'
+        FunctionType
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    tryScan'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' textToKeywordObj'
+        TypeReference
+          Identifier: ' MapLike'
+          TypeReference
+            Identifier: 'KeywordSyntaxKind'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isUnicodeIdentifierStart'
+    Parameter
+      Identifier: 'code'
+      NumberKeyword
+    Parameter
+      Identifier: ' languageVersion'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptTarget'
+        UndefinedKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' tokenToString'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' PunctuationOrKeywordSyntaxKind'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' tokenToString'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' stringToToken'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    UnionType
+      TypeReference
+        Identifier: ' SyntaxKind'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' regularExpressionFlagToCharacterCode'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' RegularExpressionFlags'
+    UnionType
+      TypeReference
+        Identifier: ' CharacterCodes'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' characterCodeToRegularExpressionFlag'
+    Parameter
+      Identifier: 'ch'
+      TypeReference
+        Identifier: ' CharacterCodes'
+    UnionType
+      TypeReference
+        Identifier: ' RegularExpressionFlags'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' computeLineStarts'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    ArrayType
+      NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getPositionOfLineAndCharacter'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFileLike'
+    Parameter
+      Identifier: ' line'
+      NumberKeyword
+    Parameter
+      Identifier: ' character'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getPositionOfLineAndCharacter'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFileLike'
+    Parameter
+      Identifier: ' line'
+      NumberKeyword
+    Parameter
+      Identifier: ' character'
+      NumberKeyword
+    Parameter
+      Identifier: ' allowEdits'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' computePositionOfLineAndCharacter'
+    Parameter
+      Identifier: 'lineStarts'
+      TypeOperator
+        ArrayType
+          NumberKeyword
+    Parameter
+      Identifier: ' line'
+      NumberKeyword
+    Parameter
+      Identifier: ' character'
+      NumberKeyword
+    Parameter
+      Identifier: ' debugText'
+      QuestionToken
+      StringKeyword
+    Parameter
+      Identifier: ' allowEdits'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getLineStarts'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFileLike'
+    TypeOperator
+      ArrayType
+        NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' computeLineAndCharacterOfPosition'
+    Parameter
+      Identifier: 'lineStarts'
+      TypeOperator
+        ArrayType
+          NumberKeyword
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    TypeReference
+      Identifier: ' LineAndCharacter'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' computeLineOfPosition'
+    Parameter
+      Identifier: 'lineStarts'
+      TypeOperator
+        ArrayType
+          NumberKeyword
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' lowerBound'
+      QuestionToken
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getLinesBetweenPositions'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFileLike'
+    Parameter
+      Identifier: ' pos1'
+      NumberKeyword
+    Parameter
+      Identifier: ' pos2'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getLineAndCharacterOfPosition'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFileLike'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    TypeReference
+      Identifier: ' LineAndCharacter'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isWhiteSpaceLike'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isWhiteSpaceSingleLine'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isLineBreak'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' couldStartTrivia'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' skipTrivia'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' stopAfterLineBreak'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' stopAtComments'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' inJSDoc'
+      QuestionToken
+      BooleanKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachLeadingCommentRange'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'pos'
+          NumberKeyword
+        Parameter
+          Identifier: ' end'
+          NumberKeyword
+        Parameter
+          Identifier: ' kind'
+          TypeReference
+            Identifier: ' CommentKind'
+        Parameter
+          Identifier: ' hasTrailingNewLine'
+          BooleanKeyword
+        TypeReference
+          Identifier: ' U'
+    UnionType
+      TypeReference
+        Identifier: ' U'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachLeadingCommentRange'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'pos'
+          NumberKeyword
+        Parameter
+          Identifier: ' end'
+          NumberKeyword
+        Parameter
+          Identifier: ' kind'
+          TypeReference
+            Identifier: ' CommentKind'
+        Parameter
+          Identifier: ' hasTrailingNewLine'
+          BooleanKeyword
+        Parameter
+          Identifier: ' state'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Parameter
+      Identifier: ' state'
+      TypeReference
+        Identifier: ' T'
+    UnionType
+      TypeReference
+        Identifier: ' U'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachTrailingCommentRange'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'pos'
+          NumberKeyword
+        Parameter
+          Identifier: ' end'
+          NumberKeyword
+        Parameter
+          Identifier: ' kind'
+          TypeReference
+            Identifier: ' CommentKind'
+        Parameter
+          Identifier: ' hasTrailingNewLine'
+          BooleanKeyword
+        TypeReference
+          Identifier: ' U'
+    UnionType
+      TypeReference
+        Identifier: ' U'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachTrailingCommentRange'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'pos'
+          NumberKeyword
+        Parameter
+          Identifier: ' end'
+          NumberKeyword
+        Parameter
+          Identifier: ' kind'
+          TypeReference
+            Identifier: ' CommentKind'
+        Parameter
+          Identifier: ' hasTrailingNewLine'
+          BooleanKeyword
+        Parameter
+          Identifier: ' state'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Parameter
+      Identifier: ' state'
+      TypeReference
+        Identifier: ' T'
+    UnionType
+      TypeReference
+        Identifier: ' U'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' reduceEachLeadingCommentRange'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'pos'
+          NumberKeyword
+        Parameter
+          Identifier: ' end'
+          NumberKeyword
+        Parameter
+          Identifier: ' kind'
+          TypeReference
+            Identifier: ' CommentKind'
+        Parameter
+          Identifier: ' hasTrailingNewLine'
+          BooleanKeyword
+        Parameter
+          Identifier: ' state'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Parameter
+      Identifier: ' state'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' initial'
+      TypeReference
+        Identifier: ' U'
+    UnionType
+      TypeReference
+        Identifier: ' U'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' reduceEachTrailingCommentRange'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'pos'
+          NumberKeyword
+        Parameter
+          Identifier: ' end'
+          NumberKeyword
+        Parameter
+          Identifier: ' kind'
+          TypeReference
+            Identifier: ' CommentKind'
+        Parameter
+          Identifier: ' hasTrailingNewLine'
+          BooleanKeyword
+        Parameter
+          Identifier: ' state'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Parameter
+      Identifier: ' state'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' initial'
+      TypeReference
+        Identifier: ' U'
+    UnionType
+      TypeReference
+        Identifier: ' U'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getLeadingCommentRanges'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' CommentRange'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getTrailingCommentRanges'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' CommentRange'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getShebang'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isIdentifierStart'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    Parameter
+      Identifier: ' languageVersion'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptTarget'
+        UndefinedKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isIdentifierPart'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    Parameter
+      Identifier: ' languageVersion'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptTarget'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' identifierVariant'
+      QuestionToken
+      TypeReference
+        Identifier: ' LanguageVariant'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isIdentifierText'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' languageVersion'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptTarget'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' identifierVariant'
+      QuestionToken
+      TypeReference
+        Identifier: ' LanguageVariant'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createScanner'
+    Parameter
+      Identifier: 'languageVersion'
+      TypeReference
+        Identifier: ' ScriptTarget'
+    Parameter
+      Identifier: ' skipTrivia'
+      BooleanKeyword
+    Parameter
+      Identifier: ' languageVariant'
+      QuestionToken
+      TypeReference
+        Identifier: ' LanguageVariant'
+    Parameter
+      Identifier: ' textInitial'
+      QuestionToken
+      StringKeyword
+    Parameter
+      Identifier: ' onError'
+      QuestionToken
+      TypeReference
+        Identifier: ' ErrorCallback'
+    Parameter
+      Identifier: ' start'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' length'
+      QuestionToken
+      NumberKeyword
+    TypeReference
+      Identifier: ' Scanner'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' utf16EncodeAsString'
+    Parameter
+      Identifier: 'codePoint'
+      NumberKeyword
+    StringKeyword

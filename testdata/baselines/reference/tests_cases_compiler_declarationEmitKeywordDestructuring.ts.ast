@@ -1,0 +1,103 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' P'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    enum'
+        BooleanKeyword
+      PropertySignature
+        Identifier: '
+    function'
+        BooleanKeyword
+      PropertySignature
+        Identifier: '
+    abstract'
+        BooleanKeyword
+      PropertySignature
+        Identifier: '
+    async'
+        BooleanKeyword
+      PropertySignature
+        Identifier: '
+    await'
+        BooleanKeyword
+      PropertySignature
+        Identifier: '
+    one'
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' enum'
+          Identifier: ' _enum'
+        BindingElement
+          DotDotDotToken
+          Identifier: 'rest'
+      TypeReference
+        Identifier: ' P'
+    Block
+      ReturnStatement
+        Identifier: ' rest'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' function'
+          Identifier: ' _function'
+        BindingElement
+          DotDotDotToken
+          Identifier: 'rest'
+      TypeReference
+        Identifier: ' P'
+    Block
+      ReturnStatement
+        Identifier: ' rest'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' abstract'
+          Identifier: ' _abstract'
+        BindingElement
+          DotDotDotToken
+          Identifier: 'rest'
+      TypeReference
+        Identifier: ' P'
+    Block
+      ReturnStatement
+        Identifier: ' rest'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' async'
+          Identifier: ' _async'
+        BindingElement
+          DotDotDotToken
+          Identifier: 'rest'
+      TypeReference
+        Identifier: ' P'
+    Block
+      ReturnStatement
+        Identifier: ' rest'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' await'
+          Identifier: ' _await'
+        BindingElement
+          DotDotDotToken
+          Identifier: 'rest'
+      TypeReference
+        Identifier: ' P'
+    Block
+      ReturnStatement
+        Identifier: ' rest'

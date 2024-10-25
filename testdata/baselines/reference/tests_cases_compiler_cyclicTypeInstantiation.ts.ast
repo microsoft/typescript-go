@@ -1,0 +1,66 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+        a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: '
+        b'
+                TypeQuery
+                  Identifier: ' x'
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+        a'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: '
+        b'
+                TypeQuery
+                  Identifier: ' x'
+      ReturnStatement
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' foo'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' bar'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+// Relating types of a and b produces instantiations of the cyclic anonymous types in foo and bar
+a'
+      EqualsToken
+      Identifier: ' b'

@@ -1,0 +1,977 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' REACT_STATICS'
+    PropertySignature
+      Identifier: '
+    childContextTypes'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    contextType'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    contextTypes'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    defaultProps'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    displayName'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    getDefaultProps'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    getDerivedStateFromError'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    getDerivedStateFromProps'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    mixins'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    propTypes'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' KNOWN_STATICS'
+    PropertySignature
+      Identifier: '
+    name'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    length'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    prototype'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    caller'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    callee'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    arguments'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    arity'
+      LiteralType
+        TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' MEMO_STATICS'
+    PropertySignature
+      StringLiteral
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    compare'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    defaultProps'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    displayName'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    propTypes'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' FORWARD_REF_STATICS'
+    PropertySignature
+      StringLiteral
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    render'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    defaultProps'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    displayName'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    propTypes'
+      LiteralType
+        TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' NonReactStatics'
+    TypeParameter
+      Identifier: '
+    S'
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ComponentType'
+        AnyKeyword
+    TypeParameter
+      Identifier: '
+    C'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          LiteralType
+            TrueKeyword
+      TypeLiteral
+    MappedType
+      TypeParameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' Exclude'
+          TypeOperator
+            TypeReference
+              Identifier: ' S'
+          ConditionalType
+            TypeReference
+              Identifier: '
+            S'
+            TypeReference
+              QualifiedName
+                Identifier: ' React'
+                Identifier: 'MemoExoticComponent'
+              AnyKeyword
+            UnionType
+              TypeOperator
+                TypeReference
+                  Identifier: ' MEMO_STATICS'
+              TypeOperator
+                TypeReference
+                  Identifier: ' C'
+            ConditionalType
+              TypeReference
+                Identifier: ' S'
+              TypeReference
+                QualifiedName
+                  Identifier: ' React'
+                  Identifier: 'ForwardRefExoticComponent'
+                AnyKeyword
+              UnionType
+                TypeOperator
+                  TypeReference
+                    Identifier: ' FORWARD_REF_STATICS'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' C'
+              UnionType
+                TypeOperator
+                  TypeReference
+                    Identifier: ' REACT_STATICS'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' KNOWN_STATICS'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' C'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' S'
+        TypeReference
+          Identifier: 'key'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' AnyStyledComponent'
+    UnionType
+      TypeReference
+        Identifier: ' StyledComponent'
+        AnyKeyword
+        AnyKeyword
+        AnyKeyword
+        AnyKeyword
+      TypeReference
+        Identifier: ' StyledComponent'
+        AnyKeyword
+        AnyKeyword
+        AnyKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' StyledComponent'
+    TypeParameter
+      Identifier: '
+    C'
+      UnionType
+        TypeOperator
+          TypeReference
+            QualifiedName
+              Identifier: ' JSX'
+              Identifier: 'IntrinsicElements'
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ComponentType'
+          AnyKeyword
+    TypeParameter
+      Identifier: '
+    T'
+      ObjectKeyword
+    TypeParameter
+      Identifier: '
+    O'
+      ObjectKeyword
+      TypeLiteral
+    TypeParameter
+      Identifier: '
+    A'
+      TypeOperator
+        AnyKeyword
+      NeverKeyword
+    IntersectionType
+      StringKeyword
+      TypeReference
+        Identifier: '
+    StyledComponentBase'
+        TypeReference
+          Identifier: 'C'
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' O'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: '
+    NonReactStatics'
+        ConditionalType
+          TypeReference
+            Identifier: 'C'
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'ComponentType'
+            AnyKeyword
+          TypeReference
+            Identifier: ' C'
+          NeverKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' StyledComponentProps'
+    TypeParameter
+      Identifier: '
+    // The Component from whose props are derived
+    C'
+      UnionType
+        StringKeyword
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ComponentType'
+          AnyKeyword
+    TypeParameter
+      Identifier: '
+    // The Theme from the current context
+    T'
+      ObjectKeyword
+    TypeParameter
+      Identifier: '
+    // The other props added by the template
+    O'
+      ObjectKeyword
+    TypeParameter
+      Identifier: '
+    // The props that are made optional by .attrs
+    A'
+      TypeOperator
+        AnyKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    // Distribute O if O is a union type
+    O'
+      ObjectKeyword
+      IntersectionType
+        TypeReference
+          Identifier: ' WithOptionalTheme'
+          IntersectionType
+            TypeReference
+              Identifier: '
+        Omit'
+              IntersectionType
+                TypeReference
+                  Identifier: '
+            ReactDefaultizedProps'
+                  TypeReference
+                    Identifier: '
+                C'
+                  TypeReference
+                    QualifiedName
+                      Identifier: '
+                React'
+                      Identifier: 'ComponentPropsWithRef'
+                    ConditionalType
+                      TypeReference
+                        Identifier: '
+                    C'
+                      UnionType
+                        TypeReference
+                          Identifier: ' IntrinsicElementsKeys'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' React'
+                            Identifier: 'ComponentType'
+                          AnyKeyword
+                      TypeReference
+                        Identifier: ' C'
+                      NeverKeyword
+                TypeReference
+                  Identifier: '
+            O'
+              TypeReference
+                Identifier: '
+            A'
+            TypeReference
+              Identifier: '
+        Partial'
+              TypeReference
+                Identifier: '
+            Pick'
+                IntersectionType
+                  TypeReference
+                    QualifiedName
+                      Identifier: '
+                React'
+                      Identifier: 'ComponentPropsWithRef'
+                    ConditionalType
+                      TypeReference
+                        Identifier: '
+                    C'
+                      UnionType
+                        TypeReference
+                          Identifier: ' IntrinsicElementsKeys'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' React'
+                            Identifier: 'ComponentType'
+                          AnyKeyword
+                      TypeReference
+                        Identifier: ' C'
+                      NeverKeyword
+                  TypeReference
+                    Identifier: '
+                O'
+                TypeReference
+                  Identifier: '
+                A'
+          TypeReference
+            Identifier: '
+        T'
+        TypeReference
+          Identifier: '
+    WithChildrenIfReactComponentClass'
+          TypeReference
+            Identifier: 'C'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' Defaultize'
+    TypeParameter
+      Identifier: 'P'
+    TypeParameter
+      Identifier: ' D'
+    ConditionalType
+      TypeReference
+        Identifier: ' P'
+      AnyKeyword
+      ConditionalType
+        StringKeyword
+        TypeOperator
+          TypeReference
+            Identifier: ' P'
+        TypeReference
+          Identifier: ' P'
+        IntersectionType
+          TypeReference
+            Identifier: ' Pick'
+            TypeReference
+              Identifier: 'P'
+            TypeReference
+              Identifier: ' Exclude'
+              TypeOperator
+                TypeReference
+                  Identifier: ' P'
+              TypeOperator
+                TypeReference
+                  Identifier: ' D'
+          TypeReference
+            Identifier: '
+    Partial'
+            TypeReference
+              Identifier: 'Pick'
+              TypeReference
+                Identifier: 'P'
+              TypeReference
+                Identifier: ' Extract'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' P'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' D'
+          TypeReference
+            Identifier: '
+    Partial'
+            TypeReference
+              Identifier: 'Pick'
+              TypeReference
+                Identifier: 'D'
+              TypeReference
+                Identifier: ' Exclude'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' D'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' P'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' ReactDefaultizedProps'
+    TypeParameter
+      Identifier: 'C'
+    TypeParameter
+      Identifier: ' P'
+    ConditionalType
+      TypeReference
+        Identifier: ' C'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' defaultProps'
+          InferType
+            TypeParameter
+              Identifier: ' D'
+      TypeReference
+        Identifier: ' Defaultize'
+        TypeReference
+          Identifier: 'P'
+        TypeReference
+          Identifier: ' D'
+      TypeReference
+        Identifier: ' P'
+  TypeAliasDeclaration
+    Identifier: ' WithChildrenIfReactComponentClass'
+    TypeParameter
+      Identifier: 'C'
+      UnionType
+        StringKeyword
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ComponentType'
+          AnyKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ComponentClass'
+        AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' children'
+          QuestionToken
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'ReactNode'
+      TypeLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' IntrinsicElementsKeys'
+    TypeOperator
+      TypeReference
+        QualifiedName
+          Identifier: ' JSX'
+          Identifier: 'IntrinsicElements'
+  TypeAliasDeclaration
+    Identifier: ' WithOptionalTheme'
+    TypeParameter
+      Identifier: 'P'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' theme'
+          QuestionToken
+          TypeReference
+            Identifier: ' T'
+    TypeParameter
+      Identifier: ' T'
+    IntersectionType
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          Identifier: 'P'
+        LiteralType
+          StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    theme'
+          QuestionToken
+          TypeReference
+            Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' ForwardRefExoticBase'
+    TypeParameter
+      Identifier: 'P'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        QualifiedName
+          Identifier: 'React'
+          Identifier: 'ForwardRefExoticComponent'
+        TypeReference
+          Identifier: 'P'
+      TypeOperator
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ForwardRefExoticComponent'
+          AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' StyledComponentPropsWithAs'
+    TypeParameter
+      Identifier: '
+    C'
+      UnionType
+        StringKeyword
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ComponentType'
+          AnyKeyword
+    TypeParameter
+      Identifier: '
+    T'
+      ObjectKeyword
+    TypeParameter
+      Identifier: '
+    O'
+      ObjectKeyword
+    TypeParameter
+      Identifier: '
+    A'
+      TypeOperator
+        AnyKeyword
+    TypeParameter
+      Identifier: '
+    F'
+      UnionType
+        StringKeyword
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ComponentType'
+          AnyKeyword
+      TypeReference
+        Identifier: ' C'
+    IntersectionType
+      TypeReference
+        Identifier: ' StyledComponentProps'
+        TypeReference
+          Identifier: 'C'
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' O'
+        TypeReference
+          Identifier: ' A'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' as'
+          QuestionToken
+          TypeReference
+            Identifier: ' C'
+        PropertySignature
+          Identifier: ' forwardedAs'
+          QuestionToken
+          TypeReference
+            Identifier: ' F'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' StyledComponentInnerOtherProps'
+    TypeParameter
+      Identifier: 'C'
+      TypeReference
+        Identifier: ' AnyStyledComponent'
+    ConditionalType
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        Identifier: ' StyledComponent'
+        AnyKeyword
+        AnyKeyword
+        InferType
+          TypeParameter
+            Identifier: ' O'
+        AnyKeyword
+      TypeReference
+        Identifier: ' O'
+      ConditionalType
+        TypeReference
+          Identifier: ' C'
+        TypeReference
+          Identifier: ' StyledComponent'
+          AnyKeyword
+          AnyKeyword
+          InferType
+            TypeParameter
+              Identifier: ' O'
+        TypeReference
+          Identifier: ' O'
+        NeverKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' StyledComponentInnerAttrs'
+    TypeParameter
+      Identifier: 'C'
+      TypeReference
+        Identifier: ' AnyStyledComponent'
+    ConditionalType
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        Identifier: ' StyledComponent'
+        AnyKeyword
+        AnyKeyword
+        AnyKeyword
+        InferType
+          TypeParameter
+            Identifier: ' A'
+      TypeReference
+        Identifier: ' A'
+      NeverKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' StyledComponentBase'
+    TypeParameter
+      Identifier: '
+    C'
+      UnionType
+        StringKeyword
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ComponentType'
+          AnyKeyword
+    TypeParameter
+      Identifier: '
+    T'
+      ObjectKeyword
+    TypeParameter
+      Identifier: '
+    O'
+      ObjectKeyword
+      TypeLiteral
+    TypeParameter
+      Identifier: '
+    A'
+      TypeOperator
+        AnyKeyword
+      NeverKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ForwardRefExoticBase'
+        TypeReference
+          Identifier: 'StyledComponentProps'
+          TypeReference
+            Identifier: 'C'
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' O'
+          TypeReference
+            Identifier: ' A'
+    CallSignature
+      Parameter
+        Identifier: 'props'
+        IntersectionType
+          TypeReference
+            Identifier: ' StyledComponentProps'
+            TypeReference
+              Identifier: 'C'
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: ' O'
+            TypeReference
+              Identifier: ' A'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' as'
+              QuestionToken
+              NeverKeyword
+            PropertySignature
+              Identifier: ' forwardedAs'
+              QuestionToken
+              NeverKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ReactElement'
+        TypeReference
+          Identifier: '
+        StyledComponentProps'
+          TypeReference
+            Identifier: 'C'
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' O'
+          TypeReference
+            Identifier: ' A'
+    CallSignature
+      TypeParameter
+        Identifier: 'AsC'
+        UnionType
+          StringKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'ComponentType'
+            AnyKeyword
+        TypeReference
+          Identifier: ' C'
+      TypeParameter
+        Identifier: ' FAsC'
+        UnionType
+          StringKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'ComponentType'
+            AnyKeyword
+        TypeReference
+          Identifier: ' AsC'
+      Parameter
+        Identifier: '
+        props'
+        TypeReference
+          Identifier: ' StyledComponentPropsWithAs'
+          TypeReference
+            Identifier: 'AsC'
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' O'
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' FAsC'
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ReactElement'
+        TypeReference
+          Identifier: 'StyledComponentPropsWithAs'
+          TypeReference
+            Identifier: 'AsC'
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' O'
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' FAsC'
+    MethodSignature
+      Identifier: '
+
+    withComponent'
+      TypeParameter
+        Identifier: 'WithC'
+        TypeReference
+          Identifier: ' AnyStyledComponent'
+      Parameter
+        Identifier: '
+        component'
+        TypeReference
+          Identifier: ' WithC'
+      TypeReference
+        Identifier: ' StyledComponent'
+        TypeReference
+          Identifier: '
+        StyledComponentInnerComponent'
+          TypeReference
+            Identifier: 'WithC'
+        TypeReference
+          Identifier: '
+        T'
+        IntersectionType
+          TypeReference
+            Identifier: '
+        O'
+          TypeReference
+            Identifier: ' StyledComponentInnerOtherProps'
+            TypeReference
+              Identifier: 'WithC'
+        UnionType
+          TypeReference
+            Identifier: '
+        A'
+          TypeReference
+            Identifier: ' StyledComponentInnerAttrs'
+            TypeReference
+              Identifier: 'WithC'
+    MethodSignature
+      Identifier: '
+    withComponent'
+      TypeParameter
+        Identifier: 'WithC'
+        UnionType
+          TypeOperator
+            TypeReference
+              QualifiedName
+                Identifier: ' JSX'
+                Identifier: 'IntrinsicElements'
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'ComponentType'
+            AnyKeyword
+      Parameter
+        Identifier: '
+        component'
+        TypeReference
+          Identifier: ' WithC'
+      TypeReference
+        Identifier: ' StyledComponent'
+        TypeReference
+          Identifier: 'WithC'
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' O'
+        TypeReference
+          Identifier: ' A'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' StyledComponentInnerComponent'
+    TypeParameter
+      Identifier: 'C'
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ComponentType'
+        AnyKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        Identifier: ' StyledComponent'
+        InferType
+          TypeParameter
+            Identifier: ' I'
+        AnyKeyword
+        AnyKeyword
+        AnyKeyword
+      TypeReference
+        Identifier: ' I'
+      ConditionalType
+        TypeReference
+          Identifier: ' C'
+        TypeReference
+          Identifier: ' StyledComponent'
+          InferType
+            TypeParameter
+              Identifier: ' I'
+          AnyKeyword
+          AnyKeyword
+        TypeReference
+          Identifier: ' I'
+        TypeReference
+          Identifier: ' C'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' StyledComponentPropsWithRef'
+    TypeParameter
+      Identifier: '
+    C'
+      UnionType
+        TypeOperator
+          TypeReference
+            QualifiedName
+              Identifier: ' JSX'
+              Identifier: 'IntrinsicElements'
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ComponentType'
+          AnyKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        Identifier: ' AnyStyledComponent'
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ComponentPropsWithRef'
+        TypeReference
+          Identifier: 'StyledComponentInnerComponent'
+          TypeReference
+            Identifier: 'C'
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ComponentPropsWithRef'
+        TypeReference
+          Identifier: 'C'

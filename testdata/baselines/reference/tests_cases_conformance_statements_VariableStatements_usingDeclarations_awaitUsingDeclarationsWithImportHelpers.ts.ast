@@ -1,0 +1,12 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NullKeyword

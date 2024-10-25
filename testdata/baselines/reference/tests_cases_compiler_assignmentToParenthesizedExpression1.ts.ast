@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          CommaToken
+          Identifier: ' x'
+      EqualsToken
+      NumericLiteral

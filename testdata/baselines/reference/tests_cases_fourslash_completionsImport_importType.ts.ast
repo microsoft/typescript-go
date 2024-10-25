@@ -1,0 +1,153 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @allowJs: true
+
+// @Filename: /a.js
+//// export const x = 0;
+//// export class C {}
+//// /** @typedef {number} T */
+
+// @Filename: /b.js
+//// export const m = 0;
+//// /** @type {/*0*/} */
+//// /** @type {/*1*/} */
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sourceDisplay'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'AutoImportSuggestions'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sourceDisplay'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+    excludes'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Something with a value-side will get a normal import.
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// A pure type will get `import().T`
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

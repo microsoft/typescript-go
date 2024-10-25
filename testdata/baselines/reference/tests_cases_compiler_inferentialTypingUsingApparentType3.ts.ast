@@ -1,0 +1,90 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Field'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    clean'
+      Parameter
+        Identifier: 'input'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' CharField'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Field'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    clean'
+      Parameter
+        Identifier: 'input'
+        StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' NumberField'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Field'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    clean'
+      Parameter
+        Identifier: 'input'
+        NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' ObjectField'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' T'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'name'
+            StringKeyword
+          TypeReference
+            Identifier: ' Field'
+            AnyKeyword
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' fields'
+        TypeReference
+          Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' person'
+        NewExpression
+          Identifier: ' ObjectField'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    id'
+              NewExpression
+                Identifier: ' NumberField'
+            PropertyAssignment
+              Identifier: '
+    name'
+              NewExpression
+                Identifier: ' CharField'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+
+person'
+        Identifier: 'fields'
+      Identifier: 'id'

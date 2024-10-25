@@ -1,0 +1,38 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ExpressionStatement
+    Identifier: '
+
+// @filename: /node_modules/@foo/bar/index.js
+This'
+  ExpressionStatement
+    Identifier: ' file'
+  ExpressionStatement
+    Identifier: ' is'
+  ExpressionStatement
+    Identifier: ' not'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' processed'
+        Identifier: '
+
+// @filename: /a.ts
+import'
+      AsteriskToken
+      Identifier: ' as'
+  ExpressionStatement
+    Identifier: ' foo'
+  ExpressionStatement
+    Identifier: ' from'
+  ExpressionStatement
+    StringLiteral

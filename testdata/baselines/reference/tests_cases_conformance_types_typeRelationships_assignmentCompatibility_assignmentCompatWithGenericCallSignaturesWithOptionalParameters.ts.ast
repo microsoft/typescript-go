@@ -1,0 +1,1081 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' ClassTypeParam'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Base'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          Identifier: '
+        a'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a2'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a3'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a4'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a5'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+
+        init'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a'
+                  EqualsToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a2'
+                  EqualsToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a2'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a2'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a3'
+                  EqualsToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a3'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a3'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a3'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' y'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a4'
+                  EqualsToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a4'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' y'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a4'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a4'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' y'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a5'
+                  EqualsToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a5'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' y'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a5'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a5'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' y'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+  ModuleDeclaration
+    Identifier: ' GenericSignaturesInvalid'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Base2'
+        PropertyDeclaration
+          Identifier: '
+        a'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a2'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a3'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a4'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a5'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' Target'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          Identifier: '
+        a'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a2'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a3'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a4'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a5'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      FunctionDeclaration
+        Identifier: ' foo'
+        TypeParameter
+          Identifier: 'T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' Base2'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' t'
+                TypeReference
+                  Identifier: ' Target'
+                  TypeReference
+                    Identifier: 'T'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        // all errors
+        b'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a2'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a3'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a4'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a5'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        b'
+                Identifier: 'a2'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a2'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a2'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a2'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a3'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a2'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a4'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a2'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a5'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        b'
+                Identifier: 'a3'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a3'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a2'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a3'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a3'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a3'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a4'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a3'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a5'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        b'
+                Identifier: 'a4'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a4'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a2'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a4'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a3'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a4'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a4'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a4'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a5'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        b'
+                Identifier: 'a5'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a5'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a2'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a5'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a3'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a5'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a4'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        b'
+                Identifier: 'a5'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' t'
+                Identifier: 'a5'
+  ModuleDeclaration
+    Identifier: ' GenericSignaturesValid'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Base2'
+        PropertyDeclaration
+          Identifier: '
+        a'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a2'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a3'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a4'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        a5'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+
+        init'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a2'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a2'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a2'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a3'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a3'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a3'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a3'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' y'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a4'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a4'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' y'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a4'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a4'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' y'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a5'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a5'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' y'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a5'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a5'
+                  EqualsToken
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    Parameter
+                      Identifier: ' y'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    NullKeyword

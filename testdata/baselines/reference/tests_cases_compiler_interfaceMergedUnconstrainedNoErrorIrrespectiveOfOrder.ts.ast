@@ -1,0 +1,71 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' ns'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Function'
+        TypeParameter
+          Identifier: 'T'
+          FunctionType
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              AnyKeyword
+            AnyKeyword
+        MethodSignature
+          Identifier: '
+        throttle'
+          TypeReference
+            Identifier: ' Function'
+            TypeReference
+              Identifier: 'T'
+      InterfaceDeclaration
+        Identifier: ' Function'
+        TypeParameter
+          Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        unary'
+          TypeReference
+            Identifier: ' Function'
+            FunctionType
+              TypeReference
+                Identifier: ' ReturnType'
+                TypeReference
+                  Identifier: 'T'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' ns'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Function'
+        TypeParameter
+          Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        unary'
+          TypeReference
+            Identifier: ' Function'
+            FunctionType
+              TypeReference
+                Identifier: ' ReturnType'
+                TypeReference
+                  Identifier: 'T'
+      InterfaceDeclaration
+        Identifier: ' Function'
+        TypeParameter
+          Identifier: 'T'
+          FunctionType
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              AnyKeyword
+            AnyKeyword
+        MethodSignature
+          Identifier: '
+        throttle'
+          TypeReference
+            Identifier: ' Function'
+            TypeReference
+              Identifier: 'T'

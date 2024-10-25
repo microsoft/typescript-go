@@ -1,0 +1,397 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createCodeFixActionMaybeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCombinedCodeActions'
+        ImportSpecifier
+          Identifier: '
+    eachDiagnostic'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addToSeen'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    findChildOfKind'
+        ImportSpecifier
+          Identifier: '
+    getSymbolId'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isVariableDeclarationList'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    Symbol'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    Token'
+        ImportSpecifier
+          Identifier: '
+    tryCast'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Cannot_assign_to_0_because_it_is_a_constant'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToConvertConstToLet'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' sourceFile'
+                      BindingElement
+                        Identifier: ' span'
+                      BindingElement
+                        Identifier: ' program'
+                    Identifier: ' context'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' info'
+                    CallExpression
+                      Identifier: ' getInfo'
+                      Identifier: 'sourceFile'
+                      PropertyAccessExpression
+                        Identifier: ' span'
+                        Identifier: 'start'
+                      Identifier: ' program'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'info'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' undefined'
+                ReturnStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' changes'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'ChangeTracker'
+                        Identifier: 'with'
+                      Identifier: 'context'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' t'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' doChange'
+                          Identifier: 't'
+                          Identifier: ' sourceFile'
+                          PropertyAccessExpression
+                            Identifier: ' info'
+                            Identifier: 'token'
+              ReturnStatement
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'createCodeFixActionMaybeFixAll'
+                    Identifier: 'fixId'
+                    Identifier: ' changes'
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Convert_const_to_let'
+                    Identifier: ' fixId'
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Convert_all_const_to_let'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' program'
+                    Identifier: ' context'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' seen'
+                    NewExpression
+                      Identifier: ' Map'
+                      NumberKeyword
+                      LiteralType
+                        TrueKeyword
+              ReturnStatement
+                CallExpression
+                  Identifier: ' createCombinedCodeActions'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' changes'
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+            eachDiagnostic'
+                            Identifier: 'context'
+                            Identifier: ' errorCodes'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' diag'
+                              EqualsGreaterThanToken
+                              Block
+                                VariableStatement
+                                  VariableDeclarationList
+                                    VariableDeclaration
+                                      Identifier: ' info'
+                                      CallExpression
+                                        Identifier: ' getInfo'
+                                        PropertyAccessExpression
+                                          Identifier: 'diag'
+                                          Identifier: 'file'
+                                        PropertyAccessExpression
+                                          Identifier: ' diag'
+                                          Identifier: 'start'
+                                        Identifier: ' program'
+                                IfStatement
+                                  Identifier: 'info'
+                                  Block
+                                    IfStatement
+                                      CallExpression
+                                        Identifier: 'addToSeen'
+                                        Identifier: 'seen'
+                                        CallExpression
+                                          Identifier: ' getSymbolId'
+                                          PropertyAccessExpression
+                                            Identifier: 'info'
+                                            Identifier: 'symbol'
+                                      Block
+                                        ReturnStatement
+                                          CallExpression
+                                            Identifier: ' doChange'
+                                            Identifier: 'changes'
+                                            PropertyAccessExpression
+                                              Identifier: ' diag'
+                                              Identifier: 'file'
+                                            PropertyAccessExpression
+                                              Identifier: ' info'
+                                              Identifier: 'token'
+                                ReturnStatement
+                                  Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+  InterfaceDeclaration
+    Identifier: ' Info'
+    PropertySignature
+      Identifier: '
+    symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    PropertySignature
+      Identifier: '
+    token'
+      TypeReference
+        Identifier: ' Token'
+        TypeReference
+          QualifiedName
+            Identifier: 'SyntaxKind'
+            Identifier: 'ConstKeyword'
+  FunctionDeclaration
+    Identifier: ' getInfo'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    UnionType
+      TypeReference
+        Identifier: ' Info'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' checker'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getTypeChecker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' symbol'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getSymbolAtLocation'
+              CallExpression
+                Identifier: 'getTokenAtPosition'
+                Identifier: 'sourceFile'
+                Identifier: ' pos'
+      IfStatement
+        BinaryExpression
+          Identifier: 'symbol'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' declaration'
+            CallExpression
+              Identifier: ' tryCast'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'symbol'
+                  QuestionDotToken
+                  Identifier: 'valueDeclaration'
+                QuestionDotToken
+                Identifier: 'parent'
+              Identifier: ' isVariableDeclarationList'
+      IfStatement
+        BinaryExpression
+          Identifier: 'declaration'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' constToken'
+            CallExpression
+              Identifier: ' findChildOfKind'
+              TypeReference
+                Identifier: 'Token'
+                TypeReference
+                  QualifiedName
+                    Identifier: 'SyntaxKind'
+                    Identifier: 'ConstKeyword'
+              Identifier: 'declaration'
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'ConstKeyword'
+              Identifier: ' sourceFile'
+      IfStatement
+        BinaryExpression
+          Identifier: 'constToken'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' symbol'
+          PropertyAssignment
+            Identifier: ' token'
+            Identifier: ' constToken'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' token'
+      TypeReference
+        Identifier: ' Token'
+        TypeReference
+          QualifiedName
+            Identifier: 'SyntaxKind'
+            Identifier: 'ConstKeyword'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          Identifier: 'sourceFile'
+          Identifier: ' token'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' factory'
+              Identifier: 'createToken'
+            PropertyAccessExpression
+              Identifier: 'SyntaxKind'
+              Identifier: 'LetKeyword'

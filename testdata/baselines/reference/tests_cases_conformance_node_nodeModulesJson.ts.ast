@@ -1,0 +1,184 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' oops'
+    Parameter
+      Identifier: 'json'
+      StringKeyword
+    AnyKeyword
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        StringLiteral
+  Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _default'
+        TypeLiteral
+  ExportAssignment
+    Identifier: ' _default'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' oops'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' moreOops'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' typed'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' config'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' default'
+          Identifier: ' config1'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    EmptyStatement
+  ImportDeclaration
+    ImportClause
+      Identifier: ' config2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' version'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' config3'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    EmptyStatement
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+config3'
+      Identifier: 'version'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // Error
+config3'
+      Identifier: 'default'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' config'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    EmptyStatement
+  ImportDeclaration
+    ImportClause
+      Identifier: ' config2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' version'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' config3'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+config3'
+      Identifier: 'version'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // Ok
+config3'
+      Identifier: 'default'

@@ -1,0 +1,62 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' enUS'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'Locale'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' deDE'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'Locale'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' jaJP'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'Locale'
+          StringLiteral
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'Segmenter'
+      Identifier: 'enUS'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'Segmenter'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'Segmenter'
+        Identifier: 'supportedLocalesOf'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'Segmenter'
+        Identifier: 'supportedLocalesOf'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'

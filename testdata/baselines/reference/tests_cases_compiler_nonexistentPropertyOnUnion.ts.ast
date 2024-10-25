@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'toLowerCase'

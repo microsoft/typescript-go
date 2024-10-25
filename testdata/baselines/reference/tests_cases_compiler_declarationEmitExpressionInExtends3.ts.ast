@@ -1,0 +1,109 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ExportedClass'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+	x'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' LocalClass'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' U'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ExportedInterface'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' LocalInterface'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' getLocalClass'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'c'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' LocalClass'
+  FunctionDeclaration
+    Identifier: ' getExportedClass'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'c'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' ExportedClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' getLocalClass'
+          TypeReference
+            Identifier: 'LocalInterface'
+          Identifier: 'undefined'
+        StringKeyword
+        NumberKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyClass2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' getExportedClass'
+          TypeReference
+            Identifier: 'LocalInterface'
+          Identifier: 'undefined'
+        StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyClass3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' getExportedClass'
+          TypeReference
+            Identifier: 'LocalInterface'
+          Identifier: 'undefined'
+        TypeReference
+          Identifier: 'LocalInterface'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyClass4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' getExportedClass'
+          TypeReference
+            Identifier: 'LocalInterface'
+          Identifier: 'undefined'
+        TypeReference
+          Identifier: 'ExportedInterface'

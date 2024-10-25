@@ -1,0 +1,50 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Promise'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' Promise'
+            TypeReference
+              Identifier: 'U'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    PropertySignature
+      Identifier: '
+    value'
+      TypeReference
+        Identifier: ' T'

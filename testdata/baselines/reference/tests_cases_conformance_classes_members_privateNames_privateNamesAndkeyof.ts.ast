@@ -1,0 +1,83 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      PrivateIdentifier
+      Block
+    SemicolonClassElement
+    GetAccessor
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    SemicolonClassElement
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+    SemicolonClassElement
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    baz'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        TypeOperator
+          TypeReference
+            Identifier: ' A'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+k'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+
+k'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // Error
+k'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // Error
+k'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // Error
+
+k'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // Error
+k'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // Error
+k'
+      EqualsToken
+      StringLiteral

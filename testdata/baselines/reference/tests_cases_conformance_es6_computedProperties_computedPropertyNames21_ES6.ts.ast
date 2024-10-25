@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      ComputedPropertyName
+        CallExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'bar'
+      Block

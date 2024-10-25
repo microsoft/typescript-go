@@ -1,0 +1,232 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  IfStatement
+    TrueKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeAssertionExpression
+          NumberKeyword
+          Identifier: 'undefined'
+  FunctionDeclaration
+    Identifier: ' declSpace'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Point'
+    PropertySignature
+      Identifier: ' x'
+      NumberKeyword
+    PropertySignature
+      Identifier: ' y'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Point'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            TypeAssertionExpression
+              NumberKeyword
+              Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeAssertionExpression
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' y'
+              NumberKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeQuery
+          Identifier: ' p'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        FunctionExpression
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        ArrowFunction
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          EqualsGreaterThanToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        TypeAssertionExpression
+          FunctionType
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            NumberKeyword
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        TypeQuery
+          Identifier: ' fn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrayType
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeAssertionExpression
+          ArrayType
+            StringKeyword
+          ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrayType
+          StringKeyword
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' Array'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeQuery
+          Identifier: ' a'

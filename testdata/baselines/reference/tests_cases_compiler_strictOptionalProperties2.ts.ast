@@ -1,0 +1,36 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    ConditionalType
+      TypeLiteral
+        PropertySignature
+          NumericLiteral
+          QuestionToken
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+      TypeLiteral
+        PropertySignature
+          NumericLiteral
+          QuestionToken
+          StringKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    ConditionalType
+      TupleType
+        OptionalType
+          ParenthesizedType
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      TupleType
+        OptionalType
+          StringKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword

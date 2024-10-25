@@ -1,0 +1,39 @@
+SourceFile
+  ReturnStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'edit'
+          Identifier: 'role'
+        Identifier: 'then'
+      ArrowFunction
+        Parameter
+          Identifier: 'role'
+          TypeReference
+            Identifier: ' Role'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'roleService'
+                Identifier: 'add'
+              Identifier: 'role'
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              Identifier: 'data'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ng'
+                  Identifier: 'IHttpPromiseCallbackArg'
+                TypeReference
+                  Identifier: 'Role'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' data'
+              Identifier: 'data'

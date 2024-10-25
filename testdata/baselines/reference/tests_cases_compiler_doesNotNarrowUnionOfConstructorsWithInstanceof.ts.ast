@@ -1,0 +1,92 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    length'
+      LiteralType
+        NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'length'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    length'
+      LiteralType
+        NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'length'
+            EqualsToken
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' getTypedArray'
+    Parameter
+      Identifier: 'flag'
+      BooleanKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' flag'
+          QuestionToken
+          NewExpression
+            Identifier: ' A'
+          ColonToken
+          NewExpression
+            Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' getTypedArrayConstructor'
+    Parameter
+      Identifier: 'flag'
+      BooleanKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' flag'
+          QuestionToken
+          Identifier: ' A'
+          ColonToken
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' getTypedArray'
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' getTypedArrayConstructor'
+          FalseKeyword
+  IfStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'a'
+          InstanceOfKeyword
+          Identifier: ' b'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'a'
+            Identifier: 'length'

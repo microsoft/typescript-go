@@ -1,0 +1,82 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SpecialString'
+    StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' PrivateSpecialString'
+    StringKeyword
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' N'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' SpecialString'
+        StringKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ArrowFunction
+          Parameter
+            Identifier: 'p1'
+            TypeReference
+              Identifier: ' SpecialString'
+          Parameter
+            Identifier: ' p2'
+            TypeReference
+              Identifier: ' PrivateSpecialString'
+          Parameter
+            Identifier: ' p3'
+            TypeReference
+              QualifiedName
+                Identifier: ' N'
+                Identifier: 'SpecialString'
+          EqualsGreaterThanToken
+          AsExpression
+            NonNullExpression
+              NullKeyword
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' SpecialString'
+              PropertySignature
+                Identifier: ' bar'
+                TypeReference
+                  Identifier: ' PrivateSpecialString'
+              PropertySignature
+                Identifier: ' baz'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' N'
+                    Identifier: 'SpecialString'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'o'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' o'
+        ImportSpecifier
+          Identifier: ' SpecialString'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        Identifier: ' o'

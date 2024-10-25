@@ -1,0 +1,52 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Test1'
+    PropertySignature
+      Identifier: ' toString'
+      UnionType
+        LiteralType
+          NullKeyword
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Test2'
+    IntersectionType
+      TypeReference
+        Identifier: ' Test1'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' optional'
+          QuestionToken
+          UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' source'
+        TypeReference
+          Identifier: ' Test1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' target'
+        TypeReference
+          Identifier: ' Test2'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'source'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' toString'
+        PropertyAccessExpression
+          Identifier: ' target'
+          Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' hasOwn'
+        PropertyAccessExpression
+          Identifier: ' target'
+          Identifier: 'hasOwnProperty'
+  ExportDeclaration
+    NamedExports

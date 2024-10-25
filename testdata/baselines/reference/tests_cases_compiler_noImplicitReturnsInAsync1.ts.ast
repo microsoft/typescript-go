@@ -1,0 +1,26 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' test'
+    Parameter
+      Identifier: 'isError'
+      BooleanKeyword
+      FalseKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'isError'
+          EqualsEqualsEqualsToken
+          TrueKeyword
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+                StringLiteral

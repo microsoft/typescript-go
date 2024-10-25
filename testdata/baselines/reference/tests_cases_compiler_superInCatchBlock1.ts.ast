@@ -1,0 +1,28 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+ m'
+      VoidKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+ m'
+      Block
+        TryStatement
+          Block
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'm'

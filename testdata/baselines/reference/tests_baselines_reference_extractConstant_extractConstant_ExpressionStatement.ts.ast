@@ -1,0 +1,8 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' /*RENAME*/newLocal'
+        StringLiteral

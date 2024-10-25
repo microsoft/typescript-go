@@ -1,0 +1,40 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowJs: true
+
+// @Filename: /a.js
+/////*[| |]*/ /** x */ export default 1;
+
+// @Filename: /b.js
+/////*[| |]*/ /** x */ export default (1);
+
+// @Filename: /c.js
+/////*[| |]*/ /** x */ export default x;
+
+goTo'
+        Identifier: 'eachRange'
+      ArrowFunction
+        Parameter
+          Identifier: 'r'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    goTo'
+                Identifier: 'selectRange'
+              Identifier: 'r'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+    verify'
+                  Identifier: 'not'
+                Identifier: 'refactorAvailable'
+              StringLiteral

@@ -1,0 +1,14 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////interface C {
+////    (): void;
+////}
+////C(/*1*/);
+
+verify'
+        Identifier: 'noSignatureHelp'
+      StringLiteral

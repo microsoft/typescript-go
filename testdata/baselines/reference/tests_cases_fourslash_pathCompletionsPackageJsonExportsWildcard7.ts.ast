@@ -1,0 +1,47 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: nodenext
+
+// @Filename: /node_modules/foo/package.json
+//// {
+////   "name": "foo",
+////   "exports": {
+////     "./*": "./dist/*.js"
+////   }
+//// }
+
+// @Filename: /node_modules/foo/dist/blah.d.ts
+//// export const blah = 0;
+
+// @Filename: /index.mts
+//// import { } from "foo//**/";
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  isNewIdentifierLocation'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+  exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral

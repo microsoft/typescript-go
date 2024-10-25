@@ -1,0 +1,5 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Intl'
+    ModuleBlock

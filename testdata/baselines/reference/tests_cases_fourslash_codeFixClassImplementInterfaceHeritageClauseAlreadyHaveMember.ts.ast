@@ -1,0 +1,33 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// class Base {
+////     foo: number;
+//// }
+//// 
+//// class D extends Base {
+////     bar: number;
+//// }
+//// 
+//// interface I {
+////     foo: number;
+////     bar: number;
+////     baz: number;
+//// }
+////
+//// class C extends D implements I { }
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

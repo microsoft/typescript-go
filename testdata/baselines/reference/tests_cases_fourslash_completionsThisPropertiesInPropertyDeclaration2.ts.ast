@@ -1,0 +1,72 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////class Foo {
+////    private static _prop = 1;
+////    public static a = [|_/*1*/|]
+////
+////    static foo() {
+////        [|_/*2*/|]
+////    }
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          ArrayLiteralExpression
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'SuggestedClassMembers'
+              PropertyAssignment
+                Identifier: '
+            source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'ThisProperty'
+              PropertyAssignment
+                Identifier: '
+            text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            kindModifiers'
+                StringLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeInsertTextCompletions'
+              TrueKeyword

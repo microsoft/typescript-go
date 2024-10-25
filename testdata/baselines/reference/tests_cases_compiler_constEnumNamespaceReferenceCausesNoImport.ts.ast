@@ -1,0 +1,45 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' ConstFooEnum'
+    EnumMember
+      Identifier: '
+    Some'
+    EnumMember
+      Identifier: '
+    Values'
+    EnumMember
+      Identifier: '
+    Here'
+  EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooFunc'
+    VoidKeyword
+    Block
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Foo'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' check'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        QualifiedName
+          Identifier: ' Foo'
+          Identifier: 'ConstFooEnum'
+    VoidKeyword
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' Foo'
+                Identifier: 'ConstFooEnum'
+              Identifier: 'Some'
+            BreakStatement

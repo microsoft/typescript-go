@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          OmittedExpression
+          BindingElement
+            ArrayBindingPattern
+              OmittedExpression
+              BindingElement
+                ArrayBindingPattern
+              OmittedExpression
+              BindingElement
+                ArrayBindingPattern
+        AsExpression
+          Identifier: ' undefined'
+          AnyKeyword

@@ -1,0 +1,195 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k1'
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k2'
+        AsExpression
+          StringLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k3'
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k4'
+        AsExpression
+          StringLiteral
+          TypeReference
+            Identifier: ' const'
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'k1'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      ComputedPropertyName
+        Identifier: 'k1'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'k2'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      ComputedPropertyName
+        Identifier: 'k2'
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m1'
+      Block
+    MethodDeclaration
+      Identifier: '
+    m1'
+      Block
+    PropertyDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'k3'
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'k3'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'k4'
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'k4'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    p1'
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        ElementAccessExpression
+          Identifier: ' Foo'
+          Identifier: 'k1'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        ElementAccessExpression
+          NewExpression
+            Identifier: ' Foo'
+          Identifier: 'k1'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        ElementAccessExpression
+          Identifier: ' Foo'
+          Identifier: 'k2'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        ElementAccessExpression
+          NewExpression
+            Identifier: ' Foo'
+          Identifier: 'k2'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t5'
+        PropertyAccessExpression
+          Identifier: ' Foo'
+          Identifier: 'm1'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t6'
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' Foo'
+          Identifier: 'm1'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t7'
+        ElementAccessExpression
+          Identifier: ' Foo'
+          Identifier: 'k3'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t8'
+        ElementAccessExpression
+          NewExpression
+            Identifier: ' Foo'
+          Identifier: 'k3'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t9'
+        ElementAccessExpression
+          Identifier: ' Foo'
+          Identifier: 'k4'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t10'
+        ElementAccessExpression
+          NewExpression
+            Identifier: ' Foo'
+          Identifier: 'k4'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t11'
+        PropertyAccessExpression
+          Identifier: ' Foo'
+          Identifier: 'p1'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t12'
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' Foo'
+          Identifier: 'p1'

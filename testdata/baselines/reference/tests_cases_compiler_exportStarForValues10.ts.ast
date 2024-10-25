@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: ' x'
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral

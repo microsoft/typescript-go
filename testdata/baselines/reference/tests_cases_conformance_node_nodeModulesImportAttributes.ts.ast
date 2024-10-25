@@ -1,0 +1,52 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' json'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    EmptyStatement
+  ImportDeclaration
+    ImportClause
+      Identifier: ' json'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' json2'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' with'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' type'
+                  StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral

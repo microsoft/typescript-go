@@ -1,0 +1,8 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanGreaterThanToken
+      Identifier: ''
+  ExpressionStatement
+    NumericLiteral

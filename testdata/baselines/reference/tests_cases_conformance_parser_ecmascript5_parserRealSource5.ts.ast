@@ -1,0 +1,264 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' TypeScript'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' PrintContext'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' builder'
+          StringLiteral
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' indent1'
+          StringLiteral
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' indentStrings'
+          ArrayType
+            StringKeyword
+          ArrayLiteralExpression
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' indentAmt'
+          NumericLiteral
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' outfile'
+            TypeReference
+              Identifier: ' ITextWriter'
+          Parameter
+            PublicKeyword
+            Identifier: ' parser'
+            TypeReference
+              Identifier: ' Parser'
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' increaseIndent'
+          Block
+            ExpressionStatement
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'indentAmt'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' decreaseIndent'
+          Block
+            ExpressionStatement
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'indentAmt'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' startLine'
+          Block
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'builder'
+                  Identifier: 'length'
+                GreaterThanToken
+                NumericLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                CompilerDiagnostics'
+                      Identifier: 'Alert'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'builder'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' indentString'
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'indentStrings'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'indentAmt'
+            IfStatement
+              BinaryExpression
+                Identifier: 'indentString'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                indentString'
+                    EqualsToken
+                    StringLiteral
+                ForStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' i'
+                      NumericLiteral
+                  BinaryExpression
+                    Identifier: ' i'
+                    LessThanToken
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'indentAmt'
+                  PostfixUnaryExpression
+                    Identifier: ' i'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    indentString'
+                        PlusEqualsToken
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'indent1'
+                ExpressionStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'indentStrings'
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'indentAmt'
+                    EqualsToken
+                    Identifier: ' indentString'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'builder'
+                PlusEqualsToken
+                Identifier: ' indentString'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' write'
+          Parameter
+            Identifier: 's'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'builder'
+                PlusEqualsToken
+                Identifier: ' s'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' writeLine'
+          Parameter
+            Identifier: 's'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'builder'
+                PlusEqualsToken
+                Identifier: ' s'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'outfile'
+                  Identifier: 'WriteLine'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'builder'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'builder'
+                EqualsToken
+                StringLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' prePrintAST'
+        Parameter
+          Identifier: 'ast'
+          TypeReference
+            Identifier: ' AST'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' AST'
+        Parameter
+          Identifier: ' walker'
+          TypeReference
+            Identifier: ' IAstWalker'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' pc'
+                TypeReference
+                  Identifier: ' PrintContext'
+                TypeAssertionExpression
+                  TypeReference
+                    Identifier: 'PrintContext'
+                  PropertyAccessExpression
+                    Identifier: 'walker'
+                    Identifier: 'state'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        ast'
+                Identifier: 'print'
+              Identifier: 'pc'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        pc'
+                Identifier: 'increaseIndent'
+          ReturnStatement
+            Identifier: ' ast'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' postPrintAST'
+        Parameter
+          Identifier: 'ast'
+          TypeReference
+            Identifier: ' AST'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' AST'
+        Parameter
+          Identifier: ' walker'
+          TypeReference
+            Identifier: ' IAstWalker'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' pc'
+                TypeReference
+                  Identifier: ' PrintContext'
+                TypeAssertionExpression
+                  TypeReference
+                    Identifier: 'PrintContext'
+                  PropertyAccessExpression
+                    Identifier: 'walker'
+                    Identifier: 'state'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        pc'
+                Identifier: 'decreaseIndent'
+          ReturnStatement
+            Identifier: ' ast'

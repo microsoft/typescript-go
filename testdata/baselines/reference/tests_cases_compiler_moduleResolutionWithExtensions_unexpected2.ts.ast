@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    Identifier: '// @noImplicitReferences: true
+// @traceResolution: true
+// This tests that a package.json "types" with an unexpected extension is ignored.
+
+// @Filename: /node_modules/foo/foo.js
+This'
+  ExpressionStatement
+    Identifier: ' file'
+  ExpressionStatement
+    Identifier: ' is'
+  ExpressionStatement
+    Identifier: ' not'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' read'
+      Identifier: ''
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ImportDeclaration
+    StringLiteral

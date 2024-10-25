@@ -1,0 +1,126 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'x'
+              BindingElement
+                Identifier: ' y'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+        BinaryExpression
+          Identifier: ' x'
+          LessThanToken
+          Identifier: ' y'
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'x'
+          CommaToken
+          PrefixUnaryExpression
+            Identifier: 'y'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    PostfixUnaryExpression
+                      Identifier: ' x'
+                    PlusToken
+                    PostfixUnaryExpression
+                      Identifier: ' y'
+          IfStatement
+            BinaryExpression
+              Identifier: 'x'
+              EqualsEqualsToken
+              NumericLiteral
+            BreakStatement
+            IfStatement
+              BinaryExpression
+                Identifier: 'y'
+                EqualsEqualsToken
+                NumericLiteral
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            y'
+                  EqualsToken
+                  NumericLiteral
+              ReturnStatement
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: 'a'
+                    Identifier: ' x'
+                  BindingElement
+                    Identifier: ' b'
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: 'c'
+                        Identifier: ' y'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'a'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' b'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: 'c'
+                      NumericLiteral
+        BinaryExpression
+          Identifier: ' x'
+          LessThanToken
+          Identifier: ' y'
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'x'
+          CommaToken
+          PrefixUnaryExpression
+            Identifier: 'y'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    PostfixUnaryExpression
+                      Identifier: ' x'
+                    PlusToken
+                    PostfixUnaryExpression
+                      Identifier: ' y'
+          IfStatement
+            BinaryExpression
+              Identifier: 'x'
+              EqualsEqualsToken
+              NumericLiteral
+            BreakStatement
+            IfStatement
+              BinaryExpression
+                Identifier: 'y'
+                EqualsEqualsToken
+                NumericLiteral
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            y'
+                  EqualsToken
+                  NumericLiteral
+              ReturnStatement

@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        SymbolKeyword
+      FunctionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword

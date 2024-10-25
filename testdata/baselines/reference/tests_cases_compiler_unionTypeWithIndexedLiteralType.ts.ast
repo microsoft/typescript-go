@@ -1,0 +1,33 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: ' x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Idx'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        StringKeyword
+      TypeReference
+        Identifier: ' U'
+  TypeAliasDeclaration
+    Identifier: ' U'
+    UnionType
+      TypeReference
+        Identifier: ' Idx'
+      TypeReference
+        Identifier: ' I'
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            StringLiteral

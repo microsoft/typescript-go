@@ -1,0 +1,76 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    unmeasurableUsage'
+      ExclamationToken
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        MinusToken
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    method'
+      UnionType
+        StringKeyword
+        ParenthesizedType
+          ConditionalType
+            ThisType
+            TypeReference
+              Identifier: ' C'
+            UndefinedKeyword
+            LiteralType
+              NullKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+      AnyKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    marker'
+      ExclamationToken
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' C'
+          TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'method'

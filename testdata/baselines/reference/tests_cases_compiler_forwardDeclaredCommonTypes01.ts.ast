@@ -1,0 +1,54 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Promise'
+    TypeParameter
+      Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' Symbol'
+  InterfaceDeclaration
+    Identifier: ' Map'
+    TypeParameter
+      Identifier: 'K'
+    TypeParameter
+      Identifier: ' V'
+  InterfaceDeclaration
+    Identifier: ' WeakMap'
+    TypeParameter
+      Identifier: 'K'
+      ObjectKeyword
+    TypeParameter
+      Identifier: ' V'
+  InterfaceDeclaration
+    Identifier: ' Set'
+    TypeParameter
+      Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' WeakSet'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          ExpressionStatement
+            NewExpression
+              Identifier: ' Promise'
+          ExpressionStatement
+            NewExpression
+              Identifier: ' Symbol'
+          ExpressionStatement
+            CallExpression
+              Identifier: ' Symbol'
+          ExpressionStatement
+            NewExpression
+              Identifier: ' Map'
+          ExpressionStatement
+            NewExpression
+              Identifier: ' WeakMap'
+          ExpressionStatement
+            NewExpression
+              Identifier: ' Set'
+          ExpressionStatement
+            NewExpression
+              Identifier: ' WeakSet'

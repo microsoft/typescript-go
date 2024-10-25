@@ -1,0 +1,24 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Preferences'
+    PropertyDeclaration
+      Identifier: '
+  assignability'
+      StringLiteral
+    Constructor
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ooscope2'
+        ArrowFunction
+          Parameter
+            Identifier: ' s'
+          EqualsGreaterThanToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' s'
+              Identifier: 'length'
+            GreaterThanToken
+            NumericLiteral

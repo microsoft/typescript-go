@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' test'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' ClassA'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' method'
+          Block

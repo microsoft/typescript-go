@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    GetAccessor
+      StaticKeyword
+      Identifier: ' Foo'
+      FunctionType
+        TypeReference
+          Identifier: ' T'
+      Block
+        ReturnStatement
+          NullKeyword
+    SetAccessor
+      StaticKeyword
+      Identifier: ' Bar'
+      Parameter
+        Identifier: 'v'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' v'
+            TypeReference
+              Identifier: ' T'
+      Block

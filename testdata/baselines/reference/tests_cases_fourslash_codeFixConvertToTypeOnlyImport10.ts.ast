@@ -1,0 +1,47 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @verbatimModuleSyntax: true
+// @module: esnext
+// @moduleResolution: bundler
+// @target: esnext
+
+// @filename: /a.ts
+////function f() {}
+////export interface I {}
+////export type { f };
+
+// @Filename: /b.ts
+////import { I, f } from "./a";
+////export { type I, f };
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'codeFixAvailable'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral

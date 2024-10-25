@@ -1,0 +1,50 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' promise'
+        FunctionExpression
+          Parameter
+            Identifier: ' obj'
+          Block
+            IfStatement
+              BinaryExpression
+                Identifier: ' top'
+                AmpersandAmpersandToken
+                PropertyAccessExpression
+                  Identifier: ' top'
+                  Identifier: 'doScroll'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    ParenthesizedExpression
+                      FunctionExpression
+                        Identifier: ' doScrollCheck'
+                        Block
+                          IfStatement
+                            FalseKeyword
+                            Block
+                              TryStatement
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+						top'
+                                        Identifier: 'doScroll'
+                                      StringLiteral
+                                CatchClause
+                                  VariableDeclaration
+                                    Identifier: 'e'
+                                  Block
+                                    ReturnStatement
+                                      CallExpression
+                                        Identifier: ' setTimeout'
+                                        Identifier: ' doScrollCheck'
+                                        NumericLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+
+					// detach all dom ready events
+					detach'

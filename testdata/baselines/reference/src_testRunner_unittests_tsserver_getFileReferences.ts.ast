@@ -1,0 +1,330 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' importA'
+                NoSubstitutionTemplateLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' importCurlyFromA'
+                NoSubstitutionTemplateLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' importAFromA'
+                NoSubstitutionTemplateLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' typeofImportA'
+                NoSubstitutionTemplateLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' aTs'
+                TypeReference
+                  Identifier: ' File'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        path'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        content'
+                    StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' bTs'
+                TypeReference
+                  Identifier: ' File'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        path'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        content'
+                    Identifier: ' importA'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' cTs'
+                TypeReference
+                  Identifier: ' File'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        path'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        content'
+                    Identifier: ' importCurlyFromA'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' dTs'
+                TypeReference
+                  Identifier: ' File'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        path'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        content'
+                    CallExpression
+                      PropertyAccessExpression
+                        ArrayLiteralExpression
+                          Identifier: 'importAFromA'
+                          Identifier: ' typeofImportA'
+                        Identifier: 'join'
+                      StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' tsconfig'
+                TypeReference
+                  Identifier: ' File'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        path'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        content'
+                    StringLiteral
+          FunctionDeclaration
+            Identifier: ' makeSampleSession'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' host'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' TestServerHost'
+                        Identifier: 'createServerHost'
+                      ArrayLiteralExpression
+                        Identifier: 'aTs'
+                        Identifier: ' bTs'
+                        Identifier: ' cTs'
+                        Identifier: ' dTs'
+                        Identifier: ' tsconfig'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' session'
+                    NewExpression
+                      Identifier: ' TestSession'
+                      Identifier: 'host'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        openFilesForSession'
+                  ArrayLiteralExpression
+                    Identifier: 'aTs'
+                    Identifier: ' bTs'
+                    Identifier: ' cTs'
+                    Identifier: ' dTs'
+                  Identifier: ' session'
+              ReturnStatement
+                Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        CallExpression
+                          Identifier: ' makeSampleSession'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'FileReferencesRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'FileReferences'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' file'
+                              PropertyAccessExpression
+                                Identifier: ' aTs'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        CallExpression
+                          Identifier: ' makeSampleSession'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'ConfigureRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'Configure'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                preferences'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' disableLineTextInReferences'
+                                  TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'FileReferencesRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'FileReferences'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' file'
+                              PropertyAccessExpression
+                                Identifier: ' aTs'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'

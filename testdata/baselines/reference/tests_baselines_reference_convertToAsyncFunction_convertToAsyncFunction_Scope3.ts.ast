@@ -1,0 +1,73 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' fetch'
+              StringLiteral
+            Identifier: 'then'
+          FunctionExpression
+            Parameter
+              Identifier: 'res'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+    obj'
+                  EqualsToken
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+      func'
+                      FunctionExpression
+                        Identifier: ' f'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+        console'
+                                Identifier: 'log'
+                              Identifier: 'res'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' res'
+            AwaitExpression
+              CallExpression
+                Identifier: ' fetch'
+                StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    obj'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        func'
+              FunctionExpression
+                Identifier: ' f'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            console'
+                        Identifier: 'log'
+                      Identifier: 'res'

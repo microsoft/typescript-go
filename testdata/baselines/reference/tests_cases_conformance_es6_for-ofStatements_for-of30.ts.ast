@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyStringIterator'
+    MethodDeclaration
+      Identifier: '
+    next'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            done'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+            value'
+              StringLiteral
+    PropertyDeclaration
+      Identifier: '
+
+    return'
+      NumericLiteral
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Block
+        ReturnStatement
+          ThisKeyword
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+    NewExpression
+      Identifier: ' MyStringIterator'
+    Block

@@ -1,0 +1,160 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: ''
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            ArrowFunction
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: ''
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            ArrowFunction
+              EqualsGreaterThanToken
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: ''
+  ClassDeclaration
+    Identifier: ' User'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+      StringLiteral
+    MethodDeclaration
+      Identifier: '
+    sayHello'
+      VoidKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' RegisteredUser'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' User'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+      StringLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        FunctionDeclaration
+          Identifier: ' inner'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'sayHello'
+        FunctionDeclaration
+          Identifier: ' inner2'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: 'sayHello'
+        ExpressionStatement
+          CallExpression
+            ParenthesizedExpression
+              FunctionExpression
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: ''
+    MethodDeclaration
+      Identifier: '
+    sayHello'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'sayHello'
+        FunctionDeclaration
+          Identifier: ' inner'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: 'sayHello'
+        ExpressionStatement
+          CallExpression
+            ParenthesizedExpression
+              FunctionExpression
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: ''
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticFunction'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' s'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: ''
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: ''
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: ''

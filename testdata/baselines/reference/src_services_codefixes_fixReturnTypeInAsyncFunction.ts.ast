@@ -1,0 +1,406 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isFunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isInJSFile'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    Type'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+        ImportSpecifier
+          Identifier: '
+    TypeNode'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'The_return_type_of_an_async_function_or_method_must_be_the_global_Promise_T_type_Did_you_mean_to_write_Promise_0'
+            Identifier: 'code'
+  InterfaceDeclaration
+    Identifier: ' Info'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' returnTypeNode'
+      TypeReference
+        Identifier: ' TypeNode'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' returnType'
+      TypeReference
+        Identifier: ' Type'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' promisedTypeNode'
+      TypeReference
+        Identifier: ' TypeNode'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' promisedType'
+      TypeReference
+        Identifier: ' Type'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToFixReturnTypeInAsyncFunction'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' sourceFile'
+                      BindingElement
+                        Identifier: ' program'
+                      BindingElement
+                        Identifier: ' span'
+                    Identifier: ' context'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' checker'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' program'
+                        Identifier: 'getTypeChecker'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' info'
+                    CallExpression
+                      Identifier: ' getInfo'
+                      Identifier: 'sourceFile'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' program'
+                          Identifier: 'getTypeChecker'
+                      PropertyAccessExpression
+                        Identifier: ' span'
+                        Identifier: 'start'
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'info'
+                Block
+                  ReturnStatement
+                    Identifier: ' undefined'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' returnTypeNode'
+                      BindingElement
+                        Identifier: ' returnType'
+                      BindingElement
+                        Identifier: ' promisedTypeNode'
+                      BindingElement
+                        Identifier: ' promisedType'
+                    Identifier: ' info'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' changes'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'ChangeTracker'
+                        Identifier: 'with'
+                      Identifier: 'context'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' t'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' doChange'
+                          Identifier: 't'
+                          Identifier: ' sourceFile'
+                          Identifier: ' returnTypeNode'
+                          Identifier: ' promisedTypeNode'
+              ReturnStatement
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'createCodeFixAction'
+                    Identifier: '
+            fixId'
+                    Identifier: '
+            changes'
+                    ArrayLiteralExpression
+                      PropertyAccessExpression
+                        Identifier: 'Diagnostics'
+                        Identifier: 'Replace_0_with_Promise_1'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' checker'
+                          Identifier: 'typeToString'
+                        Identifier: 'returnType'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' checker'
+                          Identifier: 'typeToString'
+                        Identifier: 'promisedType'
+                    Identifier: '
+            fixId'
+                    PropertyAccessExpression
+                      Identifier: '
+            Diagnostics'
+                      Identifier: 'Fix_all_incorrect_return_type_of_an_async_functions'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' info'
+                        CallExpression
+                          Identifier: ' getInfo'
+                          PropertyAccessExpression
+                            Identifier: 'diag'
+                            Identifier: 'file'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' context'
+                                Identifier: 'program'
+                              Identifier: 'getTypeChecker'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'start'
+                  IfStatement
+                    Identifier: 'info'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                doChange'
+                          Identifier: 'changes'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'file'
+                          PropertyAccessExpression
+                            Identifier: ' info'
+                            Identifier: 'returnTypeNode'
+                          PropertyAccessExpression
+                            Identifier: ' info'
+                            Identifier: 'promisedTypeNode'
+  FunctionDeclaration
+    Identifier: ' getInfo'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Info'
+      UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isInJSFile'
+          Identifier: 'sourceFile'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' func'
+            CallExpression
+              Identifier: ' findAncestor'
+              Identifier: 'token'
+              Identifier: ' isFunctionLikeDeclaration'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' returnTypeNode'
+            PropertyAccessExpression
+              Identifier: ' func'
+              QuestionDotToken
+              Identifier: 'type'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'returnTypeNode'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' returnType'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getTypeFromTypeNode'
+              Identifier: 'returnTypeNode'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' promisedType'
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' checker'
+                  Identifier: 'getAwaitedType'
+                Identifier: 'returnType'
+              BarBarToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' checker'
+                  Identifier: 'getVoidType'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' promisedTypeNode'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'typeToTypeNode'
+              Identifier: 'promisedType'
+              Identifier: ' /*enclosingDeclaration*/ returnTypeNode'
+              Identifier: ' /*flags*/ undefined'
+      IfStatement
+        Identifier: 'promisedTypeNode'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' returnTypeNode'
+              ShorthandPropertyAssignment
+                Identifier: ' returnType'
+              ShorthandPropertyAssignment
+                Identifier: ' promisedTypeNode'
+              ShorthandPropertyAssignment
+                Identifier: ' promisedType'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' returnTypeNode'
+      TypeReference
+        Identifier: ' TypeNode'
+    Parameter
+      Identifier: ' promisedTypeNode'
+      TypeReference
+        Identifier: ' TypeNode'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          Identifier: 'sourceFile'
+          Identifier: ' returnTypeNode'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' factory'
+              Identifier: 'createTypeReferenceNode'
+            StringLiteral
+            ArrayLiteralExpression
+              Identifier: 'promisedTypeNode'

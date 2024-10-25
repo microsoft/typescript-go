@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+
+    bar'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' k'
+              Identifier: ' foo'

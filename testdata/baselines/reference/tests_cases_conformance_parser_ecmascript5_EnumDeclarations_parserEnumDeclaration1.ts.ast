@@ -1,0 +1,10 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+  Foo'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+  Bar'

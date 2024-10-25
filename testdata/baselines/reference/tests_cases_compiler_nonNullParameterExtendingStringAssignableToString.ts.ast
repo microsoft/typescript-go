@@ -1,0 +1,56 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'p'
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' fn'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    TypeParameter
+      Identifier: ' U'
+      StringKeyword
+    Parameter
+      Identifier: 'one'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' two'
+      TypeReference
+        Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' three'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' Boolean'
+              QuestionToken
+              Identifier: ' one'
+              ColonToken
+              Identifier: ' two'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+          NonNullExpression
+            Identifier: 'one'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+          NonNullExpression
+            Identifier: 'two'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+          NonNullExpression
+            Identifier: 'three'

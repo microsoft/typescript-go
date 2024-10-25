@@ -1,0 +1,61 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleDeclaration
+      Identifier: 'B'
+      ModuleDeclaration
+        Identifier: 'C'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' Point'
+            PropertyDeclaration
+              Identifier: '
+        x'
+              NumberKeyword
+            PropertyDeclaration
+              Identifier: '
+        y'
+              NumberKeyword
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+            PropertyDeclaration
+              Identifier: ' // Error
+            name'
+              StringKeyword
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleDeclaration
+      Identifier: 'X'
+      ModuleBlock
+        ClassDeclaration
+          ExportKeyword
+          Identifier: ' Point'
+          PropertyDeclaration
+            Identifier: '
+        x'
+            NumberKeyword
+          PropertyDeclaration
+            Identifier: ' y'
+            NumberKeyword
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' X'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' Point'
+                NumberKeyword

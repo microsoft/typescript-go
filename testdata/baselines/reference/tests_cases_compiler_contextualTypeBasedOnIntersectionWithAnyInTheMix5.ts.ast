@@ -1,0 +1,226 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' ComputedGetter'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'oldValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' ComputedOptions'
+    TypeReference
+      Identifier: ' Record'
+      StringKeyword
+      TypeReference
+        Identifier: ' ComputedGetter'
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' ExtractComputedReturns'
+    TypeParameter
+      Identifier: 'T'
+      AnyKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'key'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'key'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          InferType
+            TypeParameter
+              Identifier: ' TReturn'
+        TypeReference
+          Identifier: ' TReturn'
+        NeverKeyword
+  InterfaceDeclaration
+    Identifier: ' ComponentOptionsBase'
+    TypeParameter
+      Identifier: 'D'
+    TypeParameter
+      Identifier: ' C'
+      TypeReference
+        Identifier: ' ComputedOptions'
+    PropertySignature
+      Identifier: '
+  data'
+      QuestionToken
+      TypeReference
+        Identifier: ' D'
+    PropertySignature
+      Identifier: '
+  computed'
+      QuestionToken
+      TypeReference
+        Identifier: ' C'
+  TypeAliasDeclaration
+    Identifier: ' ComponentPublicInstance'
+    TypeParameter
+      Identifier: 'D'
+      TypeLiteral
+    TypeParameter
+      Identifier: ' C'
+      TypeReference
+        Identifier: ' ComputedOptions'
+      TypeLiteral
+    IntersectionType
+      TypeReference
+        Identifier: ' D'
+      TypeReference
+        Identifier: '
+  ExtractComputedReturns'
+        TypeReference
+          Identifier: 'C'
+  TypeAliasDeclaration
+    Identifier: ' ComponentOptions'
+    TypeParameter
+      Identifier: '
+  D'
+      AnyKeyword
+    TypeParameter
+      Identifier: '
+  C'
+      TypeReference
+        Identifier: ' ComputedOptions'
+      AnyKeyword
+    IntersectionType
+      TypeReference
+        Identifier: ' ComponentOptionsBase'
+        TypeReference
+          Identifier: 'D'
+        TypeReference
+          Identifier: ' C'
+      TypeReference
+        Identifier: ' ThisType'
+        TypeReference
+          Identifier: 'ComponentPublicInstance'
+          TypeReference
+            Identifier: 'D'
+          TypeReference
+            Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' App'
+    MethodSignature
+      Identifier: '
+  mixin'
+      Parameter
+        Identifier: 'mixin'
+        TypeReference
+          Identifier: ' ComponentOptions'
+      ThisType
+  InterfaceDeclaration
+    Identifier: ' InjectionKey'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Symbol'
+  InterfaceDeclaration
+    Identifier: ' Ref'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+  _v'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' reactive'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Ref'
+      TypeReference
+        Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' ThemeInstance'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' name'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'Ref'
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ThemeSymbol'
+        TypeReference
+          Identifier: ' InjectionKey'
+          TypeReference
+            Identifier: 'ThemeInstance'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' inject'
+    Parameter
+      Identifier: '
+  this'
+      TypeReference
+        Identifier: ' ComponentPublicInstance'
+    Parameter
+      Identifier: '
+  key'
+      UnionType
+        TypeReference
+          Identifier: ' InjectionKey'
+          AnyKeyword
+        StringKeyword
+    AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' app'
+        TypeReference
+          Identifier: ' App'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+app'
+        Identifier: 'mixin'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  computed'
+          ObjectLiteralExpression
+            MethodDeclaration
+              Identifier: '
+    $vuetify'
+              Block
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' reactive'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+        theme'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' inject'
+                            Identifier: 'call'
+                          ThisKeyword
+                          Identifier: ' ThemeSymbol'

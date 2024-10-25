@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+   A'
+            TypeReference
+              Identifier: ' B'
+          CallSignature
+            TypeParameter
+              Identifier: 'T'

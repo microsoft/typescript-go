@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' a'
+      ExclamationToken
+      StringKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' ns'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'

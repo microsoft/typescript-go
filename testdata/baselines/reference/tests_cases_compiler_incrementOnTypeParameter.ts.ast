@@ -1,0 +1,35 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+        ForStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' i'
+              TypeReference
+                Identifier: ' T'
+            VariableDeclaration
+              Identifier: ' j'
+              NumericLiteral
+          BinaryExpression
+            Identifier: ' j'
+            LessThanToken
+            NumericLiteral
+          PostfixUnaryExpression
+            Identifier: ' i'
+          Block

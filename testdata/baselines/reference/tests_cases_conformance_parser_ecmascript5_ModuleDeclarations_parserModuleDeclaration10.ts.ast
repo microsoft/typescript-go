@@ -1,0 +1,7 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' data'
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' next'
+    StringKeyword

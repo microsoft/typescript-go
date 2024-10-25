@@ -1,0 +1,290 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    TypeParameter
+      Identifier: ' P'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' tp'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tp'
+          EqualsToken
+          Identifier: ' s'
+  FunctionDeclaration
+    Identifier: ' g'
+    TypeParameter
+      Identifier: 'T'
+      LiteralType
+        NullKeyword
+    TypeParameter
+      Identifier: ' P'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' tp'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tp'
+          EqualsToken
+          Identifier: ' s'
+  FunctionDeclaration
+    Identifier: ' h'
+    TypeParameter
+      Identifier: 'T'
+      UndefinedKeyword
+    TypeParameter
+      Identifier: ' P'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' tp'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tp'
+          EqualsToken
+          Identifier: ' s'
+  FunctionDeclaration
+    Identifier: ' i'
+    TypeParameter
+      Identifier: 'T'
+      VoidKeyword
+    TypeParameter
+      Identifier: ' P'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' tp'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tp'
+          EqualsToken
+          Identifier: ' s'
+  FunctionDeclaration
+    Identifier: ' j'
+    TypeParameter
+      Identifier: 'T'
+      NeverKeyword
+    TypeParameter
+      Identifier: ' P'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' tp'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tp'
+          EqualsToken
+          Identifier: ' s'
+  FunctionDeclaration
+    Identifier: ' k'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    TypeParameter
+      Identifier: ' P'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' tp'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tp'
+          EqualsToken
+          Identifier: ' s'
+  FunctionDeclaration
+    Identifier: ' o'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeParameter
+      Identifier: ' P'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' tp'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tp'
+          EqualsToken
+          Identifier: ' s'
+  FunctionDeclaration
+    Identifier: ' l'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    TypeParameter
+      Identifier: ' P'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' tp'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tp'
+          EqualsToken
+          Identifier: ' s'
+  FunctionDeclaration
+    Identifier: ' m'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+    TypeParameter
+      Identifier: ' P'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' tp'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tp'
+          EqualsToken
+          Identifier: ' s'
+  FunctionDeclaration
+    Identifier: ' n'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          NumberKeyword
+    TypeParameter
+      Identifier: ' P'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' tp'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tp'
+          EqualsToken
+          Identifier: ' s'

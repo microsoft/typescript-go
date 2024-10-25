@@ -1,0 +1,226 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'obj'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          QuestionToken
+          StringKeyword
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'obj'
+          Identifier: 'a'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        obj'
+              EqualsToken
+              ObjectLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a1'
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a2'
+                PropertyAccessExpression
+                  Identifier: ' obj'
+                  Identifier: 'a'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'obj'
+      UnionType
+        TupleType
+          NumberKeyword
+          StringKeyword
+        ArrayType
+          LiteralType
+            NullKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a0'
+            ElementAccessExpression
+              Identifier: ' obj'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a1'
+            ElementAccessExpression
+              Identifier: ' obj'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'b0'
+              BindingElement
+                Identifier: ' b1'
+            Identifier: ' obj'
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ArrayLiteralExpression
+              Identifier: 'a0'
+              Identifier: ' a1'
+            EqualsToken
+            Identifier: ' obj'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'obj'
+            NumericLiteral
+          AmpersandAmpersandToken
+          ElementAccessExpression
+            Identifier: ' obj'
+            NumericLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' c0'
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' c1'
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'd0'
+                  BindingElement
+                    Identifier: ' d1'
+                Identifier: ' obj'
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ArrayLiteralExpression
+                  Identifier: 'c0'
+                  Identifier: ' c1'
+                EqualsToken
+                Identifier: ' obj'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'obj'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          QuestionToken
+          StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'a'
+          AmpersandAmpersandToken
+          PropertyAccessExpression
+            Identifier: ' obj'
+            Identifier: 'b'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' a'
+                  BindingElement
+                    Identifier: ' b'
+                Identifier: ' obj'
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' a'
+                  ShorthandPropertyAssignment
+                    Identifier: ' b'
+                EqualsToken
+                Identifier: ' obj'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            BooleanKeyword
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' x'
+            EqualsToken
+            NumericLiteral
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  StringLiteral
+                Identifier: ' x'
+            EqualsToken
+            NumericLiteral
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  BinaryExpression
+                    StringLiteral
+                    PlusToken
+                    StringLiteral
+                Identifier: ' x'
+            EqualsToken
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' KeyValue'
+    TupleType
+      StringKeyword
+      OptionalType
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'key'
+          BindingElement
+            Identifier: ' value'
+        TypeReference
+          Identifier: ' KeyValue'
+        ArrayLiteralExpression
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+value'
+        Identifier: 'toUpperCase'

@@ -1,0 +1,156 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Prop'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    children'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' JSX'
+            Identifier: 'Element'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' JSX'
+              Identifier: 'Element'
+  ClassDeclaration
+    Identifier: ' Button'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        AnyKeyword
+        AnyKeyword
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          ParenthesizedExpression
+            JsxElement
+              JsxOpeningElement
+                Identifier: 'div'
+                JsxAttributes
+              JsxText
+              JsxClosingElement
+                Identifier: 'div'
+  FunctionDeclaration
+    Identifier: ' AnotherButton'
+    Parameter
+      Identifier: 'p'
+      AnyKeyword
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'h1'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'h1'
+  FunctionDeclaration
+    Identifier: ' Comp'
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' Prop'
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxExpression
+            PropertyAccessExpression
+              Identifier: 'p'
+              Identifier: 'b'
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k1'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Comp'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' a'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' b'
+                StringLiteral
+          JsxSelfClosingElement
+            Identifier: 'Button'
+            JsxAttributes
+          JsxText
+          JsxSelfClosingElement
+            Identifier: 'AnotherButton'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'Comp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k2'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Comp'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' a'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' b'
+                StringLiteral
+          JsxSelfClosingElement
+            Identifier: 'Button'
+            JsxAttributes
+          JsxText
+          JsxSelfClosingElement
+            Identifier: 'AnotherButton'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'Comp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k3'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Comp'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' a'
+                JsxExpression
+                  NumericLiteral
+              JsxAttribute
+                Identifier: ' b'
+                StringLiteral
+          JsxText
+          JsxSelfClosingElement
+            Identifier: 'Button'
+            JsxAttributes
+          JsxText
+          JsxSelfClosingElement
+            Identifier: 'AnotherButton'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'Comp'

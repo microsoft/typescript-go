@@ -1,0 +1,365 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjsi'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjsi'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' typei'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+cjsi'
+  ExpressionStatement
+    Identifier: '
+mjsi'
+  ExpressionStatement
+    Identifier: '
+typei'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjsi2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjsi2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' typei2'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+cjsi2'
+  ExpressionStatement
+    Identifier: '
+mjsi2'
+  ExpressionStatement
+    Identifier: '
+typei2'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjsi'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjsi'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' typei'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+cjsi'
+  ExpressionStatement
+    Identifier: '
+mjsi'
+  ExpressionStatement
+    Identifier: '
+typei'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjsi2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjsi2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' typei2'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+cjsi2'
+  ExpressionStatement
+    Identifier: '
+mjsi2'
+  ExpressionStatement
+    Identifier: '
+typei2'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjsi'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjsi'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' typei'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+cjsi'
+  ExpressionStatement
+    Identifier: '
+mjsi'
+  ExpressionStatement
+    Identifier: '
+typei'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjsi2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjsi2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' typei2'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+cjsi2'
+  ExpressionStatement
+    Identifier: '
+mjsi2'
+  ExpressionStatement
+    Identifier: '
+typei2'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' type'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' cjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' mjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' type'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' type'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' cjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' mjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' type'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' type'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' cjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' mjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' type'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' type'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' cjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' mjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' type'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' type'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' cjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' mjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' type'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' type'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' cjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' mjs'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' type'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          NullKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          NullKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        NullKeyword

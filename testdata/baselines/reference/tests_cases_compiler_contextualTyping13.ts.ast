@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            NumberKeyword
+          NumberKeyword
+        FunctionExpression
+          Parameter
+            Identifier: 'a'
+          Block
+            ReturnStatement
+              Identifier: ' a'

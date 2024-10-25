@@ -1,0 +1,15 @@
+SourceFile
+  ExportAssignment
+    Identifier: ' a'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        StringLiteral

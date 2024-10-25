@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'a'
+        NumericLiteral
+      Parameter
+        Identifier: ' b'
+      Block

@@ -1,0 +1,29 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                ArrayLiteralExpression
+                Identifier: 'concat'
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' a'
+                    NumericLiteral
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' a'
+                    NumericLiteral
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'b'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' b'
+              Identifier: 'a'

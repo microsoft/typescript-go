@@ -1,0 +1,240 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' commonValues'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntry'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'n'
+                      TemplateTail
+                PropertyAssignment
+                  Identifier: ' text'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'n'
+                      TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' commonTypes'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntry'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'n'
+                      TemplateTail
+                PropertyAssignment
+                  Identifier: ' text'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'n'
+                      TemplateTail
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              SpreadElement
+                Identifier: 'commonValues'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' text'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' text'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' text'
+                  StringLiteral
+              StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' noLib'
+                TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'typeKeywordsPlus'
+            ArrayLiteralExpression
+              PropertyAccessExpression
+                Identifier: '
+            completion'
+                Identifier: 'globalThisEntry'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' text'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' text'
+                  StringLiteral
+              SpreadElement
+                Identifier: 'commonTypes'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' text'
+                  StringLiteral
+              SpreadElement
+                Identifier: 'commonValues'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' text'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' text'
+                  StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' noLib'
+                TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'typeKeywordsPlus'
+            ArrayLiteralExpression
+              PropertyAccessExpression
+                Identifier: '
+            completion'
+                Identifier: 'globalThisEntry'
+              StringLiteral
+              StringLiteral
+              SpreadElement
+                Identifier: 'commonTypes'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' text'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' text'
+                  StringLiteral

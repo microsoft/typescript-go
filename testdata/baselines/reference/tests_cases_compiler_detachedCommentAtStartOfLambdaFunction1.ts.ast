@@ -1,0 +1,34 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' TestFile'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'message'
+        StringKeyword
+      FunctionType
+        StringKeyword
+      Block
+        ReturnStatement
+          ArrowFunction
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              ArrayType
+                StringKeyword
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: '
+            /// <summary>Test summary</summary>
+            /// <param name="message" type="String" />
+            /// <returns type="Function" />
+            message'
+              PlusToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'name'

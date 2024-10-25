@@ -1,0 +1,474 @@
+SourceFile
+  ExpressionStatement
+    ParenthesizedExpression
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    x'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    y'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+
+    // keywords
+    break'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    case'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    catch'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    class'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    const'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    continue'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    debugger'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    default'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    delete'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    do'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    else'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    enum'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    export'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    extends'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    false'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    finally'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    for'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    function'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    if'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    import'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    in'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    instanceof'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    new'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    null'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    return'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    super'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    switch'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    this'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    throw'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    true'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    try'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    typeof'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    var'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    void'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    while'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    with'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    implements'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    interface'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    let'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    package'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    private'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    protected'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    public'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    static'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    yield'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    abstract'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    as'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    asserts'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    any'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    async'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    await'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    boolean'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    constructor'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    declare'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    get'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    infer'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    is'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    keyof'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    module'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    namespace'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    never'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    readonly'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    require'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    number'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    object'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    set'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    string'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    symbol'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    type'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    undefined'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    unique'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    unknown'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    from'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    global'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    bigint'
+          ClassExpression
+            Constructor
+              Block
+        PropertyAssignment
+          Identifier: '
+    of'
+          ClassExpression
+            Constructor
+              Block

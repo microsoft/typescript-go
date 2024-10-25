@@ -1,0 +1,155 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' CustomTransformers'
+        ImportSpecifier
+          Identifier: ' EmitHint'
+        ImportSpecifier
+          Identifier: ' EmitHost'
+        ImportSpecifier
+          Identifier: ' EmitOnly'
+        ImportSpecifier
+          Identifier: ' EmitResolver'
+        ImportSpecifier
+          Identifier: ' EmitTransformers'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' NodeFactory'
+        ImportSpecifier
+          Identifier: ' TransformationContext'
+        ImportSpecifier
+          Identifier: ' TransformationResult'
+        ImportSpecifier
+          Identifier: ' TransformerFactory'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noTransformers'
+        TypeReference
+          Identifier: ' EmitTransformers'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getTransformers'
+    Parameter
+      Identifier: 'compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' customTransformers'
+      QuestionToken
+      TypeReference
+        Identifier: ' CustomTransformers'
+    Parameter
+      Identifier: ' emitOnly'
+      QuestionToken
+      UnionType
+        BooleanKeyword
+        TypeReference
+          Identifier: ' EmitOnly'
+    TypeReference
+      Identifier: ' EmitTransformers'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' noEmitSubstitution'
+    Parameter
+      Identifier: '_hint'
+      TypeReference
+        Identifier: ' EmitHint'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' Node'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' noEmitNotification'
+    Parameter
+      Identifier: 'hint'
+      TypeReference
+        Identifier: ' EmitHint'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' callback'
+      FunctionType
+        Parameter
+          Identifier: 'hint'
+          TypeReference
+            Identifier: ' EmitHint'
+        Parameter
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+        VoidKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' transformNodes'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'resolver'
+      UnionType
+        TypeReference
+          Identifier: ' EmitResolver'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' host'
+      UnionType
+        TypeReference
+          Identifier: ' EmitHost'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' nodes'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' transformers'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' TransformerFactory'
+            TypeReference
+              Identifier: 'T'
+    Parameter
+      Identifier: ' allowDtsFiles'
+      BooleanKeyword
+    TypeReference
+      Identifier: ' TransformationResult'
+      TypeReference
+        Identifier: 'T'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullTransformationContext'
+        TypeReference
+          Identifier: ' TransformationContext'

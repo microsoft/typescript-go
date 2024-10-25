@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// [|/// <reference path="./tripleSlashReference.ts" />
+//// f1/*0*/();|]
+
+// @Filename: Module.ts
+//// export function f1() {}
+//// export var v1 = 5;
+
+// @Filename: tripleSlashReference.ts
+//// var x = 5;/*dummy*/
+
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral

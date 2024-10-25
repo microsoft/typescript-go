@@ -1,0 +1,23 @@
+SourceFile
+  ExportAssignment
+    ClassExpression
+      PropertyDeclaration
+        Identifier: '
+    chunk'
+        NumericLiteral
+  ImportEqualsDeclaration
+    Identifier: ' Chunk'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' Chunk'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+c'
+      Identifier: 'chunk'

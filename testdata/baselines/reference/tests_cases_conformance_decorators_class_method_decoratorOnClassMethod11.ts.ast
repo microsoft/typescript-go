@@ -1,0 +1,27 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: '
+        decorator'
+          Parameter
+            Identifier: 'target'
+            TypeReference
+              Identifier: ' Object'
+          Parameter
+            Identifier: ' key'
+            StringKeyword
+          VoidKeyword
+          Block
+        MethodDeclaration
+          Decorator
+            ParenthesizedExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'decorator'
+          Identifier: '
+        method'
+          Block

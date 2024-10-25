@@ -1,0 +1,13 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' MyRoot'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        ModuleBlock
+          ClassDeclaration
+            Identifier: ' MyClass'

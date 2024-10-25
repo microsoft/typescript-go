@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+  x'
+            NumericLiteral

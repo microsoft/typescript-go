@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    new'
+            QuestionToken
+            AnyKeyword

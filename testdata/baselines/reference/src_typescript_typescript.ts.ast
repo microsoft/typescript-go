@@ -1,0 +1,85 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    LogLevel'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        AnyKeyword
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' console'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'loggingHost'
+          EqualsToken
+          ObjectLiteralExpression
+            MethodDeclaration
+              Identifier: '
+        log'
+              Parameter
+                Identifier: 'level'
+              Parameter
+                Identifier: ' s'
+              Block
+                SwitchStatement
+                  Identifier: 'level'
+                  CaseBlock
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' LogLevel'
+                        Identifier: 'Error'
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' console'
+                            Identifier: 'error'
+                          Identifier: 's'
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' LogLevel'
+                        Identifier: 'Warning'
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' console'
+                            Identifier: 'warn'
+                          Identifier: 's'
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' LogLevel'
+                        Identifier: 'Info'
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' console'
+                            Identifier: 'log'
+                          Identifier: 's'
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' LogLevel'
+                        Identifier: 'Verbose'
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' console'
+                            Identifier: 'log'
+                          Identifier: 's'
+  ExportDeclaration
+    StringLiteral

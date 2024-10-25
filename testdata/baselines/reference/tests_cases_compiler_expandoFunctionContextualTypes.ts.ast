@@ -1,0 +1,51 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' MyComponentProps'
+    PropertySignature
+      Identifier: '
+    color'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' StatelessComponent'
+    TypeParameter
+      Identifier: 'P'
+    CallSignature
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    defaultProps'
+      QuestionToken
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MyComponent'
+        TypeReference
+          Identifier: ' StatelessComponent'
+          TypeReference
+            Identifier: 'MyComponentProps'
+        ArrowFunction
+          EqualsGreaterThanToken
+          AsExpression
+            NullKeyword
+            AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+MyComponent'
+        Identifier: 'defaultProps'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    color'
+          StringLiteral

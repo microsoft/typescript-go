@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      QuestionToken
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    f'
+      QuestionToken
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      QuestionToken
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      Identifier: '
+    f'
+      QuestionToken
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block

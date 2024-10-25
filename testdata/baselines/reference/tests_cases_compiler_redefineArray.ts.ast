@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'Array'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        Parameter
+          Identifier: ' s'
+          StringKeyword
+        Block
+          ReturnStatement
+            Identifier: ' n'

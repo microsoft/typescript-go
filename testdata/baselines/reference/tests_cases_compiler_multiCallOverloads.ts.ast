@@ -1,0 +1,63 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ICallback'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        QuestionToken
+        StringKeyword
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' load'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' ICallback'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        TypeReference
+          Identifier: ' ICallback'
+        FunctionExpression
+          Parameter
+            Identifier: 'z'
+            QuestionToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        TypeReference
+          Identifier: ' ICallback'
+        FunctionExpression
+          Parameter
+            Identifier: 'z'
+            QuestionToken
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+load'
+      Identifier: 'f1'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // ok
+load'
+      Identifier: 'f2'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // ok
+load'
+      FunctionExpression
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // this shouldn’t be an error
+load'
+      FunctionExpression
+        Parameter
+          Identifier: 'z'
+          QuestionToken
+        Block

@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' f'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              ThisKeyword
+    GetAccessor
+      StaticKeyword
+      Identifier: ' x'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              ThisKeyword
+        ReturnStatement
+          Identifier: ' y'

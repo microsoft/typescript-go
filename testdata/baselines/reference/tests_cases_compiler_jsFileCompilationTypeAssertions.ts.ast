@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    AsExpression
+      NumericLiteral
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeAssertionExpression
+          StringKeyword
+          Identifier: 'undefined'

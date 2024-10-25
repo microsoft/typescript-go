@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tuvwx'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wrong'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' insufficient'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' actually'
+        TypeReference
+          Identifier: ' Everything'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+          UndefinedKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' c'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: ' d'
+              LiteralType
+                NumericLiteral
+          NumberKeyword
+          StringKeyword

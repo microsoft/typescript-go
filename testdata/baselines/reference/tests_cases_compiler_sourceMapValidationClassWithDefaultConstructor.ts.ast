@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Greeter'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      NumericLiteral
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' nameA'
+      StringLiteral

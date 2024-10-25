@@ -1,0 +1,13 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' im1'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          Identifier: ' im1'
+          Identifier: 'x'

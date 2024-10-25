@@ -1,0 +1,236 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Default'
+    PropertyDeclaration
+      Identifier: '
+    member'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Public'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Protected'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' member'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Private'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        TypeReference
+          Identifier: ' Default'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        TypeReference
+          Identifier: ' Public'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        TypeReference
+          Identifier: ' Protected'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        TypeReference
+          Identifier: ' Private'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v5'
+        UnionType
+          TypeReference
+            Identifier: ' Default'
+          TypeReference
+            Identifier: ' Public'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v6'
+        UnionType
+          TypeReference
+            Identifier: ' Default'
+          TypeReference
+            Identifier: ' Protected'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v7'
+        UnionType
+          TypeReference
+            Identifier: ' Default'
+          TypeReference
+            Identifier: ' Private'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v8'
+        UnionType
+          TypeReference
+            Identifier: ' Public'
+          TypeReference
+            Identifier: ' Protected'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v9'
+        UnionType
+          TypeReference
+            Identifier: ' Public'
+          TypeReference
+            Identifier: ' Private'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v10'
+        UnionType
+          TypeReference
+            Identifier: ' Protected'
+          TypeReference
+            Identifier: ' Private'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v11'
+        UnionType
+          TypeReference
+            Identifier: ' Default'
+          TypeReference
+            Identifier: ' Public'
+          TypeReference
+            Identifier: ' Protected'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v12'
+        UnionType
+          TypeReference
+            Identifier: ' Default'
+          TypeReference
+            Identifier: ' Public'
+          TypeReference
+            Identifier: ' Private'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v13'
+        UnionType
+          TypeReference
+            Identifier: ' Default'
+          TypeReference
+            Identifier: ' Protected'
+          TypeReference
+            Identifier: ' Private'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v14'
+        UnionType
+          TypeReference
+            Identifier: ' Public'
+          TypeReference
+            Identifier: ' Private'
+          TypeReference
+            Identifier: ' Protected'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v15'
+        UnionType
+          TypeReference
+            Identifier: ' Default'
+          TypeReference
+            Identifier: ' Public'
+          TypeReference
+            Identifier: ' Private'
+          TypeReference
+            Identifier: ' Protected'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+v1'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v2'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v3'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v4'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v5'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v6'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v7'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v8'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v9'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v10'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v11'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v12'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v13'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v14'
+      Identifier: 'member'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+v15'
+      Identifier: 'member'

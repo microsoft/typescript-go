@@ -1,0 +1,486 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: commonjs
+
+// @Filename: /node_modules/@types/node/index.d.ts
+//// declare module "path" { function join(...segments: readonly string[]): string; }
+//// declare module "node:path" { export * from "path"; }
+//// declare module "fs" { function writeFile(): void }
+//// declare module "fs/promises" { function writeFile(): Promise<void> }
+//// declare module "node:fs" { export * from "fs"; }
+//// declare module "node:fs/promises" { export * from "fs/promises"; }
+
+// @Filename: /other.ts
+//// import "node:fs/promises";
+
+// @Filename: /noPrefix.ts
+//// import "path";
+//// write/*noPrefix*/
+
+// @Filename: /prefix.ts
+//// import "node:path";
+//// write/*prefix*/
+
+// @Filename: /mixed1.ts
+//// import "path";
+//// import "node:path";
+//// write/*mixed1*/
+
+// @Filename: /mixed2.ts
+//// import "node:path";
+//// import "path";
+//// write/*mixed2*/
+
+// @Filename: /test1.ts
+//// import "node:test";
+//// import "path";
+//// writeFile/*test1*/
+
+// @Filename: /test2.ts
+//// import "node:test";
+//// writeFile/*test2*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Prefixed imports take precedence over non-prefixed imports when mixed
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Unless the prefixed import is not available unprefixed
+
+verify'
+        Identifier: 'importFixModuleSpecifiers'
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixModuleSpecifiers'
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    source'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword

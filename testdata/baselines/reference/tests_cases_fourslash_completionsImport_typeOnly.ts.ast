@@ -1,0 +1,55 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @target: esnext
+
+// @Filename: /a.ts
+//// export class A {}
+//// export class B {}
+
+// @Filename: /b.ts
+//// import type { A } from './a';
+//// const b: B/**/
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    includeInsertTextCompletions'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

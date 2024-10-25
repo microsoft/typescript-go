@@ -1,0 +1,100 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NewExpression
+          Identifier: ' A'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        TypeReference
+          Identifier: ' A'
+          StringKeyword
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'B'
+            StringKeyword
+          NewExpression
+            Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        TypeReference
+          Identifier: ' A'
+          NumberKeyword
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'B'
+            StringKeyword
+          NewExpression
+            Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        TypeReference
+          Identifier: ' B'
+          NumberKeyword
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'A'
+            NumberKeyword
+          NewExpression
+            Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        TypeReference
+          Identifier: ' A'
+          NumberKeyword
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'A'
+            NumberKeyword
+          NewExpression
+            Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        TypeReference
+          Identifier: ' A'
+          NumberKeyword
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'A'
+            NumberKeyword
+          ArrayLiteralExpression

@@ -1,0 +1,35 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' F'
+    CallSignature
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        PublicKeyword
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' F'
+      Block
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+            InstanceOfKeyword
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'b'
+          Block

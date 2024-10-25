@@ -1,0 +1,35 @@
+SourceFile
+  NamespaceExportDeclaration
+    Identifier: ' Alpha'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringKeyword
+  NamespaceExportDeclaration
+    Identifier: ' Alpha'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' v1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' v2'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        StringKeyword
+        PropertyAccessExpression
+          Identifier: ' Alpha'
+          Identifier: 'x'

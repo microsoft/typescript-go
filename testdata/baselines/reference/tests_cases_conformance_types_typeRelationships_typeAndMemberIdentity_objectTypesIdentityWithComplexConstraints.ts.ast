@@ -1,0 +1,64 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'S'
+              TypeReference
+                Identifier: ' A'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' S'
+            VoidKeyword
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    CallSignature
+      TypeParameter
+        Identifier: 'U'
+        TypeReference
+          Identifier: ' B'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' U'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' U'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block

@@ -1,0 +1,32 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' C'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' C'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' C1'
+      ClassDeclaration
+        Identifier: ' C1'
+      InterfaceDeclaration
+        Identifier: ' C1'
+      InterfaceDeclaration
+        Identifier: ' C1'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C2'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' C2'

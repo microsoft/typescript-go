@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          ParenthesizedExpression
+            AsExpression
+              FunctionExpression
+                Identifier: ' a'
+                Block
+              AnyKeyword
+        Identifier: 'foo'

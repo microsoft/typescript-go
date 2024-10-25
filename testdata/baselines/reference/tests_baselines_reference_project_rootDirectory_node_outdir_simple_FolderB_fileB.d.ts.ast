@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    c'
+      TypeReference
+        Identifier: ' C'

@@ -1,0 +1,70 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Narrow'
+    PropertyDeclaration
+      Identifier: '
+    narrowed'
+      BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectKeyword
+  IfStatement
+    BinaryExpression
+      Identifier: 'a'
+      InstanceOfKeyword
+      Identifier: ' Narrow'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    a'
+          Identifier: 'narrowed'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    a'
+          EqualsToken
+          NumericLiteral
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' a'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    a'
+            Identifier: 'toFixed'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        UnionType
+          ObjectKeyword
+          LiteralType
+            NullKeyword
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' b'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+   b'
+            Identifier: 'toString'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+   b'
+            Identifier: 'toString'

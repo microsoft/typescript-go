@@ -1,0 +1,40 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: 'U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            FunctionType
+              Parameter
+                Identifier: 'item'
+                TypeReference
+                  Identifier: ' U'
+              BooleanKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            FunctionType
+              Parameter
+                Identifier: 'item'
+                TypeReference
+                  Identifier: ' T'
+              BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Should be an error
+    y'
+          EqualsToken
+          Identifier: ' x'

@@ -1,0 +1,21 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' TypeStructure'
+    UnionType
+      TupleType
+        LiteralType
+          StringLiteral
+        ArrayType
+          TypeReference
+            Identifier: ' TypeStructure'
+      TupleType
+        LiteralType
+          StringLiteral
+      TupleType
+        LiteralType
+          StringLiteral
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' TypeStructure'

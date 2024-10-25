@@ -1,0 +1,113 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' inA'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' Point3D'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Point'
+            PropertySignature
+              Identifier: '
+            z'
+              NumberKeyword
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' a'
+        Identifier: ' A'
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' a'
+        Identifier: ' A'
+      ImportEqualsDeclaration
+        Identifier: ' b'
+        QualifiedName
+          Identifier: ' a'
+          Identifier: 'inA'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' m'
+            TypeQuery
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            TypeReference
+              QualifiedName
+                Identifier: ' b'
+                Identifier: 'Point3D'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' z'
+                NumericLiteral
+  ModuleDeclaration
+    Identifier: ' D'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' a'
+        Identifier: ' A'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            TypeReference
+              QualifiedName
+                Identifier: ' a'
+                Identifier: 'Point'
+  ModuleDeclaration
+    Identifier: ' E'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' a'
+        QualifiedName
+          Identifier: ' A'
+          Identifier: 'inA'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' xDist'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            QualifiedName
+              Identifier: ' a'
+              Identifier: 'Point3D'
+        Block
+          ReturnStatement
+            BinaryExpression
+              NumericLiteral
+              MinusToken
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'x'

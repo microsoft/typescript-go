@@ -1,0 +1,69 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' require'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exports'
+        ObjectLiteralExpression
+  ClassDeclaration
+    Identifier: ' Object'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' __esModule'
+        FalseKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'require'
+      ExportSpecifier
+        Identifier: ' exports'
+      ExportSpecifier
+        Identifier: ' Object'
+  FunctionDeclaration
+    Identifier: ' require'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exports'
+        ObjectLiteralExpression
+  ClassDeclaration
+    Identifier: ' Object'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' __esModule'
+        FalseKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'require'
+      ExportSpecifier
+        Identifier: ' exports'
+      ExportSpecifier
+        Identifier: ' Object'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral

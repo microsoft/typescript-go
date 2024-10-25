@@ -1,0 +1,24 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      NumberKeyword
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' c'
+        FalseKeyword
+  ImportDeclaration
+    ImportClause
+      Identifier: ' b'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+b'

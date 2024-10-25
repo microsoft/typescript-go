@@ -1,0 +1,631 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Box'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' wrap'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' compose'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Parameter
+      Identifier: ' g'
+      FunctionType
+        Parameter
+          Identifier: 'b'
+          TypeReference
+            Identifier: ' B'
+        TypeReference
+          Identifier: ' C'
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' C'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' list'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' unlist'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' box'
+    TypeParameter
+      Identifier: 'V'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' V'
+    TypeReference
+      Identifier: ' Box'
+      TypeReference
+        Identifier: 'V'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' unbox'
+    TypeParameter
+      Identifier: 'W'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Box'
+        TypeReference
+          Identifier: 'W'
+    TypeReference
+      Identifier: ' W'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' map'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'a'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    ArrayType
+      TypeReference
+        Identifier: ' U'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' identity'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' zip'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    TupleType
+      TypeReference
+        Identifier: 'A'
+      TypeReference
+        Identifier: ' B'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' flip'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' Y'
+    TypeParameter
+      Identifier: ' Z'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' X'
+        Parameter
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' Y'
+        TypeReference
+          Identifier: ' Z'
+    FunctionType
+      Parameter
+        Identifier: 'y'
+        TypeReference
+          Identifier: ' Y'
+      Parameter
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' X'
+      TypeReference
+        Identifier: ' Z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f00'
+        FunctionType
+          TypeParameter
+            Identifier: 'A'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' A'
+          ArrayType
+            TypeReference
+              Identifier: ' A'
+        Identifier: ' list'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f01'
+        FunctionType
+          TypeParameter
+            Identifier: 'A'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' A'
+          ArrayType
+            TypeReference
+              Identifier: ' A'
+        ArrowFunction
+          Parameter
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f02'
+        FunctionType
+          TypeParameter
+            Identifier: 'A'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' A'
+          ArrayType
+            TypeReference
+              Identifier: ' A'
+        CallExpression
+          Identifier: ' wrap'
+          Identifier: 'list'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f03'
+        FunctionType
+          TypeParameter
+            Identifier: 'A'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' A'
+          ArrayType
+            TypeReference
+              Identifier: ' A'
+        CallExpression
+          Identifier: ' wrap'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f10'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' Box'
+            ArrayType
+              TypeReference
+                Identifier: 'T'
+        CallExpression
+          Identifier: ' compose'
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' list'
+              Identifier: 'a'
+          ArrowFunction
+            Parameter
+              Identifier: ' b'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' box'
+              Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f11'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' Box'
+            ArrayType
+              TypeReference
+                Identifier: 'T'
+        CallExpression
+          Identifier: ' compose'
+          Identifier: 'list'
+          Identifier: ' box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f12'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Box'
+              ArrayType
+                TypeReference
+                  Identifier: 'T'
+          TypeReference
+            Identifier: ' T'
+        CallExpression
+          Identifier: ' compose'
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' unbox'
+              Identifier: 'a'
+          ArrowFunction
+            Parameter
+              Identifier: ' b'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' unlist'
+              Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f13'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Box'
+              ArrayType
+                TypeReference
+                  Identifier: 'T'
+          TypeReference
+            Identifier: ' T'
+        CallExpression
+          Identifier: ' compose'
+          Identifier: 'unbox'
+          Identifier: ' unlist'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrayMap'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'f'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'map'
+              Identifier: 'f'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrayFilter'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'f'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              BooleanKeyword
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'filter'
+              Identifier: 'f'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f20'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            ArrayType
+              StringKeyword
+          ArrayType
+            NumberKeyword
+        CallExpression
+          Identifier: ' arrayMap'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f21'
+        FunctionType
+          TypeParameter
+            Identifier: 'A'
+          Parameter
+            Identifier: 'a'
+            ArrayType
+              TypeReference
+                Identifier: ' A'
+          ArrayType
+            ArrayType
+              TypeReference
+                Identifier: ' A'
+        CallExpression
+          Identifier: ' arrayMap'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f22'
+        FunctionType
+          TypeParameter
+            Identifier: 'A'
+          Parameter
+            Identifier: 'a'
+            ArrayType
+              TypeReference
+                Identifier: ' A'
+          ArrayType
+            TypeReference
+              Identifier: ' A'
+        CallExpression
+          Identifier: ' arrayMap'
+          Identifier: 'identity'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f23'
+        FunctionType
+          TypeParameter
+            Identifier: 'A'
+          Parameter
+            Identifier: 'a'
+            ArrayType
+              TypeReference
+                Identifier: ' A'
+          ArrayType
+            TypeReference
+              Identifier: ' Box'
+              TypeReference
+                Identifier: 'A'
+        CallExpression
+          Identifier: ' arrayMap'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f30'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            ArrayType
+              StringKeyword
+          ArrayType
+            StringKeyword
+        CallExpression
+          Identifier: ' arrayFilter'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'length'
+              GreaterThanToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f31'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Box'
+              NumberKeyword
+          Parameter
+            Identifier: 'a'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+        CallExpression
+          Identifier: ' arrayFilter'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'value'
+              GreaterThanToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f40'
+        FunctionType
+          TypeParameter
+            Identifier: 'A'
+          TypeParameter
+            Identifier: ' B'
+          Parameter
+            Identifier: 'b'
+            TypeReference
+              Identifier: ' B'
+          Parameter
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' A'
+          TupleType
+            TypeReference
+              Identifier: 'A'
+            TypeReference
+              Identifier: ' B'
+        CallExpression
+          Identifier: ' flip'
+          Identifier: 'zip'
+  TypeAliasDeclaration
+    Identifier: ' fn'
+    FunctionType
+      TypeParameter
+        Identifier: 'A'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        TypeReference
+          Identifier: ' fn'
+        ArrowFunction
+          Parameter
+            Identifier: ' a'
+          EqualsGreaterThanToken
+          Identifier: ' a'

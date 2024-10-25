@@ -1,0 +1,48 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' MyEnumType'
+    EnumMember
+      Identifier: '
+    foo'
+    EnumMember
+      Identifier: ' bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _arr'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' key'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' key'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' enumValue'
+        PropertyAccessExpression
+          Identifier: ' MyEnumType'
+          Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' _arr'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'o'
+            EqualsGreaterThanToken
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: ' MyEnumType'
+                PropertyAccessExpression
+                  Identifier: 'o'
+                  Identifier: 'key'
+              EqualsEqualsEqualsToken
+              Identifier: ' enumValue'

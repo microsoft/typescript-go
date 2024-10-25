@@ -1,0 +1,60 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionExpression
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' S'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' S'
+          VoidKeyword
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+    x'
+                EqualsToken
+                Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionExpression
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' S'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' S'
+          VoidKeyword
+          Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+g'
+      EqualsToken
+      Identifier: ' f'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g'
+      NumericLiteral
+      StringLiteral

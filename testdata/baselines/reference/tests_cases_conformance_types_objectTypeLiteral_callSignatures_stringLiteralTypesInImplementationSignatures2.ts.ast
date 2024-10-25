@@ -1,0 +1,113 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      LiteralType
+        StringLiteral
+    Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      Parameter
+        Identifier: ' y'
+        LiteralType
+          StringLiteral
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      Parameter
+        Identifier: ' y'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+            Block
+          MethodDeclaration
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+            Block

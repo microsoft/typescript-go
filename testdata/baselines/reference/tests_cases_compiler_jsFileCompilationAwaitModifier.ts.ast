@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' a'
+      Block
+        ExpressionStatement
+          AwaitExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+              NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+
+    b'
+      ArrowFunction
+        AsyncKeyword
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+                NumericLiteral

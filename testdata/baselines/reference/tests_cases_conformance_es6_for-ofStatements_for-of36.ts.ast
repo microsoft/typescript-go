@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tuple'
+        TupleType
+          StringKeyword
+          BooleanKeyword
+        ArrayLiteralExpression
+          StringLiteral
+          TrueKeyword
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+    Identifier: ' tuple'
+    Block
+      ExpressionStatement
+        Identifier: '
+    v'

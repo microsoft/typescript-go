@@ -1,0 +1,54 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        NumberKeyword
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          AnyKeyword
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeReference
+          Identifier: ' I'
+        ObjectLiteralExpression
+          MethodDeclaration
+            ComputedPropertyName
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                NumericLiteral
+            Parameter
+              Identifier: 'y'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' y'
+                  Identifier: 'length'
+          PropertyAssignment
+            ComputedPropertyName
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: ' y'
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' y'
+                Identifier: 'length'

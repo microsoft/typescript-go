@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ''
+  Block
+    ExpressionStatement
+      ArrayLiteralExpression
+        Identifier: 'name'
+        Identifier: 'string'
+    ExpressionStatement
+      Identifier: 'VariableDeclaration'
+  EmptyStatement

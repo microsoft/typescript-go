@@ -1,0 +1,16 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+    ArrayLiteralExpression
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+          Identifier: ' v'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        Identifier: ' v'

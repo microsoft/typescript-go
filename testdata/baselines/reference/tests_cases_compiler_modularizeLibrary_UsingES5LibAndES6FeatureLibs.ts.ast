@@ -1,0 +1,49 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        NewExpression
+          Identifier: ' Proxy'
+          Identifier: 't'
+          ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Reflect'
+        Identifier: 'ownKeys'
+      ObjectLiteralExpression
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' idGen'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+      WhileStatement
+        BinaryExpression
+          Identifier: 'i'
+          LessThanToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            YieldExpression
+              BinaryExpression
+                Identifier: ' i'
+                PlusToken
+                NumericLiteral

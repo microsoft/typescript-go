@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' props'
+        TypeReference
+          Identifier: ' WizardStepProps'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Wizard'
+    GetAccessor
+      Identifier: ' steps'
+      Block
+        ReturnStatement
+          AsExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+      wizard'
+                ThisKeyword
+              SpreadAssignment
+                Identifier: 'props'
+            TypeReference
+              Identifier: ' WizardStepProps'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' WizardStepProps'
+    PropertySignature
+      Identifier: '
+  wizard'
+      QuestionToken
+      TypeReference
+        Identifier: ' Wizard'

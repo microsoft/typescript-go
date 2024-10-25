@@ -1,0 +1,331 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo1'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+  x'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+  y'
+      TypeReference
+        Identifier: ' Foo1'
+        FunctionType
+          Parameter
+            Identifier: 'arg'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f10'
+        TypeReference
+          Identifier: ' Foo1'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f11'
+        TypeReference
+          Identifier: ' Foo1'
+          LiteralType
+            StringLiteral
+        Identifier: ' f10'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f12'
+        TypeReference
+          Identifier: ' Foo1'
+          UnknownKeyword
+        Identifier: ' f10'
+  InterfaceDeclaration
+    Identifier: ' Foo2'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+  x'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+  y'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+        PropertySignature
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' Foo2'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f20'
+        TypeReference
+          Identifier: ' Foo2'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f21'
+        TypeReference
+          Identifier: ' Foo2'
+          LiteralType
+            StringLiteral
+        Identifier: ' f20'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f22'
+        TypeReference
+          Identifier: ' Foo2'
+          UnknownKeyword
+        Identifier: ' f20'
+  TypeAliasDeclaration
+    Identifier: ' Foo3'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  x'
+        TypeReference
+          Identifier: ' T'
+      PropertySignature
+        Identifier: '
+  y'
+        TypeReference
+          Identifier: ' Foo3'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f30'
+        TypeReference
+          Identifier: ' Foo3'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f31'
+        TypeReference
+          Identifier: ' Foo3'
+          LiteralType
+            StringLiteral
+        Identifier: ' f30'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f32'
+        TypeReference
+          Identifier: ' Foo3'
+          UnknownKeyword
+        Identifier: ' f30'
+  TypeAliasDeclaration
+    Identifier: ' Foo4'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  x'
+        TypeReference
+          Identifier: ' T'
+      PropertySignature
+        Identifier: '
+  y'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            FunctionType
+              Parameter
+                Identifier: 'arg'
+                TypeReference
+                  Identifier: ' T'
+              VoidKeyword
+          PropertySignature
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' Foo4'
+              FunctionType
+                Parameter
+                  Identifier: 'arg'
+                  TypeReference
+                    Identifier: ' T'
+                VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f40'
+        TypeReference
+          Identifier: ' Foo4'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f41'
+        TypeReference
+          Identifier: ' Foo4'
+          LiteralType
+            StringLiteral
+        Identifier: ' f40'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f42'
+        TypeReference
+          Identifier: ' Foo4'
+          UnknownKeyword
+        Identifier: ' f40'
+  InterfaceDeclaration
+    Identifier: ' Fn'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+    MethodSignature
+      Identifier: '
+  then'
+      TypeParameter
+        Identifier: 'C'
+      Parameter
+        Identifier: 'next'
+        TypeReference
+          Identifier: ' Fn'
+          TypeReference
+            Identifier: 'B'
+          TypeReference
+            Identifier: ' C'
+      TypeReference
+        Identifier: ' Fn'
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        TypeReference
+          Identifier: ' Fn'
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn1'
+        TypeReference
+          Identifier: ' Fn'
+          UnknownKeyword
+          NumberKeyword
+        Identifier: ' fn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn2'
+        TypeReference
+          Identifier: ' Fn'
+          LiteralType
+            StringLiteral
+          NumberKeyword
+        Identifier: ' fn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn3'
+        TypeReference
+          Identifier: ' Fn'
+          StringKeyword
+          UnknownKeyword
+        Identifier: ' fn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn4'
+        TypeReference
+          Identifier: ' Fn'
+          StringKeyword
+          LiteralType
+            NumericLiteral
+        Identifier: ' fn'
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'Dummy'
+    TypeParameter
+      Identifier: ' V'
+    PropertySignature
+      Identifier: '
+  c'
+      TypeReference
+        Identifier: ' C'
+        TypeReference
+          Identifier: 'Dummy'
+        TypeReference
+          Identifier: ' V'
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'Dummy'
+    TypeParameter
+      Identifier: ' V'
+    PropertyDeclaration
+      DeclareKeyword
+      Identifier: ' sub'
+      TypeReference
+        Identifier: ' I'
+        TypeReference
+          Identifier: 'Dummy'
+        TypeReference
+          Identifier: ' V'
+    PropertyDeclaration
+      DeclareKeyword
+      Identifier: ' covariance'
+      TypeReference
+        Identifier: ' V'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        TypeReference
+          Identifier: ' C'
+          UnknownKeyword
+          StringKeyword
+        NewExpression
+          Identifier: ' C'
+          UnknownKeyword
+          NumberKeyword

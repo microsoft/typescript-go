@@ -1,0 +1,82 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            NumberKeyword
+          VoidKeyword
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'toExponential'
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: 'b'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' b'
+                Identifier: 'toFixed'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    baz'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' A'
+          VoidKeyword
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'foo'
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: 'b'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' b'
+              Identifier: 'foo'

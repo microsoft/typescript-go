@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' ClassC'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' test'
+          Identifier: 'ClassA'

@@ -1,0 +1,30 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          QuestionToken
+          NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'b'
+              QuestionQuestionToken
+              NumericLiteral
+      WhileStatement
+        Identifier: 'c'
+        Block
+          ExpressionStatement
+            YieldExpression
+              PostfixUnaryExpression
+                Identifier: ' c'

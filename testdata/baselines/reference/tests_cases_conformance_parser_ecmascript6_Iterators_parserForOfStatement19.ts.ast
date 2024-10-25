@@ -1,0 +1,7 @@
+SourceFile
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' of'
+    Identifier: ' of'
+    Block

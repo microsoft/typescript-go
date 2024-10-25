@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' greetings'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' greet'
+        ArrowFunction
+          Parameter
+            Identifier: 'greeting'
+            StringKeyword
+          NumberKeyword
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              PostfixUnaryExpression
+                Identifier: '
+    greetings'
+            ReturnStatement
+              Identifier: ' greetings'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+greet'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' incrGreetings'
+        ArrowFunction
+          EqualsGreaterThanToken
+          PostfixUnaryExpression
+            Identifier: ' greetings'

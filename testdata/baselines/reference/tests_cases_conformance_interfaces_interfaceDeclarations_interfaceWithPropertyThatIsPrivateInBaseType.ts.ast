@@ -1,0 +1,38 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: ' // error
+    x'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Base2'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Foo2'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base2'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: ' // error
+    x'
+      NumberKeyword

@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      NumericLiteral
+      StringLiteral
+    PropertyDeclaration
+      NumericLiteral
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' X'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral

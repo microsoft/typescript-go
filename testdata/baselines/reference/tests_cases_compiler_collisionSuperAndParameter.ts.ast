@@ -1,0 +1,221 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+    a'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lamda'
+              ArrowFunction
+                Parameter
+                  Identifier: '_super'
+                  NumberKeyword
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' x'
+                      EqualsGreaterThanToken
+                      ThisKeyword
+    MethodDeclaration
+      Identifier: '
+    b'
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lambda'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' x'
+                      EqualsGreaterThanToken
+                      ThisKeyword
+    SetAccessor
+      Identifier: ' c'
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Foo2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+    x'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lamda'
+              ArrowFunction
+                Parameter
+                  Identifier: '_super'
+                  NumberKeyword
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' x'
+                      EqualsGreaterThanToken
+                      ThisKeyword
+    MethodDeclaration
+      Identifier: '
+    y'
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lambda'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' x'
+                      EqualsGreaterThanToken
+                      ThisKeyword
+    SetAccessor
+      Identifier: ' z'
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' prop3'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        doStuff'
+          FunctionType
+            Parameter
+              Identifier: '_super'
+              NumberKeyword
+            VoidKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' prop4'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        doStuff'
+          ArrowFunction
+            Parameter
+              Identifier: '_super'
+              NumberKeyword
+            EqualsGreaterThanToken
+            Block
+    Constructor
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Foo3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+    x'
+    MethodDeclaration
+      Identifier: '
+    y'
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' prop2'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        doStuff'
+          FunctionType
+            Parameter
+              Identifier: '_super'
+              NumberKeyword
+            VoidKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' _super'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Foo4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    Constructor
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: '_super'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: '_super'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    MethodDeclaration
+      Identifier: '
+    y'
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: ' // no code gen - no error
+    y'
+      Parameter
+        Identifier: '_super'
+        StringKeyword
+    MethodDeclaration
+      Identifier: ' // no code gen - no error
+    y'
+      Parameter
+        Identifier: '_super'
+        AnyKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lambda'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' x'
+                      EqualsGreaterThanToken
+                      ThisKeyword

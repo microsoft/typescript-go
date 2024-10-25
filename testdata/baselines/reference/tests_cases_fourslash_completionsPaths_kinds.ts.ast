@@ -1,0 +1,60 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /src/b.ts
+////not read
+
+// @Filename: /src/dir/x.ts
+////not read
+
+// @Filename: /src/a.ts
+////import {} from "./[|/*0*/|]";
+////import {} from "./[|/*1*/|]";
+
+// @Filename: /tsconfig.json
+////{
+////    "compilerOptions": {
+////        "baseUrl": ".",
+////        "paths": {
+////            "foo/*": ["src/*"]
+////        }
+////    }
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+        PropertyAssignment
+          Identifier: '
+    isNewIdentifierLocation'
+          TrueKeyword

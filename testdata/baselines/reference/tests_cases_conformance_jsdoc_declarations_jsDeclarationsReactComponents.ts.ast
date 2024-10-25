@@ -1,0 +1,264 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' PropTypes'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TabbedShowLayout'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ParenthesizedExpression
+                TypeAssertionExpression
+                  TypeReference
+                    Identifier: 'div'
+                  RegularExpressionLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+TabbedShowLayout'
+        Identifier: 'propTypes'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    version'
+          PropertyAccessExpression
+            Identifier: ' PropTypes'
+            Identifier: 'number'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+TabbedShowLayout'
+        Identifier: 'defaultProps'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    tabs'
+          Identifier: ' undefined'
+  ExportAssignment
+    Identifier: ' TabbedShowLayout'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TabbedShowLayout'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              BinaryExpression
+                ParenthesizedExpression
+                  TypeAssertionExpression
+                    TypeReference
+                      Identifier: 'div'
+                    Identifier: ' className'
+                EqualsToken
+                StringLiteral
+            ExpressionStatement
+              BinaryExpression
+                Identifier: ' key'
+                EqualsToken
+                BinaryExpression
+                  BinaryExpression
+                    StringLiteral
+                    GreaterThanToken
+                    Identifier: '
+            ok'
+                  LessThanToken
+                  RegularExpressionLiteral
+  EmptyStatement
+  EmptyStatement
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+TabbedShowLayout'
+        Identifier: 'defaultProps'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    tabs'
+          StringLiteral
+  ExportAssignment
+    Identifier: ' TabbedShowLayout'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TabbedShowLayout'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              BinaryExpression
+                ParenthesizedExpression
+                  TypeAssertionExpression
+                    TypeReference
+                      Identifier: 'div'
+                    Identifier: ' className'
+                EqualsToken
+                StringLiteral
+            ExpressionStatement
+              BinaryExpression
+                Identifier: ' key'
+                EqualsToken
+                BinaryExpression
+                  BinaryExpression
+                    StringLiteral
+                    GreaterThanToken
+                    Identifier: '
+            ok'
+                  LessThanToken
+                  RegularExpressionLiteral
+  EmptyStatement
+  EmptyStatement
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+TabbedShowLayout'
+        Identifier: 'defaultProps'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    tabs'
+          StringLiteral
+  ExportAssignment
+    Identifier: ' TabbedShowLayout'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TabbedShowLayout'
+        ArrowFunction
+          Parameter
+            Identifier: '/** @type {{className: string}}*/prop'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              BinaryExpression
+                ParenthesizedExpression
+                  TypeAssertionExpression
+                    TypeReference
+                      Identifier: 'div'
+                    Identifier: ' className'
+                EqualsToken
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: 'prop'
+                  PropertyAssignment
+                    Identifier: ''
+                    PropertyAccessExpression
+                      Identifier: ''
+                      Identifier: 'className'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: ' key'
+                EqualsToken
+                BinaryExpression
+                  BinaryExpression
+                    StringLiteral
+                    GreaterThanToken
+                    Identifier: '
+            ok'
+                  LessThanToken
+                  RegularExpressionLiteral
+  EmptyStatement
+  EmptyStatement
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+TabbedShowLayout'
+        Identifier: 'defaultProps'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    tabs'
+          StringLiteral
+  ExportAssignment
+    Identifier: ' TabbedShowLayout'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' PropTypes'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' Tree'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' allowDropOnRoot'
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          RegularExpressionLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Tree'
+        Identifier: 'propTypes'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    classes'
+          PropertyAccessExpression
+            Identifier: ' PropTypes'
+            Identifier: 'object'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Tree'
+        Identifier: 'defaultProps'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    classes'
+          ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    parentSource'
+          StringLiteral
+  ExportAssignment
+    Identifier: ' Tree'

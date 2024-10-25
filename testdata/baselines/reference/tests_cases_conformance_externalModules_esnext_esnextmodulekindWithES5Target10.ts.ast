@@ -1,0 +1,10 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' i'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+  ExportAssignment
+    Identifier: ' N'

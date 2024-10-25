@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier

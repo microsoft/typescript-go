@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: '
+    b'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    x'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' p'
+              Identifier: 'a'
+            Identifier: 'toFixed'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' p'
+              Identifier: 'b'
+            Identifier: 'substring'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        PropertyAccessExpression
+          Identifier: ' p'
+          Identifier: 'd'

@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+            StringKeyword

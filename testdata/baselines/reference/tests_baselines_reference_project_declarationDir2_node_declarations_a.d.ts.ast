@@ -1,0 +1,16 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' B'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' B'

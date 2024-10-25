@@ -1,0 +1,30 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+//// type Ctor<AA> = new () => A/*1*/A;
+//// type MixinCtor<AA> = new () => AA & { constructor: MixinCtor<A/*2*/A> };
+//// type NestedCtor<AA> = new() => AA & (new () => AA & { constructor: NestedCtor<A/*3*/A> });
+//// type Method<AA> = { method(): A/*4*/A };
+//// type Construct<AA> = { new(): A/*5*/A };
+
+verify'
+        Identifier: 'quickInfos'
+      ObjectLiteralExpression
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral

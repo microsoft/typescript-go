@@ -1,0 +1,13 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      EnumDeclaration
+        Identifier: ' E'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ElementAccessExpression
+              Identifier: ' E'
+              NumericLiteral

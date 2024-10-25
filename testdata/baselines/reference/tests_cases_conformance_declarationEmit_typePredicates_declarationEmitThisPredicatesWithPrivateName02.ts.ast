@@ -1,0 +1,62 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    c'
+      BooleanKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    m'
+            TypePredicate
+              ThisType
+              TypeReference
+                Identifier: ' Foo'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' dis'
+                    AsExpression
+                      AsExpression
+                        ThisKeyword
+                        TypeLiteral
+                      TypeReference
+                        Identifier: ' Foo'
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' dis'
+                        Identifier: 'a'
+                      ExclamationEqualsToken
+                      NullKeyword
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' dis'
+                        Identifier: 'b'
+                      ExclamationEqualsToken
+                      NullKeyword
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' dis'
+                      Identifier: 'c'
+                    ExclamationEqualsToken
+                    NullKeyword

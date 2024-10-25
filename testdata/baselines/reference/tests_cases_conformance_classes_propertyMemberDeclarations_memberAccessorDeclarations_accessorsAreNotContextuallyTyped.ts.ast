@@ -1,0 +1,38 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'v'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            StringKeyword
+          StringKeyword
+      Block
+    GetAccessor
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            EqualsGreaterThanToken
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'x'
+          StringLiteral

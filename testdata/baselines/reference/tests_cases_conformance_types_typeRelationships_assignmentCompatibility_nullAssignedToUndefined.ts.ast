@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          Identifier: ' undefined'
+          EqualsToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeQuery
+          Identifier: ' undefined'
+        NullKeyword

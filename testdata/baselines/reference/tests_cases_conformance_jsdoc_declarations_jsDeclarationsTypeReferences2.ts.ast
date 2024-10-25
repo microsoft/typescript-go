@@ -1,0 +1,48 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    m'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+          BindingElement
+            Identifier: ' m'
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' require'
+            StringLiteral
+          Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thing'
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    thing'

@@ -1,0 +1,224 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Test1'
+    TypeParameter
+      Identifier: 'K1'
+      TypeOperator
+        AnyKeyword
+    TypeParameter
+      Identifier: ' K2'
+      TypeOperator
+        AnyKeyword
+    TypeReference
+      Identifier: '
+    MustBeKey'
+      IntersectionType
+        TypeReference
+          Identifier: 'Extract'
+          TypeReference
+            Identifier: 'K1'
+          TypeOperator
+            AnyKeyword
+        TypeReference
+          Identifier: ' K1'
+        TypeReference
+          Identifier: ' K2'
+  TypeAliasDeclaration
+    Identifier: ' Test2'
+    TypeParameter
+      Identifier: 'K1'
+      TypeOperator
+        AnyKeyword
+    TypeParameter
+      Identifier: ' K2'
+      TypeOperator
+        AnyKeyword
+    TypeReference
+      Identifier: '
+    MustBeKey'
+      IntersectionType
+        TypeReference
+          Identifier: 'K1'
+        TypeReference
+          Identifier: ' K2'
+        TypeReference
+          Identifier: ' Extract'
+          TypeReference
+            Identifier: 'K1'
+          TypeOperator
+            AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' MustBeKey'
+    TypeParameter
+      Identifier: 'K'
+      TypeOperator
+        AnyKeyword
+    TypeReference
+      Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' AnyKey'
+    UnionType
+      NumberKeyword
+      StringKeyword
+      SymbolKeyword
+  TypeAliasDeclaration
+    Identifier: ' ReturnTypeKeyof'
+    TypeParameter
+      Identifier: 'Obj'
+      ObjectKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' Obj'
+      ObjectKeyword
+      ConditionalType
+        TupleType
+          TypeOperator
+            TypeReference
+              Identifier: ' Obj'
+        TupleType
+          NeverKeyword
+        NeverKeyword
+        IndexedAccessType
+          MappedType
+            TypeParameter
+              Identifier: 'Key'
+              TypeOperator
+                TypeReference
+                  Identifier: ' Obj'
+            StringKeyword
+            MinusToken
+            FunctionType
+              TypeReference
+                Identifier: ' Key'
+          StringKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' KeyIfSignatureOfObject'
+    TypeParameter
+      Identifier: '
+    Obj'
+      ObjectKeyword
+    TypeParameter
+      Identifier: '
+    Key'
+      TypeReference
+        Identifier: ' AnyKey'
+    TypeParameter
+      Identifier: '
+    ReturnTypeKeys'
+      TypeReference
+        Identifier: ' ReturnTypeKeyof'
+        TypeReference
+          Identifier: 'Obj'
+    ConditionalType
+      TypeReference
+        Identifier: ' ReturnTypeKeys'
+      FunctionType
+        TypeReference
+          Identifier: ' Key'
+      ParenthesizedType
+        ConditionalType
+          ParenthesizedType
+            FunctionType
+              TypeReference
+                Identifier: ' Key'
+          TypeReference
+            Identifier: ' ReturnTypeKeys'
+          TypeReference
+            Identifier: ' Key'
+          NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Reduced1'
+    TypeParameter
+      Identifier: 'Obj'
+      ObjectKeyword
+    TypeParameter
+      Identifier: ' Key'
+      TypeReference
+        Identifier: ' AnyKey'
+    TypeParameter
+      Identifier: ' Value'
+    TypeParameter
+      Identifier: ' ObjKeys'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    Key'
+      TypeReference
+        Identifier: ' KeyIfSignatureOfObject'
+        TypeReference
+          Identifier: 'Obj'
+        TypeReference
+          Identifier: ' Key'
+      ConditionalType
+        TypeReference
+          Identifier: ' Key'
+        TypeReference
+          Identifier: ' ObjKeys'
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeReference
+              Identifier: ' Key'
+          TypeReference
+            Identifier: ' Value'
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Reduced2'
+    TypeParameter
+      Identifier: 'Obj'
+      ObjectKeyword
+    TypeParameter
+      Identifier: ' Key'
+      TypeReference
+        Identifier: ' AnyKey'
+    TypeParameter
+      Identifier: ' Value'
+    TypeParameter
+      Identifier: ' ObjKeys'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    Key'
+      TypeReference
+        Identifier: ' AnyKey'
+      ConditionalType
+        TypeReference
+          Identifier: ' Key'
+        TypeReference
+          Identifier: ' KeyIfSignatureOfObject'
+          TypeReference
+            Identifier: 'Obj'
+          TypeReference
+            Identifier: ' Key'
+        ConditionalType
+          TypeReference
+            Identifier: ' Key'
+          TypeReference
+            Identifier: ' ObjKeys'
+          MappedType
+            TypeParameter
+              Identifier: 'K'
+              TypeReference
+                Identifier: ' Key'
+            TypeReference
+              Identifier: ' Value'
+          NeverKeyword
+        NeverKeyword
+      NeverKeyword

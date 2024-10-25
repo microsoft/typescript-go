@@ -1,0 +1,98 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' FooAndBaz'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          UnknownKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' baz'
+          UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' Disjoint'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' value'
+          StringKeyword
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' err'
+          QuestionToken
+          NeverKeyword
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' value'
+          QuestionToken
+          NeverKeyword
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' err'
+          TypeReference
+            Identifier: ' FooAndBaz'
+  FunctionDeclaration
+    Identifier: ' test1'
+    Parameter
+      Identifier: 'result'
+      TypeReference
+        Identifier: ' Disjoint'
+    StringKeyword
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'result'
+          Identifier: 'err'
+        Block
+          ThrowStatement
+            PropertyAccessExpression
+              Identifier: ' result'
+              Identifier: 'err'
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' result'
+          Identifier: 'value'
+  TypeAliasDeclaration
+    Identifier: ' TrivialIntersection'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' want0'
+    Parameter
+      Identifier: 'x'
+      LiteralType
+        NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' test2'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        LiteralType
+          NumericLiteral
+        TypeReference
+          Identifier: ' TrivialIntersection'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'a'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        want0'
+              Identifier: 'a'

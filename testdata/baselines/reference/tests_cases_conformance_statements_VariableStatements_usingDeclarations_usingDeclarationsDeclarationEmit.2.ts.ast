@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        ObjectLiteralExpression
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'dispose'
+            Block
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' R1'
+    TypeQuery
+      Identifier: ' r1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        ObjectLiteralExpression
+          MethodDeclaration
+            AsyncKeyword
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'asyncDispose'
+            Block
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' R2'
+    TypeQuery
+      Identifier: ' r2'

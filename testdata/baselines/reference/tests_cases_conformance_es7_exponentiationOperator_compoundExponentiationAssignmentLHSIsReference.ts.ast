@@ -1,0 +1,104 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' fn1'
+    Parameter
+      Identifier: 'x2'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x2'
+          AsteriskAsteriskToken
+          Identifier: ''
+      ExpressionStatement
+        Identifier: ' value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x3'
+        Identifier: 'a'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+x3'
+        StringLiteral
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'x1'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' fn2'
+    Parameter
+      Identifier: 'x4'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            Identifier: 'x4'
+          AsteriskAsteriskToken
+          Identifier: ''
+      ExpressionStatement
+        Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'x3'
+          Identifier: 'a'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ElementAccessExpression
+          Identifier: 'x3'
+          StringLiteral
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    Identifier: ' value'

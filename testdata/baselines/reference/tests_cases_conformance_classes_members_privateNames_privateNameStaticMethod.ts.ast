@@ -1,0 +1,35 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A1'
+    MethodDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      Parameter
+        Identifier: 'param'
+        StringKeyword
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        A1'
+              PrivateIdentifier
+            StringLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        A1'
+              PrivateIdentifier
+            NumericLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' // Error
+        A1'
+              PrivateIdentifier

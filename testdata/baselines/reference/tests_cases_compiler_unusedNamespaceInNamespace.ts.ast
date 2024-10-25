@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        ModuleBlock

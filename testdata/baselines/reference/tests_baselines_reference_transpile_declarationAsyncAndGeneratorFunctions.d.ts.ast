@@ -1,0 +1,620 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' asyncFn'
+    Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          TypeReference
+            Identifier: ' Promise'
+            VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' asyncFn2'
+    Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' asyncFn3'
+    Block
+      ReturnStatement
+        AsExpression
+          ParenthesizedExpression
+            AwaitExpression
+              NumericLiteral
+          NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    AsteriskToken
+    Identifier: ' generatorFn'
+    Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' asyncGeneratorFn'
+    Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' asyncFn'
+    UnknownKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' asyncFn2'
+    UnknownKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' asyncFn3'
+    UnknownKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' generatorFn'
+    TypeLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' asyncGeneratorFn'
+    TypeLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+//// [Diagnostics reported]
+declarationAsyncAndGeneratorFunctions'
+        Identifier: 'ts'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9007'
+    ExpressionStatement
+      Identifier: ' Function'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  ReturnStatement
+    Identifier: ' type'
+  ExpressionStatement
+    Identifier: ' annotation'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationAsyncAndGeneratorFunctions'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9007'
+    ExpressionStatement
+      Identifier: ' Function'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  ReturnStatement
+    Identifier: ' type'
+  ExpressionStatement
+    Identifier: ' annotation'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationAsyncAndGeneratorFunctions'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9007'
+    ExpressionStatement
+      Identifier: ' Function'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  ReturnStatement
+    Identifier: ' type'
+  ExpressionStatement
+    Identifier: ' annotation'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationAsyncAndGeneratorFunctions'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9007'
+    ExpressionStatement
+      Identifier: ' Function'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  ReturnStatement
+    Identifier: ' type'
+  ExpressionStatement
+    Identifier: ' annotation'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationAsyncAndGeneratorFunctions'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9007'
+    ExpressionStatement
+      Identifier: ' Function'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  ReturnStatement
+    Identifier: ' type'
+  ExpressionStatement
+    Identifier: ' annotation'
+  WithStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+      EqualsEqualsEqualsToken
+      Identifier: ''
+    ExpressionStatement
+      BinaryExpression
+        Identifier: ''
+        EqualsToken
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' declarationAsyncAndGeneratorFunctions'
+              Identifier: 'ts'
+            NumericLiteral
+            Identifier: ' errors'
+          EqualsEqualsEqualsToken
+          Identifier: ''
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' asyncFn'
+    Block
+      ExpressionStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            Identifier: ' error'
+      LabeledStatement
+        Identifier: ' TS9007'
+        ExpressionStatement
+          Identifier: ' Function'
+      ExpressionStatement
+        Identifier: ' must'
+      ExpressionStatement
+        Identifier: ' have'
+      ExpressionStatement
+        Identifier: ' an'
+      ExpressionStatement
+        Identifier: ' explicit'
+      ReturnStatement
+        Identifier: ' type'
+      ExpressionStatement
+        Identifier: ' annotation'
+      WithStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: ''
+        ExpressionStatement
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                Identifier: ' related'
+      ExpressionStatement
+        Identifier: ' TS9031'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' declarationAsyncAndGeneratorFunctions'
+          Identifier: 'ts'
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        Identifier: ' Add'
+      ExpressionStatement
+        Identifier: ' a'
+      ReturnStatement
+        Identifier: ' type'
+      ExpressionStatement
+        Identifier: ' to'
+      ExpressionStatement
+        Identifier: ' the'
+      FunctionDeclaration
+        Identifier: ' declaration'
+        Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          TypeReference
+            Identifier: ' Promise'
+            VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' asyncFn2'
+    Block
+      ExpressionStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              Identifier: ' error'
+      LabeledStatement
+        Identifier: ' TS9007'
+        ExpressionStatement
+          Identifier: ' Function'
+      ExpressionStatement
+        Identifier: ' must'
+      ExpressionStatement
+        Identifier: ' have'
+      ExpressionStatement
+        Identifier: ' an'
+      ExpressionStatement
+        Identifier: ' explicit'
+      ReturnStatement
+        Identifier: ' type'
+      ExpressionStatement
+        Identifier: ' annotation'
+      WithStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: ''
+        ExpressionStatement
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                Identifier: ' related'
+      ExpressionStatement
+        Identifier: ' TS9031'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' declarationAsyncAndGeneratorFunctions'
+          Identifier: 'ts'
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        Identifier: ' Add'
+      ExpressionStatement
+        Identifier: ' a'
+      ReturnStatement
+        Identifier: ' type'
+      ExpressionStatement
+        Identifier: ' to'
+      ExpressionStatement
+        Identifier: ' the'
+      FunctionDeclaration
+        Identifier: ' declaration'
+        Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' asyncFn3'
+    Block
+      ExpressionStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              Identifier: ' error'
+      LabeledStatement
+        Identifier: ' TS9007'
+        ExpressionStatement
+          Identifier: ' Function'
+      ExpressionStatement
+        Identifier: ' must'
+      ExpressionStatement
+        Identifier: ' have'
+      ExpressionStatement
+        Identifier: ' an'
+      ExpressionStatement
+        Identifier: ' explicit'
+      ReturnStatement
+        Identifier: ' type'
+      ExpressionStatement
+        Identifier: ' annotation'
+      WithStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: ''
+        ExpressionStatement
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                Identifier: ' related'
+      ExpressionStatement
+        Identifier: ' TS9031'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' declarationAsyncAndGeneratorFunctions'
+          Identifier: 'ts'
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        Identifier: ' Add'
+      ExpressionStatement
+        Identifier: ' a'
+      ReturnStatement
+        Identifier: ' type'
+      ExpressionStatement
+        Identifier: ' to'
+      ExpressionStatement
+        Identifier: ' the'
+      FunctionDeclaration
+        Identifier: ' declaration'
+        Block
+      ReturnStatement
+        AsExpression
+          ParenthesizedExpression
+            AwaitExpression
+              NumericLiteral
+          NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    AsteriskToken
+    Identifier: ' generatorFn'
+    Block
+      ExpressionStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    Identifier: ' error'
+      LabeledStatement
+        Identifier: ' TS9007'
+        ExpressionStatement
+          Identifier: ' Function'
+      ExpressionStatement
+        Identifier: ' must'
+      ExpressionStatement
+        Identifier: ' have'
+      ExpressionStatement
+        Identifier: ' an'
+      ExpressionStatement
+        Identifier: ' explicit'
+      ReturnStatement
+        Identifier: ' type'
+      ExpressionStatement
+        Identifier: ' annotation'
+      WithStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: ''
+        ExpressionStatement
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                Identifier: ' related'
+      ExpressionStatement
+        Identifier: ' TS9031'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' declarationAsyncAndGeneratorFunctions'
+          Identifier: 'ts'
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        Identifier: ' Add'
+      ExpressionStatement
+        Identifier: ' a'
+      ReturnStatement
+        Identifier: ' type'
+      ExpressionStatement
+        Identifier: ' to'
+      ExpressionStatement
+        Identifier: ' the'
+      FunctionDeclaration
+        Identifier: ' declaration'
+        Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' asyncGeneratorFn'
+    Block
+      ExpressionStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              Identifier: ' error'
+      LabeledStatement
+        Identifier: ' TS9007'
+        ExpressionStatement
+          Identifier: ' Function'
+      ExpressionStatement
+        Identifier: ' must'
+      ExpressionStatement
+        Identifier: ' have'
+      ExpressionStatement
+        Identifier: ' an'
+      ExpressionStatement
+        Identifier: ' explicit'
+      ReturnStatement
+        Identifier: ' type'
+      ExpressionStatement
+        Identifier: ' annotation'
+      WithStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: ''
+        ExpressionStatement
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                Identifier: ' related'
+      ExpressionStatement
+        Identifier: ' TS9031'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' declarationAsyncAndGeneratorFunctions'
+          Identifier: 'ts'
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        Identifier: ' Add'
+      ExpressionStatement
+        Identifier: ' a'
+      ReturnStatement
+        Identifier: ' type'
+      ExpressionStatement
+        Identifier: ' to'
+      ExpressionStatement
+        Identifier: ' the'
+      FunctionDeclaration
+        Identifier: ' declaration'
+        Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          NumberKeyword

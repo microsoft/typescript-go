@@ -1,0 +1,65 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f1'
+    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C1'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' p2'
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' p2'
+      Block
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' E1'
+    EnumMember
+      Identifier: 'A'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u'
+        PropertyAccessExpression
+          Identifier: ' E1'
+          Identifier: 'A'
+  EnumDeclaration
+    Identifier: ' E2'
+    EnumMember
+      Identifier: 'B'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        PropertyAccessExpression
+          Identifier: ' E2'
+          Identifier: 'B'

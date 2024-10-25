@@ -1,0 +1,51 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Point'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Origin'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' y'
+                NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Point'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        NumberKeyword
+      PropertySignature
+        Identifier: ' y'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cl'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cl'
+        CallExpression
+          Identifier: ' Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cl'
+        PropertyAccessExpression
+          Identifier: ' Point'
+          Identifier: 'Origin'

@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' P'
+      TypeReference
+        Identifier: ' T'

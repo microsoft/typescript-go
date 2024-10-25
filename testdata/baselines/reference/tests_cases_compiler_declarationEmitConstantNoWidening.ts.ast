@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' FOO'
+        StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' type'
+      Identifier: ' FOO'

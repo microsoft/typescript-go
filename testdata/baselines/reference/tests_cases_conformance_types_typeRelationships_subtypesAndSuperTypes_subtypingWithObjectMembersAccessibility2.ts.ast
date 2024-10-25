@@ -1,0 +1,122 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' ExplicitPublic'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' A'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' foo'
+          TypeReference
+            Identifier: ' Base'
+      ClassDeclaration
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' foo'
+          TypeReference
+            Identifier: ' Derived'
+      ClassDeclaration
+        Identifier: ' A2'
+        PropertyDeclaration
+          PrivateKeyword
+          NumericLiteral
+          TypeReference
+            Identifier: ' Base'
+      ClassDeclaration
+        Identifier: ' B2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A2'
+        PropertyDeclaration
+          PublicKeyword
+          NumericLiteral
+          TypeReference
+            Identifier: ' Derived'
+      ClassDeclaration
+        Identifier: ' A3'
+        PropertyDeclaration
+          PrivateKeyword
+          StringLiteral
+          TypeReference
+            Identifier: ' Base'
+      ClassDeclaration
+        Identifier: ' B3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A3'
+        PropertyDeclaration
+          PublicKeyword
+          StringLiteral
+          TypeReference
+            Identifier: ' Derived'
+  ModuleDeclaration
+    Identifier: ' ImplicitPublic'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' A'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' foo'
+          TypeReference
+            Identifier: ' Base'
+      ClassDeclaration
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' Derived'
+      ClassDeclaration
+        Identifier: ' A2'
+        PropertyDeclaration
+          PrivateKeyword
+          NumericLiteral
+          TypeReference
+            Identifier: ' Base'
+      ClassDeclaration
+        Identifier: ' B2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A2'
+        PropertyDeclaration
+          NumericLiteral
+          TypeReference
+            Identifier: ' Derived'
+      ClassDeclaration
+        Identifier: ' A3'
+        PropertyDeclaration
+          PrivateKeyword
+          StringLiteral
+          TypeReference
+            Identifier: ' Base'
+      ClassDeclaration
+        Identifier: ' B3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A3'
+        PropertyDeclaration
+          StringLiteral
+          TypeReference
+            Identifier: ' Derived'

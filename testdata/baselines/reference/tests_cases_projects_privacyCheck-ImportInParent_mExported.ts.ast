@@ -1,0 +1,25 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' me'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' class1'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' prop1'
+          NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            Identifier: ' class1'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' class1'

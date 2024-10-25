@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noUnusedLocals: true
+// @noUnusedParameters: true
+//// class A<Dummy> { public x: Dummy }
+//// var x : {
+////     [|new <T, U, K>(a: T): A<U>;|]
+//// }
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newRangeContent'
+          StringLiteral

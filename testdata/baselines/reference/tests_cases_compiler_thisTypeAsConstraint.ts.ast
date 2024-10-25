@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' m'
+      TypeParameter
+        Identifier: 'T'
+        ThisType
+      Block

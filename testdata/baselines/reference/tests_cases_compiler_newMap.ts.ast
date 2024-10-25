@@ -1,0 +1,5 @@
+SourceFile
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Map'
+      StringKeyword

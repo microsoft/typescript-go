@@ -1,0 +1,90 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' CompilerDiagnostics'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' debug'
+            FalseKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IDiagnosticWriter'
+        MethodSignature
+          Identifier: '
+            Alert'
+          Parameter
+            Identifier: 'output'
+            StringKeyword
+          VoidKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' diagnosticWriter'
+            TypeReference
+              Identifier: ' IDiagnosticWriter'
+            NullKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' analysisPass'
+            NumberKeyword
+            NumericLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' Alert'
+        Parameter
+          Identifier: 'output'
+          StringKeyword
+        Block
+          IfStatement
+            Identifier: 'diagnosticWriter'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                diagnosticWriter'
+                    Identifier: 'Alert'
+                  Identifier: 'output'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' debugPrint'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        Block
+          IfStatement
+            Identifier: 'debug'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+                Alert'
+                  Identifier: 's'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' assert'
+        Parameter
+          Identifier: 'condition'
+          BooleanKeyword
+        Parameter
+          Identifier: ' s'
+          StringKeyword
+        Block
+          IfStatement
+            Identifier: 'debug'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'condition'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                    Alert'
+                      Identifier: 's'

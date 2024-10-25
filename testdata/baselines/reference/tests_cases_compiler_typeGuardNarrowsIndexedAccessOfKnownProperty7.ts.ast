@@ -1,0 +1,32 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' key'
+            CallExpression
+              Identifier: ' Symbol'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Foo'
+          Identifier: 'key'
+      StringKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              ThisKeyword
+              PropertyAccessExpression
+                Identifier: 'Foo'
+                Identifier: 'key'
+            EqualsToken
+            StringLiteral

@@ -1,0 +1,110 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BooleanKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ParenthesizedExpression
+          BinaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    ParenthesizedExpression
+                      BinaryExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            ParenthesizedExpression
+                              BinaryExpression
+                                ParenthesizedExpression
+                                  BinaryExpression
+                                    ParenthesizedExpression
+                                      BinaryExpression
+                                        ParenthesizedExpression
+                                          BinaryExpression
+                                            ParenthesizedExpression
+                                              BinaryExpression
+                                                ParenthesizedExpression
+                                                  BinaryExpression
+                                                    ParenthesizedExpression
+                                                      BinaryExpression
+                                                        ParenthesizedExpression
+                                                          BinaryExpression
+                                                            ParenthesizedExpression
+                                                              BinaryExpression
+                                                                ParenthesizedExpression
+                                                                  BinaryExpression
+                                                                    ParenthesizedExpression
+                                                                      BinaryExpression
+                                                                        ParenthesizedExpression
+                                                                          BinaryExpression
+                                                                            ParenthesizedExpression
+                                                                              BinaryExpression
+                                                                                ParenthesizedExpression
+                                                                                  BinaryExpression
+                                                                                    ParenthesizedExpression
+                                                                                      BinaryExpression
+                                                                                        ParenthesizedExpression
+                                                                                          BinaryExpression
+                                                                                            ParenthesizedExpression
+                                                                                              BinaryExpression
+                                                                                                ParenthesizedExpression
+                                                                                                  BinaryExpression
+                                                                                                    ParenthesizedExpression
+                                                                                                      BinaryExpression
+                                                                                                        ParenthesizedExpression
+                                                                                                          Identifier: 'b'
+                                                                                                        AmpersandAmpersandToken
+                                                                                                        Identifier: ' b'
+                                                                                                    AmpersandAmpersandToken
+                                                                                                    Identifier: ' b'
+                                                                                                AmpersandAmpersandToken
+                                                                                                Identifier: ' b'
+                                                                                            AmpersandAmpersandToken
+                                                                                            Identifier: ' b'
+                                                                                        AmpersandAmpersandToken
+                                                                                        Identifier: ' b'
+                                                                                    AmpersandAmpersandToken
+                                                                                    Identifier: ' b'
+                                                                                AmpersandAmpersandToken
+                                                                                Identifier: ' b'
+                                                                            AmpersandAmpersandToken
+                                                                            Identifier: ' b'
+                                                                        AmpersandAmpersandToken
+                                                                        Identifier: ' b'
+                                                                    AmpersandAmpersandToken
+                                                                    Identifier: ' b'
+                                                                AmpersandAmpersandToken
+                                                                Identifier: ' b'
+                                                            AmpersandAmpersandToken
+                                                            Identifier: ' b'
+                                                        AmpersandAmpersandToken
+                                                        Identifier: ' b'
+                                                    AmpersandAmpersandToken
+                                                    Identifier: ' b'
+                                                AmpersandAmpersandToken
+                                                Identifier: ' b'
+                                            AmpersandAmpersandToken
+                                            Identifier: ' b'
+                                        AmpersandAmpersandToken
+                                        Identifier: ' b'
+                                    AmpersandAmpersandToken
+                                    Identifier: ' b'
+                                AmpersandAmpersandToken
+                                Identifier: ' b'
+                            AmpersandAmpersandToken
+                            Identifier: ' b'
+                        AmpersandAmpersandToken
+                        Identifier: ' b'
+                    AmpersandAmpersandToken
+                    Identifier: ' b'
+                AmpersandAmpersandToken
+                Identifier: ' b'
+            AmpersandAmpersandToken
+            Identifier: ' b'
+        AmpersandAmpersandToken
+        Identifier: ' b'

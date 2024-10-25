@@ -1,0 +1,135 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'x'
+      LiteralType
+        StringLiteral
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn1'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn1'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn2'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn2'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn3'
+    Parameter
+      Identifier: 'x'
+      NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn4'
+    Block
+  EmptyStatement
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E1'
+    EnumMember
+      Identifier: '
+    y'
+      NumericLiteral
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E2'
+    EnumMember
+      Identifier: '
+    x'
+      PropertyAccessExpression
+        StringLiteral
+        Identifier: 'length'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M1'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      FunctionDeclaration
+        Identifier: ' fn'
+        Block
+      ClassDeclaration
+        Identifier: ' C'
+        PropertyDeclaration
+          StaticKeyword
+          Identifier: ' x'
+          NumericLiteral
+        PropertyDeclaration
+          Identifier: '
+        y'
+          NumericLiteral
+        Constructor
+          Block
+        MethodDeclaration
+          Identifier: '
+        fn'
+          Block
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' sfn'
+          Block
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ModuleDeclaration
+        DeclareKeyword
+        StringLiteral
+        ModuleBlock
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' q'
+      ExportAssignment
+        Identifier: ' n'

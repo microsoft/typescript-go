@@ -1,0 +1,89 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Brand'
+    TypeParameter
+      Identifier: '
+  Base'
+    TypeParameter
+      Identifier: '
+  Branding'
+    TypeParameter
+      Identifier: '
+  ReservedName'
+      StringKeyword
+      LiteralType
+        StringLiteral
+    IntersectionType
+      TypeReference
+        Identifier: ' Base'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeReference
+            Identifier: ' ReservedName'
+        TypeReference
+          Identifier: ' Branding'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' __witness__'
+          TypeReference
+            Identifier: ' Base'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' BoundedInteger'
+    TypeParameter
+      Identifier: '
+  LowerBound'
+      NumberKeyword
+    TypeParameter
+      Identifier: '
+  UpperBound'
+      NumberKeyword
+    TypeReference
+      Identifier: ' Brand'
+      NumberKeyword
+      LiteralType
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' toBoundedInteger'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'LowerBound'
+            NumberKeyword
+          TypeParameter
+            Identifier: ' UpperBound'
+            NumberKeyword
+          Parameter
+            Identifier: 'bounds'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+    lowerBound'
+                TypeReference
+                  Identifier: ' LowerBound'
+              PropertySignature
+                Identifier: '
+    upperBound'
+                TypeReference
+                  Identifier: ' UpperBound'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: '
+    n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' BoundedInteger'
+              TypeReference
+                Identifier: 'LowerBound'
+              TypeReference
+                Identifier: ' UpperBound'
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              AsExpression
+                ObjectLiteralExpression
+                AnyKeyword

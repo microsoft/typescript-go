@@ -1,0 +1,105 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Number'
+    MethodSignature
+      Identifier: '
+    doStuff'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' NotNumber'
+    MethodSignature
+      Identifier: '
+    toString'
+      Parameter
+        Identifier: 'radix'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    toFixed'
+      Parameter
+        Identifier: 'fractionDigits'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    toExponential'
+      Parameter
+        Identifier: 'fractionDigits'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    toPrecision'
+      Parameter
+        Identifier: 'precision'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    valueOf'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    doStuff'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' Number'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' NotNumber'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+
+b'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+b'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+
+x'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // expected error
+x'
+      EqualsToken
+      Identifier: ' b'

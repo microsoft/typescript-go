@@ -1,0 +1,15 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Length'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' ArrayLike'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+      NumberKeyword
+      NeverKeyword

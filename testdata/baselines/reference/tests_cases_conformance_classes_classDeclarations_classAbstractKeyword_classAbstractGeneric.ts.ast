@@ -1,0 +1,107 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    t'
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        NumberKeyword
+  ClassDeclaration
+    Identifier: ' E'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: ' // error -- doesn't implement bar
+    foo'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 't'
+  ClassDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: ' // error -- doesn't implement foo
+    bar'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Block
+  ClassDeclaration
+    Identifier: ' G'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 't'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Block

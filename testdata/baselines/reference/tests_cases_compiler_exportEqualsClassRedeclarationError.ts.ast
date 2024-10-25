@@ -1,0 +1,26 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' SomeClass'
+    GetAccessor
+      StaticKeyword
+      Identifier: ' someProp'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      Identifier: ' someProp'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+    SetAccessor
+      StaticKeyword
+      Identifier: ' someProp'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+  ExportAssignment
+    Identifier: ' SomeClass'

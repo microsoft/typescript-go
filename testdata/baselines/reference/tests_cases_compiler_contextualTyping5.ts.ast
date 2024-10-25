@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'id'
+          NumberKeyword
+      ObjectLiteralExpression

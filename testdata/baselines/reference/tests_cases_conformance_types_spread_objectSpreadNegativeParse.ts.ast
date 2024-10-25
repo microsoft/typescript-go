@@ -1,0 +1,46 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o7'
+        ObjectLiteralExpression
+          SpreadAssignment
+            ConditionalExpression
+              Identifier: 'o'
+              QuestionToken
+              Identifier: ''
+              ColonToken
+              Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o8'
+        ObjectLiteralExpression
+          SpreadAssignment
+            BinaryExpression
+              Identifier: ''
+              AsteriskToken
+              Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o9'
+        ObjectLiteralExpression
+          SpreadAssignment
+            CallExpression
+              Identifier: 'matchMedia'
+      VariableDeclaration
+        ObjectBindingPattern
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o10'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'get'
+          MethodDeclaration
+            Identifier: ' x'
+            Block
+              ReturnStatement
+                NumericLiteral

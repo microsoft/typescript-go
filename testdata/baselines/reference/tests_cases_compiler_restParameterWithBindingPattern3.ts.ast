@@ -1,0 +1,83 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' a'
+    Parameter
+      DotDotDotToken
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'a'
+          NumericLiteral
+        BindingElement
+          Identifier: ' b'
+          TrueKeyword
+      ArrayType
+        StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' b'
+    Parameter
+      DotDotDotToken
+      ArrayBindingPattern
+        BindingElement
+          DotDotDotToken
+          Identifier: 'foo'
+          ArrayLiteralExpression
+      ArrayType
+        StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' c'
+    Parameter
+      DotDotDotToken
+      ObjectBindingPattern
+        BindingElement
+          NumericLiteral
+          Identifier: ' a'
+        BindingElement
+          Identifier: ' length'
+        BindingElement
+          NumericLiteral
+          Identifier: ' d'
+      TupleType
+        BooleanKeyword
+        StringKeyword
+        NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' d'
+    Parameter
+      DotDotDotToken
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'a'
+        OmittedExpression
+        OmittedExpression
+        BindingElement
+          Identifier: ' d'
+      TupleType
+        BooleanKeyword
+        StringKeyword
+        NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' e'
+    Parameter
+      DotDotDotToken
+      ObjectBindingPattern
+        BindingElement
+          NumericLiteral
+          Identifier: ' a'
+          NumericLiteral
+        BindingElement
+          NumericLiteral
+          Identifier: ' b'
+          TrueKeyword
+        BindingElement
+          Identifier: 'rest'
+          DotDotDotToken
+          Identifier: ' rest'
+      TupleType
+        BooleanKeyword
+        StringKeyword
+        NumberKeyword
+    Block

@@ -1,0 +1,455 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C1_public'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f1'
+          Block
+      ClassDeclaration
+        Identifier: ' C2_private'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C3_public'
+        Constructor
+          Parameter
+            Identifier: 'm1_c3_c1'
+            TypeReference
+              Identifier: ' C1_public'
+        Constructor
+          Parameter
+            Identifier: 'm1_c3_c2'
+            TypeReference
+              Identifier: ' C2_private'
+        Constructor
+          Parameter
+            Identifier: 'm1_c3_c1_2'
+            AnyKeyword
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f1_private'
+          Parameter
+            Identifier: 'm1_c3_f1_arg'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f2_public'
+          Parameter
+            Identifier: 'm1_c3_f2_arg'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f3_private'
+          Parameter
+            Identifier: 'm1_c3_f3_arg'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f4_public'
+          Parameter
+            Identifier: 'm1_c3_f4_arg'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f5_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f6_public'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f7_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f8_public'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f9_private'
+          TypeReference
+            Identifier: ' C1_public'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f10_public'
+          TypeReference
+            Identifier: ' C1_public'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f11_private'
+          TypeReference
+            Identifier: ' C2_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f12_public'
+          TypeReference
+            Identifier: ' C2_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+      ClassDeclaration
+        Identifier: ' C4_private'
+        Constructor
+          Parameter
+            Identifier: 'm1_c4_c1'
+            TypeReference
+              Identifier: ' C1_public'
+        Constructor
+          Parameter
+            Identifier: 'm1_c4_c2'
+            TypeReference
+              Identifier: ' C2_private'
+        Constructor
+          Parameter
+            Identifier: 'm1_c4_c1_2'
+            AnyKeyword
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f1_private'
+          Parameter
+            Identifier: 'm1_c4_f1_arg'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f2_public'
+          Parameter
+            Identifier: 'm1_c4_f2_arg'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f3_private'
+          Parameter
+            Identifier: 'm1_c4_f3_arg'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f4_public'
+          Parameter
+            Identifier: 'm1_c4_f4_arg'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f5_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f6_public'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f7_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f8_public'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f9_private'
+          TypeReference
+            Identifier: ' C1_public'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f10_public'
+          TypeReference
+            Identifier: ' C1_public'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f11_private'
+          TypeReference
+            Identifier: ' C2_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f12_public'
+          TypeReference
+            Identifier: ' C2_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C5_public'
+        Constructor
+          Parameter
+            Identifier: 'm1_c5_c'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+      ClassDeclaration
+        Identifier: ' C6_private'
+        Constructor
+          Parameter
+            Identifier: 'm1_c6_c'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C7_public'
+        Constructor
+          Parameter
+            Identifier: 'm1_c7_c'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+      ClassDeclaration
+        Identifier: ' C8_private'
+        Constructor
+          Parameter
+            Identifier: 'm1_c8_c'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+      FunctionDeclaration
+        Identifier: ' f1_public'
+        Parameter
+          Identifier: 'm1_f1_arg'
+          TypeReference
+            Identifier: ' C1_public'
+        Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f2_public'
+        Parameter
+          Identifier: 'm1_f2_arg'
+          TypeReference
+            Identifier: ' C1_public'
+        Block
+      FunctionDeclaration
+        Identifier: ' f3_public'
+        Parameter
+          Identifier: 'm1_f3_arg'
+          TypeReference
+            Identifier: ' C2_private'
+        Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f4_public'
+        Parameter
+          Identifier: 'm1_f4_arg'
+          TypeReference
+            Identifier: ' C2_private'
+        Block
+      FunctionDeclaration
+        Identifier: ' f5_public'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' C1_public'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f6_public'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' C1_public'
+      FunctionDeclaration
+        Identifier: ' f7_public'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' C2_private'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f8_public'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' C2_private'
+      FunctionDeclaration
+        Identifier: ' f9_private'
+        TypeReference
+          Identifier: ' C1_public'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' C1_public'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f10_public'
+        TypeReference
+          Identifier: ' C1_public'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' C1_public'
+      FunctionDeclaration
+        Identifier: ' f11_private'
+        TypeReference
+          Identifier: ' C2_private'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' C2_private'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f12_public'
+        TypeReference
+          Identifier: ' C2_private'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' C2_private'
+  ClassDeclaration
+    Identifier: ' C6_public'
+  ClassDeclaration
+    Identifier: ' C7_public'
+    Constructor
+      Parameter
+        Identifier: 'c7_c2'
+        TypeReference
+          Identifier: ' C6_public'
+    Constructor
+      Parameter
+        Identifier: 'c7_c1_2'
+        AnyKeyword
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' f1_private'
+      Parameter
+        Identifier: 'c7_f1_arg'
+        TypeReference
+          Identifier: ' C6_public'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f2_public'
+      Parameter
+        Identifier: 'c7_f2_arg'
+        TypeReference
+          Identifier: ' C6_public'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' f5_private'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' C6_public'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f6_public'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' C6_public'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' f9_private'
+      TypeReference
+        Identifier: ' C6_public'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' C6_public'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f10_public'
+      TypeReference
+        Identifier: ' C6_public'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' C6_public'
+  ClassDeclaration
+    Identifier: ' C9_public'
+    Constructor
+      Parameter
+        Identifier: 'c9_c'
+        TypeReference
+          Identifier: ' C6_public'
+      Block
+  FunctionDeclaration
+    Identifier: ' f4_public'
+    Parameter
+      Identifier: 'f4_arg'
+      TypeReference
+        Identifier: ' C6_public'
+    Block
+  FunctionDeclaration
+    Identifier: ' f6_public'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' C6_public'
+  FunctionDeclaration
+    Identifier: ' f10_public'
+    TypeReference
+      Identifier: ' C6_public'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' C6_public'

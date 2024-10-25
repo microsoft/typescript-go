@@ -1,0 +1,10 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' outer'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            StringLiteral

@@ -1,0 +1,98 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' otherValue'
+        ArrowFunction
+          EqualsGreaterThanToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' inner'
+            UnionType
+              NumberKeyword
+              StringKeyword
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  FunctionDeclaration
+    Identifier: ' isNumber'
+    Parameter
+      Identifier: 'obj'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' obj'
+      NumberKeyword
+    Block
+      ReturnStatement
+        TrueKeyword
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            BinaryExpression
+              CallExpression
+                Identifier: 'otherValue'
+              CommaToken
+              Identifier: ' value'
+          Identifier: 'inner'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            PropertyAccessExpression
+              Identifier: ' value'
+              Identifier: 'inner'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NumberKeyword
+            PropertyAccessExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'otherValue'
+                  CommaToken
+                  Identifier: ' value'
+              Identifier: 'inner'
+  IfStatement
+    CallExpression
+      Identifier: 'isNumber'
+      PropertyAccessExpression
+        ParenthesizedExpression
+          BinaryExpression
+            CallExpression
+              Identifier: 'otherValue'
+            CommaToken
+            Identifier: ' value'
+        Identifier: 'inner'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            PropertyAccessExpression
+              Identifier: ' value'
+              Identifier: 'inner'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NumberKeyword
+            PropertyAccessExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'otherValue'
+                  CommaToken
+                  Identifier: ' value'
+              Identifier: 'inner'

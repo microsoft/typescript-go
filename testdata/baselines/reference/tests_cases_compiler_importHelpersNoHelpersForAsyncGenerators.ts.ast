@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          NumericLiteral
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            NumericLiteral
+  ExportDeclaration
+    NamedExports

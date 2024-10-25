@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fnOverload'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fnOverload'
+      Parameter
+        Identifier: 'foo'
+        StringKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fnOverload'
+      Parameter
+        Identifier: 'foo'
+        QuestionToken
+        AnyKeyword
+      Block

@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    p'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block

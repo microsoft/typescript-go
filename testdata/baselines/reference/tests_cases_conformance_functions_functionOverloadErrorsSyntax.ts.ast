@@ -1,0 +1,44 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn4a'
+    Parameter
+      Identifier: 'x'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' y'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' fn4a'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn4b'
+    Parameter
+      Identifier: 'n'
+      StringKeyword
+    Parameter
+      Identifier: ' x'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' y'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' fn4b'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn5'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'y'
+      ArrayType
+        AnyKeyword
+    Parameter
+      Identifier: ' z'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' fn5'
+    Block

@@ -1,0 +1,171 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'S'
+    ConditionalType
+      TypeReference
+        Identifier: ' Lowercase'
+        IntersectionType
+          TypeReference
+            Identifier: 'S'
+          StringKeyword
+      LiteralType
+        StringLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        TypeReference
+          Identifier: ' A'
+          LiteralType
+            StringLiteral
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'S'
+    ConditionalType
+      TypeReference
+        Identifier: ' Lowercase'
+        IntersectionType
+          TypeReference
+            Identifier: 'S'
+          StringKeyword
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          StringKeyword
+          TemplateTail
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeReference
+          Identifier: ' B'
+          LiteralType
+            StringLiteral
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'S'
+    ConditionalType
+      TypeReference
+        Identifier: ' Capitalize'
+        TypeReference
+          Identifier: 'Lowercase'
+          IntersectionType
+            TypeReference
+              Identifier: 'S'
+            StringKeyword
+      LiteralType
+        StringLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeReference
+          Identifier: ' C'
+          LiteralType
+            StringLiteral
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' Capitalize'
+        TypeReference
+          Identifier: 'Lowercase'
+          TypeReference
+            Identifier: 'S'
+      LiteralType
+        StringLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        TypeReference
+          Identifier: ' D'
+          LiteralType
+            StringLiteral
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' E'
+    TypeParameter
+      Identifier: 'S'
+    TypeReference
+      Identifier: ' Lowercase'
+      IntersectionType
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            IntersectionType
+              TypeReference
+                Identifier: 'S'
+              StringKeyword
+            TemplateTail
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            IntersectionType
+              TypeReference
+                Identifier: 'S'
+              StringKeyword
+            TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' F'
+    ConditionalType
+      TypeReference
+        Identifier: ' E'
+        LiteralType
+          StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' G'
+    TypeParameter
+      Identifier: 'S'
+    ConditionalType
+      TypeReference
+        Identifier: ' E'
+        TypeReference
+          Identifier: 'S'
+      LiteralType
+        StringLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        TypeReference
+          Identifier: ' G'
+          LiteralType
+            StringLiteral
+        NumericLiteral

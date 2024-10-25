@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myMethod'
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myMethod'
+      Block

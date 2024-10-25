@@ -1,0 +1,49 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Parent'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    accessChildProps'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' Child'
+              StringKeyword
+            PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: ' // OK (`#foo` was added when `Parent`'s constructor was called on `child`)
+        Child'
+            PrivateIdentifier
+  ClassDeclaration
+    Identifier: ' Child'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Parent'
+        TypeReference
+          Identifier: 'T'
+    PropertyDeclaration
+      PrivateIdentifier
+      StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' Parent'
+          NumberKeyword
+        Identifier: 'accessChildProps'

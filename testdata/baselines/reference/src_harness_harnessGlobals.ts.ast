@@ -1,0 +1,185 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' chai'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' assert'
+            TypeQuery
+              QualifiedName
+                Identifier: ' chai'
+                Identifier: 'assert'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expect'
+            TypeQuery
+              QualifiedName
+                Identifier: ' chai'
+                Identifier: 'expect'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+globalThis'
+        Identifier: 'assert'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' chai'
+        Identifier: 'assert'
+  Block
+    ExpressionStatement
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: '
+    // chai's builtin `assert.isFalse` is featureful but slow - we don't use those features,
+    // so we'll just overwrite it as an alterative to migrating a bunch of code off of chai
+    assert'
+          Identifier: 'isFalse'
+        EqualsToken
+        ArrowFunction
+          Parameter
+            Identifier: 'expr'
+            AnyKeyword
+          Parameter
+            Identifier: ' msg'
+            StringKeyword
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              BinaryExpression
+                Identifier: 'expr'
+                ExclamationEqualsEqualsToken
+                FalseKeyword
+              ThrowStatement
+                NewExpression
+                  Identifier: ' Error'
+                  Identifier: 'msg'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' assertDeepImpl'
+          PropertyAccessExpression
+            Identifier: ' assert'
+            Identifier: 'deepEqual'
+    ExpressionStatement
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: '
+    assert'
+          Identifier: 'deepEqual'
+        EqualsToken
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          Parameter
+            Identifier: ' b'
+          Parameter
+            Identifier: ' msg'
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'isArray'
+                  Identifier: 'a'
+                AmpersandAmpersandToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'isArray'
+                  Identifier: 'b'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+            assertDeepImpl'
+                    CallExpression
+                      Identifier: 'arrayExtraKeysObject'
+                      Identifier: 'a'
+                    CallExpression
+                      Identifier: ' arrayExtraKeysObject'
+                      Identifier: 'b'
+                    StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+        assertDeepImpl'
+                Identifier: 'a'
+                Identifier: ' b'
+                Identifier: ' msg'
+            FunctionDeclaration
+              Identifier: ' arrayExtraKeysObject'
+              Parameter
+                Identifier: 'a'
+                TypeOperator
+                  ArrayType
+                    UnknownKeyword
+              ObjectKeyword
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' obj'
+                      TypeLiteral
+                        IndexSignature
+                          Parameter
+                            Identifier: 'key'
+                            StringKeyword
+                          UnknownKeyword
+                      ObjectLiteralExpression
+                ForInStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' key'
+                  Identifier: ' a'
+                  Block
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'Number'
+                          Identifier: 'isNaN'
+                        CallExpression
+                          Identifier: 'Number'
+                          Identifier: 'key'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            ElementAccessExpression
+                              Identifier: '
+                    obj'
+                              Identifier: 'key'
+                            EqualsToken
+                            ElementAccessExpression
+                              Identifier: ' a'
+                              Identifier: 'key'
+                ReturnStatement
+                  Identifier: ' obj'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+globalThis'
+        Identifier: 'expect'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' chai'
+        Identifier: 'expect'

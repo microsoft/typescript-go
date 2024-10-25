@@ -1,0 +1,25 @@
+SourceFile
+  ForStatement
+    FalseKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      ExpressionStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  ForStatement
+    FalseKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          NumericLiteral

@@ -1,0 +1,430 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          LiteralType
+            NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T0'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'A'
+          TypeReference
+            Identifier: 'T'
+      TupleType
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'A'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'T'
+      TupleType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T3'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'A'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'T'
+      TupleType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T4'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'A'
+          TypeReference
+            Identifier: 'T'
+      TupleType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T5'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'A'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'T'
+      TupleType
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T6'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' A'
+            TypeReference
+              Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' y'
+          LiteralType
+            NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Or'
+    TypeParameter
+      Identifier: 'A'
+      BooleanKeyword
+    TypeParameter
+      Identifier: ' B'
+      BooleanKeyword
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' B'
+      TupleType
+        LiteralType
+          FalseKeyword
+        LiteralType
+          FalseKeyword
+      LiteralType
+        FalseKeyword
+      LiteralType
+        TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' And'
+    TypeParameter
+      Identifier: 'A'
+      BooleanKeyword
+    TypeParameter
+      Identifier: ' B'
+      BooleanKeyword
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' B'
+      TupleType
+        LiteralType
+          TrueKeyword
+        LiteralType
+          TrueKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' Not'
+    TypeParameter
+      Identifier: 'T'
+      BooleanKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+      LiteralType
+        TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' Extends'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    ConditionalType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' IsNumberLiteral'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' And'
+      TypeReference
+        Identifier: 'Extends'
+        TypeReference
+          Identifier: 'T'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Not'
+        TypeReference
+          Identifier: 'Extends'
+          NumberKeyword
+          TypeReference
+            Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' IsLiteral'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Or'
+      LiteralType
+        FalseKeyword
+      TypeReference
+        Identifier: ' IsNumberLiteral'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Values'
+    TypeParameter
+      Identifier: 'O'
+      ObjectKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+  O'
+      ArrayType
+        AnyKeyword
+      IndexedAccessType
+        TypeReference
+          Identifier: ' O'
+        NumberKeyword
+      IndexedAccessType
+        TypeReference
+          Identifier: ' O'
+        TypeOperator
+          TypeReference
+            Identifier: ' O'
+  TypeAliasDeclaration
+    Identifier: ' Equals'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' B'
+      TupleType
+        TypeReference
+          Identifier: 'B'
+        TypeReference
+          Identifier: ' A'
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' FilterByStringValue'
+    TypeParameter
+      Identifier: 'O'
+      ObjectKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' O'
+      ConditionalType
+        TypeReference
+          Identifier: ' Equals'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'O'
+            TypeReference
+              Identifier: 'K'
+          StringKeyword
+        LiteralType
+          TrueKeyword
+        TypeReference
+          Identifier: ' K'
+        NeverKeyword
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' FilteredValuesMatchNever'
+    TypeParameter
+      Identifier: 'O'
+      ObjectKeyword
+    TypeReference
+      Identifier: ' Equals'
+      TypeReference
+        Identifier: 'Values'
+        TypeReference
+          Identifier: 'FilterByStringValue'
+          TupleType
+            TypeReference
+              Identifier: 'O'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' FilteredRes1'
+    TypeReference
+      Identifier: ' FilteredValuesMatchNever'
+      TupleType
+  TypeAliasDeclaration
+    Identifier: ' Bit'
+    UnionType
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' AndBit'
+    TypeParameter
+      Identifier: 'A'
+      TypeReference
+        Identifier: ' Bit'
+    TypeParameter
+      Identifier: ' B'
+      TypeReference
+        Identifier: ' Bit'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' B'
+      TupleType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TestBit'
+    TypeParameter
+      Identifier: 'A'
+      TypeReference
+        Identifier: ' Bit'
+    TypeParameter
+      Identifier: ' B'
+      TypeReference
+        Identifier: ' Bit'
+    TypeReference
+      Identifier: ' AndBit'
+      ConditionalType
+        TypeReference
+          Identifier: '
+  A'
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+      ConditionalType
+        TypeReference
+          Identifier: '
+  B'
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TestBitRes'
+    TypeReference
+      Identifier: ' TestBit'
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral

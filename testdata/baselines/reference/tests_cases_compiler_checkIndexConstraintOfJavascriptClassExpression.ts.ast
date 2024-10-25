@@ -1,0 +1,54 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: '// @Filename: weird.js
+// @allowJs: true
+// @checkJs: true
+// @strict: true
+// @noEmit: true
+// @outFile: foo.js
+someFunction'
+      FunctionExpression
+        Parameter
+          Identifier: 'BaseClass'
+        Block
+          ExpressionStatement
+            StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' DEFAULT_MESSAGE'
+                StringLiteral
+          ClassDeclaration
+            Identifier: ' Hello'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' BaseClass'
+            Constructor
+              Block
+                ExpressionStatement
+                  CallExpression
+                    SuperKeyword
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'foo'
+                    EqualsToken
+                    StringLiteral
+            MethodDeclaration
+              Identifier: '
+        _render'
+              Parameter
+                Identifier: 'error'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' message'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' error'
+                          Identifier: 'message'
+                        BarBarToken
+                        Identifier: ' DEFAULT_MESSAGE'

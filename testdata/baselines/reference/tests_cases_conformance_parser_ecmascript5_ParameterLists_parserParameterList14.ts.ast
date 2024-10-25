@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+  foo'
+      Parameter
+        Identifier: 'a'
+        NumericLiteral
+      VoidKeyword

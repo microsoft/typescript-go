@@ -1,0 +1,29 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' Foo'
+          TypeReference
+            Identifier: 'T'
+        StringKeyword
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' bar'
+          Identifier: 'x'

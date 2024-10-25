@@ -1,0 +1,39 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' suggest'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' TypeScriptKeywords'
+            ArrayType
+              StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            AnyKeyword
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '	
+					
+	TypeScriptKeywords'
+            Identifier: 'forEach'
+          FunctionExpression
+            Parameter
+              Identifier: 'keyword'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '						
+		result'
+                    Identifier: 'push'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: 'text'
+                      Identifier: 'keyword'
+                    PropertyAssignment
+                      Identifier: ' type'
+                      StringLiteral

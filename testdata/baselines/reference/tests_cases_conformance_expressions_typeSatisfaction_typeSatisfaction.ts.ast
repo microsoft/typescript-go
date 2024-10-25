@@ -1,0 +1,130 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    a'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+          TypeReference
+            Identifier: ' I1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              NumericLiteral
+          TypeReference
+            Identifier: ' I1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        SatisfiesExpression
+          ObjectLiteralExpression
+          TypeReference
+            Identifier: ' I1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        TypeReference
+          Identifier: ' T1'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              StringLiteral
+          TypeReference
+            Identifier: ' T1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t5'
+        SatisfiesExpression
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'm'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' m'
+                  Identifier: 'substring'
+                NumericLiteral
+          TypeReference
+            Identifier: ' T2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t6'
+        SatisfiesExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+          TupleType
+            NumberKeyword
+            NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t7'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              StringLiteral
+          TypeReference
+            Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t8'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              StringLiteral
+          TypeReference
+            Identifier: ' A'

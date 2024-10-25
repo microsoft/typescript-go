@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'public'
+      Parameter
+        Identifier: ' rest'
+        ArrayType
+          StringKeyword
+      Block

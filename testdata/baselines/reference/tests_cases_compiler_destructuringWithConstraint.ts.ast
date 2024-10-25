@@ -1,0 +1,35 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Props'
+    PropertySignature
+      Identifier: '
+    foo'
+      QuestionToken
+      BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'P'
+      TypeReference
+        Identifier: ' Props'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'P'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' foo'
+                FalseKeyword
+            Identifier: ' props'
+      IfStatement
+        BinaryExpression
+          Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          TrueKeyword
+        Block

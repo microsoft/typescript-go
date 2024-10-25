@@ -1,0 +1,28 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Point'
+    TupleType
+      NumberKeyword
+      NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' increment'
+    Parameter
+      Identifier: 'point'
+      TypeReference
+        Identifier: ' Point'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' point'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'd'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' d'
+              PlusToken
+              NumericLiteral

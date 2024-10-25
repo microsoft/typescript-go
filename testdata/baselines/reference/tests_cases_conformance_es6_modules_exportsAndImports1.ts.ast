@@ -1,0 +1,145 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+  ClassDeclaration
+    Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' I'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      Identifier: ' C'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' D'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      Identifier: ' C'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+  TypeAliasDeclaration
+    Identifier: ' T'
+    NumberKeyword
+  ImportEqualsDeclaration
+    Identifier: ' a'
+    QualifiedName
+      Identifier: ' M'
+      Identifier: 'x'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' v'
+      ExportSpecifier
+        Identifier: ' f'
+      ExportSpecifier
+        Identifier: ' C'
+      ExportSpecifier
+        Identifier: ' I'
+      ExportSpecifier
+        Identifier: ' E'
+      ExportSpecifier
+        Identifier: ' D'
+      ExportSpecifier
+        Identifier: ' M'
+      ExportSpecifier
+        Identifier: ' N'
+      ExportSpecifier
+        Identifier: ' T'
+      ExportSpecifier
+        Identifier: ' a'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' v'
+      ExportSpecifier
+        Identifier: ' f'
+      ExportSpecifier
+        Identifier: ' C'
+      ExportSpecifier
+        Identifier: ' I'
+      ExportSpecifier
+        Identifier: ' E'
+      ExportSpecifier
+        Identifier: ' D'
+      ExportSpecifier
+        Identifier: ' M'
+      ExportSpecifier
+        Identifier: ' N'
+      ExportSpecifier
+        Identifier: ' T'
+      ExportSpecifier
+        Identifier: ' a'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' v'
+        ImportSpecifier
+          Identifier: ' f'
+        ImportSpecifier
+          Identifier: ' C'
+        ImportSpecifier
+          Identifier: ' I'
+        ImportSpecifier
+          Identifier: ' E'
+        ImportSpecifier
+          Identifier: ' D'
+        ImportSpecifier
+          Identifier: ' M'
+        ImportSpecifier
+          Identifier: ' N'
+        ImportSpecifier
+          Identifier: ' T'
+        ImportSpecifier
+          Identifier: ' a'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' v'
+      ExportSpecifier
+        Identifier: ' f'
+      ExportSpecifier
+        Identifier: ' C'
+      ExportSpecifier
+        Identifier: ' I'
+      ExportSpecifier
+        Identifier: ' E'
+      ExportSpecifier
+        Identifier: ' D'
+      ExportSpecifier
+        Identifier: ' M'
+      ExportSpecifier
+        Identifier: ' N'
+      ExportSpecifier
+        Identifier: ' T'
+      ExportSpecifier
+        Identifier: ' a'

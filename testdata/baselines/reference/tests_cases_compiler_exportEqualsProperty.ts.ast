@@ -1,0 +1,114 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    ModuleDeclaration
+      Identifier: 'bar'
+      ModuleBlock
+        TypeAliasDeclaration
+          ExportKeyword
+          Identifier: ' X'
+          NumberKeyword
+        VariableStatement
+          ExportKeyword
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' X'
+              NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ExportAssignment
+        PropertyAccessExpression
+          Identifier: ' foo'
+          Identifier: 'bar'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ExportAssignment
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'bar'
+          Identifier: 'X'
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        Constructor
+          Parameter
+            Identifier: 'b'
+            NumberKeyword
+          Block
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+                NumberKeyword
+                NumericLiteral
+  ExportAssignment
+    PropertyAccessExpression
+      Identifier: ' A'
+      Identifier: 'B'
+  ExportAssignment
+    PropertyAccessExpression
+      StringLiteral
+      Identifier: 'length'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' X'
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' X2'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' X'
+        Identifier: ' X'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeReference
+          Identifier: ' X2'
+        Identifier: ' X2'
+  ImportEqualsDeclaration
+    Identifier: ' B'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+        NewExpression
+          Identifier: ' B'
+          PropertyAccessExpression
+            Identifier: 'B'
+            Identifier: 'b'
+  ImportEqualsDeclaration
+    Identifier: ' fooLength'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+fooLength'
+      PlusToken
+      NumericLiteral

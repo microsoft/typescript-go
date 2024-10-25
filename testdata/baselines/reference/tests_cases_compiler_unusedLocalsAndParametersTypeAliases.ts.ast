@@ -1,0 +1,74 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' handler1'
+    FunctionType
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    getHandler'
+      TypeReference
+        Identifier: ' handler1'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' handler2'
+    FunctionType
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' handler3'
+    FunctionType
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' handler3'
+    PropertySignature
+      Identifier: '
+    getHandler'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' handler4'
+    FunctionType
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' handler5'
+    UnionType
+      TypeReference
+        Identifier: ' handler4'
+      ParenthesizedType
+        FunctionType
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' handler5'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+x'
+  TypeAliasDeclaration
+    Identifier: ' handler6'
+    FunctionType
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'handler6'
+  ExpressionStatement
+    CallExpression
+      ElementAccessExpression
+        Identifier: '
+y'
+        NumericLiteral

@@ -1,0 +1,67 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' x3'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' x3'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' x3'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+   cb'
+          Identifier: 'a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// both are errors
+x3'
+      NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' 
+x3'
+      NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            StringLiteral
+        EqualsGreaterThanToken
+        NumericLiteral

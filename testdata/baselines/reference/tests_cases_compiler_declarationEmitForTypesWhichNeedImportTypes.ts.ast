@@ -1,0 +1,25 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Named'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createNamed'
+    TypeReference
+      Identifier: ' Named'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' createNamed'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Value'
+        CallExpression
+          Identifier: ' createNamed'

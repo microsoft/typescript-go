@@ -1,0 +1,41 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' test0'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' a'
+          NumericLiteral
+        BindingElement
+          Identifier: ' b'
+          Identifier: ' a'
+      ObjectLiteralExpression
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' a'
+          ShorthandPropertyAssignment
+            Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' test1'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' c'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' a'
+              NumericLiteral
+            BindingElement
+              Identifier: ' b'
+              Identifier: ' a'
+          ObjectLiteralExpression
+      ObjectLiteralExpression
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' a'
+          ShorthandPropertyAssignment
+            Identifier: ' b'

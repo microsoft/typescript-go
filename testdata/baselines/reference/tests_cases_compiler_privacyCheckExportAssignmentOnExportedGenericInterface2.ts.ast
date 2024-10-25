@@ -1,0 +1,32 @@
+SourceFile
+  ExportAssignment
+    Identifier: ' Foo'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'array'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' Foo'
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            StringLiteral

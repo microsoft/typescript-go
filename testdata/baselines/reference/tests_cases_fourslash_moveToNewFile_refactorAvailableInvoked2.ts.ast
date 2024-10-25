@@ -1,0 +1,42 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+
+////class ns extends ap{
+//// constructor() {}
+////     
+////   export function fn() {
+////       console.log("Hello"); /*a*//*b*/
+////    }
+////    fn();
+////    
+////}
+
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'refactorAvailableForTriggerReason'
+      StringLiteral
+      StringLiteral
+      Identifier: '
+/*actionName*/ undefined'
+      Identifier: '
+/*actionDescription*/ undefined'
+      Identifier: '
+/*kind*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        allowTextChangesInNewFiles'
+          TrueKeyword
+      TrueKeyword

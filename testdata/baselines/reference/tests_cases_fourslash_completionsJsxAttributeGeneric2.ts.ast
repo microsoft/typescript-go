@@ -1,0 +1,55 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+        Identifier: 'forEach'
+      ArrowFunction
+        Parameter
+          Identifier: 'marker'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+  verify'
+                Identifier: 'completions'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+    marker'
+                PropertyAssignment
+                  Identifier: '
+    exact'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+      name'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+      sortText'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' completion'
+                            Identifier: 'SortText'
+                          Identifier: 'OptionalMember'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+      name'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+      sortText'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' completion'
+                            Identifier: 'SortText'
+                          Identifier: 'OptionalMember'

@@ -1,0 +1,43 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+/////*namespaceN*/
+////namespace n {
+////}
+////
+/////*namespaceM*/
+////module m {
+////}
+////
+/////*ambientModule*/
+////module "ambientModule" {
+////}
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      StringLiteral

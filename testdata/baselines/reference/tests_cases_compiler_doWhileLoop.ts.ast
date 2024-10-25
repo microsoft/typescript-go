@@ -1,0 +1,8 @@
+SourceFile
+  DoStatement
+    Block
+    FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'

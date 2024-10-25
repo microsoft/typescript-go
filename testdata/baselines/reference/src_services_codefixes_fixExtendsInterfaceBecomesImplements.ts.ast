@@ -1,0 +1,419 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    getContainingClass'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    HeritageClause'
+        ImportSpecifier
+          Identifier: '
+    isWhiteSpaceSingleLine'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Cannot_extend_an_interface_0_Did_you_mean_implements'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' nodes'
+                  CallExpression
+                    Identifier: ' getNodes'
+                    Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'span'
+                      Identifier: 'start'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'nodes'
+              ReturnStatement
+                Identifier: ' undefined'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' extendsToken'
+                    BindingElement
+                      Identifier: ' heritageClauses'
+                  Identifier: ' nodes'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' t'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' doChanges'
+                        Identifier: 't'
+                        Identifier: ' sourceFile'
+                        Identifier: ' extendsToken'
+                        Identifier: ' heritageClauses'
+            ReturnStatement
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'createCodeFixAction'
+                  Identifier: 'fixId'
+                  Identifier: ' changes'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Change_extends_to_implements'
+                  Identifier: ' fixId'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Change_all_extended_interfaces_to_implements'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' nodes'
+                        CallExpression
+                          Identifier: ' getNodes'
+                          PropertyAccessExpression
+                            Identifier: 'diag'
+                            Identifier: 'file'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'start'
+                  IfStatement
+                    Identifier: 'nodes'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' doChanges'
+                        Identifier: 'changes'
+                        PropertyAccessExpression
+                          Identifier: ' diag'
+                          Identifier: 'file'
+                        PropertyAccessExpression
+                          Identifier: ' nodes'
+                          Identifier: 'extendsToken'
+                        PropertyAccessExpression
+                          Identifier: ' nodes'
+                          Identifier: 'heritageClauses'
+  FunctionDeclaration
+    Identifier: ' getNodes'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' heritageClauses'
+            NonNullExpression
+              PropertyAccessExpression
+                NonNullExpression
+                  CallExpression
+                    Identifier: ' getContainingClass'
+                    Identifier: 'token'
+                Identifier: 'heritageClauses'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' extendsToken'
+            NonNullExpression
+              CallExpression
+                PropertyAccessExpression
+                  ElementAccessExpression
+                    Identifier: ' heritageClauses'
+                    NumericLiteral
+                  Identifier: 'getFirstToken'
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' extendsToken'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ExtendsKeyword'
+          QuestionToken
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' extendsToken'
+            ShorthandPropertyAssignment
+              Identifier: ' heritageClauses'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' doChanges'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' extendsToken'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' heritageClauses'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' HeritageClause'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          Identifier: 'sourceFile'
+          Identifier: ' extendsToken'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' factory'
+              Identifier: 'createToken'
+            PropertyAccessExpression
+              Identifier: 'SyntaxKind'
+              Identifier: 'ImplementsKeyword'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        heritageClauses'
+                Identifier: 'length'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: '
+        heritageClauses'
+                  NumericLiteral
+                Identifier: 'token'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'ExtendsKeyword'
+          AmpersandAmpersandToken
+          BinaryExpression
+            PropertyAccessExpression
+              ElementAccessExpression
+                Identifier: '
+        heritageClauses'
+                NumericLiteral
+              Identifier: 'token'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ImplementsKeyword'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' implementsToken'
+                NonNullExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      ElementAccessExpression
+                        Identifier: ' heritageClauses'
+                        NumericLiteral
+                      Identifier: 'getFirstToken'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' implementsFullStart'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' implementsToken'
+                    Identifier: 'getFullStart'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changes'
+                Identifier: 'replaceRange'
+              Identifier: 'sourceFile'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' pos'
+                  Identifier: ' implementsFullStart'
+                PropertyAssignment
+                  Identifier: ' end'
+                  Identifier: ' implementsFullStart'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createToken'
+                PropertyAccessExpression
+                  Identifier: 'SyntaxKind'
+                  Identifier: 'CommaToken'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' text'
+                PropertyAccessExpression
+                  Identifier: ' sourceFile'
+                  Identifier: 'text'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' end'
+                PropertyAccessExpression
+                  Identifier: ' implementsToken'
+                  Identifier: 'end'
+          WhileStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'end'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' text'
+                  Identifier: 'length'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isWhiteSpaceSingleLine'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'text'
+                    Identifier: 'charCodeAt'
+                  Identifier: 'end'
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            end'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        changes'
+                Identifier: 'deleteRange'
+              Identifier: 'sourceFile'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' pos'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' implementsToken'
+                      Identifier: 'getStart'
+                ShorthandPropertyAssignment
+                  Identifier: ' end'

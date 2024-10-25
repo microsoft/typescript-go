@@ -1,0 +1,30 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      FunctionType
+        Parameter
+          Identifier: 'p1'
+          NumberKeyword
+        NumberKeyword
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' p'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        CallExpression
+          Identifier: ' f'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'

@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' c'
+            TypeQuery
+              Identifier: ' b'

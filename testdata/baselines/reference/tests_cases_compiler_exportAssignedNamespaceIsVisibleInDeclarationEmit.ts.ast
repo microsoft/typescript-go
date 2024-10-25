@@ -1,0 +1,28 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Bar'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' Bar'
+  ExportAssignment
+    Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' f'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thing'
+        CallExpression
+          Identifier: ' f'

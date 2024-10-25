@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+  M'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            NumericLiteral

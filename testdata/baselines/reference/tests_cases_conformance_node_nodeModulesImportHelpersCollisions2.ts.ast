@@ -1,0 +1,42 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' fs'
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' fs'
+    StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ExportDeclaration
+        NamedExports

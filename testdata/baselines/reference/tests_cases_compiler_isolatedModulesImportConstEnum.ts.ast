@@ -1,0 +1,23 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Foo'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      PropertyAccessExpression
+        Identifier: 'Foo'
+        Identifier: 'BAR'
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' Foo'
+    EnumMember
+      Identifier: '
+  BAR'

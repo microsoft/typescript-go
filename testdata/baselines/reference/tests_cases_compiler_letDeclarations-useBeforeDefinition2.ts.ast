@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    Identifier: '// @target: ES6
+// @outFile: out.js
+
+// @Filename: file1.ts
+l'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        NumericLiteral

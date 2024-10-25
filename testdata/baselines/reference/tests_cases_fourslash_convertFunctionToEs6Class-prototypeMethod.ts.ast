@@ -1,0 +1,30 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '// @allowNonTsExtensions: true
+// @Filename: test123.js
+
+/// <reference path="./fourslash.ts" />
+
+//// // Comment
+//// function /*1*/fn() {
+////     this.baz = 10;
+//// }
+//// fn.prototype = {
+////     bar() {
+////         console.log('hello world');
+////     }
+//// }
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

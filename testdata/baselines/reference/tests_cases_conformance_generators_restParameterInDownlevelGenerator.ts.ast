@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' mergeStringLists'
+    Parameter
+      DotDotDotToken
+      Identifier: 'strings'
+      ArrayType
+        StringKeyword
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' str'
+        Identifier: ' strings'
+        EmptyStatement

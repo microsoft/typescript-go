@@ -1,0 +1,18 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' outer'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Beta'
+      ModuleDeclaration
+        Identifier: ' inner'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' Beta'
+            HeritageClause
+              ExpressionWithTypeArguments
+                PropertyAccessExpression
+                  Identifier: ' outer'
+                  Identifier: 'Beta'

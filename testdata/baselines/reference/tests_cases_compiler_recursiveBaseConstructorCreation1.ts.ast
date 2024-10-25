@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' func'
+      Parameter
+        Identifier: 'param'
+        TypeReference
+          Identifier: ' C2'
+      AnyKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' C2'

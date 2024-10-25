@@ -1,0 +1,33 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @module: esnext
+// @allowJs: true
+
+// @Filename: /a.js
+////const { a, b } = require("./other");
+////const p = 0;
+////[|const y = p + b;
+////const z = 0;
+////exports.z = 0;|]
+////a; y; z;
+
+// @Filename: /user.ts
+////const { x, y } = require("./a");
+
+verify'
+        Identifier: 'moveToNewFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral

@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @checkJs: true
+// @target: es5
+// @outDir: ./out
+// @declaration: true
+// @filename: index.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Parameter
+            Identifier: 'p'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 't'
+                EqualsToken
+                BinaryExpression
+                  NumericLiteral
+                  PlusToken
+                  Identifier: ' p'

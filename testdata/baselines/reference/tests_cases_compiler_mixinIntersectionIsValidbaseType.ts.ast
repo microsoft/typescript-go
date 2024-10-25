@@ -1,0 +1,116 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+      ObjectKeyword
+    ConstructorType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Initable'
+    MethodSignature
+      Identifier: '
+    init'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      VoidKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Serializable'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'K'
+            IntersectionType
+              TypeReference
+                Identifier: ' Constructor'
+                TypeReference
+                  Identifier: 'Initable'
+              TypeReference
+                Identifier: ' Initable'
+          Parameter
+            Identifier: '
+    SuperClass'
+            TypeReference
+              Identifier: ' K'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' LocalMixin'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'InnerSuperClass'
+                      TypeReference
+                        Identifier: ' K'
+                    EqualsGreaterThanToken
+                    Block
+                      ReturnStatement
+                        ClassExpression
+                          Identifier: ' SerializableLocal'
+                          HeritageClause
+                            ExpressionWithTypeArguments
+                              Identifier: ' InnerSuperClass'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' ResultClass'
+                  CallExpression
+                    Identifier: ' LocalMixin'
+                    Identifier: 'SuperClass'
+            ReturnStatement
+              Identifier: ' ResultClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' AMixin'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'K'
+            IntersectionType
+              TypeReference
+                Identifier: ' Constructor'
+                TypeReference
+                  Identifier: 'Initable'
+              TypeReference
+                Identifier: ' Initable'
+          Parameter
+            Identifier: 'SuperClass'
+            TypeReference
+              Identifier: ' K'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' SomeHowOkay'
+                  ClassExpression
+                    Identifier: ' A'
+                    HeritageClause
+                      ExpressionWithTypeArguments
+                        Identifier: ' SuperClass'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' SomeHowNotOkay'
+                  ClassExpression
+                    Identifier: ' A'
+                    HeritageClause
+                      ExpressionWithTypeArguments
+                        CallExpression
+                          Identifier: ' Serializable'
+                          Identifier: 'SuperClass'

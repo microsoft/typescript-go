@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'model'
+        Identifier: 'rotate'
+      NumericLiteral
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' rotateY'
+          AsteriskToken
+          PropertyAccessExpression
+            Identifier: ' Math'
+            Identifier: 'PI'
+        SlashToken
+        NumericLiteral
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' rotateZ'
+          AsteriskToken
+          PropertyAccessExpression
+            Identifier: ' Math'
+            Identifier: 'PI'
+        SlashToken
+        NumericLiteral

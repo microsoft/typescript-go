@@ -1,0 +1,8 @@
+SourceFile
+  Block
+    LabeledStatement
+      Identifier: 'a'
+      ExpressionStatement
+        NumericLiteral
+  ExpressionStatement
+    RegularExpressionLiteral

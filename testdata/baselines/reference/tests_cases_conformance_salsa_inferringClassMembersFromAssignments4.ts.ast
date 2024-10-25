@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'p'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'p'
+            EqualsToken
+            NumericLiteral

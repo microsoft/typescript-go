@@ -1,0 +1,51 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' DebugClass'
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' debugFunc'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' i'
+              NumericLiteral
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        i'
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        i'
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        i'
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        i'
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        i'
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        i'
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        i'
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        i'
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        i'
+        ReturnStatement
+          TrueKeyword

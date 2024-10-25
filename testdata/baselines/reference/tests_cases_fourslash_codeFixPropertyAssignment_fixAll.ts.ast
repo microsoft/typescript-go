@@ -1,0 +1,35 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////const a = {
+////    x: 1,
+////    y = 1,
+////    z: 1
+////}
+////const b = {
+////    x = 1,
+////    y: 1
+////}
+////const c = {
+////    x: 1,
+////    y = 1
+////}
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixAllDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

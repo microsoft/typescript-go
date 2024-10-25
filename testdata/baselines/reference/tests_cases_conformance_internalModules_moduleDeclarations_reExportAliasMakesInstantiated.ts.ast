@@ -1,0 +1,62 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' pack1'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' test1'
+            StringKeyword
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' test1'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' pack2'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' test1'
+        QualifiedName
+          Identifier: ' pack1'
+          Identifier: 'test1'
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' test1'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' test1'
+    QualifiedName
+      Identifier: ' pack2'
+      Identifier: 'test1'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' mod1'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' test1'
+        StringKeyword
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' test1'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' mod2'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' test1'
+        QualifiedName
+          Identifier: ' mod1'
+          Identifier: 'test1'
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' test1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test2'
+        Identifier: ' mod2'

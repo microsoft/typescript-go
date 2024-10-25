@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectKeyword
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' key'
+    Identifier: ' a'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            ElementAccessExpression
+              Identifier: ' a'
+              Identifier: 'key'

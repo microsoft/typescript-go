@@ -1,0 +1,25 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' SymbolConstructor'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' observer'
+      SymbolKeyword
+  InterfaceDeclaration
+    Identifier: ' SymbolConstructor'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' observer'
+      TypeOperator
+        SymbolKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'observer'
+            NumericLiteral

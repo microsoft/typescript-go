@@ -1,0 +1,27 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      QuestionToken
+      AnyKeyword
+    AnyKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' foo'
+          StringLiteral

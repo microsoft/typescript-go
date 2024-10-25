@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      StringKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'foo'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'bar'

@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    IndexSignature
+      Parameter
+        Identifier: 'p'
+        StringKeyword
+      AnyKeyword
+    IndexSignature
+      StaticKeyword
+      Parameter
+        Identifier: 'p'
+        StringKeyword
+      NumberKeyword

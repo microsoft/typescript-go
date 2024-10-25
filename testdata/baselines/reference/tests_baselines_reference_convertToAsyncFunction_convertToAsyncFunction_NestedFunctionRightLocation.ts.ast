@@ -1,0 +1,62 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      FunctionDeclaration
+        Identifier: ' fn2'
+        Block
+          FunctionDeclaration
+            Identifier: ' /*[#|*/fn3'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: ' fetch'
+                      StringLiteral
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'res'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' console'
+                        Identifier: 'log'
+                      Identifier: 'res'
+          ReturnStatement
+            CallExpression
+              Identifier: ' fn3'
+      ReturnStatement
+        CallExpression
+          Identifier: ' fn2'
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      FunctionDeclaration
+        Identifier: ' fn2'
+        Block
+          FunctionDeclaration
+            AsyncKeyword
+            Identifier: ' fn3'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' res'
+                    AwaitExpression
+                      CallExpression
+                        Identifier: ' fetch'
+                        StringLiteral
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' console'
+                    Identifier: 'log'
+                  Identifier: 'res'
+          ReturnStatement
+            CallExpression
+              Identifier: ' fn3'
+      ReturnStatement
+        CallExpression
+          Identifier: ' fn2'

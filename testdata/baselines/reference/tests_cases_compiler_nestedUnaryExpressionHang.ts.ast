@@ -1,0 +1,34 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      PercentToken
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              Identifier: ''

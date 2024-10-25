@@ -1,0 +1,143 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn'
+    Parameter
+      Identifier: '
+    a'
+      NumberKeyword
+    Parameter
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' Promise'
+        NumberKeyword
+    Parameter
+      Identifier: '
+    c'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: '
+    d'
+      TypeReference
+        Identifier: ' Promise'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' prop'
+            StringKeyword
+    Parameter
+      Identifier: '
+    e'
+      TypeReference
+        Identifier: ' Promise'
+        FunctionType
+          VoidKeyword
+    Parameter
+      Identifier: '
+    f'
+      UnionType
+        TypeReference
+          Identifier: ' Promise'
+          FunctionType
+            VoidKeyword
+        ParenthesizedType
+          FunctionType
+            VoidKeyword
+    Parameter
+      Identifier: '
+    g'
+      TypeReference
+        Identifier: ' Promise'
+        TypeLiteral
+          ConstructSignature
+            AnyKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    // All errors
+    a'
+          BarToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          BarToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          PlusToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          GreaterThanToken
+          Identifier: ' b'
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    b'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsEqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'c'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+        Identifier: ' c'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        fn'
+              Identifier: 'b'
+              Identifier: ' b'
+              Identifier: ' c'
+              Identifier: ' d'
+              Identifier: ' e'
+              Identifier: ' f'
+              Identifier: ' g'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        d'
+              Identifier: 'prop'
+      ForOfStatement
+        AwaitKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+        Identifier: ' c'
+        Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    e'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+      ExpressionStatement
+        NewExpression
+          Identifier: ' g'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    b'

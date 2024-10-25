@@ -1,0 +1,49 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ClassDeclaration
+        Identifier: ' c'
+        Constructor
+          Parameter
+            Identifier: 'M'
+          Parameter
+            Identifier: ' p'
+            Identifier: ' x'
+          Block
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' d'
+        Constructor
+          Parameter
+            PrivateKeyword
+            Identifier: ' M'
+          Parameter
+            Identifier: ' p'
+            Identifier: ' x'
+          Block
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' d2'
+        Constructor
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' M'
+                  NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' p'
+                  Identifier: ' x'

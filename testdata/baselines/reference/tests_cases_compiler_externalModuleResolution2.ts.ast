@@ -1,0 +1,33 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' X'
+            NumericLiteral
+  ExportAssignment
+    Identifier: ' M2'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Y'
+            NumberKeyword
+  ExportAssignment
+    Identifier: ' M1'
+  ImportEqualsDeclaration
+    Identifier: ' x'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'X'

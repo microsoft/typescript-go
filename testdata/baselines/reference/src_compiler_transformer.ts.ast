@@ -1,0 +1,2945 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addRange'
+        ImportSpecifier
+          Identifier: '
+    append'
+        ImportSpecifier
+          Identifier: '
+    Bundle'
+        ImportSpecifier
+          Identifier: '
+    chainBundle'
+        ImportSpecifier
+          Identifier: '
+    CompilerOptions'
+        ImportSpecifier
+          Identifier: '
+    createEmitHelperFactory'
+        ImportSpecifier
+          Identifier: '
+    CustomTransformer'
+        ImportSpecifier
+          Identifier: '
+    CustomTransformerFactory'
+        ImportSpecifier
+          Identifier: '
+    CustomTransformers'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticWithLocation'
+        ImportSpecifier
+          Identifier: '
+    disposeEmitNodes'
+        ImportSpecifier
+          Identifier: '
+    EmitFlags'
+        ImportSpecifier
+          Identifier: '
+    EmitHelper'
+        ImportSpecifier
+          Identifier: '
+    EmitHint'
+        ImportSpecifier
+          Identifier: '
+    EmitHost'
+        ImportSpecifier
+          Identifier: '
+    EmitOnly'
+        ImportSpecifier
+          Identifier: '
+    EmitResolver'
+        ImportSpecifier
+          Identifier: '
+    EmitTransformers'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    FunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    getEmitFlags'
+        ImportSpecifier
+          Identifier: '
+    getEmitModuleKind'
+        ImportSpecifier
+          Identifier: '
+    getEmitScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    getJSXTransformEnabled'
+        ImportSpecifier
+          Identifier: '
+    getParseTreeNode'
+        ImportSpecifier
+          Identifier: '
+    getSourceFileOfNode'
+        ImportSpecifier
+          Identifier: '
+    getUseDefineForClassFields'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    isBundle'
+        ImportSpecifier
+          Identifier: '
+    isSourceFile'
+        ImportSpecifier
+          Identifier: '
+    LexicalEnvironmentFlags'
+        ImportSpecifier
+          Identifier: '
+    map'
+        ImportSpecifier
+          Identifier: '
+    memoize'
+        ImportSpecifier
+          Identifier: '
+    ModuleKind'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeFactory'
+        ImportSpecifier
+          Identifier: '
+    NodeFlags'
+        ImportSpecifier
+          Identifier: '
+    noop'
+        ImportSpecifier
+          Identifier: '
+    notImplemented'
+        ImportSpecifier
+          Identifier: '
+    returnUndefined'
+        ImportSpecifier
+          Identifier: '
+    ScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    setEmitFlags'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    Statement'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    tracing'
+        ImportSpecifier
+          Identifier: '
+    TransformationContext'
+        ImportSpecifier
+          Identifier: '
+    TransformationResult'
+        ImportSpecifier
+          Identifier: '
+    transformClassFields'
+        ImportSpecifier
+          Identifier: '
+    transformDeclarations'
+        ImportSpecifier
+          Identifier: '
+    transformECMAScriptModule'
+        ImportSpecifier
+          Identifier: '
+    Transformer'
+        ImportSpecifier
+          Identifier: '
+    TransformerFactory'
+        ImportSpecifier
+          Identifier: '
+    transformES2015'
+        ImportSpecifier
+          Identifier: '
+    transformES2016'
+        ImportSpecifier
+          Identifier: '
+    transformES2017'
+        ImportSpecifier
+          Identifier: '
+    transformES2018'
+        ImportSpecifier
+          Identifier: '
+    transformES2019'
+        ImportSpecifier
+          Identifier: '
+    transformES2020'
+        ImportSpecifier
+          Identifier: '
+    transformES2021'
+        ImportSpecifier
+          Identifier: '
+    transformESDecorators'
+        ImportSpecifier
+          Identifier: '
+    transformESNext'
+        ImportSpecifier
+          Identifier: '
+    transformGenerators'
+        ImportSpecifier
+          Identifier: '
+    transformImpliedNodeFormatDependentModule'
+        ImportSpecifier
+          Identifier: '
+    transformJsx'
+        ImportSpecifier
+          Identifier: '
+    transformLegacyDecorators'
+        ImportSpecifier
+          Identifier: '
+    transformModule'
+        ImportSpecifier
+          Identifier: '
+    transformSystemModule'
+        ImportSpecifier
+          Identifier: '
+    transformTypeScript'
+        ImportSpecifier
+          Identifier: '
+    VariableDeclaration'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' performance'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' getModuleTransformer'
+    Parameter
+      Identifier: 'moduleKind'
+      TypeReference
+        Identifier: ' ModuleKind'
+    TypeReference
+      Identifier: ' TransformerFactory'
+      UnionType
+        TypeReference
+          Identifier: 'SourceFile'
+        TypeReference
+          Identifier: ' Bundle'
+    Block
+      SwitchStatement
+        Identifier: 'moduleKind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' ModuleKind'
+              Identifier: 'Preserve'
+            ReturnStatement
+              Identifier: ' transformECMAScriptModule'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' ModuleKind'
+              Identifier: 'ESNext'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' ModuleKind'
+              Identifier: 'ES2022'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' ModuleKind'
+              Identifier: 'ES2020'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' ModuleKind'
+              Identifier: 'ES2015'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' ModuleKind'
+              Identifier: 'Node16'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' ModuleKind'
+              Identifier: 'NodeNext'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' ModuleKind'
+              Identifier: 'CommonJS'
+            ReturnStatement
+              Identifier: ' transformImpliedNodeFormatDependentModule'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' ModuleKind'
+              Identifier: 'System'
+            ReturnStatement
+              Identifier: ' transformSystemModule'
+          DefaultClause
+            ReturnStatement
+              Identifier: ' transformModule'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' TransformationState'
+    EnumMember
+      Identifier: '
+    Uninitialized'
+    EnumMember
+      Identifier: '
+    Initialized'
+    EnumMember
+      Identifier: '
+    Completed'
+    EnumMember
+      Identifier: '
+    Disposed'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' SyntaxKindFeatureFlags'
+    EnumMember
+      Identifier: '
+    Substitution'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    EmitNotifications'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noTransformers'
+        TypeReference
+          Identifier: ' EmitTransformers'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' scriptTransformers'
+            Identifier: ' emptyArray'
+          PropertyAssignment
+            Identifier: ' declarationTransformers'
+            Identifier: ' emptyArray'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getTransformers'
+    Parameter
+      Identifier: 'compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' customTransformers'
+      QuestionToken
+      TypeReference
+        Identifier: ' CustomTransformers'
+    Parameter
+      Identifier: ' emitOnly'
+      QuestionToken
+      UnionType
+        BooleanKeyword
+        TypeReference
+          Identifier: ' EmitOnly'
+    TypeReference
+      Identifier: ' EmitTransformers'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        scriptTransformers'
+            CallExpression
+              Identifier: ' getScriptTransformers'
+              Identifier: 'compilerOptions'
+              Identifier: ' customTransformers'
+              Identifier: ' emitOnly'
+          PropertyAssignment
+            Identifier: '
+        declarationTransformers'
+            CallExpression
+              Identifier: ' getDeclarationTransformers'
+              Identifier: 'customTransformers'
+  FunctionDeclaration
+    Identifier: ' getScriptTransformers'
+    Parameter
+      Identifier: 'compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' customTransformers'
+      QuestionToken
+      TypeReference
+        Identifier: ' CustomTransformers'
+    Parameter
+      Identifier: ' emitOnly'
+      QuestionToken
+      UnionType
+        BooleanKeyword
+        TypeReference
+          Identifier: ' EmitOnly'
+    Block
+      IfStatement
+        Identifier: 'emitOnly'
+        ReturnStatement
+          Identifier: ' emptyArray'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' languageVersion'
+            CallExpression
+              Identifier: ' getEmitScriptTarget'
+              Identifier: 'compilerOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleKind'
+            CallExpression
+              Identifier: ' getEmitModuleKind'
+              Identifier: 'compilerOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' useDefineForClassFields'
+            CallExpression
+              Identifier: ' getUseDefineForClassFields'
+              Identifier: 'compilerOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' transformers'
+            ArrayType
+              TypeReference
+                Identifier: ' TransformerFactory'
+                UnionType
+                  TypeReference
+                    Identifier: 'SourceFile'
+                  TypeReference
+                    Identifier: ' Bundle'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    addRange'
+          Identifier: 'transformers'
+          BinaryExpression
+            Identifier: ' customTransformers'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' map'
+              PropertyAccessExpression
+                Identifier: 'customTransformers'
+                Identifier: 'before'
+              Identifier: ' wrapScriptTransformerFactory'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    transformers'
+            Identifier: 'push'
+          Identifier: 'transformTypeScript'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'compilerOptions'
+          Identifier: 'experimentalDecorators'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformLegacyDecorators'
+      IfStatement
+        CallExpression
+          Identifier: 'getJSXTransformEnabled'
+          Identifier: 'compilerOptions'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformJsx'
+      IfStatement
+        BinaryExpression
+          Identifier: 'languageVersion'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' ScriptTarget'
+            Identifier: 'ESNext'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformESNext'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'compilerOptions'
+              Identifier: 'experimentalDecorators'
+          AmpersandAmpersandToken
+          ParenthesizedExpression
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'languageVersion'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' ScriptTarget'
+                  Identifier: 'ESNext'
+              BarBarToken
+              PrefixUnaryExpression
+                Identifier: 'useDefineForClassFields'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformESDecorators'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    transformers'
+            Identifier: 'push'
+          Identifier: 'transformClassFields'
+      IfStatement
+        BinaryExpression
+          Identifier: 'languageVersion'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' ScriptTarget'
+            Identifier: 'ES2021'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformES2021'
+      IfStatement
+        BinaryExpression
+          Identifier: 'languageVersion'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' ScriptTarget'
+            Identifier: 'ES2020'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformES2020'
+      IfStatement
+        BinaryExpression
+          Identifier: 'languageVersion'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' ScriptTarget'
+            Identifier: 'ES2019'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformES2019'
+      IfStatement
+        BinaryExpression
+          Identifier: 'languageVersion'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' ScriptTarget'
+            Identifier: 'ES2018'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformES2018'
+      IfStatement
+        BinaryExpression
+          Identifier: 'languageVersion'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' ScriptTarget'
+            Identifier: 'ES2017'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformES2017'
+      IfStatement
+        BinaryExpression
+          Identifier: 'languageVersion'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' ScriptTarget'
+            Identifier: 'ES2016'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformES2016'
+      IfStatement
+        BinaryExpression
+          Identifier: 'languageVersion'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' ScriptTarget'
+            Identifier: 'ES2015'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformES2015'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformers'
+                Identifier: 'push'
+              Identifier: 'transformGenerators'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    transformers'
+            Identifier: 'push'
+          CallExpression
+            Identifier: 'getModuleTransformer'
+            Identifier: 'moduleKind'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    addRange'
+          Identifier: 'transformers'
+          BinaryExpression
+            Identifier: ' customTransformers'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' map'
+              PropertyAccessExpression
+                Identifier: 'customTransformers'
+                Identifier: 'after'
+              Identifier: ' wrapScriptTransformerFactory'
+      ReturnStatement
+        Identifier: ' transformers'
+  FunctionDeclaration
+    Identifier: ' getDeclarationTransformers'
+    Parameter
+      Identifier: 'customTransformers'
+      QuestionToken
+      TypeReference
+        Identifier: ' CustomTransformers'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' transformers'
+            ArrayType
+              TypeReference
+                Identifier: ' TransformerFactory'
+                UnionType
+                  TypeReference
+                    Identifier: 'SourceFile'
+                  TypeReference
+                    Identifier: ' Bundle'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    transformers'
+            Identifier: 'push'
+          Identifier: 'transformDeclarations'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    addRange'
+          Identifier: 'transformers'
+          BinaryExpression
+            Identifier: ' customTransformers'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' map'
+              PropertyAccessExpression
+                Identifier: 'customTransformers'
+                Identifier: 'afterDeclarations'
+              Identifier: ' wrapDeclarationTransformerFactory'
+      ReturnStatement
+        Identifier: ' transformers'
+  FunctionDeclaration
+    Identifier: ' wrapCustomTransformer'
+    Parameter
+      Identifier: 'transformer'
+      TypeReference
+        Identifier: ' CustomTransformer'
+    TypeReference
+      Identifier: ' Transformer'
+      UnionType
+        TypeReference
+          Identifier: 'Bundle'
+        TypeReference
+          Identifier: ' SourceFile'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' node'
+          EqualsGreaterThanToken
+          ConditionalExpression
+            CallExpression
+              Identifier: ' isBundle'
+              Identifier: 'node'
+            QuestionToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' transformer'
+                Identifier: 'transformBundle'
+              Identifier: 'node'
+            ColonToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' transformer'
+                Identifier: 'transformSourceFile'
+              Identifier: 'node'
+  FunctionDeclaration
+    Identifier: ' wrapCustomTransformerFactory'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' Bundle'
+    Parameter
+      Identifier: 'transformer'
+      UnionType
+        TypeReference
+          Identifier: ' TransformerFactory'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' CustomTransformerFactory'
+    Parameter
+      Identifier: ' handleDefault'
+      FunctionType
+        Parameter
+          Identifier: 'context'
+          TypeReference
+            Identifier: ' TransformationContext'
+        Parameter
+          Identifier: ' tx'
+          TypeReference
+            Identifier: ' Transformer'
+            TypeReference
+              Identifier: 'T'
+        TypeReference
+          Identifier: ' Transformer'
+          UnionType
+            TypeReference
+              Identifier: 'Bundle'
+            TypeReference
+              Identifier: ' SourceFile'
+    TypeReference
+      Identifier: ' TransformerFactory'
+      UnionType
+        TypeReference
+          Identifier: 'Bundle'
+        TypeReference
+          Identifier: ' SourceFile'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' context'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' customTransformer'
+                  CallExpression
+                    Identifier: ' transformer'
+                    Identifier: 'context'
+            ReturnStatement
+              ConditionalExpression
+                BinaryExpression
+                  TypeOfExpression
+                    Identifier: ' customTransformer'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                QuestionToken
+                CallExpression
+                  Identifier: ' handleDefault'
+                  Identifier: 'context'
+                  Identifier: ' customTransformer'
+                ColonToken
+                CallExpression
+                  Identifier: ' wrapCustomTransformer'
+                  Identifier: 'customTransformer'
+  FunctionDeclaration
+    Identifier: ' wrapScriptTransformerFactory'
+    Parameter
+      Identifier: 'transformer'
+      UnionType
+        TypeReference
+          Identifier: ' TransformerFactory'
+          TypeReference
+            Identifier: 'SourceFile'
+        TypeReference
+          Identifier: ' CustomTransformerFactory'
+    TypeReference
+      Identifier: ' TransformerFactory'
+      UnionType
+        TypeReference
+          Identifier: 'Bundle'
+        TypeReference
+          Identifier: ' SourceFile'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' wrapCustomTransformerFactory'
+          Identifier: 'transformer'
+          Identifier: ' chainBundle'
+  FunctionDeclaration
+    Identifier: ' wrapDeclarationTransformerFactory'
+    Parameter
+      Identifier: 'transformer'
+      UnionType
+        TypeReference
+          Identifier: ' TransformerFactory'
+          UnionType
+            TypeReference
+              Identifier: 'Bundle'
+            TypeReference
+              Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' CustomTransformerFactory'
+    TypeReference
+      Identifier: ' TransformerFactory'
+      UnionType
+        TypeReference
+          Identifier: 'Bundle'
+        TypeReference
+          Identifier: ' SourceFile'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' wrapCustomTransformerFactory'
+          Identifier: 'transformer'
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            Parameter
+              Identifier: ' node'
+            EqualsGreaterThanToken
+            Identifier: ' node'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' noEmitSubstitution'
+    Parameter
+      Identifier: '_hint'
+      TypeReference
+        Identifier: ' EmitHint'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' Node'
+    Block
+      ReturnStatement
+        Identifier: ' node'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' noEmitNotification'
+    Parameter
+      Identifier: 'hint'
+      TypeReference
+        Identifier: ' EmitHint'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' callback'
+      FunctionType
+        Parameter
+          Identifier: 'hint'
+          TypeReference
+            Identifier: ' EmitHint'
+        Parameter
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+        VoidKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    callback'
+          Identifier: 'hint'
+          Identifier: ' node'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' transformNodes'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'resolver'
+      UnionType
+        TypeReference
+          Identifier: ' EmitResolver'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' host'
+      UnionType
+        TypeReference
+          Identifier: ' EmitHost'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' nodes'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' transformers'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' TransformerFactory'
+            TypeReference
+              Identifier: 'T'
+    Parameter
+      Identifier: ' allowDtsFiles'
+      BooleanKeyword
+    TypeReference
+      Identifier: ' TransformationResult'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' enabledSyntaxKindFeatures'
+            NewExpression
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'SyntaxKindFeatureFlags'
+              PropertyAccessExpression
+                Identifier: 'SyntaxKind'
+                Identifier: 'Count'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lexicalEnvironmentVariableDeclarations'
+            ArrayType
+              TypeReference
+                Identifier: ' VariableDeclaration'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lexicalEnvironmentFunctionDeclarations'
+            ArrayType
+              TypeReference
+                Identifier: ' FunctionDeclaration'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lexicalEnvironmentStatements'
+            ArrayType
+              TypeReference
+                Identifier: ' Statement'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lexicalEnvironmentFlags'
+            PropertyAccessExpression
+              Identifier: ' LexicalEnvironmentFlags'
+              Identifier: 'None'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lexicalEnvironmentVariableDeclarationsStack'
+            ArrayType
+              ArrayType
+                TypeReference
+                  Identifier: ' VariableDeclaration'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lexicalEnvironmentFunctionDeclarationsStack'
+            ArrayType
+              ArrayType
+                TypeReference
+                  Identifier: ' FunctionDeclaration'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lexicalEnvironmentStatementsStack'
+            ArrayType
+              ArrayType
+                TypeReference
+                  Identifier: ' Statement'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lexicalEnvironmentFlagsStack'
+            ArrayType
+              TypeReference
+                Identifier: ' LexicalEnvironmentFlags'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lexicalEnvironmentStackOffset'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lexicalEnvironmentSuspended'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' blockScopedVariableDeclarationsStack'
+            ArrayType
+              ArrayType
+                TypeReference
+                  Identifier: ' Identifier'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' blockScopeStackOffset'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' blockScopedVariableDeclarations'
+            ArrayType
+              TypeReference
+                Identifier: ' Identifier'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' emitHelpers'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' EmitHelper'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' onSubstituteNode'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' TransformationContext'
+              LiteralType
+                StringLiteral
+            Identifier: ' noEmitSubstitution'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' onEmitNode'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' TransformationContext'
+              LiteralType
+                StringLiteral
+            Identifier: ' noEmitNotification'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' state'
+            PropertyAccessExpression
+              Identifier: ' TransformationState'
+              Identifier: 'Uninitialized'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' diagnostics'
+            ArrayType
+              TypeReference
+                Identifier: ' DiagnosticWithLocation'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' context'
+            TypeReference
+              Identifier: ' TransformationContext'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+        factory'
+              PropertyAssignment
+                Identifier: '
+        getCompilerOptions'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' options'
+              PropertyAssignment
+                Identifier: '
+        getEmitResolver'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  NonNullExpression
+                    Identifier: ' resolver'
+              PropertyAssignment
+                Identifier: ' // TODO: GH#18217
+        getEmitHost'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  NonNullExpression
+                    Identifier: ' host'
+              PropertyAssignment
+                Identifier: ' // TODO: GH#18217
+        getEmitHelperFactory'
+                CallExpression
+                  Identifier: ' memoize'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' createEmitHelperFactory'
+                      Identifier: 'context'
+              ShorthandPropertyAssignment
+                Identifier: '
+        startLexicalEnvironment'
+              ShorthandPropertyAssignment
+                Identifier: '
+        suspendLexicalEnvironment'
+              ShorthandPropertyAssignment
+                Identifier: '
+        resumeLexicalEnvironment'
+              ShorthandPropertyAssignment
+                Identifier: '
+        endLexicalEnvironment'
+              ShorthandPropertyAssignment
+                Identifier: '
+        setLexicalEnvironmentFlags'
+              ShorthandPropertyAssignment
+                Identifier: '
+        getLexicalEnvironmentFlags'
+              ShorthandPropertyAssignment
+                Identifier: '
+        hoistVariableDeclaration'
+              ShorthandPropertyAssignment
+                Identifier: '
+        hoistFunctionDeclaration'
+              ShorthandPropertyAssignment
+                Identifier: '
+        addInitializationStatement'
+              ShorthandPropertyAssignment
+                Identifier: '
+        startBlockScope'
+              ShorthandPropertyAssignment
+                Identifier: '
+        endBlockScope'
+              ShorthandPropertyAssignment
+                Identifier: '
+        addBlockScopedVariable'
+              ShorthandPropertyAssignment
+                Identifier: '
+        requestEmitHelper'
+              ShorthandPropertyAssignment
+                Identifier: '
+        readEmitHelpers'
+              ShorthandPropertyAssignment
+                Identifier: '
+        enableSubstitution'
+              ShorthandPropertyAssignment
+                Identifier: '
+        enableEmitNotification'
+              ShorthandPropertyAssignment
+                Identifier: '
+        isSubstitutionEnabled'
+              ShorthandPropertyAssignment
+                Identifier: '
+        isEmitNotificationEnabled'
+              GetAccessor
+                Identifier: ' onSubstituteNode'
+                Block
+                  ReturnStatement
+                    Identifier: ' onSubstituteNode'
+              SetAccessor
+                Identifier: ' onSubstituteNode'
+                Parameter
+                  Identifier: 'value'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            Debug'
+                        Identifier: 'assert'
+                      BinaryExpression
+                        Identifier: 'state'
+                        LessThanToken
+                        PropertyAccessExpression
+                          Identifier: ' TransformationState'
+                          Identifier: 'Initialized'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            Debug'
+                        Identifier: 'assert'
+                      BinaryExpression
+                        Identifier: 'value'
+                        ExclamationEqualsEqualsToken
+                        Identifier: ' undefined'
+                      StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            onSubstituteNode'
+                      EqualsToken
+                      Identifier: ' value'
+              GetAccessor
+                Identifier: ' onEmitNode'
+                Block
+                  ReturnStatement
+                    Identifier: ' onEmitNode'
+              SetAccessor
+                Identifier: ' onEmitNode'
+                Parameter
+                  Identifier: 'value'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            Debug'
+                        Identifier: 'assert'
+                      BinaryExpression
+                        Identifier: 'state'
+                        LessThanToken
+                        PropertyAccessExpression
+                          Identifier: ' TransformationState'
+                          Identifier: 'Initialized'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            Debug'
+                        Identifier: 'assert'
+                      BinaryExpression
+                        Identifier: 'value'
+                        ExclamationEqualsEqualsToken
+                        Identifier: ' undefined'
+                      StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            onEmitNode'
+                      EqualsToken
+                      Identifier: ' value'
+              MethodDeclaration
+                Identifier: '
+        addDiagnostic'
+                Parameter
+                  Identifier: 'diag'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            diagnostics'
+                        Identifier: 'push'
+                      Identifier: 'diag'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+        Identifier: ' nodes'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        disposeEmitNodes'
+              CallExpression
+                Identifier: 'getSourceFileOfNode'
+                CallExpression
+                  Identifier: 'getParseTreeNode'
+                  Identifier: 'node'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    performance'
+            Identifier: 'mark'
+          StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' transformersWithContext'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' transformers'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 't'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' t'
+                  Identifier: 'context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' transformation'
+            ArrowFunction
+              Parameter
+                Identifier: 'node'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+              EqualsGreaterThanToken
+              Block
+                ForOfStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' transform'
+                  Identifier: ' transformersWithContext'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+            node'
+                        EqualsToken
+                        CallExpression
+                          Identifier: ' transform'
+                          Identifier: 'node'
+                ReturnStatement
+                  Identifier: ' node'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    // prevent modification of transformation hooks.
+    state'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' TransformationState'
+            Identifier: 'Initialized'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' transformed'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+            ArrayLiteralExpression
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+        Identifier: ' nodes'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        tracing'
+                QuestionDotToken
+                Identifier: 'push'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'tracing'
+                  Identifier: 'Phase'
+                Identifier: 'Emit'
+              StringLiteral
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'kind'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'SourceFile'
+                QuestionToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' path'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          AsExpression
+                            Identifier: 'node'
+                            AnyKeyword
+                          TypeReference
+                            Identifier: ' SourceFile'
+                      Identifier: 'path'
+                ColonToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    PropertyAccessExpression
+                      Identifier: ' node'
+                      Identifier: 'kind'
+                  PropertyAssignment
+                    Identifier: ' pos'
+                    PropertyAccessExpression
+                      Identifier: ' node'
+                      Identifier: 'pos'
+                  PropertyAssignment
+                    Identifier: ' end'
+                    PropertyAccessExpression
+                      Identifier: ' node'
+                      Identifier: 'end'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        transformed'
+                Identifier: 'push'
+              CallExpression
+                ParenthesizedExpression
+                  ConditionalExpression
+                    Identifier: 'allowDtsFiles'
+                    QuestionToken
+                    Identifier: ' transformation'
+                    ColonToken
+                    Identifier: ' transformRoot'
+                Identifier: 'node'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        tracing'
+                QuestionDotToken
+                Identifier: 'pop'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    // prevent modification of the lexical environment.
+    state'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' TransformationState'
+            Identifier: 'Completed'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    performance'
+            Identifier: 'mark'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    performance'
+            Identifier: 'measure'
+          StringLiteral
+          StringLiteral
+          StringLiteral
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        transformed'
+          ShorthandPropertyAssignment
+            Identifier: '
+        substituteNode'
+          ShorthandPropertyAssignment
+            Identifier: '
+        emitNodeWithNotification'
+          ShorthandPropertyAssignment
+            Identifier: '
+        isEmitNotificationEnabled'
+          ShorthandPropertyAssignment
+            Identifier: '
+        dispose'
+          ShorthandPropertyAssignment
+            Identifier: '
+        diagnostics'
+      FunctionDeclaration
+        Identifier: ' transformRoot'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' T'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' node'
+                AmpersandAmpersandToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    PrefixUnaryExpression
+                      CallExpression
+                        Identifier: 'isSourceFile'
+                        Identifier: 'node'
+                    BarBarToken
+                    PrefixUnaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'isDeclarationFile'
+              QuestionToken
+              CallExpression
+                Identifier: ' transformation'
+                Identifier: 'node'
+              ColonToken
+              Identifier: ' node'
+      FunctionDeclaration
+        Identifier: ' enableSubstitution'
+        Parameter
+          Identifier: 'kind'
+          TypeReference
+            Identifier: ' SyntaxKind'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+        enabledSyntaxKindFeatures'
+                Identifier: 'kind'
+              BarEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKindFeatureFlags'
+                Identifier: 'Substitution'
+      FunctionDeclaration
+        Identifier: ' isSubstitutionEnabled'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: 'enabledSyntaxKindFeatures'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'kind'
+                    AmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKindFeatureFlags'
+                      Identifier: 'Substitution'
+                ExclamationEqualsEqualsToken
+                NumericLiteral
+              AmpersandAmpersandToken
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'getEmitFlags'
+                      Identifier: 'node'
+                    AmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' EmitFlags'
+                      Identifier: 'NoSubstitution'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+      FunctionDeclaration
+        Identifier: ' substituteNode'
+        Parameter
+          Identifier: 'hint'
+          TypeReference
+            Identifier: ' EmitHint'
+        Parameter
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Disposed'
+              StringLiteral
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  Identifier: ' node'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' isSubstitutionEnabled'
+                    Identifier: 'node'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' onSubstituteNode'
+                  Identifier: 'hint'
+                  Identifier: ' node'
+              BarBarToken
+              Identifier: ' node'
+      FunctionDeclaration
+        Identifier: ' enableEmitNotification'
+        Parameter
+          Identifier: 'kind'
+          TypeReference
+            Identifier: ' SyntaxKind'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+        enabledSyntaxKindFeatures'
+                Identifier: 'kind'
+              BarEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKindFeatureFlags'
+                Identifier: 'EmitNotifications'
+      FunctionDeclaration
+        Identifier: ' isEmitNotificationEnabled'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: 'enabledSyntaxKindFeatures'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'kind'
+                    AmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKindFeatureFlags'
+                      Identifier: 'EmitNotifications'
+                ExclamationEqualsEqualsToken
+                NumericLiteral
+              BarBarToken
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'getEmitFlags'
+                      Identifier: 'node'
+                    AmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' EmitFlags'
+                      Identifier: 'AdviseOnEmitNode'
+                ExclamationEqualsEqualsToken
+                NumericLiteral
+      FunctionDeclaration
+        Identifier: ' emitNodeWithNotification'
+        Parameter
+          Identifier: 'hint'
+          TypeReference
+            Identifier: ' EmitHint'
+        Parameter
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' emitCallback'
+          FunctionType
+            Parameter
+              Identifier: 'hint'
+              TypeReference
+                Identifier: ' EmitHint'
+            Parameter
+              Identifier: ' node'
+              TypeReference
+                Identifier: ' Node'
+            VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Disposed'
+              StringLiteral
+          IfStatement
+            Identifier: 'node'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'isEmitNotificationEnabled'
+                  Identifier: 'node'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                onEmitNode'
+                      Identifier: 'hint'
+                      Identifier: ' node'
+                      Identifier: ' emitCallback'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                emitCallback'
+                      Identifier: 'hint'
+                      Identifier: ' node'
+      FunctionDeclaration
+        Identifier: ' hoistVariableDeclaration'
+        Parameter
+          Identifier: 'name'
+          TypeReference
+            Identifier: ' Identifier'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' decl'
+                CallExpression
+                  Identifier: ' setEmitFlags'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createVariableDeclaration'
+                    Identifier: 'name'
+                  PropertyAccessExpression
+                    Identifier: ' EmitFlags'
+                    Identifier: 'NoNestedSourceMaps'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'lexicalEnvironmentVariableDeclarations'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentVariableDeclarations'
+                  EqualsToken
+                  ArrayLiteralExpression
+                    Identifier: 'decl'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            lexicalEnvironmentVariableDeclarations'
+                    Identifier: 'push'
+                  Identifier: 'decl'
+          IfStatement
+            BinaryExpression
+              Identifier: 'lexicalEnvironmentFlags'
+              AmpersandToken
+              PropertyAccessExpression
+                Identifier: ' LexicalEnvironmentFlags'
+                Identifier: 'InParameters'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentFlags'
+                  BarEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' LexicalEnvironmentFlags'
+                    Identifier: 'VariablesHoistedInParameters'
+      FunctionDeclaration
+        Identifier: ' hoistFunctionDeclaration'
+        Parameter
+          Identifier: 'func'
+          TypeReference
+            Identifier: ' FunctionDeclaration'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        setEmitFlags'
+              Identifier: 'func'
+              PropertyAccessExpression
+                Identifier: ' EmitFlags'
+                Identifier: 'CustomPrologue'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'lexicalEnvironmentFunctionDeclarations'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentFunctionDeclarations'
+                  EqualsToken
+                  ArrayLiteralExpression
+                    Identifier: 'func'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            lexicalEnvironmentFunctionDeclarations'
+                    Identifier: 'push'
+                  Identifier: 'func'
+      FunctionDeclaration
+        Identifier: ' addInitializationStatement'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Statement'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        setEmitFlags'
+              Identifier: 'node'
+              PropertyAccessExpression
+                Identifier: ' EmitFlags'
+                Identifier: 'CustomPrologue'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'lexicalEnvironmentStatements'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentStatements'
+                  EqualsToken
+                  ArrayLiteralExpression
+                    Identifier: 'node'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            lexicalEnvironmentStatements'
+                    Identifier: 'push'
+                  Identifier: 'node'
+      FunctionDeclaration
+        Identifier: ' startLexicalEnvironment'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              PrefixUnaryExpression
+                Identifier: 'lexicalEnvironmentSuspended'
+              StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+
+        // Save the current lexical environment. Rather than resizing the array we adjust the
+        // stack size variable. This allows us to reuse existing array slots we've
+        // already allocated between transformations to avoid allocation and GC overhead during
+        // transformation.
+        lexicalEnvironmentVariableDeclarationsStack'
+                Identifier: 'lexicalEnvironmentStackOffset'
+              EqualsToken
+              Identifier: ' lexicalEnvironmentVariableDeclarations'
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+        lexicalEnvironmentFunctionDeclarationsStack'
+                Identifier: 'lexicalEnvironmentStackOffset'
+              EqualsToken
+              Identifier: ' lexicalEnvironmentFunctionDeclarations'
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+        lexicalEnvironmentStatementsStack'
+                Identifier: 'lexicalEnvironmentStackOffset'
+              EqualsToken
+              Identifier: ' lexicalEnvironmentStatements'
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+        lexicalEnvironmentFlagsStack'
+                Identifier: 'lexicalEnvironmentStackOffset'
+              EqualsToken
+              Identifier: ' lexicalEnvironmentFlags'
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+        lexicalEnvironmentStackOffset'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentVariableDeclarations'
+              EqualsToken
+              NonNullExpression
+                Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentFunctionDeclarations'
+              EqualsToken
+              NonNullExpression
+                Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentStatements'
+              EqualsToken
+              NonNullExpression
+                Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentFlags'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' LexicalEnvironmentFlags'
+                Identifier: 'None'
+      FunctionDeclaration
+        Identifier: ' suspendLexicalEnvironment'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              PrefixUnaryExpression
+                Identifier: 'lexicalEnvironmentSuspended'
+              StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentSuspended'
+              EqualsToken
+              TrueKeyword
+      FunctionDeclaration
+        Identifier: ' resumeLexicalEnvironment'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              Identifier: 'lexicalEnvironmentSuspended'
+              StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentSuspended'
+              EqualsToken
+              FalseKeyword
+      FunctionDeclaration
+        Identifier: ' endLexicalEnvironment'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' Statement'
+          UndefinedKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              PrefixUnaryExpression
+                Identifier: 'lexicalEnvironmentSuspended'
+              StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' statements'
+                UnionType
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Statement'
+                  UndefinedKeyword
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: '
+            lexicalEnvironmentVariableDeclarations'
+                BarBarToken
+                Identifier: '
+            lexicalEnvironmentFunctionDeclarations'
+              BarBarToken
+              Identifier: '
+            lexicalEnvironmentStatements'
+            Block
+              IfStatement
+                Identifier: 'lexicalEnvironmentFunctionDeclarations'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                statements'
+                      EqualsToken
+                      ArrayLiteralExpression
+                        SpreadElement
+                          Identifier: 'lexicalEnvironmentFunctionDeclarations'
+              IfStatement
+                Identifier: 'lexicalEnvironmentVariableDeclarations'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' statement'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' factory'
+                            Identifier: 'createVariableStatement'
+                          Identifier: '
+                    /*modifiers*/ undefined'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    factory'
+                              Identifier: 'createVariableDeclarationList'
+                            Identifier: 'lexicalEnvironmentVariableDeclarations'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+                setEmitFlags'
+                      Identifier: 'statement'
+                      PropertyAccessExpression
+                        Identifier: ' EmitFlags'
+                        Identifier: 'CustomPrologue'
+                  IfStatement
+                    PrefixUnaryExpression
+                      Identifier: 'statements'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    statements'
+                          EqualsToken
+                          ArrayLiteralExpression
+                            Identifier: 'statement'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    statements'
+                            Identifier: 'push'
+                          Identifier: 'statement'
+              IfStatement
+                Identifier: 'lexicalEnvironmentStatements'
+                Block
+                  IfStatement
+                    PrefixUnaryExpression
+                      Identifier: 'statements'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    statements'
+                          EqualsToken
+                          ArrayLiteralExpression
+                            SpreadElement
+                              Identifier: 'lexicalEnvironmentStatements'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    statements'
+                          EqualsToken
+                          ArrayLiteralExpression
+                            SpreadElement
+                              Identifier: 'statements'
+                            SpreadElement
+                              Identifier: 'lexicalEnvironmentStatements'
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+
+        // Restore the previous lexical environment.
+        lexicalEnvironmentStackOffset'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentVariableDeclarations'
+              EqualsToken
+              ElementAccessExpression
+                Identifier: ' lexicalEnvironmentVariableDeclarationsStack'
+                Identifier: 'lexicalEnvironmentStackOffset'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentFunctionDeclarations'
+              EqualsToken
+              ElementAccessExpression
+                Identifier: ' lexicalEnvironmentFunctionDeclarationsStack'
+                Identifier: 'lexicalEnvironmentStackOffset'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentStatements'
+              EqualsToken
+              ElementAccessExpression
+                Identifier: ' lexicalEnvironmentStatementsStack'
+                Identifier: 'lexicalEnvironmentStackOffset'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentFlags'
+              EqualsToken
+              ElementAccessExpression
+                Identifier: ' lexicalEnvironmentFlagsStack'
+                Identifier: 'lexicalEnvironmentStackOffset'
+          IfStatement
+            BinaryExpression
+              Identifier: 'lexicalEnvironmentStackOffset'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentVariableDeclarationsStack'
+                  EqualsToken
+                  ArrayLiteralExpression
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentFunctionDeclarationsStack'
+                  EqualsToken
+                  ArrayLiteralExpression
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentStatementsStack'
+                  EqualsToken
+                  ArrayLiteralExpression
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentFlagsStack'
+                  EqualsToken
+                  ArrayLiteralExpression
+          ReturnStatement
+            Identifier: ' statements'
+      FunctionDeclaration
+        Identifier: ' setLexicalEnvironmentFlags'
+        Parameter
+          Identifier: 'flags'
+          TypeReference
+            Identifier: ' LexicalEnvironmentFlags'
+        Parameter
+          Identifier: ' value'
+          BooleanKeyword
+        VoidKeyword
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lexicalEnvironmentFlags'
+              EqualsToken
+              ConditionalExpression
+                Identifier: ' value'
+                QuestionToken
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentFlags'
+                  BarToken
+                  Identifier: ' flags'
+                ColonToken
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentFlags'
+                  AmpersandToken
+                  PrefixUnaryExpression
+                    Identifier: 'flags'
+      FunctionDeclaration
+        Identifier: ' getLexicalEnvironmentFlags'
+        TypeReference
+          Identifier: ' LexicalEnvironmentFlags'
+        Block
+          ReturnStatement
+            Identifier: ' lexicalEnvironmentFlags'
+      FunctionDeclaration
+        Identifier: ' startBlockScope'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+        blockScopedVariableDeclarationsStack'
+                Identifier: 'blockScopeStackOffset'
+              EqualsToken
+              Identifier: ' blockScopedVariableDeclarations'
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+        blockScopeStackOffset'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        blockScopedVariableDeclarations'
+              EqualsToken
+              NonNullExpression
+                Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' endBlockScope'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' statements'
+                UnionType
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Statement'
+                  UndefinedKeyword
+                ConditionalExpression
+                  CallExpression
+                    Identifier: ' some'
+                    Identifier: 'blockScopedVariableDeclarations'
+                  QuestionToken
+                  ArrayLiteralExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                factory'
+                        Identifier: 'createVariableStatement'
+                      Identifier: '
+                    /*modifiers*/ undefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    factory'
+                          Identifier: 'createVariableDeclarationList'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                        blockScopedVariableDeclarations'
+                            Identifier: 'map'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'identifier'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' factory'
+                                Identifier: 'createVariableDeclaration'
+                              Identifier: 'identifier'
+                        PropertyAccessExpression
+                          Identifier: '
+                        NodeFlags'
+                          Identifier: 'Let'
+                  ColonToken
+                  Identifier: ' undefined'
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+        blockScopeStackOffset'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        blockScopedVariableDeclarations'
+              EqualsToken
+              ElementAccessExpression
+                Identifier: ' blockScopedVariableDeclarationsStack'
+                Identifier: 'blockScopeStackOffset'
+          IfStatement
+            BinaryExpression
+              Identifier: 'blockScopeStackOffset'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            blockScopedVariableDeclarationsStack'
+                  EqualsToken
+                  ArrayLiteralExpression
+          ReturnStatement
+            Identifier: ' statements'
+      FunctionDeclaration
+        Identifier: ' addBlockScopedVariable'
+        Parameter
+          Identifier: 'name'
+          TypeReference
+            Identifier: ' Identifier'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'blockScopeStackOffset'
+                GreaterThanToken
+                NumericLiteral
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'blockScopedVariableDeclarations'
+                    BarBarToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        Identifier: 'blockScopedVariableDeclarations'
+                        EqualsToken
+                        ArrayLiteralExpression
+                Identifier: 'push'
+              Identifier: 'name'
+      FunctionDeclaration
+        Identifier: ' requestEmitHelper'
+        Parameter
+          Identifier: 'helper'
+          TypeReference
+            Identifier: ' EmitHelper'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'helper'
+                  Identifier: 'scoped'
+              StringLiteral
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'helper'
+              Identifier: 'dependencies'
+            Block
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' h'
+                PropertyAccessExpression
+                  Identifier: ' helper'
+                  Identifier: 'dependencies'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                requestEmitHelper'
+                      Identifier: 'h'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        emitHelpers'
+              EqualsToken
+              CallExpression
+                Identifier: ' append'
+                Identifier: 'emitHelpers'
+                Identifier: ' helper'
+      FunctionDeclaration
+        Identifier: ' readEmitHelpers'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' EmitHelper'
+          UndefinedKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Uninitialized'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'state'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' TransformationState'
+                  Identifier: 'Completed'
+              StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' helpers'
+                Identifier: ' emitHelpers'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        emitHelpers'
+              EqualsToken
+              Identifier: ' undefined'
+          ReturnStatement
+            Identifier: ' helpers'
+      FunctionDeclaration
+        Identifier: ' dispose'
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'state'
+              LessThanToken
+              PropertyAccessExpression
+                Identifier: ' TransformationState'
+                Identifier: 'Disposed'
+            Block
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' node'
+                Identifier: ' nodes'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                disposeEmitNodes'
+                      CallExpression
+                        Identifier: 'getSourceFileOfNode'
+                        CallExpression
+                          Identifier: 'getParseTreeNode'
+                          Identifier: 'node'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            // Release references to external entries for GC purposes.
+            lexicalEnvironmentVariableDeclarations'
+                  EqualsToken
+                  NonNullExpression
+                    Identifier: ' undefined'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentVariableDeclarationsStack'
+                  EqualsToken
+                  NonNullExpression
+                    Identifier: ' undefined'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentFunctionDeclarations'
+                  EqualsToken
+                  NonNullExpression
+                    Identifier: ' undefined'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lexicalEnvironmentFunctionDeclarationsStack'
+                  EqualsToken
+                  NonNullExpression
+                    Identifier: ' undefined'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            onSubstituteNode'
+                  EqualsToken
+                  NonNullExpression
+                    Identifier: ' undefined'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            onEmitNode'
+                  EqualsToken
+                  NonNullExpression
+                    Identifier: ' undefined'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            emitHelpers'
+                  EqualsToken
+                  Identifier: ' undefined'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            // Prevent further use of the transformation result.
+            state'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' TransformationState'
+                    Identifier: 'Disposed'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullTransformationContext'
+        TypeReference
+          Identifier: ' TransformationContext'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    factory'
+            Identifier: ' factory'
+          PropertyAssignment
+            Identifier: ' // eslint-disable-line object-shorthand
+    getCompilerOptions'
+            ArrowFunction
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    getEmitResolver'
+            Identifier: ' notImplemented'
+          PropertyAssignment
+            Identifier: '
+    getEmitHost'
+            Identifier: ' notImplemented'
+          PropertyAssignment
+            Identifier: '
+    getEmitHelperFactory'
+            Identifier: ' notImplemented'
+          PropertyAssignment
+            Identifier: '
+    startLexicalEnvironment'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    resumeLexicalEnvironment'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    suspendLexicalEnvironment'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    endLexicalEnvironment'
+            Identifier: ' returnUndefined'
+          PropertyAssignment
+            Identifier: '
+    setLexicalEnvironmentFlags'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    getLexicalEnvironmentFlags'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    hoistVariableDeclaration'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    hoistFunctionDeclaration'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    addInitializationStatement'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    startBlockScope'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    endBlockScope'
+            Identifier: ' returnUndefined'
+          PropertyAssignment
+            Identifier: '
+    addBlockScopedVariable'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    requestEmitHelper'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    readEmitHelpers'
+            Identifier: ' notImplemented'
+          PropertyAssignment
+            Identifier: '
+    enableSubstitution'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    enableEmitNotification'
+            Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+    isSubstitutionEnabled'
+            Identifier: ' notImplemented'
+          PropertyAssignment
+            Identifier: '
+    isEmitNotificationEnabled'
+            Identifier: ' notImplemented'
+          PropertyAssignment
+            Identifier: '
+    onSubstituteNode'
+            Identifier: ' noEmitSubstitution'
+          PropertyAssignment
+            Identifier: '
+    onEmitNode'
+            Identifier: ' noEmitNotification'
+          PropertyAssignment
+            Identifier: '
+    addDiagnostic'
+            Identifier: ' noop'

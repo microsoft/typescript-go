@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Block

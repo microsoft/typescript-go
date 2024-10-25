@@ -1,0 +1,50 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+// @strict: true
+
+//// interface Foo {
+////     a: boolean;
+//// }
+//// function partialFoo<T extends Partial<Foo>>(x: T, y: T) {return t}
+//// partialFoo({ a: true, b: true }, { /*1*/ });
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+      sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'OptionalMember'
+              PropertyAssignment
+                Identifier: '
+      name'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+      sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'OptionalMember'
+              PropertyAssignment
+                Identifier: '
+      name'
+                StringLiteral

@@ -1,0 +1,187 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' await'
+        LiteralType
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    ClassStaticBlockDeclaration
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' await'
+              AnyKeyword
+    ClassStaticBlockDeclaration
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' await'
+              AsExpression
+                ObjectLiteralExpression
+                AnyKeyword
+    ClassStaticBlockDeclaration
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' await'
+                  Identifier: ' other'
+              AsExpression
+                ObjectLiteralExpression
+                AnyKeyword
+    ClassStaticBlockDeclaration
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' await'
+    ClassStaticBlockDeclaration
+      Block
+        FunctionDeclaration
+          Identifier: ' await'
+          Block
+        EmptyStatement
+    ClassStaticBlockDeclaration
+      Block
+        ClassDeclaration
+          Identifier: ' await'
+        EmptyStatement
+    ClassStaticBlockDeclaration
+      Block
+        ClassDeclaration
+          Identifier: ' D'
+          PropertyDeclaration
+            Identifier: '
+      await'
+            NumericLiteral
+          PropertyDeclaration
+            Identifier: ' // legal
+      x'
+            Identifier: ' await'
+        EmptyStatement
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            FunctionExpression
+              Identifier: ' await'
+              Block
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            ClassExpression
+              Identifier: ' await'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            FunctionExpression
+              Block
+                ReturnStatement
+                  Identifier: ' await'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Identifier: ' await'
+    ClassStaticBlockDeclaration
+      Block
+        ClassDeclaration
+          Identifier: ' E'
+          Constructor
+            Block
+              ExpressionStatement
+                Identifier: ' await'
+          MethodDeclaration
+            Identifier: '
+      method'
+            Block
+              ExpressionStatement
+                Identifier: ' await'
+          GetAccessor
+            Identifier: ' accessor'
+            Block
+              ExpressionStatement
+                Identifier: '
+        await'
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            Identifier: ' accessor'
+            Parameter
+              Identifier: 'v'
+              AnyKeyword
+            Block
+              ExpressionStatement
+                Identifier: '
+        await'
+          PropertyDeclaration
+            Identifier: '
+      propLambda'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  Identifier: ' await'
+          PropertyDeclaration
+            Identifier: '
+      propFunc'
+            FunctionExpression
+              Block
+                ExpressionStatement
+                  Identifier: ' await'
+    ClassStaticBlockDeclaration
+      Block
+        ClassDeclaration
+          Identifier: ' S'
+          MethodDeclaration
+            StaticKeyword
+            Identifier: ' method'
+            Block
+              ExpressionStatement
+                Identifier: ' await'
+          GetAccessor
+            StaticKeyword
+            Identifier: ' accessor'
+            Block
+              ExpressionStatement
+                Identifier: '
+        await'
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            StaticKeyword
+            Identifier: ' accessor'
+            Parameter
+              Identifier: 'v'
+              AnyKeyword
+            Block
+              ExpressionStatement
+                Identifier: '
+        await'
+          PropertyDeclaration
+            StaticKeyword
+            Identifier: ' propLambda'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  Identifier: ' await'
+          PropertyDeclaration
+            StaticKeyword
+            Identifier: ' propFunc'
+            FunctionExpression
+              Block
+                ExpressionStatement
+                  Identifier: ' await'

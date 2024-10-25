@@ -1,0 +1,141 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        BinaryExpression
+          Identifier: ' undefined'
+          PlusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        BinaryExpression
+          Identifier: ' undefined'
+          PlusToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x7'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x8'
+        BinaryExpression
+          Identifier: ' undefined'
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x9'
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x10'
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x12'
+        BinaryExpression
+          Identifier: ' undefined'
+          PlusToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x13'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x14'
+        BinaryExpression
+          Identifier: ' undefined'
+          PlusToken
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x15'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'x'
+          PlusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x16'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'x'
+          PlusToken
+          Identifier: ' undefined'

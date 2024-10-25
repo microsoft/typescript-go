@@ -1,0 +1,92 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 't'
+    Parameter
+      Identifier: ' u'
+    Parameter
+      Identifier: ' v'
+    Parameter
+      Identifier: ' w'
+    Parameter
+      Identifier: ' x'
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 't'
+                Identifier: 'a'
+              PlusToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' t'
+                  Identifier: 'b'
+                Identifier: 'length'
+            GreaterThanToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' u'
+                Identifier: 'a'
+              MinusToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' u'
+                  Identifier: 'b'
+                Identifier: 'length'
+          AmpersandAmpersandToken
+          PropertyAccessExpression
+            Identifier: ' v'
+            Identifier: 'c'
+        Block
+          ReturnStatement
+            Identifier: ' w'
+      ReturnStatement
+        Identifier: ' x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' c'
+          NullKeyword
+      Identifier: ' undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' c'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: ' d'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          Identifier: ' undefined'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+      Identifier: ' undefined'
+      Identifier: ' undefined'
+      NumericLiteral
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 'x'
+    Block

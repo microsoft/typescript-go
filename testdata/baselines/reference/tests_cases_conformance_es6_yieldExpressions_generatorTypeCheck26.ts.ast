@@ -1,0 +1,45 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    TypeReference
+      Identifier: ' IterableIterator'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        NumberKeyword
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'length'
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'length'
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'length'

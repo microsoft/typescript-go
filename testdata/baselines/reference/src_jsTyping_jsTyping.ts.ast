@@ -1,0 +1,1756 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CharacterCodes'
+        ImportSpecifier
+          Identifier: '
+    combinePaths'
+        ImportSpecifier
+          Identifier: '
+    compareStringsCaseSensitive'
+        ImportSpecifier
+          Identifier: '
+    CompilerOptions'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    deduplicate'
+        ImportSpecifier
+          Identifier: '
+    equateStringsCaseSensitive'
+        ImportSpecifier
+          Identifier: '
+    Extension'
+        ImportSpecifier
+          Identifier: '
+    fileExtensionIs'
+        ImportSpecifier
+          Identifier: '
+    flatMap'
+        ImportSpecifier
+          Identifier: '
+    forEach'
+        ImportSpecifier
+          Identifier: '
+    getBaseFileName'
+        ImportSpecifier
+          Identifier: '
+    getDirectoryPath'
+        ImportSpecifier
+          Identifier: '
+    getNormalizedAbsolutePath'
+        ImportSpecifier
+          Identifier: '
+    getOwnKeys'
+        ImportSpecifier
+          Identifier: '
+    getPathComponents'
+        ImportSpecifier
+          Identifier: '
+    getProperty'
+        ImportSpecifier
+          Identifier: '
+    hasJSFileExtension'
+        ImportSpecifier
+          Identifier: '
+    mapDefined'
+        ImportSpecifier
+          Identifier: '
+    MapLike'
+        ImportSpecifier
+          Identifier: '
+    nodeCoreModules'
+        ImportSpecifier
+          Identifier: '
+    normalizePath'
+        ImportSpecifier
+          Identifier: '
+    Path'
+        ImportSpecifier
+          Identifier: '
+    readConfigFile'
+        ImportSpecifier
+          Identifier: '
+    removeFileExtension'
+        ImportSpecifier
+          Identifier: '
+    removeMinAndVersionNumbers'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    toFileNameLowerCase'
+        ImportSpecifier
+          Identifier: '
+    TypeAcquisition'
+        ImportSpecifier
+          Identifier: '
+    Version'
+        ImportSpecifier
+          Identifier: '
+    versionMajorMinor'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' stringifyIndented'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TypingResolutionHost'
+    MethodSignature
+      Identifier: '
+    directoryExists'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    fileExists'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    readFile'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' encoding'
+        QuestionToken
+        StringKeyword
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    readDirectory'
+      Parameter
+        Identifier: 'rootDir'
+        StringKeyword
+      Parameter
+        Identifier: ' extensions'
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' excludes'
+        UnionType
+          TypeOperator
+            ArrayType
+              StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' includes'
+        UnionType
+          TypeOperator
+            ArrayType
+              StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' depth'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+  InterfaceDeclaration
+    Identifier: ' PackageJson'
+    PropertySignature
+      Identifier: '
+    dependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' MapLike'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    devDependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' MapLike'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    name'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    optionalDependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' MapLike'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    peerDependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' MapLike'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    types'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    typings'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CachedTyping'
+    PropertySignature
+      Identifier: '
+    typingLocation'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    version'
+      TypeReference
+        Identifier: ' Version'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isTypingUpToDate'
+    Parameter
+      Identifier: 'cachedTyping'
+      TypeReference
+        Identifier: ' CachedTyping'
+    Parameter
+      Identifier: ' availableTypingVersions'
+      TypeReference
+        Identifier: ' MapLike'
+        StringKeyword
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' availableVersion'
+            NewExpression
+              Identifier: ' Version'
+              BinaryExpression
+                CallExpression
+                  Identifier: 'getProperty'
+                  Identifier: 'availableTypingVersions'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'versionMajorMinor'
+                      TemplateTail
+                BarBarToken
+                NonNullExpression
+                  CallExpression
+                    Identifier: ' getProperty'
+                    Identifier: 'availableTypingVersions'
+                    StringLiteral
+      ReturnStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' availableVersion'
+              Identifier: 'compareTo'
+            PropertyAccessExpression
+              Identifier: 'cachedTyping'
+              Identifier: 'version'
+          LessThanEqualsToken
+          NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' nonRelativeModuleNameForTypingCache'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' nodeCoreModules'
+              Identifier: 'has'
+            Identifier: 'moduleName'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          Identifier: ' moduleName'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SafeList'
+    TypeReference
+      Identifier: ' ReadonlyMap'
+      StringKeyword
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' loadSafeList'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' TypingResolutionHost'
+    Parameter
+      Identifier: ' safeListPath'
+      TypeReference
+        Identifier: ' Path'
+    TypeReference
+      Identifier: ' SafeList'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            CallExpression
+              Identifier: ' readConfigFile'
+              Identifier: 'safeListPath'
+              ArrowFunction
+                Parameter
+                  Identifier: ' path'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'readFile'
+                  Identifier: 'path'
+      ReturnStatement
+        NewExpression
+          Identifier: ' Map'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Object'
+              Identifier: 'entries'
+            StringKeyword
+            PropertyAccessExpression
+              Identifier: 'result'
+              Identifier: 'config'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' loadTypesMap'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' TypingResolutionHost'
+    Parameter
+      Identifier: ' typesMapPath'
+      TypeReference
+        Identifier: ' Path'
+    UnionType
+      TypeReference
+        Identifier: ' SafeList'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            CallExpression
+              Identifier: ' readConfigFile'
+              Identifier: 'typesMapPath'
+              ArrowFunction
+                Parameter
+                  Identifier: ' path'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'readFile'
+                  Identifier: 'path'
+      IfStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'result'
+            Identifier: 'config'
+          QuestionDotToken
+          Identifier: 'simpleMap'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' Map'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'Object'
+                  Identifier: 'entries'
+                StringKeyword
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'result'
+                    Identifier: 'config'
+                  Identifier: 'simpleMap'
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' discoverTypings'
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' TypingResolutionHost'
+    Parameter
+      Identifier: '
+    log'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'message'
+              StringKeyword
+            VoidKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    fileNames'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: '
+    projectRootPath'
+      TypeReference
+        Identifier: ' Path'
+    Parameter
+      Identifier: '
+    safeList'
+      TypeReference
+        Identifier: ' SafeList'
+    Parameter
+      Identifier: '
+    packageNameToTypingLocation'
+      TypeReference
+        Identifier: ' ReadonlyMap'
+        StringKeyword
+        TypeReference
+          Identifier: ' CachedTyping'
+    Parameter
+      Identifier: '
+    typeAcquisition'
+      TypeReference
+        Identifier: ' TypeAcquisition'
+    Parameter
+      Identifier: '
+    unresolvedImports'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: '
+    typesRegistry'
+      TypeReference
+        Identifier: ' ReadonlyMap'
+        StringKeyword
+        TypeReference
+          Identifier: ' MapLike'
+          StringKeyword
+    Parameter
+      Identifier: '
+    compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' cachedTypingPaths'
+        ArrayType
+          StringKeyword
+      PropertySignature
+        Identifier: ' newTypingNames'
+        ArrayType
+          StringKeyword
+      PropertySignature
+        Identifier: ' filesToWatch'
+        ArrayType
+          StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'typeAcquisition'
+          BarBarToken
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'typeAcquisition'
+              Identifier: 'enable'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' cachedTypingPaths'
+                ArrayLiteralExpression
+              PropertyAssignment
+                Identifier: ' newTypingNames'
+                ArrayLiteralExpression
+              PropertyAssignment
+                Identifier: ' filesToWatch'
+                ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inferredTypings'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              UnionType
+                StringKeyword
+                LiteralType
+                  FalseKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    // Only infer typings for .js and .jsx files
+    fileNames'
+          EqualsToken
+          CallExpression
+            Identifier: ' mapDefined'
+            Identifier: 'fileNames'
+            ArrowFunction
+              Parameter
+                Identifier: ' fileName'
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' path'
+                      CallExpression
+                        Identifier: ' normalizePath'
+                        Identifier: 'fileName'
+                IfStatement
+                  CallExpression
+                    Identifier: 'hasJSFileExtension'
+                    Identifier: 'path'
+                  Block
+                    ReturnStatement
+                      Identifier: ' path'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' filesToWatch'
+            ArrayType
+              StringKeyword
+            ArrayLiteralExpression
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'typeAcquisition'
+          Identifier: 'include'
+        ExpressionStatement
+          CallExpression
+            Identifier: ' addInferredTypings'
+            PropertyAccessExpression
+              Identifier: 'typeAcquisition'
+              Identifier: 'include'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exclude'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' typeAcquisition'
+                Identifier: 'exclude'
+              BarBarToken
+              ArrayLiteralExpression
+      IfStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'compilerOptions'
+            Identifier: 'types'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' possibleSearchDirs'
+                NewExpression
+                  Identifier: ' Set'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'fileNames'
+                      Identifier: 'map'
+                    Identifier: 'getDirectoryPath'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        possibleSearchDirs'
+                Identifier: 'add'
+              Identifier: 'projectRootPath'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        possibleSearchDirs'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'searchDir'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            getTypingNames'
+                      Identifier: 'searchDir'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' filesToWatch'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            getTypingNames'
+                      Identifier: 'searchDir'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' filesToWatch'
+      IfStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'typeAcquisition'
+            Identifier: 'disableFilenameBasedTypeAcquisition'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        getTypingNamesFromSourceFileNames'
+              Identifier: 'fileNames'
+      IfStatement
+        Identifier: 'unresolvedImports'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' module'
+                CallExpression
+                  Identifier: ' deduplicate'
+                  StringKeyword
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            unresolvedImports'
+                      Identifier: 'map'
+                    Identifier: 'nonRelativeModuleNameForTypingCache'
+                  Identifier: '
+            equateStringsCaseSensitive'
+                  Identifier: '
+            compareStringsCaseSensitive'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addInferredTypings'
+              Identifier: 'module'
+              StringLiteral
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' excludeTypingName'
+        Identifier: ' exclude'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' didDelete'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' inferredTypings'
+                    Identifier: 'delete'
+                  Identifier: 'excludeTypingName'
+          IfStatement
+            BinaryExpression
+              Identifier: 'didDelete'
+              AmpersandAmpersandToken
+              Identifier: ' log'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' log'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'excludeTypingName'
+                    TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // Add the cached typing locations for inferred typings that are already installed
+    packageNameToTypingLocation'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'typing'
+            Parameter
+              Identifier: ' name'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' registryEntry'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' typesRegistry'
+                        Identifier: 'get'
+                      Identifier: 'name'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'inferredTypings'
+                          Identifier: 'get'
+                        Identifier: 'name'
+                      EqualsEqualsEqualsToken
+                      FalseKeyword
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      Identifier: ' registryEntry'
+                      ExclamationEqualsEqualsToken
+                      Identifier: ' undefined'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' isTypingUpToDate'
+                    Identifier: 'typing'
+                    Identifier: ' registryEntry'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            inferredTypings'
+                        Identifier: 'set'
+                      Identifier: 'name'
+                      PropertyAccessExpression
+                        Identifier: ' typing'
+                        Identifier: 'typingLocation'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newTypingNames'
+            ArrayType
+              StringKeyword
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cachedTypingPaths'
+            ArrayType
+              StringKeyword
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    inferredTypings'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'inferred'
+            Parameter
+              Identifier: ' typing'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                Identifier: 'inferred'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            cachedTypingPaths'
+                        Identifier: 'push'
+                      Identifier: 'inferred'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            newTypingNames'
+                        Identifier: 'push'
+                      Identifier: 'typing'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' cachedTypingPaths'
+              ShorthandPropertyAssignment
+                Identifier: ' newTypingNames'
+              ShorthandPropertyAssignment
+                Identifier: ' filesToWatch'
+      IfStatement
+        Identifier: 'log'
+        ExpressionStatement
+          CallExpression
+            Identifier: ' log'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                CallExpression
+                  Identifier: 'stringifyIndented'
+                  Identifier: 'result'
+                TemplateTail
+      ReturnStatement
+        Identifier: ' result'
+      FunctionDeclaration
+        Identifier: ' addInferredTyping'
+        Parameter
+          Identifier: 'typingName'
+          StringKeyword
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'inferredTypings'
+                  Identifier: 'has'
+                Identifier: 'typingName'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            inferredTypings'
+                    Identifier: 'set'
+                  Identifier: 'typingName'
+                  FalseKeyword
+      FunctionDeclaration
+        Identifier: ' addInferredTypings'
+        Parameter
+          Identifier: 'typingNames'
+          TypeOperator
+            ArrayType
+              StringKeyword
+        Parameter
+          Identifier: ' message'
+          StringKeyword
+        Block
+          IfStatement
+            Identifier: 'log'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' log'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'message'
+                    TemplateMiddle
+                  TemplateSpan
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'JSON'
+                        Identifier: 'stringify'
+                      Identifier: 'typingNames'
+                    TemplateTail
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        forEach'
+              Identifier: 'typingNames'
+              Identifier: ' addInferredTyping'
+      FunctionDeclaration
+        Identifier: ' getTypingNames'
+        Parameter
+          Identifier: 'projectRootPath'
+          StringKeyword
+        Parameter
+          Identifier: ' manifestName'
+          StringKeyword
+        Parameter
+          Identifier: ' modulesDirName'
+          StringKeyword
+        Parameter
+          Identifier: ' filesToWatch'
+          ArrayType
+            StringKeyword
+        VoidKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' manifestPath'
+                CallExpression
+                  Identifier: ' combinePaths'
+                  Identifier: 'projectRootPath'
+                  Identifier: ' manifestName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' manifest'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' manifestTypingNames'
+          IfStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'host'
+                Identifier: 'fileExists'
+              Identifier: 'manifestPath'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            filesToWatch'
+                    Identifier: 'push'
+                  Identifier: 'manifestPath'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            manifest'
+                  EqualsToken
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: ' readConfigFile'
+                      Identifier: 'manifestPath'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' path'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' host'
+                            Identifier: 'readFile'
+                          Identifier: 'path'
+                    Identifier: 'config'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            manifestTypingNames'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' flatMap'
+                    ArrayLiteralExpression
+                      PropertyAccessExpression
+                        Identifier: 'manifest'
+                        Identifier: 'dependencies'
+                      PropertyAccessExpression
+                        Identifier: ' manifest'
+                        Identifier: 'devDependencies'
+                      PropertyAccessExpression
+                        Identifier: ' manifest'
+                        Identifier: 'optionalDependencies'
+                      PropertyAccessExpression
+                        Identifier: ' manifest'
+                        Identifier: 'peerDependencies'
+                    Identifier: ' getOwnKeys'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addInferredTypings'
+                  Identifier: 'manifestTypingNames'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'manifestPath'
+                      TemplateTail
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' packagesFolderPath'
+                CallExpression
+                  Identifier: ' combinePaths'
+                  Identifier: 'projectRootPath'
+                  Identifier: ' modulesDirName'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        filesToWatch'
+                Identifier: 'push'
+              Identifier: 'packagesFolderPath'
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'host'
+                  Identifier: 'directoryExists'
+                Identifier: 'packagesFolderPath'
+            Block
+              ReturnStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' packageNames'
+                ArrayType
+                  StringKeyword
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' dependencyManifestNames'
+                ConditionalExpression
+                  Identifier: ' manifestTypingNames'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' manifestTypingNames'
+                      Identifier: 'map'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'typingName'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' combinePaths'
+                        Identifier: 'packagesFolderPath'
+                        Identifier: ' typingName'
+                        Identifier: ' manifestName'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' host'
+                          Identifier: 'readDirectory'
+                        Identifier: 'packagesFolderPath'
+                        ArrayLiteralExpression
+                          PropertyAccessExpression
+                            Identifier: 'Extension'
+                            Identifier: 'Json'
+                        Identifier: ' /*excludes*/ undefined'
+                        Identifier: ' /*includes*/ undefined'
+                        NumericLiteral
+                      Identifier: 'filter'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'manifestPath'
+                      EqualsGreaterThanToken
+                      Block
+                        IfStatement
+                          BinaryExpression
+                            CallExpression
+                              Identifier: 'getBaseFileName'
+                              Identifier: 'manifestPath'
+                            ExclamationEqualsEqualsToken
+                            Identifier: ' manifestName'
+                          Block
+                            ReturnStatement
+                              FalseKeyword
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' pathComponents'
+                              CallExpression
+                                Identifier: ' getPathComponents'
+                                CallExpression
+                                  Identifier: 'normalizePath'
+                                  Identifier: 'manifestPath'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' isScoped'
+                              BinaryExpression
+                                ElementAccessExpression
+                                  ElementAccessExpression
+                                    Identifier: ' pathComponents'
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'pathComponents'
+                                        Identifier: 'length'
+                                      MinusToken
+                                      NumericLiteral
+                                  NumericLiteral
+                                EqualsEqualsEqualsToken
+                                StringLiteral
+                        ReturnStatement
+                          BinaryExpression
+                            BinaryExpression
+                              Identifier: ' isScoped'
+                              AmpersandAmpersandToken
+                              BinaryExpression
+                                CallExpression
+                                  Identifier: ' toFileNameLowerCase'
+                                  ElementAccessExpression
+                                    Identifier: 'pathComponents'
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'pathComponents'
+                                        Identifier: 'length'
+                                      MinusToken
+                                      NumericLiteral
+                                EqualsEqualsEqualsToken
+                                Identifier: ' modulesDirName'
+                            BarBarToken
+                            BinaryExpression
+                              PrefixUnaryExpression
+                                Identifier: 'isScoped'
+                              AmpersandAmpersandToken
+                              BinaryExpression
+                                CallExpression
+                                  Identifier: ' toFileNameLowerCase'
+                                  ElementAccessExpression
+                                    Identifier: 'pathComponents'
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'pathComponents'
+                                        Identifier: 'length'
+                                      MinusToken
+                                      NumericLiteral
+                                EqualsEqualsEqualsToken
+                                Identifier: ' modulesDirName'
+          IfStatement
+            Identifier: 'log'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' log'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'packagesFolderPath'
+                    TemplateMiddle
+                  TemplateSpan
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'JSON'
+                        Identifier: 'stringify'
+                      Identifier: 'dependencyManifestNames'
+                    TemplateTail
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' manifestPath'
+            Identifier: ' dependencyManifestNames'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' normalizedFileName'
+                    CallExpression
+                      Identifier: ' normalizePath'
+                      Identifier: 'manifestPath'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' result'
+                    CallExpression
+                      Identifier: ' readConfigFile'
+                      Identifier: 'normalizedFileName'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'path'
+                          StringKeyword
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' host'
+                            Identifier: 'readFile'
+                          Identifier: 'path'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' manifest'
+                    TypeReference
+                      Identifier: ' PackageJson'
+                    PropertyAccessExpression
+                      Identifier: ' result'
+                      Identifier: 'config'
+              IfStatement
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'manifest'
+                    Identifier: 'name'
+                Block
+                  ContinueStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' ownTypes'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' manifest'
+                        Identifier: 'types'
+                      BarBarToken
+                      PropertyAccessExpression
+                        Identifier: ' manifest'
+                        Identifier: 'typings'
+              IfStatement
+                Identifier: 'ownTypes'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' absolutePath'
+                        CallExpression
+                          Identifier: ' getNormalizedAbsolutePath'
+                          Identifier: 'ownTypes'
+                          CallExpression
+                            Identifier: ' getDirectoryPath'
+                            Identifier: 'normalizedFileName'
+                  IfStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'host'
+                        Identifier: 'fileExists'
+                      Identifier: 'absolutePath'
+                    Block
+                      IfStatement
+                        Identifier: 'log'
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: ' log'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                PropertyAccessExpression
+                                  Identifier: 'manifest'
+                                  Identifier: 'name'
+                                TemplateTail
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    inferredTypings'
+                            Identifier: 'set'
+                          PropertyAccessExpression
+                            Identifier: 'manifest'
+                            Identifier: 'name'
+                          Identifier: ' absolutePath'
+                    Block
+                      IfStatement
+                        Identifier: 'log'
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: ' log'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                PropertyAccessExpression
+                                  Identifier: 'manifest'
+                                  Identifier: 'name'
+                                TemplateTail
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                packageNames'
+                        Identifier: 'push'
+                      PropertyAccessExpression
+                        Identifier: 'manifest'
+                        Identifier: 'name'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        addInferredTypings'
+              Identifier: 'packageNames'
+              StringLiteral
+      FunctionDeclaration
+        Identifier: ' getTypingNamesFromSourceFileNames'
+        Parameter
+          Identifier: 'fileNames'
+          ArrayType
+            StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' fromFileNames'
+                CallExpression
+                  Identifier: ' mapDefined'
+                  Identifier: 'fileNames'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' j'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        PrefixUnaryExpression
+                          CallExpression
+                            Identifier: 'hasJSFileExtension'
+                            Identifier: 'j'
+                        ReturnStatement
+                          Identifier: ' undefined'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' inferredTypingName'
+                            CallExpression
+                              Identifier: ' removeFileExtension'
+                              CallExpression
+                                Identifier: 'toFileNameLowerCase'
+                                CallExpression
+                                  Identifier: 'getBaseFileName'
+                                  Identifier: 'j'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' cleanedTypingName'
+                            CallExpression
+                              Identifier: ' removeMinAndVersionNumbers'
+                              Identifier: 'inferredTypingName'
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' safeList'
+                            Identifier: 'get'
+                          Identifier: 'cleanedTypingName'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'fromFileNames'
+              Identifier: 'length'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addInferredTypings'
+                  Identifier: 'fromFileNames'
+                  StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' hasJsxFile'
+                CallExpression
+                  Identifier: ' some'
+                  Identifier: 'fileNames'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' f'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' fileExtensionIs'
+                      Identifier: 'f'
+                      PropertyAccessExpression
+                        Identifier: ' Extension'
+                        Identifier: 'Jsx'
+          IfStatement
+            Identifier: 'hasJsxFile'
+            Block
+              IfStatement
+                Identifier: 'log'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' log'
+                    NoSubstitutionTemplateLiteral
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addInferredTyping'
+                  StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' NameValidationResult'
+    EnumMember
+      Identifier: '
+    Ok'
+    EnumMember
+      Identifier: '
+    EmptyName'
+    EnumMember
+      Identifier: '
+    NameTooLong'
+    EnumMember
+      Identifier: '
+    NameStartsWithDot'
+    EnumMember
+      Identifier: '
+    NameStartsWithUnderscore'
+    EnumMember
+      Identifier: '
+    NameContainsNonURISafeCharacters'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' maxPackageNameLength'
+        NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ScopedPackageNameValidationResult'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    isScopeName'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    result'
+      TypeReference
+        Identifier: ' NameValidationResult'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PackageNameValidationResult'
+    UnionType
+      TypeReference
+        Identifier: ' NameValidationResult'
+      TypeReference
+        Identifier: ' ScopedPackageNameValidationResult'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' validatePackageName'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    TypeReference
+      Identifier: ' PackageNameValidationResult'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' validatePackageNameWorker'
+          Identifier: 'packageName'
+          TrueKeyword
+  FunctionDeclaration
+    Identifier: ' validatePackageNameWorker'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    Parameter
+      Identifier: ' supportScopedPackage'
+      LiteralType
+        FalseKeyword
+    TypeReference
+      Identifier: ' NameValidationResult'
+  FunctionDeclaration
+    Identifier: ' validatePackageNameWorker'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    Parameter
+      Identifier: ' supportScopedPackage'
+      LiteralType
+        TrueKeyword
+    TypeReference
+      Identifier: ' PackageNameValidationResult'
+  FunctionDeclaration
+    Identifier: ' validatePackageNameWorker'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    Parameter
+      Identifier: ' supportScopedPackage'
+      BooleanKeyword
+    TypeReference
+      Identifier: ' PackageNameValidationResult'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'packageName'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'EmptyName'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'packageName'
+            Identifier: 'length'
+          GreaterThanToken
+          Identifier: ' maxPackageNameLength'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'NameTooLong'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'packageName'
+              Identifier: 'charCodeAt'
+            NumericLiteral
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' CharacterCodes'
+            Identifier: 'dot'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'NameStartsWithDot'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'packageName'
+              Identifier: 'charCodeAt'
+            NumericLiteral
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' CharacterCodes'
+            Identifier: '_'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'NameStartsWithUnderscore'
+      IfStatement
+        Identifier: 'supportScopedPackage'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' matches'
+                CallExpression
+                  PropertyAccessExpression
+                    RegularExpressionLiteral
+                    Identifier: 'exec'
+                  Identifier: 'packageName'
+          IfStatement
+            Identifier: 'matches'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' scopeResult'
+                    CallExpression
+                      Identifier: ' validatePackageNameWorker'
+                      ElementAccessExpression
+                        Identifier: 'matches'
+                        NumericLiteral
+                      FalseKeyword
+              IfStatement
+                BinaryExpression
+                  Identifier: 'scopeResult'
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' NameValidationResult'
+                    Identifier: 'Ok'
+                Block
+                  ReturnStatement
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' name'
+                        ElementAccessExpression
+                          Identifier: ' matches'
+                          NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' isScopeName'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: ' result'
+                        Identifier: ' scopeResult'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' packageResult'
+                    CallExpression
+                      Identifier: ' validatePackageNameWorker'
+                      ElementAccessExpression
+                        Identifier: 'matches'
+                        NumericLiteral
+                      FalseKeyword
+              IfStatement
+                BinaryExpression
+                  Identifier: 'packageResult'
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' NameValidationResult'
+                    Identifier: 'Ok'
+                Block
+                  ReturnStatement
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' name'
+                        ElementAccessExpression
+                          Identifier: ' matches'
+                          NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' isScopeName'
+                        FalseKeyword
+                      PropertyAssignment
+                        Identifier: ' result'
+                        Identifier: ' packageResult'
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' NameValidationResult'
+                  Identifier: 'Ok'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'encodeURIComponent'
+            Identifier: 'packageName'
+          ExclamationEqualsEqualsToken
+          Identifier: ' packageName'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'NameContainsNonURISafeCharacters'
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' NameValidationResult'
+          Identifier: 'Ok'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' renderPackageNameValidationFailure'
+    Parameter
+      Identifier: 'result'
+      TypeReference
+        Identifier: ' PackageNameValidationResult'
+    Parameter
+      Identifier: ' typing'
+      StringKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' result'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          QuestionToken
+          CallExpression
+            Identifier: '
+        renderPackageNameValidationFailureWorker'
+            Identifier: 'typing'
+            PropertyAccessExpression
+              Identifier: ' result'
+              Identifier: 'result'
+            PropertyAccessExpression
+              Identifier: ' result'
+              Identifier: 'name'
+            PropertyAccessExpression
+              Identifier: ' result'
+              Identifier: 'isScopeName'
+          ColonToken
+          CallExpression
+            Identifier: '
+        renderPackageNameValidationFailureWorker'
+            Identifier: 'typing'
+            Identifier: ' result'
+            Identifier: ' typing'
+            FalseKeyword
+  FunctionDeclaration
+    Identifier: ' renderPackageNameValidationFailureWorker'
+    Parameter
+      Identifier: 'typing'
+      StringKeyword
+    Parameter
+      Identifier: ' result'
+      TypeReference
+        Identifier: ' NameValidationResult'
+    Parameter
+      Identifier: ' name'
+      StringKeyword
+    Parameter
+      Identifier: ' isScopeName'
+      BooleanKeyword
+    StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' kind'
+            ConditionalExpression
+              Identifier: ' isScopeName'
+              QuestionToken
+              StringLiteral
+              ColonToken
+              StringLiteral
+      SwitchStatement
+        Identifier: 'result'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'EmptyName'
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'typing'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'kind'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateTail
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'NameTooLong'
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'typing'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'kind'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'maxPackageNameLength'
+                  TemplateTail
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'NameStartsWithDot'
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'typing'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'kind'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateTail
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'NameStartsWithUnderscore'
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'typing'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'kind'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateTail
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'NameContainsNonURISafeCharacters'
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'typing'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'kind'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateTail
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' NameValidationResult'
+              Identifier: 'Ok'
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Debug'
+                  Identifier: 'fail'
+          DefaultClause
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            Debug'
+                  Identifier: 'assertNever'
+                Identifier: 'result'

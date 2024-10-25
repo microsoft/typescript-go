@@ -1,0 +1,445 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fAsync'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          NumericLiteral
+          TrueKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fAsyncExplicit'
+    TypeReference
+      Identifier: ' Promise'
+      TupleType
+        NumberKeyword
+        BooleanKeyword
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          NumericLiteral
+          TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' Obj'
+    PropertySignature
+      Identifier: '
+    stringProp'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    anyProp'
+      AnyKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fIndexedTypeForStringProp'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Obj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'Obj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' obj'
+          Identifier: 'stringProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fIndexedTypeForPromiseOfStringProp'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Obj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'Obj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'stringProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fIndexedTypeForExplicitPromiseOfStringProp'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Obj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'Obj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'Obj'
+            LiteralType
+              StringLiteral
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'stringProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fIndexedTypeForAnyProp'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Obj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'Obj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' obj'
+          Identifier: 'anyProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fIndexedTypeForPromiseOfAnyProp'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Obj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'Obj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'anyProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fIndexedTypeForExplicitPromiseOfAnyProp'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Obj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'Obj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'Obj'
+            LiteralType
+              StringLiteral
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'anyProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fGenericIndexedTypeForStringProp'
+    TypeParameter
+      Identifier: 'TObj'
+      TypeReference
+        Identifier: ' Obj'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' TObj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'TObj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' obj'
+          Identifier: 'stringProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fGenericIndexedTypeForPromiseOfStringProp'
+    TypeParameter
+      Identifier: 'TObj'
+      TypeReference
+        Identifier: ' Obj'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' TObj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'TObj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'stringProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fGenericIndexedTypeForExplicitPromiseOfStringProp'
+    TypeParameter
+      Identifier: 'TObj'
+      TypeReference
+        Identifier: ' Obj'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' TObj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'TObj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'TObj'
+            LiteralType
+              StringLiteral
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'stringProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fGenericIndexedTypeForAnyProp'
+    TypeParameter
+      Identifier: 'TObj'
+      TypeReference
+        Identifier: ' Obj'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' TObj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'TObj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' obj'
+          Identifier: 'anyProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fGenericIndexedTypeForPromiseOfAnyProp'
+    TypeParameter
+      Identifier: 'TObj'
+      TypeReference
+        Identifier: ' Obj'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' TObj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'TObj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'anyProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fGenericIndexedTypeForExplicitPromiseOfAnyProp'
+    TypeParameter
+      Identifier: 'TObj'
+      TypeReference
+        Identifier: ' Obj'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' TObj'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'TObj'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'TObj'
+            LiteralType
+              StringLiteral
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'anyProp'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fGenericIndexedTypeForKProp'
+    TypeParameter
+      Identifier: 'TObj'
+      TypeReference
+        Identifier: ' Obj'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' TObj'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' TObj'
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' K'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'TObj'
+        TypeReference
+          Identifier: 'K'
+    Block
+      ReturnStatement
+        ElementAccessExpression
+          Identifier: ' obj'
+          Identifier: 'key'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fGenericIndexedTypeForPromiseOfKProp'
+    TypeParameter
+      Identifier: 'TObj'
+      TypeReference
+        Identifier: ' Obj'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' TObj'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' TObj'
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' K'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'TObj'
+        TypeReference
+          Identifier: 'K'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          ElementAccessExpression
+            Identifier: 'obj'
+            Identifier: 'key'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fGenericIndexedTypeForExplicitPromiseOfKProp'
+    TypeParameter
+      Identifier: 'TObj'
+      TypeReference
+        Identifier: ' Obj'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' TObj'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' TObj'
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' K'
+    TypeReference
+      Identifier: ' Promise'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'TObj'
+        TypeReference
+          Identifier: 'K'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'TObj'
+            TypeReference
+              Identifier: 'K'
+          ElementAccessExpression
+            Identifier: 'obj'
+            Identifier: 'key'

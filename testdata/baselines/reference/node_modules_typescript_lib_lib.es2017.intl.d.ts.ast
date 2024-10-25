@@ -1,0 +1,82 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Intl'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' DateTimeFormatPartTypesRegistry'
+        PropertySignature
+          Identifier: '
+        day'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        dayPeriod'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        era'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        hour'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        literal'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        minute'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        month'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        second'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        timeZoneName'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        weekday'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        year'
+          AnyKeyword
+      TypeAliasDeclaration
+        Identifier: ' DateTimeFormatPartTypes'
+        TypeOperator
+          TypeReference
+            Identifier: ' DateTimeFormatPartTypesRegistry'
+      InterfaceDeclaration
+        Identifier: ' DateTimeFormatPart'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            Identifier: ' DateTimeFormatPartTypes'
+        PropertySignature
+          Identifier: '
+        value'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' DateTimeFormat'
+        MethodSignature
+          Identifier: '
+        formatToParts'
+          Parameter
+            Identifier: 'date'
+            QuestionToken
+            UnionType
+              TypeReference
+                Identifier: ' Date'
+              NumberKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' DateTimeFormatPart'

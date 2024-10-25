@@ -1,0 +1,74 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' Origin'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' x'
+                    NumericLiteral
+                  PropertyAssignment
+                    Identifier: ' y'
+                    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        FunctionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' y'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        PropertyAccessExpression
+          Identifier: ' A'
+          Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cl'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cl'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' B'
+            Identifier: 'Point'
+          Identifier: 'Origin'

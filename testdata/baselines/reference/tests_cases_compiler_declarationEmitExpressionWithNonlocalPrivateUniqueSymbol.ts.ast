@@ -1,0 +1,31 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' AX'
+    TypeLiteral
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' A'
+        TypeOperator
+          SymbolKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' A'
+        TypeReference
+          Identifier: ' AX'
+        AsExpression
+          NumericLiteral
+          AnyKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' A1'
+        Identifier: ' A'

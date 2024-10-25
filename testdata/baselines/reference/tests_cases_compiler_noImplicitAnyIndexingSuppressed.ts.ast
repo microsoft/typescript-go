@@ -1,0 +1,135 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' MyEmusEnum'
+    EnumMember
+      Identifier: '
+    emu'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strRepresentation1'
+        ElementAccessExpression
+          Identifier: ' MyEmusEnum'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strRepresentation2'
+        ElementAccessExpression
+          Identifier: ' MyEmusEnum'
+          PropertyAccessExpression
+            Identifier: 'MyEmusEnum'
+            Identifier: 'emu'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strRepresentation3'
+        ElementAccessExpression
+          Identifier: ' MyEmusEnum'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strRepresentation4'
+        ElementAccessExpression
+          Identifier: ' MyEmusEnum'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ElementAccessExpression
+          ObjectLiteralExpression
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ElementAccessExpression
+          ObjectLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' hi'
+        AnyKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' emptyObj'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z1'
+        ElementAccessExpression
+          Identifier: ' emptyObj'
+          Identifier: 'hi'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z2'
+        ElementAccessExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              AnyKeyword
+              Identifier: 'emptyObj'
+          Identifier: 'hi'
+  InterfaceDeclaration
+    Identifier: ' MyMap'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        TypeReference
+          Identifier: ' MyMap'
+          NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            Identifier: ' NaN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mResult1'
+        ElementAccessExpression
+          Identifier: ' m'
+          PropertyAccessExpression
+            Identifier: 'MyEmusEnum'
+            Identifier: 'emu'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mResult2'
+        ElementAccessExpression
+          Identifier: ' m'
+          ElementAccessExpression
+            Identifier: 'MyEmusEnum'
+            PropertyAccessExpression
+              Identifier: 'MyEmusEnum'
+              Identifier: 'emu'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mResult3'
+        ElementAccessExpression
+          Identifier: ' m'
+          Identifier: 'hi'

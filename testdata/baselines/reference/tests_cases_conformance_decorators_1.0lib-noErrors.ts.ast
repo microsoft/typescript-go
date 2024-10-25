@@ -1,0 +1,3243 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NaN'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Infinity'
+        NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' eval'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' parseInt'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' radix'
+      QuestionToken
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' parseFloat'
+    Parameter
+      Identifier: 'string'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isNaN'
+    Parameter
+      Identifier: 'number'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isFinite'
+    Parameter
+      Identifier: 'number'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' decodeURI'
+    Parameter
+      Identifier: 'encodedURI'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' decodeURIComponent'
+    Parameter
+      Identifier: 'encodedURIComponent'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' encodeURI'
+    Parameter
+      Identifier: 'uri'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' encodeURIComponent'
+    Parameter
+      Identifier: 'uriComponent'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+    StringKeyword
+  InterfaceDeclaration
+    Identifier: ' PropertyDescriptor'
+    PropertySignature
+      Identifier: '
+    configurable'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    enumerable'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    value'
+      QuestionToken
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    writable'
+      QuestionToken
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    get'
+      QuestionToken
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    set'
+      QuestionToken
+      Parameter
+        Identifier: 'v'
+        AnyKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' PropertyDescriptorMap'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      TypeReference
+        Identifier: ' PropertyDescriptor'
+  InterfaceDeclaration
+    Identifier: ' Object'
+    PropertySignature
+      Identifier: '
+    /** The initial value of Object.prototype.constructor is the standard built-in Object constructor. */
+    constructor'
+      TypeReference
+        Identifier: ' Function'
+    MethodSignature
+      Identifier: '
+
+    /** Returns a string representation of an object. */
+    toString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** Returns a date converted to a string using the current locale. */
+    toLocaleString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** Returns the primitive value of the specified object. */
+    valueOf'
+      TypeReference
+        Identifier: ' Object'
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Determines whether an object has a property with the specified name. 
+      * @param v A property name.
+      */
+    hasOwnProperty'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Determines whether an object exists in another object's prototype chain. 
+      * @param v Another object whose prototype chain is to be checked.
+      */
+    isPrototypeOf'
+      Parameter
+        Identifier: 'v'
+        TypeReference
+          Identifier: ' Object'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    /** 
+      * Determines whether a specified property is enumerable.
+      * @param v A property name.
+      */
+    propertyIsEnumerable'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Object'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'value'
+              QuestionToken
+              AnyKeyword
+            TypeReference
+              Identifier: ' Object'
+          CallSignature
+            AnyKeyword
+          CallSignature
+            Parameter
+              Identifier: 'value'
+              AnyKeyword
+            AnyKeyword
+          PropertySignature
+            Identifier: '
+
+    /** A reference to the prototype for a class of objects. */
+    prototype'
+            TypeReference
+              Identifier: ' Object'
+          MethodSignature
+            Identifier: '
+
+    /** 
+      * Returns the prototype of an object. 
+      * @param o The object that references the prototype.
+      */
+    getPrototypeOf'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            AnyKeyword
+          MethodSignature
+            Identifier: '
+
+    /**
+      * Gets the own property descriptor of the specified object. 
+      * An own property descriptor is one that is defined directly on the object and is not inherited from the object's prototype. 
+      * @param o Object that contains the property.
+      * @param p Name of the property.
+    */
+    getOwnPropertyDescriptor'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            Parameter
+              Identifier: ' p'
+              StringKeyword
+            TypeReference
+              Identifier: ' PropertyDescriptor'
+          MethodSignature
+            Identifier: '
+
+    /** 
+      * Returns the names of the own properties of an object. The own properties of an object are those that are defined directly 
+      * on that object, and are not inherited from the object's prototype. The properties of an object include both fields (objects) and functions.
+      * @param o Object that contains the own properties.
+      */
+    getOwnPropertyNames'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            ArrayType
+              StringKeyword
+          MethodSignature
+            Identifier: '
+
+    /** 
+      * Creates an object that has the specified prototype, and that optionally contains specified properties.
+      * @param o Object to use as a prototype. May be null
+      * @param properties JavaScript object that contains one or more property descriptors. 
+      */
+    create'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            Parameter
+              Identifier: ' properties'
+              QuestionToken
+              TypeReference
+                Identifier: ' PropertyDescriptorMap'
+            AnyKeyword
+          MethodSignature
+            Identifier: '
+
+    /**
+      * Adds a property to an object, or modifies attributes of an existing property. 
+      * @param o Object on which to add or modify the property. This can be a native JavaScript object (that is, a user-defined object or a built in object) or a DOM object.
+      * @param p The property name.
+      * @param attributes Descriptor for the property. It can be for a data property or an accessor property.
+      */
+    defineProperty'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            Parameter
+              Identifier: ' p'
+              StringKeyword
+            Parameter
+              Identifier: ' attributes'
+              TypeReference
+                Identifier: ' PropertyDescriptor'
+            AnyKeyword
+          MethodSignature
+            Identifier: '
+
+    /**
+      * Adds one or more properties to an object, and/or modifies attributes of existing properties. 
+      * @param o Object on which to add or modify the properties. This can be a native JavaScript object or a DOM object.
+      * @param properties JavaScript object that contains one or more descriptor objects. Each descriptor object describes a data property or an accessor property.
+      */
+    defineProperties'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            Parameter
+              Identifier: ' properties'
+              TypeReference
+                Identifier: ' PropertyDescriptorMap'
+            AnyKeyword
+          MethodSignature
+            Identifier: '
+
+    /**
+      * Prevents the modification of attributes of existing properties, and prevents the addition of new properties.
+      * @param o Object on which to lock the attributes. 
+      */
+    seal'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            AnyKeyword
+          MethodSignature
+            Identifier: '
+
+    /**
+      * Prevents the modification of existing property attributes and values, and prevents the addition of new properties.
+      * @param o Object on which to lock the attributes.
+      */
+    freeze'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            AnyKeyword
+          MethodSignature
+            Identifier: '
+
+    /**
+      * Prevents the addition of new properties to an object.
+      * @param o Object to make non-extensible. 
+      */
+    preventExtensions'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            AnyKeyword
+          MethodSignature
+            Identifier: '
+
+    /**
+      * Returns true if existing property attributes cannot be modified in an object and new properties cannot be added to the object.
+      * @param o Object to test. 
+      */
+    isSealed'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            BooleanKeyword
+          MethodSignature
+            Identifier: '
+
+    /**
+      * Returns true if existing property attributes and values cannot be modified in an object, and new properties cannot be added to the object.
+      * @param o Object to test.  
+      */
+    isFrozen'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            BooleanKeyword
+          MethodSignature
+            Identifier: '
+
+    /**
+      * Returns a value that indicates whether new properties can be added to an object.
+      * @param o Object to test. 
+      */
+    isExtensible'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            BooleanKeyword
+          MethodSignature
+            Identifier: '
+
+    /**
+      * Returns the names of the enumerable properties and methods of an object.
+      * @param o Object that contains the properties and methods. This can be an object that you created or an existing Document Object Model (DOM) object.
+      */
+    keys'
+            Parameter
+              Identifier: 'o'
+              AnyKeyword
+            ArrayType
+              StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Function'
+    MethodSignature
+      Identifier: '
+    /**
+      * Calls the function, substituting the specified object for the this value of the function, and the specified array for the arguments of the function.
+      * @param thisArg The object to be used as the this object.
+      * @param argArray A set of arguments to be passed to the function.
+      */
+    apply'
+      Parameter
+        Identifier: 'thisArg'
+        AnyKeyword
+      Parameter
+        Identifier: ' argArray'
+        QuestionToken
+        AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Calls a method of an object, substituting another object for the current object.
+      * @param thisArg The object to be used as the current object.
+      * @param argArray A list of arguments to be passed to the method.
+      */
+    call'
+      Parameter
+        Identifier: 'thisArg'
+        AnyKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'argArray'
+        ArrayType
+          AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * For a given function, creates a bound function that has the same body as the original function. 
+      * The this object of the bound function is associated with the specified object, and has the specified initial parameters.
+      * @param thisArg An object to which the this keyword can refer inside the new function.
+      * @param argArray A list of arguments to be passed to the new function.
+      */
+    bind'
+      Parameter
+        Identifier: 'thisArg'
+        AnyKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'argArray'
+        ArrayType
+          AnyKeyword
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+
+    prototype'
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    length'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+
+    // Non-standard extensions
+    arguments'
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    caller'
+      TypeReference
+        Identifier: ' Function'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Function'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              ArrayType
+                StringKeyword
+            TypeReference
+              Identifier: ' Function'
+          CallSignature
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              ArrayType
+                StringKeyword
+            TypeReference
+              Identifier: ' Function'
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' Function'
+  InterfaceDeclaration
+    Identifier: ' IArguments'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    length'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    callee'
+      TypeReference
+        Identifier: ' Function'
+  InterfaceDeclaration
+    Identifier: ' String'
+    MethodSignature
+      Identifier: '
+    /** Returns a string representation of a string. */
+    toString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns the character at the specified index.
+      * @param pos The zero-based index of the desired character.
+      */
+    charAt'
+      Parameter
+        Identifier: 'pos'
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** 
+      * Returns the Unicode value of the character at the specified location.
+      * @param index The zero-based index of the desired character. If there is no character at the specified index, NaN is returned.
+      */
+    charCodeAt'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns a string that contains the concatenation of two or more strings.
+      * @param strings The strings to append to the end of the string.  
+      */
+    concat'
+      Parameter
+        DotDotDotToken
+        Identifier: 'strings'
+        ArrayType
+          StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns the position of the first occurrence of a substring. 
+      * @param searchString The substring to search for in the string
+      * @param position The index at which to begin searching the String object. If omitted, search starts at the beginning of the string.
+      */
+    indexOf'
+      Parameter
+        Identifier: 'searchString'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns the last occurrence of a substring in the string.
+      * @param searchString The substring to search for.
+      * @param position The index at which to begin searching. If omitted, the search begins at the end of the string.
+      */
+    lastIndexOf'
+      Parameter
+        Identifier: 'searchString'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Determines whether two strings are equivalent in the current locale.
+      * @param that String to compare to target string
+      */
+    localeCompare'
+      Parameter
+        Identifier: 'that'
+        StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /** 
+      * Matches a string with a regular expression, and returns an array containing the results of that search.
+      * @param regexp A variable name or string literal containing the regular expression pattern and flags.
+      */
+    match'
+      Parameter
+        Identifier: 'regexp'
+        StringKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** 
+      * Matches a string with a regular expression, and returns an array containing the results of that search.
+      * @param regexp A regular expression object that contains the regular expression pattern and applicable flags. 
+      */
+    match'
+      Parameter
+        Identifier: 'regexp'
+        TypeReference
+          Identifier: ' RegExp'
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Replaces text in a string, using a regular expression or search string.
+      * @param searchValue A String object or string literal that represents the regular expression
+      * @param replaceValue A String object or string literal containing the text to replace for every successful match of rgExp in stringObj.
+      */
+    replace'
+      Parameter
+        Identifier: 'searchValue'
+        StringKeyword
+      Parameter
+        Identifier: ' replaceValue'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Replaces text in a string, using a regular expression or search string.
+      * @param searchValue A String object or string literal that represents the regular expression
+      * @param replaceValue A function that returns the replacement text.
+      */
+    replace'
+      Parameter
+        Identifier: 'searchValue'
+        StringKeyword
+      Parameter
+        Identifier: ' replaceValue'
+        FunctionType
+          Parameter
+            Identifier: 'substring'
+            StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Replaces text in a string, using a regular expression or search string.
+      * @param searchValue A Regular Expression object containing the regular expression pattern and applicable flags
+      * @param replaceValue A String object or string literal containing the text to replace for every successful match of rgExp in stringObj.
+      */
+    replace'
+      Parameter
+        Identifier: 'searchValue'
+        TypeReference
+          Identifier: ' RegExp'
+      Parameter
+        Identifier: ' replaceValue'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Replaces text in a string, using a regular expression or search string.
+      * @param searchValue A Regular Expression object containing the regular expression pattern and applicable flags
+      * @param replaceValue A function that returns the replacement text.
+      */
+    replace'
+      Parameter
+        Identifier: 'searchValue'
+        TypeReference
+          Identifier: ' RegExp'
+      Parameter
+        Identifier: ' replaceValue'
+        FunctionType
+          Parameter
+            Identifier: 'substring'
+            StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Finds the first substring match in a regular expression search.
+      * @param regexp The regular expression pattern and applicable flags. 
+      */
+    search'
+      Parameter
+        Identifier: 'regexp'
+        StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Finds the first substring match in a regular expression search.
+      * @param regexp The regular expression pattern and applicable flags. 
+      */
+    search'
+      Parameter
+        Identifier: 'regexp'
+        TypeReference
+          Identifier: ' RegExp'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns a section of a string.
+      * @param start The index to the beginning of the specified portion of stringObj. 
+      * @param end The index to the end of the specified portion of stringObj. The substring includes the characters up to, but not including, the character indicated by end. 
+      * If this value is not specified, the substring continues to the end of stringObj.
+      */
+    slice'
+      Parameter
+        Identifier: 'start'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Split a string into substrings using the specified separator and return them as an array.
+      * @param separator A string that identifies character or characters to use in separating the string. If omitted, a single-element array containing the entire string is returned. 
+      * @param limit A value used to limit the number of elements returned in the array.
+      */
+    split'
+      Parameter
+        Identifier: 'separator'
+        StringKeyword
+      Parameter
+        Identifier: ' limit'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Split a string into substrings using the specified separator and return them as an array.
+      * @param separator A Regular Express that identifies character or characters to use in separating the string. If omitted, a single-element array containing the entire string is returned. 
+      * @param limit A value used to limit the number of elements returned in the array.
+      */
+    split'
+      Parameter
+        Identifier: 'separator'
+        TypeReference
+          Identifier: ' RegExp'
+      Parameter
+        Identifier: ' limit'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns the substring at the specified location within a String object. 
+      * @param start The zero-based index number indicating the beginning of the substring.
+      * @param end Zero-based index number indicating the end of the substring. The substring includes the characters up to, but not including, the character indicated by end.
+      * If end is omitted, the characters from start through the end of the original string are returned.
+      */
+    substring'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** Converts all the alphabetic characters in a string to lowercase. */
+    toLowerCase'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** Converts all alphabetic characters to lowercase, taking into account the host environment's current locale. */
+    toLocaleLowerCase'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** Converts all the alphabetic characters in a string to uppercase. */
+    toUpperCase'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** Returns a string where all alphabetic characters have been converted to uppercase, taking into account the host environment's current locale. */
+    toLocaleUpperCase'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** Removes the leading and trailing white space and line terminator characters from a string. */
+    trim'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+
+    /** Returns the length of a String object. */
+    length'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    // IE extensions
+    /**
+      * Gets a substring beginning at the specified location and having the specified length.
+      * @param from The starting position of the desired substring. The index of the first character in the string is zero.
+      * @param length The number of characters to include in the returned substring.
+      */
+    substr'
+      Parameter
+        Identifier: 'from'
+        NumberKeyword
+      Parameter
+        Identifier: ' length'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' String'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'value'
+              QuestionToken
+              AnyKeyword
+            TypeReference
+              Identifier: ' String'
+          CallSignature
+            Parameter
+              Identifier: 'value'
+              QuestionToken
+              AnyKeyword
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' String'
+          MethodSignature
+            Identifier: '
+    fromCharCode'
+            Parameter
+              DotDotDotToken
+              Identifier: 'codes'
+              ArrayType
+                NumberKeyword
+            StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Boolean'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Boolean'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'value'
+              QuestionToken
+              AnyKeyword
+            TypeReference
+              Identifier: ' Boolean'
+          CallSignature
+            Parameter
+              Identifier: 'value'
+              QuestionToken
+              AnyKeyword
+            BooleanKeyword
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' Boolean'
+  InterfaceDeclaration
+    Identifier: ' Number'
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns a string representation of an object.
+      * @param radix Specifies a radix for converting numeric values to strings. This value is only used for numbers.
+      */
+    toString'
+      Parameter
+        Identifier: 'radix'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** 
+      * Returns a string representing a number in fixed-point notation.
+      * @param fractionDigits Number of digits after the decimal point. Must be in the range 0 - 20, inclusive.
+      */
+    toFixed'
+      Parameter
+        Identifier: 'fractionDigits'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns a string containing a number represented in exponential notation.
+      * @param fractionDigits Number of digits after the decimal point. Must be in the range 0 - 20, inclusive.
+      */
+    toExponential'
+      Parameter
+        Identifier: 'fractionDigits'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns a string containing a number represented either in exponential or fixed-point notation with a specified number of digits.
+      * @param precision Number of significant digits. Must be in the range 1 - 21, inclusive.
+      */
+    toPrecision'
+      Parameter
+        Identifier: 'precision'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Number'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'value'
+              QuestionToken
+              AnyKeyword
+            TypeReference
+              Identifier: ' Number'
+          CallSignature
+            Parameter
+              Identifier: 'value'
+              QuestionToken
+              AnyKeyword
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' Number'
+          PropertySignature
+            Identifier: '
+
+    /** The largest number that can be represented in JavaScript. Equal to approximately 1.79E+308. */
+    MAX_VALUE'
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+
+    /** The closest number to zero that can be represented in JavaScript. Equal to approximately 5.00E-324. */
+    MIN_VALUE'
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+
+    /** 
+      * A value that is not a number.
+      * In equality comparisons, NaN does not equal any value, including itself. To test whether a value is equivalent to NaN, use the isNaN function.
+      */
+    NaN'
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+
+    /** 
+      * A value that is less than the largest negative number that can be represented in JavaScript.
+      * JavaScript displays NEGATIVE_INFINITY values as -infinity. 
+      */
+    NEGATIVE_INFINITY'
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+
+    /**
+      * A value greater than the largest number that can be represented in JavaScript. 
+      * JavaScript displays POSITIVE_INFINITY values as infinity. 
+      */
+    POSITIVE_INFINITY'
+            NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Math'
+    PropertySignature
+      Identifier: '
+    /** The mathematical constant e. This is Euler's number, the base of natural logarithms. */
+    E'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    /** The natural logarithm of 10. */
+    LN10'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    /** The natural logarithm of 2. */
+    LN2'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    /** The base-2 logarithm of e. */
+    LOG2E'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    /** The base-10 logarithm of e. */
+    LOG10E'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    /** Pi. This is the ratio of the circumference of a circle to its diameter. */
+    PI'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    /** The square root of 0.5, or, equivalently, one divided by the square root of 2. */
+    SQRT1_2'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    /** The square root of 2. */
+    SQRT2'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the absolute value of a number (the value without regard to whether it is positive or negative). 
+      * For example, the absolute value of -5 is the same as the absolute value of 5.
+      * @param x A numeric expression for which the absolute value is needed.
+      */
+    abs'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the arc cosine (or inverse cosine) of a number. 
+      * @param x A numeric expression.
+      */
+    acos'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** 
+      * Returns the arcsine of a number. 
+      * @param x A numeric expression.
+      */
+    asin'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the arctangent of a number. 
+      * @param x A numeric expression for which the arctangent is needed.
+      */
+    atan'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the angle (in radians) from the X axis to a point (y,x).
+      * @param y A numeric expression representing the cartesian y-coordinate.
+      * @param x A numeric expression representing the cartesian x-coordinate.
+      */
+    atan2'
+      Parameter
+        Identifier: 'y'
+        NumberKeyword
+      Parameter
+        Identifier: ' x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the smallest number greater than or equal to its numeric argument. 
+      * @param x A numeric expression.
+      */
+    ceil'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the cosine of a number. 
+      * @param x A numeric expression that contains an angle measured in radians.
+      */
+    cos'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns e (the base of natural logarithms) raised to a power. 
+      * @param x A numeric expression representing the power of e.
+      */
+    exp'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the greatest number less than or equal to its numeric argument. 
+      * @param x A numeric expression.
+      */
+    floor'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the natural logarithm (base e) of a number. 
+      * @param x A numeric expression.
+      */
+    log'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the larger of a set of supplied numeric expressions. 
+      * @param values Numeric expressions to be evaluated.
+      */
+    max'
+      Parameter
+        DotDotDotToken
+        Identifier: 'values'
+        ArrayType
+          NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the smaller of a set of supplied numeric expressions. 
+      * @param values Numeric expressions to be evaluated.
+      */
+    min'
+      Parameter
+        DotDotDotToken
+        Identifier: 'values'
+        ArrayType
+          NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the value of a base expression taken to a specified power. 
+      * @param x The base value of the expression.
+      * @param y The exponent value of the expression.
+      */
+    pow'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Returns a pseudorandom number between 0 and 1. */
+    random'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** 
+      * Returns a supplied numeric expression rounded to the nearest number.
+      * @param x The value to be rounded to the nearest number.
+      */
+    round'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the sine of a number.
+      * @param x A numeric expression that contains an angle measured in radians.
+      */
+    sin'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the square root of a number.
+      * @param x A numeric expression.
+      */
+    sqrt'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns the tangent of a number.
+      * @param x A numeric expression that contains an angle measured in radians.
+      */
+    tan'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Math'
+        TypeReference
+          Identifier: ' Math'
+  InterfaceDeclaration
+    Identifier: ' Date'
+    MethodSignature
+      Identifier: '
+    /** Returns a string representation of a date. The format of the string depends on the locale. */
+    toString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** Returns a date as a string value. */
+    toDateString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** Returns a time as a string value. */
+    toTimeString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** Returns a value as a string value appropriate to the host environment's current locale. */
+    toLocaleString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** Returns a date as a string value appropriate to the host environment's current locale. */
+    toLocaleDateString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** Returns a time as a string value appropriate to the host environment's current locale. */
+    toLocaleTimeString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** Returns the stored time value in milliseconds since midnight, January 1, 1970 UTC. */
+    valueOf'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the time value in milliseconds. */
+    getTime'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the year, using local time. */
+    getFullYear'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the year using Universal Coordinated Time (UTC). */
+    getUTCFullYear'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the month, using local time. */
+    getMonth'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the month of a Date object using Universal Coordinated Time (UTC). */
+    getUTCMonth'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the day-of-the-month, using local time. */
+    getDate'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the day-of-the-month, using Universal Coordinated Time (UTC). */
+    getUTCDate'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the day of the week, using local time. */
+    getDay'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the day of the week using Universal Coordinated Time (UTC). */
+    getUTCDay'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the hours in a date, using local time. */
+    getHours'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the hours value in a Date object using Universal Coordinated Time (UTC). */
+    getUTCHours'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the minutes of a Date object, using local time. */
+    getMinutes'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the minutes of a Date object using Universal Coordinated Time (UTC). */
+    getUTCMinutes'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the seconds of a Date object, using local time. */
+    getSeconds'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the seconds of a Date object using Universal Coordinated Time (UTC). */
+    getUTCSeconds'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the milliseconds of a Date, using local time. */
+    getMilliseconds'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the milliseconds of a Date object using Universal Coordinated Time (UTC). */
+    getUTCMilliseconds'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the difference in minutes between Universal Coordinated Time (UTC) and the time on the local computer. */
+    getTimezoneOffset'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** 
+      * Sets the date and time value in the Date object.
+      * @param time A numeric value representing the number of elapsed milliseconds since midnight, January 1, 1970 GMT. 
+      */
+    setTime'
+      Parameter
+        Identifier: 'time'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Sets the milliseconds value in the Date object using local time. 
+      * @param ms A numeric value equal to the millisecond value.
+      */
+    setMilliseconds'
+      Parameter
+        Identifier: 'ms'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** 
+      * Sets the milliseconds value in the Date object using Universal Coordinated Time (UTC).
+      * @param ms A numeric value equal to the millisecond value. 
+      */
+    setUTCMilliseconds'
+      Parameter
+        Identifier: 'ms'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Sets the seconds value in the Date object using local time. 
+      * @param sec A numeric value equal to the seconds value.
+      * @param ms A numeric value equal to the milliseconds value.
+      */
+    setSeconds'
+      Parameter
+        Identifier: 'sec'
+        NumberKeyword
+      Parameter
+        Identifier: ' ms'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Sets the seconds value in the Date object using Universal Coordinated Time (UTC).
+      * @param sec A numeric value equal to the seconds value.
+      * @param ms A numeric value equal to the milliseconds value.
+      */
+    setUTCSeconds'
+      Parameter
+        Identifier: 'sec'
+        NumberKeyword
+      Parameter
+        Identifier: ' ms'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Sets the minutes value in the Date object using local time. 
+      * @param min A numeric value equal to the minutes value. 
+      * @param sec A numeric value equal to the seconds value. 
+      * @param ms A numeric value equal to the milliseconds value.
+      */
+    setMinutes'
+      Parameter
+        Identifier: 'min'
+        NumberKeyword
+      Parameter
+        Identifier: ' sec'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' ms'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Sets the minutes value in the Date object using Universal Coordinated Time (UTC).
+      * @param min A numeric value equal to the minutes value. 
+      * @param sec A numeric value equal to the seconds value. 
+      * @param ms A numeric value equal to the milliseconds value.
+      */
+    setUTCMinutes'
+      Parameter
+        Identifier: 'min'
+        NumberKeyword
+      Parameter
+        Identifier: ' sec'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' ms'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Sets the hour value in the Date object using local time.
+      * @param hours A numeric value equal to the hours value.
+      * @param min A numeric value equal to the minutes value.
+      * @param sec A numeric value equal to the seconds value. 
+      * @param ms A numeric value equal to the milliseconds value.
+      */
+    setHours'
+      Parameter
+        Identifier: 'hours'
+        NumberKeyword
+      Parameter
+        Identifier: ' min'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' sec'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' ms'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Sets the hours value in the Date object using Universal Coordinated Time (UTC).
+      * @param hours A numeric value equal to the hours value.
+      * @param min A numeric value equal to the minutes value.
+      * @param sec A numeric value equal to the seconds value. 
+      * @param ms A numeric value equal to the milliseconds value.
+      */
+    setUTCHours'
+      Parameter
+        Identifier: 'hours'
+        NumberKeyword
+      Parameter
+        Identifier: ' min'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' sec'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' ms'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Sets the numeric day-of-the-month value of the Date object using local time. 
+      * @param date A numeric value equal to the day of the month.
+      */
+    setDate'
+      Parameter
+        Identifier: 'date'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** 
+      * Sets the numeric day of the month in the Date object using Universal Coordinated Time (UTC).
+      * @param date A numeric value equal to the day of the month. 
+      */
+    setUTCDate'
+      Parameter
+        Identifier: 'date'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** 
+      * Sets the month value in the Date object using local time. 
+      * @param month A numeric value equal to the month. The value for January is 0, and other month values follow consecutively. 
+      * @param date A numeric value representing the day of the month. If this value is not supplied, the value from a call to the getDate method is used.
+      */
+    setMonth'
+      Parameter
+        Identifier: 'month'
+        NumberKeyword
+      Parameter
+        Identifier: ' date'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Sets the month value in the Date object using Universal Coordinated Time (UTC).
+      * @param month A numeric value equal to the month. The value for January is 0, and other month values follow consecutively.
+      * @param date A numeric value representing the day of the month. If it is not supplied, the value from a call to the getUTCDate method is used.
+      */
+    setUTCMonth'
+      Parameter
+        Identifier: 'month'
+        NumberKeyword
+      Parameter
+        Identifier: ' date'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Sets the year of the Date object using local time.
+      * @param year A numeric value for the year.
+      * @param month A zero-based numeric value for the month (0 for January, 11 for December). Must be specified if numDate is specified.
+      * @param date A numeric value equal for the day of the month.
+      */
+    setFullYear'
+      Parameter
+        Identifier: 'year'
+        NumberKeyword
+      Parameter
+        Identifier: ' month'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' date'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Sets the year value in the Date object using Universal Coordinated Time (UTC).
+      * @param year A numeric value equal to the year.
+      * @param month A numeric value equal to the month. The value for January is 0, and other month values follow consecutively. Must be supplied if numDate is supplied.
+      * @param date A numeric value equal to the day of the month.
+      */
+    setUTCFullYear'
+      Parameter
+        Identifier: 'year'
+        NumberKeyword
+      Parameter
+        Identifier: ' month'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' date'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** Returns a date converted to a string using Universal Coordinated Time (UTC). */
+    toUTCString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** Returns a date as a string value in ISO format. */
+    toISOString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** Used by the JSON.stringify method to enable the transformation of an object's data for JavaScript Object Notation (JSON) serialization. */
+    toJSON'
+      Parameter
+        Identifier: 'key'
+        QuestionToken
+        AnyKeyword
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Date'
+        TypeLiteral
+          ConstructSignature
+            TypeReference
+              Identifier: ' Date'
+          ConstructSignature
+            Parameter
+              Identifier: 'value'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Date'
+          ConstructSignature
+            Parameter
+              Identifier: 'value'
+              StringKeyword
+            TypeReference
+              Identifier: ' Date'
+          ConstructSignature
+            Parameter
+              Identifier: 'year'
+              NumberKeyword
+            Parameter
+              Identifier: ' month'
+              NumberKeyword
+            Parameter
+              Identifier: ' date'
+              QuestionToken
+              NumberKeyword
+            Parameter
+              Identifier: ' hours'
+              QuestionToken
+              NumberKeyword
+            Parameter
+              Identifier: ' minutes'
+              QuestionToken
+              NumberKeyword
+            Parameter
+              Identifier: ' seconds'
+              QuestionToken
+              NumberKeyword
+            Parameter
+              Identifier: ' ms'
+              QuestionToken
+              NumberKeyword
+            TypeReference
+              Identifier: ' Date'
+          CallSignature
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' Date'
+          MethodSignature
+            Identifier: '
+    /**
+      * Parses a string containing a date, and returns the number of milliseconds between that date and midnight, January 1, 1970.
+      * @param s A date string
+      */
+    parse'
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            NumberKeyword
+          MethodSignature
+            Identifier: '
+    /**
+      * Returns the number of milliseconds between midnight, January 1, 1970 Universal Coordinated Time (UTC) (or GMT) and the specified date. 
+      * @param year The full year designation is required for cross-century date accuracy. If year is between 0 and 99 is used, then year is assumed to be 1900 + year.
+      * @param month The month as an number between 0 and 11 (January to December).
+      * @param date The date as an number between 1 and 31.
+      * @param hours Must be supplied if minutes is supplied. An number from 0 to 23 (midnight to 11pm) that specifies the hour.
+      * @param minutes Must be supplied if seconds is supplied. An number from 0 to 59 that specifies the minutes.
+      * @param seconds Must be supplied if milliseconds is supplied. An number from 0 to 59 that specifies the seconds.
+      * @param ms An number from 0 to 999 that specifies the milliseconds.
+      */
+    UTC'
+            Parameter
+              Identifier: 'year'
+              NumberKeyword
+            Parameter
+              Identifier: ' month'
+              NumberKeyword
+            Parameter
+              Identifier: ' date'
+              QuestionToken
+              NumberKeyword
+            Parameter
+              Identifier: ' hours'
+              QuestionToken
+              NumberKeyword
+            Parameter
+              Identifier: ' minutes'
+              QuestionToken
+              NumberKeyword
+            Parameter
+              Identifier: ' seconds'
+              QuestionToken
+              NumberKeyword
+            Parameter
+              Identifier: ' ms'
+              QuestionToken
+              NumberKeyword
+            NumberKeyword
+          MethodSignature
+            Identifier: '
+    now'
+            NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' RegExpExecArray'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    length'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+
+    index'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    input'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    toString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    toLocaleString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    concat'
+      Parameter
+        DotDotDotToken
+        Identifier: 'items'
+        ArrayType
+          ArrayType
+            StringKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    join'
+      Parameter
+        Identifier: 'separator'
+        QuestionToken
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    pop'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    push'
+      Parameter
+        DotDotDotToken
+        Identifier: 'items'
+        ArrayType
+          StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    reverse'
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    shift'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    slice'
+      Parameter
+        Identifier: 'start'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    sort'
+      Parameter
+        Identifier: 'compareFn'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            StringKeyword
+          Parameter
+            Identifier: ' b'
+            StringKeyword
+          NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    splice'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    splice'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' deleteCount'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'items'
+        ArrayType
+          StringKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    unshift'
+      Parameter
+        DotDotDotToken
+        Identifier: 'items'
+        ArrayType
+          StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    indexOf'
+      Parameter
+        Identifier: 'searchElement'
+        StringKeyword
+      Parameter
+        Identifier: ' fromIndex'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    lastIndexOf'
+      Parameter
+        Identifier: 'searchElement'
+        StringKeyword
+      Parameter
+        Identifier: ' fromIndex'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    every'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              StringKeyword
+          BooleanKeyword
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    some'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              StringKeyword
+          BooleanKeyword
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    forEach'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              StringKeyword
+          VoidKeyword
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    map'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              StringKeyword
+          AnyKeyword
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      ArrayType
+        AnyKeyword
+    MethodSignature
+      Identifier: '
+    filter'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            StringKeyword
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              StringKeyword
+          BooleanKeyword
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    reduce'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'previousValue'
+            AnyKeyword
+          Parameter
+            Identifier: ' currentValue'
+            AnyKeyword
+          Parameter
+            Identifier: ' currentIndex'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              StringKeyword
+          AnyKeyword
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    reduceRight'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'previousValue'
+            AnyKeyword
+          Parameter
+            Identifier: ' currentValue'
+            AnyKeyword
+          Parameter
+            Identifier: ' currentIndex'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              StringKeyword
+          AnyKeyword
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        AnyKeyword
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' RegExp'
+    MethodSignature
+      Identifier: '
+    /** 
+      * Executes a search on a string using a regular expression pattern, and returns an array containing the results of that search.
+      * @param string The String object or string literal on which to perform the search.
+      */
+    exec'
+      Parameter
+        Identifier: 'string'
+        StringKeyword
+      TypeReference
+        Identifier: ' RegExpExecArray'
+    MethodSignature
+      Identifier: '
+
+    /** 
+      * Returns a Boolean value that indicates whether or not a pattern exists in a searched string.
+      * @param string String on which to perform the search.
+      */
+    test'
+      Parameter
+        Identifier: 'string'
+        StringKeyword
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+
+    /** Returns a copy of the text of the regular expression pattern. Read-only. The rgExp argument is a Regular expression object. It can be a variable name or a literal. */
+    source'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+
+    /** Returns a Boolean value indicating the state of the global flag (g) used with a regular expression. Default is false. Read-only. */
+    global'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+
+    /** Returns a Boolean value indicating the state of the ignoreCase flag (i) used with a regular expression. Default is false. Read-only. */
+    ignoreCase'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+
+    /** Returns a Boolean value indicating the state of the multiline flag (m) used with a regular expression. Default is false. Read-only. */
+    multiline'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+
+    lastIndex'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    // Non-standard extensions
+    compile'
+      TypeReference
+        Identifier: ' RegExp'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' RegExp'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'pattern'
+              StringKeyword
+            Parameter
+              Identifier: ' flags'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' RegExp'
+          CallSignature
+            Parameter
+              Identifier: 'pattern'
+              StringKeyword
+            Parameter
+              Identifier: ' flags'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' RegExp'
+          PropertySignature
+            Identifier: '
+
+    // Non-standard extensions
+    $1'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    $2'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    $3'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    $4'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    $5'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    $6'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    $7'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    $8'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    $9'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    lastMatch'
+            StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Error'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    message'
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Error'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' Error'
+          CallSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' Error'
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' Error'
+  InterfaceDeclaration
+    Identifier: ' EvalError'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Error'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' EvalError'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' EvalError'
+          CallSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' EvalError'
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' EvalError'
+  InterfaceDeclaration
+    Identifier: ' RangeError'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Error'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' RangeError'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' RangeError'
+          CallSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' RangeError'
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' RangeError'
+  InterfaceDeclaration
+    Identifier: ' ReferenceError'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Error'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ReferenceError'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' ReferenceError'
+          CallSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' ReferenceError'
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' ReferenceError'
+  InterfaceDeclaration
+    Identifier: ' SyntaxError'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Error'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SyntaxError'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' SyntaxError'
+          CallSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' SyntaxError'
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' SyntaxError'
+  InterfaceDeclaration
+    Identifier: ' TypeError'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Error'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TypeError'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' TypeError'
+          CallSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' TypeError'
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' TypeError'
+  InterfaceDeclaration
+    Identifier: ' URIError'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Error'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' URIError'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' URIError'
+          CallSignature
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' URIError'
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' URIError'
+  InterfaceDeclaration
+    Identifier: ' JSON'
+    MethodSignature
+      Identifier: '
+    /**
+      * Converts a JavaScript Object Notation (JSON) string into an object.
+      * @param text A valid JSON string.
+      * @param reviver A function that transforms the results. This function is called for each member of the object. 
+      * If a member contains nested objects, the nested objects are transformed before the parent object is. 
+      */
+    parse'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      Parameter
+        Identifier: ' reviver'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'key'
+            AnyKeyword
+          Parameter
+            Identifier: ' value'
+            AnyKeyword
+          AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Converts a JavaScript value to a JavaScript Object Notation (JSON) string.
+      * @param value A JavaScript value, usually an object or array, to be converted.
+      */
+    stringify'
+      Parameter
+        Identifier: 'value'
+        AnyKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Converts a JavaScript value to a JavaScript Object Notation (JSON) string.
+      * @param value A JavaScript value, usually an object or array, to be converted.
+      * @param replacer A function that transforms the results.
+      */
+    stringify'
+      Parameter
+        Identifier: 'value'
+        AnyKeyword
+      Parameter
+        Identifier: ' replacer'
+        FunctionType
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          Parameter
+            Identifier: ' value'
+            AnyKeyword
+          AnyKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Converts a JavaScript value to a JavaScript Object Notation (JSON) string.
+      * @param value A JavaScript value, usually an object or array, to be converted.
+      * @param replacer Array that transforms the results.
+      */
+    stringify'
+      Parameter
+        Identifier: 'value'
+        AnyKeyword
+      Parameter
+        Identifier: ' replacer'
+        ArrayType
+          AnyKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Converts a JavaScript value to a JavaScript Object Notation (JSON) string.
+      * @param value A JavaScript value, usually an object or array, to be converted.
+      * @param replacer A function that transforms the results.
+      * @param space Adds indentation, white space, and line break characters to the return-value JSON text to make it easier to read.
+      */
+    stringify'
+      Parameter
+        Identifier: 'value'
+        AnyKeyword
+      Parameter
+        Identifier: ' replacer'
+        FunctionType
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          Parameter
+            Identifier: ' value'
+            AnyKeyword
+          AnyKeyword
+      Parameter
+        Identifier: ' space'
+        AnyKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Converts a JavaScript value to a JavaScript Object Notation (JSON) string.
+      * @param value A JavaScript value, usually an object or array, to be converted.
+      * @param replacer Array that transforms the results.
+      * @param space Adds indentation, white space, and line break characters to the return-value JSON text to make it easier to read.
+      */
+    stringify'
+      Parameter
+        Identifier: 'value'
+        AnyKeyword
+      Parameter
+        Identifier: ' replacer'
+        ArrayType
+          AnyKeyword
+      Parameter
+        Identifier: ' space'
+        AnyKeyword
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' JSON'
+        TypeReference
+          Identifier: ' JSON'
+  InterfaceDeclaration
+    Identifier: ' Array'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    /**
+      * Returns a string representation of an array.
+      */
+    toString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    toLocaleString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Combines two or more arrays.
+      * @param items Additional items to add to the end of array1.
+      */
+    concat'
+      TypeParameter
+        Identifier: 'U'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      Parameter
+        DotDotDotToken
+        Identifier: 'items'
+        ArrayType
+          TypeReference
+            Identifier: ' U'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    /**
+      * Combines two or more arrays.
+      * @param items Additional items to add to the end of array1.
+      */
+    concat'
+      Parameter
+        DotDotDotToken
+        Identifier: 'items'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    /**
+      * Adds all the elements of an array separated by the specified separator string.
+      * @param separator A string used to separate one element of an array from the next in the resulting String. If omitted, the array elements are separated with a comma.
+      */
+    join'
+      Parameter
+        Identifier: 'separator'
+        QuestionToken
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Removes the last element from an array and returns it.
+      */
+    pop'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    /**
+      * Appends new elements to an array, and returns the new length of the array.
+      * @param items New elements of the Array.
+      */
+    push'
+      Parameter
+        DotDotDotToken
+        Identifier: 'items'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+      * Reverses the elements in an Array. 
+      */
+    reverse'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    /**
+      * Removes the first element from an array and returns it.
+      */
+    shift'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    /** 
+      * Returns a section of an array.
+      * @param start The beginning of the specified portion of the array.
+      * @param end The end of the specified portion of the array.
+      */
+    slice'
+      Parameter
+        Identifier: 'start'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Sorts an array.
+      * @param compareFn The name of the function used to determine the order of the elements. If omitted, the elements are sorted in ascending, ASCII character order.
+      */
+    sort'
+      Parameter
+        Identifier: 'compareFn'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' b'
+            TypeReference
+              Identifier: ' T'
+          NumberKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+      * @param start The zero-based location in the array from which to start removing elements.
+      */
+    splice'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+      * @param start The zero-based location in the array from which to start removing elements.
+      * @param deleteCount The number of elements to remove.
+      * @param items Elements to insert into the array in place of the deleted elements.
+      */
+    splice'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' deleteCount'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'items'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Inserts new elements at the start of an array.
+      * @param items  Elements to insert at the start of the Array.
+      */
+    unshift'
+      Parameter
+        DotDotDotToken
+        Identifier: 'items'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns the index of the first occurrence of a value in an array.
+      * @param searchElement The value to locate in the array.
+      * @param fromIndex The array index at which to begin the search. If fromIndex is omitted, the search starts at index 0.
+      */
+    indexOf'
+      Parameter
+        Identifier: 'searchElement'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' fromIndex'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns the index of the last occurrence of a specified value in an array.
+      * @param searchElement The value to locate in the array.
+      * @param fromIndex The array index at which to begin the search. If fromIndex is omitted, the search starts at the last index in the array.
+      */
+    lastIndexOf'
+      Parameter
+        Identifier: 'searchElement'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' fromIndex'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Determines whether all the members of an array satisfy the specified test.
+      * @param callbackfn A function that accepts up to three arguments. The every method calls the callbackfn function for each element in array1 until the callbackfn returns false, or until the end of the array.
+      * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+      */
+    every'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          BooleanKeyword
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Determines whether the specified callback function returns true for any element of an array.
+      * @param callbackfn A function that accepts up to three arguments. The some method calls the callbackfn function for each element in array1 until the callbackfn returns true, or until the end of the array.
+      * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+      */
+    some'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          BooleanKeyword
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Performs the specified action for each element in an array.
+      * @param callbackfn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array. 
+      * @param thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+      */
+    forEach'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          VoidKeyword
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Calls a defined callback function on each element of an array, and returns an array that contains the results.
+      * @param callbackfn A function that accepts up to three arguments. The map method calls the callbackfn function one time for each element in the array. 
+      * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+      */
+    map'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' U'
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Returns the elements of an array that meet the condition specified in a callback function. 
+      * @param callbackfn A function that accepts up to three arguments. The filter method calls the callbackfn function one time for each element in the array. 
+      * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+      */
+    filter'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          BooleanKeyword
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    MethodSignature
+      Identifier: '
+
+    /**
+      * Calls the specified callback function for all the elements in an array. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+      * @param callbackfn A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array.
+      * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value.
+      */
+    reduce'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'previousValue'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' currentValue'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' currentIndex'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    /**
+      * Calls the specified callback function for all the elements in an array. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+      * @param callbackfn A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array.
+      * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value.
+      */
+    reduce'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'previousValue'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' currentValue'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' currentIndex'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' initialValue'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+    MethodSignature
+      Identifier: '
+
+    /** 
+      * Calls the specified callback function for all the elements in an array, in descending order. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+      * @param callbackfn A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. 
+      * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value.
+      */
+    reduceRight'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'previousValue'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' currentValue'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' currentIndex'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    /** 
+      * Calls the specified callback function for all the elements in an array, in descending order. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+      * @param callbackfn A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. 
+      * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value.
+      */
+    reduceRight'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'previousValue'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' currentValue'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' currentIndex'
+            NumberKeyword
+          Parameter
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' initialValue'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+    PropertySignature
+      Identifier: '
+
+    /**
+      * Gets or sets the length of the array. This is a number one higher than the highest element defined in an array.
+      */
+    length'
+      NumberKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Array'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'arrayLength'
+              QuestionToken
+              NumberKeyword
+            ArrayType
+              AnyKeyword
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'arrayLength'
+              NumberKeyword
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              DotDotDotToken
+              Identifier: 'items'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          CallSignature
+            Parameter
+              Identifier: 'arrayLength'
+              QuestionToken
+              NumberKeyword
+            ArrayType
+              AnyKeyword
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'arrayLength'
+              NumberKeyword
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              DotDotDotToken
+              Identifier: 'items'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          MethodSignature
+            Identifier: '
+    isArray'
+            Parameter
+              Identifier: 'arg'
+              AnyKeyword
+            BooleanKeyword
+          PropertySignature
+            Identifier: '
+    prototype'
+            TypeReference
+              Identifier: ' Array'
+              AnyKeyword

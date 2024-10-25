@@ -1,0 +1,73 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: ' foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    MethodSignature
+      Identifier: '
+	a'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' D'
+    MethodSignature
+      Identifier: ' bar'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+    MethodSignature
+      Identifier: '
+	b'
+      TypeReference
+        Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: 'C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        StringKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' Date'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'b'

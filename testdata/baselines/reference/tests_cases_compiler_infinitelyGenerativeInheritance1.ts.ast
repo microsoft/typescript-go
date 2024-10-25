@@ -1,0 +1,63 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Stack'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+      pop'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+      zip'
+      TypeParameter
+        Identifier: 'S'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' Stack'
+          TypeReference
+            Identifier: 'S'
+      TypeReference
+        Identifier: ' Stack'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+          PropertySignature
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' S'
+  InterfaceDeclaration
+    Identifier: ' MyStack'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Stack'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+      zip'
+      TypeParameter
+        Identifier: 'S'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' Stack'
+          TypeReference
+            Identifier: 'S'
+      TypeReference
+        Identifier: ' Stack'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+          PropertySignature
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' S'

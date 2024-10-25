@@ -1,0 +1,184 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' Greet'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'name'
+          QuestionToken
+          StringKeyword
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxExpression
+            Identifier: 'x'
+          JsxClosingElement
+            Identifier: 'div'
+  ClassDeclaration
+    Identifier: ' BigGreeter'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            QuestionToken
+            StringKeyword
+        TypeLiteral
+    MethodDeclaration
+      Identifier: '
+	render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxClosingElement
+              Identifier: 'div'
+    PropertyDeclaration
+      Identifier: '
+	greeting'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxSelfClosingElement
+          Identifier: 'Greet'
+          JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        JsxSelfClosingElement
+          Identifier: 'Greet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' key'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        JsxSelfClosingElement
+          Identifier: 'Greet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' ref'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        JsxSelfClosingElement
+          Identifier: 'BigGreeter'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' ref'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'greeting'
+                      Identifier: 'substr'
+                    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        JsxSelfClosingElement
+          Identifier: 'BigGreeter'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' ref'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'greeting'
+                      Identifier: 'subtr'
+                    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        JsxSelfClosingElement
+          Identifier: 'BigGreeter'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' ref'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'notARealProperty'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        JsxSelfClosingElement
+          Identifier: 'BigGreeter'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' key'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' ref'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'innerText'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' ref'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'propertyNotOnHtmlDivElement'

@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        UnionType
+          NumberKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  IfStatement
+    Identifier: 'a'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            BinaryExpression
+              Identifier: ' a'
+              PlusToken
+              NumericLiteral

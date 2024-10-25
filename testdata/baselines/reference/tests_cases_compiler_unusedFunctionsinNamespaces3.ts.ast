@@ -1,0 +1,13 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Validation'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' function1'
+            FunctionExpression
+              Parameter
+                Identifier: 'param1'
+                StringKeyword
+              Block

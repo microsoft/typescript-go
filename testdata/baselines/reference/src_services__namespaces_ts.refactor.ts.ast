@@ -1,0 +1,89 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' addOrRemoveBracesToArrowFunction'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' addOrRemoveBracesToArrowFunction'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' convertArrowFunctionOrFunctionExpression'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' convertArrowFunctionOrFunctionExpression'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' convertParamsToDestructuredObject'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' convertParamsToDestructuredObject'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' convertStringOrTemplateLiteral'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' convertStringOrTemplateLiteral'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' convertToOptionalChainExpression'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' convertToOptionalChainExpression'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' extractSymbol'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' extractSymbol'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' generateGetAccessorAndSetAccessor'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' generateGetAccessorAndSetAccessor'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' inferFunctionReturnType'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' inferFunctionReturnType'

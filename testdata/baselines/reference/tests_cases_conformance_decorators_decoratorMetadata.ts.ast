@@ -1,0 +1,35 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Service'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Service'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'decorator'
+    Identifier: ' MyComponent'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' Service'
+        TypeReference
+          Identifier: ' Service'
+      Block
+    MethodDeclaration
+      Decorator
+        Identifier: 'decorator'
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'x'
+        ThisType
+      Block

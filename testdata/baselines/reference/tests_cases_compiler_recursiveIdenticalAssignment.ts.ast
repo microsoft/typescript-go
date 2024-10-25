@@ -1,0 +1,48 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'B'
+          TypeReference
+            Identifier: 'T'
+    PropertySignature
+      Identifier: ' // error, constraint referencing itself
+    x'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'A'
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'B'
+            AnyKeyword
+        Identifier: ' a'

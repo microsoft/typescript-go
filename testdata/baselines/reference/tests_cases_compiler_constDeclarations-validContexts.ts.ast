@@ -1,0 +1,271 @@
+SourceFile
+  IfStatement
+    TrueKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            NumericLiteral
+  WhileStatement
+    TrueKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            NumericLiteral
+  DoStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c4'
+            NumericLiteral
+    TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+  WithStatement
+    Identifier: 'obj'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c5'
+            NumericLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c6'
+            NumericLiteral
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+    ObjectLiteralExpression
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c7'
+            NumericLiteral
+  IfStatement
+    TrueKeyword
+    Block
+      LabeledStatement
+        Identifier: '
+    label'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c8'
+              NumericLiteral
+  WhileStatement
+    FalseKeyword
+    Block
+      LabeledStatement
+        Identifier: '
+    label2'
+        LabeledStatement
+          Identifier: ' label3'
+          LabeledStatement
+            Identifier: ' label4'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' c9'
+                  NumericLiteral
+  TryStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c10'
+            NumericLiteral
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c11'
+              NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c12'
+            NumericLiteral
+  SwitchStatement
+    NumericLiteral
+    CaseBlock
+      CaseClause
+        NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c13'
+              NumericLiteral
+        BreakStatement
+      DefaultClause
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c14'
+              NumericLiteral
+        BreakStatement
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' c15'
+          NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c16'
+            NumericLiteral
+      LabeledStatement
+        Identifier: '
+        label17'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c17'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c18'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' F'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c19'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' F2'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' c20'
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' F3'
+        FunctionExpression
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' c21'
+                  NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c22'
+            NumericLiteral
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c23'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c24'
+              NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c25'
+              NumericLiteral
+    GetAccessor
+      Identifier: ' v'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c26'
+              NumericLiteral
+        ReturnStatement
+          Identifier: ' c26'
+    SetAccessor
+      Identifier: ' v'
+      Parameter
+        Identifier: 'value'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c27'
+              Identifier: ' value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    f'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' c28'
+                    NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    f2'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' c29'
+                      NumericLiteral

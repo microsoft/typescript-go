@@ -1,0 +1,50 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'div'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        Identifier: ''
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          AnyKeyword
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral

@@ -1,0 +1,3969 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    __String'
+        ImportSpecifier
+          Identifier: '
+    ArrayLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    BindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    Block'
+        ImportSpecifier
+          Identifier: '
+    compareValues'
+        ImportSpecifier
+          Identifier: '
+    Comparison'
+        ImportSpecifier
+          Identifier: '
+    createExpressionFromEntityName'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    EmitFlags'
+        ImportSpecifier
+          Identifier: '
+    EmitHelper'
+        ImportSpecifier
+          Identifier: '
+    EmitHelperUniqueNameCallback'
+        ImportSpecifier
+          Identifier: '
+    EmitNode'
+        ImportSpecifier
+          Identifier: '
+    EntityName'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    FunctionExpression'
+        ImportSpecifier
+          Identifier: '
+    GeneratedIdentifierFlags'
+        ImportSpecifier
+          Identifier: '
+    getEmitFlags'
+        ImportSpecifier
+          Identifier: '
+    getEmitScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    getPropertyNameOfBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    InternalEmitFlags'
+        ImportSpecifier
+          Identifier: '
+    isCallExpression'
+        ImportSpecifier
+          Identifier: '
+    isComputedPropertyName'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    memoize'
+        ImportSpecifier
+          Identifier: '
+    ObjectLiteralElementLike'
+        ImportSpecifier
+          Identifier: '
+    ParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    PrivateIdentifier'
+        ImportSpecifier
+          Identifier: '
+    ScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    setEmitFlags'
+        ImportSpecifier
+          Identifier: '
+    setInternalEmitFlags'
+        ImportSpecifier
+          Identifier: '
+    setTextRange'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    TextRange'
+        ImportSpecifier
+          Identifier: '
+    TransformationContext'
+        ImportSpecifier
+          Identifier: '
+    UnscopedEmitHelper'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' PrivateIdentifierKind'
+    EnumMember
+      Identifier: '
+    Field'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    Method'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    Accessor'
+      StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ESDecorateClassContext'
+    PropertySignature
+      Identifier: '
+    /**
+     * The kind of the decorated element.
+     */
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+
+    /**
+     * The name of the decorated element.
+     */
+    name'
+      TypeReference
+        Identifier: ' Expression'
+    PropertySignature
+      Identifier: '
+
+    metadata'
+      TypeReference
+        Identifier: ' Expression'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ESDecorateClassElementContext'
+    PropertySignature
+      Identifier: '
+    /**
+     * The kind of the decorated element.
+     */
+    kind'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    name'
+      TypeReference
+        Identifier: ' ESDecorateName'
+    PropertySignature
+      Identifier: '
+    static'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    private'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    access'
+      TypeReference
+        Identifier: ' ESDecorateClassElementAccess'
+    PropertySignature
+      Identifier: '
+    metadata'
+      TypeReference
+        Identifier: ' Expression'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ESDecorateClassElementAccess'
+    PropertySignature
+      Identifier: '
+    get'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    set'
+      QuestionToken
+      BooleanKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ESDecorateName'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' computed'
+          LiteralType
+            TrueKeyword
+        PropertySignature
+          Identifier: ' name'
+          TypeReference
+            Identifier: ' Expression'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' computed'
+          LiteralType
+            FalseKeyword
+        PropertySignature
+          Identifier: ' name'
+          UnionType
+            TypeReference
+              Identifier: ' Identifier'
+            TypeReference
+              Identifier: ' PrivateIdentifier'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ESDecorateContext'
+    UnionType
+      TypeReference
+        Identifier: ' ESDecorateClassContext'
+      TypeReference
+        Identifier: ' ESDecorateClassElementContext'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' EmitHelperFactory'
+    MethodSignature
+      Identifier: '
+    getUnscopedHelperName'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      TypeReference
+        Identifier: ' Identifier'
+    MethodSignature
+      Identifier: '
+    // TypeScript Helpers
+    createDecorateHelper'
+      Parameter
+        Identifier: 'decoratorExpressions'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Expression'
+      Parameter
+        Identifier: ' target'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' memberName'
+        QuestionToken
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' descriptor'
+        QuestionToken
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createMetadataHelper'
+      Parameter
+        Identifier: 'metadataKey'
+        StringKeyword
+      Parameter
+        Identifier: ' metadataValue'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createParamHelper'
+      Parameter
+        Identifier: 'expression'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' parameterOffset'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    // ES Decorators Helpers
+    createESDecorateHelper'
+      Parameter
+        Identifier: 'ctor'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' descriptorIn'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' decorators'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' contextIn'
+        TypeReference
+          Identifier: ' ESDecorateContext'
+      Parameter
+        Identifier: ' initializers'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' extraInitializers'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createRunInitializersHelper'
+      Parameter
+        Identifier: 'thisArg'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' initializers'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' value'
+        QuestionToken
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    // ES2018 Helpers
+    createAssignHelper'
+      Parameter
+        Identifier: 'attributesSegments'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createAwaitHelper'
+      Parameter
+        Identifier: 'expression'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createAsyncGeneratorHelper'
+      Parameter
+        Identifier: 'generatorFunc'
+        TypeReference
+          Identifier: ' FunctionExpression'
+      Parameter
+        Identifier: ' hasLexicalThis'
+        BooleanKeyword
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createAsyncDelegatorHelper'
+      Parameter
+        Identifier: 'expression'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createAsyncValuesHelper'
+      Parameter
+        Identifier: 'expression'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    // ES2018 Destructuring Helpers
+    createRestHelper'
+      Parameter
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' elements'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' BindingOrAssignmentElement'
+      Parameter
+        Identifier: ' computedTempVariables'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Expression'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' location'
+        TypeReference
+          Identifier: ' TextRange'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    // ES2017 Helpers
+    createAwaiterHelper'
+      Parameter
+        Identifier: 'hasLexicalThis'
+        BooleanKeyword
+      Parameter
+        Identifier: ' argumentsExpression'
+        UnionType
+          TypeReference
+            Identifier: ' Expression'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' promiseConstructor'
+        UnionType
+          TypeReference
+            Identifier: ' EntityName'
+          TypeReference
+            Identifier: ' Expression'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' parameters'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' ParameterDeclaration'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' body'
+        TypeReference
+          Identifier: ' Block'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    // ES2015 Helpers
+    createExtendsHelper'
+      Parameter
+        Identifier: 'name'
+        TypeReference
+          Identifier: ' Identifier'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createTemplateObjectHelper'
+      Parameter
+        Identifier: 'cooked'
+        TypeReference
+          Identifier: ' ArrayLiteralExpression'
+      Parameter
+        Identifier: ' raw'
+        TypeReference
+          Identifier: ' ArrayLiteralExpression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createSpreadArrayHelper'
+      Parameter
+        Identifier: 'to'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' from'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' packFrom'
+        BooleanKeyword
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createPropKeyHelper'
+      Parameter
+        Identifier: 'expr'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createSetFunctionNameHelper'
+      Parameter
+        Identifier: 'f'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' name'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' prefix'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    // ES2015 Destructuring Helpers
+    createValuesHelper'
+      Parameter
+        Identifier: 'expression'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createReadHelper'
+      Parameter
+        Identifier: 'iteratorRecord'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' count'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    // ES2015 Generator Helpers
+    createGeneratorHelper'
+      Parameter
+        Identifier: 'body'
+        TypeReference
+          Identifier: ' FunctionExpression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    // ES Module Helpers
+    createImportStarHelper'
+      Parameter
+        Identifier: 'expression'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createImportStarCallbackHelper'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createImportDefaultHelper'
+      Parameter
+        Identifier: 'expression'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createExportStarHelper'
+      Parameter
+        Identifier: 'moduleExpression'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' exportsExpression'
+        QuestionToken
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    // Class Fields Helpers
+    createClassPrivateFieldGetHelper'
+      Parameter
+        Identifier: 'receiver'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' state'
+        TypeReference
+          Identifier: ' Identifier'
+      Parameter
+        Identifier: ' kind'
+        TypeReference
+          Identifier: ' PrivateIdentifierKind'
+      Parameter
+        Identifier: ' f'
+        UnionType
+          TypeReference
+            Identifier: ' Identifier'
+          UndefinedKeyword
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createClassPrivateFieldSetHelper'
+      Parameter
+        Identifier: 'receiver'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' state'
+        TypeReference
+          Identifier: ' Identifier'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' kind'
+        TypeReference
+          Identifier: ' PrivateIdentifierKind'
+      Parameter
+        Identifier: ' f'
+        UnionType
+          TypeReference
+            Identifier: ' Identifier'
+          UndefinedKeyword
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createClassPrivateFieldInHelper'
+      Parameter
+        Identifier: 'state'
+        TypeReference
+          Identifier: ' Identifier'
+      Parameter
+        Identifier: ' receiver'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    // 'using' helpers
+    createAddDisposableResourceHelper'
+      Parameter
+        Identifier: 'envBinding'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' Expression'
+      Parameter
+        Identifier: ' async'
+        BooleanKeyword
+      TypeReference
+        Identifier: ' Expression'
+    MethodSignature
+      Identifier: '
+    createDisposeResourcesHelper'
+      Parameter
+        Identifier: 'envBinding'
+        TypeReference
+          Identifier: ' Expression'
+      TypeReference
+        Identifier: ' Expression'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createEmitHelperFactory'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    TypeReference
+      Identifier: ' EmitHelperFactory'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' factory'
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'factory'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' immutableTrue'
+            CallExpression
+              Identifier: ' memoize'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' setInternalEmitFlags'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createTrue'
+                  PropertyAccessExpression
+                    Identifier: ' InternalEmitFlags'
+                    Identifier: 'Immutable'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' immutableFalse'
+            CallExpression
+              Identifier: ' memoize'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' setInternalEmitFlags'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createFalse'
+                  PropertyAccessExpression
+                    Identifier: ' InternalEmitFlags'
+                    Identifier: 'Immutable'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        getUnscopedHelperName'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // TypeScript Helpers
+        createDecorateHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createMetadataHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createParamHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // ES Decorators Helpers
+        createESDecorateHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createRunInitializersHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // ES2018 Helpers
+        createAssignHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createAwaitHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createAsyncGeneratorHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createAsyncDelegatorHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createAsyncValuesHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // ES2018 Destructuring Helpers
+        createRestHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // ES2017 Helpers
+        createAwaiterHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // ES2015 Helpers
+        createExtendsHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createTemplateObjectHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createSpreadArrayHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createPropKeyHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createSetFunctionNameHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // ES2015 Destructuring Helpers
+        createValuesHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createReadHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // ES2015 Generator Helpers
+        createGeneratorHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // ES Module Helpers
+        createImportStarHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createImportStarCallbackHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createImportDefaultHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createExportStarHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // Class Fields Helpers
+        createClassPrivateFieldGetHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createClassPrivateFieldSetHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createClassPrivateFieldInHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        // 'using' helpers
+        createAddDisposableResourceHelper'
+          ShorthandPropertyAssignment
+            Identifier: '
+        createDisposeResourcesHelper'
+      FunctionDeclaration
+        Identifier: ' getUnscopedHelperName'
+        Parameter
+          Identifier: 'name'
+          StringKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' setEmitFlags'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createIdentifier'
+                Identifier: 'name'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' EmitFlags'
+                  Identifier: 'HelperName'
+                BarToken
+                PropertyAccessExpression
+                  Identifier: ' EmitFlags'
+                  Identifier: 'AdviseOnEmitNode'
+      FunctionDeclaration
+        Identifier: ' createDecorateHelper'
+        Parameter
+          Identifier: 'decoratorExpressions'
+          ArrayType
+            TypeReference
+              Identifier: ' Expression'
+        Parameter
+          Identifier: ' target'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' memberName'
+          QuestionToken
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' descriptor'
+          QuestionToken
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'decorateHelper'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' argumentsArray'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Expression'
+                ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        argumentsArray'
+                Identifier: 'push'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createArrayLiteralExpression'
+                Identifier: 'decoratorExpressions'
+                TrueKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        argumentsArray'
+                Identifier: 'push'
+              Identifier: 'target'
+          IfStatement
+            Identifier: 'memberName'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            argumentsArray'
+                    Identifier: 'push'
+                  Identifier: 'memberName'
+              IfStatement
+                Identifier: 'descriptor'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                argumentsArray'
+                        Identifier: 'push'
+                      Identifier: 'descriptor'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              Identifier: '
+            argumentsArray'
+      FunctionDeclaration
+        Identifier: ' createMetadataHelper'
+        Parameter
+          Identifier: 'metadataKey'
+          StringKeyword
+        Parameter
+          Identifier: ' metadataValue'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'metadataHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                factory'
+                    Identifier: 'createStringLiteral'
+                  Identifier: 'metadataKey'
+                Identifier: '
+                metadataValue'
+      FunctionDeclaration
+        Identifier: ' createParamHelper'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' parameterOffset'
+          NumberKeyword
+        Parameter
+          Identifier: ' location'
+          QuestionToken
+          TypeReference
+            Identifier: ' TextRange'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'paramHelper'
+          ReturnStatement
+            CallExpression
+              Identifier: ' setTextRange'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            factory'
+                  Identifier: 'createCallExpression'
+                CallExpression
+                  Identifier: '
+                getUnscopedHelperName'
+                  StringLiteral
+                Identifier: '
+                /*typeArguments*/ undefined'
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                    factory'
+                      Identifier: 'createNumericLiteral'
+                    BinaryExpression
+                      Identifier: 'parameterOffset'
+                      PlusToken
+                      StringLiteral
+                  Identifier: '
+                    expression'
+              Identifier: '
+            location'
+      FunctionDeclaration
+        Identifier: ' createESDecorateClassContextObject'
+        Parameter
+          Identifier: 'contextIn'
+          TypeReference
+            Identifier: ' ESDecorateClassContext'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' properties'
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAssignment'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createStringLiteral'
+                      StringLiteral
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAssignment'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    PropertyAccessExpression
+                      Identifier: ' contextIn'
+                      Identifier: 'name'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAssignment'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    PropertyAccessExpression
+                      Identifier: ' contextIn'
+                      Identifier: 'metadata'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createObjectLiteralExpression'
+              Identifier: 'properties'
+      FunctionDeclaration
+        Identifier: ' createESDecorateClassElementAccessGetMethod'
+        Parameter
+          Identifier: 'elementName'
+          TypeReference
+            Identifier: ' ESDecorateName'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' accessor'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' elementName'
+                    Identifier: 'computed'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createElementAccessExpression'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    PropertyAccessExpression
+                      Identifier: ' elementName'
+                      Identifier: 'name'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAccessExpression'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    PropertyAccessExpression
+                      Identifier: ' elementName'
+                      Identifier: 'name'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createPropertyAssignment'
+              StringLiteral
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            factory'
+                  Identifier: 'createArrowFunction'
+                Identifier: '
+                /*modifiers*/ undefined'
+                Identifier: '
+                /*typeParameters*/ undefined'
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createParameterDeclaration'
+                    Identifier: '
+                    /*modifiers*/ undefined'
+                    Identifier: '
+                    /*dotDotDotToken*/ undefined'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                Identifier: '
+                /*type*/ undefined'
+                Identifier: '
+                /*equalsGreaterThanToken*/ undefined'
+                Identifier: '
+                accessor'
+      FunctionDeclaration
+        Identifier: ' createESDecorateClassElementAccessSetMethod'
+        Parameter
+          Identifier: 'elementName'
+          TypeReference
+            Identifier: ' ESDecorateName'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' accessor'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' elementName'
+                    Identifier: 'computed'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createElementAccessExpression'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    PropertyAccessExpression
+                      Identifier: ' elementName'
+                      Identifier: 'name'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAccessExpression'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    PropertyAccessExpression
+                      Identifier: ' elementName'
+                      Identifier: 'name'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createPropertyAssignment'
+              StringLiteral
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            factory'
+                  Identifier: 'createArrowFunction'
+                Identifier: '
+                /*modifiers*/ undefined'
+                Identifier: '
+                /*typeParameters*/ undefined'
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                    factory'
+                      Identifier: 'createParameterDeclaration'
+                    Identifier: '
+                        /*modifiers*/ undefined'
+                    Identifier: '
+                        /*dotDotDotToken*/ undefined'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                        factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                    factory'
+                      Identifier: 'createParameterDeclaration'
+                    Identifier: '
+                        /*modifiers*/ undefined'
+                    Identifier: '
+                        /*dotDotDotToken*/ undefined'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                        factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                Identifier: '
+                /*type*/ undefined'
+                Identifier: '
+                /*equalsGreaterThanToken*/ undefined'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                factory'
+                    Identifier: 'createBlock'
+                  ArrayLiteralExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    factory'
+                        Identifier: 'createExpressionStatement'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                        factory'
+                          Identifier: 'createAssignment'
+                        Identifier: '
+                            accessor'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                            factory'
+                            Identifier: 'createIdentifier'
+                          StringLiteral
+      FunctionDeclaration
+        Identifier: ' createESDecorateClassElementAccessHasMethod'
+        Parameter
+          Identifier: 'elementName'
+          TypeReference
+            Identifier: ' ESDecorateName'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' propertyName'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' elementName'
+                    Identifier: 'computed'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' elementName'
+                    Identifier: 'name'
+                  ColonToken
+                  ConditionalExpression
+                    CallExpression
+                      Identifier: '
+            isIdentifier'
+                      PropertyAccessExpression
+                        Identifier: 'elementName'
+                        Identifier: 'name'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createStringLiteralFromNode'
+                      PropertyAccessExpression
+                        Identifier: 'elementName'
+                        Identifier: 'name'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+            elementName'
+                      Identifier: 'name'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createPropertyAssignment'
+              StringLiteral
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            factory'
+                  Identifier: 'createArrowFunction'
+                Identifier: '
+                /*modifiers*/ undefined'
+                Identifier: '
+                /*typeParameters*/ undefined'
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createParameterDeclaration'
+                    Identifier: '
+                    /*modifiers*/ undefined'
+                    Identifier: '
+                    /*dotDotDotToken*/ undefined'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                Identifier: '
+                /*type*/ undefined'
+                Identifier: '
+                /*equalsGreaterThanToken*/ undefined'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                factory'
+                    Identifier: 'createBinaryExpression'
+                  Identifier: '
+                    propertyName'
+                  PropertyAccessExpression
+                    Identifier: '
+                    SyntaxKind'
+                    Identifier: 'InKeyword'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                    factory'
+                      Identifier: 'createIdentifier'
+                    StringLiteral
+      FunctionDeclaration
+        Identifier: ' createESDecorateClassElementAccessObject'
+        Parameter
+          Identifier: 'name'
+          TypeReference
+            Identifier: ' ESDecorateName'
+        Parameter
+          Identifier: ' access'
+          TypeReference
+            Identifier: ' ESDecorateClassElementAccess'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' properties'
+                ArrayType
+                  TypeReference
+                    Identifier: ' ObjectLiteralElementLike'
+                ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        properties'
+                Identifier: 'push'
+              CallExpression
+                Identifier: 'createESDecorateClassElementAccessHasMethod'
+                Identifier: 'name'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'access'
+              Identifier: 'get'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' properties'
+                  Identifier: 'push'
+                CallExpression
+                  Identifier: 'createESDecorateClassElementAccessGetMethod'
+                  Identifier: 'name'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'access'
+              Identifier: 'set'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' properties'
+                  Identifier: 'push'
+                CallExpression
+                  Identifier: 'createESDecorateClassElementAccessSetMethod'
+                  Identifier: 'name'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createObjectLiteralExpression'
+              Identifier: 'properties'
+      FunctionDeclaration
+        Identifier: ' createESDecorateClassElementContextObject'
+        Parameter
+          Identifier: 'contextIn'
+          TypeReference
+            Identifier: ' ESDecorateClassElementContext'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' properties'
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAssignment'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createStringLiteral'
+                      PropertyAccessExpression
+                        Identifier: 'contextIn'
+                        Identifier: 'kind'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAssignment'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' contextIn'
+                          Identifier: 'name'
+                        Identifier: 'computed'
+                      QuestionToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' contextIn'
+                          Identifier: 'name'
+                        Identifier: 'name'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createStringLiteralFromNode'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'contextIn'
+                            Identifier: 'name'
+                          Identifier: 'name'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAssignment'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' contextIn'
+                        Identifier: 'static'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createTrue'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createFalse'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAssignment'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' contextIn'
+                        Identifier: 'private'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createTrue'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createFalse'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAssignment'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    CallExpression
+                      Identifier: ' createESDecorateClassElementAccessObject'
+                      PropertyAccessExpression
+                        Identifier: 'contextIn'
+                        Identifier: 'name'
+                      PropertyAccessExpression
+                        Identifier: ' contextIn'
+                        Identifier: 'access'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createPropertyAssignment'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    PropertyAccessExpression
+                      Identifier: ' contextIn'
+                      Identifier: 'metadata'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createObjectLiteralExpression'
+              Identifier: 'properties'
+      FunctionDeclaration
+        Identifier: ' createESDecorateContextObject'
+        Parameter
+          Identifier: 'contextIn'
+          TypeReference
+            Identifier: ' ESDecorateContext'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' contextIn'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              QuestionToken
+              CallExpression
+                Identifier: ' createESDecorateClassContextObject'
+                Identifier: 'contextIn'
+              ColonToken
+              CallExpression
+                Identifier: '
+            createESDecorateClassElementContextObject'
+                Identifier: 'contextIn'
+      FunctionDeclaration
+        Identifier: ' createESDecorateHelper'
+        Parameter
+          Identifier: 'ctor'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' descriptorIn'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' decorators'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' contextIn'
+          TypeReference
+            Identifier: ' ESDecorateContext'
+        Parameter
+          Identifier: ' initializers'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' extraInitializers'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'esDecorateHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                BinaryExpression
+                  Identifier: '
+                ctor'
+                  QuestionQuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createNull'
+                BinaryExpression
+                  Identifier: '
+                descriptorIn'
+                  QuestionQuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createNull'
+                Identifier: '
+                decorators'
+                CallExpression
+                  Identifier: '
+                createESDecorateContextObject'
+                  Identifier: 'contextIn'
+                Identifier: '
+                initializers'
+                Identifier: '
+                extraInitializers'
+      FunctionDeclaration
+        Identifier: ' createRunInitializersHelper'
+        Parameter
+          Identifier: 'thisArg'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' initializers'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' value'
+          QuestionToken
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'runInitializersHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ConditionalExpression
+                Identifier: '
+            value'
+                QuestionToken
+                ArrayLiteralExpression
+                  Identifier: 'thisArg'
+                  Identifier: ' initializers'
+                  Identifier: ' value'
+                ColonToken
+                ArrayLiteralExpression
+                  Identifier: 'thisArg'
+                  Identifier: ' initializers'
+      FunctionDeclaration
+        Identifier: ' createAssignHelper'
+        Parameter
+          Identifier: 'attributesSegments'
+          ArrayType
+            TypeReference
+              Identifier: ' Expression'
+        Block
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'getEmitScriptTarget'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'context'
+                    Identifier: 'getCompilerOptions'
+              GreaterThanEqualsToken
+              PropertyAccessExpression
+                Identifier: ' ScriptTarget'
+                Identifier: 'ES2015'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createCallExpression'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createPropertyAccessExpression'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createIdentifier'
+                      StringLiteral
+                    StringLiteral
+                  Identifier: ' /*typeArguments*/ undefined'
+                  Identifier: ' attributesSegments'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'assignHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              Identifier: '
+            attributesSegments'
+      FunctionDeclaration
+        Identifier: ' createAwaitHelper'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'awaitHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: 'getUnscopedHelperName'
+                StringLiteral
+              Identifier: ' /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'expression'
+      FunctionDeclaration
+        Identifier: ' createAsyncGeneratorHelper'
+        Parameter
+          Identifier: 'generatorFunc'
+          TypeReference
+            Identifier: ' FunctionExpression'
+        Parameter
+          Identifier: ' hasLexicalThis'
+          BooleanKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'awaitHelper'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'asyncGeneratorHelper'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'generatorFunc'
+                      Identifier: 'emitNode'
+                    BarBarToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'generatorFunc'
+                          Identifier: 'emitNode'
+                        EqualsToken
+                        AsExpression
+                          ObjectLiteralExpression
+                          TypeReference
+                            Identifier: ' EmitNode'
+                Identifier: 'flags'
+              BarEqualsToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' EmitFlags'
+                  Identifier: 'AsyncFunctionBody'
+                BarToken
+                PropertyAccessExpression
+                  Identifier: ' EmitFlags'
+                  Identifier: 'ReuseTempVariableScope'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                ConditionalExpression
+                  Identifier: '
+                hasLexicalThis'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createThis'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createVoidZero'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                factory'
+                    Identifier: 'createIdentifier'
+                  StringLiteral
+                Identifier: '
+                generatorFunc'
+      FunctionDeclaration
+        Identifier: ' createAsyncDelegatorHelper'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'awaitHelper'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'asyncDelegator'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'expression'
+      FunctionDeclaration
+        Identifier: ' createAsyncValuesHelper'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'asyncValues'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'expression'
+      FunctionDeclaration
+        Identifier: ' createRestHelper'
+        Parameter
+          Identifier: 'value'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' elements'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' BindingOrAssignmentElement'
+        Parameter
+          Identifier: ' computedTempVariables'
+          UnionType
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' Expression'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' location'
+          TypeReference
+            Identifier: ' TextRange'
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'restHelper'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' propertyNames'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Expression'
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' computedTempVariableOffset'
+                NumericLiteral
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                NumericLiteral
+            BinaryExpression
+              Identifier: ' i'
+              LessThanToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' elements'
+                  Identifier: 'length'
+                MinusToken
+                NumericLiteral
+            PostfixUnaryExpression
+              Identifier: ' i'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' propertyName'
+                    CallExpression
+                      Identifier: ' getPropertyNameOfBindingOrAssignmentElement'
+                      ElementAccessExpression
+                        Identifier: 'elements'
+                        Identifier: 'i'
+              IfStatement
+                Identifier: 'propertyName'
+                Block
+                  IfStatement
+                    CallExpression
+                      Identifier: 'isComputedPropertyName'
+                      Identifier: 'propertyName'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    Debug'
+                            Identifier: 'assertIsDefined'
+                          Identifier: 'computedTempVariables'
+                          StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' temp'
+                            ElementAccessExpression
+                              Identifier: ' computedTempVariables'
+                              Identifier: 'computedTempVariableOffset'
+                      ExpressionStatement
+                        PostfixUnaryExpression
+                          Identifier: '
+                    computedTempVariableOffset'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    // typeof _tmp === "symbol" ? _tmp : _tmp + ""
+                    propertyNames'
+                            Identifier: 'push'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        factory'
+                              Identifier: 'createConditionalExpression'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                            factory'
+                                Identifier: 'createTypeCheck'
+                              Identifier: 'temp'
+                              StringLiteral
+                            Identifier: '
+                            /*questionToken*/ undefined'
+                            Identifier: '
+                            temp'
+                            Identifier: '
+                            /*colonToken*/ undefined'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                            factory'
+                                Identifier: 'createAdd'
+                              Identifier: 'temp'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' factory'
+                                  Identifier: 'createStringLiteral'
+                                StringLiteral
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    propertyNames'
+                            Identifier: 'push'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'factory'
+                              Identifier: 'createStringLiteralFromNode'
+                            Identifier: 'propertyName'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: '
+                value'
+                CallExpression
+                  Identifier: '
+                setTextRange'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                    factory'
+                      Identifier: 'createArrayLiteralExpression'
+                    Identifier: 'propertyNames'
+                  Identifier: '
+                    location'
+      FunctionDeclaration
+        Identifier: ' createAwaiterHelper'
+        Parameter
+          Identifier: 'hasLexicalThis'
+          BooleanKeyword
+        Parameter
+          Identifier: ' argumentsExpression'
+          UnionType
+            TypeReference
+              Identifier: ' Expression'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' promiseConstructor'
+          UnionType
+            TypeReference
+              Identifier: ' EntityName'
+            TypeReference
+              Identifier: ' Expression'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' parameters'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' ParameterDeclaration'
+        Parameter
+          Identifier: ' body'
+          TypeReference
+            Identifier: ' Block'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'awaiterHelper'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' generatorFunc'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createFunctionExpression'
+                  Identifier: '
+            /*modifiers*/ undefined'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createToken'
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'AsteriskToken'
+                  Identifier: '
+            /*name*/ undefined'
+                  Identifier: '
+            /*typeParameters*/ undefined'
+                  BinaryExpression
+                    Identifier: '
+            parameters'
+                    QuestionQuestionToken
+                    ArrayLiteralExpression
+                  Identifier: '
+            /*type*/ undefined'
+                  Identifier: '
+            body'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'generatorFunc'
+                      Identifier: 'emitNode'
+                    BarBarToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'generatorFunc'
+                          Identifier: 'emitNode'
+                        EqualsToken
+                        AsExpression
+                          ObjectLiteralExpression
+                          TypeReference
+                            Identifier: ' EmitNode'
+                Identifier: 'flags'
+              BarEqualsToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' EmitFlags'
+                  Identifier: 'AsyncFunctionBody'
+                BarToken
+                PropertyAccessExpression
+                  Identifier: ' EmitFlags'
+                  Identifier: 'ReuseTempVariableScope'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                ConditionalExpression
+                  Identifier: '
+                hasLexicalThis'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createThis'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createVoidZero'
+                BinaryExpression
+                  Identifier: '
+                argumentsExpression'
+                  QuestionQuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createVoidZero'
+                ConditionalExpression
+                  Identifier: '
+                promiseConstructor'
+                  QuestionToken
+                  CallExpression
+                    Identifier: ' createExpressionFromEntityName'
+                    Identifier: 'factory'
+                    Identifier: ' promiseConstructor'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createVoidZero'
+                Identifier: '
+                generatorFunc'
+      FunctionDeclaration
+        Identifier: ' createExtendsHelper'
+        Parameter
+          Identifier: 'name'
+          TypeReference
+            Identifier: ' Identifier'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'extendsHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'name'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createUniqueName'
+                  StringLiteral
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' GeneratedIdentifierFlags'
+                      Identifier: 'Optimistic'
+                    BarToken
+                    PropertyAccessExpression
+                      Identifier: ' GeneratedIdentifierFlags'
+                      Identifier: 'FileLevel'
+      FunctionDeclaration
+        Identifier: ' createTemplateObjectHelper'
+        Parameter
+          Identifier: 'cooked'
+          TypeReference
+            Identifier: ' ArrayLiteralExpression'
+        Parameter
+          Identifier: ' raw'
+          TypeReference
+            Identifier: ' ArrayLiteralExpression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'templateObjectHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'cooked'
+                Identifier: ' raw'
+      FunctionDeclaration
+        Identifier: ' createSpreadArrayHelper'
+        Parameter
+          Identifier: 'to'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' from'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' packFrom'
+          BooleanKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'spreadArrayHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'to'
+                Identifier: ' from'
+                ConditionalExpression
+                  Identifier: ' packFrom'
+                  QuestionToken
+                  CallExpression
+                    Identifier: ' immutableTrue'
+                  ColonToken
+                  CallExpression
+                    Identifier: ' immutableFalse'
+      FunctionDeclaration
+        Identifier: ' createPropKeyHelper'
+        Parameter
+          Identifier: 'expr'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'propKeyHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'expr'
+      FunctionDeclaration
+        Identifier: ' createSetFunctionNameHelper'
+        Parameter
+          Identifier: 'f'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' name'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' prefix'
+          QuestionToken
+          StringKeyword
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'setFunctionNameHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ConditionalExpression
+                Identifier: '
+            prefix'
+                QuestionToken
+                ArrayLiteralExpression
+                  Identifier: 'f'
+                  Identifier: ' name'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'factory'
+                      Identifier: 'createStringLiteral'
+                    Identifier: 'prefix'
+                ColonToken
+                ArrayLiteralExpression
+                  Identifier: 'f'
+                  Identifier: ' name'
+      FunctionDeclaration
+        Identifier: ' createValuesHelper'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'valuesHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'expression'
+      FunctionDeclaration
+        Identifier: ' createReadHelper'
+        Parameter
+          Identifier: 'iteratorRecord'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' count'
+          UnionType
+            NumberKeyword
+            UndefinedKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'readHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ConditionalExpression
+                BinaryExpression
+                  Identifier: '
+            count'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                QuestionToken
+                ArrayLiteralExpression
+                  Identifier: 'iteratorRecord'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createNumericLiteral'
+                    BinaryExpression
+                      Identifier: 'count'
+                      PlusToken
+                      StringLiteral
+                ColonToken
+                ArrayLiteralExpression
+                  Identifier: 'iteratorRecord'
+      FunctionDeclaration
+        Identifier: ' createGeneratorHelper'
+        Parameter
+          Identifier: 'body'
+          TypeReference
+            Identifier: ' FunctionExpression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'generatorHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'factory'
+                    Identifier: 'createThis'
+                Identifier: ' body'
+      FunctionDeclaration
+        Identifier: ' createImportStarHelper'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'importStarHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'expression'
+      FunctionDeclaration
+        Identifier: ' createImportStarCallbackHelper'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'importStarHelper'
+          ReturnStatement
+            CallExpression
+              Identifier: ' getUnscopedHelperName'
+              StringLiteral
+      FunctionDeclaration
+        Identifier: ' createImportDefaultHelper'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'importDefaultHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'expression'
+      FunctionDeclaration
+        Identifier: ' createExportStarHelper'
+        Parameter
+          Identifier: 'moduleExpression'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' exportsExpression'
+          TypeReference
+            Identifier: ' Expression'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' factory'
+              Identifier: 'createIdentifier'
+            StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'exportStarHelper'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'createBindingHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'moduleExpression'
+                Identifier: ' exportsExpression'
+      FunctionDeclaration
+        Identifier: ' createClassPrivateFieldGetHelper'
+        Parameter
+          Identifier: 'receiver'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' state'
+          TypeReference
+            Identifier: ' Identifier'
+        Parameter
+          Identifier: ' kind'
+          TypeReference
+            Identifier: ' PrivateIdentifierKind'
+        Parameter
+          Identifier: ' f'
+          UnionType
+            TypeReference
+              Identifier: ' Identifier'
+            UndefinedKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'classPrivateFieldGetHelper'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' args'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'f'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            args'
+                  EqualsToken
+                  ArrayLiteralExpression
+                    Identifier: 'receiver'
+                    Identifier: ' state'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createStringLiteral'
+                      Identifier: 'kind'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            args'
+                  EqualsToken
+                  ArrayLiteralExpression
+                    Identifier: 'receiver'
+                    Identifier: ' state'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createStringLiteral'
+                      Identifier: 'kind'
+                    Identifier: ' f'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: 'getUnscopedHelperName'
+                StringLiteral
+              Identifier: ' /*typeArguments*/ undefined'
+              Identifier: ' args'
+      FunctionDeclaration
+        Identifier: ' createClassPrivateFieldSetHelper'
+        Parameter
+          Identifier: 'receiver'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' state'
+          TypeReference
+            Identifier: ' Identifier'
+        Parameter
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' kind'
+          TypeReference
+            Identifier: ' PrivateIdentifierKind'
+        Parameter
+          Identifier: ' f'
+          UnionType
+            TypeReference
+              Identifier: ' Identifier'
+            UndefinedKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'classPrivateFieldSetHelper'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' args'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'f'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            args'
+                  EqualsToken
+                  ArrayLiteralExpression
+                    Identifier: 'receiver'
+                    Identifier: ' state'
+                    Identifier: ' value'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createStringLiteral'
+                      Identifier: 'kind'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            args'
+                  EqualsToken
+                  ArrayLiteralExpression
+                    Identifier: 'receiver'
+                    Identifier: ' state'
+                    Identifier: ' value'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createStringLiteral'
+                      Identifier: 'kind'
+                    Identifier: ' f'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: 'getUnscopedHelperName'
+                StringLiteral
+              Identifier: ' /*typeArguments*/ undefined'
+              Identifier: ' args'
+      FunctionDeclaration
+        Identifier: ' createClassPrivateFieldInHelper'
+        Parameter
+          Identifier: 'state'
+          TypeReference
+            Identifier: ' Identifier'
+        Parameter
+          Identifier: ' receiver'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'classPrivateFieldInHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: 'getUnscopedHelperName'
+                StringLiteral
+              Identifier: ' /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'state'
+                Identifier: ' receiver'
+      FunctionDeclaration
+        Identifier: ' createAddDisposableResourceHelper'
+        Parameter
+          Identifier: 'envBinding'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' async'
+          BooleanKeyword
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'addDisposableResourceHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: '
+            getUnscopedHelperName'
+                StringLiteral
+              Identifier: '
+            /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'envBinding'
+                Identifier: ' value'
+                ConditionalExpression
+                  Identifier: ' async'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createTrue'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createFalse'
+      FunctionDeclaration
+        Identifier: ' createDisposeResourcesHelper'
+        Parameter
+          Identifier: 'envBinding'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'requestEmitHelper'
+              Identifier: 'disposeResourcesHelper'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCallExpression'
+              CallExpression
+                Identifier: 'getUnscopedHelperName'
+                StringLiteral
+              Identifier: ' /*typeArguments*/ undefined'
+              ArrayLiteralExpression
+                Identifier: 'envBinding'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' compareEmitHelpers'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' EmitHelper'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' EmitHelper'
+    TypeReference
+      Identifier: ' Comparison'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          Identifier: ' y'
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' Comparison'
+            Identifier: 'EqualTo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'priority'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' y'
+            Identifier: 'priority'
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' Comparison'
+            Identifier: 'EqualTo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'priority'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' Comparison'
+            Identifier: 'GreaterThan'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'y'
+            Identifier: 'priority'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' Comparison'
+            Identifier: 'LessThan'
+      ReturnStatement
+        CallExpression
+          Identifier: ' compareValues'
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'priority'
+          PropertyAccessExpression
+            Identifier: ' y'
+            Identifier: 'priority'
+  FunctionDeclaration
+    Identifier: ' helperString'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' TemplateStringsArray'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        StringKeyword
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'uniqueName'
+            TypeReference
+              Identifier: ' EmitHelperUniqueNameCallback'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' result'
+                  StringLiteral
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' args'
+                  Identifier: 'length'
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            result'
+                    PlusEqualsToken
+                    ElementAccessExpression
+                      Identifier: ' input'
+                      Identifier: 'i'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            result'
+                    PlusEqualsToken
+                    CallExpression
+                      Identifier: ' uniqueName'
+                      ElementAccessExpression
+                        Identifier: 'args'
+                        Identifier: 'i'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        result'
+                PlusEqualsToken
+                ElementAccessExpression
+                  Identifier: ' input'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'input'
+                      Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+            ReturnStatement
+              Identifier: ' result'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorateHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' metadataHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' paramHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' esDecorateHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' runInitializersHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' awaitHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' asyncGeneratorHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    dependencies'
+            ArrayLiteralExpression
+              Identifier: 'awaitHelper'
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' asyncDelegator'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    dependencies'
+            ArrayLiteralExpression
+              Identifier: 'awaitHelper'
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' asyncValues'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' restHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' awaiterHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' extendsHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' templateObjectHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' readHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spreadArrayHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' propKeyHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' setFunctionNameHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' valuesHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' generatorHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' createBindingHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' setModuleDefaultHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' importStarHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    dependencies'
+            ArrayLiteralExpression
+              Identifier: 'createBindingHelper'
+              Identifier: ' setModuleDefaultHelper'
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' importDefaultHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exportStarHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    dependencies'
+            ArrayLiteralExpression
+              Identifier: 'createBindingHelper'
+          PropertyAssignment
+            Identifier: '
+    priority'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classPrivateFieldGetHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classPrivateFieldSetHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classPrivateFieldInHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' addDisposableResourceHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' disposeResourcesHelper'
+        TypeReference
+          Identifier: ' UnscopedEmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    importName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            NoSubstitutionTemplateLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' asyncSuperHelper'
+        TypeReference
+          Identifier: ' EmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            TaggedTemplateExpression
+              Identifier: ' helperString'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  StringLiteral
+                  TemplateTail
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' advancedAsyncSuperHelper'
+        TypeReference
+          Identifier: ' EmitHelper'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    scoped'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: '
+    text'
+            TaggedTemplateExpression
+              Identifier: ' helperString'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  StringLiteral
+                  TemplateTail
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isCallToHelper'
+    Parameter
+      Identifier: 'firstSegment'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' helperName'
+      TypeReference
+        Identifier: ' __String'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              CallExpression
+                Identifier: ' isCallExpression'
+                Identifier: 'firstSegment'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isIdentifier'
+                PropertyAccessExpression
+                  Identifier: 'firstSegment'
+                  Identifier: 'expression'
+            AmpersandAmpersandToken
+            BinaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'getEmitFlags'
+                    PropertyAccessExpression
+                      Identifier: 'firstSegment'
+                      Identifier: 'expression'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' EmitFlags'
+                    Identifier: 'HelperName'
+              ExclamationEqualsEqualsToken
+              NumericLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' firstSegment'
+                Identifier: 'expression'
+              Identifier: 'escapedText'
+            EqualsEqualsEqualsToken
+            Identifier: ' helperName'

@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyClass'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' Count'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' SetCount'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block

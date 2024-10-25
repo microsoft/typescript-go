@@ -1,0 +1,67 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Tab'
+    TupleType
+      StringKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ReactNode'
+  InterfaceDeclaration
+    Identifier: ' Props'
+    PropertySignature
+      Identifier: '
+    children'
+      ArrayType
+        TypeReference
+          Identifier: ' Tab'
+  FunctionDeclaration
+    Identifier: ' TabLayout'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' Props'
+    Block
+      ReturnStatement
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' App'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeLiteral
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'TabLayout'
+              JsxAttributes
+            JsxText
+            JsxExpression
+              ArrayLiteralExpression
+                ArrayLiteralExpression
+                  StringLiteral
+                  JsxSelfClosingElement
+                    Identifier: 'div'
+                    JsxAttributes
+                ArrayLiteralExpression
+                  StringLiteral
+                  JsxSelfClosingElement
+                    Identifier: 'div'
+                    JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'TabLayout'

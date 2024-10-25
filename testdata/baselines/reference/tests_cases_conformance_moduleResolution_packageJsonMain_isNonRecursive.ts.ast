@@ -1,0 +1,25 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @filename: /node_modules/foo/oof/ofo.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      NumericLiteral
+  ImportEqualsDeclaration
+    Identifier: ' foo'
+    ExternalModuleReference
+      StringLiteral

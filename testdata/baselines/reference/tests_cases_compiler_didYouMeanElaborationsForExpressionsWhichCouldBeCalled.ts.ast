@@ -1,0 +1,94 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Bar'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      ExclamationToken
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getNum'
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'arg'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' Bar'
+        PropertySignature
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' Date'
+    Parameter
+      Identifier: ' item'
+      NumberKeyword
+    Parameter
+      Identifier: ' items'
+      QuestionToken
+      TupleType
+        NumberKeyword
+        NumberKeyword
+        NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    x'
+          Identifier: ' Bar'
+        PropertyAssignment
+          Identifier: '
+    y'
+          Identifier: ' Date'
+      CallExpression
+        Identifier: ' getNum'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    x'
+          NewExpression
+            Identifier: ' Bar'
+        PropertyAssignment
+          Identifier: '
+    y'
+          NewExpression
+            Identifier: ' Date'
+      Identifier: ' getNum'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    x'
+          NewExpression
+            Identifier: ' Bar'
+        PropertyAssignment
+          Identifier: '
+    y'
+          NewExpression
+            Identifier: ' Date'
+      CallExpression
+        Identifier: ' getNum'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        Identifier: '
+    getNum'

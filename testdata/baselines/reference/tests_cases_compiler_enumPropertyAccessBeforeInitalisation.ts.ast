@@ -1,0 +1,26 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+      Identifier: ' A'
+    EnumMember
+      Identifier: '
+    B'
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'B'
+    EnumMember
+      Identifier: '
+    C'
+      ElementAccessExpression
+        Identifier: ' E'
+        StringLiteral
+    EnumMember
+      Identifier: '
+    D'
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        Identifier: ' D'

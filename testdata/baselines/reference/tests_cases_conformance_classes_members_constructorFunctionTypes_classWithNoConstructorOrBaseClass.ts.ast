@@ -1,0 +1,53 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: 'U'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        NewExpression
+          Identifier: ' D'
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        Identifier: ' D'

@@ -1,0 +1,141 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BooleanKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        StringKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        VoidKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeQuery
+          Identifier: ' undefined'
+        NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      NullKeyword
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+E'
+        Identifier: 'A'
+      EqualsToken
+      NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+f'
+      EqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+C'
+      EqualsToken
+      NullKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: ' foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        TypeReference
+          Identifier: ' I'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+g'
+      EqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+I'
+      EqualsToken
+      NullKeyword
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+M'
+      EqualsToken
+      NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' f'
+            VoidKeyword
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' i'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+i'
+      EqualsToken
+      NullKeyword

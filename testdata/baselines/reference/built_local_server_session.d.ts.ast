@@ -1,0 +1,1087 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' BufferEncoding'
+        ImportSpecifier
+          Identifier: ' Diagnostic'
+        ImportSpecifier
+          Identifier: ' FileTextChanges'
+        ImportSpecifier
+          Identifier: ' HostCancellationToken'
+        ImportSpecifier
+          Identifier: ' LanguageServiceMode'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ITypingsInstaller'
+        ImportSpecifier
+          Identifier: ' Logger'
+        ImportSpecifier
+          Identifier: ' NormalizedPath'
+        ImportSpecifier
+          Identifier: ' ProjectService'
+        ImportSpecifier
+          Identifier: ' ProjectServiceEventHandler'
+        ImportSpecifier
+          Identifier: ' ServerHost'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' protocol'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ServerCancellationToken'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' HostCancellationToken'
+    MethodSignature
+      Identifier: '
+    setRequest'
+      Parameter
+        Identifier: 'requestId'
+        NumberKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    resetRequest'
+      Parameter
+        Identifier: 'requestId'
+        NumberKeyword
+      VoidKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullCancellationToken'
+        TypeReference
+          Identifier: ' ServerCancellationToken'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' formatDiagnosticToProtocol'
+    Parameter
+      Identifier: 'diag'
+      TypeReference
+        Identifier: ' Diagnostic'
+    Parameter
+      Identifier: ' includeFileName'
+      LiteralType
+        TrueKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' protocol'
+        Identifier: 'DiagnosticWithFileName'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' formatDiagnosticToProtocol'
+    Parameter
+      Identifier: 'diag'
+      TypeReference
+        Identifier: ' Diagnostic'
+    Parameter
+      Identifier: ' includeFileName'
+      LiteralType
+        FalseKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' protocol'
+        Identifier: 'Diagnostic'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' CommandNames'
+    TypeReference
+      QualifiedName
+        Identifier: ' protocol'
+        Identifier: 'CommandTypes'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' CommandNames'
+        AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' formatMessage'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Message'
+    Parameter
+      Identifier: 'msg'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' logger'
+      TypeReference
+        Identifier: ' Logger'
+    Parameter
+      Identifier: ' byteLength'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        Parameter
+          Identifier: ' encoding'
+          TypeReference
+            Identifier: ' BufferEncoding'
+        NumberKeyword
+    Parameter
+      Identifier: ' newLine'
+      StringKeyword
+    StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PerformanceData'
+    IntersectionType
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          QualifiedName
+            Identifier: 'protocol'
+            Identifier: 'PerformanceData'
+        LiteralType
+          StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    diagnosticsDuration'
+          QuestionToken
+          TypeReference
+            Identifier: ' Map'
+            TypeReference
+              Identifier: 'NormalizedPath'
+            TypeReference
+              QualifiedName
+                Identifier: ' protocol'
+                Identifier: 'DiagnosticPerformanceData'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Event'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+        ObjectKeyword
+      Parameter
+        Identifier: 'body'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' eventName'
+        StringKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' EventSender'
+    PropertySignature
+      Identifier: '
+    event'
+      TypeReference
+        Identifier: ' Event'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' toEvent'
+    Parameter
+      Identifier: 'eventName'
+      StringKeyword
+    Parameter
+      Identifier: ' body'
+      ObjectKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' protocol'
+        Identifier: 'Event'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SessionOptions'
+    PropertySignature
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' ServerHost'
+    PropertySignature
+      Identifier: '
+    cancellationToken'
+      TypeReference
+        Identifier: ' ServerCancellationToken'
+    PropertySignature
+      Identifier: '
+    useSingleInferredProject'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    useInferredProjectPerProjectRoot'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    typingsInstaller'
+      QuestionToken
+      TypeReference
+        Identifier: ' ITypingsInstaller'
+    PropertySignature
+      Identifier: '
+    byteLength'
+      FunctionType
+        Parameter
+          Identifier: 'buf'
+          StringKeyword
+        Parameter
+          Identifier: ' encoding'
+          QuestionToken
+          TypeReference
+            Identifier: ' BufferEncoding'
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    hrtime'
+      FunctionType
+        Parameter
+          Identifier: 'start'
+          QuestionToken
+          TupleType
+            NumberKeyword
+            NumberKeyword
+        TupleType
+          NumberKeyword
+          NumberKeyword
+    PropertySignature
+      Identifier: '
+    logger'
+      TypeReference
+        Identifier: ' Logger'
+    PropertySignature
+      Identifier: '
+    /**
+     * If falsy, all events are suppressed.
+     */
+    canUseEvents'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    canUseWatchEvents'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    eventHandler'
+      QuestionToken
+      TypeReference
+        Identifier: ' ProjectServiceEventHandler'
+    PropertySignature
+      Identifier: '
+    /** Has no effect if eventHandler is also specified. */
+    suppressDiagnosticEvents'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    serverMode'
+      QuestionToken
+      TypeReference
+        Identifier: ' LanguageServiceMode'
+    PropertySignature
+      Identifier: '
+    throttleWaitMilliseconds'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    noGetErrOnBackgroundUpdate'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    globalPlugins'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    pluginProbeLocations'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    allowLocalPluginLoads'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    typesMapLocation'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ incrementalVerifier'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'service'
+          TypeReference
+            Identifier: ' ProjectService'
+        VoidKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Session'
+    TypeParameter
+      Identifier: 'TMessage'
+      StringKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' EventSender'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' gcTimer'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' projectService'
+      TypeReference
+        Identifier: ' ProjectService'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' changeSeq'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' performanceData'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' currentRequestId'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' errorCheck'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ServerHost'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' cancellationToken'
+    PropertyDeclaration
+      ProtectedKeyword
+      ReadonlyKeyword
+      Identifier: ' typingsInstaller'
+      TypeReference
+        Identifier: ' ITypingsInstaller'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' byteLength'
+      FunctionType
+        Parameter
+          Identifier: 'buf'
+          StringKeyword
+        Parameter
+          Identifier: ' encoding'
+          QuestionToken
+          TypeReference
+            Identifier: ' BufferEncoding'
+        NumberKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' hrtime'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' logger'
+      TypeReference
+        Identifier: ' Logger'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' canUseEvents'
+      BooleanKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' suppressDiagnosticEvents'
+      QuestionToken
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' eventHandler'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' noGetErrOnBackgroundUpdate'
+      QuestionToken
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' regionDiagLineCountThreshold'
+      NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'opts'
+        TypeReference
+          Identifier: ' SessionOptions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' sendRequestCompletedEvent'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' addPerformanceData'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' addDiagnosticsPerformanceData'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' performanceEventHandler'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' defaultEventHandler'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' projectsUpdatedInBackgroundEvent'
+    MethodDeclaration
+      Identifier: '
+    logError'
+      Parameter
+        Identifier: 'err'
+        TypeReference
+          Identifier: ' Error'
+      Parameter
+        Identifier: ' cmd'
+        StringKeyword
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' logErrorWorker'
+    MethodDeclaration
+      Identifier: '
+    send'
+      Parameter
+        Identifier: 'msg'
+        TypeReference
+          QualifiedName
+            Identifier: ' protocol'
+            Identifier: 'Message'
+      VoidKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' writeMessage'
+      Parameter
+        Identifier: 'msg'
+        TypeReference
+          QualifiedName
+            Identifier: ' protocol'
+            Identifier: 'Message'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    event'
+      TypeParameter
+        Identifier: 'T'
+        ObjectKeyword
+      Parameter
+        Identifier: 'body'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' eventName'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    doOutput'
+      Parameter
+        Identifier: 'info'
+        UnionType
+          TypeLiteral
+          UndefinedKeyword
+      Parameter
+        Identifier: ' cmdName'
+        StringKeyword
+      Parameter
+        Identifier: ' reqSeq'
+        NumberKeyword
+      Parameter
+        Identifier: ' success'
+        BooleanKeyword
+      Parameter
+        Identifier: ' performanceData'
+        UnionType
+          TypeReference
+            Identifier: ' PerformanceData'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' message'
+        QuestionToken
+        StringKeyword
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' semanticCheck'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' syntacticCheck'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' suggestionCheck'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' regionSemanticCheck'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' shouldDoRegionCheck'
+      Parameter
+        Identifier: 'file'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      BooleanKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' sendDiagnosticsEvent'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' updateErrorCheck'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' cleanProjects'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' cleanup'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getEncodedSyntacticClassifications'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getEncodedSemanticClassifications'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getProject'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getConfigFileAndProject'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getConfigFileDiagnostics'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' convertToDiagnosticsWithLinePositionFromDiagnosticFile'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getCompilerOptionsDiagnostics'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' convertToDiagnosticsWithLinePosition'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getDiagnosticsWorker'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getDefinition'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapDefinitionInfoLocations'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getDefinitionAndBoundSpan'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' findSourceDefinition'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getEmitOutput'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapJSDocTagInfo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapDisplayParts'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapSignatureHelpItems'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapDefinitionInfo'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' mapToOriginalLocation'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toFileSpan'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toFileSpanWithContext'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getTypeDefinition'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapImplementationLocations'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getImplementation'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getSyntacticDiagnosticsSync'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getSemanticDiagnosticsSync'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getSuggestionDiagnosticsSync'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getJsxClosingTag'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getLinkedEditingRange'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getDocumentHighlights'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' provideInlayHints'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapCode'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getCopilotRelatedInfo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' setCompilerOptionsForInferredProjects'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getProjectInfo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getProjectInfoWorker'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getDefaultConfiguredProjectInfo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getRenameInfo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getProjects'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getDefaultProject'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getRenameLocations'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapRenameInfo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toSpanGroups'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getReferences'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFileReferences'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' openClientFile'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getPosition'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getPositionInFile'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFileAndProject'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFileAndLanguageServiceForSyntacticOperation'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFileAndProjectWorker'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getOutliningSpans'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getTodoComments'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getDocCommentTemplate'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getSpanOfEnclosingComment'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getIndentation'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getBreakpointStatement'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getNameOrDottedNameSpan'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' isValidBraceCompletion'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getQuickInfoWorker'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFormattingEditsForRange'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFormattingEditsForRangeFull'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFormattingEditsForDocumentFull'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFormattingEditsAfterKeystrokeFull'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFormattingEditsAfterKeystroke'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getCompletions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getCompletionEntryDetails'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getCompileOnSaveAffectedFileList'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' emitFile'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getSignatureHelpItems'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toPendingErrorCheck'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getDiagnostics'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' change'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' reload'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' saveToTmp'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' closeClientFile'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapLocationNavigationBarItems'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getNavigationBarItems'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toLocationNavigationTree'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getNavigationTree'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getNavigateToItems'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFullNavigateToItems'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getSupportedCodeFixes'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' isLocation'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' extractPositionOrRange'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getRange'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getApplicableRefactors'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getEditsForRefactor'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getMoveToRefactoringFileSuggestions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' preparePasteEdits'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getPasteEdits'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' organizeImports'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getEditsForFileRename'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getCodeFixes'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getCombinedCodeFix'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' applyCodeActionCommand'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getStartAndEndPosition'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapCodeAction'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapCodeFixAction'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapPasteEditsAction'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapTextChangesToCodeEdits'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapTextChangeToCodeEdit'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' convertTextChangeToCodeEdit'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getBraceMatching'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getDiagnosticsForProject'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' configurePlugin'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getSmartSelectionRange'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toggleLineComment'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toggleMultilineComment'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' commentSelection'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' uncommentSelection'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' mapSelectionRange'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getScriptInfoFromProjectService'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toProtocolCallHierarchyItem'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toProtocolCallHierarchyIncomingCall'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toProtocolCallHierarchyOutgoingCall'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' prepareCallHierarchy'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' provideCallHierarchyIncomingCalls'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' provideCallHierarchyOutgoingCalls'
+    MethodDeclaration
+      Identifier: '
+    getCanonicalFileName'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    exit'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' notRequired'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' requiredResponse'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' handlers'
+    MethodDeclaration
+      Identifier: '
+    addProtocolHandler'
+      Parameter
+        Identifier: 'command'
+        StringKeyword
+      Parameter
+        Identifier: ' handler'
+        FunctionType
+          Parameter
+            Identifier: 'request'
+            TypeReference
+              QualifiedName
+                Identifier: ' protocol'
+                Identifier: 'Request'
+          TypeReference
+            Identifier: ' HandlerResponse'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' setCurrentRequest'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' resetCurrentRequest'
+    MethodDeclaration
+      Identifier: '
+    executeWithRequestId'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'requestId'
+        NumberKeyword
+      Parameter
+        Identifier: ' f'
+        FunctionType
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    executeWithRequestId'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'requestId'
+        NumberKeyword
+      Parameter
+        Identifier: ' f'
+        FunctionType
+          TypeReference
+            Identifier: ' T'
+      Parameter
+        Identifier: ' perfomanceData'
+        UnionType
+          TypeReference
+            Identifier: ' PerformanceData'
+          UndefinedKeyword
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      Identifier: '
+    executeCommand'
+      Parameter
+        Identifier: 'request'
+        TypeReference
+          QualifiedName
+            Identifier: ' protocol'
+            Identifier: 'Request'
+      TypeReference
+        Identifier: ' HandlerResponse'
+    MethodDeclaration
+      Identifier: '
+    onMessage'
+      Parameter
+        Identifier: 'message'
+        TypeReference
+          Identifier: ' TMessage'
+      VoidKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' parseMessage'
+      Parameter
+        Identifier: 'message'
+        TypeReference
+          Identifier: ' TMessage'
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Request'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' toStringMessage'
+      Parameter
+        Identifier: 'message'
+        TypeReference
+          Identifier: ' TMessage'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getFormatOptions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getPreferences'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getHostFormatOptions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getHostPreferences'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' HandlerResponse'
+    PropertySignature
+      Identifier: '
+    response'
+      QuestionToken
+      TypeLiteral
+    PropertySignature
+      Identifier: '
+    responseRequired'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ performanceData'
+      QuestionToken
+      TypeReference
+        Identifier: ' PerformanceData'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getLocationInNewDocument'
+    Parameter
+      Identifier: 'oldText'
+      StringKeyword
+    Parameter
+      Identifier: ' renameFilename'
+      StringKeyword
+    Parameter
+      Identifier: ' renameLocation'
+      NumberKeyword
+    Parameter
+      Identifier: ' edits'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' FileTextChanges'
+    TypeReference
+      QualifiedName
+        Identifier: ' protocol'
+        Identifier: 'Location'

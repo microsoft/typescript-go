@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    Constructor
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' B'
+      Block
+        ReturnStatement
+          NumericLiteral

@@ -1,0 +1,67 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mySymbol'
+        CallExpression
+          Identifier: ' Symbol'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    CallSignature
+      VoidKeyword
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'mySymbol'
+      LiteralType
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' Foo'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'mySymbol'
+      EqualsToken
+      TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    CallSignature
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+  test'
+      LiteralType
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        AsExpression
+          StringLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        TypeReference
+          Identifier: ' Bar'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+bar'
+        Identifier: 't'
+      EqualsToken
+      TrueKeyword

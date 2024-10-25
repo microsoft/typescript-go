@@ -1,0 +1,9 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeReference
+          Identifier: ' X'
+          TypeReference
+            Identifier: 'T'

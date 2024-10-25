@@ -1,0 +1,198 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Q'
+        NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Q'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' try1'
+        TypeReference
+          QualifiedName
+            Identifier: ' Q'
+            Identifier: 'A'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Q2'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' Q'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' try2'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' Q2'
+              Identifier: 'Q'
+            Identifier: 'A'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Q3'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: 'A'
+            Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' try3'
+        TypeReference
+          QualifiedName
+            Identifier: ' Q3'
+            Identifier: 'B'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Q4'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' Q'
+            Identifier: ' default'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' try4'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' Q4'
+              Identifier: 'default'
+            Identifier: 'A'
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' NS1'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' NS2'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' NS2'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' NS1'
+  ExportDeclaration
+    NamedExports
+  TypeAliasDeclaration
+    Identifier: ' A'
+    StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' NS1'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' NS2'
+          ExportSpecifier
+            Identifier: ' A'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' NS2'
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' NS1'
+          ExportSpecifier
+            Identifier: ' B'
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' try1'
+        TypeReference
+          QualifiedName
+            Identifier: ' NS1'
+            Identifier: 'A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' try2'
+        TypeReference
+          QualifiedName
+            Identifier: ' NS2'
+            Identifier: 'B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' try3'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' NS1'
+              Identifier: 'NS2'
+            Identifier: 'B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' try4'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' NS2'
+              Identifier: 'NS1'
+            Identifier: 'A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' try5'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              QualifiedName
+                Identifier: ' NS1'
+                Identifier: 'NS2'
+              Identifier: 'NS1'
+            Identifier: 'A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' try6'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              QualifiedName
+                Identifier: ' NS2'
+                Identifier: 'NS1'
+              Identifier: 'NS2'
+            Identifier: 'B'

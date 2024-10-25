@@ -1,0 +1,53 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elemA'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elemB'
+        BinaryExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'b'
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                Identifier: ''
+          LessThanToken
+          RegularExpressionLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elemC'
+        BinaryExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'c'
+            ObjectLiteralExpression
+              PropertyAssignment
+                NumericLiteral
+                Identifier: ''
+          LessThanToken
+          RegularExpressionLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elemD'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elemE'
+        BinaryExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'e'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'true'
+                Identifier: ''
+          LessThanToken
+          RegularExpressionLiteral

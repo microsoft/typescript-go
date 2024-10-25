@@ -1,0 +1,39 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' chalk'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    grey'
+            ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'chalk'
+      EqualsToken
+      Identifier: ' chalk'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: '
+    chalk'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' grey'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    Identifier: '
+grey'
+  ExpressionStatement
+    Identifier: '
+chalk'

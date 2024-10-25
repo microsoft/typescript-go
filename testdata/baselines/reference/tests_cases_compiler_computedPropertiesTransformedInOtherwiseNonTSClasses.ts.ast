@@ -1,0 +1,19 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' NS'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              Identifier: ' Symbol'
+      ClassDeclaration
+        Identifier: ' NotTransformed'
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'NS'
+              Identifier: 'x'
+          NumberKeyword

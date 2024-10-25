@@ -1,0 +1,15 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' E1'
+    EnumMember
+      Identifier: '
+	A'
+    EnumMember
+      Identifier: 'B'
+    EnumMember
+      Identifier: 'C'
+  ClassDeclaration
+    Identifier: ' C1'
+  ExportAssignment
+    Identifier: ' C1'

@@ -1,0 +1,144 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    ConstructSignature
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    apply'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      Parameter
+        Identifier: ' b'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    call'
+      Parameter
+        Identifier: 'thisArg'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'argArray'
+        ArrayType
+          NumberKeyword
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            AnyKeyword
+          Parameter
+            Identifier: ' b'
+            QuestionToken
+            AnyKeyword
+          VoidKeyword
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'apply'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b'
+        FunctionType
+          Parameter
+            Identifier: 'thisArg'
+            NumberKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'argArray'
+            ArrayType
+              NumberKeyword
+          VoidKeyword
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'call'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1c'
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'arguments'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          ConstructSignature
+            NumberKeyword
+          MethodSignature
+            Identifier: '
+    apply'
+            Parameter
+              Identifier: 'a'
+              AnyKeyword
+            Parameter
+              Identifier: ' b'
+              QuestionToken
+              AnyKeyword
+            VoidKeyword
+          MethodSignature
+            Identifier: '
+    call'
+            Parameter
+              Identifier: 'thisArg'
+              NumberKeyword
+            Parameter
+              DotDotDotToken
+              Identifier: 'argArray'
+              ArrayType
+                NumberKeyword
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            AnyKeyword
+          Parameter
+            Identifier: ' b'
+            QuestionToken
+            AnyKeyword
+          VoidKeyword
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'apply'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b'
+        FunctionType
+          Parameter
+            Identifier: 'thisArg'
+            NumberKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'argArray'
+            ArrayType
+              NumberKeyword
+          VoidKeyword
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'call'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2c'
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'arguments'

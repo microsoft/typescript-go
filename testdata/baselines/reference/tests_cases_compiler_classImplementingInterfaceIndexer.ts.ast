@@ -1,0 +1,22 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' prop'
+  ClassDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' prop'

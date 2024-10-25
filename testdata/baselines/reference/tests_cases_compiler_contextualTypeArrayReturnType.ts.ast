@@ -1,0 +1,50 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IBookStyle'
+    PropertySignature
+      Identifier: '
+    initialLeftPageTransforms'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'width'
+          NumberKeyword
+        ArrayType
+          TypeReference
+            Identifier: ' NamedTransform'
+  InterfaceDeclaration
+    Identifier: ' NamedTransform'
+    IndexSignature
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      TypeReference
+        Identifier: ' Transform3D'
+  InterfaceDeclaration
+    Identifier: ' Transform3D'
+    PropertySignature
+      Identifier: '
+    cachedCss'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' style'
+        TypeReference
+          Identifier: ' IBookStyle'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    initialLeftPageTransforms'
+            ArrowFunction
+              Parameter
+                Identifier: 'width'
+                NumberKeyword
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        StringLiteral
+                        NullKeyword

@@ -1,0 +1,672 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' inferReturnType1'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' inferReturnType2'
+    Block
+      ExpressionStatement
+        YieldExpression
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' inferReturnType3'
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' inferReturnType4'
+    Block
+      ExpressionStatement
+        YieldExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'resolve'
+            NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' inferReturnType5'
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+      ExpressionStatement
+        YieldExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'resolve'
+            NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' inferReturnType6'
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' inferReturnType7'
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Promise'
+                Identifier: 'resolve'
+              NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' inferReturnType8'
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          CallExpression
+            ParenthesizedExpression
+              FunctionExpression
+                AsyncKeyword
+                AsteriskToken
+                Block
+                  ExpressionStatement
+                    YieldExpression
+                      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability1'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterableIterator'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability2'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterableIterator'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'resolve'
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability3'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterableIterator'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                AsteriskToken
+                ArrayLiteralExpression
+                  NumericLiteral
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability4'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterableIterator'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                AsteriskToken
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'Promise'
+                      Identifier: 'resolve'
+                    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability5'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterableIterator'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                AsteriskToken
+                CallExpression
+                  ParenthesizedExpression
+                    FunctionExpression
+                      AsyncKeyword
+                      AsteriskToken
+                      Block
+                        ExpressionStatement
+                          YieldExpression
+                            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability6'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterable'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability7'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterable'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'resolve'
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability8'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterable'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                AsteriskToken
+                ArrayLiteralExpression
+                  NumericLiteral
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability9'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterable'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                AsteriskToken
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'Promise'
+                      Identifier: 'resolve'
+                    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability10'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterable'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                AsteriskToken
+                CallExpression
+                  ParenthesizedExpression
+                    FunctionExpression
+                      AsyncKeyword
+                      AsteriskToken
+                      Block
+                        ExpressionStatement
+                          YieldExpression
+                            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability11'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterator'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability12'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterator'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'resolve'
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability13'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterator'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                AsteriskToken
+                ArrayLiteralExpression
+                  NumericLiteral
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability14'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterator'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                AsteriskToken
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'Promise'
+                      Identifier: 'resolve'
+                    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' assignability15'
+        FunctionType
+          TypeReference
+            Identifier: ' AsyncIterator'
+            NumberKeyword
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                AsteriskToken
+                CallExpression
+                  ParenthesizedExpression
+                    FunctionExpression
+                      AsyncKeyword
+                      AsteriskToken
+                      Block
+                        ExpressionStatement
+                          YieldExpression
+                            NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType1'
+    TypeReference
+      Identifier: ' AsyncIterableIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType2'
+    TypeReference
+      Identifier: ' AsyncIterableIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'resolve'
+            NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType3'
+    TypeReference
+      Identifier: ' AsyncIterableIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType4'
+    TypeReference
+      Identifier: ' AsyncIterableIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Promise'
+                Identifier: 'resolve'
+              NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType5'
+    TypeReference
+      Identifier: ' AsyncIterableIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          CallExpression
+            ParenthesizedExpression
+              FunctionExpression
+                AsyncKeyword
+                AsteriskToken
+                Block
+                  ExpressionStatement
+                    YieldExpression
+                      NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType6'
+    TypeReference
+      Identifier: ' AsyncIterable'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType7'
+    TypeReference
+      Identifier: ' AsyncIterable'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'resolve'
+            NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType8'
+    TypeReference
+      Identifier: ' AsyncIterable'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType9'
+    TypeReference
+      Identifier: ' AsyncIterable'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Promise'
+                Identifier: 'resolve'
+              NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType10'
+    TypeReference
+      Identifier: ' AsyncIterable'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          CallExpression
+            ParenthesizedExpression
+              FunctionExpression
+                AsyncKeyword
+                AsteriskToken
+                Block
+                  ExpressionStatement
+                    YieldExpression
+                      NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType11'
+    TypeReference
+      Identifier: ' AsyncIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType12'
+    TypeReference
+      Identifier: ' AsyncIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'resolve'
+            NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType13'
+    TypeReference
+      Identifier: ' AsyncIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType14'
+    TypeReference
+      Identifier: ' AsyncIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Promise'
+                Identifier: 'resolve'
+              NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType15'
+    TypeReference
+      Identifier: ' AsyncIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          CallExpression
+            ParenthesizedExpression
+              FunctionExpression
+                AsyncKeyword
+                AsteriskToken
+                Block
+                  ExpressionStatement
+                    YieldExpression
+                      NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' explicitReturnType16'
+    TypeLiteral
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' awaitedType1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AwaitExpression
+              NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' awaitedType2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+                NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' nextType1'
+    TypeLiteral
+      MethodSignature
+        Identifier: ' next'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          UnionType
+            TupleType
+            TupleType
+              UnionType
+                NumberKeyword
+                TypeReference
+                  Identifier: ' PromiseLike'
+                  NumberKeyword
+        AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            YieldExpression

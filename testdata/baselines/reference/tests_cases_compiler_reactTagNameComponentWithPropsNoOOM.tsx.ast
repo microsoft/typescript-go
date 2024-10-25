@@ -1,0 +1,51 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Tag'
+        TypeOperator
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'ReactHTML'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classes'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rest'
+        TypeLiteral
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' children'
+        ArrayType
+          AnyKeyword
+        ArrayLiteralExpression
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'Tag'
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' className'
+            JsxExpression
+              Identifier: 'classes'
+          JsxAttribute
+            Identifier: 'rest'
+      JsxText
+      JsxExpression
+        Identifier: 'children'
+      JsxText
+      JsxClosingElement
+        Identifier: 'Tag'

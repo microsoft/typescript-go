@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Dummy'
+    Constructor
+      Parameter
+        Identifier: 'person'
+        StringKeyword
+      Parameter
+        Identifier: ' person2'
+        StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' unused'
+              NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        person2'
+            EqualsToken
+            StringLiteral

@@ -1,0 +1,571 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  InterfaceDeclaration
+    Identifier: ' Serializer'
+    SetAccessor
+      Identifier: ' value'
+      Parameter
+        Identifier: 'v'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+    GetAccessor
+      Identifier: ' value'
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' box'
+        TypeReference
+          Identifier: ' Serializer'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ElementAccessExpression
+          Identifier: ' box'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+box'
+        StringLiteral
+      EqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+box'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+box'
+        StringLiteral
+      EqualsToken
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Element'
+    GetAccessor
+      Identifier: ' style'
+      TypeReference
+        Identifier: ' CSSStyleDeclaration'
+    SetAccessor
+      Identifier: ' style'
+      Parameter
+        Identifier: 'cssText'
+        StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' element'
+        TypeReference
+          Identifier: ' Element'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+element'
+        StringLiteral
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+element'
+        StringLiteral
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' element'
+        Identifier: 'style'
+  ClassDeclaration
+    Identifier: ' One'
+    GetAccessor
+      Identifier: ' prop1'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop2'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      Block
+    PropertyDeclaration
+      Identifier: '
+
+  prop3'
+      NumberKeyword
+      NumericLiteral
+    GetAccessor
+      Identifier: ' prop4'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop4'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Two'
+    GetAccessor
+      Identifier: ' prop1'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop2'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop3'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop3'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          BooleanKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop4'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop4'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          BooleanKeyword
+      Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u1'
+        UnionType
+          TypeReference
+            Identifier: ' One'
+          TypeReference
+            Identifier: ' Two'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+u1'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+u1'
+        StringLiteral
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+u1'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+u1'
+        StringLiteral
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+u1'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+u1'
+        StringLiteral
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+u1'
+        StringLiteral
+      EqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+u1'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+u1'
+        StringLiteral
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+u1'
+        StringLiteral
+      EqualsToken
+      TrueKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        IntersectionType
+          TypeReference
+            Identifier: ' One'
+          TypeReference
+            Identifier: ' Two'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' iv1'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+i'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+i'
+        StringLiteral
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' iv2'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+i'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+i'
+        StringLiteral
+      EqualsToken
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' Three'
+    GetAccessor
+      Identifier: ' prop1'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      Block
+    PropertyDeclaration
+      Identifier: '
+
+  prop2'
+      NumberKeyword
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' Four'
+    GetAccessor
+      Identifier: ' prop1'
+      LiteralType
+        StringLiteral
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          LiteralType
+            StringLiteral
+          NumberKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop2'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          LiteralType
+            NumericLiteral
+      Block
+  ClassDeclaration
+    Identifier: ' Five'
+    GetAccessor
+      Identifier: ' prop1'
+      LiteralType
+        StringLiteral
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          LiteralType
+            StringLiteral
+          BooleanKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop2'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+      Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        IntersectionType
+          TypeReference
+            Identifier: ' Three'
+          TypeReference
+            Identifier: ' Four'
+          TypeReference
+            Identifier: ' Five'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+i2'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+i2'
+        StringLiteral
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+i2'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+i2'
+        StringLiteral
+      EqualsToken
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' Six'
+    GetAccessor
+      Identifier: ' prop1'
+      UnionType
+        BooleanKeyword
+        NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          BooleanKeyword
+          StringKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop2'
+      UnionType
+        BigIntKeyword
+        NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 's'
+        UnionType
+          BooleanKeyword
+          LiteralType
+            NullKeyword
+      Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s1'
+        TypeReference
+          Identifier: ' Six'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k1'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sv1'
+        ElementAccessExpression
+          Identifier: ' s1'
+          Identifier: 'k1'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+s1'
+        Identifier: 'k1'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+s1'
+        Identifier: 'k1'
+      EqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+s1'
+        Identifier: 'k1'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+s1'
+        Identifier: 'k1'
+      EqualsToken
+      NullKeyword

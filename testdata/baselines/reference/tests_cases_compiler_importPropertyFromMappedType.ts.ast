@@ -1,0 +1,30 @@
+SourceFile
+  ExportAssignment
+    Identifier: ' createHttpError'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' createHttpError'
+        TypeReference
+          QualifiedName
+            Identifier: ' createHttpError'
+            Identifier: 'NamedConstructors'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' createHttpError'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' NamedConstructors'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            LiteralType
+              StringLiteral
+          UnknownKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' NotFound'
+    StringLiteral

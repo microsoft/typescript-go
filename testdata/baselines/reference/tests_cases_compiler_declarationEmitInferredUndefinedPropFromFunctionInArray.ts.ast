@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' foo'
+              NumericLiteral
+            MethodDeclaration
+              Identifier: ' m'
+              Block
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' bar'
+              NumericLiteral

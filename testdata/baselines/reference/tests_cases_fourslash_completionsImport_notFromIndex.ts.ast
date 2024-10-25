@@ -1,0 +1,108 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'marker'
+          BindingElement
+            Identifier: ' sourceDisplay'
+    ArrayLiteralExpression
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: '
+        marker'
+            PropertyAssignment
+              Identifier: '
+        includes'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            source'
+                  StringLiteral
+                ShorthandPropertyAssignment
+                  Identifier: '
+            sourceDisplay'
+                PropertyAssignment
+                  Identifier: '
+            text'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            kind'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            kindModifiers'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            hasAction'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'AutoImportSuggestions'
+            PropertyAssignment
+              Identifier: '
+        preferences'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' includeCompletionsForModuleExports'
+                  TrueKeyword
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'applyCodeActionFromCompletion'
+          Identifier: 'marker'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        source'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        description'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'sourceDisplay'
+                  TemplateTail
+            PropertyAssignment
+              Identifier: '
+        newFileContent'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'sourceDisplay'
+                  TemplateTail

@@ -1,0 +1,1193 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fx'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fx'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' n'
+      NumberKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fx'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      TupleType
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f0'
+            ExpressionWithTypeArguments
+              Identifier: ' fx'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f1'
+            ExpressionWithTypeArguments
+              Identifier: ' fx'
+              StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f2'
+            ExpressionWithTypeArguments
+              Identifier: ' fx'
+              StringKeyword
+              NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f3'
+            ExpressionWithTypeArguments
+              Identifier: ' fx'
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' T10'
+    TypeQuery
+      Identifier: ' fx'
+  TypeAliasDeclaration
+    Identifier: ' T11'
+    TypeQuery
+      Identifier: ' fx'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T12'
+    TypeQuery
+      Identifier: ' fx'
+      StringKeyword
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' T13'
+    TypeQuery
+      Identifier: ' fx'
+      StringKeyword
+      NumberKeyword
+      BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' A0'
+            ExpressionWithTypeArguments
+              Identifier: ' Array'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' A1'
+            ExpressionWithTypeArguments
+              Identifier: ' Array'
+              StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' A2'
+            ExpressionWithTypeArguments
+              Identifier: ' Array'
+              StringKeyword
+              NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' T20'
+    TypeQuery
+      Identifier: ' Array'
+  TypeAliasDeclaration
+    Identifier: ' T21'
+    TypeQuery
+      Identifier: ' Array'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T22'
+    TypeQuery
+      Identifier: ' Array'
+      StringKeyword
+      NumberKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' f'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' U'
+      ArrayType
+        TypeReference
+          Identifier: ' U'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            ExpressionWithTypeArguments
+              Identifier: ' C'
+              StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f1'
+            ExpressionWithTypeArguments
+              PropertyAccessExpression
+                Identifier: ' C'
+                Identifier: 'f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f10'
+    Parameter
+      Identifier: 'f'
+      TypeLiteral
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        CallSignature
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' b'
+            NumberKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f11'
+    Parameter
+      Identifier: 'f'
+      TypeLiteral
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        CallSignature
+          Parameter
+            Identifier: 'a'
+            StringKeyword
+          Parameter
+            Identifier: ' b'
+            NumberKeyword
+          ArrayType
+            StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f12'
+    Parameter
+      Identifier: 'f'
+      TypeLiteral
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: ' x'
+          StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f13'
+    Parameter
+      Identifier: 'f'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          StringKeyword
+        PropertySignature
+          Identifier: ' y'
+          StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f14'
+    Parameter
+      Identifier: 'f'
+      TypeLiteral
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' b'
+            NumberKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f15'
+    Parameter
+      Identifier: 'f'
+      TypeLiteral
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        CallSignature
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' b'
+            NumberKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f16'
+    Parameter
+      Identifier: 'f'
+      TypeLiteral
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        CallSignature
+          Parameter
+            Identifier: 'a'
+            StringKeyword
+          Parameter
+            Identifier: ' b'
+            NumberKeyword
+          ArrayType
+            StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f17'
+    Parameter
+      Identifier: 'f'
+      TypeLiteral
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        ConstructSignature
+          Parameter
+            Identifier: 'a'
+            StringKeyword
+          Parameter
+            Identifier: ' b'
+            NumberKeyword
+          ArrayType
+            StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f20'
+    Parameter
+      Identifier: 'f'
+      IntersectionType
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' U'
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              TypeReference
+                Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f21'
+    Parameter
+      Identifier: 'f'
+      IntersectionType
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              StringKeyword
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f22'
+    Parameter
+      Identifier: 'f'
+      IntersectionType
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f23'
+    Parameter
+      Identifier: 'f'
+      IntersectionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' y'
+            StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f24'
+    Parameter
+      Identifier: 'f'
+      IntersectionType
+        ParenthesizedType
+          ConstructorType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          ConstructorType
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' U'
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              TypeReference
+                Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f25'
+    Parameter
+      Identifier: 'f'
+      IntersectionType
+        ParenthesizedType
+          ConstructorType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' U'
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              TypeReference
+                Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f26'
+    Parameter
+      Identifier: 'f'
+      IntersectionType
+        ParenthesizedType
+          ConstructorType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              StringKeyword
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f27'
+    Parameter
+      Identifier: 'f'
+      IntersectionType
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          ConstructorType
+            Parameter
+              Identifier: 'a'
+              StringKeyword
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f30'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' U'
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              TypeReference
+                Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f31'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              StringKeyword
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f32'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f33'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' y'
+            StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f34'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          ConstructorType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          ConstructorType
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' U'
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              TypeReference
+                Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f35'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          ConstructorType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' U'
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              TypeReference
+                Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f36'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          ConstructorType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              StringKeyword
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f37'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        ParenthesizedType
+          ConstructorType
+            Parameter
+              Identifier: 'a'
+              StringKeyword
+            Parameter
+              Identifier: ' b'
+              NumberKeyword
+            ArrayType
+              StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' f38'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'A'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' A'
+            TypeReference
+              Identifier: ' A'
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'B'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' B'
+            ArrayType
+              TypeReference
+                Identifier: ' B'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+        ParenthesizedType
+          FunctionType
+            TypeParameter
+              Identifier: 'C'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' C'
+            ArrayType
+              ArrayType
+                TypeReference
+                  Identifier: ' C'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fs'
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              StringKeyword
+  FunctionDeclaration
+    Identifier: ' makeBox'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' value'
+  TypeAliasDeclaration
+    Identifier: ' BoxFunc'
+    TypeParameter
+      Identifier: 'T'
+    TypeQuery
+      Identifier: ' makeBox'
+      TypeReference
+        Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' StringBoxFunc'
+    TypeReference
+      Identifier: ' BoxFunc'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Box'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' ReturnType'
+      TypeQuery
+        Identifier: ' makeBox'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' StringBox'
+    TypeReference
+      Identifier: ' Box'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'U'
+    TypeReference
+      Identifier: ' InstanceType'
+      TypeQuery
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'U'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g1'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' T'
+          ConstructSignature
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'b'
+              TypeReference
+                Identifier: ' U'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' U'
+  TypeAliasDeclaration
+    Identifier: ' T30'
+    TypeParameter
+      Identifier: 'V'
+    TypeQuery
+      Identifier: ' g1'
+      TypeReference
+        Identifier: 'V'
+  TypeAliasDeclaration
+    Identifier: ' T31'
+    TypeParameter
+      Identifier: 'A'
+    TypeReference
+      Identifier: ' ReturnType'
+      TypeReference
+        Identifier: 'T30'
+        TypeReference
+          Identifier: 'A'
+  TypeAliasDeclaration
+    Identifier: ' T32'
+    TypeParameter
+      Identifier: 'B'
+    TypeReference
+      Identifier: ' InstanceType'
+      TypeReference
+        Identifier: 'T30'
+        TypeReference
+          Identifier: 'B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g2'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+              StringKeyword
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+              NumberKeyword
+            Parameter
+              Identifier: 'b'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T40'
+    TypeParameter
+      Identifier: 'U'
+      StringKeyword
+    TypeQuery
+      Identifier: ' g2'
+      TypeReference
+        Identifier: 'U'
+  TypeAliasDeclaration
+    Identifier: ' T41'
+    TypeParameter
+      Identifier: 'U'
+      NumberKeyword
+    TypeQuery
+      Identifier: ' g2'
+      TypeReference
+        Identifier: 'U'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g3'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+              StringKeyword
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+              NumberKeyword
+            TypeParameter
+              Identifier: ' Q'
+            Parameter
+              Identifier: 'b'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T50'
+    TypeParameter
+      Identifier: 'U'
+      StringKeyword
+    TypeQuery
+      Identifier: ' g3'
+      TypeReference
+        Identifier: 'U'
+  TypeAliasDeclaration
+    Identifier: ' T51'
+    TypeParameter
+      Identifier: 'U'
+      NumberKeyword
+    TypeQuery
+      Identifier: ' g3'
+      TypeReference
+        Identifier: 'U'
+      AnyKeyword

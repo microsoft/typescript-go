@@ -1,0 +1,160 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ranges'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' optionalReplacementSpan'
+          ElementAccessExpression
+            Identifier: ' ranges'
+            NumericLiteral

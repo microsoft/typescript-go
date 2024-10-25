@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' static'
+    GetAccessor
+      Identifier: ' Foo'
+      Block

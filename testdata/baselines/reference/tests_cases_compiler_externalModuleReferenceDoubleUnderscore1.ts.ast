@@ -1,0 +1,50 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' basics'
+        ExternalModuleReference
+          StringLiteral
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' TimeUnit'
+        QualifiedName
+          Identifier: ' basics'
+          Identifier: 'TimeUnit'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' TimeUnit'
+        EnumMember
+          Identifier: '
+        Second'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        Minute'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        Hour'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        Day'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        Week'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        Month'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        Year'
+          NumericLiteral

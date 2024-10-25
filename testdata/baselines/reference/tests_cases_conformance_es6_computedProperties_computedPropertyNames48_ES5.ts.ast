@@ -1,0 +1,61 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' extractIndexer'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'p'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+extractIndexer'
+      ObjectLiteralExpression
+        PropertyAssignment
+          ComputedPropertyName
+            Identifier: 'a'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // Should return string
+
+extractIndexer'
+      ObjectLiteralExpression
+        PropertyAssignment
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'E'
+              Identifier: 'x'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // Should return string
+
+extractIndexer'
+      ObjectLiteralExpression
+        PropertyAssignment
+          ComputedPropertyName
+            BinaryExpression
+              StringLiteral
+              BarBarToken
+              NumericLiteral
+          StringLiteral

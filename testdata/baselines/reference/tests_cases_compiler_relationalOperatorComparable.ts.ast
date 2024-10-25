@@ -1,0 +1,113 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'onethree'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    Parameter
+      Identifier: ' two'
+      LiteralType
+        NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a1'
+            BinaryExpression
+              Identifier: ' onethree'
+              LessThanToken
+              Identifier: ' two'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a2'
+            BinaryExpression
+              Identifier: ' onethree'
+              LessThanToken
+              TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a3'
+            BinaryExpression
+              Identifier: ' onethree'
+              LessThanEqualsToken
+              FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a4'
+            BinaryExpression
+              Identifier: ' onethree'
+              GreaterThanEqualsToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a5'
+            BinaryExpression
+              Identifier: ' onethree'
+              GreaterThanToken
+              Identifier: ' f'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a6'
+            BinaryExpression
+              TrueKeyword
+              LessThanToken
+              Identifier: ' onethree'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a7'
+            BinaryExpression
+              FalseKeyword
+              LessThanToken
+              Identifier: ' two'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a8'
+            BinaryExpression
+              StringLiteral
+              LessThanToken
+              Identifier: ' onethree'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a9'
+            BinaryExpression
+              Identifier: ' onethree'
+              LessThanToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a10'
+            BinaryExpression
+              NumericLiteral
+              LessThanToken
+              Identifier: ' two'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a11'
+            BinaryExpression
+              NumericLiteral
+              LessThanToken
+              NumericLiteral

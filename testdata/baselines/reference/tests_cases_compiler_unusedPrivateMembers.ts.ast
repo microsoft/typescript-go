@@ -1,0 +1,155 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test1'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' initializeInternal'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' test'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NewExpression
+                Identifier: ' Test1'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        x'
+              Identifier: 'initializeInternal'
+  ClassDeclaration
+    Identifier: ' Test2'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p'
+      NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' test'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NewExpression
+                Identifier: ' Test2'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        x'
+            Identifier: 'p'
+  ClassDeclaration
+    Identifier: ' Test3'
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' test'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NewExpression
+                Identifier: ' Test3'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        x'
+            Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' Test4'
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' x'
+      Parameter
+        Identifier: 'v'
+      Block
+        ExpressionStatement
+          Identifier: '
+        v'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' test'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NewExpression
+                Identifier: ' Test4'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        x'
+            Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' Test5'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p'
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' test'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NewExpression
+                Identifier: ' Test5'
+                NumberKeyword
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        x'
+            Identifier: 'p'
+  ClassDeclaration
+    Identifier: ' Test6'
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' a'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' a'
+      Parameter
+        Identifier: 'v'
+      Block
+        ExpressionStatement
+          Identifier: '
+        v'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' b'
+      NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' test'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NewExpression
+                Identifier: ' Test6'
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        x'
+              Identifier: 'a'

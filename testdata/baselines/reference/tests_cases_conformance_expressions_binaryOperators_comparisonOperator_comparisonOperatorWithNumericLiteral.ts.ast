@@ -1,0 +1,215 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' BrandedNum'
+    IntersectionType
+      NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' __numberBrand'
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' BrandedNum'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// operator >
+x'
+      GreaterThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanToken
+      TypeAssertionExpression
+        NumberKeyword
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'BrandedNum'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// operator <
+x'
+      LessThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      LessThanToken
+      TypeAssertionExpression
+        NumberKeyword
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      LessThanToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'BrandedNum'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// operator >=
+x'
+      GreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanEqualsToken
+      TypeAssertionExpression
+        NumberKeyword
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanEqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'BrandedNum'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// operator <=
+x'
+      LessThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      LessThanEqualsToken
+      TypeAssertionExpression
+        NumberKeyword
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      LessThanEqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'BrandedNum'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// operator ==
+x'
+      EqualsEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsEqualsToken
+      TypeAssertionExpression
+        NumberKeyword
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsEqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'BrandedNum'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// operator !=
+x'
+      ExclamationEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      ExclamationEqualsToken
+      TypeAssertionExpression
+        NumberKeyword
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      ExclamationEqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'BrandedNum'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// operator ===
+x'
+      EqualsEqualsEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsEqualsEqualsToken
+      TypeAssertionExpression
+        NumberKeyword
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsEqualsEqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'BrandedNum'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// operator !==
+x'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      ExclamationEqualsEqualsToken
+      TypeAssertionExpression
+        NumberKeyword
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      ExclamationEqualsEqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'BrandedNum'
+        NumericLiteral

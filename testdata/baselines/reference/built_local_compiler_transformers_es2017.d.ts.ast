@@ -1,0 +1,66 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' __String'
+        ImportSpecifier
+          Identifier: ' Bundle'
+        ImportSpecifier
+          Identifier: ' EmitResolver'
+        ImportSpecifier
+          Identifier: ' FunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: ' NodeFactory'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' TransformationContext'
+        ImportSpecifier
+          Identifier: ' VariableStatement'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' transformES2017'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          TypeReference
+            Identifier: ' Bundle'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' Bundle'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createSuperAccessVariableStatement'
+    Parameter
+      Identifier: 'factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    Parameter
+      Identifier: ' resolver'
+      TypeReference
+        Identifier: ' EmitResolver'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' FunctionLikeDeclaration'
+    Parameter
+      Identifier: ' names'
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: '__String'
+    TypeReference
+      Identifier: ' VariableStatement'

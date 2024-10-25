@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////enum E {
+////    /** {@link /**/A} */
+////    A
+////}
+
+verify'
+        Identifier: 'baselineRename'
+      StringLiteral
+      ObjectLiteralExpression

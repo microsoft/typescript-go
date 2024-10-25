@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ParenthesizedExpression
+          SatisfiesExpression
+            NumericLiteral
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ParenthesizedExpression
+          ParenthesizedExpression
+            SatisfiesExpression
+              NumericLiteral
+              NumberKeyword

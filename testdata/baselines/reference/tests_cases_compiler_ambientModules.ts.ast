@@ -1,0 +1,23 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    ModuleDeclaration
+      Identifier: 'Bar'
+      ModuleBlock
+        VariableStatement
+          ExportKeyword
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' foo'
+  EmptyStatement
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Foo'
+          Identifier: 'Bar'
+        Identifier: 'foo'
+      EqualsToken
+      NumericLiteral

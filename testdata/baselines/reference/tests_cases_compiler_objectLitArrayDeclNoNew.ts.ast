@@ -1,0 +1,64 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+  ExpressionStatement
+    StringLiteral
+  ModuleDeclaration
+    Identifier: ' Test'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IState'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IToken'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ILineTokens'
+        PropertySignature
+          Identifier: '
+        tokens'
+          ArrayType
+            TypeReference
+              Identifier: ' IToken'
+        PropertySignature
+          Identifier: '
+        endState'
+          TypeReference
+            Identifier: ' IState'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Gar'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' moo'
+          NumberKeyword
+          NumericLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' bug'
+        TypeReference
+          Identifier: ' ILineTokens'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' state'
+                TypeReference
+                  Identifier: 'IState'
+                NullKeyword
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+       tokens'
+                ElementAccessExpression
+                  Identifier: ' Gar'
+                  Identifier: ''
+              PropertyAssignment
+                Identifier: '//IToken[],  // Missing new. Correct syntax is: tokens: new IToken[]
+       endState'
+                Identifier: ' state'

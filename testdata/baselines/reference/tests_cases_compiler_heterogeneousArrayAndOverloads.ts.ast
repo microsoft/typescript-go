@@ -1,0 +1,62 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' arrTest'
+    MethodDeclaration
+      Identifier: '
+    test'
+      Parameter
+        Identifier: 'arg1'
+        ArrayType
+          NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    test'
+      Parameter
+        Identifier: 'arg1'
+        ArrayType
+          StringKeyword
+    MethodDeclaration
+      Identifier: '
+    test'
+      Parameter
+        Identifier: 'arg1'
+        ArrayType
+          AnyKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    callTest'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'test'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'test'
+            ArrayLiteralExpression
+              StringLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'test'
+            ArrayLiteralExpression
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'test'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              StringLiteral
+              NumericLiteral

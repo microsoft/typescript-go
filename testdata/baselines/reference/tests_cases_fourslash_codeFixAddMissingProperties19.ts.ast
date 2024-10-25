@@ -1,0 +1,37 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////export interface Foo<T> {
+////    z(...args: T extends unknown[] ? T : [T]);
+////}
+////export interface Bar {
+////    a(foo: Foo<[number]>): void;
+////    b(foo: Foo<[]>): void;
+////    c(foo: Foo<number>): void;
+////}
+////[|const bar: Bar = {};|]
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_missing_properties'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    newRangeContent'
+          NoSubstitutionTemplateLiteral

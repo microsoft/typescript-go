@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+/////**
+//// * @returns {Array<{ value: /**/string }>}
+//// */
+////function foo() { return [] }
+
+verify'
+        Identifier: 'baselineSmartSelection'

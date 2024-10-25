@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+
+//// declare namespace AMap {
+////     namespace MassMarks {
+////         interface Data {
+////             style?: number;
+////         }
+////     }
+////     class MassMarks<D extends MassMarks.Data = MassMarks.Data> {
+////         constructor(data: D[] | string);
+////         clear(): void;
+////     }
+//// }
+////
+//// interface MassMarksCustomData extends AMap.MassMarks./*1*/Data {
+////     name: string;
+////     id: string;
+//// }
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' z'
+      StringKeyword
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' b'
+      TrueKeyword

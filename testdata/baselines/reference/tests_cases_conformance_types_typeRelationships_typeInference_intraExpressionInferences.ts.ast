@@ -1,0 +1,1719 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' callIt'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    produce'
+          FunctionType
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+    consume'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+callIt'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    produce'
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    consume'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' n'
+                Identifier: 'toFixed'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+callIt'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    produce'
+          ArrowFunction
+            Parameter
+              Identifier: ' _a'
+            EqualsGreaterThanToken
+            NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    consume'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' n'
+                Identifier: 'toFixed'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+callIt'
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    produce'
+          Block
+            ReturnStatement
+              NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    consume'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' n'
+                Identifier: 'toFixed'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' callItT'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      TupleType
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' T'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+callItT'
+      ArrayLiteralExpression
+        ArrowFunction
+          EqualsGreaterThanToken
+          NumericLiteral
+        ArrowFunction
+          Parameter
+            Identifier: ' n'
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' n'
+              Identifier: 'toFixed'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+callItT'
+      ArrayLiteralExpression
+        ArrowFunction
+          Parameter
+            Identifier: '_a'
+          EqualsGreaterThanToken
+          NumericLiteral
+        ArrowFunction
+          Parameter
+            Identifier: ' n'
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' n'
+              Identifier: 'toFixed'
+  InterfaceDeclaration
+    Identifier: ' MyInterface'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    retrieveGeneric'
+      FunctionType
+        Parameter
+          Identifier: 'parameter'
+          StringKeyword
+        TypeReference
+          Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    operateWithGeneric'
+      FunctionType
+        Parameter
+          Identifier: 'generic'
+          TypeReference
+            Identifier: ' T'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inferTypeFn'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'generic'
+            TypeReference
+              Identifier: ' MyInterface'
+              TypeReference
+                Identifier: 'T'
+          EqualsGreaterThanToken
+          Identifier: ' generic'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myGeneric'
+        CallExpression
+          Identifier: ' inferTypeFn'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    retrieveGeneric'
+              ArrowFunction
+                Parameter
+                  Identifier: ' parameter'
+                EqualsGreaterThanToken
+                NumericLiteral
+            PropertyAssignment
+              Identifier: '
+    operateWithGeneric'
+              ArrowFunction
+                Parameter
+                  Identifier: ' generic'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' generic'
+                    Identifier: 'toFixed'
+  FunctionDeclaration
+    Identifier: ' make'
+    TypeParameter
+      Identifier: 'M'
+    Parameter
+      Identifier: 'o'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' mutations'
+          TypeReference
+            Identifier: ' M'
+        PropertySignature
+          Identifier: '  action'
+          FunctionType
+            Parameter
+              Identifier: 'm'
+              TypeReference
+                Identifier: ' M'
+            VoidKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+make'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+   mutations'
+          ObjectLiteralExpression
+            MethodDeclaration
+              Identifier: '
+       foo'
+              Block
+        PropertyAssignment
+          Identifier: '
+   action'
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' a'
+                    Identifier: 'foo'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'options'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          TypeReference
+            Identifier: ' A'
+        PropertySignature
+          Identifier: ' b'
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' A'
+            VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    a'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NumericLiteral
+        MethodDeclaration
+          Identifier: '
+    b'
+          Parameter
+            Identifier: 'a'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    a'
+          FunctionExpression
+            Block
+              ReturnStatement
+                NumericLiteral
+        MethodDeclaration
+          Identifier: '
+    b'
+          Parameter
+            Identifier: 'a'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    a'
+          Block
+            ReturnStatement
+              NumericLiteral
+        MethodDeclaration
+          Identifier: '
+    b'
+          Parameter
+            Identifier: 'a'
+          Block
+  TypeAliasDeclaration
+    Identifier: ' Chain'
+    TypeParameter
+      Identifier: 'R1'
+    TypeParameter
+      Identifier: ' R2'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+    a'
+        TypeReference
+          Identifier: ' R1'
+      MethodSignature
+        Identifier: '
+    b'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' R1'
+        TypeReference
+          Identifier: ' R2'
+      MethodSignature
+        Identifier: '
+    c'
+        Parameter
+          Identifier: 'b'
+          TypeReference
+            Identifier: ' R2'
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'R1'
+    TypeParameter
+      Identifier: ' R2'
+    Parameter
+      Identifier: 'foo'
+      TypeReference
+        Identifier: ' Chain'
+        TypeReference
+          Identifier: 'R1'
+        TypeReference
+          Identifier: ' R2'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    a'
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    b'
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    c'
+          ArrowFunction
+            Parameter
+              Identifier: 'b'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' x'
+                    StringKeyword
+                    Identifier: ' b'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    a'
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    b'
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            Identifier: ' a'
+        PropertyAssignment
+          Identifier: '
+    c'
+          ArrowFunction
+            Parameter
+              Identifier: 'b'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' x'
+                    NumberKeyword
+                    Identifier: ' b'
+  ClassDeclaration
+    Identifier: ' Wrapper'
+    TypeParameter
+      Identifier: 'T'
+      AnyKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' value'
+      QuestionToken
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' WrappedMap'
+    TypeReference
+      Identifier: ' Record'
+      StringKeyword
+      TypeReference
+        Identifier: ' Wrapper'
+  TypeAliasDeclaration
+    Identifier: ' Unwrap'
+    TypeParameter
+      Identifier: 'D'
+      TypeReference
+        Identifier: ' WrappedMap'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' D'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' D'
+          TypeReference
+            Identifier: 'K'
+        TypeReference
+          Identifier: ' Wrapper'
+          InferType
+            TypeParameter
+              Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' MappingComponent'
+    TypeParameter
+      Identifier: 'I'
+      TypeReference
+        Identifier: ' WrappedMap'
+    TypeParameter
+      Identifier: ' O'
+      TypeReference
+        Identifier: ' WrappedMap'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+    setup'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' inputs'
+            TypeReference
+              Identifier: ' I'
+          PropertySignature
+            Identifier: ' outputs'
+            TypeReference
+              Identifier: ' O'
+      PropertySignature
+        Identifier: '
+    map'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'inputs'
+            TypeReference
+              Identifier: ' Unwrap'
+              TypeReference
+                Identifier: 'I'
+          TypeReference
+            Identifier: ' Unwrap'
+            TypeReference
+              Identifier: 'O'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' createMappingComponent'
+    TypeParameter
+      Identifier: 'I'
+      TypeReference
+        Identifier: ' WrappedMap'
+    TypeParameter
+      Identifier: ' O'
+      TypeReference
+        Identifier: ' WrappedMap'
+    Parameter
+      Identifier: 'def'
+      TypeReference
+        Identifier: ' MappingComponent'
+        TypeReference
+          Identifier: 'I'
+        TypeReference
+          Identifier: ' O'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+createMappingComponent'
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    setup'
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            inputs'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                num'
+                      NewExpression
+                        Identifier: ' Wrapper'
+                        NumberKeyword
+                    PropertyAssignment
+                      Identifier: '
+                str'
+                      NewExpression
+                        Identifier: ' Wrapper'
+                        StringKeyword
+                PropertyAssignment
+                  Identifier: '
+            outputs'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                bool'
+                      NewExpression
+                        Identifier: ' Wrapper'
+                        BooleanKeyword
+                    PropertyAssignment
+                      Identifier: '
+                str'
+                      NewExpression
+                        Identifier: ' Wrapper'
+                        StringKeyword
+        MethodDeclaration
+          Identifier: '
+    map'
+          Parameter
+            Identifier: 'inputs'
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            bool'
+                  PropertyAccessExpression
+                    Identifier: ' inputs'
+                    Identifier: 'nonexistent'
+                PropertyAssignment
+                  Identifier: '
+            str'
+                  PropertyAccessExpression
+                    Identifier: ' inputs'
+                    Identifier: 'num'
+  FunctionDeclaration
+    Identifier: ' simplified'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'props'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' generator'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: ' receiver'
+          FunctionType
+            Parameter
+              Identifier: 't'
+              TypeReference
+                Identifier: ' T'
+            AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' whatIWant'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'props'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' generator'
+          FunctionType
+            Parameter
+              Identifier: 'bob'
+              AnyKeyword
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: ' receiver'
+          FunctionType
+            Parameter
+              Identifier: 't'
+              TypeReference
+                Identifier: ' T'
+            AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' nonObject'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'generator'
+      FunctionType
+        Parameter
+          Identifier: 'bob'
+          AnyKeyword
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' receiver'
+      FunctionType
+        Parameter
+          Identifier: 't'
+          TypeReference
+            Identifier: ' T'
+        AnyKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+simplified'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' generator'
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+        PropertyAssignment
+          Identifier: ' receiver'
+          ArrowFunction
+            Parameter
+              Identifier: 't'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              BinaryExpression
+                Identifier: 't'
+                PlusToken
+                NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+whatIWant'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' generator'
+          ArrowFunction
+            Parameter
+              Identifier: 'bob'
+            EqualsGreaterThanToken
+            ConditionalExpression
+              Identifier: ' bob'
+              QuestionToken
+              NumericLiteral
+              ColonToken
+              NumericLiteral
+        PropertyAssignment
+          Identifier: ' receiver'
+          ArrowFunction
+            Parameter
+              Identifier: 't'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              BinaryExpression
+                Identifier: 't'
+                PlusToken
+                NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+nonObject'
+      ArrowFunction
+        Parameter
+          Identifier: 'bob'
+        EqualsGreaterThanToken
+        ConditionalExpression
+          Identifier: ' bob'
+          QuestionToken
+          NumericLiteral
+          ColonToken
+          NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 't'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' console'
+            Identifier: 'log'
+          BinaryExpression
+            Identifier: 't'
+            PlusToken
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' Opts'
+    TypeParameter
+      Identifier: 'TParams'
+    TypeParameter
+      Identifier: ' TDone'
+    TypeParameter
+      Identifier: ' TMapped'
+    PropertySignature
+      Identifier: '
+    fetch'
+      FunctionType
+        Parameter
+          Identifier: 'params'
+          TypeReference
+            Identifier: ' TParams'
+        Parameter
+          Identifier: ' foo'
+          NumberKeyword
+        TypeReference
+          Identifier: ' TDone'
+    PropertySignature
+      Identifier: '
+    map'
+      FunctionType
+        Parameter
+          Identifier: 'data'
+          TypeReference
+            Identifier: ' TDone'
+        TypeReference
+          Identifier: ' TMapped'
+  FunctionDeclaration
+    Identifier: ' example'
+    TypeParameter
+      Identifier: 'TParams'
+    TypeParameter
+      Identifier: ' TDone'
+    TypeParameter
+      Identifier: ' TMapped'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' Opts'
+        TypeReference
+          Identifier: 'TParams'
+        TypeReference
+          Identifier: ' TDone'
+        TypeReference
+          Identifier: ' TMapped'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'params'
+            TypeReference
+              Identifier: ' TParams'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' data'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' options'
+                      Identifier: 'fetch'
+                    Identifier: 'params'
+                    NumericLiteral
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' options'
+                  Identifier: 'map'
+                Identifier: 'data'
+  InterfaceDeclaration
+    Identifier: ' Params'
+    PropertySignature
+      Identifier: '
+    one'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    two'
+      StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+example'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fetch'
+          ArrowFunction
+            Parameter
+              Identifier: 'params'
+              TypeReference
+                Identifier: ' Params'
+            EqualsGreaterThanToken
+            NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    map'
+          ArrowFunction
+            Parameter
+              Identifier: 'number'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' String'
+              Identifier: 'number'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+example'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fetch'
+          ArrowFunction
+            Parameter
+              Identifier: 'params'
+              TypeReference
+                Identifier: ' Params'
+            Parameter
+              Identifier: ' foo'
+              NumberKeyword
+            EqualsGreaterThanToken
+            NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    map'
+          ArrowFunction
+            Parameter
+              Identifier: 'number'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' String'
+              Identifier: 'number'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+example'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fetch'
+          ArrowFunction
+            Parameter
+              Identifier: 'params'
+              TypeReference
+                Identifier: ' Params'
+            Parameter
+              Identifier: ' foo'
+            EqualsGreaterThanToken
+            NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    map'
+          ArrowFunction
+            Parameter
+              Identifier: 'number'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' String'
+              Identifier: 'number'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' branch'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: '_'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' test'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' if'
+                FunctionType
+                  Parameter
+                    Identifier: 't'
+                    TypeReference
+                      Identifier: ' T'
+                  TypePredicate
+                    Identifier: ' t'
+                    TypeReference
+                      Identifier: ' U'
+              PropertySignature
+                Identifier: ' then'
+                FunctionType
+                  Parameter
+                    Identifier: 'u'
+                    TypeReference
+                      Identifier: ' U'
+                  VoidKeyword
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+branch'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  test'
+          Identifier: ' x'
+        PropertyAssignment
+          Identifier: '
+  if'
+          ArrowFunction
+            Parameter
+              Identifier: 't'
+            TypePredicate
+              Identifier: ' t'
+              LiteralType
+                StringLiteral
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' t'
+              EqualsEqualsEqualsToken
+              StringLiteral
+        PropertyAssignment
+          Identifier: '
+  then'
+          ArrowFunction
+            Parameter
+              Identifier: ' u'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' test1'
+                    LiteralType
+                      StringLiteral
+                    Identifier: ' u'
+  InterfaceDeclaration
+    Identifier: ' Props'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+  a'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        TypeReference
+          Identifier: ' T'
+    PropertySignature
+      Identifier: '
+  b'
+      FunctionType
+        Parameter
+          Identifier: 'arg'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' Props'
+        TypeReference
+          Identifier: 'T'
+    LiteralType
+      NullKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+Foo'
+      ObjectLiteralExpression
+        SpreadAssignment
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    a'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                NumericLiteral
+            PropertyAssignment
+              Identifier: '
+    b'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+      arg'
+                        Identifier: 'toString'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' nested'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'arg'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  prop'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    produce'
+              FunctionType
+                Parameter
+                  Identifier: 'arg1'
+                  NumberKeyword
+                TypeReference
+                  Identifier: ' T'
+            PropertySignature
+              Identifier: '
+    consume'
+              FunctionType
+                Parameter
+                  Identifier: 'arg2'
+                  TypeReference
+                    Identifier: ' T'
+                VoidKeyword
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resNested'
+        CallExpression
+          Identifier: ' nested'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  prop'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    produce'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'a'
+                    EqualsGreaterThanToken
+                    ArrayLiteralExpression
+                      Identifier: 'a'
+                PropertyAssignment
+                  Identifier: '
+    consume'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'arg'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' arg'
+                        Identifier: 'join'
+                      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' twoConsumers'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'arg'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  a'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              StringKeyword
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+  consume1'
+          FunctionType
+            Parameter
+              Identifier: 'arg1'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+        PropertySignature
+          Identifier: '
+  consume2'
+          FunctionType
+            Parameter
+              Identifier: 'arg2'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resTwoConsumers'
+        CallExpression
+          Identifier: ' twoConsumers'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  a'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  Identifier: 'arg'
+            PropertyAssignment
+              Identifier: '
+  consume1'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg1'
+                EqualsGreaterThanToken
+                Block
+            PropertyAssignment
+              Identifier: '
+  consume2'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg2'
+                EqualsGreaterThanToken
+                Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' multipleProducersBeforeConsumers'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' T2'
+    Parameter
+      Identifier: 'arg'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  a'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              StringKeyword
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+  b'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              StringKeyword
+            TypeReference
+              Identifier: ' T2'
+        PropertySignature
+          Identifier: '
+  consume1'
+          FunctionType
+            Parameter
+              Identifier: 'arg1'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+        PropertySignature
+          Identifier: '
+  consume2'
+          FunctionType
+            Parameter
+              Identifier: 'arg2'
+              TypeReference
+                Identifier: ' T2'
+            VoidKeyword
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' T2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resMultipleProducersBeforeConsumers'
+        CallExpression
+          Identifier: ' multipleProducersBeforeConsumers'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  a'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  Identifier: 'arg'
+            PropertyAssignment
+              Identifier: '
+  b'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' Number'
+                  Identifier: 'arg'
+            PropertyAssignment
+              Identifier: '
+  consume1'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg1'
+                EqualsGreaterThanToken
+                Block
+            PropertyAssignment
+              Identifier: '
+  consume2'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg2'
+                EqualsGreaterThanToken
+                Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' withConditionalExpression'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' T2'
+    TypeParameter
+      Identifier: ' T3'
+    Parameter
+      Identifier: 'arg'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  a'
+          FunctionType
+            Parameter
+              Identifier: 'arg1'
+              StringKeyword
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+  b'
+          FunctionType
+            Parameter
+              Identifier: 'arg2'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T2'
+        PropertySignature
+          Identifier: '
+  c'
+          FunctionType
+            Parameter
+              Identifier: 'arg2'
+              TypeReference
+                Identifier: ' T2'
+            TypeReference
+              Identifier: ' T3'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' T2'
+      TypeReference
+        Identifier: ' T3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resWithConditionalExpression'
+        CallExpression
+          Identifier: ' withConditionalExpression'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  a'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  Identifier: 'arg'
+            PropertyAssignment
+              Identifier: '
+  b'
+              ConditionalExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Math'
+                    Identifier: 'random'
+                QuestionToken
+                ArrowFunction
+                  Parameter
+                    Identifier: 'arg'
+                  EqualsGreaterThanToken
+                  AsExpression
+                    StringLiteral
+                    TypeReference
+                      Identifier: ' const'
+                ColonToken
+                ArrowFunction
+                  Parameter
+                    Identifier: 'arg'
+                  EqualsGreaterThanToken
+                  AsExpression
+                    StringLiteral
+                    TypeReference
+                      Identifier: ' const'
+            PropertyAssignment
+              Identifier: '
+  c'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' Boolean'
+                  Identifier: 'arg'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' onion'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' T2'
+    TypeParameter
+      Identifier: ' T3'
+    Parameter
+      Identifier: 'arg'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  a'
+          FunctionType
+            Parameter
+              Identifier: 'arg1'
+              StringKeyword
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+  nested'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    b'
+              FunctionType
+                Parameter
+                  Identifier: 'arg2'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T2'
+            PropertySignature
+              Identifier: '
+    nested2'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+      c'
+                  FunctionType
+                    Parameter
+                      Identifier: 'arg2'
+                      TypeReference
+                        Identifier: ' T2'
+                    TypeReference
+                      Identifier: ' T3'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' T2'
+      TypeReference
+        Identifier: ' T3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resOnion'
+        CallExpression
+          Identifier: ' onion'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  a'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  Identifier: 'arg'
+            PropertyAssignment
+              Identifier: '
+  nested'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    b'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'arg'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' arg'
+                        Identifier: 'join'
+                      StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    nested2'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+      c'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'arg'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' Boolean'
+                          Identifier: 'arg'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' onion2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' T2'
+    TypeParameter
+      Identifier: ' T3'
+    TypeParameter
+      Identifier: ' T4'
+    Parameter
+      Identifier: 'arg'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  a'
+          FunctionType
+            Parameter
+              Identifier: 'arg1'
+              StringKeyword
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+  nested'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    b'
+              FunctionType
+                Parameter
+                  Identifier: 'arg2'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T2'
+            PropertySignature
+              Identifier: '
+    c'
+              FunctionType
+                Parameter
+                  Identifier: 'arg3'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T3'
+            PropertySignature
+              Identifier: '
+    nested2'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+      d'
+                  FunctionType
+                    Parameter
+                      Identifier: 'arg4'
+                      TypeReference
+                        Identifier: ' T3'
+                    TypeReference
+                      Identifier: ' T4'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' T2'
+      TypeReference
+        Identifier: ' T3'
+      TypeReference
+        Identifier: ' T4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resOnion2'
+        CallExpression
+          Identifier: ' onion2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  a'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  Identifier: 'arg'
+            PropertyAssignment
+              Identifier: '
+  nested'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    b'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'arg'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' arg'
+                        Identifier: 'join'
+                      StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    c'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'arg'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' Number'
+                      Identifier: 'arg'
+                PropertyAssignment
+                  Identifier: '
+    nested2'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+      d'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'arg'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' Boolean'
+                          Identifier: 'arg'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' distant'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'args'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  foo'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    bar'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+      baz'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: '
+        producer'
+                      FunctionType
+                        Parameter
+                          Identifier: 'arg'
+                          StringKeyword
+                        TypeReference
+                          Identifier: ' T'
+        PropertySignature
+          Identifier: '
+  consumer'
+          FunctionType
+            Parameter
+              Identifier: 'val'
+              TypeReference
+                Identifier: ' T'
+            UnknownKeyword
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' distantRes'
+        CallExpression
+          Identifier: ' distant'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  foo'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    bar'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+      baz'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+        producer'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'arg'
+                            EqualsGreaterThanToken
+                            NumericLiteral
+            PropertyAssignment
+              Identifier: '
+  consumer'
+              ArrowFunction
+                Parameter
+                  Identifier: 'val'
+                EqualsGreaterThanToken
+                Block

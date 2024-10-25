@@ -1,0 +1,106 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////var x = [1, 2, 3];
+////x./*1*/concat([4]);
+////x./*2*/foo/*3*/()./*6*/toExponential/*7*/(2);
+////x./*4*/foo/*5*/()./*8*/charAt/*9*/(0);
+////
+
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// foo doesn't exist, so both references should be in error
+verify'
+        Identifier: 'errorExistsBetweenMarkers'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'errorExistsBetweenMarkers'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Extend interface to contain foo returning type T
+goTo'
+        Identifier: 'eof'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insertLine'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+// References to foo should now not be in error
+verify'
+          Identifier: 'not'
+        Identifier: 'errorExistsBetweenMarkers'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'errorExistsBetweenMarkers'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+// Resulting type should be a number, so toExponential should be valid, charAt should not
+verify'
+          Identifier: 'not'
+        Identifier: 'errorExistsBetweenMarkers'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'errorExistsBetweenMarkers'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Should only be the one error in the file
+verify'
+        Identifier: 'numberOfErrorsInCurrentFile'
+      NumericLiteral

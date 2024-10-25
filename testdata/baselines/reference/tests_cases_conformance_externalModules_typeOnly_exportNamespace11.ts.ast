@@ -1,0 +1,23 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' intermediate'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ghost'
+        TypeReference
+          QualifiedName
+            Identifier: ' intermediate'
+            Identifier: 'Ghost'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' intermediate'
+            Identifier: 'Ghost'
+  ExportDeclaration
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Ghost'

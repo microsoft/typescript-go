@@ -1,0 +1,75 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' moment'
+    TypeReference
+      QualifiedName
+        Identifier: ' moment'
+        Identifier: 'Moment'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' moment'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Moment'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Object'
+        MethodSignature
+          Identifier: '
+    valueOf'
+          NumberKeyword
+  ExportAssignment
+    Identifier: ' moment'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' moment'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' moment'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Moment'
+        MethodSignature
+          Identifier: '
+        tz'
+          StringKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' _moment'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Moment'
+        MethodSignature
+          Identifier: '
+        strftime'
+          Parameter
+            Identifier: 'pattern'
+            StringKeyword
+          StringKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Moment'
+        MethodSignature
+          Identifier: '
+        strftime'
+          Parameter
+            Identifier: 'pattern'
+            StringKeyword
+          StringKeyword
+  ImportEqualsDeclaration
+    Identifier: ' moment'
+    ExternalModuleReference
+      StringLiteral

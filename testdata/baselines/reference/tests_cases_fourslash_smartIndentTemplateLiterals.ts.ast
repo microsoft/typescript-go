@@ -1,0 +1,54 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' verifyIndentation'
+    Parameter
+      Identifier: 'marker'
+      StringKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+	goTo'
+            Identifier: 'marker'
+          Identifier: 'marker'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+	edit'
+            Identifier: 'insert'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+	verify'
+            Identifier: 'indentationIs'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyIndentation'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyIndentation'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyIndentation'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyIndentation'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+verifyIndentation'
+      StringLiteral

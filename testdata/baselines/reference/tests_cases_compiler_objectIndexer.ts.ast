@@ -1,0 +1,33 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Callback'
+    CallSignature
+      Parameter
+        Identifier: 'value'
+        AnyKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' IMap'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      TypeReference
+        Identifier: ' Callback'
+  ClassDeclaration
+    Identifier: ' Emitter'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' listeners'
+      TypeReference
+        Identifier: ' IMap'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'listeners'
+            EqualsToken
+            ObjectLiteralExpression

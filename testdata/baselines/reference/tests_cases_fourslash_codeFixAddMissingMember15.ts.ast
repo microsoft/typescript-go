@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////interface Foo {}
+////class Foo {}
+////Foo.test;
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          CallExpression
+            Identifier: ' ignoreInterpolations'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Declare_static_property_0'
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

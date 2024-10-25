@@ -1,0 +1,65 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' AText'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+      value'
+            StringKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' a'
+        Parameter
+          Identifier: 'text'
+          StringKeyword
+        TypeReference
+          Identifier: ' AText'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' b'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' a'
+          Identifier: 'text'
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          ArrayLiteralExpression
+            StringLiteral

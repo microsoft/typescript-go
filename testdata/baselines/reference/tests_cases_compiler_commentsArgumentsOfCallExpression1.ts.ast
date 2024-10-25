@@ -1,0 +1,46 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: '/*c1*/ x'
+      AnyKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      FunctionExpression
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block

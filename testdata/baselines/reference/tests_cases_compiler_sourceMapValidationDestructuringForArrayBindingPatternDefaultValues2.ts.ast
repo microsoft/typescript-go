@@ -1,0 +1,893 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              AnyKeyword
+            VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Robot'
+    TupleType
+      NumberKeyword
+      StringKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' MultiSkilledRobot'
+    TupleType
+      StringKeyword
+      TupleType
+        StringKeyword
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robotA'
+        TypeReference
+          Identifier: ' Robot'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' getRobot'
+    Block
+      ReturnStatement
+        Identifier: ' robotA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobotA'
+        TypeReference
+          Identifier: ' MultiSkilledRobot'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobotB'
+        TypeReference
+          Identifier: ' MultiSkilledRobot'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' getMultiRobot'
+    Block
+      ReturnStatement
+        Identifier: ' multiRobotA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nameA'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' primarySkillA'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' secondarySkillA'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberB'
+        NumberKeyword
+      VariableDeclaration
+        Identifier: ' nameB'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberA2'
+        NumberKeyword
+      VariableDeclaration
+        Identifier: ' nameA2'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' skillA2'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' nameMA'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberA3'
+        NumberKeyword
+      VariableDeclaration
+        Identifier: ' robotAInfo'
+        ArrayType
+          ParenthesizedType
+            UnionType
+              NumberKeyword
+              StringKeyword
+      VariableDeclaration
+        Identifier: ' multiRobotAInfo'
+        ArrayType
+          ParenthesizedType
+            UnionType
+              StringKeyword
+              TupleType
+                StringKeyword
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumberKeyword
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          OmittedExpression
+          BinaryExpression
+            Identifier: ' nameA'
+            EqualsToken
+            StringLiteral
+        EqualsToken
+        Identifier: ' robotA'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          OmittedExpression
+          BinaryExpression
+            Identifier: ' nameA'
+            EqualsToken
+            StringLiteral
+        EqualsToken
+        CallExpression
+          Identifier: ' getRobot'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          OmittedExpression
+          BinaryExpression
+            Identifier: ' nameA'
+            EqualsToken
+            StringLiteral
+        EqualsToken
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          StringLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          OmittedExpression
+          BinaryExpression
+            ArrayLiteralExpression
+              BinaryExpression
+                Identifier: '
+    primarySkillA'
+                EqualsToken
+                StringLiteral
+              BinaryExpression
+                Identifier: '
+    secondarySkillA'
+                EqualsToken
+                StringLiteral
+            EqualsToken
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+        EqualsToken
+        Identifier: ' multiRobotA'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'primarySkillA'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          OmittedExpression
+          BinaryExpression
+            ArrayLiteralExpression
+              BinaryExpression
+                Identifier: '
+    primarySkillA'
+                EqualsToken
+                StringLiteral
+              BinaryExpression
+                Identifier: '
+    secondarySkillA'
+                EqualsToken
+                StringLiteral
+            EqualsToken
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+        EqualsToken
+        CallExpression
+          Identifier: ' getMultiRobot'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'primarySkillA'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          OmittedExpression
+          BinaryExpression
+            ArrayLiteralExpression
+              BinaryExpression
+                Identifier: '
+    primarySkillA'
+                EqualsToken
+                StringLiteral
+              BinaryExpression
+                Identifier: '
+    secondarySkillA'
+                EqualsToken
+                StringLiteral
+            EqualsToken
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+        EqualsToken
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'primarySkillA'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'numberB'
+            EqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+        EqualsToken
+        Identifier: ' robotA'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberB'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'numberB'
+            EqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+        EqualsToken
+        CallExpression
+          Identifier: ' getRobot'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberB'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'numberB'
+            EqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+        EqualsToken
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          StringLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberB'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'nameB'
+            EqualsToken
+            StringLiteral
+        EqualsToken
+        Identifier: ' multiRobotA'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameB'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'nameB'
+            EqualsToken
+            StringLiteral
+        EqualsToken
+        CallExpression
+          Identifier: ' getMultiRobot'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameB'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'nameB'
+            EqualsToken
+            StringLiteral
+        EqualsToken
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameB'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'numberA2'
+            EqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          BinaryExpression
+            Identifier: ' nameA2'
+            EqualsToken
+            StringLiteral
+          BinaryExpression
+            Identifier: ' skillA2'
+            EqualsToken
+            StringLiteral
+        EqualsToken
+        Identifier: ' robotA'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA2'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'numberA2'
+            EqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          BinaryExpression
+            Identifier: ' nameA2'
+            EqualsToken
+            StringLiteral
+          BinaryExpression
+            Identifier: ' skillA2'
+            EqualsToken
+            StringLiteral
+        EqualsToken
+        CallExpression
+          Identifier: ' getRobot'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA2'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'numberA2'
+            EqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          BinaryExpression
+            Identifier: ' nameA2'
+            EqualsToken
+            StringLiteral
+          BinaryExpression
+            Identifier: ' skillA2'
+            EqualsToken
+            StringLiteral
+        EqualsToken
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          StringLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA2'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameMA'
+            StringLiteral
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: '
+            primarySkillA'
+                StringLiteral
+              BindingElement
+                Identifier: '
+            secondarySkillA'
+                StringLiteral
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+        Identifier: ' multiRobotA'
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameMA'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'nameMA'
+            EqualsToken
+            StringLiteral
+          BinaryExpression
+            ArrayLiteralExpression
+              BinaryExpression
+                Identifier: '
+        primarySkillA'
+                EqualsToken
+                StringLiteral
+              BinaryExpression
+                Identifier: '
+        secondarySkillA'
+                EqualsToken
+                StringLiteral
+            EqualsToken
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+        EqualsToken
+        CallExpression
+          Identifier: ' getMultiRobot'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameMA'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'nameMA'
+            EqualsToken
+            StringLiteral
+          BinaryExpression
+            ArrayLiteralExpression
+              BinaryExpression
+                Identifier: '
+        primarySkillA'
+                EqualsToken
+                StringLiteral
+              BinaryExpression
+                Identifier: '
+        secondarySkillA'
+                EqualsToken
+                StringLiteral
+            EqualsToken
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+        EqualsToken
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameMA'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'numberA3'
+            EqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          SpreadElement
+            Identifier: 'robotAInfo'
+        EqualsToken
+        Identifier: ' robotA'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberA3'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'numberA3'
+            EqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          SpreadElement
+            Identifier: 'robotAInfo'
+        EqualsToken
+        CallExpression
+          Identifier: ' getRobot'
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberA3'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'numberA3'
+            EqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          SpreadElement
+            Identifier: 'robotAInfo'
+        EqualsToken
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'Robot'
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+            StringLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'numberA3'

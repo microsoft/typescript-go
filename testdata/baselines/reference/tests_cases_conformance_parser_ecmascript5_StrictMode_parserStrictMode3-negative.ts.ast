@@ -1,0 +1,6 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'eval'
+      EqualsToken
+      NumericLiteral

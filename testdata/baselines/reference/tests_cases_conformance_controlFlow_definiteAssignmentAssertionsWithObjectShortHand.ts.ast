@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' a'
+            ExclamationToken
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    a'
+            QuestionToken
+            Block

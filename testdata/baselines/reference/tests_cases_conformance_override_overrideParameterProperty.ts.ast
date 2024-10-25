@@ -1,0 +1,92 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+  p1'
+      ExclamationToken
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        PublicKeyword
+        OverrideKeyword
+        Identifier: ' p1'
+        LiteralType
+          StringLiteral
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'p1'
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        OverrideKeyword
+        Identifier: ' p1'
+        LiteralType
+          StringLiteral
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'p1'
+  ClassDeclaration
+    Identifier: ' C3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        OverrideKeyword
+        PublicKeyword
+        Identifier: ' p1'
+        LiteralType
+          StringLiteral
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'p1'
+    MethodDeclaration
+      Identifier: '
+
+  m'
+      Parameter
+        OverrideKeyword
+        Identifier: ' p1'
+        LiteralType
+          StringLiteral
+      Block
+  ClassDeclaration
+    Identifier: ' C4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        PublicKeyword
+        OverrideKeyword
+        Identifier: ' p2'
+        StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

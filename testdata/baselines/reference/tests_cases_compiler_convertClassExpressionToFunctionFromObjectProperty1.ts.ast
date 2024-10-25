@@ -1,0 +1,791 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        AnyKeyword
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// properties
+foo'
+        Identifier: 'x'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'y'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// keywords
+foo'
+        Identifier: 'break'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'case'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'catch'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'class'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'const'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'continue'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'debugger'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'default'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'delete'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'do'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'else'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'enum'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'export'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'extends'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'false'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'finally'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'for'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'function'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'if'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'import'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'in'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'instanceof'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'new'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'null'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'return'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'super'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'switch'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'this'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'throw'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'true'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'try'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'typeof'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'var'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'void'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'while'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'with'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'implements'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'interface'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'let'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'package'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'private'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'protected'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'public'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'static'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'yield'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'abstract'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'as'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'asserts'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'any'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'async'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'await'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'boolean'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'constructor'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'declare'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'get'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'infer'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'is'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'keyof'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'module'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'namespace'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'never'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'readonly'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'require'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'number'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'object'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'set'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'string'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'symbol'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'type'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'undefined'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'unique'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'unknown'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'from'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'global'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'bigint'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'of'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block

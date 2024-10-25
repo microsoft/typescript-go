@@ -1,0 +1,29 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ijs'
+        ArrayType
+          TupleType
+            NumberKeyword
+            NumberKeyword
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ijs'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' ijs'
+          Identifier: 'concat'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral

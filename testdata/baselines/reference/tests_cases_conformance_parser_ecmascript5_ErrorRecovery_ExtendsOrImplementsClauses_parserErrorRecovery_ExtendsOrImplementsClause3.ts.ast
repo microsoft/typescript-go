@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'

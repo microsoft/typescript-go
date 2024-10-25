@@ -1,0 +1,51 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Outer'
+        FunctionExpression
+          Parameter
+            Identifier: 'element'
+          Parameter
+            Identifier: ' config'
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+// @Filename: usage.js
+/** @constructor */
+Outer'
+        Identifier: 'Pos'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'line'
+        Parameter
+          Identifier: ' ch'
+        Block
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/** @type {number} */
+Outer'
+          Identifier: 'Pos'
+        Identifier: 'prototype'
+      Identifier: 'line'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pos'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Outer'
+            Identifier: 'Pos'
+          NumericLiteral
+          StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+pos'
+      Identifier: 'line'

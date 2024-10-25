@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        TypeLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'bar'
+        EqualsToken
+        ObjectLiteralExpression

@@ -1,0 +1,166 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Parameter
+      Identifier: ' b'
+      BooleanKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'toString'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          AmpersandAmpersandToken
+          Identifier: ' x'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'toString'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'toString'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'b'
+            AmpersandAmpersandToken
+            Identifier: ' x'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'toString'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'x'
+            AmpersandAmpersandToken
+            Identifier: ' b'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'toString'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'x'
+              AmpersandAmpersandToken
+              Identifier: ' b'
+            AmpersandAmpersandToken
+            Identifier: ' b'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'toString'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  Identifier: 'b'
+                  AmpersandAmpersandToken
+                  Identifier: ' b'
+                AmpersandAmpersandToken
+                Identifier: ' x'
+              AmpersandAmpersandToken
+              Identifier: ' b'
+            AmpersandAmpersandToken
+            Identifier: ' b'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        x'
+                Identifier: 'toString'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    AnyKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' x'
+            AmpersandAmpersandToken
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' x'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          AmpersandAmpersandToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'hasOwnProperty'
+            StringLiteral

@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' D'
+      ClassExpression
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' C'

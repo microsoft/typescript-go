@@ -1,0 +1,82 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Type'
+    PropertySignature
+      Identifier: '
+  type'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' TypeExt'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Type'
+    PropertySignature
+      Identifier: '
+  arr'
+      ArrayType
+        TypeReference
+          Identifier: ' Type'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' guard'
+        ArrowFunction
+          Parameter
+            Identifier: 'arg'
+            TypeReference
+              Identifier: ' Type'
+          TypePredicate
+            Identifier: ' arg'
+            TypeReference
+              Identifier: ' TypeExt'
+          EqualsGreaterThanToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' arg'
+              Identifier: 'type'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' otherFunc'
+        ArrowFunction
+          Parameter
+            Identifier: 'arg1'
+            TypeReference
+              Identifier: ' Type'
+          Parameter
+            Identifier: ' arg2'
+            TypeReference
+              Identifier: ' TypeExt'
+          VoidKeyword
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' y'
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' Type'
+    VoidKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'guard'
+          Identifier: 'arg'
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' ITEM'
+            PropertyAccessExpression
+              Identifier: ' arg'
+              Identifier: 'arr'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'otherFunc'
+                  Identifier: 'ITEM'
+                  Identifier: ' arg'
+                Block

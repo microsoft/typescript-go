@@ -1,0 +1,564 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T00'
+    TupleType
+      OptionalType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T01'
+    TupleType
+      StringKeyword
+      OptionalType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T02'
+    TupleType
+      OptionalType
+        StringKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T03'
+    TupleType
+      RestType
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T04'
+    TupleType
+      RestType
+        TupleType
+          RestType
+            ArrayType
+              StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T05'
+    TupleType
+      RestType
+        TupleType
+          RestType
+            TupleType
+              RestType
+                ArrayType
+                  StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T06'
+    TupleType
+      StringKeyword
+      RestType
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T07'
+    TupleType
+      RestType
+        ArrayType
+          StringKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T08'
+    TupleType
+      RestType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T09'
+    TupleType
+      RestType
+        JSDocNullableType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T10'
+    TupleType
+      StringKeyword
+      RestType
+        TupleType
+          RestType
+            ArrayType
+              StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T11'
+    TupleType
+      StringKeyword
+      RestType
+        TupleType
+          RestType
+            TupleType
+              RestType
+                ArrayType
+                  StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T15'
+    TupleType
+      BooleanKeyword
+      NumberKeyword
+      RestType
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' L15'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T15'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' assign'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' S'
+      TypeReference
+        Identifier: ' T'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+assign'
+      ArrayType
+        NumberKeyword
+      TupleType
+        RestType
+          ArrayType
+            NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+assign'
+      ArrayType
+        NumberKeyword
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+assign'
+      TupleType
+        RestType
+          ArrayType
+            NumberKeyword
+      ArrayType
+        NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+assign'
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+      ArrayType
+        NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+assign'
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+      TupleType
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+assign'
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+      TupleType
+        NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+assign'
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+      TupleType
+        NumberKeyword
+        NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+assign'
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+      TupleType
+        NumberKeyword
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+assign'
+      TupleType
+        NumberKeyword
+      TupleType
+        RestType
+          ArrayType
+            NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+assign'
+      TupleType
+        NumberKeyword
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+
+assign'
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+assign'
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+      TupleType
+        StringKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+assign'
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+      TupleType
+        NumberKeyword
+        NumberKeyword
+        StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+assign'
+      TupleType
+        NumberKeyword
+        RestType
+          ArrayType
+            NumberKeyword
+      TupleType
+        NumberKeyword
+        NumberKeyword
+        NumberKeyword
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T20'
+    TupleType
+      NumberKeyword
+      StringKeyword
+      RestType
+        ArrayType
+          BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' T21'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T20'
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T22'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T20'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T23'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T20'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T24'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T20'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T25'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T20'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T26'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T20'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T27'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T20'
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T28'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T20'
+      NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        TypeReference
+          Identifier: ' T20'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e0'
+        ElementAccessExpression
+          Identifier: ' t'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        ElementAccessExpression
+          Identifier: ' t'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        ElementAccessExpression
+          Identifier: ' t'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e3'
+        ElementAccessExpression
+          Identifier: ' t'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ex'
+        ElementAccessExpression
+          Identifier: ' t'
+          Identifier: 'x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f0'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'x'
+      TupleType
+        TypeReference
+          Identifier: 'T'
+        RestType
+          ArrayType
+            TypeReference
+              Identifier: 'U'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f0'
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+f0'
+      ArrayLiteralExpression
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f0'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f0'
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+        TrueKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'a'
+      TupleType
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          NumberKeyword
+        RestType
+          ArrayType
+            ParenthesizedType
+              FunctionType
+                Parameter
+                  Identifier: 'x'
+                  StringKeyword
+                NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    Parameter
+      DotDotDotToken
+      Identifier: 'a'
+      TupleType
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          NumberKeyword
+        RestType
+          ArrayType
+            ParenthesizedType
+              FunctionType
+                Parameter
+                  Identifier: 'x'
+                  StringKeyword
+                NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f1'
+      ArrayLiteralExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' x'
+            AsteriskToken
+            NumericLiteral
+        ArrowFunction
+          Parameter
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'length'
+        ArrowFunction
+          Parameter
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'charCodeAt'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' x'
+          AsteriskToken
+          NumericLiteral
+      ArrowFunction
+        Parameter
+          Identifier: ' x'
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'length'
+      ArrowFunction
+        Parameter
+          Identifier: ' x'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'charCodeAt'
+          NumericLiteral

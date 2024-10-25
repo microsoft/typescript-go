@@ -1,0 +1,32 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' N'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      IndexedAccessType
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeReference
+              Identifier: ' K'
+          TypeReference
+            Identifier: ' N'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' K'
+        TypeReference
+          Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' M'
+    TypeReference
+      Identifier: ' N'
+      NumberKeyword
+      LiteralType
+        StringLiteral

@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' newProperty'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+
+    x'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: '/*RENAME*/newProperty'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newLocal'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      Identifier: ' /*RENAME*/newLocal'

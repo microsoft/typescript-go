@@ -1,0 +1,177 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'obj'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' kind'
+            LiteralType
+              StringLiteral
+          PropertySignature
+            Identifier: ' data'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' kind'
+            LiteralType
+              NumericLiteral
+          PropertySignature
+            Identifier: ' data'
+            NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' obj'
+              Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'obj'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' kind'
+            LiteralType
+              StringLiteral
+          PropertySignature
+            Identifier: ' data'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' kind'
+            LiteralType
+              NumericLiteral
+          PropertySignature
+            Identifier: ' data'
+            NumberKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' obj'
+              QuestionDotToken
+              Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+  TypeAliasDeclaration
+    Identifier: ' WrappedStringOr'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' value'
+          QuestionToken
+          StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' value'
+          QuestionToken
+          TypeReference
+            Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' numberOk'
+    Parameter
+      Identifier: 'wrapped'
+      UnionType
+        TypeReference
+          Identifier: ' WrappedStringOr'
+          NumberKeyword
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' wrapped'
+              QuestionDotToken
+              Identifier: 'value'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+            NullKeyword
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' wrapped'
+          Identifier: 'value'
+  FunctionDeclaration
+    Identifier: ' booleanBad'
+    Parameter
+      Identifier: 'wrapped'
+      UnionType
+        TypeReference
+          Identifier: ' WrappedStringOr'
+          BooleanKeyword
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' wrapped'
+              QuestionDotToken
+              Identifier: 'value'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+            NullKeyword
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' wrapped'
+          Identifier: 'value'
+  FunctionDeclaration
+    Identifier: ' booleanFixed'
+    Parameter
+      Identifier: 'wrapped'
+      UnionType
+        TypeReference
+          Identifier: ' WrappedStringOr'
+          BooleanKeyword
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                Identifier: 'wrapped'
+                QuestionDotToken
+                Identifier: 'value'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+            NullKeyword
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' wrapped'
+          Identifier: 'value'

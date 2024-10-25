@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        Identifier: 'y'

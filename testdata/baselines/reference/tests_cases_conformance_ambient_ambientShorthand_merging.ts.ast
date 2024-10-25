@@ -1,0 +1,21 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            NumberKeyword
+  ImportDeclaration
+    ImportClause
+      Identifier: ' foo'
+      NamedImports
+        ImportSpecifier
+          Identifier: 'bar'
+    StringLiteral

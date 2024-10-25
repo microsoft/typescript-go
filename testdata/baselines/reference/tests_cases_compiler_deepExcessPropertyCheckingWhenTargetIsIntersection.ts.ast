@@ -1,0 +1,122 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' StatelessComponent'
+    TypeParameter
+      Identifier: 'P'
+      TypeLiteral
+    CallSignature
+      Parameter
+        Identifier: 'props'
+        IntersectionType
+          TypeReference
+            Identifier: ' P'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' children'
+              QuestionToken
+              NumberKeyword
+      Parameter
+        Identifier: ' context'
+        QuestionToken
+        AnyKeyword
+      LiteralType
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TestComponent'
+        TypeReference
+          Identifier: ' StatelessComponent'
+          TypeReference
+            Identifier: 'TestProps'
+        ArrowFunction
+          Parameter
+            Identifier: 'props'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NullKeyword
+  InterfaceDeclaration
+    Identifier: ' ITestProps'
+    PropertySignature
+      Identifier: '
+  ariaLabel'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' NestedProp'
+    TypeParameter
+      Identifier: 'TProps'
+    PropertySignature
+      Identifier: '
+  props'
+      TypeReference
+        Identifier: ' TProps'
+  InterfaceDeclaration
+    Identifier: ' TestProps'
+    PropertySignature
+      Identifier: '
+  icon'
+      TypeReference
+        Identifier: ' NestedProp'
+        TypeReference
+          Identifier: 'ITestProps'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+ 
+TestComponent'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'icon'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' props'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' INVALID_PROP_NAME'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' ariaLabel'
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TestComponent2'
+        TypeReference
+          Identifier: ' StatelessComponent'
+          UnionType
+            TypeReference
+              Identifier: 'TestProps'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'props2'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'x'
+                    NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'props'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NullKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+TestComponent2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'icon'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' props'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' INVALID_PROP_NAME'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' ariaLabel'
+                  StringLiteral

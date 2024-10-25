@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ModuleDeclaration
+    Identifier: ' public'
+    ModuleBlock
+  ModuleDeclaration
+    Identifier: ' private'
+    ModuleBlock
+  ModuleDeclaration
+    Identifier: ' public'
+    ModuleDeclaration
+      Identifier: 'whatever'
+      ModuleBlock
+  ModuleDeclaration
+    Identifier: ' private'
+    ModuleDeclaration
+      Identifier: 'public'
+      ModuleDeclaration
+        Identifier: 'foo'
+        ModuleBlock

@@ -1,0 +1,403 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    u'
+          EqualsToken
+          Identifier: ' t'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    u'
+          EqualsToken
+          Identifier: ' t'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' V'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    u'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    t'
+          EqualsToken
+          Identifier: ' v'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    v'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+
+    u'
+          EqualsToken
+          Identifier: ' v'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    v'
+          EqualsToken
+          Identifier: ' u'
+  FunctionDeclaration
+    Identifier: ' foo4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Date'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' V'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    t'
+          EqualsToken
+          Identifier: ' v'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    t'
+          EqualsToken
+          NewExpression
+            Identifier: ' Date'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+
+    u'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    u'
+          EqualsToken
+          Identifier: ' v'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    u'
+          EqualsToken
+          NewExpression
+            Identifier: ' Date'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+
+    v'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    v'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    v'
+          EqualsToken
+          NewExpression
+            Identifier: ' Date'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            TypeReference
+              Identifier: ' Date'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    d'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    d'
+          EqualsToken
+          Identifier: ' v'
+  FunctionDeclaration
+    Identifier: ' foo5'
+    TypeParameter
+      Identifier: 'V'
+      TypeReference
+        Identifier: ' Date'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' V'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    t'
+          EqualsToken
+          Identifier: ' v'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    t'
+          EqualsToken
+          NewExpression
+            Identifier: ' Date'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+
+    u'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    u'
+          EqualsToken
+          Identifier: ' v'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    u'
+          EqualsToken
+          NewExpression
+            Identifier: ' Date'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+
+    v'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    v'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    v'
+          EqualsToken
+          NewExpression
+            Identifier: ' Date'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            TypeReference
+              Identifier: ' Date'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    d'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    d'
+          EqualsToken
+          Identifier: ' v'
+  FunctionDeclaration
+    Identifier: ' foo6'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' V'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    t'
+          EqualsToken
+          Identifier: ' v'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+
+    u'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    u'
+          EqualsToken
+          Identifier: ' v'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+
+    v'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    v'
+          EqualsToken
+          Identifier: ' u'

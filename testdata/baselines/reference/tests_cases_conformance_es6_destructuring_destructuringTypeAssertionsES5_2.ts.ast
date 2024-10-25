@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x'
+        ParenthesizedExpression
+          TypeAssertionExpression
+            AnyKeyword
+            CallExpression
+              Identifier: 'foo'

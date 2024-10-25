@@ -1,0 +1,158 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Stuff'
+    PropertySignature
+      Identifier: '
+    a'
+      QuestionToken
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          ArrayType
+            NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    c'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    d'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    e'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    f'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    g'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    h'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    i'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    j'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    k'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    UnionType
+      TypeReference
+        Identifier: ' Stuff'
+      StringKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+      a'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  NumericLiteral
+          PropertyAssignment
+            Identifier: '
+      b'
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+      c'
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+      d'
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+      e'
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+      f'
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+      g'
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+      h'
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+      i'
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+      j'
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+      k'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral

@@ -1,0 +1,117 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      TrueKeyword
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      Block
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'thing'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        thing'
+            PrivateIdentifier
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' // OK
+        thing'
+              PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        thing'
+            PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        thing'
+            PrivateIdentifier
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' // Error
+        thing'
+              PrivateIdentifier
+    MethodDeclaration
+      Identifier: '
+    methodU'
+      Parameter
+        Identifier: 'thing'
+        UnknownKeyword
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        thing'
+            PrivateIdentifier
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        thing'
+              PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        thing'
+            PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        thing'
+            PrivateIdentifier
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        thing'
+              PrivateIdentifier
+    MethodDeclaration
+      Identifier: '
+    methodN'
+      Parameter
+        Identifier: 'thing'
+        NeverKeyword
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        thing'
+            PrivateIdentifier
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        thing'
+              PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        thing'
+            PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        thing'
+            PrivateIdentifier
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        thing'
+              PrivateIdentifier
+  EmptyStatement

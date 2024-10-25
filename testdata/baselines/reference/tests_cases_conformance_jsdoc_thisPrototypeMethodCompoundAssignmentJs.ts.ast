@@ -1,0 +1,51 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '// @strict: true
+// @noEmit: true
+// @checkJs: true
+// @allowJs: true
+
+// @filename: index.js
+
+Element'
+          Identifier: 'prototype'
+        Identifier: 'remove'
+      QuestionQuestionEqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'parentNode'
+                QuestionDotToken
+                Identifier: 'removeChild'
+              ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+/**
+ * @this Node
+ */
+Element'
+          Identifier: 'prototype'
+        Identifier: 'remove'
+      QuestionQuestionEqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'parentNode'
+                QuestionDotToken
+                Identifier: 'removeChild'
+              ThisKeyword

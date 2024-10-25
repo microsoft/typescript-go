@@ -1,0 +1,69 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TupleType
+          NumberKeyword
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rest'
+        TupleType
+          NumberKeyword
+          StringKeyword
+          RestType
+            ArrayType
+              BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        ElementAccessExpression
+          Identifier: ' a'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        ElementAccessExpression
+          Identifier: ' a'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        ElementAccessExpression
+          Identifier: ' a'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        ElementAccessExpression
+          Identifier: ' rest'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        ElementAccessExpression
+          Identifier: ' rest'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        ElementAccessExpression
+          Identifier: ' rest'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a7'
+        ElementAccessExpression
+          Identifier: ' rest'
+          NumericLiteral

@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            LiteralType
+              NumericLiteral
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            LiteralType
+              StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsEqualsEqualsToken
+      Identifier: ' y'

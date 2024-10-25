@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' recurser'
+        FunctionExpression
+          Identifier: ' foo'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+    // using the local name
+    foo'
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+
+    // using the globally visible name
+    recurser'
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Identifier: ' bar'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    bar'

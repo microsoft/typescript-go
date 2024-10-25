@@ -1,0 +1,14 @@
+SourceFile
+  LabeledStatement
+    Identifier: 'target'
+    WhileStatement
+      TrueKeyword
+      Block
+        FunctionDeclaration
+          Identifier: ' f'
+          Block
+            WhileStatement
+              TrueKeyword
+              Block
+                BreakStatement
+                  Identifier: ' target'

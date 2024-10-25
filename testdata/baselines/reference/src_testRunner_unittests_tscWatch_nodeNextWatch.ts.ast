@@ -1,0 +1,224 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTscWatch'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyTscWatch'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' configFile'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                CallExpression
+                                  Identifier: ' jsonToReadableText'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    compilerOptions'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                        strict'
+                                          TrueKeyword
+                                        PropertyAssignment
+                                          Identifier: '
+                        target'
+                                          StringLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        module'
+                                          StringLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        moduleResolution'
+                                          StringLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        outDir'
+                                          StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' packageFile'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                CallExpression
+                                  Identifier: ' jsonToReadableText'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    name'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    version'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    description'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    type'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    main'
+                                      StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' file1'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                TaggedTemplateExpression
+                                  Identifier: ' dedent'
+                                  NoSubstitutionTemplateLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' declFile'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                NoSubstitutionTemplateLiteral
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createWatchedSystem'
+                          ArrayLiteralExpression
+                            Identifier: 'configFile'
+                            Identifier: ' file1'
+                            Identifier: ' declFile'
+                            Identifier: ' packageFile'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' currentDirectory'
+                              StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    sys'
+                              Identifier: 'modifyFile'
+                            StringLiteral
+                            TaggedTemplateExpression
+                              Identifier: '
+                        dedent'
+                              NoSubstitutionTemplateLiteral
+                            ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'

@@ -1,0 +1,77 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: ' b'
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: ' c'
+  ClassDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' X1'
+    PropertyDeclaration
+      Identifier: ' x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' X2'
+    PropertyDeclaration
+      Identifier: ' x'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' X1'
+    TypeReference
+      Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' X'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+    AnyKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xs'
+        TypeReference
+          Identifier: ' X'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        CallExpression
+          Identifier: ' f'
+          Identifier: 'xs'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        TypeReference
+          Identifier: ' A'

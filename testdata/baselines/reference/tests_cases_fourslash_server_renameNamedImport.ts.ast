@@ -1,0 +1,44 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='../fourslash.ts' />
+
+// @Filename: /home/src/workspaces/project/lib/tsconfig.json
+//// {}
+
+// @Filename: /home/src/workspaces/project/lib/index.ts
+//// const unrelatedLocalVariable = 123;
+//// export const someExportedVariable = unrelatedLocalVariable;
+
+// @Filename: /home/src/workspaces/project/src/tsconfig.json
+//// {}
+
+// @Filename: /home/src/workspaces/project/src/index.ts
+//// import { /*i*/someExportedVariable } from '../lib/index';
+//// someExportedVariable;
+
+// @Filename: /home/src/workspaces/project/tsconfig.json
+//// {}
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' providePrefixAndSuffixTextForRename'
+          TrueKeyword

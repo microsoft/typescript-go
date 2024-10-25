@@ -1,0 +1,53 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @module: nodenext
+// @checkJs: true
+// @outDir: dist
+// @noTypesAndSymbols: true
+
+// @Filename: /1.cjs
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: /2.cjs
+exports'
+        Identifier: 'foo'
+      EqualsToken
+      NumericLiteral
+  ImportDeclaration
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'foo'
+      EqualsToken
+      ObjectLiteralExpression
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      Identifier: ' two'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' three'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // error
+two'
+      Identifier: 'foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+three'
+      Identifier: 'foo'

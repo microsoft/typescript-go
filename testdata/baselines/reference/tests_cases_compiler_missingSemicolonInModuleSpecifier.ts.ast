@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'x'
+    StringLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      CallExpression
+        FunctionExpression
+          Block
+            ReturnStatement
+              NumericLiteral

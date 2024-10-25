@@ -1,0 +1,67 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Ns'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Ns'
+        Identifier: 'One'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Ns'
+        Identifier: 'Two'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+Ns'
+          Identifier: 'One'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+  ok'
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Ns'
+          Identifier: 'Two'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' one'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+one'
+      Identifier: 'wat'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' two'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+two'
+      Identifier: 'wat'

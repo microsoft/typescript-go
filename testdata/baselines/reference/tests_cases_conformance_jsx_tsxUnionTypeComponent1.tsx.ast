@@ -1,0 +1,82 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ComponentProps'
+    PropertySignature
+      Identifier: '
+    AnyComponent'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'StatelessComponent'
+          AnyKeyword
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ComponentClass'
+          AnyKeyword
+  ClassDeclaration
+    Identifier: ' MyComponent'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'ComponentProps'
+        TypeLiteral
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' AnyComponent'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'props'
+        ReturnStatement
+          ParenthesizedExpression
+            JsxSelfClosingElement
+              Identifier: 'AnyComponent'
+              JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'MyComponent'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' AnyComponent'
+          JsxExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              JsxElement
+                JsxOpeningElement
+                  Identifier: 'button'
+                  JsxAttributes
+                JsxText
+                JsxClosingElement
+                  Identifier: 'button'
+  ClassDeclaration
+    Identifier: ' MyButtonComponent'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeLiteral
+        TypeLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'MyComponent'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' AnyComponent'
+          JsxExpression
+            Identifier: 'MyButtonComponent'

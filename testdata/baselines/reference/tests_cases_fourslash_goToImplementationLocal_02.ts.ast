@@ -1,0 +1,14 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+//// const x = { [|hello|]: () => {} };
+////
+//// x.he/*function_call*/llo();
+////
+
+verify'
+        Identifier: 'baselineGoToImplementation'
+      StringLiteral

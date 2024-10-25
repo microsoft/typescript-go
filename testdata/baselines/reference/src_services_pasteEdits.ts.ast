@@ -1,0 +1,986 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CancellationToken'
+        ImportSpecifier
+          Identifier: '
+    codefix'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    fileShouldUseJavaScriptRequire'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    findIndex'
+        ImportSpecifier
+          Identifier: '
+    forEachChild'
+        ImportSpecifier
+          Identifier: '
+    formatting'
+        ImportSpecifier
+          Identifier: '
+    getNewLineOrDefaultFromHost'
+        ImportSpecifier
+          Identifier: '
+    getQuotePreference'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    rangeContainsPosition'
+        ImportSpecifier
+          Identifier: '
+    rangeContainsRange'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    Statement'
+        ImportSpecifier
+          Identifier: '
+    SymbolFlags'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TextRange'
+        ImportSpecifier
+          Identifier: '
+    UserPreferences'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' addTargetFileImports'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addExportsInOldFile'
+        ImportSpecifier
+          Identifier: '
+    getExistingLocals'
+        ImportSpecifier
+          Identifier: '
+    getUsageInfo'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CodeFixContextBase'
+        ImportSpecifier
+          Identifier: '
+    FileTextChanges'
+        ImportSpecifier
+          Identifier: '
+    LanguageServiceHost'
+        ImportSpecifier
+          Identifier: '
+    PasteEdits'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' pasteEditsProvider'
+    Parameter
+      Identifier: '
+    targetFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    pastedText'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: '
+    pasteLocations'
+      ArrayType
+        TypeReference
+          Identifier: ' TextRange'
+    Parameter
+      Identifier: '
+    copiedFrom'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' file'
+            TypeReference
+              Identifier: ' SourceFile'
+          PropertySignature
+            Identifier: ' range'
+            ArrayType
+              TypeReference
+                Identifier: ' TextRange'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: '
+    formatContext'
+      TypeReference
+        QualifiedName
+          Identifier: ' formatting'
+          Identifier: 'FormatContext'
+    Parameter
+      Identifier: '
+    cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    TypeReference
+      Identifier: ' PasteEdits'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' changes'
+            ArrayType
+              TypeReference
+                Identifier: ' FileTextChanges'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' textChanges'
+                  Identifier: 'ChangeTracker'
+                Identifier: 'with'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' host'
+                ShorthandPropertyAssignment
+                  Identifier: ' formatContext'
+                ShorthandPropertyAssignment
+                  Identifier: ' preferences'
+              ArrowFunction
+                Parameter
+                  Identifier: ' changeTracker'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' pasteEdits'
+                  Identifier: 'targetFile'
+                  Identifier: ' pastedText'
+                  Identifier: ' pasteLocations'
+                  Identifier: ' copiedFrom'
+                  Identifier: ' host'
+                  Identifier: ' preferences'
+                  Identifier: ' formatContext'
+                  Identifier: ' cancellationToken'
+                  Identifier: ' changeTracker'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' edits'
+            Identifier: ' changes'
+          ShorthandPropertyAssignment
+            Identifier: ' fixId'
+  FunctionDeclaration
+    Identifier: ' pasteEdits'
+    Parameter
+      Identifier: '
+    targetFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    pastedText'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: '
+    pasteLocations'
+      ArrayType
+        TypeReference
+          Identifier: ' TextRange'
+    Parameter
+      Identifier: '
+    copiedFrom'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' file'
+            TypeReference
+              Identifier: ' SourceFile'
+          PropertySignature
+            Identifier: ' range'
+            ArrayType
+              TypeReference
+                Identifier: ' TextRange'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: '
+    formatContext'
+      TypeReference
+        QualifiedName
+          Identifier: ' formatting'
+          Identifier: 'FormatContext'
+    Parameter
+      Identifier: '
+    cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: '
+    changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' actualPastedText'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'pastedText'
+            Identifier: 'length'
+          ExclamationEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' pasteLocations'
+            Identifier: 'length'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        actualPastedText'
+              EqualsToken
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' pastedText'
+                    Identifier: 'length'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                QuestionToken
+                ElementAccessExpression
+                  Identifier: ' pastedText'
+                  NumericLiteral
+                ColonToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' pastedText'
+                    Identifier: 'join'
+                  CallExpression
+                    Identifier: 'getNewLineOrDefaultFromHost'
+                    PropertyAccessExpression
+                      Identifier: 'formatContext'
+                      Identifier: 'host'
+                    PropertyAccessExpression
+                      Identifier: ' formatContext'
+                      Identifier: 'options'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statements'
+            ArrayType
+              TypeReference
+                Identifier: ' Statement'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newText'
+            PropertyAccessExpression
+              Identifier: ' targetFile'
+              Identifier: 'text'
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' pasteLocations'
+                Identifier: 'length'
+              MinusToken
+              NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          GreaterThanEqualsToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' pos'
+                  BindingElement
+                    Identifier: ' end'
+                ElementAccessExpression
+                  Identifier: ' pasteLocations'
+                  Identifier: 'i'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        newText'
+              EqualsToken
+              ConditionalExpression
+                Identifier: ' actualPastedText'
+                QuestionToken
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' newText'
+                        Identifier: 'slice'
+                      NumericLiteral
+                      Identifier: ' pos'
+                    PlusToken
+                    Identifier: ' actualPastedText'
+                  PlusToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' newText'
+                      Identifier: 'slice'
+                    Identifier: 'end'
+                ColonToken
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' newText'
+                        Identifier: 'slice'
+                      NumericLiteral
+                      Identifier: ' pos'
+                    PlusToken
+                    ElementAccessExpression
+                      Identifier: ' pastedText'
+                      Identifier: 'i'
+                  PlusToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' newText'
+                      Identifier: 'slice'
+                    Identifier: 'end'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importAdder'
+            TypeReference
+              QualifiedName
+                Identifier: ' codefix'
+                Identifier: 'ImportAdder'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    Debug'
+                Identifier: 'checkDefined'
+              PropertyAccessExpression
+                Identifier: 'host'
+                Identifier: 'runWithTemporaryFileUpdate'
+            Identifier: 'call'
+          Identifier: 'host'
+          PropertyAccessExpression
+            Identifier: ' targetFile'
+            Identifier: 'fileName'
+          Identifier: ' newText'
+          ArrowFunction
+            Parameter
+              Identifier: 'updatedProgram'
+              TypeReference
+                Identifier: ' Program'
+            Parameter
+              Identifier: ' originalProgram'
+              UnionType
+                TypeReference
+                  Identifier: ' Program'
+                UndefinedKeyword
+            Parameter
+              Identifier: ' updatedFile'
+              TypeReference
+                Identifier: ' SourceFile'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+        importAdder'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' codefix'
+                      Identifier: 'createImportAdder'
+                    Identifier: 'updatedFile'
+                    Identifier: ' updatedProgram'
+                    Identifier: ' preferences'
+                    Identifier: ' host'
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'copiedFrom'
+                  QuestionDotToken
+                  Identifier: 'range'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            Debug'
+                        Identifier: 'assert'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'copiedFrom'
+                            Identifier: 'range'
+                          Identifier: 'length'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' pastedText'
+                          Identifier: 'length'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            copiedFrom'
+                          Identifier: 'range'
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'copy'
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' statementsInSourceFile'
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' copiedFrom'
+                                    Identifier: 'file'
+                                  Identifier: 'statements'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' startNodeIndex'
+                                CallExpression
+                                  Identifier: ' findIndex'
+                                  Identifier: 'statementsInSourceFile'
+                                  ArrowFunction
+                                    Parameter
+                                      Identifier: ' s'
+                                    EqualsGreaterThanToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' s'
+                                        Identifier: 'end'
+                                      GreaterThanToken
+                                      PropertyAccessExpression
+                                        Identifier: ' copy'
+                                        Identifier: 'pos'
+                          IfStatement
+                            BinaryExpression
+                              Identifier: 'startNodeIndex'
+                              EqualsEqualsEqualsToken
+                              PrefixUnaryExpression
+                                NumericLiteral
+                            ReturnStatement
+                              Identifier: ' undefined'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' endNodeIndex'
+                                CallExpression
+                                  Identifier: ' findIndex'
+                                  Identifier: 'statementsInSourceFile'
+                                  ArrowFunction
+                                    Parameter
+                                      Identifier: ' s'
+                                    EqualsGreaterThanToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' s'
+                                        Identifier: 'end'
+                                      GreaterThanEqualsToken
+                                      PropertyAccessExpression
+                                        Identifier: ' copy'
+                                        Identifier: 'end'
+                                  Identifier: ' startNodeIndex'
+                          IfStatement
+                            BinaryExpression
+                              BinaryExpression
+                                Identifier: 'endNodeIndex'
+                                ExclamationEqualsEqualsToken
+                                PrefixUnaryExpression
+                                  NumericLiteral
+                              AmpersandAmpersandToken
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: ' copy'
+                                  Identifier: 'end'
+                                LessThanEqualsToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    ElementAccessExpression
+                                      Identifier: ' statementsInSourceFile'
+                                      Identifier: 'endNodeIndex'
+                                    Identifier: 'getStart'
+                            Block
+                              ExpressionStatement
+                                PostfixUnaryExpression
+                                  Identifier: '
+                    endNodeIndex'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                statements'
+                                Identifier: 'push'
+                              SpreadElement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'statementsInSourceFile'
+                                    Identifier: 'slice'
+                                  Identifier: 'startNodeIndex'
+                                  ConditionalExpression
+                                    BinaryExpression
+                                      Identifier: ' endNodeIndex'
+                                      EqualsEqualsEqualsToken
+                                      PrefixUnaryExpression
+                                        NumericLiteral
+                                    QuestionToken
+                                    PropertyAccessExpression
+                                      Identifier: ' statementsInSourceFile'
+                                      Identifier: 'length'
+                                    ColonToken
+                                    BinaryExpression
+                                      Identifier: ' endNodeIndex'
+                                      PlusToken
+                                      NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' usage'
+                        CallExpression
+                          Identifier: ' getUsageInfo'
+                          PropertyAccessExpression
+                            Identifier: 'copiedFrom'
+                            Identifier: 'file'
+                          Identifier: ' statements'
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                Identifier: ' originalProgram'
+                              Identifier: 'getTypeChecker'
+                          CallExpression
+                            Identifier: ' getExistingLocals'
+                            Identifier: 'updatedFile'
+                            Identifier: ' statements'
+                            CallExpression
+                              PropertyAccessExpression
+                                NonNullExpression
+                                  Identifier: ' originalProgram'
+                                Identifier: 'getTypeChecker'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' pos'
+                              PropertyAccessExpression
+                                ElementAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' copiedFrom'
+                                    Identifier: 'range'
+                                  NumericLiteral
+                                Identifier: 'pos'
+                            PropertyAssignment
+                              Identifier: ' end'
+                              PropertyAccessExpression
+                                ElementAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' copiedFrom'
+                                    Identifier: 'range'
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'copiedFrom'
+                                        Identifier: 'range'
+                                      Identifier: 'length'
+                                    MinusToken
+                                    NumericLiteral
+                                Identifier: 'end'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            Debug'
+                        Identifier: 'assertIsDefined'
+                      Identifier: 'originalProgram'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' useEsModuleSyntax'
+                        PrefixUnaryExpression
+                          CallExpression
+                            Identifier: 'fileShouldUseJavaScriptRequire'
+                            PropertyAccessExpression
+                              Identifier: 'targetFile'
+                              Identifier: 'fileName'
+                            Identifier: ' originalProgram'
+                            Identifier: ' host'
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'copiedFrom'
+                                    Identifier: 'file'
+                                  Identifier: 'commonJsModuleIndicator'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            addExportsInOldFile'
+                      PropertyAccessExpression
+                        Identifier: 'copiedFrom'
+                        Identifier: 'file'
+                      PropertyAccessExpression
+                        Identifier: ' usage'
+                        Identifier: 'targetFileImportsFromOldFile'
+                      Identifier: ' changes'
+                      Identifier: ' useEsModuleSyntax'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            addTargetFileImports'
+                      PropertyAccessExpression
+                        Identifier: 'copiedFrom'
+                        Identifier: 'file'
+                      PropertyAccessExpression
+                        Identifier: ' usage'
+                        Identifier: 'oldImportsNeededByTargetFile'
+                      PropertyAccessExpression
+                        Identifier: ' usage'
+                        Identifier: 'targetFileImportsFromOldFile'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' originalProgram'
+                          Identifier: 'getTypeChecker'
+                      Identifier: ' updatedProgram'
+                      Identifier: ' importAdder'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' context'
+                        TypeReference
+                          Identifier: ' CodeFixContextBase'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                sourceFile'
+                            Identifier: ' updatedFile'
+                          PropertyAssignment
+                            Identifier: '
+                program'
+                            NonNullExpression
+                              Identifier: ' originalProgram'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                cancellationToken'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                host'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                preferences'
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                formatContext'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' offset'
+                        NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            pasteLocations'
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'location'
+                        Parameter
+                          Identifier: ' i'
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' oldTextLength'
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' location'
+                                    Identifier: 'end'
+                                  MinusToken
+                                  PropertyAccessExpression
+                                    Identifier: ' location'
+                                    Identifier: 'pos'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' textToBePasted'
+                                BinaryExpression
+                                  Identifier: ' actualPastedText'
+                                  QuestionQuestionToken
+                                  ElementAccessExpression
+                                    Identifier: ' pastedText'
+                                    Identifier: 'i'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' startPos'
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' location'
+                                    Identifier: 'pos'
+                                  PlusToken
+                                  Identifier: ' offset'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' endPos'
+                                BinaryExpression
+                                  Identifier: ' startPos'
+                                  PlusToken
+                                  PropertyAccessExpression
+                                    Identifier: ' textToBePasted'
+                                    Identifier: 'length'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' range'
+                                TypeReference
+                                  Identifier: ' TextRange'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' pos'
+                                    Identifier: ' startPos'
+                                  PropertyAssignment
+                                    Identifier: ' end'
+                                    Identifier: ' endPos'
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                offset'
+                              PlusEqualsToken
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: ' textToBePasted'
+                                  Identifier: 'length'
+                                MinusToken
+                                Identifier: ' oldTextLength'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' enclosingNode'
+                                CallExpression
+                                  Identifier: ' findAncestor'
+                                  CallExpression
+                                    Identifier: '
+                    getTokenAtPosition'
+                                    PropertyAccessExpression
+                                      Identifier: 'context'
+                                      Identifier: 'sourceFile'
+                                    PropertyAccessExpression
+                                      Identifier: ' range'
+                                      Identifier: 'pos'
+                                  ArrowFunction
+                                    Parameter
+                                      Identifier: '
+                    ancestorNode'
+                                    EqualsGreaterThanToken
+                                    CallExpression
+                                      Identifier: ' rangeContainsRange'
+                                      Identifier: 'ancestorNode'
+                                      Identifier: ' range'
+                          IfStatement
+                            PrefixUnaryExpression
+                              Identifier: 'enclosingNode'
+                            ReturnStatement
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+                forEachChild'
+                              Identifier: 'enclosingNode'
+                              FunctionExpression
+                                Identifier: ' importUnresolvedIdentifiers'
+                                Parameter
+                                  Identifier: 'node'
+                                Block
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' isImportCandidate'
+                                        BinaryExpression
+                                          BinaryExpression
+                                            CallExpression
+                                              Identifier: ' isIdentifier'
+                                              Identifier: 'node'
+                                            AmpersandAmpersandToken
+                                            CallExpression
+                                              Identifier: '
+                        rangeContainsPosition'
+                                              Identifier: 'range'
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' node'
+                                                  Identifier: 'getStart'
+                                                Identifier: 'updatedFile'
+                                          AmpersandAmpersandToken
+                                          PrefixUnaryExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                CallExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: 'updatedProgram'
+                                                    QuestionDotToken
+                                                    Identifier: 'getTypeChecker'
+                                                Identifier: 'resolveName'
+                                              PropertyAccessExpression
+                                                Identifier: '
+                            node'
+                                                Identifier: 'text'
+                                              Identifier: '
+                            node'
+                                              PropertyAccessExpression
+                                                Identifier: '
+                            SymbolFlags'
+                                                Identifier: 'All'
+                                              FalseKeyword
+                                  IfStatement
+                                    Identifier: 'isImportCandidate'
+                                    Block
+                                      ReturnStatement
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' importAdder'
+                                            Identifier: 'addImportForUnresolvedIdentifier'
+                                          Identifier: '
+                            context'
+                                          Identifier: '
+                            node'
+                                          TrueKeyword
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    node'
+                                        Identifier: 'forEachChild'
+                                      Identifier: 'importUnresolvedIdentifiers'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        importAdder'
+                    Identifier: 'writeFixes'
+                  Identifier: 'changes'
+                  CallExpression
+                    Identifier: ' getQuotePreference'
+                    ConditionalExpression
+                      Identifier: 'copiedFrom'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' copiedFrom'
+                        Identifier: 'file'
+                      ColonToken
+                      Identifier: ' targetFile'
+                    Identifier: ' preferences'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              NonNullExpression
+                Identifier: 'importAdder'
+              Identifier: 'hasFixes'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    pasteLocations'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'paste'
+            Parameter
+              Identifier: ' i'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        changes'
+                    Identifier: 'replaceRangeWithText'
+                  Identifier: '
+            targetFile'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' pos'
+                      PropertyAccessExpression
+                        Identifier: ' paste'
+                        Identifier: 'pos'
+                    PropertyAssignment
+                      Identifier: ' end'
+                      PropertyAccessExpression
+                        Identifier: ' paste'
+                        Identifier: 'end'
+                  BinaryExpression
+                    Identifier: '
+            actualPastedText'
+                    QuestionQuestionToken
+                    ElementAccessExpression
+                      Identifier: ' pastedText'
+                      Identifier: 'i'

@@ -1,0 +1,266 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' z'
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+      VariableDeclaration
+        Identifier: ' c'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement0'
+    Block
+      ForOfStatement
+        Identifier: 'x'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement1'
+    Block
+      ForOfStatement
+        Identifier: 'x'
+        AwaitExpression
+          Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement2'
+    Block
+      ForOfStatement
+        Identifier: 'x'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement3'
+    Block
+      ForOfStatement
+        PropertyAccessExpression
+          ParenthesizedExpression
+            AwaitExpression
+              Identifier: ' x'
+          Identifier: 'a'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement4'
+    Block
+      ForOfStatement
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'a'
+        AwaitExpression
+          Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement5'
+    Block
+      ForOfStatement
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'a'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement6'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement7'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+        AwaitExpression
+          Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement8'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement9'
+    Block
+      ForOfStatement
+        ArrayLiteralExpression
+          Identifier: 'x'
+        AwaitExpression
+          Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement10'
+    Block
+      ForOfStatement
+        ArrayLiteralExpression
+          Identifier: 'x'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement11'
+    Block
+      ForOfStatement
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'x'
+            EqualsToken
+            AwaitExpression
+              Identifier: ' a'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement12'
+    Block
+      ForOfStatement
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'x'
+            EqualsToken
+            Identifier: ' a'
+        AwaitExpression
+          Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement13'
+    Block
+      ForOfStatement
+        ArrayLiteralExpression
+          BinaryExpression
+            Identifier: 'x'
+            EqualsToken
+            Identifier: ' a'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement14'
+    Block
+      ForOfStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' x'
+        AwaitExpression
+          Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement15'
+    Block
+      ForOfStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' x'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement16'
+    Block
+      ForOfStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' x'
+            EqualsToken
+            AwaitExpression
+              Identifier: ' a'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement17'
+    Block
+      ForOfStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' x'
+            EqualsToken
+            Identifier: ' a'
+        AwaitExpression
+          Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' forOfStatement18'
+    Block
+      ForOfStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' x'
+            EqualsToken
+            Identifier: ' a'
+        Identifier: ' y'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' z'

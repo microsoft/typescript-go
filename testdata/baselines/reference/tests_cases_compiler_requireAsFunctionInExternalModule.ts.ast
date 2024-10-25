@@ -1,0 +1,47 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' require'
+    Parameter
+      Identifier: 'a'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' has'
+    Parameter
+      Identifier: 'a'
+    Block
+      ReturnStatement
+        TrueKeyword
+  ImportDeclaration
+    ImportClause
+      Identifier: ' require'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' has'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' hello'
+    Block
+  IfStatement
+    CallExpression
+      Identifier: 'has'
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    require'
+          StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' hello'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+hello'

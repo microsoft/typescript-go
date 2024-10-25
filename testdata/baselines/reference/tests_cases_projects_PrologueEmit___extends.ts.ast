@@ -1,0 +1,13 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' base'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' child'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' base'

@@ -1,0 +1,14 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @allowJs: true
+// @experimentalDecorators: true
+// @Filename: a.js
+//// @internal class C {}
+
+verify'
+        Identifier: 'getSemanticDiagnostics'
+      ArrayLiteralExpression

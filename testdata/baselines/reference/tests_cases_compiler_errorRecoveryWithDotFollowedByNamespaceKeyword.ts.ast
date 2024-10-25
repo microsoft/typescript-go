@@ -1,0 +1,22 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+          IfStatement
+            TrueKeyword
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+            B'
+                  Identifier: ''
+              ModuleDeclaration
+                Identifier: ' B'
+                ModuleBlock
+                  FunctionDeclaration
+                    ExportKeyword
+                    Identifier: ' baz'
+                    Block

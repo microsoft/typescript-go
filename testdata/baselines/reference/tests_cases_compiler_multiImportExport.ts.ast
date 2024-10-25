@@ -1,0 +1,49 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' Drawing'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' addr'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' Drawing'
+              Identifier: 'Math'
+            Identifier: 'Adder'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' Math'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' Adder'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Math'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    Adder'
+            Identifier: 'Adder'
+  ExportAssignment
+    Identifier: ' Math'
+  ClassDeclaration
+    Identifier: ' Adder'
+    MethodDeclaration
+      Identifier: '
+    add'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Parameter
+        Identifier: ' b'
+        NumberKeyword
+      Block
+  ExportAssignment
+    Identifier: ' Adder'

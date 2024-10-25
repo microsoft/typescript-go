@@ -1,0 +1,77 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TopLevelSym'
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' InnerSym'
+        CallExpression
+          Identifier: ' Symbol'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        MethodDeclaration
+          ComputedPropertyName
+            Identifier: 'TopLevelSym'
+          Parameter
+            Identifier: 'x'
+            NumericLiteral
+          Block
+            ReturnStatement
+              Identifier: ' x'
+        PropertyAssignment
+          Identifier: '
+    items'
+          ObjectLiteralExpression
+            PropertyAssignment
+              ComputedPropertyName
+                Identifier: 'InnerSym'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: 'x'
+                      NumericLiteral
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' arg'
+                  Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TopLevelSym'
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' InnerSym'
+        CallExpression
+          Identifier: ' Symbol'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyClass'
+    PropertyDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'TopLevelSym'
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'InnerSym'
+      StringLiteral
+    Constructor
+      Parameter
+        Identifier: '_p'
+        Identifier: ' InnerSym'
+      Block

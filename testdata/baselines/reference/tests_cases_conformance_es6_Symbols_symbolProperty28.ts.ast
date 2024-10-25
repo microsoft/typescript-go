@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        PropertyAccessExpression
+          CallExpression
+            ElementAccessExpression
+              Identifier: ' c'
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'toStringTag'
+          Identifier: 'x'

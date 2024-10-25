@@ -1,0 +1,14 @@
+SourceFile
+  IfStatement
+    NumericLiteral
+    Block
+    IfStatement
+      NumericLiteral
+      Block
+      IfStatement
+        NumericLiteral
+        Block
+        IfStatement
+          NumericLiteral
+          Block
+          Block

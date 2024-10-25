@@ -1,0 +1,31 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' JSX'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' Component'
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxText
+            JsxExpression
+            JsxText
+            JsxExpression
+              NullKeyword
+            JsxText
+            JsxExpression
+            JsxText
+            JsxExpression
+            JsxText
+            JsxExpression
+            JsxText
+            JsxExpression
+            JsxText
+            JsxClosingElement
+              Identifier: 'div'

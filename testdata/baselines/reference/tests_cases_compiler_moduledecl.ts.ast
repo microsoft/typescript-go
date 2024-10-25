@@ -1,0 +1,602 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' a'
+    ModuleBlock
+  ModuleDeclaration
+    Identifier: ' b'
+    ModuleDeclaration
+      Identifier: 'a'
+      ModuleBlock
+  ModuleDeclaration
+    Identifier: ' c'
+    ModuleDeclaration
+      Identifier: 'a'
+      ModuleDeclaration
+        Identifier: 'b'
+        ModuleBlock
+          ImportEqualsDeclaration
+            Identifier: ' ma'
+            Identifier: ' a'
+  ModuleDeclaration
+    Identifier: ' mImport'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' d'
+        Identifier: ' a'
+      ImportEqualsDeclaration
+        Identifier: ' e'
+        QualifiedName
+          Identifier: ' b'
+          Identifier: 'a'
+      ImportEqualsDeclaration
+        Identifier: ' d1'
+        Identifier: ' a'
+      ImportEqualsDeclaration
+        Identifier: ' e1'
+        QualifiedName
+          Identifier: ' b'
+          Identifier: 'a'
+  ModuleDeclaration
+    Identifier: ' m0'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' f1'
+        Block
+      FunctionDeclaration
+        Identifier: ' f2'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+      FunctionDeclaration
+        Identifier: ' f2'
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+      FunctionDeclaration
+        Identifier: ' f2'
+        Parameter
+          Identifier: 'ns'
+          AnyKeyword
+        Block
+      ClassDeclaration
+        Identifier: ' c1'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' a'
+          FunctionType
+            StringKeyword
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' b'
+          FunctionType
+            NumberKeyword
+        PropertyDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' s1'
+        PropertyDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' s2'
+      InterfaceDeclaration
+        Identifier: ' i1'
+        CallSignature
+          TypeReference
+            Identifier: ' Object'
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' c1'
+      ImportEqualsDeclaration
+        Identifier: ' m2'
+        Identifier: ' a'
+      ImportEqualsDeclaration
+        Identifier: ' m3'
+        Identifier: ' b'
+      ImportEqualsDeclaration
+        Identifier: ' m4'
+        QualifiedName
+          Identifier: ' b'
+          Identifier: 'a'
+      ImportEqualsDeclaration
+        Identifier: ' m5'
+        Identifier: ' c'
+      ImportEqualsDeclaration
+        Identifier: ' m6'
+        QualifiedName
+          Identifier: ' c'
+          Identifier: 'a'
+      ImportEqualsDeclaration
+        Identifier: ' m7'
+        QualifiedName
+          QualifiedName
+            Identifier: ' c'
+            Identifier: 'a'
+          Identifier: 'b'
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f1'
+        Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f2'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f2'
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f2'
+        Parameter
+          Identifier: 'ns'
+          AnyKeyword
+        Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c1'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' a'
+          FunctionType
+            StringKeyword
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' b'
+          FunctionType
+            NumberKeyword
+        PropertyDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' s1'
+        PropertyDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' s2'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' d'
+          Block
+            ReturnStatement
+              StringLiteral
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' e'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' y'
+              StringKeyword
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' n'
+          Parameter
+            PublicKeyword
+            Identifier: ' n2'
+            NumberKeyword
+          Parameter
+            PrivateKeyword
+            Identifier: ' n3'
+          Parameter
+            PrivateKeyword
+            Identifier: ' n4'
+            StringKeyword
+          Block
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' i1'
+        CallSignature
+          TypeReference
+            Identifier: ' Object'
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' c1'
+      ImportEqualsDeclaration
+        Identifier: ' m2'
+        Identifier: ' a'
+      ImportEqualsDeclaration
+        Identifier: ' m3'
+        Identifier: ' b'
+      ImportEqualsDeclaration
+        Identifier: ' m4'
+        QualifiedName
+          Identifier: ' b'
+          Identifier: 'a'
+      ImportEqualsDeclaration
+        Identifier: ' m5'
+        Identifier: ' c'
+      ImportEqualsDeclaration
+        Identifier: ' m6'
+        QualifiedName
+          Identifier: ' c'
+          Identifier: 'a'
+      ImportEqualsDeclaration
+        Identifier: ' m7'
+        QualifiedName
+          QualifiedName
+            Identifier: ' c'
+            Identifier: 'a'
+          Identifier: 'b'
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m2'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                NumericLiteral
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+                NumberKeyword
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m3'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' c'
+                NumberKeyword
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m25'
+        ModuleBlock
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' m5'
+            ModuleBlock
+              VariableStatement
+                ExportKeyword
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' c'
+                    NumberKeyword
+  ModuleDeclaration
+    Identifier: ' m13'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m4'
+        ModuleBlock
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' m2'
+            ModuleBlock
+              ModuleDeclaration
+                ExportKeyword
+                Identifier: ' m3'
+                ModuleBlock
+                  VariableStatement
+                    ExportKeyword
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' c'
+                        NumberKeyword
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' f'
+            Block
+              ReturnStatement
+                NumericLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' m4'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' m5'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' m43'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' m55'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NumberKeyword
+  ModuleDeclaration
+    Identifier: ' exportTests'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C1_public'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f2'
+          Block
+            ReturnStatement
+              NumericLiteral
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f3'
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        Identifier: ' C2_private'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f2'
+          Block
+            ReturnStatement
+              NumericLiteral
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f3'
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C3_public'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' getC2_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' setC2_private'
+          Parameter
+            Identifier: 'arg'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+        GetAccessor
+          PrivateKeyword
+          Identifier: ' c2'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getC1_public'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' setC1_public'
+          Parameter
+            Identifier: 'arg'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+        GetAccessor
+          PublicKeyword
+          Identifier: ' c1'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' mAmbient'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' myProp'
+          NumberKeyword
+      FunctionDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' aVar'
+            TypeReference
+              Identifier: ' C'
+      InterfaceDeclaration
+        Identifier: ' B'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          TypeReference
+            Identifier: ' C'
+      EnumDeclaration
+        Identifier: ' e'
+        EnumMember
+          Identifier: '
+        x'
+        EnumMember
+          Identifier: '
+        y'
+        EnumMember
+          Identifier: '
+        z'
+      ModuleDeclaration
+        Identifier: ' m3'
+        ModuleBlock
+          ClassDeclaration
+            Identifier: ' C'
+            PropertyDeclaration
+              PublicKeyword
+              Identifier: ' myProp'
+              NumberKeyword
+          FunctionDeclaration
+            Identifier: ' foo'
+            TypeReference
+              Identifier: ' C'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' aVar'
+                TypeReference
+                  Identifier: ' C'
+          InterfaceDeclaration
+            Identifier: ' B'
+            PropertySignature
+              Identifier: '
+            x'
+              NumberKeyword
+            PropertySignature
+              Identifier: '
+            y'
+              TypeReference
+                Identifier: ' C'
+          EnumDeclaration
+            Identifier: ' e'
+            EnumMember
+              Identifier: '
+            x'
+            EnumMember
+              Identifier: '
+            y'
+            EnumMember
+              Identifier: '
+            z'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' mAmbient'
+            Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cVar'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' mAmbient'
+            Identifier: 'C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aVar'
+        PropertyAccessExpression
+          Identifier: ' mAmbient'
+          Identifier: 'aVar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bB'
+        TypeReference
+          QualifiedName
+            Identifier: ' mAmbient'
+            Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' eVar'
+        TypeReference
+          QualifiedName
+            Identifier: ' mAmbient'
+            Identifier: 'e'
+  FunctionDeclaration
+    Identifier: ' m3foo'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' mAmbient'
+              Identifier: 'm3'
+            Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m3cVar'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' mAmbient'
+              Identifier: 'm3'
+            Identifier: 'C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m3aVar'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' mAmbient'
+            Identifier: 'm3'
+          Identifier: 'aVar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m3bB'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' mAmbient'
+              Identifier: 'm3'
+            Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m3eVar'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' mAmbient'
+              Identifier: 'm3'
+            Identifier: 'e'

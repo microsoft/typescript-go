@@ -1,0 +1,50 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @noLib: true
+
+// @Filename: /a.ts
+////export const foo = 0;
+
+// @Filename: /b.ts
+////const foo = 1;
+////fo/**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            text'
+                  StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' noLib'
+                TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' includeCompletionsForModuleExports'
+              TrueKeyword

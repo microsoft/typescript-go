@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @strict: true
+
+//// abstract class A { abstract a (); }
+//// 
+//// class AT extends A { a () {} }
+//// 
+//// class T {
+////     a: AT;
+//// }
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral

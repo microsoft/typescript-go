@@ -1,0 +1,53 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+  ExpressionStatement
+    StringLiteral
+  ModuleDeclaration
+    Identifier: ' Test'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Bug'
+        MethodDeclaration
+          Identifier: '
+  getName'
+          StringKeyword
+          Block
+            ReturnStatement
+              StringLiteral
+        MethodDeclaration
+          Identifier: '
+  bug'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' name'
+                  StringKeyword
+                  NullKeyword
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'name'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'getName'
+                  Identifier: 'length'
+                GreaterThanToken
+                NumericLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+    console'
+                      Identifier: 'log'
+                    Identifier: 'name'

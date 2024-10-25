@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' arr'
+            ArrayType
+              AnyKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' arr'
+            ArrayLiteralExpression
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' obj'
+        QuestionDotToken
+        Identifier: 'arr'
+      QuestionQuestionToken
+      ArrayLiteralExpression
+    Block

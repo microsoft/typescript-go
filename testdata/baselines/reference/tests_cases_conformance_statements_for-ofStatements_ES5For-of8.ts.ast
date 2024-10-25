@@ -1,0 +1,27 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+  ForOfStatement
+    PropertyAccessExpression
+      CallExpression
+        Identifier: 'foo'
+      Identifier: 'x'
+    ArrayLiteralExpression
+      StringLiteral
+      StringLiteral
+      StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            PropertyAccessExpression
+              CallExpression
+                Identifier: ' foo'
+              Identifier: 'x'

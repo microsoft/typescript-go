@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' c'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' i'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' uninstantiated'
+    ModuleBlock
+  ExportDeclaration
+    StringLiteral

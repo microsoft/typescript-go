@@ -1,0 +1,38 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Block
+    MethodDeclaration
+      Identifier: '
+  method'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          LiteralType
+            NullKeyword
+        NullKeyword
+  TryStatement
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+  a'
+          EqualsToken
+          NewExpression
+            Identifier: ' A'
+    Block
+      IfStatement
+        Identifier: 'a'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    a'
+                Identifier: 'method'

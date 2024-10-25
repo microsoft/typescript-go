@@ -1,0 +1,623 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T'
+    ArrayType
+      NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnDeclBasic1'
+    Parameter
+      Identifier: 'p'
+      UnionType
+        ArrayType
+          NumberKeyword
+        ArrayType
+          StringKeyword
+        TupleType
+          TypeReference
+            Identifier: 'T'
+      ArrayLiteralExpression
+    Parameter
+      Identifier: ' rParam'
+      StringKeyword
+    VoidKeyword
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnDeclBasic2'
+    Parameter
+      Identifier: 'p'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+      ArrowFunction
+        EqualsGreaterThanToken
+        NonNullExpression
+          NullKeyword
+    Parameter
+      Identifier: ' rParam'
+      StringKeyword
+    VoidKeyword
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnDeclBasic3'
+    Parameter
+      Identifier: 'p'
+      ConstructorType
+        AnyKeyword
+      ClassExpression
+    Parameter
+      Identifier: ' rParam'
+      StringKeyword
+    VoidKeyword
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnDeclBasic4'
+    Parameter
+      Identifier: 'p'
+      TupleType
+        TypeReference
+          Identifier: 'T'
+      ArrayLiteralExpression
+        ArrayLiteralExpression
+    Parameter
+      Identifier: ' rParam'
+      StringKeyword
+    VoidKeyword
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnDeclBasic5'
+    Parameter
+      Identifier: 'p'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          TypeReference
+            Identifier: ' T'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          ArrayLiteralExpression
+    Parameter
+      Identifier: ' rParam'
+      StringKeyword
+    VoidKeyword
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnDeclBasic6'
+    Parameter
+      Identifier: 'p'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          StringKeyword
+          TemplateTail
+      StringLiteral
+    Parameter
+      Identifier: ' rParam'
+      StringKeyword
+    VoidKeyword
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnDeclBasic7'
+    Parameter
+      Identifier: 'p'
+      IntersectionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            QuestionToken
+            StringKeyword
+        ArrayType
+          NumberKeyword
+      ArrayLiteralExpression
+    Parameter
+      Identifier: ' rParam'
+      StringKeyword
+    VoidKeyword
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnDeclBasic8'
+    Parameter
+      Identifier: 'p'
+      UnionType
+        ParenthesizedType
+          UnionType
+            ArrayType
+              NumberKeyword
+            ArrayType
+              StringKeyword
+        NumberKeyword
+      ArrayLiteralExpression
+    Parameter
+      Identifier: ' rParam'
+      StringKeyword
+    VoidKeyword
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnDeclHasUndefined'
+    Parameter
+      Identifier: 'p'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+      ArrayLiteralExpression
+    Parameter
+      Identifier: ' rParam'
+      StringKeyword
+    VoidKeyword
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnDeclBad'
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' T'
+      ArrayLiteralExpression
+    Parameter
+      Identifier: ' rParam'
+      StringKeyword
+    VoidKeyword
+    Block
+  EmptyStatement
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExprOk1'
+        FunctionExpression
+          Parameter
+            Identifier: 'array'
+            ArrayType
+              NumberKeyword
+            ArrayLiteralExpression
+          Parameter
+            Identifier: ' rParam'
+            StringKeyword
+          VoidKeyword
+          Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExprOk2'
+        FunctionExpression
+          Parameter
+            Identifier: 'array'
+            UnionType
+              TypeReference
+                Identifier: ' T'
+              UndefinedKeyword
+            ArrayLiteralExpression
+          Parameter
+            Identifier: ' rParam'
+            StringKeyword
+          VoidKeyword
+          Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnExprBad'
+        FunctionExpression
+          Parameter
+            Identifier: 'array'
+            TypeReference
+              Identifier: ' T'
+            ArrayLiteralExpression
+          Parameter
+            Identifier: ' rParam'
+            StringKeyword
+          VoidKeyword
+          Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrowOk1'
+        ArrowFunction
+          Parameter
+            Identifier: 'array'
+            ArrayType
+              NumberKeyword
+            ArrayLiteralExpression
+          Parameter
+            Identifier: ' rParam'
+            StringKeyword
+          VoidKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrowOk2'
+        ArrowFunction
+          Parameter
+            Identifier: 'array'
+            UnionType
+              TypeReference
+                Identifier: ' T'
+              UndefinedKeyword
+            ArrayLiteralExpression
+          Parameter
+            Identifier: ' rParam'
+            StringKeyword
+          VoidKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrowBad'
+        ArrowFunction
+          Parameter
+            Identifier: 'array'
+            TypeReference
+              Identifier: ' T'
+            ArrayLiteralExpression
+          Parameter
+            Identifier: ' rParam'
+            StringKeyword
+          VoidKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inObjectLiteralFnExprOk1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' o'
+            FunctionExpression
+              Parameter
+                Identifier: 'array'
+                ArrayType
+                  NumberKeyword
+                ArrayLiteralExpression
+              Parameter
+                Identifier: ' rParam'
+                StringKeyword
+              VoidKeyword
+              Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inObjectLiteralFnExprOk2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' o'
+            FunctionExpression
+              Parameter
+                Identifier: 'array'
+                UnionType
+                  TypeReference
+                    Identifier: ' T'
+                  UndefinedKeyword
+                ArrayLiteralExpression
+              Parameter
+                Identifier: ' rParam'
+                StringKeyword
+              VoidKeyword
+              Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inObjectLiteralFnExprBad'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' o'
+            FunctionExpression
+              Parameter
+                Identifier: 'array'
+                TypeReference
+                  Identifier: ' T'
+                ArrayLiteralExpression
+              Parameter
+                Identifier: ' rParam'
+                StringKeyword
+              VoidKeyword
+              Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inObjectLiteralArrowOk1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' o'
+            ArrowFunction
+              Parameter
+                Identifier: 'array'
+                ArrayType
+                  NumberKeyword
+                ArrayLiteralExpression
+              Parameter
+                Identifier: ' rParam'
+                StringKeyword
+              VoidKeyword
+              EqualsGreaterThanToken
+              Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inObjectLiteralArrowOk2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' o'
+            ArrowFunction
+              Parameter
+                Identifier: 'array'
+                UnionType
+                  TypeReference
+                    Identifier: ' T'
+                  UndefinedKeyword
+                ArrayLiteralExpression
+              Parameter
+                Identifier: ' rParam'
+                StringKeyword
+              VoidKeyword
+              EqualsGreaterThanToken
+              Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inObjectLiteralArrowBad'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' o'
+            ArrowFunction
+              Parameter
+                Identifier: 'array'
+                TypeReference
+                  Identifier: ' T'
+                ArrayLiteralExpression
+              Parameter
+                Identifier: ' rParam'
+                StringKeyword
+              VoidKeyword
+              EqualsGreaterThanToken
+              Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inObjectLiteralMethodOk1'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' o'
+            Parameter
+              Identifier: 'array'
+              ArrayType
+                NumberKeyword
+              ArrayLiteralExpression
+            Parameter
+              Identifier: ' rParam'
+              StringKeyword
+            VoidKeyword
+            Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inObjectLiteralMethodOk2'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' o'
+            Parameter
+              Identifier: 'array'
+              UnionType
+                TypeReference
+                  Identifier: ' T'
+                UndefinedKeyword
+              ArrayLiteralExpression
+            Parameter
+              Identifier: ' rParam'
+              StringKeyword
+            VoidKeyword
+            Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inObjectLiteralMethodBad'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' o'
+            Parameter
+              Identifier: 'array'
+              TypeReference
+                Identifier: ' T'
+              ArrayLiteralExpression
+            Parameter
+              Identifier: ' rParam'
+              StringKeyword
+            VoidKeyword
+            Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' InClassFnExprOk1'
+    PropertyDeclaration
+      Identifier: ' o'
+      FunctionExpression
+        Parameter
+          Identifier: 'array'
+          ArrayType
+            NumberKeyword
+          ArrayLiteralExpression
+        Parameter
+          Identifier: ' rParam'
+          StringKeyword
+        VoidKeyword
+        Block
+  EmptyStatement
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' InClassFnExprOk2'
+    PropertyDeclaration
+      Identifier: ' o'
+      FunctionExpression
+        Parameter
+          Identifier: 'array'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+          ArrayLiteralExpression
+        Parameter
+          Identifier: ' rParam'
+          StringKeyword
+        VoidKeyword
+        Block
+  EmptyStatement
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' InClassFnExprBad'
+    PropertyDeclaration
+      Identifier: ' o'
+      FunctionExpression
+        Parameter
+          Identifier: 'array'
+          TypeReference
+            Identifier: ' T'
+          ArrayLiteralExpression
+        Parameter
+          Identifier: ' rParam'
+          StringKeyword
+        VoidKeyword
+        Block
+  EmptyStatement
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' InClassArrowOk1'
+    PropertyDeclaration
+      Identifier: ' o'
+      ArrowFunction
+        Parameter
+          Identifier: 'array'
+          ArrayType
+            NumberKeyword
+          ArrayLiteralExpression
+        Parameter
+          Identifier: ' rParam'
+          StringKeyword
+        VoidKeyword
+        EqualsGreaterThanToken
+        Block
+  EmptyStatement
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' InClassArrowOk2'
+    PropertyDeclaration
+      Identifier: ' o'
+      ArrowFunction
+        Parameter
+          Identifier: 'array'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+          ArrayLiteralExpression
+        Parameter
+          Identifier: ' rParam'
+          StringKeyword
+        VoidKeyword
+        EqualsGreaterThanToken
+        Block
+  EmptyStatement
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' InClassArrowBad'
+    PropertyDeclaration
+      Identifier: ' o'
+      ArrowFunction
+        Parameter
+          Identifier: 'array'
+          TypeReference
+            Identifier: ' T'
+          ArrayLiteralExpression
+        Parameter
+          Identifier: ' rParam'
+          StringKeyword
+        VoidKeyword
+        EqualsGreaterThanToken
+        Block
+  EmptyStatement
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' InClassMethodOk1'
+    MethodDeclaration
+      Identifier: ' o'
+      Parameter
+        Identifier: 'array'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+      Parameter
+        Identifier: ' rParam'
+        StringKeyword
+      VoidKeyword
+      Block
+  EmptyStatement
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' InClassMethodOk2'
+    MethodDeclaration
+      Identifier: ' o'
+      Parameter
+        Identifier: 'array'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+        ArrayLiteralExpression
+      Parameter
+        Identifier: ' rParam'
+        StringKeyword
+      VoidKeyword
+      Block
+  EmptyStatement
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' InClassMethodBad'
+    MethodDeclaration
+      Identifier: ' o'
+      Parameter
+        Identifier: 'array'
+        TypeReference
+          Identifier: ' T'
+        ArrayLiteralExpression
+      Parameter
+        Identifier: ' rParam'
+        StringKeyword
+      VoidKeyword
+      Block
+  EmptyStatement

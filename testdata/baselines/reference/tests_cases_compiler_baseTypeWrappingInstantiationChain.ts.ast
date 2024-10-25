@@ -1,0 +1,86 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' CBaseBase'
+    TypeParameter
+      Identifier: 'T3'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' Parameter'
+          TypeReference
+            Identifier: 'T3'
+      Block
+  ClassDeclaration
+    Identifier: ' CBase'
+    TypeParameter
+      Identifier: 'T2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CBaseBase'
+        TypeReference
+          Identifier: 'Wrapper'
+          TypeReference
+            Identifier: 'T2'
+  ClassDeclaration
+    Identifier: ' Parameter'
+    TypeParameter
+      Identifier: 'T4'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T4'
+      Block
+  ClassDeclaration
+    Identifier: ' Wrapper'
+    TypeParameter
+      Identifier: 'T5'
+    PropertyDeclaration
+      Identifier: '
+    property'
+      TypeReference
+        Identifier: ' T5'
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CBase'
+        TypeReference
+          Identifier: 'T1'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' works'
+      Block
+        ExpressionStatement
+          NewExpression
+            Identifier: ' CBaseBase'
+            TypeReference
+              Identifier: 'Wrapper'
+              TypeReference
+                Identifier: 'T1'
+            ThisKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' alsoWorks'
+      Block
+        ExpressionStatement
+          NewExpression
+            Identifier: ' CBase'
+            TypeReference
+              Identifier: 'T1'
+            ThisKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' method'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' Wrapper'
+          TypeReference
+            Identifier: 'T1'
+      Block

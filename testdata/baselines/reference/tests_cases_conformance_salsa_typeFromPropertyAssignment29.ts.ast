@@ -1,0 +1,463 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' ExpandoDecl'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' n'
+            Identifier: 'toString'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoDecl'
+        Identifier: 'prop'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoDecl'
+        Identifier: 'm'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' n'
+              PlusToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' ExpandoDecl'
+              Identifier: 'prop'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ExpandoDecl'
+                Identifier: 'm'
+              NumericLiteral
+          PlusToken
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' ExpandoDecl'
+              NumericLiteral
+            Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ExpandoExpr'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' n'
+                  Identifier: 'toString'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoExpr'
+        Identifier: 'prop'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoExpr'
+        Identifier: 'prop'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoExpr'
+        Identifier: 'm'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' n'
+              PlusToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        BinaryExpression
+          BinaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'ExpandoExpr'
+                    Identifier: 'prop'
+                  Identifier: 'x'
+                BarBarToken
+                NumericLiteral
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ExpandoExpr'
+                Identifier: 'm'
+              NumericLiteral
+          PlusToken
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' ExpandoExpr'
+              NumericLiteral
+            Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ExpandoArrow'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' n'
+              Identifier: 'toString'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoArrow'
+        Identifier: 'prop'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoArrow'
+        Identifier: 'm'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' n'
+              PlusToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' ExpandoNested'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nested'
+            FunctionExpression
+              Parameter
+                Identifier: 'm'
+                NumberKeyword
+              Block
+                ReturnStatement
+                  BinaryExpression
+                    Identifier: ' n'
+                    PlusToken
+                    Identifier: ' m'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    nested'
+            Identifier: 'total'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' n'
+            PlusToken
+            NumericLiteral
+      ReturnStatement
+        Identifier: ' nested'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoNested'
+        Identifier: 'also'
+      EqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' ExpandoMerge'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' n'
+          AsteriskToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoMerge'
+        Identifier: 'p1'
+      EqualsToken
+      NumericLiteral
+  ModuleDeclaration
+    Identifier: ' ExpandoMerge'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p2'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' ExpandoMerge'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p3'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' ExpandoMerge'
+                Identifier: 'p1'
+              PlusToken
+              PropertyAccessExpression
+                Identifier: ' ExpandoMerge'
+                Identifier: 'p2'
+            PlusToken
+            PropertyAccessExpression
+              Identifier: ' ExpandoMerge'
+              Identifier: 'p3'
+          PlusToken
+          CallExpression
+            Identifier: ' ExpandoMerge'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Ns'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' ExpandoNamespace'
+        VoidKeyword
+        Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    ExpandoNamespace'
+            Identifier: 'p6'
+          EqualsToken
+          NumericLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            Identifier: ' ExpandoNamespace'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ExpandoExpr2'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' n'
+                  Identifier: 'toString'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoExpr2'
+        Identifier: 'prop'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoExpr2'
+        Identifier: 'm'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' n'
+              PlusToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' ExpandoExpr2'
+              Identifier: 'prop'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ExpandoExpr2'
+                Identifier: 'm'
+              NumericLiteral
+          PlusToken
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' ExpandoExpr2'
+              NumericLiteral
+            Identifier: 'length'
+  ClassDeclaration
+    Identifier: ' ExpandoClass'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoClass'
+        Identifier: 'prop'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoClass'
+        Identifier: 'm'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' n'
+              PlusToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' ExpandoClass'
+              Identifier: 'prop'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ExpandoClass'
+                Identifier: 'm'
+              NumericLiteral
+          PlusToken
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' ExpandoClass'
+            Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ExpandoExpr3'
+        ClassExpression
+          PropertyDeclaration
+            Identifier: '
+    n'
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoExpr3'
+        Identifier: 'prop'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ExpandoExpr3'
+        Identifier: 'm'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' n'
+              PlusToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' ExpandoExpr3'
+              Identifier: 'prop'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ExpandoExpr3'
+                Identifier: 'm'
+              NumericLiteral
+          PlusToken
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' ExpandoExpr3'
+            Identifier: 'n'

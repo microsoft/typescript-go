@@ -1,0 +1,27 @@
+SourceFile
+  TryStatement
+    Block
+      ForStatement
+        CallExpression
+          ParenthesizedExpression
+            FunctionExpression
+              Block
+                ThrowStatement
+                  StringLiteral
+        CallExpression
+          ParenthesizedExpression
+            FunctionExpression
+              Block
+                ThrowStatement
+                  StringLiteral
+        CallExpression
+          ParenthesizedExpression
+            FunctionExpression
+              Block
+                ThrowStatement
+                  StringLiteral
+        Block
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block

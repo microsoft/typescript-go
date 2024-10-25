@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              NullKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+foo'
+        Identifier: 'filter'
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'name'

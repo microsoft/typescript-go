@@ -1,0 +1,40 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn1'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' fn2'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' fn3'
+    Parameter
+      Identifier: 'arg'
+    Block
+      ReturnStatement
+        Identifier: ' arg'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' type'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' prop'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' type'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' prop'
+            NumericLiteral

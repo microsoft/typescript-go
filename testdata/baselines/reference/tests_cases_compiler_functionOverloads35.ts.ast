@@ -1,0 +1,41 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          AnyKeyword
+    AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' foo'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'a'
+              NumericLiteral

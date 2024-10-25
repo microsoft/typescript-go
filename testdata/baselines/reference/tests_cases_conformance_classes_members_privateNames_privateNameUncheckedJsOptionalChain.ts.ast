@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            QuestionDotToken
+            PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            QuestionDotToken
+            PrivateIdentifier

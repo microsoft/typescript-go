@@ -1,0 +1,52 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' b'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          StaticKeyword
+          Identifier: ' d'
+          NumberKeyword
+        Constructor
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' c'
+    UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        UnionType
+          TypeQuery
+            Identifier: ' A'
+          UndefinedKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: '
+
+a'
+          QuestionDotToken
+          Identifier: 'b'
+        TypeReference
+          Identifier: 'c'
+      Identifier: 'd'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+
+a'
+        QuestionDotToken
+        Identifier: 'b'
+      Identifier: 'd'

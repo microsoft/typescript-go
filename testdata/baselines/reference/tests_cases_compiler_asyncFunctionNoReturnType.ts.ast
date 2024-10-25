@@ -1,0 +1,9 @@
+SourceFile
+  ExpressionStatement
+    ArrowFunction
+      AsyncKeyword
+      EqualsGreaterThanToken
+      Block
+        IfStatement
+          Identifier: 'window'
+          ReturnStatement

@@ -1,0 +1,29 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        a'
+                Identifier: ' x'
+              ShorthandPropertyAssignment
+                Identifier: '
+        x'

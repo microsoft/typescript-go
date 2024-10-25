@@ -1,0 +1,8 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        DeclareKeyword
+        Identifier: ' M1'
+        ModuleBlock

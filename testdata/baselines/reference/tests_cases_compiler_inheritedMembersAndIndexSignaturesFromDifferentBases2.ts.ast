@@ -1,0 +1,25 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    foo'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        StringKeyword

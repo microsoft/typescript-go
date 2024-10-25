@@ -1,0 +1,60 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            Identifier: ' string'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            StringKeyword
+  ClassDeclaration
+    Identifier: ' C3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' C4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' M'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+  ClassDeclaration
+    Identifier: ' C5'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' foo'
+  ClassDeclaration
+    Identifier: ' C6'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ArrayLiteralExpression

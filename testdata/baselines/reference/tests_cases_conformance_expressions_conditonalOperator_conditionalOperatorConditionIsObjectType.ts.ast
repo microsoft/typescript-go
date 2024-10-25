@@ -1,0 +1,488 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' condObject'
+        TypeReference
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprAny1'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprBoolean1'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprNumber1'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprString1'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprIsObject1'
+        TypeReference
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprAny2'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprBoolean2'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprNumber2'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprString2'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprIsObject2'
+        TypeReference
+          Identifier: ' Object'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' doIt'
+      FunctionType
+        VoidKeyword
+  EmptyStatement
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+
+//Cond is an object type variable
+condObject'
+      QuestionToken
+      Identifier: ' exprAny1'
+      ColonToken
+      Identifier: ' exprAny2'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+condObject'
+      QuestionToken
+      Identifier: ' exprBoolean1'
+      ColonToken
+      Identifier: ' exprBoolean2'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+condObject'
+      QuestionToken
+      Identifier: ' exprNumber1'
+      ColonToken
+      Identifier: ' exprNumber2'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+condObject'
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprString2'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+condObject'
+      QuestionToken
+      Identifier: ' exprIsObject1'
+      ColonToken
+      Identifier: ' exprIsObject2'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+condObject'
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprBoolean1'
+  ExpressionStatement
+    ConditionalExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            StringKeyword
+          EqualsGreaterThanToken
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'length'
+      QuestionToken
+      Identifier: ' exprAny1'
+      ColonToken
+      Identifier: ' exprAny2'
+  ExpressionStatement
+    ConditionalExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            StringKeyword
+          EqualsGreaterThanToken
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'length'
+      QuestionToken
+      Identifier: ' exprBoolean1'
+      ColonToken
+      Identifier: ' exprBoolean2'
+  ExpressionStatement
+    ConditionalExpression
+      ParenthesizedExpression
+        ObjectLiteralExpression
+      QuestionToken
+      Identifier: ' exprNumber1'
+      ColonToken
+      Identifier: ' exprNumber2'
+  ExpressionStatement
+    ConditionalExpression
+      ParenthesizedExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprString2'
+  ExpressionStatement
+    ConditionalExpression
+      ParenthesizedExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+      QuestionToken
+      Identifier: ' exprIsObject1'
+      ColonToken
+      Identifier: ' exprIsObject2'
+  ExpressionStatement
+    ConditionalExpression
+      ParenthesizedExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprBoolean1'
+  ExpressionStatement
+    ConditionalExpression
+      CallExpression
+        Identifier: ' // union
+
+//Cond is an object type expression
+foo'
+      QuestionToken
+      Identifier: ' exprAny1'
+      ColonToken
+      Identifier: ' exprAny2'
+  ExpressionStatement
+    ConditionalExpression
+      NewExpression
+        Identifier: ' Date'
+      QuestionToken
+      Identifier: ' exprBoolean1'
+      ColonToken
+      Identifier: ' exprBoolean2'
+  ExpressionStatement
+    ConditionalExpression
+      NewExpression
+        Identifier: ' C'
+      QuestionToken
+      Identifier: ' exprNumber1'
+      ColonToken
+      Identifier: ' exprNumber2'
+  ExpressionStatement
+    ConditionalExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+C'
+          Identifier: 'doIt'
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprString2'
+  ExpressionStatement
+    ConditionalExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+condObject'
+          Identifier: 'valueOf'
+      QuestionToken
+      Identifier: ' exprIsObject1'
+      ColonToken
+      Identifier: ' exprIsObject2'
+  ExpressionStatement
+    ConditionalExpression
+      NewExpression
+        Identifier: ' Date'
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprBoolean1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsAny1'
+        ConditionalExpression
+          Identifier: ' condObject'
+          QuestionToken
+          Identifier: ' exprAny1'
+          ColonToken
+          Identifier: ' exprAny2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean1'
+        ConditionalExpression
+          Identifier: ' condObject'
+          QuestionToken
+          Identifier: ' exprBoolean1'
+          ColonToken
+          Identifier: ' exprBoolean2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsNumber1'
+        ConditionalExpression
+          Identifier: ' condObject'
+          QuestionToken
+          Identifier: ' exprNumber1'
+          ColonToken
+          Identifier: ' exprNumber2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsString1'
+        ConditionalExpression
+          Identifier: ' condObject'
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprString2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsObject1'
+        ConditionalExpression
+          Identifier: ' condObject'
+          QuestionToken
+          Identifier: ' exprIsObject1'
+          ColonToken
+          Identifier: ' exprIsObject2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsStringOrBoolean1'
+        ConditionalExpression
+          Identifier: ' condObject'
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprBoolean1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsAny2'
+        ConditionalExpression
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'length'
+          QuestionToken
+          Identifier: ' exprAny1'
+          ColonToken
+          Identifier: ' exprAny2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean2'
+        ConditionalExpression
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'length'
+          QuestionToken
+          Identifier: ' exprBoolean1'
+          ColonToken
+          Identifier: ' exprBoolean2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsNumber2'
+        ConditionalExpression
+          ParenthesizedExpression
+            ObjectLiteralExpression
+          QuestionToken
+          Identifier: ' exprNumber1'
+          ColonToken
+          Identifier: ' exprNumber2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsString2'
+        ConditionalExpression
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                StringLiteral
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprString2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsObject2'
+        ConditionalExpression
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                StringLiteral
+          QuestionToken
+          Identifier: ' exprIsObject1'
+          ColonToken
+          Identifier: ' exprIsObject2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsStringOrBoolean2'
+        ConditionalExpression
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                StringLiteral
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprBoolean1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsAny3'
+        ConditionalExpression
+          CallExpression
+            Identifier: ' foo'
+          QuestionToken
+          Identifier: ' exprAny1'
+          ColonToken
+          Identifier: ' exprAny2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean3'
+        ConditionalExpression
+          NewExpression
+            Identifier: ' Date'
+          QuestionToken
+          Identifier: ' exprBoolean1'
+          ColonToken
+          Identifier: ' exprBoolean2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsNumber3'
+        ConditionalExpression
+          NewExpression
+            Identifier: ' C'
+          QuestionToken
+          Identifier: ' exprNumber1'
+          ColonToken
+          Identifier: ' exprNumber2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsString3'
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'doIt'
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprString2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsObject3'
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' condObject'
+              Identifier: 'valueOf'
+          QuestionToken
+          Identifier: ' exprIsObject1'
+          ColonToken
+          Identifier: ' exprIsObject2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsStringOrBoolean3'
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'doIt'
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprBoolean1'

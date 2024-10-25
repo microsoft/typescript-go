@@ -1,0 +1,220 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+// @Filename: foo.js
+
+////var A; 
+////A.prototype = { };
+////A.prototype = { m() {} };
+////A.prototype.a = function() { };
+////A.b = function() { };
+////
+////var B; 
+////B["prototype"] = { };
+////B["prototype"] = { m() {} };
+////B["prototype"]["a"] = function() { };
+////B["b"] = function() { };
+
+verify'
+        Identifier: 'navigationTree'
+      ObjectLiteralExpression
+        PropertyAssignment
+          StringLiteral
+          StringLiteral
+        PropertyAssignment
+          StringLiteral
+          StringLiteral
+        PropertyAssignment
+          StringLiteral
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' name'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' quoted'
+                    FalseKeyword
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' name'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' quoted'
+                    TrueKeyword
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' name'
+                  BindingElement
+                    Identifier: ' quoted'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    Identifier: ' name'
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    ArrayLiteralExpression
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          ConditionalExpression
+                            Identifier: ' quoted'
+                            QuestionToken
+                            NoSubstitutionTemplateLiteral
+                            ColonToken
+                            StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          ConditionalExpression
+                            Identifier: ' quoted'
+                            QuestionToken
+                            NoSubstitutionTemplateLiteral
+                            ColonToken
+                            StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'navigationBar'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            CallExpression
+              PropertyAccessExpression
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'name'
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      Identifier: ' name'
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+        SpreadElement
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' name'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' quoted'
+                    FalseKeyword
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' name'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' quoted'
+                    TrueKeyword
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' name'
+                  BindingElement
+                    Identifier: ' quoted'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    Identifier: ' name'
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    ArrayLiteralExpression
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          ConditionalExpression
+                            Identifier: ' quoted'
+                            QuestionToken
+                            NoSubstitutionTemplateLiteral
+                            ColonToken
+                            StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          ConditionalExpression
+                            Identifier: ' quoted'
+                            QuestionToken
+                            NoSubstitutionTemplateLiteral
+                            ColonToken
+                            StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    NumericLiteral

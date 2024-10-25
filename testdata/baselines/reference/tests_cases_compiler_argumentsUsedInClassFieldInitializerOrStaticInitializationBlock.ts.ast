@@ -1,0 +1,62 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' A'
+    Block
+      ReturnStatement
+        ClassExpression
+          Identifier: ' T'
+          PropertyDeclaration
+            Identifier: '
+     a'
+            Identifier: ' arguments'
+  FunctionDeclaration
+    Identifier: ' A1'
+    Block
+      ReturnStatement
+        NewExpression
+          ClassExpression
+            Identifier: ' T'
+            PropertyDeclaration
+              Identifier: '
+     a'
+              Identifier: ' arguments'
+  FunctionDeclaration
+    Identifier: ' B'
+    Block
+      ReturnStatement
+        ClassExpression
+          Identifier: ' T'
+          PropertyDeclaration
+            Identifier: '
+     a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' b'
+                Identifier: ' arguments'
+  FunctionDeclaration
+    Identifier: ' B1'
+    Block
+      ReturnStatement
+        NewExpression
+          ClassExpression
+            Identifier: ' T'
+            PropertyDeclaration
+              Identifier: '
+     a'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' b'
+                  Identifier: ' arguments'
+  FunctionDeclaration
+    Identifier: ' C'
+    Block
+      ReturnStatement
+        ClassExpression
+          Identifier: ' T'
+          PropertyDeclaration
+            Identifier: '
+     a'
+            FunctionExpression
+              Block
+                ExpressionStatement
+                  Identifier: ' arguments'

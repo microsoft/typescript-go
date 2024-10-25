@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        NewExpression
+          Identifier: ' foo'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+f'
+        NumericLiteral
+      EqualsToken
+      NumericLiteral

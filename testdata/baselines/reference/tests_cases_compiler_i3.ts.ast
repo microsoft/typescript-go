@@ -1,0 +1,35 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I3'
+    PropertySignature
+      Identifier: ' one'
+      QuestionToken
+      NumberKeyword
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'one'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+i'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' i'

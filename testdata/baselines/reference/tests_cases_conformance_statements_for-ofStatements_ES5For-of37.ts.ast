@@ -1,0 +1,53 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+      TryStatement
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' j'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'i'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                Block
+                  ThrowStatement
+                    NewExpression
+                      Identifier: ' Error'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'i'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'err'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        console'
+                  Identifier: 'log'
+                StringLiteral
+                Identifier: ' i'
+                Identifier: ' err'

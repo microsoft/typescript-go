@@ -1,0 +1,7 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+        ObjectLiteralExpression

@@ -1,0 +1,64 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Dictionary'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'myFavouriteType'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' Dictionary'
+          NumberKeyword
+        ObjectLiteralExpression
+  IfStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: 'foo'
+        Identifier: 'x'
+      EqualsEqualsEqualsToken
+      Identifier: ' undefined'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    foo'
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nu'
+            ElementAccessExpression
+              Identifier: ' foo'
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            ElementAccessExpression
+              Identifier: ' foo'
+              Identifier: 'x'
+      ExpressionStatement
+        PostfixUnaryExpression
+          NonNullExpression
+            ElementAccessExpression
+              Identifier: '
+    foo'
+              Identifier: 'x'

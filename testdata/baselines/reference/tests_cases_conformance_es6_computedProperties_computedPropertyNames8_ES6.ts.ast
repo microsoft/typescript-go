@@ -1,0 +1,34 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' u'
+            TypeReference
+              Identifier: ' U'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  Identifier: 't'
+                NumericLiteral
+              PropertyAssignment
+                ComputedPropertyName
+                  Identifier: 'u'
+                NumericLiteral

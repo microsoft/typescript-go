@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' w_e'
+        IndexedAccessType
+          ParenthesizedType
+            TypeQuery
+              Identifier: ' globalThis'
+          LiteralType
+            StringLiteral

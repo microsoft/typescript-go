@@ -1,0 +1,40 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: ' x'
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'x'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ReturnStatement
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                ElementAccessExpression
+                  SuperKeyword
+                  StringLiteral

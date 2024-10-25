@@ -1,0 +1,2093 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' fakes'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vfs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' baselineParseConfig'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseInsensitiveBasePath'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseInsensitiveTsconfigPath'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseInsensitiveHost'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' fakes'
+            Identifier: 'ParseConfigHost'
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' vfs'
+              Identifier: 'FileSystem'
+            TrueKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        cwd'
+                Identifier: ' caseInsensitiveBasePath'
+              PropertyAssignment
+                Identifier: '
+        files'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseSensitiveBasePath'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseSensitiveHost'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' fakes'
+            Identifier: 'ParseConfigHost'
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' vfs'
+              Identifier: 'FileSystem'
+            FalseKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        cwd'
+                Identifier: ' caseSensitiveBasePath'
+              PropertyAssignment
+                Identifier: '
+        files'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseInsensitiveMixedExtensionHost'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' fakes'
+            Identifier: 'ParseConfigHost'
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' vfs'
+              Identifier: 'FileSystem'
+            TrueKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        cwd'
+                Identifier: ' caseInsensitiveBasePath'
+              PropertyAssignment
+                Identifier: '
+        files'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseInsensitiveCommonFoldersHost'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' fakes'
+            Identifier: 'ParseConfigHost'
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' vfs'
+              Identifier: 'FileSystem'
+            TrueKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        cwd'
+                Identifier: ' caseInsensitiveBasePath'
+              PropertyAssignment
+                Identifier: '
+        files'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseInsensitiveDottedFoldersHost'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' fakes'
+            Identifier: 'ParseConfigHost'
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' vfs'
+              Identifier: 'FileSystem'
+            TrueKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        cwd'
+                Identifier: ' caseInsensitiveBasePath'
+              PropertyAssignment
+                Identifier: '
+        files'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseInsensitiveOrderingDiffersWithCaseHost'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' fakes'
+            Identifier: 'ParseConfigHost'
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' vfs'
+              Identifier: 'FileSystem'
+            TrueKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        cwd'
+                Identifier: ' caseInsensitiveBasePath'
+              PropertyAssignment
+                Identifier: '
+        files'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseSensitiveOrderingDiffersWithCaseHost'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' fakes'
+            Identifier: 'ParseConfigHost'
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' vfs'
+              Identifier: 'FileSystem'
+            FalseKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        cwd'
+                Identifier: ' caseSensitiveBasePath'
+              PropertyAssignment
+                Identifier: '
+        files'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseInsensitiveHostWithSameFileNamesWithDifferentExtensions'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' fakes'
+            Identifier: 'ParseConfigHost'
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' vfs'
+              Identifier: 'FileSystem'
+            TrueKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        cwd'
+                Identifier: ' caseInsensitiveBasePath'
+              PropertyAssignment
+                Identifier: '
+        files'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+  FunctionDeclaration
+    Identifier: ' baselineMatches'
+    Parameter
+      Identifier: 'subScenario'
+      StringKeyword
+    Parameter
+      Identifier: ' json'
+      AnyKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        QualifiedName
+          Identifier: ' fakes'
+          Identifier: 'ParseConfigHost'
+    Parameter
+      Identifier: ' basePath'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' jsonText'
+            CallExpression
+              Identifier: ' jsonToReadableText'
+              Identifier: 'json'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    baselineParseConfig'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        scenario'
+              StringLiteral
+            ShorthandPropertyAssignment
+              Identifier: '
+        subScenario'
+            PropertyAssignment
+              Identifier: '
+        input'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            createHost'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Identifier: ' host'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            jsonText'
+                    PropertyAssignment
+                      Identifier: '
+            configFileName'
+                      Identifier: ' caseInsensitiveTsconfigPath'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            basePath'
+                    PropertyAssignment
+                      Identifier: '
+            baselineParsed'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'baseline'
+                        Parameter
+                          Identifier: ' parsed'
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' wildcardDirectories'
+                                ConditionalExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' parsed'
+                                    Identifier: 'wildcardDirectories'
+                                  QuestionToken
+                                  AsExpression
+                                    ObjectLiteralExpression
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'MapLike'
+                                      StringKeyword
+                                  ColonToken
+                                  Identifier: ' undefined'
+                          IfStatement
+                            PropertyAccessExpression
+                              Identifier: 'parsed'
+                              Identifier: 'wildcardDirectories'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'getOwnKeys'
+                                    PropertyAccessExpression
+                                      Identifier: 'parsed'
+                                      Identifier: 'wildcardDirectories'
+                                  Identifier: 'forEach'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: 'dir'
+                                  EqualsGreaterThanToken
+                                  BinaryExpression
+                                    ElementAccessExpression
+                                      NonNullExpression
+                                        Identifier: ' wildcardDirectories'
+                                      Identifier: 'dir'
+                                    EqualsToken
+                                    TemplateExpression
+                                      TemplateHead
+                                      TemplateSpan
+                                        ElementAccessExpression
+                                          PropertyAccessExpression
+                                            ParenthesizedExpression
+                                              AsExpression
+                                                Identifier: 'ts'
+                                                AnyKeyword
+                                            Identifier: 'WatchDirectoryFlags'
+                                          ElementAccessExpression
+                                            NonNullExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'parsed'
+                                                Identifier: 'wildcardDirectories'
+                                            Identifier: 'dir'
+                                        TemplateTail
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                baseline'
+                                Identifier: 'push'
+                              StringLiteral
+                              CallExpression
+                                Identifier: '
+                    jsonToReadableText'
+                                ObjectLiteralExpression
+                                  SpreadAssignment
+                                    Identifier: 'parsed'
+                                  PropertyAssignment
+                                    Identifier: '
+                        errors'
+                                    Identifier: ' undefined'
+                                  ShorthandPropertyAssignment
+                                    Identifier: '
+                        wildcardDirectories'
+            PropertyAssignment
+              Identifier: '
+        header'
+              ArrowFunction
+                Parameter
+                  Identifier: ' baseline'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' baseline'
+                    Identifier: 'push'
+                  StringLiteral
+                  Identifier: ' jsonText'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    baselineMatches'
+              StringLiteral
+              ObjectLiteralExpression
+              Identifier: ' caseInsensitiveCommonFoldersHost'
+              Identifier: ' caseInsensitiveBasePath'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                files'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                files'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                files'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseSensitiveHost'
+                      Identifier: '
+            caseSensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveCommonFoldersHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveCommonFoldersHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveCommonFoldersHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseSensitiveHost'
+                      Identifier: '
+            caseSensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                files'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveCommonFoldersHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                    exclude'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveCommonFoldersHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                    exclude'
+                                  AsExpression
+                                    ArrayLiteralExpression
+                                    ArrayType
+                                      StringKeyword
+                              Identifier: '
+                caseInsensitiveCommonFoldersHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveCommonFoldersHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveCommonFoldersHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveCommonFoldersHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                compilerOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    allowJs'
+                              FalseKeyword
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                compilerOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    allowJs'
+                              TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                compilerOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    allowJs'
+                              TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                compilerOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    allowJs'
+                              FalseKeyword
+                      Identifier: '
+            caseInsensitiveMixedExtensionHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                compilerOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    jsx'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                    allowJs'
+                              FalseKeyword
+                      Identifier: '
+            caseInsensitiveMixedExtensionHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                compilerOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    jsx'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                    allowJs'
+                              FalseKeyword
+                      Identifier: '
+            caseInsensitiveMixedExtensionHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                compilerOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    allowJs'
+                              TrueKeyword
+                      Identifier: '
+            caseInsensitiveMixedExtensionHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                compilerOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    jsx'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                    allowJs'
+                              TrueKeyword
+                      Identifier: '
+            caseInsensitiveMixedExtensionHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                compilerOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    jsx'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                    allowJs'
+                              TrueKeyword
+                      Identifier: '
+            caseInsensitiveMixedExtensionHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                compilerOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    allowJs'
+                              TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                    exclude'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                    exclude'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                    exclude'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHostWithSameFileNamesWithDifferentExtensions'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHostWithSameFileNamesWithDifferentExtensions'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHostWithSameFileNamesWithDifferentExtensions'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHostWithSameFileNamesWithDifferentExtensions'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHostWithSameFileNamesWithDifferentExtensions'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHostWithSameFileNamesWithDifferentExtensions'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveHostWithSameFileNamesWithDifferentExtensions'
+                              Identifier: '
+                caseInsensitiveBasePath'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseInsensitiveDottedFoldersHost'
+                      Identifier: '
+            caseInsensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveDottedFoldersHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveDottedFoldersHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveDottedFoldersHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            baselineMatches'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    include'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                    exclude'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                              Identifier: '
+                caseInsensitiveDottedFoldersHost'
+                              Identifier: '
+                caseInsensitiveBasePath'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                exclude'
+                          ArrayLiteralExpression
+                            StringLiteral
+                      Identifier: '
+            caseSensitiveHost'
+                      Identifier: '
+            caseSensitiveBasePath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                include'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      Identifier: '
+            caseSensitiveHost'
+                      Identifier: '
+            caseSensitiveBasePath'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    baselineMatches'
+              StringLiteral
+              ObjectLiteralExpression
+              Identifier: ' caseSensitiveOrderingDiffersWithCaseHost'
+              Identifier: ' caseSensitiveBasePath'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    baselineMatches'
+              StringLiteral
+              ObjectLiteralExpression
+              Identifier: ' caseInsensitiveOrderingDiffersWithCaseHost'
+              Identifier: ' caseInsensitiveBasePath'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' fs'
+                        NewExpression
+                          PropertyAccessExpression
+                            Identifier: ' vfs'
+                            Identifier: 'FileSystem'
+                          TrueKeyword
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+            cwd'
+                              Identifier: ' caseInsensitiveBasePath'
+                            PropertyAssignment
+                              Identifier: '
+            files'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  StringLiteral
+                                  StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        fs'
+                        Identifier: 'mkdirpSync'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        fs'
+                        Identifier: 'symlinkSync'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        fs'
+                        Identifier: 'symlinkSync'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        fs'
+                        Identifier: 'symlinkSync'
+                      StringLiteral
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        NewExpression
+                          PropertyAccessExpression
+                            Identifier: ' fakes'
+                            Identifier: 'ParseConfigHost'
+                          Identifier: 'fs'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' json'
+                        ObjectLiteralExpression
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineMatches'
+                      StringLiteral
+                      Identifier: ' json'
+                      Identifier: ' host'
+                      Identifier: ' caseInsensitiveBasePath'

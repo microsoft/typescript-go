@@ -1,0 +1,35 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' M'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'

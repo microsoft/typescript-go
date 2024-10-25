@@ -1,0 +1,235 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' stuff'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+stuff'
+        Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+stuff'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+stuff'
+        Identifier: 'blah'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+stuff'
+        Identifier: 'n'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+stuff'
+        Identifier: 'x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      ElementAccessExpression
+        Identifier: '
+stuff'
+        StringLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ElementAccessExpression
+        Identifier: '
+stuff'
+        StringLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ElementAccessExpression
+        Identifier: '
+stuff'
+        Identifier: 'n'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'stuff'
+          Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ElementAccessExpression
+          Identifier: 'stuff'
+          StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'stuff'
+          Identifier: 'blah'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ElementAccessExpression
+          Identifier: 'stuff'
+          Identifier: 'n'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'stuff'
+          Identifier: 'x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        ElementAccessExpression
+          Identifier: 'stuff'
+          StringLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        ElementAccessExpression
+          Identifier: 'stuff'
+          StringLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        ElementAccessExpression
+          Identifier: 'stuff'
+          Identifier: 'n'
+  ForInStatement
+    PropertyAccessExpression
+      Identifier: 'stuff'
+      Identifier: 'x'
+    ArrayLiteralExpression
+    Block
+  ForOfStatement
+    PropertyAccessExpression
+      Identifier: 'stuff'
+      Identifier: 'x'
+    ArrayLiteralExpression
+    Block
+  ForInStatement
+    ElementAccessExpression
+      Identifier: 'stuff'
+      StringLiteral
+    ArrayLiteralExpression
+    Block
+  ForOfStatement
+    ElementAccessExpression
+      Identifier: 'stuff'
+      StringLiteral
+    ArrayLiteralExpression
+    Block
+  ForInStatement
+    PropertyAccessExpression
+      Identifier: 'stuff'
+      Identifier: 'blah'
+    ArrayLiteralExpression
+    Block
+  ForOfStatement
+    PropertyAccessExpression
+      Identifier: 'stuff'
+      Identifier: 'blah'
+    ArrayLiteralExpression
+    Block
+  ForInStatement
+    ElementAccessExpression
+      Identifier: 'stuff'
+      Identifier: 'n'
+    ArrayLiteralExpression
+    Block
+  ForOfStatement
+    ElementAccessExpression
+      Identifier: 'stuff'
+      Identifier: 'n'
+    ArrayLiteralExpression
+    Block
+  ForInStatement
+    ParenthesizedExpression
+      PropertyAccessExpression
+        Identifier: 'stuff'
+        Identifier: 'x'
+    ArrayLiteralExpression
+    Block
+  ForOfStatement
+    ParenthesizedExpression
+      PropertyAccessExpression
+        Identifier: 'stuff'
+        Identifier: 'x'
+    ArrayLiteralExpression
+    Block
+  ForInStatement
+    ParenthesizedExpression
+      ElementAccessExpression
+        Identifier: 'stuff'
+        StringLiteral
+    ArrayLiteralExpression
+    Block
+  ForOfStatement
+    ParenthesizedExpression
+      ElementAccessExpression
+        Identifier: 'stuff'
+        StringLiteral
+    ArrayLiteralExpression
+    Block
+  ForInStatement
+    ParenthesizedExpression
+      PropertyAccessExpression
+        Identifier: 'stuff'
+        Identifier: 'blah'
+    ArrayLiteralExpression
+    Block
+  ForOfStatement
+    ParenthesizedExpression
+      PropertyAccessExpression
+        Identifier: 'stuff'
+        Identifier: 'blah'
+    ArrayLiteralExpression
+    Block
+  ForInStatement
+    ParenthesizedExpression
+      ElementAccessExpression
+        Identifier: 'stuff'
+        Identifier: 'n'
+    ArrayLiteralExpression
+    Block
+  ForOfStatement
+    ParenthesizedExpression
+      ElementAccessExpression
+        Identifier: 'stuff'
+        Identifier: 'n'
+    ArrayLiteralExpression
+    Block

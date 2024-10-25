@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: '𝑚'
+    Parameter
+      Identifier: ' 𝑀'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          BinaryExpression
+            Identifier: '𝑀'
+            PlusToken
+            Identifier: ' 𝑚'

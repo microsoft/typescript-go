@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Symbol'
+            Identifier: 'for'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'foo'
+            Identifier: ' undefined'

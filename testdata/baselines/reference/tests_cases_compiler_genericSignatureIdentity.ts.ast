@@ -1,0 +1,58 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' Date'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+              NumberKeyword
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              AnyKeyword
+            AnyKeyword

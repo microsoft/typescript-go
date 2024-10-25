@@ -1,0 +1,127 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              StringKeyword
+            VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' MultiSkilledRobot'
+    TupleType
+      StringKeyword
+      TupleType
+        StringKeyword
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobotA'
+        TypeReference
+          Identifier: ' MultiSkilledRobot'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiRobotB'
+        TypeReference
+          Identifier: ' MultiSkilledRobot'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          BindingElement
+            Identifier: ' skillA'
+        Identifier: ' multiRobotA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameMB'
+        Identifier: ' multiRobotB'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameMA'
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'primarySkillA'
+              BindingElement
+                Identifier: ' secondarySkillA'
+        Identifier: ' multiRobotA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameMC'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'nameMC2'
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'primarySkillC'
+              BindingElement
+                Identifier: ' secondarySkillC'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'multiRobotAInfo'
+        Identifier: ' multiRobotA'
+  IfStatement
+    BinaryExpression
+      Identifier: 'nameMB'
+      EqualsEqualsToken
+      Identifier: ' nameMA'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          BinaryExpression
+            ElementAccessExpression
+              Identifier: 'skillA'
+              NumericLiteral
+            PlusToken
+            ElementAccessExpression
+              Identifier: ' skillA'
+              NumericLiteral

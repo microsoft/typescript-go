@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      PropertyAccessExpression
+        Identifier: ' console'
+        Identifier: 'log'
+    Block
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'a'
+      PropertyAccessExpression
+        Identifier: ' console'
+        Identifier: 'log'
+    Block

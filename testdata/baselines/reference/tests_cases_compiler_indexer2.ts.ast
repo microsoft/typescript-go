@@ -1,0 +1,27 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IHeapObjectProperty'
+  InterfaceDeclaration
+    Identifier: ' IDirectChildrenMap'
+    MethodSignature
+      Identifier: ' 
+        hasOwnProperty'
+      Parameter
+        Identifier: 'objectId'
+        NumberKeyword
+      BooleanKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'objectId'
+        NumberKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' IHeapObjectProperty'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' directChildrenMap'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IDirectChildrenMap'
+          ObjectLiteralExpression

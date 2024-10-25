@@ -1,0 +1,215 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          SymbolKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra1'
+        BinaryExpression
+          Identifier: ' x'
+          InKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra2'
+        BinaryExpression
+          Identifier: ' a1'
+          InKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra3'
+        BinaryExpression
+          Identifier: ' a2'
+          InKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra4'
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra5'
+        BinaryExpression
+          NumericLiteral
+          InKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra6'
+        BinaryExpression
+          Identifier: ' a3'
+          InKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra7'
+        BinaryExpression
+          Identifier: ' a4'
+          InKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb1'
+        BinaryExpression
+          Identifier: ' x'
+          InKeyword
+          Identifier: ' b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb2'
+        BinaryExpression
+          Identifier: ' x'
+          InKeyword
+          ObjectLiteralExpression
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rb3'
+            BinaryExpression
+              Identifier: ' x'
+              InKeyword
+              Identifier: ' t'
+  FunctionDeclaration
+    Identifier: ' unionCase'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rb4'
+            BinaryExpression
+              Identifier: ' x'
+              InKeyword
+              Identifier: ' t'
+  FunctionDeclaration
+    Identifier: ' unionCase2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        ObjectKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rb5'
+            BinaryExpression
+              Identifier: ' x'
+              InKeyword
+              Identifier: ' t'
+  InterfaceDeclaration
+    Identifier: ' X'
+    PropertySignature
+      Identifier: ' x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Y'
+    PropertySignature
+      Identifier: ' y'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        UnionType
+          TypeReference
+            Identifier: ' X'
+          TypeReference
+            Identifier: ' Y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        TypeReference
+          Identifier: ' X'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        TypeReference
+          Identifier: ' Y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rc1'
+        BinaryExpression
+          Identifier: ' x'
+          InKeyword
+          Identifier: ' c1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rc2'
+        BinaryExpression
+          Identifier: ' x'
+          InKeyword
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'c2'
+              BarBarToken
+              Identifier: ' c3'

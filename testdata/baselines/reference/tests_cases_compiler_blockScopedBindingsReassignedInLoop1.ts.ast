@@ -1,0 +1,36 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' use'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Block
+            ExpressionStatement
+              StringLiteral
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                NumericLiteral
+              PrefixUnaryExpression
+                Identifier: 'i'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    ParenthesizedExpression
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' use'
+                          PrefixUnaryExpression
+                            Identifier: 'i'

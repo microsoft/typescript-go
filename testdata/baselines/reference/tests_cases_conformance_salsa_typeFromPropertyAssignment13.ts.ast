@@ -1,0 +1,85 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Outer'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Outer'
+        Identifier: 'Inner'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Outer'
+          Identifier: 'Inner'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    m'
+          Block
+        PropertyAssignment
+          Identifier: '
+    i'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+// incremental assignments still work
+Outer'
+            Identifier: 'Inner'
+          Identifier: 'prototype'
+        Identifier: 'j'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/** @type {string} */
+Outer'
+          Identifier: 'Inner'
+        Identifier: 'prototype'
+      Identifier: 'k'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inner'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Outer'
+            Identifier: 'Inner'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+inner'
+        Identifier: 'm'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+inner'
+      Identifier: 'i'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+inner'
+      Identifier: 'j'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+inner'
+      Identifier: 'k'

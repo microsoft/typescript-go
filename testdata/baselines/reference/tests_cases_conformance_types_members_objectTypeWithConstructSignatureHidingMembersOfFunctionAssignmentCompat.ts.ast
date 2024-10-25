@@ -1,0 +1,48 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    ConstructSignature
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' Object'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+f'
+      EqualsToken
+      Identifier: ' i'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+i'
+      EqualsToken
+      Identifier: ' f'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          ConstructSignature
+            AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+f'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' f'

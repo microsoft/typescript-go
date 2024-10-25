@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'foo'
+            EqualsToken
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' M1'
+    ModuleDeclaration
+      Identifier: 'M2'
+      ModuleBlock
+        ClassDeclaration
+          Identifier: ' C'
+          MethodDeclaration
+            PrivateKeyword
+            Identifier: ' foo'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'foo'
+                  EqualsToken
+                  NumericLiteral

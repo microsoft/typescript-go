@@ -1,0 +1,39 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+    EnumMember
+      Identifier: '
+    c'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Foo'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    EnumMember
+      Identifier: '
+    a'
+      PropertyAccessExpression
+        Identifier: ' Foo'
+        Identifier: 'a'
+    EnumMember
+      Identifier: '
+    c'
+      PropertyAccessExpression
+        Identifier: ' Foo'
+        Identifier: 'c'
+    EnumMember
+      Identifier: '
+    e'
+      NumericLiteral

@@ -1,0 +1,73 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            TupleType
+              NamedTupleMember
+                Identifier: 'n'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' a'
+                LiteralType
+                  StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    /** r rest param */
+    a'
+              TypeQuery
+                Identifier: ' a'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NonNullExpression
+                NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            TupleType
+              NamedTupleMember
+                Identifier: 'n'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' a'
+                LiteralType
+                  StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    /** r rest param */
+    a'
+              TypeQuery
+                Identifier: ' a'
+            PropertySignature
+              Identifier: '
+    /** module var */
+    n'
+              TypeQuery
+                Identifier: ' n'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NonNullExpression
+                NullKeyword

@@ -1,0 +1,10 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    b'
+      NumberKeyword
+  NamespaceExportDeclaration
+    Identifier: ' moduleA'

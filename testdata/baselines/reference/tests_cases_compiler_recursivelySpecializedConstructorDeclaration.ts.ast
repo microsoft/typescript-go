@@ -1,0 +1,44 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' MsPortal'
+    ModuleDeclaration
+      Identifier: 'Controls'
+      ModuleDeclaration
+        Identifier: 'Base'
+        ModuleDeclaration
+          Identifier: 'ItemList'
+          ModuleBlock
+            InterfaceDeclaration
+              ExportKeyword
+              Identifier: ' Interface'
+              TypeParameter
+                Identifier: 'TValue'
+              PropertySignature
+                Identifier: '
+        // Removing this line fixes the constructor of ItemValue
+        options'
+                TypeReference
+                  Identifier: ' ViewModel'
+                  TypeReference
+                    Identifier: 'TValue'
+            ClassDeclaration
+              ExportKeyword
+              Identifier: ' ItemValue'
+              TypeParameter
+                Identifier: 'T'
+              Constructor
+                Parameter
+                  Identifier: 'value'
+                  TypeReference
+                    Identifier: ' T'
+                Block
+            ClassDeclaration
+              ExportKeyword
+              Identifier: ' ViewModel'
+              TypeParameter
+                Identifier: 'TValue'
+              HeritageClause
+                ExpressionWithTypeArguments
+                  Identifier: ' ItemValue'
+                  TypeReference
+                    Identifier: 'TValue'

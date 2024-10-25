@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Foo'
+    Block
+      ExpressionStatement
+        Identifier: '
+    arguments'
+      ReturnStatement
+        NewExpression
+          Identifier: ' Foo'

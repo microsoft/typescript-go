@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      NumericLiteral

@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' a'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'x'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' b'
+    Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        PropertyAccessExpression
+          Identifier: ' b'
+          Identifier: 'x'

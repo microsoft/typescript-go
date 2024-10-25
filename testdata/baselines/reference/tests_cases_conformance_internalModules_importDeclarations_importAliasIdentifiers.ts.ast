@@ -1,0 +1,176 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' moduleA'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' x'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' y'
+            NumberKeyword
+          Block
+  ImportEqualsDeclaration
+    Identifier: ' alias'
+    Identifier: ' moduleA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            Identifier: ' alias'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            Identifier: ' moduleA'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  ClassDeclaration
+    Identifier: ' clodule'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' clodule'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Point'
+            TypeReference
+              Identifier: ' Point'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+  ImportEqualsDeclaration
+    Identifier: ' clolias'
+    Identifier: ' clodule'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            Identifier: ' clolias'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            Identifier: ' clodule'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  FunctionDeclaration
+    Identifier: ' fundule'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' fundule'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Point'
+            TypeReference
+              Identifier: ' Point'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+  ImportEqualsDeclaration
+    Identifier: ' funlias'
+    Identifier: ' fundule'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            Identifier: ' funlias'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            Identifier: ' fundule'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword

@@ -1,0 +1,115 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Equals'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    ConditionalType
+      ParenthesizedType
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          ConditionalType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: ' B'
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+      ParenthesizedType
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          ConditionalType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: ' A'
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' State'
+    TypeParameter
+      Identifier: 'TContext'
+    PropertyDeclaration
+      Identifier: '
+    _context'
+      TypeReference
+        Identifier: ' TContext'
+    PropertyDeclaration
+      Identifier: '
+    _value'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    matches'
+      TypeParameter
+        Identifier: 'TSV'
+        StringKeyword
+      Parameter
+        Identifier: 'stateValue'
+        TypeReference
+          Identifier: ' TSV'
+      TypePredicate
+        ThisType
+        IntersectionType
+          TypeReference
+            Identifier: ' State'
+            TypeReference
+              Identifier: 'TContext'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              TypeReference
+                Identifier: ' TSV'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'state'
+      TypeReference
+        Identifier: ' State'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'state'
+              Identifier: 'matches'
+            StringLiteral
+          AmpersandAmpersandToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' state'
+              Identifier: 'matches'
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        state'
+          TypeAliasDeclaration
+            Identifier: ' T1'
+            TypeReference
+              Identifier: ' Equals'
+              TypeQuery
+                Identifier: ' state'
+              NeverKeyword
+          TypeAliasDeclaration
+            Identifier: ' T2'
+            TypeReference
+              Identifier: ' Equals'
+              NeverKeyword
+              NeverKeyword

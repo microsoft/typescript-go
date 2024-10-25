@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        ArrayLiteralExpression
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+    Identifier: ' C'
+    Block
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'C'
+            Identifier: 'hasOwnProperty'
+          Identifier: 'a'
+        Block

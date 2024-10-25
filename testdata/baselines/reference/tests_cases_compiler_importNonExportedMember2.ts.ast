@@ -1,0 +1,11 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  InterfaceDeclaration
+    Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Foo'
+    StringLiteral

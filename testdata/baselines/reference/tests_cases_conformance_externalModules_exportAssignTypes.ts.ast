@@ -1,0 +1,144 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringLiteral
+  ExportAssignment
+    Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportAssignment
+    Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TrueKeyword
+  ExportAssignment
+    Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  ExportAssignment
+    Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' answer'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' when'
+            NumericLiteral
+  ExportAssignment
+    Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  ExportAssignment
+    Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' x'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  ExportAssignment
+    Identifier: ' x'
+  ImportEqualsDeclaration
+    Identifier: ' iString'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        StringKeyword
+        Identifier: ' iString'
+  ImportEqualsDeclaration
+    Identifier: ' iNumber'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        NumberKeyword
+        Identifier: ' iNumber'
+  ImportEqualsDeclaration
+    Identifier: ' iBoolean'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        BooleanKeyword
+        Identifier: ' iBoolean'
+  ImportEqualsDeclaration
+    Identifier: ' iArray'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        TypeReference
+          Identifier: ' Array'
+          NumberKeyword
+        Identifier: ' iArray'
+  ImportEqualsDeclaration
+    Identifier: ' iObject'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v5'
+        TypeReference
+          Identifier: ' Object'
+        Identifier: ' iObject'
+  ImportEqualsDeclaration
+    Identifier: ' iAny'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v6'
+        Identifier: ' iAny'
+  ImportEqualsDeclaration
+    Identifier: ' iGeneric'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v7'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'x'
+            Parameter
+              Identifier: 'p1'
+              TypeReference
+                Identifier: ' x'
+            TypeReference
+              Identifier: ' x'
+        Identifier: ' iGeneric'

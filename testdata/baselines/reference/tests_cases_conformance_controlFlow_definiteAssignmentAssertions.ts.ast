@@ -1,0 +1,198 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      ExclamationToken
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    b'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      ExclamationToken
+      NumberKeyword
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'a'
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      ExclamationToken
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    b'
+      ExclamationToken
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' c'
+      ExclamationToken
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    d'
+      ExclamationToken
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C4'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      ExclamationToken
+      NumberKeyword
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' C5'
+    PropertyDeclaration
+      AbstractKeyword
+      Identifier: ' a'
+      ExclamationToken
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ExclamationToken
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ExclamationToken
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ExclamationToken
+            UnionType
+              StringKeyword
+              NumberKeyword
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s'
+                StringKeyword
+                Identifier: ' x'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                NumberKeyword
+                Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ExclamationToken
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+        x'
+                    EqualsToken
+                    NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    g'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ExclamationToken
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ExclamationToken
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            ExclamationToken
+            NumberKeyword
+            NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        ExclamationToken
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        ExclamationToken
+        NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            ExclamationToken
+            NumberKeyword

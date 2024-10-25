@@ -1,0 +1,18 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' server'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' server'

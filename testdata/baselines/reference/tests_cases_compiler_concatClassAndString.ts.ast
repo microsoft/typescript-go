@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' f'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+f'
+      PlusEqualsToken
+      StringLiteral

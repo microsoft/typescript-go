@@ -1,0 +1,15 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Alias'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+  TypeAliasDeclaration
+    Identifier: ' Alias2'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'

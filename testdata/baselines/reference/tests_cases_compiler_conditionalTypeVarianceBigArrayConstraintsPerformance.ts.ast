@@ -1,0 +1,47 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Stuff'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeOperator
+        TypeReference
+          QualifiedName
+            Identifier: ' JSX'
+            Identifier: 'IntrinsicElements'
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            Identifier: ' JSX'
+            Identifier: 'IntrinsicElements'
+        TypeReference
+          Identifier: 'T'
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'p1'
+      TypeReference
+        Identifier: ' Stuff'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' p2'
+      TypeReference
+        Identifier: ' Stuff'
+        TypeReference
+          Identifier: 'U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    p1'
+          EqualsToken
+          Identifier: ' p2'

@@ -1,0 +1,211 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bool'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNum'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNumOrBool'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numOrBool'
+        UnionType
+          NumberKeyword
+          BooleanKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cOrBool'
+        UnionType
+          TypeReference
+            Identifier: ' C'
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNumOrBoolOrC'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+          TypeReference
+            Identifier: ' C'
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        TypeOfExpression
+          Identifier: ' strOrNumOrBool'
+        ExclamationEqualsEqualsToken
+        StringLiteral
+      AmpersandAmpersandToken
+      BinaryExpression
+        TypeOfExpression
+          Identifier: ' strOrNumOrBool'
+        ExclamationEqualsEqualsToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    bool'
+          EqualsToken
+          Identifier: ' strOrNumOrBool'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    strOrNum'
+          EqualsToken
+          Identifier: ' strOrNumOrBool'
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' strOrNumOrBoolOrC'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        AmpersandAmpersandToken
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' strOrNumOrBoolOrC'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+      AmpersandAmpersandToken
+      BinaryExpression
+        TypeOfExpression
+          Identifier: ' strOrNumOrBoolOrC'
+        ExclamationEqualsEqualsToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          Identifier: ' strOrNumOrBoolOrC'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    strOrNumOrBool'
+          EqualsToken
+          Identifier: ' strOrNumOrBoolOrC'
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' strOrNumOrBoolOrC'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        AmpersandAmpersandToken
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' strOrNumOrBoolOrC'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+      AmpersandAmpersandToken
+      BinaryExpression
+        TypeOfExpression
+          Identifier: ' strOrNumOrBool'
+        EqualsEqualsEqualsToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    cOrBool'
+          EqualsToken
+          Identifier: ' strOrNumOrBoolOrC'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // C | boolean
+    bool'
+          EqualsToken
+          Identifier: ' strOrNumOrBool'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+              TypeReference
+                Identifier: ' C'
+            Identifier: ' strOrNumOrBoolOrC'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+            Identifier: ' strOrNumOrBool'
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        TypeOfExpression
+          Identifier: ' strOrNumOrBool'
+        ExclamationEqualsEqualsToken
+        StringLiteral
+      AmpersandAmpersandToken
+      BinaryExpression
+        Identifier: ' numOrBool'
+        ExclamationEqualsEqualsToken
+        Identifier: ' strOrNumOrBool'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    numOrBool'
+          EqualsToken
+          Identifier: ' strOrNumOrBool'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+            Identifier: ' strOrNumOrBool'

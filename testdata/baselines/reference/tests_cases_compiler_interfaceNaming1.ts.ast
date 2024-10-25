@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    Identifier: 'interface'
+  Block
+  InterfaceDeclaration
+    Identifier: ' interface'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+interface'
+      AmpersandToken
+      ObjectLiteralExpression

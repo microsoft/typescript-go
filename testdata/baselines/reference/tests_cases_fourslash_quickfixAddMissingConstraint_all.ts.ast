@@ -1,0 +1,120 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @strict: true
+
+// @filename: /bar.ts
+////export type Bar = Record<string, string>
+////export function bar<T extends Bar>(obj: { prop: T }) {}
+
+// @filename: /foo.ts
+////import { bar } from "./bar";
+////
+////export function f1<T>(x: T) {
+////    bar({ prop: x })
+////}
+////
+////function f2<T>(x: T) {
+////    const y: `${number}` = x;
+////}
+////
+////interface Fn<T extends string> {}
+////function f3<T>(x: Fn<T>) {
+////}
+////
+////function f4<T = `${number}`>(x: T) {
+////    const y: `${number}` = x;
+////}
+////
+////interface TypeRef<T extends {}> {
+////    x: T
+////}
+////function f5<T>(): TypeRef</**/T> {
+////    throw undefined as any as TypeRef<T>;
+////}
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixAllDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_extends_constraint_to_all_type_parameters'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    BinaryExpression
+                                      BinaryExpression
+                                        BinaryExpression
+                                          BinaryExpression
+                                            BinaryExpression
+                                              StringLiteral
+                                              PlusToken
+                                              StringLiteral
+                                            PlusToken
+                                            StringLiteral
+                                          PlusToken
+                                          StringLiteral
+                                        PlusToken
+                                        StringLiteral
+                                      PlusToken
+                                      StringLiteral
+                                    PlusToken
+                                    StringLiteral
+                                  PlusToken
+                                  StringLiteral
+                                PlusToken
+                                StringLiteral
+                              PlusToken
+                              StringLiteral
+                            PlusToken
+                            StringLiteral
+                          PlusToken
+                          StringLiteral
+                        PlusToken
+                        StringLiteral
+                      PlusToken
+                      StringLiteral
+                    PlusToken
+                    StringLiteral
+                  PlusToken
+                  StringLiteral
+                PlusToken
+                StringLiteral
+              PlusToken
+              StringLiteral
+            PlusToken
+            StringLiteral

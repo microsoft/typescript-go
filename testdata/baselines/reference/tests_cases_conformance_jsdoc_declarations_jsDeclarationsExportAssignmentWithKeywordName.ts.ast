@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    extends'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    more'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        others'
+              ArrayLiteralExpression
+                StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: '
+    x'

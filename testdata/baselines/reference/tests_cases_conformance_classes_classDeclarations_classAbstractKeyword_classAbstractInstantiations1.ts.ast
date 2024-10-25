@@ -1,0 +1,68 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' A'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' A'
+      NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' B'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      NewExpression
+        Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      NewExpression
+        Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      NewExpression
+        Identifier: ' B'

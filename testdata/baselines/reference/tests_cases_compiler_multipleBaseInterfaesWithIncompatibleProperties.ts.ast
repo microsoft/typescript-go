@@ -1,0 +1,19 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        StringKeyword
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        NumberKeyword

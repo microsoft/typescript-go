@@ -1,0 +1,55 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @Filename: genericTypeWithMultipleBases_0.ts
+////interface iBaseScope {
+////    watch: () => void;
+////}
+// @Filename: genericTypeWithMultipleBases_1.ts
+////interface iMover {
+////    moveUp: () => void;
+////}
+// @Filename: genericTypeWithMultipleBases_2.ts
+////interface iScope<TModel> extends iBaseScope, iMover {
+////    family: TModel;
+////}
+// @Filename: genericTypeWithMultipleBases_3.ts
+////var x: iScope<number>;
+// @Filename: genericTypeWithMultipleBases_4.ts
+////x./**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral

@@ -1,0 +1,108 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayType
+          TypeLiteral
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+            NumericLiteral
+          ArrayLiteralExpression
+            StringLiteral
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+    Identifier: ' x'
+    Block
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+        ElementAccessExpression
+          Identifier: ' x'
+          Identifier: 'i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' _j'
+                ElementAccessExpression
+                  ElementAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'i'
+                  Identifier: 'j'
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k'
+        ElementAccessExpression
+          Identifier: ' x'
+          NumericLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' k1'
+                ElementAccessExpression
+                  Identifier: ' x'
+                  NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' k2'
+                ElementAccessExpression
+                  Identifier: ' k1'
+                  Identifier: 'k'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+    Identifier: ' x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            BinaryExpression
+              Identifier: ' a'
+              BarBarToken
+              Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' idx'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        BinaryExpression
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+          BarBarToken
+          ArrayLiteralExpression
+  ForInStatement
+    ElementAccessExpression
+      Identifier: 'n'
+      PostfixUnaryExpression
+        Identifier: 'idx'
+    Identifier: ' m'
+    EmptyStatement

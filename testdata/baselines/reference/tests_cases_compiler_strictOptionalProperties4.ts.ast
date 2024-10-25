@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+y'
+      Identifier: 'foo'

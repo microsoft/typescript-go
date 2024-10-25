@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+		s'
+            EqualsToken
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' Foo'
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' bar'

@@ -1,0 +1,28 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        PropertySignature
+          Identifier: '
+        kind'
+          LiteralType
+            StringLiteral
+      InterfaceDeclaration
+        Identifier: ' B'
+        PropertySignature
+          Identifier: '
+        kind'
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+  ExportAssignment
+    Identifier: ' X'

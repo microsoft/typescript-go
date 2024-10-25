@@ -1,0 +1,24 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Enum'
+    EnumMember
+      Identifier: '
+    Value1'
+    EnumMember
+      Identifier: '
+    Value2'
+  ImportEqualsDeclaration
+    Identifier: ' provider'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' provider'
+            Identifier: 'Enum'
+          Identifier: 'Value1'

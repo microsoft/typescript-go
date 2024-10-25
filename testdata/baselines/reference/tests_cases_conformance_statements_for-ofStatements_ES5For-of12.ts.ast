@@ -1,0 +1,8 @@
+SourceFile
+  ForOfStatement
+    ArrayLiteralExpression
+      StringLiteral
+    ArrayLiteralExpression
+      ArrayLiteralExpression
+        StringLiteral
+    Block

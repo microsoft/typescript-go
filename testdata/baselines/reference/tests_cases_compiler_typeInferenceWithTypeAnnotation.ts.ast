@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'p'
+      FunctionType
+        Parameter
+          Identifier: 't'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'

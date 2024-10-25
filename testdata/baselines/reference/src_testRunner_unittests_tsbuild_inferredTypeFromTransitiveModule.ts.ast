@@ -1,0 +1,332 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' getInferredTypeFromTransitiveModuleSys'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' TestServerHost'
+                    Identifier: 'createWatchedSystem'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    target'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    declaration'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    outDir'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    incremental'
+                                TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getInferredTypeFromTransitiveModuleSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        Identifier: ' changeBarParam'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        Identifier: ' changeBarParamBack'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getInferredTypeFromTransitiveModuleSys'
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  Identifier: ' changeToIsolatedModules'
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        Identifier: ' changeBarParam'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        Identifier: ' changeBarParamBack'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getInferredTypeFromTransitiveModuleSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            changeToIsolatedModules'
+                          Identifier: 'sys'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'appendFile'
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        Identifier: ' changeBarParam'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        Identifier: ' changeBarParamBack'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        Identifier: ' changeBarParam'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'replaceFileText'
+                            StringLiteral
+                            NoSubstitutionTemplateLiteral
+                            StringLiteral
+  FunctionDeclaration
+    Identifier: ' changeToIsolatedModules'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        Identifier: ' TestServerHost'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'replaceFileText'
+          StringLiteral
+          NoSubstitutionTemplateLiteral
+          NoSubstitutionTemplateLiteral
+  FunctionDeclaration
+    Identifier: ' changeBarParam'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        Identifier: ' TestServerHost'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'replaceFileText'
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' changeBarParamBack'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        Identifier: ' TestServerHost'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'replaceFileText'
+          StringLiteral
+          StringLiteral
+          StringLiteral

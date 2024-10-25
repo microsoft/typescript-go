@@ -1,0 +1,112 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Accessor'
+  FunctionDeclaration
+    Identifier: ' attr'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' attr'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' value'
+      StringKeyword
+    TypeReference
+      Identifier: ' Accessor'
+  FunctionDeclaration
+    Identifier: ' attr'
+    Parameter
+      Identifier: 'map'
+      AnyKeyword
+    TypeReference
+      Identifier: ' Accessor'
+  FunctionDeclaration
+    Identifier: ' attr'
+    Parameter
+      Identifier: 'nameOrMap'
+      AnyKeyword
+    Parameter
+      Identifier: ' value'
+      QuestionToken
+      StringKeyword
+    AnyKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'nameOrMap'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' nameOrMap'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' Accessor'
+        Block
+          ReturnStatement
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' attr2'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' attr2'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' value'
+      StringKeyword
+    TypeReference
+      Identifier: ' Accessor'
+  FunctionDeclaration
+    Identifier: ' attr2'
+    Parameter
+      Identifier: 'map'
+      AnyKeyword
+    TypeReference
+      Identifier: ' Accessor'
+  FunctionDeclaration
+    Identifier: ' attr2'
+    Parameter
+      Identifier: 'nameOrMap'
+      AnyKeyword
+    Parameter
+      Identifier: ' value'
+      QuestionToken
+      StringKeyword
+    StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'nameOrMap'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' nameOrMap'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ReturnStatement
+            StringLiteral
+        Block
+          ReturnStatement
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    StringKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+  EmptyStatement

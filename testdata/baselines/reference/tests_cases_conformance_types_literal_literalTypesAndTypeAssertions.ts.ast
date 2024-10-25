@@ -1,0 +1,97 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            AsExpression
+              StringLiteral
+              LiteralType
+                StringLiteral
+          PropertyAssignment
+            Identifier: '
+    b'
+            TypeAssertionExpression
+              LiteralType
+                StringLiteral
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+    c'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        AsExpression
+          NumericLiteral
+          ParenthesizedType
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' b'
+            AsExpression
+              StringLiteral
+              LiteralType
+                StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' c'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' c'
+            AsExpression
+              StringLiteral
+              LiteralType
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' d'
+            AsExpression
+              StringLiteral
+              LiteralType
+                StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' d'
+            AsExpression
+              StringLiteral
+              LiteralType
+                StringLiteral

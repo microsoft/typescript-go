@@ -1,0 +1,42 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' clodule'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    id'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    value'
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fn'
+      Parameter
+        Identifier: 'id'
+        StringKeyword
+      Block
+  ModuleDeclaration
+    Identifier: ' clodule'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fn'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' y'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+        Block
+          ReturnStatement
+            Identifier: ' x'

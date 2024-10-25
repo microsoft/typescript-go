@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T1'
+    TypeParameter
+      Identifier: ' T2'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' map'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T1'
+          TypeReference
+            Identifier: ' T2'
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        NumberKeyword
+        StringKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ArrowFunction
+              Parameter
+                Identifier: 'value'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' String'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'value'
+                    Identifier: 'toExponential'

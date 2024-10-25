@@ -1,0 +1,227 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFsContentsForDemoProjectReferencesCoreConfig'
+    Parameter
+      Identifier: 'additional'
+      QuestionToken
+      ObjectKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' jsonToReadableText'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        extends'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        compilerOptions'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            outDir'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            rootDir'
+                  StringLiteral
+            SpreadAssignment
+              Identifier: 'additional'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getSysForDemoProjectReferences'
+    TypeReference
+      Identifier: ' TestServerHost'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' TestServerHost'
+            Identifier: 'createWatchedSystem'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            extends'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                outDir'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                rootDir'
+                        StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            references'
+                    ArrayLiteralExpression
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' path'
+                          StringLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' getFsContentsForDemoProjectReferencesCoreConfig'
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            extends'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                outDir'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                rootDir'
+                        StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            references'
+                    ArrayLiteralExpression
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    path'
+                          StringLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                declaration'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                target'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                module'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                strict'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                noUnusedLocals'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                noUnusedParameters'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                noImplicitReturns'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                noFallthroughCasesInSwitch'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                composite'
+                        TrueKeyword
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            files'
+                    ArrayLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            references'
+                    ArrayLiteralExpression
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    path'
+                          StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    path'
+                          StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    path'
+                          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' currentDirectory'
+              StringLiteral

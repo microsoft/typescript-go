@@ -1,0 +1,186 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IData'
+    PropertySignature
+      Identifier: '
+  bar'
+      BooleanKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'TDependencies'
+    Parameter
+      Identifier: '
+  getter'
+      FunctionType
+        Parameter
+          Identifier: 'deps'
+          TypeReference
+            Identifier: ' TDependencies'
+        Parameter
+          Identifier: ' data'
+          TypeReference
+            Identifier: ' IData'
+        AnyKeyword
+    Parameter
+      Identifier: '
+  deps'
+      TypeReference
+        Identifier: ' TDependencies'
+    AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' DEPS'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  foo'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ArrowFunction
+        Parameter
+          Identifier: 'deps'
+        Parameter
+          Identifier: ' data'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    fn1'
+              FunctionExpression
+                Block
+                  ReturnStatement
+                    PropertyAccessExpression
+                      Identifier: ' deps'
+                      Identifier: 'foo'
+            PropertyAssignment
+              Identifier: '
+    fn2'
+              PropertyAccessExpression
+                Identifier: ' data'
+                Identifier: 'bar'
+      Identifier: '
+  DEPS'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ArrowFunction
+        Parameter
+          Identifier: 'deps'
+          TypeQuery
+            Identifier: ' DEPS'
+        Parameter
+          Identifier: ' data'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    fn1'
+              FunctionExpression
+                Block
+                  ReturnStatement
+                    PropertyAccessExpression
+                      Identifier: ' deps'
+                      Identifier: 'foo'
+            PropertyAssignment
+              Identifier: '
+    fn2'
+              PropertyAccessExpression
+                Identifier: ' data'
+                Identifier: 'bar'
+      Identifier: '
+  DEPS'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ArrowFunction
+        Parameter
+          Identifier: 'deps'
+        Parameter
+          Identifier: ' data'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    fn1'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' deps'
+                  Identifier: 'foo'
+            PropertyAssignment
+              Identifier: '
+    fn2'
+              PropertyAccessExpression
+                Identifier: ' data'
+                Identifier: 'bar'
+      Identifier: '
+  DEPS'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ArrowFunction
+        Parameter
+          Identifier: 'deps'
+        Parameter
+          Identifier: ' data'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              MethodDeclaration
+                Identifier: '
+      fn1'
+                Block
+                  ReturnStatement
+                    PropertyAccessExpression
+                      Identifier: ' deps'
+                      Identifier: 'foo'
+              PropertyAssignment
+                Identifier: '
+      fn2'
+                PropertyAccessExpression
+                  Identifier: ' data'
+                  Identifier: 'bar'
+      Identifier: '
+  DEPS'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ArrowFunction
+        Parameter
+          Identifier: 'deps'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            MethodDeclaration
+              Identifier: '
+    fn1'
+              Block
+                ReturnStatement
+                  PropertyAccessExpression
+                    Identifier: ' deps'
+                    Identifier: 'foo'
+            PropertyAssignment
+              Identifier: '
+    fn2'
+              NumericLiteral
+      Identifier: '
+  DEPS'

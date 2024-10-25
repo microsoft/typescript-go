@@ -1,0 +1,138 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Element'
+  TypeAliasDeclaration
+    Identifier: ' DiscriminatorTrue'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    disc'
+        LiteralType
+          TrueKeyword
+      PropertySignature
+        Identifier: '
+    cb'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' DiscriminatorFalse'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    disc'
+        QuestionToken
+        LiteralType
+          FalseKeyword
+      PropertySignature
+        Identifier: '
+    cb'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Props'
+    UnionType
+      TypeReference
+        Identifier: ' DiscriminatorTrue'
+      TypeReference
+        Identifier: ' DiscriminatorFalse'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Comp'
+    Parameter
+      Identifier: 'props'
+      UnionType
+        TypeReference
+          Identifier: ' DiscriminatorTrue'
+        TypeReference
+          Identifier: ' DiscriminatorFalse'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  ExpressionStatement
+    VoidExpression
+      ParenthesizedExpression
+        JsxSelfClosingElement
+          Identifier: 'Comp'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' disc'
+            JsxAttribute
+              Identifier: ' cb'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 's'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' parseInt'
+                    Identifier: 's'
+  ExpressionStatement
+    VoidExpression
+      ParenthesizedExpression
+        JsxSelfClosingElement
+          Identifier: 'Comp'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' disc'
+              JsxExpression
+                FalseKeyword
+            JsxAttribute
+              Identifier: ' cb'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'n'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' n'
+                      Identifier: 'toFixed'
+  ExpressionStatement
+    VoidExpression
+      ParenthesizedExpression
+        JsxSelfClosingElement
+          Identifier: 'Comp'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' disc'
+              JsxExpression
+                Identifier: 'undefined'
+            JsxAttribute
+              Identifier: ' cb'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'n'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' n'
+                      Identifier: 'toFixed'
+  ExpressionStatement
+    VoidExpression
+      ParenthesizedExpression
+        JsxSelfClosingElement
+          Identifier: 'Comp'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' cb'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'n'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' n'
+                      Identifier: 'toFixed'

@@ -1,0 +1,177 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ReturnStatement
+        Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'U'
+      TypeReference
+        Identifier: ' T'
+    TypeParameter
+      Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ReturnStatement
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionExpression
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+    x'
+                EqualsToken
+                Identifier: ' y'
+            ReturnStatement
+              Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionExpression
+          TypeParameter
+            Identifier: 'U'
+            TypeReference
+              Identifier: ' T'
+          TypeParameter
+            Identifier: ' T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+    x'
+                EqualsToken
+                Identifier: ' y'
+            ReturnStatement
+              Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+    x'
+                EqualsToken
+                Identifier: ' y'
+            ReturnStatement
+              Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'U'
+            TypeReference
+              Identifier: ' T'
+          TypeParameter
+            Identifier: ' T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+    x'
+                EqualsToken
+                Identifier: ' y'
+            ReturnStatement
+              Identifier: ' y'

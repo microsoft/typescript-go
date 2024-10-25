@@ -1,0 +1,44 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' ng'
+    ModuleBlock
+      ExpressionStatement
+        Identifier: '
+    interfaceICompiledExpression'
+      Block
+        ExpressionStatement
+          ArrowFunction
+            Parameter
+              Identifier: 'context'
+              AnyKeyword
+            Parameter
+              Identifier: ' locals'
+              QuestionToken
+              AnyKeyword
+            AnyKeyword
+            EqualsGreaterThanToken
+            Identifier: ''
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        assign'
+            Identifier: 'context'
+            Identifier: ' any'
+            Identifier: ' value'
+            Identifier: ' any'
+        ExpressionStatement
+          Identifier: ' any'
+      InterfaceDeclaration
+        Identifier: ' IQService'
+        MethodSignature
+          Identifier: '
+        all'
+          Parameter
+            Identifier: 'promises'
+            ArrayType
+              TypeReference
+                Identifier: ' IPromise'
+                AnyKeyword
+          TypeReference
+            Identifier: ' IPromise'

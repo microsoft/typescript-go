@@ -1,0 +1,286 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    IO'
+        ImportSpecifier
+          Identifier: '
+    userSpecifiedRoot'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TestRunnerKind'
+    UnionType
+      TypeReference
+        Identifier: ' CompilerTestKind'
+      TypeReference
+        Identifier: ' FourslashTestKind'
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' CompilerTestKind'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' FourslashTestKind'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shards'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shardId'
+        NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' setShards'
+    Parameter
+      Identifier: 'count'
+      NumberKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    shards'
+          EqualsToken
+          Identifier: ' count'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' setShardId'
+    Parameter
+      Identifier: 'id'
+      NumberKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    shardId'
+          EqualsToken
+          Identifier: ' id'
+  ClassDeclaration
+    ExportKeyword
+    AbstractKeyword
+    Identifier: ' RunnerBase'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' tests'
+      ArrayType
+        StringKeyword
+      ArrayLiteralExpression
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' addTest'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'tests'
+              Identifier: 'push'
+            Identifier: 'fileName'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' enumerateFiles'
+      Parameter
+        Identifier: 'folder'
+        StringKeyword
+      Parameter
+        Identifier: ' regex'
+        QuestionToken
+        TypeReference
+          Identifier: ' RegExp'
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: ' recursive'
+            BooleanKeyword
+      ArrayType
+        StringKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'map'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'IO'
+                Identifier: 'listFiles'
+              BinaryExpression
+                Identifier: 'userSpecifiedRoot'
+                PlusToken
+                Identifier: ' folder'
+              Identifier: ' regex'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' recursive'
+                  ParenthesizedExpression
+                    ConditionalExpression
+                      Identifier: 'options'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' options'
+                        Identifier: 'recursive'
+                      ColonToken
+                      FalseKeyword
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'normalizeSlashes'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' TestRunnerKind'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' enumerateTestFiles'
+      ArrayType
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+
+    getTestFiles'
+      TypeReference
+        Identifier: ' ReturnType'
+        IndexedAccessType
+          ThisType
+          LiteralType
+            StringLiteral
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' all'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'enumerateTestFiles'
+        IfStatement
+          BinaryExpression
+            Identifier: 'shards'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            ReturnStatement
+              AsExpression
+                Identifier: ' all'
+                TypeReference
+                  Identifier: ' ReturnType'
+                  IndexedAccessType
+                    ThisType
+                    LiteralType
+                      StringLiteral
+        ReturnStatement
+          AsExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' all'
+                Identifier: 'filter'
+              ArrowFunction
+                Parameter
+                  Identifier: '_val'
+                Parameter
+                  Identifier: ' idx'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' idx'
+                    PercentToken
+                    Identifier: ' shards'
+                  EqualsEqualsEqualsToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'shardId'
+                      MinusToken
+                      NumericLiteral
+            TypeReference
+              Identifier: ' ReturnType'
+              IndexedAccessType
+                ThisType
+                LiteralType
+                  StringLiteral
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' workingDirectory'
+      StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      AbstractKeyword
+      Identifier: ' initializeTests'
+      VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' removeFullPaths'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fixedPath'
+              ConditionalExpression
+                CallExpression
+                  PropertyAccessExpression
+                    RegularExpressionLiteral
+                    Identifier: 'test'
+                  Identifier: 'path'
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'getBaseFileName'
+                  Identifier: 'path'
+                ColonToken
+                Identifier: ' path'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' localHost'
+              RegularExpressionLiteral
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        fixedPath'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' fixedPath'
+                Identifier: 'replace'
+              Identifier: 'localHost'
+              StringLiteral
+        ReturnStatement
+          Identifier: ' fixedPath'

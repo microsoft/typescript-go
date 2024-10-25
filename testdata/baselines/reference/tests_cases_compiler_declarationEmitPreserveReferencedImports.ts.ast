@@ -1,0 +1,59 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Evt'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Evt'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'o'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          ArrowFunction
+            TypeReference
+              Identifier: ' T'
+            EqualsGreaterThanToken
+            NonNullExpression
+              NullKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' o'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Evt'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' o'
+            CallExpression
+              Identifier: ' o'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' v'
+                  AsExpression
+                    NonNullExpression
+                      NullKeyword
+                    TypeReference
+                      Identifier: ' Evt'

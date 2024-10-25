@@ -1,0 +1,10 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'

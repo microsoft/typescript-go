@@ -1,0 +1,60 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'TType'
+    Parameter
+      Identifier: '
+    a'
+      IntersectionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' weak'
+            QuestionToken
+            StringKeyword
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'TType'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            LiteralType
+              StringLiteral
+    Parameter
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' Readonly'
+        IntersectionType
+          TypeReference
+            Identifier: 'TType'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' name'
+              StringKeyword
+    Parameter
+      Identifier: '
+    c'
+      IntersectionType
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'TType'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // Works
+    b'
+          EqualsToken
+          Identifier: ' a'

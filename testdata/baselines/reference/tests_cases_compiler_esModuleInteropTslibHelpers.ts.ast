@@ -1,0 +1,70 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' path'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+path'
+        Identifier: 'resolve'
+      StringLiteral
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' path'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+path'
+        Identifier: 'resolve'
+      StringLiteral
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo2'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'default'
+          Identifier: ' resolve'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+resolve'
+      StringLiteral
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo3'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Bar'
+        ImportSpecifier
+          Identifier: ' default'
+          Identifier: ' resolve'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+resolve'
+      StringLiteral
+      StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' Bar'

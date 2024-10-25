@@ -1,0 +1,147 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// Use `/src` to test that directory names are not included in conversion from module path to identifier.
+// @noLib: true
+
+// @Filename: /src/foo-bar.ts
+////export = 0;
+
+// @Filename: /src/b.ts
+////exp/*0*/
+////fooB/*1*/
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' preferences'
+        TypeReference
+          QualifiedName
+            Identifier: ' FourSlashInterface'
+            Identifier: 'UserPreferences'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' includeCompletionsForModuleExports'
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exportEntry'
+        TypeReference
+          QualifiedName
+            Identifier: ' FourSlashInterface'
+            Identifier: 'ExpectedCompletionEntryObject'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    source'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    sourceDisplay'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    kind'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    kindModifiers'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    hasAction'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: '
+    sortText'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' completion'
+                Identifier: 'SortText'
+              Identifier: 'AutoImportSuggestions'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' noLib'
+                TrueKeyword
+        ShorthandPropertyAssignment
+          Identifier: '
+        preferences'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'globalsPlus'
+            ArrayLiteralExpression
+              Identifier: 'exportEntry'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' noLib'
+                TrueKeyword
+        ShorthandPropertyAssignment
+          Identifier: '
+        preferences'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

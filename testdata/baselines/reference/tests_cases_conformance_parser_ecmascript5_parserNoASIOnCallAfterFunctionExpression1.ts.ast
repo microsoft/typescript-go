@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          CallExpression
+            FunctionExpression
+              Block
+            TypeAssertionExpression
+              AnyKeyword
+              Identifier: 'window'
+          Identifier: 'foo'

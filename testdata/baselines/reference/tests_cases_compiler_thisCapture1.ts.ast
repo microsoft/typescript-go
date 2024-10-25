@@ -1,0 +1,39 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' y'
+      NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getSettings'
+      Parameter
+        Identifier: 'keys'
+        ArrayType
+          StringKeyword
+      AnyKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' ret'
+              AnyKeyword
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ret'
+                  Identifier: 'always'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'y'
+                        EqualsToken
+                        NumericLiteral
+              Identifier: 'promise'

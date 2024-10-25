@@ -1,0 +1,9 @@
+SourceFile
+  ExpressionStatement
+    ArrowFunction
+      Parameter
+        DotDotDotToken
+        Identifier: 'arg'
+        QuestionToken
+      EqualsGreaterThanToken
+      NumericLiteral

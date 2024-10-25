@@ -1,0 +1,37 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' N'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+N'
+        Identifier: 'commands'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+// @Filename: file2.js
+N'
+          Identifier: 'commands'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+N'
+          Identifier: 'commands'
+        Identifier: 'b'
+      EqualsToken
+      FunctionExpression
+        Block

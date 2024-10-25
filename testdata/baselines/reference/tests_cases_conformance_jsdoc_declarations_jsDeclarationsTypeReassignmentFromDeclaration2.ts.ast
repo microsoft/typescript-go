@@ -1,0 +1,31 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Item'
+    PropertySignature
+      Identifier: '
+    x'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getItems'
+    ArrayType
+      TypeReference
+        Identifier: ' Item'
+  ExportAssignment
+    Identifier: ' getItems'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' items'
+        CallExpression
+          CallExpression
+            Identifier: ' require'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' items'

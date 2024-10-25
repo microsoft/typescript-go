@@ -1,0 +1,258 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K1'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    TypeParameter
+      Identifier: ' K2'
+      TypeOperator
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v1'
+            TypeReference
+              Identifier: ' Extract'
+              TypeReference
+                Identifier: 'T'
+              StringKeyword
+            AsExpression
+              AsExpression
+                NumericLiteral
+                AnyKeyword
+              TypeReference
+                Identifier: ' T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v2'
+            TypeReference
+              Identifier: ' Extract'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: 'K1'
+              StringKeyword
+            AsExpression
+              AsExpression
+                NumericLiteral
+                AnyKeyword
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' T'
+                TypeReference
+                  Identifier: 'K1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v3'
+            TypeReference
+              Identifier: ' Extract'
+              IndexedAccessType
+                IndexedAccessType
+                  TypeReference
+                    Identifier: 'T'
+                  TypeReference
+                    Identifier: 'K1'
+                TypeReference
+                  Identifier: 'K2'
+              StringKeyword
+            AsExpression
+              AsExpression
+                NumericLiteral
+                AnyKeyword
+              IndexedAccessType
+                IndexedAccessType
+                  TypeReference
+                    Identifier: ' T'
+                  TypeReference
+                    Identifier: 'K1'
+                TypeReference
+                  Identifier: 'K2'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Foo'
+          TypeReference
+            Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Bar'
+          ArrayType
+            TypeReference
+              Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' Foo'
+              TypeReference
+                Identifier: 'U'
+            AsExpression
+              AsExpression
+                NumericLiteral
+                AnyKeyword
+              TypeReference
+                Identifier: ' Bar'
+                TypeReference
+                  Identifier: 'U'
+  TypeAliasDeclaration
+    Identifier: ' Foo1'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Foo2'
+          TypeReference
+            Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Foo2'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Foo1'
+          TypeReference
+            Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' Foo1'
+              TypeReference
+                Identifier: 'U'
+            AsExpression
+              AsExpression
+                NumericLiteral
+                AnyKeyword
+              TypeReference
+                Identifier: ' Bar'
+                TypeReference
+                  Identifier: 'U'
+  TypeAliasDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      TypeLiteral
+      ParenthesizedType
+        ConditionalType
+          TypeReference
+            Identifier: '
+    T'
+          TupleType
+            AnyKeyword
+            RestType
+              ArrayType
+                AnyKeyword
+          MappedType
+            TypeParameter
+              Identifier: 'K'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T'
+            QuestionToken
+            TypeReference
+              Identifier: ' F'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: 'K'
+          ConditionalType
+            TypeReference
+              Identifier: ' T'
+            ArrayType
+              AnyKeyword
+            ArrayType
+              TypeReference
+                Identifier: ' F'
+                IndexedAccessType
+                  TypeReference
+                    Identifier: 'T'
+                  NumberKeyword
+            ConditionalType
+              TypeReference
+                Identifier: ' T'
+              TypeLiteral
+                IndexSignature
+                  Parameter
+                    Identifier: 'K'
+                    StringKeyword
+                  AnyKeyword
+              MappedType
+                TypeParameter
+                  Identifier: 'K'
+                  TypeOperator
+                    TypeReference
+                      Identifier: ' T'
+                QuestionToken
+                TypeReference
+                  Identifier: ' F'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: 'T'
+                    TypeReference
+                      Identifier: 'K'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      AnyKeyword
+    TypeReference
+      Identifier: ' F'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' g'
+    Block
+      ReturnStatement
+        AsExpression
+          CallExpression
+            Identifier: ' f'
+          TypeReference
+            Identifier: ' F'
+            AnyKeyword

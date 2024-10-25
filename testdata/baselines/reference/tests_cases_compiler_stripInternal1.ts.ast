@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+  foo'
+      VoidKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+  // @internal
+  bar'
+      VoidKeyword
+      Block

@@ -1,0 +1,93 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    B'
+      TypeReference
+        Identifier: ' T'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+    Constructor
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      Parameter
+        Identifier: 'b'
+        TypeReference
+          Identifier: ' T'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'B'
+            EqualsToken
+            Identifier: ' a'
+    MethodDeclaration
+      Identifier: '
+
+    foo'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    GetAccessor
+      Identifier: ' BB'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'B'
+    SetAccessor
+      Identifier: ' BBWith'
+      Parameter
+        Identifier: 'c'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'B'
+            EqualsToken
+            Identifier: ' c'

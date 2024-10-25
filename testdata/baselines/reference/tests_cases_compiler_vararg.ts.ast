@@ -1,0 +1,216 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f'
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'rest'
+            ArrayType
+              NumberKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' sum'
+                  NumericLiteral
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+              BinaryExpression
+                Identifier: 'i'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: 'rest'
+                  Identifier: 'length'
+              PostfixUnaryExpression
+                Identifier: 'i'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                sum'
+                    PlusEqualsToken
+                    ElementAccessExpression
+                      Identifier: 'rest'
+                      Identifier: 'i'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            result'
+                PlusEqualsToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: 'x'
+                      PlusToken
+                      StringLiteral
+                    PlusToken
+                    Identifier: 'sum'
+            ReturnStatement
+              Identifier: ' result'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' fnope'
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'rest'
+            NumberKeyword
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' fonly'
+          Parameter
+            DotDotDotToken
+            Identifier: 'rest'
+            ArrayType
+              StringKeyword
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            builder'
+                EqualsToken
+                StringLiteral
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+              BinaryExpression
+                Identifier: 'i'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: 'rest'
+                  Identifier: 'length'
+              PostfixUnaryExpression
+                Identifier: 'i'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                builder'
+                    PlusEqualsToken
+                    ElementAccessExpression
+                      Identifier: 'rest'
+                      Identifier: 'i'
+            ReturnStatement
+              Identifier: ' builder'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+result'
+      PlusEqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'f'
+        Identifier: 'x'
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // bad first param
+result'
+      PlusEqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'f'
+        NumericLiteral
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // bad second param
+result'
+      PlusEqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'f'
+        StringLiteral
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+result'
+      PlusEqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'f'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok varargs length 0
+result'
+      PlusEqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'fonly'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok conversion
+result'
+      PlusEqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'fonly'
+        Identifier: 'x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // bad param
+result'
+      PlusEqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'fonly'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok 
+result'
+      PlusEqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'fonly'
+        StringLiteral
+        StringLiteral
+        StringLiteral
+        StringLiteral

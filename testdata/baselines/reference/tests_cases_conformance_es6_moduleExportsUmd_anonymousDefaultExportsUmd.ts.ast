@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Block

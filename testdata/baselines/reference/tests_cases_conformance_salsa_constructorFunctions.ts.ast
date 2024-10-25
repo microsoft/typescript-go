@@ -1,0 +1,199 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' C1'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              ThisKeyword
+              InstanceOfKeyword
+              Identifier: ' C1'
+        ReturnStatement
+          NewExpression
+            Identifier: ' C1'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1_v1'
+        CallExpression
+          Identifier: ' C1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1_v2'
+        NewExpression
+          Identifier: ' C1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C2'
+        FunctionExpression
+          Block
+            IfStatement
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    ThisKeyword
+                    InstanceOfKeyword
+                    Identifier: ' C2'
+              ReturnStatement
+                NewExpression
+                  Identifier: ' C2'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+                EqualsToken
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2_v1'
+        CallExpression
+          Identifier: ' C2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2_v2'
+        NewExpression
+          Identifier: ' C2'
+  FunctionDeclaration
+    Identifier: ' C3'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              ThisKeyword
+              InstanceOfKeyword
+              Identifier: ' C3'
+        ReturnStatement
+          NewExpression
+            Identifier: ' C3'
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3_v1'
+        CallExpression
+          Identifier: ' C3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3_v2'
+        NewExpression
+          Identifier: ' C3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C4'
+        FunctionExpression
+          Block
+            IfStatement
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    ThisKeyword
+                    InstanceOfKeyword
+                    Identifier: ' C4'
+              ReturnStatement
+                NewExpression
+                  Identifier: ' C4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4_v1'
+        CallExpression
+          Identifier: ' C4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4_v2'
+        NewExpression
+          Identifier: ' C4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5_v1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c5_v1'
+      EqualsToken
+      FunctionExpression
+        Identifier: ' f'
+        Block
+  ExpressionStatement
+    NewExpression
+      Identifier: ' c5_v1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5_v2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c5_v2'
+      EqualsToken
+      ClassExpression
+  ExpressionStatement
+    NewExpression
+      Identifier: ' c5_v2'
+  FunctionDeclaration
+    Identifier: ' C6'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'functions'
+          EqualsToken
+          ArrayLiteralExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+            ArrowFunction
+              Parameter
+                Identifier: ' x'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' x'
+                PlusToken
+                NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: ' x'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' x'
+                MinusToken
+                NumericLiteral
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c6_v1'
+        NewExpression
+          Identifier: ' C6'
+  FunctionDeclaration
+    Identifier: ' C7'
+    Parameter
+      Identifier: 'num'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c7_v1'
+        NewExpression
+          Identifier: ' C7'

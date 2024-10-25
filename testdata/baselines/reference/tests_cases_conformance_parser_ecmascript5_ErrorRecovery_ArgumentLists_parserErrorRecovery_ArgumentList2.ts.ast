@@ -1,0 +1,8 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+   bar'

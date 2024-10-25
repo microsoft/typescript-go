@@ -1,0 +1,132 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Target'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    START'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    MIDDLE'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    END'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    /** @type {number} */
+    OK_I_GUESS'
+            NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Second'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    OK'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    /** @type {number} */
+    FINE'
+            NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Fs'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    ADD1'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' n'
+                PlusToken
+                NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    ID'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Identifier: ' n'
+          PropertyAssignment
+            Identifier: '
+    SUB1'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' n'
+                MinusToken
+                NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' consume'
+    Parameter
+      Identifier: 't'
+    Parameter
+      Identifier: 's'
+    Parameter
+      Identifier: 'f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' str'
+            Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' num'
+            Identifier: ' s'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fun'
+            Identifier: ' f'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            PropertyAccessExpression
+              Identifier: ' Target'
+              Identifier: 'START'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    v'
+          EqualsToken
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' ff'
+    Parameter
+      Identifier: 's'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          ElementAccessExpression
+            Identifier: 'Target'
+            Identifier: 's'
+        Block
+          ReturnStatement
+            NullKeyword
+        Block
+          ReturnStatement
+            ElementAccessExpression
+              Identifier: ' Target'
+              Identifier: 's'

@@ -1,0 +1,26 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' bar'
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' A'
+          Identifier: 'foo'
+        PlusToken
+        NumericLiteral
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        A'
+              Identifier: 'foo'
+            PlusToken
+            NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      NumericLiteral

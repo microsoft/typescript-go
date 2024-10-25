@@ -1,0 +1,315 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' v1'
+    EnumMember
+      Identifier: ' v2'
+  EmptyStatement
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+    Parameter
+      Identifier: 'p1'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' p2'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              LiteralType
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mapped_generic'
+            MappedType
+              TypeParameter
+                Identifier: 'P'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' T'
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' T'
+                TypeReference
+                  Identifier: 'P'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mapped'
+            MappedType
+              TypeParameter
+                Identifier: 'P'
+                LiteralType
+                  StringLiteral
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' T'
+                TypeReference
+                  Identifier: 'P'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' union_generic'
+            UnionType
+              TypeReference
+                Identifier: ' T'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' union_primitive'
+            UnionType
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  NumberKeyword
+              NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' intersection_generic'
+            IntersectionType
+              TypeReference
+                Identifier: ' T'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' intersection_primitive'
+            IntersectionType
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  NumberKeyword
+              StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' num'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' str'
+            StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' literal_string'
+            LiteralType
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' literal_number'
+            LiteralType
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            TypeReference
+              Identifier: ' E'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' u'
+            UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            LiteralType
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            AnyKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r1'
+            Identifier: ' p1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r2'
+            Identifier: ' p2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r3'
+            Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r4'
+            Identifier: ' i'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r5'
+            Identifier: ' k'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r6'
+            Identifier: ' mapped_generic'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r7'
+            Identifier: ' mapped'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r8'
+            Identifier: ' union_generic'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r9'
+            Identifier: ' union_primitive'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r10'
+            Identifier: ' intersection_generic'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r11'
+            Identifier: ' intersection_primitive'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r12'
+            Identifier: ' num'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r13'
+            Identifier: ' str'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r14'
+            Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r15'
+            Identifier: ' n'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r16'
+            Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r17'
+            Identifier: ' literal_string'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r18'
+            Identifier: ' literal_number'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'r19'
+            Identifier: ' e'

@@ -1,0 +1,22 @@
+SourceFile
+  Block
+    ExpressionStatement
+      Identifier: '
+    l1'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' l1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+  Block
+    ExpressionStatement
+      Identifier: '
+    v1'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' v1'
+          NumericLiteral

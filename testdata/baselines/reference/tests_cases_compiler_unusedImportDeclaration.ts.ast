@@ -1,0 +1,44 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' TesterB'
+    PropertyDeclaration
+      Identifier: '
+    me'
+      StringKeyword
+  ExportAssignment
+    Identifier: ' TesterB'
+  ImportEqualsDeclaration
+    Identifier: ' B'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thingy'
+        TypeReference
+          Identifier: ' B'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    me'
+            StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      BinaryExpression
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          PropertyAccessExpression
+            Identifier: ' thingy'
+            Identifier: 'me'
+        PlusToken
+        StringLiteral

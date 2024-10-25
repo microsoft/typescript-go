@@ -1,0 +1,14 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        NumberKeyword
+  ClassDeclaration
+    Identifier: ' Foo'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

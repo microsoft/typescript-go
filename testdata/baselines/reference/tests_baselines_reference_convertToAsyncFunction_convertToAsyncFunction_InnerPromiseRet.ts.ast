@@ -1,0 +1,109 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/innerPromise'
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              ArrowFunction
+                Parameter
+                  Identifier: 'resp'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' resp'
+                                Identifier: 'blob'
+                            Identifier: 'then'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'blob'
+                            EqualsGreaterThanToken
+                            PropertyAccessExpression
+                              Identifier: ' blob'
+                              Identifier: 'byteOffset'
+                        Identifier: 'catch'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'err'
+                        EqualsGreaterThanToken
+                        StringLiteral
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              Identifier: 'blob'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' blob'
+                    Identifier: 'toString'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' innerPromise'
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' resp'
+            AwaitExpression
+              CallExpression
+                Identifier: ' fetch'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' blob_1'
+            AnyKeyword
+      TryStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' blob'
+                AwaitExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' resp'
+                      Identifier: 'blob'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        blob_1'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' blob'
+                Identifier: 'byteOffset'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'err'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        blob_1'
+                EqualsToken
+                StringLiteral
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' blob_1'
+            Identifier: 'toString'

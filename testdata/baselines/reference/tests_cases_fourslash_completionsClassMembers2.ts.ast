@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////interface I {
+////    method(): void;
+////}
+////
+////export class C implements I {
+////    property = "foo"
+////    /**/
+////}
+
+verify'
+        Identifier: 'baselineCompletions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    includeCompletionsWithInsertText'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    includeCompletionsWithClassMemberSnippets'
+          TrueKeyword

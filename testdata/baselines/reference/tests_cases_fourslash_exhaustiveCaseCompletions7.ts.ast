@@ -1,0 +1,61 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @newline: LF
+////export function foo(position: -1 | 0 | 1) {
+////    switch (position) {
+////        /**/
+////    }
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        isNewIdentifierLocation'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+                name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+                source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'SwitchCases'
+              PropertyAssignment
+                Identifier: '
+                sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'GlobalsOrKeywords'
+              PropertyAssignment
+                Identifier: '
+                insertText'
+                NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword

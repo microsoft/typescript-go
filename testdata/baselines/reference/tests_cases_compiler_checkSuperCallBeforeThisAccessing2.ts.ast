@@ -1,0 +1,36 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Based'
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Based'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' that'
+              ThisKeyword

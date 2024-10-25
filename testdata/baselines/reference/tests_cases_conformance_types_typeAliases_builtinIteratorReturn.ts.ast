@@ -1,0 +1,199 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' map'
+        TypeReference
+          Identifier: ' Map'
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' set'
+        TypeReference
+          Identifier: ' Set'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i0'
+        CallExpression
+          ElementAccessExpression
+            Identifier: ' array'
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' array'
+            Identifier: 'values'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' array'
+            Identifier: 'keys'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' array'
+            Identifier: 'entries'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    Identifier: ' array'
+    EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i4'
+        CallExpression
+          ElementAccessExpression
+            Identifier: ' map'
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i5'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' map'
+            Identifier: 'values'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i6'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' map'
+            Identifier: 'keys'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i7'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' map'
+            Identifier: 'entries'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    Identifier: ' map'
+    EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i8'
+        CallExpression
+          ElementAccessExpression
+            Identifier: ' set'
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i9'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' set'
+            Identifier: 'values'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i10'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' set'
+            Identifier: 'keys'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i11'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' set'
+            Identifier: 'entries'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    Identifier: ' set'
+    EmptyStatement
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i12'
+        TypeReference
+          Identifier: ' IterableIterator'
+          NumberKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i13'
+        TypeReference
+          Identifier: ' IterableIterator'
+          NumberKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i14'
+        TypeReference
+          Identifier: ' IterableIterator'
+          NumberKeyword
+          BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i15'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i16'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i17'
+        TypeReference
+          Identifier: ' Iterable'
+          NumberKeyword
+          BooleanKeyword

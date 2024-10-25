@@ -1,0 +1,98 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Point'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    y'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' point'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' y'
+      NumberKeyword
+    TypeReference
+      Identifier: ' Point'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            Identifier: ' x'
+          PropertyAssignment
+            Identifier: ' y'
+            Identifier: ' y'
+  ModuleDeclaration
+    Identifier: ' point'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' origin'
+            CallExpression
+              Identifier: ' point'
+              NumericLiteral
+              NumericLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' equals'
+        Parameter
+          Identifier: 'p1'
+          TypeReference
+            Identifier: ' Point'
+        Parameter
+          Identifier: ' p2'
+          TypeReference
+            Identifier: ' Point'
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' p1'
+                  Identifier: 'x'
+                EqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' p2'
+                  Identifier: 'x'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' p1'
+                  Identifier: 'y'
+                EqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' p2'
+                  Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        CallExpression
+          Identifier: ' point'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        PropertyAccessExpression
+          Identifier: ' point'
+          Identifier: 'origin'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' point'
+            Identifier: 'equals'
+          Identifier: 'p1'
+          Identifier: ' p2'

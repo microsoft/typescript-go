@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' foo'
+    StringLiteral

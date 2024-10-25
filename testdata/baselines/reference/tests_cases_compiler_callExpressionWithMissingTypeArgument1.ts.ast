@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: 'Foo'
+      TypeReference
+        Identifier: 'a'
+      TypeReference
+        Identifier: ''
+      TypeReference
+        Identifier: 'b'

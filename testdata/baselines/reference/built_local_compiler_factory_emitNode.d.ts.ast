@@ -1,0 +1,735 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' AccessExpression'
+        ImportSpecifier
+          Identifier: ' AutoGenerateInfo'
+        ImportSpecifier
+          Identifier: ' EmitFlags'
+        ImportSpecifier
+          Identifier: ' EmitHelper'
+        ImportSpecifier
+          Identifier: ' EmitNode'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' ImportSpecifier'
+        ImportSpecifier
+          Identifier: ' InternalEmitFlags'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' NodeArray'
+        ImportSpecifier
+          Identifier: ' PrivateIdentifier'
+        ImportSpecifier
+          Identifier: ' SnippetElement'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' SourceMapRange'
+        ImportSpecifier
+          Identifier: ' SyntaxKind'
+        ImportSpecifier
+          Identifier: ' SynthesizedComment'
+        ImportSpecifier
+          Identifier: ' TextRange'
+        ImportSpecifier
+          Identifier: ' TypeNode'
+        ImportSpecifier
+          Identifier: ' TypeParameterDeclaration'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getOrCreateEmitNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' EmitNode'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' disposeEmitNodes'
+    Parameter
+      Identifier: 'sourceFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        UndefinedKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' removeAllComments'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setEmitFlags'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' emitFlags'
+      TypeReference
+        Identifier: ' EmitFlags'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' addEmitFlags'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' emitFlags'
+      TypeReference
+        Identifier: ' EmitFlags'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setInternalEmitFlags'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' emitFlags'
+      TypeReference
+        Identifier: ' InternalEmitFlags'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' addInternalEmitFlags'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' emitFlags'
+      TypeReference
+        Identifier: ' InternalEmitFlags'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getSourceMapRange'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' SourceMapRange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setSourceMapRange'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' range'
+      UnionType
+        TypeReference
+          Identifier: ' SourceMapRange'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getTokenSourceMapRange'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' token'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    UnionType
+      TypeReference
+        Identifier: ' SourceMapRange'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setTokenSourceMapRange'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' token'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    Parameter
+      Identifier: ' range'
+      UnionType
+        TypeReference
+          Identifier: ' SourceMapRange'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getStartsOnNewLine'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      BooleanKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setStartsOnNewLine'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' newLine'
+      BooleanKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getCommentRange'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' TextRange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setCommentRange'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' range'
+      TypeReference
+        Identifier: ' TextRange'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getSyntheticLeadingComments'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' SynthesizedComment'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setSyntheticLeadingComments'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' comments'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' SynthesizedComment'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' addSyntheticLeadingComment'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' kind'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' SyntaxKind'
+            Identifier: 'SingleLineCommentTrivia'
+        TypeReference
+          QualifiedName
+            Identifier: ' SyntaxKind'
+            Identifier: 'MultiLineCommentTrivia'
+    Parameter
+      Identifier: ' text'
+      StringKeyword
+    Parameter
+      Identifier: ' hasTrailingNewLine'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getSyntheticTrailingComments'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' SynthesizedComment'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setSyntheticTrailingComments'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' comments'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' SynthesizedComment'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' addSyntheticTrailingComment'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' kind'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' SyntaxKind'
+            Identifier: 'SingleLineCommentTrivia'
+        TypeReference
+          QualifiedName
+            Identifier: ' SyntaxKind'
+            Identifier: 'MultiLineCommentTrivia'
+    Parameter
+      Identifier: ' text'
+      StringKeyword
+    Parameter
+      Identifier: ' hasTrailingNewLine'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' moveSyntheticComments'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' original'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getConstantValue'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' AccessExpression'
+    UnionType
+      StringKeyword
+      NumberKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setConstantValue'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' AccessExpression'
+    Parameter
+      Identifier: ' value'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    TypeReference
+      Identifier: ' AccessExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' addEmitHelper'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' helper'
+      TypeReference
+        Identifier: ' EmitHelper'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' addEmitHelpers'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' helpers'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' EmitHelper'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' removeEmitHelper'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' helper'
+      TypeReference
+        Identifier: ' EmitHelper'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getEmitHelpers'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' EmitHelper'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' moveEmitHelpers'
+    Parameter
+      Identifier: 'source'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' target'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' predicate'
+      FunctionType
+        Parameter
+          Identifier: 'helper'
+          TypeReference
+            Identifier: ' EmitHelper'
+        BooleanKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getSnippetElement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' SnippetElement'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setSnippetElement'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' snippet'
+      TypeReference
+        Identifier: ' SnippetElement'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ignoreSourceNewlines'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setTypeNode'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' type'
+      TypeReference
+        Identifier: ' TypeNode'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getTypeNode'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    UnionType
+      TypeReference
+        Identifier: ' TypeNode'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setIdentifierTypeArguments'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Identifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' typeArguments'
+      UnionType
+        TypeReference
+          Identifier: ' NodeArray'
+          UnionType
+            TypeReference
+              Identifier: 'TypeNode'
+            TypeReference
+              Identifier: ' TypeParameterDeclaration'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getIdentifierTypeArguments'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Identifier'
+    UnionType
+      TypeReference
+        Identifier: ' NodeArray'
+        UnionType
+          TypeReference
+            Identifier: 'TypeNode'
+          TypeReference
+            Identifier: ' TypeParameterDeclaration'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setIdentifierAutoGenerate'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' Identifier'
+        TypeReference
+          Identifier: ' PrivateIdentifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' autoGenerate'
+      UnionType
+        TypeReference
+          Identifier: ' AutoGenerateInfo'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getIdentifierAutoGenerate'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Identifier'
+        TypeReference
+          Identifier: ' PrivateIdentifier'
+    UnionType
+      TypeReference
+        Identifier: ' AutoGenerateInfo'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setIdentifierGeneratedImportReference'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' Identifier'
+        TypeReference
+          Identifier: ' PrivateIdentifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' value'
+      UnionType
+        TypeReference
+          Identifier: ' ImportSpecifier'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getIdentifierGeneratedImportReference'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Identifier'
+        TypeReference
+          Identifier: ' PrivateIdentifier'
+    UnionType
+      TypeReference
+        Identifier: ' ImportSpecifier'
+      UndefinedKeyword

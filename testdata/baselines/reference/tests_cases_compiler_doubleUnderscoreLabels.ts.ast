@@ -1,0 +1,45 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' doThing'
+    Block
+      LabeledStatement
+        Identifier: '
+    __call'
+        WhileStatement
+          TrueKeyword
+          Block
+            LabeledStatement
+              Identifier: '
+        aLabel'
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' i'
+                    NumericLiteral
+                BinaryExpression
+                  Identifier: ' i'
+                  LessThanToken
+                  NumericLiteral
+                PostfixUnaryExpression
+                  Identifier: ' i'
+                Block
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'i'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    Block
+                      BreakStatement
+                        Identifier: ' __call'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'i'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    Block
+                      BreakStatement
+                        Identifier: ' aLabel'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+doThing'

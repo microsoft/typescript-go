@@ -1,0 +1,208 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Record2'
+    TypeParameter
+      Identifier: 'K'
+      TypeOperator
+        AnyKeyword
+    TypeParameter
+      Identifier: ' T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' defaultRecord'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Record'
+        LiteralType
+          StringLiteral
+        StringKeyword
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' customRecord'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Record2'
+        LiteralType
+          StringLiteral
+        StringKeyword
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record2'
+        StringKeyword
+        StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' mixed1'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Record2'
+        LiteralType
+          StringLiteral
+        StringKeyword
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' mixed2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Record'
+        LiteralType
+          StringLiteral
+        StringKeyword
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record2'
+        StringKeyword
+        StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' defaultRecord2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Record'
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' customRecord2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Record2'
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record2'
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' mixed3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Record2'
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' mixed4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Record'
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Record2'
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'

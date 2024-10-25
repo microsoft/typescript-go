@@ -1,0 +1,6 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ExportAssignment
+        NumericLiteral

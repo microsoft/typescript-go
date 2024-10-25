@@ -1,0 +1,24 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 'key'
+          StringKeyword
+        StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      LiteralType
+        NullKeyword

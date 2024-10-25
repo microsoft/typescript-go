@@ -1,0 +1,47 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'v'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            CallExpression
+              Identifier: ' f'
+              NumberKeyword
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            CallExpression
+              Identifier: ' f'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            CallExpression
+              Identifier: ' f'
+              AnyKeyword
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r4'
+            CallExpression
+              Identifier: ' f'
+              NullKeyword

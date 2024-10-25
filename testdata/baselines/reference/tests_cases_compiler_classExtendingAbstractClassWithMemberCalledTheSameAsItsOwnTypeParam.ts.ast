@@ -1,0 +1,110 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IObserver'
+    MethodSignature
+      Identifier: '
+	handleChange'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' TChange'
+      Parameter
+        Identifier: 'observable'
+        TypeReference
+          Identifier: ' IObservable'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' TChange'
+      Parameter
+        Identifier: ' change'
+        TypeReference
+          Identifier: ' TChange'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' IObservable'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' TChange'
+      UnknownKeyword
+    MethodSignature
+      Identifier: '
+	get'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' TChange'
+      TypeReference
+        Identifier: ' TChange'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IReader'
+    MethodSignature
+      Identifier: '
+	readObservable'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'observable'
+        TypeReference
+          Identifier: ' IObservable'
+          TypeReference
+            Identifier: 'T'
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    ExportKeyword
+    AbstractKeyword
+    Identifier: ' ConvenientObservable'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' TChange'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IObservable'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' TChange'
+    GetAccessor
+      Identifier: ' TChange'
+      TypeReference
+        Identifier: ' TChange'
+      Block
+        ReturnStatement
+          NonNullExpression
+            NullKeyword
+    MethodDeclaration
+      PublicKeyword
+      AbstractKeyword
+      Identifier: ' get'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    ExportKeyword
+    AbstractKeyword
+    Identifier: ' BaseObservable'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' TChange'
+      VoidKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ConvenientObservable'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' TChange'
+    PropertyDeclaration
+      ProtectedKeyword
+      ReadonlyKeyword
+      Identifier: ' observers'
+      NewExpression
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'IObserver'

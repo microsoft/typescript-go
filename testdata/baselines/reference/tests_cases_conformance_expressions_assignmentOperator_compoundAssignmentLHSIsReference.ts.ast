@@ -1,0 +1,143 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      PlusEqualsToken
+      Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' fn1'
+    Parameter
+      Identifier: 'x2'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x2'
+          AsteriskEqualsToken
+          Identifier: ' value'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x2'
+          PlusEqualsToken
+          Identifier: ' value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x3'
+        Identifier: 'a'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x3'
+        Identifier: 'a'
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+x3'
+        StringLiteral
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+x3'
+        StringLiteral
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'x1'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'x1'
+      PlusEqualsToken
+      Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' fn2'
+    Parameter
+      Identifier: 'x4'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            Identifier: 'x4'
+          AsteriskEqualsToken
+          Identifier: ' value'
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            Identifier: 'x4'
+          PlusEqualsToken
+          Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'x3'
+          Identifier: 'a'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'x3'
+          Identifier: 'a'
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ElementAccessExpression
+          Identifier: 'x3'
+          StringLiteral
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ElementAccessExpression
+          Identifier: 'x3'
+          StringLiteral
+      PlusEqualsToken
+      Identifier: ' value'

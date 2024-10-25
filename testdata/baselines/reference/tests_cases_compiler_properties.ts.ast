@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyClass'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' Count'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' Count'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block

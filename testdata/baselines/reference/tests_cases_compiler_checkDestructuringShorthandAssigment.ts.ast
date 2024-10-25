@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Test'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' b'
+          StringLiteral
+      ObjectLiteralExpression
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+Test'
+      ParenthesizedExpression
+        BinaryExpression
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' b'
+              EqualsToken
+              StringLiteral
+          EqualsToken
+          ObjectLiteralExpression

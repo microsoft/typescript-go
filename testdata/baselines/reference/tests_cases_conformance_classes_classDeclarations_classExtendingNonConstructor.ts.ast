@@ -1,0 +1,51 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' C1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' undefined'
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        TrueKeyword
+  ClassDeclaration
+    Identifier: ' C3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        FalseKeyword
+  ClassDeclaration
+    Identifier: ' C4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' C5'
+    HeritageClause
+      ExpressionWithTypeArguments
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' C6'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' C7'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' foo'

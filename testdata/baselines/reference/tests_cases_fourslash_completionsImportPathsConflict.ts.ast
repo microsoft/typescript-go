@@ -1,0 +1,116 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /tsconfig.json
+//// {
+////     "compilerOptions": {
+////         "module": "esnext",
+////         "paths": {
+////           "@reduxjs/toolkit": ["src/index.ts"],
+////           "@internal/*": ["src/*"]
+////         }
+////     }
+//// }
+
+// @Filename: /src/index.ts
+//// export { configureStore } from "./configureStore";
+
+// @Filename: /src/configureStore.ts
+//// export function configureStore() {}
+
+// @Filename: /src/tests/createAsyncThunk.typetest.ts
+//// import {} from "@reduxjs/toolkit";
+//// /**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    sourceDisplay'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+    sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    allowIncompleteCompletions'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  data'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    exportName'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    fileName'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    moduleSpecifier'
+              StringLiteral
+        PropertyAssignment
+          Identifier: '
+  description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

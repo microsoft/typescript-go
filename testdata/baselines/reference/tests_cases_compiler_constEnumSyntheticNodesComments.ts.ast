@@ -1,0 +1,73 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' En'
+    EnumMember
+      Identifier: ' A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      Identifier: ' C'
+    EnumMember
+      Identifier: ' D'
+  FunctionDeclaration
+    Identifier: ' assert'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' verify'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' En'
+    Block
+      SwitchStatement
+        Identifier: 'a'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' En'
+              Identifier: 'A'
+            ReturnStatement
+              CallExpression
+                Identifier: ' assert'
+                LiteralType
+                  NumericLiteral
+                Identifier: 'a'
+          CaseClause
+            ElementAccessExpression
+              Identifier: ' En'
+              StringLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' assert'
+                LiteralType
+                  NumericLiteral
+                Identifier: 'a'
+          CaseClause
+            ElementAccessExpression
+              Identifier: ' En'
+              NoSubstitutionTemplateLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' assert'
+                LiteralType
+                  NumericLiteral
+                Identifier: 'a'
+          CaseClause
+            ElementAccessExpression
+              Identifier: ' En'
+              StringLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' assert'
+                LiteralType
+                  NumericLiteral
+                Identifier: 'a'

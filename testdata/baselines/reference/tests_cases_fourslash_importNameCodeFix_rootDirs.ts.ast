@@ -1,0 +1,58 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nonRelative'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' relative'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' nonRelative'
+            Identifier: 'replace'
+          StringLiteral
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        Identifier: 'nonRelative'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        Identifier: 'nonRelative'
+      Identifier: ' undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' importModuleSpecifierPreference'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        Identifier: 'relative'
+      Identifier: ' undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' importModuleSpecifierPreference'
+          StringLiteral

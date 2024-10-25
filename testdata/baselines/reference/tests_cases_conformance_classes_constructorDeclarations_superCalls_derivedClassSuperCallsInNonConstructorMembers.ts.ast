@@ -1,0 +1,72 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' super'
+    SemicolonClassElement
+    MethodDeclaration
+      Identifier: '
+    b'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    GetAccessor
+      Identifier: ' C'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' C'
+      Parameter
+        Identifier: 'v'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' a'
+      TypeReference
+        Identifier: ' super'
+    SemicolonClassElement
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' b'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    GetAccessor
+      StaticKeyword
+      Identifier: ' C'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      Identifier: ' C'
+      Parameter
+        Identifier: 'v'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

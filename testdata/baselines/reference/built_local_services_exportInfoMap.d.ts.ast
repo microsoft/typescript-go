@@ -1,0 +1,510 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' __String'
+        ImportSpecifier
+          Identifier: ' CancellationToken'
+        ImportSpecifier
+          Identifier: ' FutureSourceFile'
+        ImportSpecifier
+          Identifier: ' LanguageServiceHost'
+        ImportSpecifier
+          Identifier: ' ModuleSpecifierCache'
+        ImportSpecifier
+          Identifier: ' ModuleSpecifierResolutionHost'
+        ImportSpecifier
+          Identifier: ' PackageJsonImportFilter'
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' ScriptTarget'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' SymbolFlags'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+        ImportSpecifier
+          Identifier: ' UserPreferences'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' ImportKind'
+    EnumMember
+      Identifier: '
+    Named'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Default'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Namespace'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    CommonJS'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' ExportKind'
+    EnumMember
+      Identifier: '
+    Named'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Default'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ExportEquals'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    UMD'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SymbolExportInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' moduleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    PropertySignature
+      Identifier: '
+    /** Set if `moduleSymbol` is an external module, not an ambient module */
+    moduleFileName'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    exportKind'
+      TypeReference
+        Identifier: ' ExportKind'
+    PropertySignature
+      Identifier: '
+    targetFlags'
+      TypeReference
+        Identifier: ' SymbolFlags'
+    PropertySignature
+      Identifier: '
+    /** True if export was only found via the package.json AutoImportProvider (for telemetry). */
+    isFromPackageJson'
+      BooleanKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' FutureSymbolExportInfo'
+    IntersectionType
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          Identifier: 'SymbolExportInfo'
+        LiteralType
+          StringLiteral
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' symbol'
+          QuestionToken
+          UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ExportInfoMap'
+    MethodSignature
+      Identifier: '
+    isUsableByFile'
+      Parameter
+        Identifier: 'importingFile'
+        TypeReference
+          Identifier: ' Path'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    clear'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    add'
+      Parameter
+        Identifier: 'importingFile'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' symbol'
+        TypeReference
+          Identifier: ' Symbol'
+      Parameter
+        Identifier: ' key'
+        TypeReference
+          Identifier: ' __String'
+      Parameter
+        Identifier: ' moduleSymbol'
+        TypeReference
+          Identifier: ' Symbol'
+      Parameter
+        Identifier: ' moduleFile'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' exportKind'
+        TypeReference
+          Identifier: ' ExportKind'
+      Parameter
+        Identifier: ' isFromPackageJson'
+        BooleanKeyword
+      Parameter
+        Identifier: ' checker'
+        TypeReference
+          Identifier: ' TypeChecker'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    get'
+      Parameter
+        Identifier: 'importingFile'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' key'
+        TypeReference
+          Identifier: ' ExportMapInfoKey'
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' SymbolExportInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    search'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'importingFile'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' preferCapitalized'
+        BooleanKeyword
+      Parameter
+        Identifier: ' matches'
+        FunctionType
+          Parameter
+            Identifier: 'name'
+            StringKeyword
+          Parameter
+            Identifier: ' targetFlags'
+            TypeReference
+              Identifier: ' SymbolFlags'
+          BooleanKeyword
+      Parameter
+        Identifier: ' action'
+        FunctionType
+          Parameter
+            Identifier: 'info'
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' SymbolExportInfo'
+          Parameter
+            Identifier: ' symbolName'
+            StringKeyword
+          Parameter
+            Identifier: ' isFromAmbientModule'
+            BooleanKeyword
+          Parameter
+            Identifier: ' key'
+            TypeReference
+              Identifier: ' ExportMapInfoKey'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    releaseSymbols'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    isEmpty'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    /** @returns Whether the change resulted in the cache being cleared */
+    onFileChanged'
+      Parameter
+        Identifier: 'oldSourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' newSourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' typeAcquisitionEnabled'
+        BooleanKeyword
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CacheableExportInfoMapHost'
+    MethodSignature
+      Identifier: '
+    getCurrentProgram'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getPackageJsonAutoImportProvider'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getGlobalTypingsCacheLocation'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ExportMapInfoKey'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    __exportInfoKey'
+          VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createCacheableExportInfoMap'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' CacheableExportInfoMapHost'
+    TypeReference
+      Identifier: ' ExportInfoMap'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isImportable'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' fromFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' toFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' toModule'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' packageJsonFilter'
+      UnionType
+        TypeReference
+          Identifier: ' PackageJsonImportFilter'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' moduleSpecifierResolutionHost'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: ' moduleSpecifierCache'
+      UnionType
+        TypeReference
+          Identifier: ' ModuleSpecifierCache'
+        UndefinedKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachExternalModuleToImportFrom'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' useAutoImportProvider'
+      BooleanKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'module'
+          TypeReference
+            Identifier: ' Symbol'
+        Parameter
+          Identifier: ' moduleFile'
+          UnionType
+            TypeReference
+              Identifier: ' SourceFile'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' program'
+          TypeReference
+            Identifier: ' Program'
+        Parameter
+          Identifier: ' isFromPackageJson'
+          BooleanKeyword
+        VoidKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getIsFileExcluded'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    FunctionType
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getExportInfoMap'
+    Parameter
+      Identifier: 'importingFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' FutureSourceFile'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' cancellationToken'
+      UnionType
+        TypeReference
+          Identifier: ' CancellationToken'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' ExportInfoMap'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDefaultLikeExportInfo'
+    Parameter
+      Identifier: 'moduleSymbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    symbol'
+          TypeReference
+            Identifier: ' Symbol'
+        PropertySignature
+          Identifier: '
+    exportKind'
+          TypeReference
+            Identifier: ' ExportKind'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachNameOfDefaultExport'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'defaultExport'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' scriptTarget'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptTarget'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'name'
+          StringKeyword
+        Parameter
+          Identifier: ' capitalizedName'
+          QuestionToken
+          StringKeyword
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword

@@ -1,0 +1,63 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////interface Foo {
+////    one: string;
+////    two: {
+////        three: {
+////            four: number;
+////            five: string;
+////        }
+////    }
+////}
+////
+////interface Bar<T extends Foo> {
+////    foo: T;
+////}
+////
+////var foobar: Bar<{
+////    two: {
+////        three: {
+////            five: string,
+////            /*4*/
+////        },
+////        /*0*/
+////    },
+////    /*1*/
+////}>;
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword

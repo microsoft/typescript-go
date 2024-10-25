@@ -1,0 +1,117 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' _R'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'T'
+      TupleType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' _R'
+            FunctionType
+              Parameter
+                Identifier: '_'
+                InferType
+                  TypeParameter
+                    Identifier: ' R'
+              VoidKeyword
+      TypeReference
+        Identifier: ' R'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' _E'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'T'
+      TupleType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' _E'
+            FunctionType
+              InferType
+                TypeParameter
+                  Identifier: ' E'
+      TypeReference
+        Identifier: ' E'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' _A'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'T'
+      TupleType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' _A'
+            FunctionType
+              InferType
+                TypeParameter
+                  Identifier: ' A'
+      TypeReference
+        Identifier: ' A'
+      NeverKeyword
+  InterfaceDeclaration
+    Identifier: ' Sync'
+    TypeParameter
+      Identifier: 'R'
+    TypeParameter
+      Identifier: ' E'
+    TypeParameter
+      Identifier: ' A'
+    PropertySignature
+      Identifier: '
+  _R'
+      FunctionType
+        Parameter
+          Identifier: '_'
+          TypeReference
+            Identifier: ' R'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+  _E'
+      FunctionType
+        TypeReference
+          Identifier: ' E'
+    PropertySignature
+      Identifier: '
+  _A'
+      FunctionType
+        TypeReference
+          Identifier: ' A'
+  TypeAliasDeclaration
+    Identifier: ' R'
+    TypeReference
+      Identifier: ' _R'
+      TypeReference
+        Identifier: 'Sync'
+        NumberKeyword
+        StringKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' E'
+    TypeReference
+      Identifier: ' _E'
+      TypeReference
+        Identifier: 'Sync'
+        NumberKeyword
+        StringKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeReference
+      Identifier: ' _A'
+      TypeReference
+        Identifier: 'Sync'
+        NumberKeyword
+        StringKeyword
+        VoidKeyword

@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+// @allowJs: true
+// @Filename: Foo.js
+/////**
+//// * @type {{ [name: string]: string; }} variables
+//// */
+////const vari/**/ables = {};
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoIs'
+      StringLiteral

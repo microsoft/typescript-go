@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      ExclamationToken
+      StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      ExclamationToken
+      TypeQuery
+        QualifiedName
+          Identifier: ' this'
+          Identifier: 'foo'

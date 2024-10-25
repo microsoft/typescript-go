@@ -1,0 +1,239 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ErrorOptions'
+    PropertySignature
+      Identifier: '
+    cause'
+      QuestionToken
+      UnknownKeyword
+  InterfaceDeclaration
+    Identifier: ' Error'
+    PropertySignature
+      Identifier: '
+    cause'
+      QuestionToken
+      UnknownKeyword
+  InterfaceDeclaration
+    Identifier: ' ErrorConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' Error'
+    CallSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' Error'
+  InterfaceDeclaration
+    Identifier: ' EvalErrorConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' EvalError'
+    CallSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' EvalError'
+  InterfaceDeclaration
+    Identifier: ' RangeErrorConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' RangeError'
+    CallSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' RangeError'
+  InterfaceDeclaration
+    Identifier: ' ReferenceErrorConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' ReferenceError'
+    CallSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' ReferenceError'
+  InterfaceDeclaration
+    Identifier: ' SyntaxErrorConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' SyntaxError'
+    CallSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' SyntaxError'
+  InterfaceDeclaration
+    Identifier: ' TypeErrorConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' TypeError'
+    CallSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' TypeError'
+  InterfaceDeclaration
+    Identifier: ' URIErrorConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' URIError'
+    CallSignature
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' URIError'
+  InterfaceDeclaration
+    Identifier: ' AggregateErrorConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: '
+        errors'
+        TypeReference
+          Identifier: ' Iterable'
+          AnyKeyword
+      Parameter
+        Identifier: '
+        message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: '
+        options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' AggregateError'
+    CallSignature
+      Parameter
+        Identifier: '
+        errors'
+        TypeReference
+          Identifier: ' Iterable'
+          AnyKeyword
+      Parameter
+        Identifier: '
+        message'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: '
+        options'
+        QuestionToken
+        TypeReference
+          Identifier: ' ErrorOptions'
+      TypeReference
+        Identifier: ' AggregateError'

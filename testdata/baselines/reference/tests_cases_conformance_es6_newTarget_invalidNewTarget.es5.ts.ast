@@ -1,0 +1,131 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: 'target'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ArrowFunction
+          EqualsGreaterThanToken
+          NewExpression
+            Identifier: 'target'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        NewExpression
+          Identifier: 'target'
+      Block
+    MethodDeclaration
+      Identifier: '
+    c'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: 'target'
+    GetAccessor
+      Identifier: ' d'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: 'target'
+    SetAccessor
+      Identifier: ' e'
+      Parameter
+        Identifier: '_'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' _'
+            EqualsToken
+            NewExpression
+              Identifier: 'target'
+    PropertyDeclaration
+      Identifier: '
+    f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        NewExpression
+          Identifier: 'target'
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        NewExpression
+          Identifier: 'target'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' g'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: 'target'
+    GetAccessor
+      StaticKeyword
+      Identifier: ' h'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: 'target'
+    SetAccessor
+      StaticKeyword
+      Identifier: ' i'
+      Parameter
+        Identifier: '_'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' _'
+            EqualsToken
+            NewExpression
+              Identifier: 'target'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' j'
+      ArrowFunction
+        EqualsGreaterThanToken
+        NewExpression
+          Identifier: 'target'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' O'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              NewExpression
+                Identifier: 'target'
+            Identifier: ' undefined'
+          MethodDeclaration
+            Identifier: '
+    k'
+            Block
+              ReturnStatement
+                NewExpression
+                  Identifier: 'target'
+          GetAccessor
+            Identifier: ' l'
+            Block
+              ReturnStatement
+                NewExpression
+                  Identifier: 'target'
+          SetAccessor
+            Identifier: ' m'
+            Parameter
+              Identifier: '_'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: ' _'
+                  EqualsToken
+                  NewExpression
+                    Identifier: 'target'
+          PropertyAssignment
+            Identifier: '
+    n'
+            NewExpression
+              Identifier: 'target'

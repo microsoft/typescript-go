@@ -1,0 +1,50 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' c'
+      QuestionToken
+      StringKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      StringLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' 
+foo'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' 
+foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      StringLiteral
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      StringLiteral
+      NumericLiteral
+      NumericLiteral

@@ -1,0 +1,101 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+      StringKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    GetAccessor
+      ProtectedKeyword
+      Identifier: ' y'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    SetAccessor
+      ProtectedKeyword
+      Identifier: ' y'
+      Parameter
+        Identifier: 'x'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' bar'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+    GetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' y'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    SetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' y'
+      Parameter
+        Identifier: 'x'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'

@@ -1,0 +1,40 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Foo'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' default'
+          Identifier: ' Foo2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Bar'
+        ImportSpecifier
+          Identifier: ' default'
+          Identifier: ' Foo3'
+    StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Foo'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Foo2'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Bar'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Foo3'

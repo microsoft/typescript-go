@@ -1,0 +1,71 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Root'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Foo'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+  ExportDeclaration
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ns'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Root'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' Foo'
+            PropertySignature
+              Identifier: '
+            self'
+              TypeReference
+                Identifier: ' Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ns'
+              Identifier: 'Root'
+            Identifier: 'Foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+f'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+f'
+      Identifier: 'self'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+f'
+        Identifier: 'self'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+f'
+        Identifier: 'self'
+      Identifier: 'self'

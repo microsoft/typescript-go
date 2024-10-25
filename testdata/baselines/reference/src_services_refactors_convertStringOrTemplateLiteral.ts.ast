@@ -1,0 +1,1589 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ApplicableRefactorInfo'
+        ImportSpecifier
+          Identifier: '
+    BinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    BinaryOperator'
+        ImportSpecifier
+          Identifier: '
+    copyTrailingAsLeadingComments'
+        ImportSpecifier
+          Identifier: '
+    copyTrailingComments'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    getLocaleSpecificMessage'
+        ImportSpecifier
+          Identifier: '
+    getTextOfNode'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    getTrailingCommentRanges'
+        ImportSpecifier
+          Identifier: '
+    isBinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    isExpressionNode'
+        ImportSpecifier
+          Identifier: '
+    isNoSubstitutionTemplateLiteral'
+        ImportSpecifier
+          Identifier: '
+    isParenthesizedExpression'
+        ImportSpecifier
+          Identifier: '
+    isStringLiteral'
+        ImportSpecifier
+          Identifier: '
+    isStringLiteralLike'
+        ImportSpecifier
+          Identifier: '
+    isTemplateExpression'
+        ImportSpecifier
+          Identifier: '
+    isTemplateHead'
+        ImportSpecifier
+          Identifier: '
+    isTemplateMiddle'
+        ImportSpecifier
+          Identifier: '
+    map'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    ParenthesizedExpression'
+        ImportSpecifier
+          Identifier: '
+    RefactorContext'
+        ImportSpecifier
+          Identifier: '
+    RefactorEditInfo'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    TemplateHead'
+        ImportSpecifier
+          Identifier: '
+    TemplateMiddle'
+        ImportSpecifier
+          Identifier: '
+    TemplateSpan'
+        ImportSpecifier
+          Identifier: '
+    TemplateTail'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    Token'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' registerRefactor'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' refactorName'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' refactorDescription'
+        CallExpression
+          Identifier: ' getLocaleSpecificMessage'
+          PropertyAccessExpression
+            Identifier: 'Diagnostics'
+            Identifier: 'Convert_to_template_string'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' convertStringAction'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            Identifier: ' refactorName'
+          PropertyAssignment
+            Identifier: '
+    description'
+            Identifier: ' refactorDescription'
+          PropertyAssignment
+            Identifier: '
+    kind'
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerRefactor'
+      Identifier: 'refactorName'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    kinds'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              Identifier: 'convertStringAction'
+              Identifier: 'kind'
+        PropertyAssignment
+          Identifier: '
+    getEditsForAction'
+          Identifier: ' getRefactorEditsToConvertToTemplateString'
+        PropertyAssignment
+          Identifier: '
+    getAvailableActions'
+          Identifier: ' getRefactorActionsToConvertToTemplateString'
+  FunctionDeclaration
+    Identifier: ' getRefactorActionsToConvertToTemplateString'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' RefactorContext'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' ApplicableRefactorInfo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' file'
+              BindingElement
+                Identifier: ' startPosition'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            CallExpression
+              Identifier: ' getNodeOrParentOfParentheses'
+              Identifier: 'file'
+              Identifier: ' startPosition'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' maybeBinary'
+            CallExpression
+              Identifier: ' getParentBinaryExpression'
+              Identifier: 'node'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nodeIsStringLiteral'
+            CallExpression
+              Identifier: ' isStringLiteral'
+              Identifier: 'maybeBinary'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' refactorInfo'
+            TypeReference
+              Identifier: ' ApplicableRefactorInfo'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                Identifier: ' refactorName'
+              PropertyAssignment
+                Identifier: ' description'
+                Identifier: ' refactorDescription'
+              PropertyAssignment
+                Identifier: ' actions'
+                ArrayLiteralExpression
+      IfStatement
+        BinaryExpression
+          Identifier: 'nodeIsStringLiteral'
+          AmpersandAmpersandToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'triggerReason'
+            ExclamationEqualsEqualsToken
+            StringLiteral
+        Block
+          ReturnStatement
+            Identifier: ' emptyArray'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isExpressionNode'
+            Identifier: 'maybeBinary'
+          AmpersandAmpersandToken
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'nodeIsStringLiteral'
+              BarBarToken
+              BinaryExpression
+                CallExpression
+                  Identifier: ' isBinaryExpression'
+                  Identifier: 'maybeBinary'
+                AmpersandAmpersandToken
+                PropertyAccessExpression
+                  CallExpression
+                    Identifier: ' treeToArray'
+                    Identifier: 'maybeBinary'
+                  Identifier: 'isValidConcatenation'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        refactorInfo'
+                  Identifier: 'actions'
+                Identifier: 'push'
+              Identifier: 'convertStringAction'
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'refactorInfo'
+        IfStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'context'
+              Identifier: 'preferences'
+            Identifier: 'provideRefactorNotApplicableReason'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        refactorInfo'
+                    Identifier: 'actions'
+                  Identifier: 'push'
+                ObjectLiteralExpression
+                  SpreadAssignment
+                    Identifier: 'convertStringAction'
+                  PropertyAssignment
+                    Identifier: ' notApplicableReason'
+                    CallExpression
+                      Identifier: ' getLocaleSpecificMessage'
+                      PropertyAccessExpression
+                        Identifier: 'Diagnostics'
+                        Identifier: 'Can_only_convert_string_concatenations_and_string_literals'
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'refactorInfo'
+      ReturnStatement
+        Identifier: ' emptyArray'
+  FunctionDeclaration
+    Identifier: ' getNodeOrParentOfParentheses'
+    Parameter
+      Identifier: 'file'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' startPosition'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'file'
+              Identifier: ' startPosition'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nestedBinary'
+            CallExpression
+              Identifier: ' getParentBinaryExpression'
+              Identifier: 'node'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isNonStringBinary'
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: 'treeToArray'
+                  Identifier: 'nestedBinary'
+                Identifier: 'isValidConcatenation'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: '
+        isNonStringBinary'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: '
+        isParenthesizedExpression'
+              PropertyAccessExpression
+                Identifier: 'nestedBinary'
+                Identifier: 'parent'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: '
+        isBinaryExpression'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'nestedBinary'
+                Identifier: 'parent'
+              Identifier: 'parent'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' nestedBinary'
+                Identifier: 'parent'
+              Identifier: 'parent'
+      ReturnStatement
+        Identifier: ' node'
+  FunctionDeclaration
+    Identifier: ' getRefactorEditsToConvertToTemplateString'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' RefactorContext'
+    Parameter
+      Identifier: ' actionName'
+      StringKeyword
+    UnionType
+      TypeReference
+        Identifier: ' RefactorEditInfo'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' file'
+              BindingElement
+                Identifier: ' startPosition'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            CallExpression
+              Identifier: ' getNodeOrParentOfParentheses'
+              Identifier: 'file'
+              Identifier: ' startPosition'
+      SwitchStatement
+        Identifier: 'actionName'
+        CaseBlock
+          CaseClause
+            Identifier: ' refactorDescription'
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' edits'
+                  CallExpression
+                    Identifier: ' getEditsForToTemplateLiteral'
+                    Identifier: 'context'
+                    Identifier: ' node'
+          DefaultClause
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Debug'
+                  Identifier: 'fail'
+                StringLiteral
+  FunctionDeclaration
+    Identifier: ' getEditsForToTemplateLiteral'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' RefactorContext'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' maybeBinary'
+            CallExpression
+              Identifier: ' getParentBinaryExpression'
+              Identifier: 'node'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' file'
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'file'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' templateLiteral'
+            CallExpression
+              Identifier: ' nodesToTemplate'
+              CallExpression
+                Identifier: 'treeToArray'
+                Identifier: 'maybeBinary'
+              Identifier: ' file'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' trailingCommentRanges'
+            CallExpression
+              Identifier: ' getTrailingCommentRanges'
+              PropertyAccessExpression
+                Identifier: 'file'
+                Identifier: 'text'
+              PropertyAccessExpression
+                Identifier: ' maybeBinary'
+                Identifier: 'end'
+      IfStatement
+        Identifier: 'trailingCommentRanges'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lastComment'
+                ElementAccessExpression
+                  Identifier: ' trailingCommentRanges'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'trailingCommentRanges'
+                      Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' trailingRange'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' pos'
+                    PropertyAccessExpression
+                      ElementAccessExpression
+                        Identifier: ' trailingCommentRanges'
+                        NumericLiteral
+                      Identifier: 'pos'
+                  PropertyAssignment
+                    Identifier: ' end'
+                    PropertyAccessExpression
+                      Identifier: ' lastComment'
+                      Identifier: 'end'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' textChanges'
+                  Identifier: 'ChangeTracker'
+                Identifier: 'with'
+              Identifier: 'context'
+              ArrowFunction
+                Parameter
+                  Identifier: ' t'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            t'
+                        Identifier: 'deleteRange'
+                      Identifier: 'file'
+                      Identifier: ' trailingRange'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            t'
+                        Identifier: 'replaceNode'
+                      Identifier: 'file'
+                      Identifier: ' maybeBinary'
+                      Identifier: ' templateLiteral'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' textChanges'
+                  Identifier: 'ChangeTracker'
+                Identifier: 'with'
+              Identifier: 'context'
+              ArrowFunction
+                Parameter
+                  Identifier: ' t'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' t'
+                    Identifier: 'replaceNode'
+                  Identifier: 'file'
+                  Identifier: ' maybeBinary'
+                  Identifier: ' templateLiteral'
+  FunctionDeclaration
+    Identifier: ' isNotEqualsOperator'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' BinaryExpression'
+    Block
+      ReturnStatement
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'operatorToken'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'EqualsToken'
+              BarBarToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'operatorToken'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'PlusEqualsToken'
+  FunctionDeclaration
+    Identifier: ' getParentBinaryExpression'
+    Parameter
+      Identifier: 'expr'
+      TypeReference
+        Identifier: ' Node'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' container'
+            CallExpression
+              Identifier: ' findAncestor'
+              PropertyAccessExpression
+                Identifier: 'expr'
+                Identifier: 'parent'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                Block
+                  SwitchStatement
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'kind'
+                    CaseBlock
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'PropertyAccessExpression'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'ElementAccessExpression'
+                        ReturnStatement
+                          FalseKeyword
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'TemplateExpression'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'BinaryExpression'
+                        ReturnStatement
+                          PrefixUnaryExpression
+                            ParenthesizedExpression
+                              BinaryExpression
+                                CallExpression
+                                  Identifier: 'isBinaryExpression'
+                                  PropertyAccessExpression
+                                    Identifier: 'n'
+                                    Identifier: 'parent'
+                                AmpersandAmpersandToken
+                                CallExpression
+                                  Identifier: ' isNotEqualsOperator'
+                                  PropertyAccessExpression
+                                    Identifier: 'n'
+                                    Identifier: 'parent'
+                      DefaultClause
+                        ReturnStatement
+                          StringLiteral
+      ReturnStatement
+        AsExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'container'
+              BarBarToken
+              Identifier: ' expr'
+          TypeReference
+            Identifier: ' Expression'
+  FunctionDeclaration
+    Identifier: ' treeToArray'
+    Parameter
+      Identifier: 'current'
+      TypeReference
+        Identifier: ' Expression'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' loop'
+            ArrowFunction
+              Parameter
+                Identifier: 'current'
+                TypeReference
+                  Identifier: ' Node'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' nodes'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Expression'
+                PropertySignature
+                  Identifier: ' operators'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Token'
+                      TypeReference
+                        Identifier: 'BinaryOperator'
+                PropertySignature
+                  Identifier: ' hasString'
+                  BooleanKeyword
+                PropertySignature
+                  Identifier: ' validOperators'
+                  BooleanKeyword
+              EqualsGreaterThanToken
+              Block
+                IfStatement
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isBinaryExpression'
+                      Identifier: 'current'
+                  Block
+                    ReturnStatement
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' nodes'
+                          ArrayLiteralExpression
+                            AsExpression
+                              Identifier: 'current'
+                              TypeReference
+                                Identifier: ' Expression'
+                        PropertyAssignment
+                          Identifier: ' operators'
+                          ArrayLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' validOperators'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: ' hasString'
+                          BinaryExpression
+                            CallExpression
+                              Identifier: ' isStringLiteral'
+                              Identifier: 'current'
+                            BarBarToken
+                            CallExpression
+                              Identifier: ' isNoSubstitutionTemplateLiteral'
+                              Identifier: 'current'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      ObjectBindingPattern
+                        BindingElement
+                          Identifier: ' nodes'
+                        BindingElement
+                          Identifier: ' operators'
+                        BindingElement
+                          Identifier: ' hasString'
+                          Identifier: ' leftHasString'
+                        BindingElement
+                          Identifier: ' validOperators'
+                          Identifier: ' leftOperatorValid'
+                      CallExpression
+                        Identifier: ' loop'
+                        PropertyAccessExpression
+                          Identifier: 'current'
+                          Identifier: 'left'
+                IfStatement
+                  PrefixUnaryExpression
+                    ParenthesizedExpression
+                      BinaryExpression
+                        BinaryExpression
+                          Identifier: 'leftHasString'
+                          BarBarToken
+                          CallExpression
+                            Identifier: ' isStringLiteral'
+                            PropertyAccessExpression
+                              Identifier: 'current'
+                              Identifier: 'right'
+                        BarBarToken
+                        CallExpression
+                          Identifier: ' isTemplateExpression'
+                          PropertyAccessExpression
+                            Identifier: 'current'
+                            Identifier: 'right'
+                  Block
+                    ReturnStatement
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' nodes'
+                          ArrayLiteralExpression
+                            Identifier: 'current'
+                        PropertyAssignment
+                          Identifier: ' operators'
+                          ArrayLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' hasString'
+                          FalseKeyword
+                        PropertyAssignment
+                          Identifier: ' validOperators'
+                          TrueKeyword
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' currentOperatorValid'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' current'
+                            Identifier: 'operatorToken'
+                          Identifier: 'kind'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'PlusToken'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' validOperators'
+                      BinaryExpression
+                        Identifier: ' leftOperatorValid'
+                        AmpersandAmpersandToken
+                        Identifier: ' currentOperatorValid'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+
+        nodes'
+                      Identifier: 'push'
+                    PropertyAccessExpression
+                      Identifier: 'current'
+                      Identifier: 'right'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        operators'
+                      Identifier: 'push'
+                    PropertyAccessExpression
+                      Identifier: 'current'
+                      Identifier: 'operatorToken'
+                ReturnStatement
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: ' nodes'
+                    ShorthandPropertyAssignment
+                      Identifier: ' operators'
+                    PropertyAssignment
+                      Identifier: ' hasString'
+                      TrueKeyword
+                    ShorthandPropertyAssignment
+                      Identifier: ' validOperators'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' nodes'
+              BindingElement
+                Identifier: ' operators'
+              BindingElement
+                Identifier: ' validOperators'
+              BindingElement
+                Identifier: ' hasString'
+            CallExpression
+              Identifier: ' loop'
+              Identifier: 'current'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' nodes'
+          ShorthandPropertyAssignment
+            Identifier: ' operators'
+          PropertyAssignment
+            Identifier: ' isValidConcatenation'
+            BinaryExpression
+              Identifier: ' validOperators'
+              AmpersandAmpersandToken
+              Identifier: ' hasString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' copyTrailingOperatorComments'
+        ArrowFunction
+          Parameter
+            Identifier: 'operators'
+            ArrayType
+              TypeReference
+                Identifier: ' Token'
+                TypeReference
+                  Identifier: 'BinaryOperator'
+          Parameter
+            Identifier: ' file'
+            TypeReference
+              Identifier: ' SourceFile'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'index'
+              NumberKeyword
+            Parameter
+              Identifier: ' targetNode'
+              TypeReference
+                Identifier: ' Node'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'index'
+                  LessThanToken
+                  PropertyAccessExpression
+                    Identifier: ' operators'
+                    Identifier: 'length'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        copyTrailingComments'
+                      ElementAccessExpression
+                        Identifier: 'operators'
+                        Identifier: 'index'
+                      Identifier: ' targetNode'
+                      Identifier: ' file'
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'MultiLineCommentTrivia'
+                      FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' copyCommentFromMultiNode'
+        ArrowFunction
+          Parameter
+            Identifier: 'nodes'
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' Expression'
+          Parameter
+            Identifier: ' file'
+            TypeReference
+              Identifier: ' SourceFile'
+          Parameter
+            Identifier: ' copyOperatorComments'
+            FunctionType
+              Parameter
+                Identifier: 'index'
+                NumberKeyword
+              Parameter
+                Identifier: ' targetNode'
+                TypeReference
+                  Identifier: ' Node'
+              VoidKeyword
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'indexes'
+              ArrayType
+                NumberKeyword
+            Parameter
+              Identifier: ' targetNode'
+              TypeReference
+                Identifier: ' Node'
+            EqualsGreaterThanToken
+            Block
+              WhileStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'indexes'
+                    Identifier: 'length'
+                  GreaterThanToken
+                  NumericLiteral
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' index'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' indexes'
+                              Identifier: 'shift'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        copyTrailingComments'
+                      ElementAccessExpression
+                        Identifier: 'nodes'
+                        Identifier: 'index'
+                      Identifier: ' targetNode'
+                      Identifier: ' file'
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'MultiLineCommentTrivia'
+                      FalseKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        copyOperatorComments'
+                      Identifier: 'index'
+                      Identifier: ' targetNode'
+  FunctionDeclaration
+    Identifier: ' escapeRawStringForTemplate'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s'
+            Identifier: 'replace'
+          RegularExpressionLiteral
+          ArrowFunction
+            Parameter
+              Identifier: ' m'
+            EqualsGreaterThanToken
+            ConditionalExpression
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: ' m'
+                  NumericLiteral
+                EqualsEqualsEqualsToken
+                StringLiteral
+              QuestionToken
+              Identifier: ' m'
+              ColonToken
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                Identifier: ' m'
+  FunctionDeclaration
+    Identifier: ' getRawTextOfTemplate'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' TemplateHead'
+        TypeReference
+          Identifier: ' TemplateMiddle'
+        TypeReference
+          Identifier: ' TemplateTail'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rightShaving'
+            ConditionalExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: ' isTemplateHead'
+                  Identifier: 'node'
+                BarBarToken
+                CallExpression
+                  Identifier: ' isTemplateMiddle'
+                  Identifier: 'node'
+              QuestionToken
+              PrefixUnaryExpression
+                NumericLiteral
+              ColonToken
+              PrefixUnaryExpression
+                NumericLiteral
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' getTextOfNode'
+              Identifier: 'node'
+            Identifier: 'slice'
+          NumericLiteral
+          Identifier: ' rightShaving'
+  FunctionDeclaration
+    Identifier: ' concatConsecutiveString'
+    Parameter
+      Identifier: 'index'
+      NumberKeyword
+    Parameter
+      Identifier: ' nodes'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Expression'
+    TupleType
+      NamedTupleMember
+        Identifier: 'nextIndex'
+        NumberKeyword
+      NamedTupleMember
+        Identifier: ' text'
+        StringKeyword
+      NamedTupleMember
+        Identifier: ' rawText'
+        StringKeyword
+      NamedTupleMember
+        Identifier: ' usedIndexes'
+        ArrayType
+          NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' indexes'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' text'
+            StringLiteral
+          VariableDeclaration
+            Identifier: ' rawText'
+            StringLiteral
+      WhileStatement
+        BinaryExpression
+          Identifier: 'index'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' nodes'
+            Identifier: 'length'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' node'
+                ElementAccessExpression
+                  Identifier: ' nodes'
+                  Identifier: 'index'
+          IfStatement
+            CallExpression
+              Identifier: 'isStringLiteralLike'
+              Identifier: 'node'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: ' // includes isNoSubstitutionTemplateLiteral(node)
+            text'
+                  PlusEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'text'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            rawText'
+                  PlusEqualsToken
+                  CallExpression
+                    Identifier: ' escapeRawStringForTemplate'
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          Identifier: 'getTextOfNode'
+                          Identifier: 'node'
+                        Identifier: 'slice'
+                      NumericLiteral
+                      PrefixUnaryExpression
+                        NumericLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            indexes'
+                    Identifier: 'push'
+                  Identifier: 'index'
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            index'
+            IfStatement
+              CallExpression
+                Identifier: 'isTemplateExpression'
+                Identifier: 'node'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            text'
+                    PlusEqualsToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'head'
+                      Identifier: 'text'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            rawText'
+                    PlusEqualsToken
+                    CallExpression
+                      Identifier: ' getRawTextOfTemplate'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'head'
+                BreakStatement
+              Block
+                BreakStatement
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'index'
+          Identifier: ' text'
+          Identifier: ' rawText'
+          Identifier: ' indexes'
+  FunctionDeclaration
+    Identifier: ' nodesToTemplate'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' nodes'
+        BindingElement
+          Identifier: ' operators'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' nodes'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Expression'
+        PropertySignature
+          Identifier: ' operators'
+          ArrayType
+            TypeReference
+              Identifier: ' Token'
+              TypeReference
+                Identifier: 'BinaryOperator'
+    Parameter
+      Identifier: ' file'
+      TypeReference
+        Identifier: ' SourceFile'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' copyOperatorComments'
+            CallExpression
+              Identifier: ' copyTrailingOperatorComments'
+              Identifier: 'operators'
+              Identifier: ' file'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' copyCommentFromStringLiterals'
+            CallExpression
+              Identifier: ' copyCommentFromMultiNode'
+              Identifier: 'nodes'
+              Identifier: ' file'
+              Identifier: ' copyOperatorComments'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'begin'
+              BindingElement
+                Identifier: ' headText'
+              BindingElement
+                Identifier: ' rawHeadText'
+              BindingElement
+                Identifier: ' headIndexes'
+            CallExpression
+              Identifier: ' concatConsecutiveString'
+              NumericLiteral
+              Identifier: ' nodes'
+      IfStatement
+        BinaryExpression
+          Identifier: 'begin'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' nodes'
+            Identifier: 'length'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' noSubstitutionTemplateLiteral'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createNoSubstitutionTemplateLiteral'
+                  Identifier: 'headText'
+                  Identifier: ' rawHeadText'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        copyCommentFromStringLiterals'
+              Identifier: 'headIndexes'
+              Identifier: ' noSubstitutionTemplateLiteral'
+          ReturnStatement
+            Identifier: ' noSubstitutionTemplateLiteral'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' templateSpans'
+            ArrayType
+              TypeReference
+                Identifier: ' TemplateSpan'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' templateHead'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createTemplateHead'
+              Identifier: 'headText'
+              Identifier: ' rawHeadText'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    copyCommentFromStringLiterals'
+          Identifier: 'headIndexes'
+          Identifier: ' templateHead'
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            Identifier: ' begin'
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' nodes'
+            Identifier: 'length'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' currentNode'
+                CallExpression
+                  Identifier: ' getExpressionFromParenthesesOrExpression'
+                  ElementAccessExpression
+                    Identifier: 'nodes'
+                    Identifier: 'i'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        copyOperatorComments'
+              Identifier: 'i'
+              Identifier: ' currentNode'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'newIndex'
+                  BindingElement
+                    Identifier: ' subsequentText'
+                  BindingElement
+                    Identifier: ' rawSubsequentText'
+                  BindingElement
+                    Identifier: ' stringIndexes'
+                CallExpression
+                  Identifier: ' concatConsecutiveString'
+                  BinaryExpression
+                    Identifier: 'i'
+                    PlusToken
+                    NumericLiteral
+                  Identifier: ' nodes'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        i'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' newIndex'
+                MinusToken
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' isLast'
+                BinaryExpression
+                  Identifier: ' i'
+                  EqualsEqualsEqualsToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' nodes'
+                      Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+          IfStatement
+            CallExpression
+              Identifier: 'isTemplateExpression'
+              Identifier: 'currentNode'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' spans'
+                    CallExpression
+                      Identifier: ' map'
+                      PropertyAccessExpression
+                        Identifier: 'currentNode'
+                        Identifier: 'templateSpans'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'span'
+                        Parameter
+                          Identifier: ' index'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                copyExpressionComments'
+                              Identifier: 'span'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' isLastSpan'
+                                BinaryExpression
+                                  Identifier: ' index'
+                                  EqualsEqualsEqualsToken
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' currentNode'
+                                        Identifier: 'templateSpans'
+                                      Identifier: 'length'
+                                    MinusToken
+                                    NumericLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' text'
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' span'
+                                      Identifier: 'literal'
+                                    Identifier: 'text'
+                                  PlusToken
+                                  ParenthesizedExpression
+                                    ConditionalExpression
+                                      Identifier: 'isLastSpan'
+                                      QuestionToken
+                                      Identifier: ' subsequentText'
+                                      ColonToken
+                                      StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' rawText'
+                                BinaryExpression
+                                  CallExpression
+                                    Identifier: ' getRawTextOfTemplate'
+                                    PropertyAccessExpression
+                                      Identifier: 'span'
+                                      Identifier: 'literal'
+                                  PlusToken
+                                  ParenthesizedExpression
+                                    ConditionalExpression
+                                      Identifier: 'isLastSpan'
+                                      QuestionToken
+                                      Identifier: ' rawSubsequentText'
+                                      ColonToken
+                                      StringLiteral
+                          ReturnStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' factory'
+                                Identifier: 'createTemplateSpan'
+                              PropertyAccessExpression
+                                Identifier: '
+                    span'
+                                Identifier: 'expression'
+                              ConditionalExpression
+                                BinaryExpression
+                                  Identifier: '
+                    isLast'
+                                  AmpersandAmpersandToken
+                                  Identifier: ' isLastSpan'
+                                QuestionToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' factory'
+                                    Identifier: 'createTemplateTail'
+                                  Identifier: 'text'
+                                  Identifier: ' rawText'
+                                ColonToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' factory'
+                                    Identifier: 'createTemplateMiddle'
+                                  Identifier: 'text'
+                                  Identifier: ' rawText'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            templateSpans'
+                    Identifier: 'push'
+                  SpreadElement
+                    Identifier: 'spans'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' templatePart'
+                    ConditionalExpression
+                      Identifier: ' isLast'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createTemplateTail'
+                        Identifier: 'subsequentText'
+                        Identifier: ' rawSubsequentText'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createTemplateMiddle'
+                        Identifier: 'subsequentText'
+                        Identifier: ' rawSubsequentText'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            copyCommentFromStringLiterals'
+                  Identifier: 'stringIndexes'
+                  Identifier: ' templatePart'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            templateSpans'
+                    Identifier: 'push'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createTemplateSpan'
+                    Identifier: 'currentNode'
+                    Identifier: ' templatePart'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createTemplateExpression'
+          Identifier: 'templateHead'
+          Identifier: ' templateSpans'
+  FunctionDeclaration
+    Identifier: ' copyExpressionComments'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' ParenthesizedExpression'
+        TypeReference
+          Identifier: ' TemplateSpan'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' file'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'getSourceFile'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    copyTrailingComments'
+          Identifier: 'node'
+          PropertyAccessExpression
+            Identifier: ' node'
+            Identifier: 'expression'
+          Identifier: ' file'
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'MultiLineCommentTrivia'
+          FalseKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    copyTrailingAsLeadingComments'
+          PropertyAccessExpression
+            Identifier: 'node'
+            Identifier: 'expression'
+          PropertyAccessExpression
+            Identifier: ' node'
+            Identifier: 'expression'
+          Identifier: ' file'
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'MultiLineCommentTrivia'
+          FalseKeyword
+  FunctionDeclaration
+    Identifier: ' getExpressionFromParenthesesOrExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Expression'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isParenthesizedExpression'
+          Identifier: 'node'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        copyExpressionComments'
+              Identifier: 'node'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        node'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'expression'
+      ReturnStatement
+        Identifier: ' node'

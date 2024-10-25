@@ -1,0 +1,71 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    print'
+      Block
+        ReturnStatement
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' backup'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' bar'
+    BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' specify'
+        ConditionalExpression
+          CallExpression
+            Identifier: ' bar'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myModule'
+        CallExpression
+          ImportKeyword
+          Identifier: 'specify'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myModule1'
+        CallExpression
+          ImportKeyword
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myModule2'
+        CallExpression
+          ImportKeyword
+          ConditionalExpression
+            CallExpression
+              Identifier: 'bar'
+            QuestionToken
+            StringLiteral
+            ColonToken
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myModule3'
+        CallExpression
+          ImportKeyword
+          NullKeyword

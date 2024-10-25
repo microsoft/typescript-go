@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C123'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      NumberKeyword
+    Constructor
+      Block

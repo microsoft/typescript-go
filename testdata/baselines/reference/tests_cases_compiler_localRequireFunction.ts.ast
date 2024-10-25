@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' require'
+    Parameter
+      Identifier: 'a'
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fs'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' text'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' fs'
+            Identifier: 'readFileSync'
+          StringLiteral

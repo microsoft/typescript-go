@@ -1,0 +1,41 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' A'
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          AnyKeyword
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' B'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' someLocal'
+            AnyKeyword
+            ObjectLiteralExpression
+      ReturnStatement
+        Identifier: ' someLocal'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' A'
+      Block
+        ReturnStatement
+          TypeAssertionExpression
+            AnyKeyword
+            StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' B'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' someLocal'
+              AnyKeyword
+              ObjectLiteralExpression
+        ReturnStatement
+          Identifier: ' someLocal'

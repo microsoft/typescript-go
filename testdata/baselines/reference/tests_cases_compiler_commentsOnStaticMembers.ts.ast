@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' test'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' p1'
+      StringKeyword
+      StringLiteral
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' p2'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' p3'
+      StringKeyword
+      StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' p4'
+      StringKeyword

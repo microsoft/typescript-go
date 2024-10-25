@@ -1,0 +1,71 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////try {
+/////*tryInTryCatchFinally*/    // comment
+////}
+////catch (e) {
+/////*catchInTryCatchFinally*/    // comment
+////}
+////finally {
+/////*finalyInTryCatchFinally*/    // comment
+////}
+////
+////try {
+/////*tryInTryFinally*/    // comment
+////}
+////finally {
+/////*finalyInTryFinally*/    // comment
+////}
+////
+////try {
+/////*tryInTryCatch*/    // comment
+////}
+////catch (e) {
+/////*catchInTryCatch*/    // comment
+////}
+
+format'
+        Identifier: 'document'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' markers'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+markers'
+        Identifier: 'forEach'
+      ArrowFunction
+        Parameter
+          Identifier: 'marker'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    // Comments should be indented
+    goTo'
+                Identifier: 'marker'
+              Identifier: 'marker'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    verify'
+                Identifier: 'currentLineContentIs'
+              StringLiteral

@@ -1,0 +1,38 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////interface I<TString, TNumber> {
+////    [s: string]: TString;
+////    [s: number]: TNumber;
+////}
+////
+////declare function foo<TString, TNumber>(obj: I<TString, TNumber>): { /*1*/ }
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'GlobalsOrKeywords'
+        PropertyAssignment
+          Identifier: '
+    isNewIdentifierLocation'
+          TrueKeyword

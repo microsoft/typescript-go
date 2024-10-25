@@ -1,0 +1,35 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Drawable'
+    MethodSignature
+      Identifier: '
+    draw'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Sizable'
+    MethodSignature
+      Identifier: '
+    size'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Square'
+    MethodDeclaration
+      Identifier: '
+    draw'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    size'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' BadSquare'
+    MethodDeclaration
+      Identifier: '
+    size'
+      Block
+        ReturnStatement
+          NumericLiteral

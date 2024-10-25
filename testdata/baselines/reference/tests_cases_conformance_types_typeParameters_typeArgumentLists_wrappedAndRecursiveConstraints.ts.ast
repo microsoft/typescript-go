@@ -1,0 +1,60 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' T'
+      Block
+    MethodDeclaration
+      Identifier: '
+    foo'
+      TypeParameter
+        Identifier: 'U'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' x'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Date'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Foo'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+          Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo'
+          Identifier: 'y'

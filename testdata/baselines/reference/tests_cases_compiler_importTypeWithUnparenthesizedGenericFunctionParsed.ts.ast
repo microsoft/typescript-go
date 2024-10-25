@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fail1'
+        ImportType
+          LiteralType
+            StringLiteral
+          Identifier: 'Modifier'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'

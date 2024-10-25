@@ -1,0 +1,47 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' foo'
+    EnumMember
+      Identifier: '
+	red'
+    EnumMember
+      Identifier: ' green'
+    EnumMember
+      Identifier: ' blue'
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' answer'
+            NumericLiteral
+  ExportAssignment
+    Identifier: ' foo'
+  ImportEqualsDeclaration
+    Identifier: ' foo'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' color'
+        TypeReference
+          Identifier: ' foo'
+  IfStatement
+    BinaryExpression
+      Identifier: 'color'
+      EqualsEqualsEqualsToken
+      PropertyAccessExpression
+        Identifier: ' foo'
+        Identifier: 'green'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+	color'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'answer'

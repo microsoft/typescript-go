@@ -1,0 +1,60 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'v'
+      Block
+    MethodDeclaration
+      Identifier: '
+    fooo'
+      Parameter
+        Identifier: 'v'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'v'
+      Block
+    MethodDeclaration
+      Identifier: '
+    /** @override */
+    fooo'
+      Parameter
+        Identifier: 'v'
+      Block
+    MethodDeclaration
+      Identifier: '
+    /** @override */
+    bar'
+      Parameter
+        Identifier: 'v'
+      Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+    MethodDeclaration
+      Identifier: '
+    /** @override */
+    fooo'
+      Parameter
+        Identifier: 'v'
+      Block
+    MethodDeclaration
+      Identifier: '
+    /** @override */
+    bar'
+      Parameter
+        Identifier: 'v'
+      Block

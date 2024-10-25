@@ -1,0 +1,11 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        NumericLiteral
+  ExportAssignment
+    Identifier: ' Foo'

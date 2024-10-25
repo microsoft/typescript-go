@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+  ModuleDeclaration
+    Identifier: '
+    global'
+  ExpressionStatement
+    Identifier: ' x'

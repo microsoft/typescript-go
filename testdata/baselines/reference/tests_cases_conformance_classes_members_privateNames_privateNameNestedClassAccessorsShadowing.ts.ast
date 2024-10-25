@@ -1,0 +1,53 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    GetAccessor
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    SemicolonClassElement
+    Constructor
+      Block
+        ClassDeclaration
+          Identifier: ' Derived'
+          GetAccessor
+            PrivateIdentifier
+            Block
+              ReturnStatement
+                NumericLiteral
+          SemicolonClassElement
+          MethodDeclaration
+            Identifier: '
+            testBase'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Base'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                console'
+                    Identifier: 'log'
+                  PropertyAccessExpression
+                    Identifier: 'x'
+                    PrivateIdentifier
+          MethodDeclaration
+            Identifier: '
+            testDerived'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Derived'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                console'
+                    Identifier: 'log'
+                  PropertyAccessExpression
+                    Identifier: 'x'
+                    PrivateIdentifier

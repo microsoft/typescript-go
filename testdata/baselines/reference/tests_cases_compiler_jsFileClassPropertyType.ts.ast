@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'p'
+            EqualsToken
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          NewExpression
+            Identifier: ' C'
+        Identifier: 'p'
+      EqualsToken
+      StringLiteral

@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrowFunction
+          EqualsGreaterThanToken
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'window'

@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        QualifiedName
+          Identifier: ' Foo'
+          Identifier: 'Bar'
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Bar'
+  ExportAssignment
+    Identifier: ' Foo'
+  ImportEqualsDeclaration
+    Identifier: ' Foo'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          QualifiedName
+            Identifier: ' Foo'
+            Identifier: 'Bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zz'
+        TypeReference
+          Identifier: ' Foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+zz'
+      Identifier: 'x'

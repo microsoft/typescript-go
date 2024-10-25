@@ -1,0 +1,18 @@
+SourceFile
+  ExportAssignment
+    StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        AwaitExpression
+          CallExpression
+            ImportKeyword
+            PropertyAccessExpression
+              ParenthesizedExpression
+                AwaitExpression
+                  CallExpression
+                    ImportKeyword
+                    StringLiteral
+              Identifier: 'default'

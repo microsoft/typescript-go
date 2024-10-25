@@ -1,0 +1,79 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    toString'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeReference
+          Identifier: ' Object'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+o'
+      EqualsToken
+      Identifier: ' i'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+i'
+      EqualsToken
+      Identifier: ' o'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    toString'
+      VoidKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+o'
+      EqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+c'
+      EqualsToken
+      Identifier: ' o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    toString'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+o'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+a'
+      EqualsToken
+      Identifier: ' o'

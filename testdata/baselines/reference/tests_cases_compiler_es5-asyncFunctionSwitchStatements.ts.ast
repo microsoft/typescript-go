@@ -1,0 +1,183 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' z'
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+      VariableDeclaration
+        Identifier: ' c'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' switchStatement0'
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            Identifier: ' y'
+            ExpressionStatement
+              Identifier: ' a'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              Identifier: ' b'
+            BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' switchStatement1'
+    Block
+      SwitchStatement
+        AwaitExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            Identifier: ' y'
+            ExpressionStatement
+              Identifier: ' a'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              Identifier: ' b'
+            BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' switchStatement2'
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            AwaitExpression
+              Identifier: ' y'
+            ExpressionStatement
+              Identifier: ' a'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              Identifier: ' b'
+            BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' switchStatement3'
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            Identifier: ' y'
+            ExpressionStatement
+              AwaitExpression
+                Identifier: ' a'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              Identifier: ' b'
+            BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' switchStatement4'
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            Identifier: ' y'
+            ExpressionStatement
+              Identifier: ' a'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              AwaitExpression
+                Identifier: ' b'
+            BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' switchStatement5'
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            Identifier: ' y'
+            ExpressionStatement
+              Identifier: ' a'
+            BreakStatement
+          CaseClause
+            AwaitExpression
+              Identifier: ' z'
+            ExpressionStatement
+              Identifier: ' b'
+            BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' switchStatement6'
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          DefaultClause
+            ExpressionStatement
+              Identifier: ' c'
+            BreakStatement
+          CaseClause
+            AwaitExpression
+              Identifier: ' y'
+            ExpressionStatement
+              Identifier: ' a'
+            BreakStatement
+          CaseClause
+            Identifier: ' z'
+            ExpressionStatement
+              Identifier: ' b'
+            BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' switchStatement7'
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          DefaultClause
+            ExpressionStatement
+              Identifier: ' c'
+            BreakStatement
+          CaseClause
+            Identifier: ' y'
+            ExpressionStatement
+              Identifier: ' a'
+            BreakStatement
+          CaseClause
+            AwaitExpression
+              Identifier: ' z'
+            ExpressionStatement
+              Identifier: ' b'
+            BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' switchStatement8'
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          DefaultClause
+            ExpressionStatement
+              Identifier: ' c'
+          CaseClause
+            Identifier: ' y'
+            ExpressionStatement
+              Identifier: ' a'
+            BreakStatement
+          CaseClause
+            AwaitExpression
+              Identifier: ' z'
+            ExpressionStatement
+              Identifier: ' b'
+            BreakStatement

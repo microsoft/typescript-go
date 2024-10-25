@@ -1,0 +1,56 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' start'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'markerByName'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' end'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'markerByName'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' span'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' start'
+            PropertyAccessExpression
+              Identifier: ' start'
+              Identifier: 'position'
+          PropertyAssignment
+            Identifier: ' length'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' end'
+                Identifier: 'position'
+              MinusToken
+              PropertyAccessExpression
+                Identifier: ' start'
+                Identifier: 'position'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'baselineInlayHints'
+      Identifier: 'span'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    includeInlayParameterNameHints'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    interactiveInlayHints'
+          TrueKeyword

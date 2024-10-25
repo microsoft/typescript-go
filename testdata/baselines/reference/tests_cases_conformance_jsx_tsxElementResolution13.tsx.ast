@@ -1,0 +1,36 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' ElementAttributesProperty'
+        PropertySignature
+          Identifier: ' pr1'
+          AnyKeyword
+        PropertySignature
+          Identifier: ' pr2'
+          AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Obj1'
+    ConstructSignature
+      Parameter
+        Identifier: 'n'
+        StringKeyword
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        TypeReference
+          Identifier: ' Obj1'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'obj1'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' x'
+          JsxExpression
+            NumericLiteral

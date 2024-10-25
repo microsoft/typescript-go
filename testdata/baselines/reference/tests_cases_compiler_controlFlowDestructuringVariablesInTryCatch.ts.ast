@@ -1,0 +1,84 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TupleType
+      NamedTupleMember
+        Identifier: 'b'
+        StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' c'
+        StringKeyword
+  TryStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            CallExpression
+              Identifier: ' f1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'b'
+            CallExpression
+              Identifier: ' f2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' c'
+            CallExpression
+              Identifier: ' f3'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'd'
+                NumericLiteral
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' e'
+                NumericLiteral
+            ObjectLiteralExpression
+    CatchClause
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+    console'
+              Identifier: 'error'
+            StringLiteral
+  ExpressionStatement
+    Identifier: '
+
+a'
+  ExpressionStatement
+    Identifier: '
+b'
+  ExpressionStatement
+    Identifier: '
+c'
+  ExpressionStatement
+    Identifier: '
+d'
+  ExpressionStatement
+    Identifier: '
+e'

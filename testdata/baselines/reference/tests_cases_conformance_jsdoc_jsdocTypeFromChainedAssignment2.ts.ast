@@ -1,0 +1,92 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @noEmit: true
+// @allowJs: true
+// @checkJs: true
+// @noImplicitAny: true
+// @Filename: mod.js
+
+/** @param {number} n */
+exports'
+        Identifier: 'f'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' exports'
+          Identifier: 'g'
+        EqualsToken
+        FunctionExpression
+          Identifier: ' fg'
+          Parameter
+            Identifier: 'n'
+          Block
+            ReturnStatement
+              BinaryExpression
+                Identifier: ' n'
+                PlusToken
+                NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/** @param {string} mom */
+module'
+          Identifier: 'exports'
+        Identifier: 'h'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' module'
+            Identifier: 'exports'
+          Identifier: 'i'
+        EqualsToken
+        FunctionExpression
+          Identifier: ' hi'
+          Parameter
+            Identifier: 'mom'
+          Block
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'mom'
+                  TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mod'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+mod'
+        Identifier: 'f'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+mod'
+        Identifier: 'g'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+mod'
+        Identifier: 'h'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+mod'
+        Identifier: 'i'
+      NumericLiteral

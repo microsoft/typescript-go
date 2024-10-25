@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////module Test10 {
+////    var x: string[] = [];
+////    x.forEach(function (y) { y./**/} );
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    excludes'
+          StringLiteral

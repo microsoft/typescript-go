@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ABC'
+        LiteralType
+          StringLiteral
+        NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' DE_NEWLINE_F'
+        LiteralType
+          StringLiteral
+        NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' G_QUOTE_HI'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' JK_BACKTICK_L'
+        LiteralType
+          StringLiteral
+        NoSubstitutionTemplateLiteral

@@ -1,0 +1,336 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' X'
+    PropertySignature
+      Identifier: '
+    x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Y'
+    PropertySignature
+      Identifier: '
+    y'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Z'
+    PropertySignature
+      Identifier: '
+    z'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isX'
+    Parameter
+      Identifier: 'obj'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' obj'
+      TypeReference
+        Identifier: ' X'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isY'
+    Parameter
+      Identifier: 'obj'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' obj'
+      TypeReference
+        Identifier: ' Y'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isZ'
+    Parameter
+      Identifier: 'obj'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' obj'
+      TypeReference
+        Identifier: ' Z'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Object'
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            CallExpression
+              Identifier: 'isX'
+              Identifier: 'obj'
+            BarBarToken
+            CallExpression
+              Identifier: ' isY'
+              Identifier: 'obj'
+          BarBarToken
+          CallExpression
+            Identifier: ' isZ'
+            Identifier: 'obj'
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            CallExpression
+              Identifier: 'isX'
+              Identifier: 'obj'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isY'
+              Identifier: 'obj'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isZ'
+            Identifier: 'obj'
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+  a'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+  b'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' isB'
+    Parameter
+      Identifier: 'toTest'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' toTest'
+      TypeReference
+        Identifier: ' B'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' toTest'
+          AmpersandAmpersandToken
+          PropertyAccessExpression
+            Identifier: ' toTest'
+            Identifier: 'b'
+  FunctionDeclaration
+    Identifier: ' union'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    UnionType
+      IntersectionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+      LiteralType
+        NullKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isB'
+          Identifier: 'a'
+        Block
+          ReturnStatement
+            Identifier: ' a'
+        Block
+          ReturnStatement
+            NullKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' log'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Beast'
+    PropertySignature
+      Identifier: ' wings'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: ' legs'
+      QuestionToken
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Legged'
+    PropertySignature
+      Identifier: ' legs'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Winged'
+    PropertySignature
+      Identifier: ' wings'
+      BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' hasLegs'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Beast'
+    TypePredicate
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' Legged'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' x'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'legs'
+            EqualsEqualsEqualsToken
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' hasWings'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Beast'
+    TypePredicate
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' Winged'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' x'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'x'
+                Identifier: 'wings'
+  FunctionDeclaration
+    Identifier: ' identifyBeast'
+    Parameter
+      Identifier: 'beast'
+      TypeReference
+        Identifier: ' Beast'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'hasLegs'
+          Identifier: 'beast'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'hasWings'
+              Identifier: 'beast'
+            Block
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'beast'
+                    Identifier: 'legs'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                log'
+                      NoSubstitutionTemplateLiteral
+                IfStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'beast'
+                      Identifier: 'legs'
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                log'
+                        NoSubstitutionTemplateLiteral
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                log'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            PropertyAccessExpression
+                              Identifier: 'beast'
+                              Identifier: 'legs'
+                            TemplateTail
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            log'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'beast'
+                        Identifier: 'legs'
+                      TemplateTail
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'hasWings'
+              Identifier: 'beast'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            log'
+                  NoSubstitutionTemplateLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            log'
+                  NoSubstitutionTemplateLiteral
+  FunctionDeclaration
+    Identifier: ' beastFoo'
+    Parameter
+      Identifier: 'beast'
+      TypeReference
+        Identifier: ' Object'
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'hasWings'
+            Identifier: 'beast'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' hasLegs'
+            Identifier: 'beast'
+        Block
+          ExpressionStatement
+            Identifier: '
+        beast'
+        Block
+          ExpressionStatement
+            Identifier: '
+        beast'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'hasLegs'
+            Identifier: 'beast'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' hasWings'
+            Identifier: 'beast'
+        Block
+          ExpressionStatement
+            Identifier: '
+        beast'

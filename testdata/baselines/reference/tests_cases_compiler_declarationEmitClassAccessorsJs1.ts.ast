@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' VFile'
+    GetAccessor
+      Identifier: ' path'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' path'
+      Parameter
+        Identifier: 'path'
+      Block

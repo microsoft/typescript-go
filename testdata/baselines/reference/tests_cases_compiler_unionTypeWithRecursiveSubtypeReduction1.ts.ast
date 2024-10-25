@@ -1,0 +1,52 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Module'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' members'
+      ArrayType
+        TypeReference
+          Identifier: ' Class'
+  ClassDeclaration
+    Identifier: ' Namespace'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' members'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            TypeReference
+              Identifier: 'Class'
+            TypeReference
+              Identifier: ' Property'
+  ClassDeclaration
+    Identifier: ' Class'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' parent'
+      TypeReference
+        Identifier: ' Namespace'
+  ClassDeclaration
+    Identifier: ' Property'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' parent'
+      UnionType
+        TypeReference
+          Identifier: ' Module'
+        TypeReference
+          Identifier: ' Class'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        UnionType
+          TypeReference
+            Identifier: ' Class'
+          TypeReference
+            Identifier: ' Property'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+t'
+      Identifier: 'parent'

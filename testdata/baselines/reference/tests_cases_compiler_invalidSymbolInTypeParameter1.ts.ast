@@ -1,0 +1,12 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' test'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cats'
+            NewExpression
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'WAWA'

@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      PrivateIdentifier
+      Parameter
+        Identifier: 'value'
+      Block

@@ -1,0 +1,707 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Comparison'
+        ImportSpecifier
+          Identifier: ' GetCanonicalFileName'
+        ImportSpecifier
+          Identifier: ' Path'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' directorySeparator'
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' altDirectorySeparator'
+        StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isAnyDirectorySeparator'
+    Parameter
+      Identifier: 'charCode'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isUrl'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isRootedDiskPath'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isDiskPathRoot'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' pathIsAbsolute'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' pathIsRelative'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' pathIsBareSpecifier'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasExtension'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' fileExtensionIs'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' extension'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' fileExtensionIsOneOf'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' extensions'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasTrailingDirectorySeparator'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRootLength'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDirectoryPath'
+    Parameter
+      Identifier: 'path'
+      TypeReference
+        Identifier: ' Path'
+    TypeReference
+      Identifier: ' Path'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDirectoryPath'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getBaseFileName'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getBaseFileName'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' extensions'
+      UnionType
+        StringKeyword
+        TypeOperator
+          ArrayType
+            StringKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      BooleanKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getAnyExtensionFromPath'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getAnyExtensionFromPath'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' extensions'
+      UnionType
+        StringKeyword
+        TypeOperator
+          ArrayType
+            StringKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      BooleanKeyword
+    StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PathPathComponents'
+    IntersectionType
+      ArrayType
+        TypeReference
+          Identifier: ' Path'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    __pathComponensBrand'
+          AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getPathComponents'
+    Parameter
+      Identifier: 'path'
+      TypeReference
+        Identifier: ' Path'
+    TypeReference
+      Identifier: ' PathPathComponents'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getPathComponents'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' currentDirectory'
+      QuestionToken
+      StringKeyword
+    ArrayType
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getPathFromPathComponents'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    Parameter
+      Identifier: 'pathComponents'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' length'
+      QuestionToken
+      NumberKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' normalizeSlashes'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' reducePathComponents'
+    Parameter
+      Identifier: 'components'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    ArrayType
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' combinePaths'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'paths'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' resolvePath'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'paths'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNormalizedPathComponents'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' currentDirectory'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    ArrayType
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNormalizedAbsolutePath'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' currentDirectory'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' normalizePath'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNormalizedAbsolutePathWithoutRoot'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' currentDirectory'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' toPath'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' basePath'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      FunctionType
+        Parameter
+          Identifier: 'path'
+          StringKeyword
+        StringKeyword
+    TypeReference
+      Identifier: ' Path'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' removeTrailingDirectorySeparator'
+    Parameter
+      Identifier: 'path'
+      TypeReference
+        Identifier: ' Path'
+    TypeReference
+      Identifier: ' Path'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' removeTrailingDirectorySeparator'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ensureTrailingDirectorySeparator'
+    Parameter
+      Identifier: 'path'
+      TypeReference
+        Identifier: ' Path'
+    TypeReference
+      Identifier: ' Path'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ensureTrailingDirectorySeparator'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ensurePathIsNonModuleName'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' changeAnyExtension'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' ext'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' changeAnyExtension'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' ext'
+      StringKeyword
+    Parameter
+      Identifier: ' extensions'
+      UnionType
+        StringKeyword
+        TypeOperator
+          ArrayType
+            StringKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      BooleanKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' changeFullExtension'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' newExtension'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' comparePathsCaseSensitive'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    TypeReference
+      Identifier: ' Comparison'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' comparePathsCaseInsensitive'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    TypeReference
+      Identifier: ' Comparison'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' comparePaths'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' Comparison'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' comparePaths'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    Parameter
+      Identifier: ' currentDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' Comparison'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' containsPath'
+    Parameter
+      Identifier: 'parent'
+      StringKeyword
+    Parameter
+      Identifier: ' child'
+      StringKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      QuestionToken
+      BooleanKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' containsPath'
+    Parameter
+      Identifier: 'parent'
+      StringKeyword
+    Parameter
+      Identifier: ' child'
+      StringKeyword
+    Parameter
+      Identifier: ' currentDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      QuestionToken
+      BooleanKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' startsWithDirectory'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' directoryName'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRelativePathFromDirectory'
+    Parameter
+      Identifier: 'from'
+      StringKeyword
+    Parameter
+      Identifier: ' to'
+      StringKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      BooleanKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRelativePathFromDirectory'
+    Parameter
+      Identifier: 'fromDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' to'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' convertToRelativePath'
+    Parameter
+      Identifier: 'absoluteOrRelativePath'
+      StringKeyword
+    Parameter
+      Identifier: ' basePath'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      FunctionType
+        Parameter
+          Identifier: 'path'
+          StringKeyword
+        StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRelativePathFromFile'
+    Parameter
+      Identifier: 'from'
+      StringKeyword
+    Parameter
+      Identifier: ' to'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRelativePathToDirectoryOrUrl'
+    Parameter
+      Identifier: 'directoryPathOrUrl'
+      StringKeyword
+    Parameter
+      Identifier: ' relativeOrAbsolutePath'
+      StringKeyword
+    Parameter
+      Identifier: ' currentDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    Parameter
+      Identifier: ' isAbsolutePathAnUrl'
+      BooleanKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachAncestorDirectory'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'directory'
+      TypeReference
+        Identifier: ' Path'
+    Parameter
+      Identifier: ' callback'
+      FunctionType
+        Parameter
+          Identifier: 'directory'
+          TypeReference
+            Identifier: ' Path'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachAncestorDirectory'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'directory'
+      StringKeyword
+    Parameter
+      Identifier: ' callback'
+      FunctionType
+        Parameter
+          Identifier: 'directory'
+          StringKeyword
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isNodeModulesDirectory'
+    Parameter
+      Identifier: 'dirPath'
+      TypeReference
+        Identifier: ' Path'
+    BooleanKeyword

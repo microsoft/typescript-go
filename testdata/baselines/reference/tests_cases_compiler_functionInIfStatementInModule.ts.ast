@@ -1,0 +1,12 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Midori'
+    ModuleBlock
+      IfStatement
+        FalseKeyword
+        Block
+          FunctionDeclaration
+            Identifier: ' Foo'
+            Parameter
+              Identifier: 'src'
+            Block

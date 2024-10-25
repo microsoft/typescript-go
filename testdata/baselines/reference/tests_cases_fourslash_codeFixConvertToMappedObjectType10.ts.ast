@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// type K = "foo" | "bar";
+//// interface Foo { }
+//// interface Bar<T> { bar: T; }
+//// interface SomeType<T> extends Foo, Bar<T> {
+////     a: number;
+////     b: T;
+////     [prop: K]: any;
+//// }
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

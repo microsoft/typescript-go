@@ -1,0 +1,56 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Block
+        ReturnStatement
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  ExpressionStatement
+    CallExpression
+      ElementAccessExpression
+        Identifier: '
+c'
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      ElementAccessExpression
+        Identifier: '
+c'
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      NumericLiteral

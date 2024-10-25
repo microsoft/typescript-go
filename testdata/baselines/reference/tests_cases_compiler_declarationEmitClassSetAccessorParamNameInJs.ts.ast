@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    SetAccessor
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'baz'
+      Block

@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' StringTree'
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' x'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'push'
+          ArrayLiteralExpression
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' StringTree'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' StringTreeArray'
+  InterfaceDeclaration
+    Identifier: ' StringTreeArray'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'StringTree'

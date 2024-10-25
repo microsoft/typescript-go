@@ -1,0 +1,35 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' R'
+        AnyKeyword
+  ExportAssignment
+    BinaryExpression
+      Identifier: ' R'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          StringLiteral
+          NumericLiteral
+        PropertyAssignment
+          StringLiteral
+          NumericLiteral
+        PropertyAssignment
+          StringLiteral
+          NumericLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' R'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' ___'
+          BindingElement
+            Identifier: ' ___hello'
+          BindingElement
+            Identifier: ' _hi'
+        Identifier: ' R'

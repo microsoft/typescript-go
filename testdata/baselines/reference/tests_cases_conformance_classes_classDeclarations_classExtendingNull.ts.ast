@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        NullKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ParenthesizedExpression
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' C3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        NullKeyword
+    PropertyDeclaration
+      Identifier: ' x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ParenthesizedExpression
+          NullKeyword
+    PropertyDeclaration
+      Identifier: ' x'
+      NumericLiteral

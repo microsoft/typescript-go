@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////export interface Album {
+////   "artist": number;
+////}
+////var a: Album;
+////var /**/x = a['artist'];
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

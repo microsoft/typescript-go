@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumberKeyword
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' A'
+        PrivateIdentifier
+      EqualsToken
+      NumericLiteral

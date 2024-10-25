@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    PropertyDeclaration
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' p'
+      TypeOperator
+        SymbolKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'C'
+          Identifier: 'p'
+      VoidKeyword

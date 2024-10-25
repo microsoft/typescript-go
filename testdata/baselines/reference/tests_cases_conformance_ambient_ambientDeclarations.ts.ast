@@ -1,0 +1,206 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn1'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn2'
+    Parameter
+      Identifier: 'n'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn3'
+    Parameter
+      Identifier: 'n'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn4'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    Parameter
+      Identifier: ' y'
+      NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn5'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      Identifier: ' y'
+      QuestionToken
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn6'
+    Parameter
+      Identifier: 'e'
+      QuestionToken
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn7'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      Identifier: ' y'
+      QuestionToken
+    Parameter
+      DotDotDotToken
+      Identifier: 'z'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn8'
+    Parameter
+      Identifier: 'y'
+      QuestionToken
+    Parameter
+      DotDotDotToken
+      Identifier: 'z'
+      ArrayType
+        NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn9'
+    Parameter
+      DotDotDotToken
+      Identifier: 'q'
+      ArrayType
+        TypeLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn10'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      DotDotDotToken
+      Identifier: 'q'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' cls'
+    Constructor
+    MethodDeclaration
+      Identifier: '
+    method'
+      TypeReference
+        Identifier: ' cls'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' static'
+      Parameter
+        Identifier: 'p'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' q'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' fn'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' fns'
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E1'
+    EnumMember
+      Identifier: '
+    x'
+    EnumMember
+      Identifier: '
+    y'
+    EnumMember
+      Identifier: '
+    z'
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E2'
+    EnumMember
+      Identifier: '
+    q'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+    EnumMember
+      Identifier: '
+    c'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    d'
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E3'
+    EnumMember
+      Identifier: '
+    A'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' E3'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          Identifier: ' E3'
+          Identifier: 'B'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M1'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      FunctionDeclaration
+        Identifier: ' fn'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        PropertyAccessExpression
+          Identifier: ' M1'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' M1'
+            Identifier: 'fn'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' q'

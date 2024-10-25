@@ -1,0 +1,63 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '  
+    f'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    g'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: ' 
+    g'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      Parameter
+        Identifier: 'm'
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    h'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      TypeReference
+        Identifier: 'I'
+    MethodSignature
+      Identifier: '  
+    h'
+      Parameter
+        Identifier: 'b'
+        BooleanKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    i'
+      Parameter
+        Identifier: 'b'
+        BooleanKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    i'
+      Parameter
+        Identifier: 'b'
+        BooleanKeyword
+      AnyKeyword

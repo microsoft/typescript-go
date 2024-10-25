@@ -1,0 +1,17 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' f'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' n'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' n'
+          TypeReference
+            Identifier: ' f'

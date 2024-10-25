@@ -1,0 +1,26 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          Identifier: '
+        div'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+            static'
+              QuestionToken
+              BooleanKeyword
+  ExportAssignment
+    JsxSelfClosingElement
+      Identifier: 'div'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' static'
+          JsxExpression
+            TrueKeyword

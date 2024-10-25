@@ -1,0 +1,501 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' TopLevelModule1'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' SubModule1'
+        ModuleBlock
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' SubSubModule1'
+            ModuleBlock
+              ClassDeclaration
+                ExportKeyword
+                Identifier: ' ClassA'
+                MethodDeclaration
+                  PublicKeyword
+                  Identifier: ' AisIn1_1_1'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a1'
+                          TypeReference
+                            Identifier: ' ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a1'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a2'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' SubSubModule1'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a2'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a3'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                Identifier: ' SubModule1'
+                                Identifier: 'SubSubModule1'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a3'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a4'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' TopLevelModule1'
+                                  Identifier: 'SubModule1'
+                                Identifier: 'SubSubModule1'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a4'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' b1'
+                          TypeReference
+                            Identifier: ' ClassB'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' b1'
+                          Identifier: 'BisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' b2'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' TopLevelModule1'
+                                  Identifier: 'SubModule1'
+                                Identifier: 'SubSubModule1'
+                              Identifier: 'ClassB'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' b2'
+                          Identifier: 'BisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' c1'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' TopLevelModule1'
+                                  Identifier: 'SubModule2'
+                                Identifier: 'SubSubModule2'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' c1'
+                          Identifier: 'AisIn1_2_2'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' d1'
+                          TypeReference
+                            Identifier: ' InterfaceX'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' d1'
+                          Identifier: 'XisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' d2'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' SubSubModule1'
+                              Identifier: 'InterfaceX'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' d2'
+                          Identifier: 'XisIn1_1_1'
+              ClassDeclaration
+                ExportKeyword
+                Identifier: ' ClassB'
+                MethodDeclaration
+                  PublicKeyword
+                  Identifier: ' BisIn1_1_1'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a1'
+                          TypeReference
+                            Identifier: ' ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a1'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a2'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' SubSubModule1'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a2'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a3'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                Identifier: ' SubModule1'
+                                Identifier: 'SubSubModule1'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a3'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a4'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' TopLevelModule1'
+                                  Identifier: 'SubModule1'
+                                Identifier: 'SubSubModule1'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a4'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' b1'
+                          TypeReference
+                            Identifier: ' ClassB'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' b1'
+                          Identifier: 'BisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' b2'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' TopLevelModule1'
+                                  Identifier: 'SubModule1'
+                                Identifier: 'SubSubModule1'
+                              Identifier: 'ClassB'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' b2'
+                          Identifier: 'BisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' c1'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' TopLevelModule1'
+                                  Identifier: 'SubModule2'
+                                Identifier: 'SubSubModule2'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' c1'
+                          Identifier: 'AisIn1_2_2'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' c2'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                Identifier: ' TopLevelModule2'
+                                Identifier: 'SubModule3'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' c2'
+                          Identifier: 'AisIn2_3'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' d1'
+                          TypeReference
+                            Identifier: ' InterfaceX'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' d1'
+                          Identifier: 'XisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' d2'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' SubSubModule1'
+                              Identifier: 'InterfaceX'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' d2'
+                          Identifier: 'XisIn1_1_1'
+              InterfaceDeclaration
+                ExportKeyword
+                Identifier: ' InterfaceX'
+                MethodSignature
+                  Identifier: ' XisIn1_1_1'
+              ClassDeclaration
+                Identifier: ' NonExportedClassQ'
+                Constructor
+                  Block
+                    FunctionDeclaration
+                      Identifier: ' QQ'
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' a4'
+                              TypeReference
+                                QualifiedName
+                                  QualifiedName
+                                    QualifiedName
+                                      Identifier: ' TopLevelModule1'
+                                      Identifier: 'SubModule1'
+                                    Identifier: 'SubSubModule1'
+                                  Identifier: 'ClassA'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' a4'
+                              Identifier: 'AisIn1_1_1'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' c1'
+                              TypeReference
+                                QualifiedName
+                                  QualifiedName
+                                    QualifiedName
+                                      Identifier: ' TopLevelModule1'
+                                      Identifier: 'SubModule2'
+                                    Identifier: 'SubSubModule2'
+                                  Identifier: 'ClassA'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' c1'
+                              Identifier: 'AisIn1_2_2'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' d1'
+                              TypeReference
+                                Identifier: ' InterfaceX'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' d1'
+                              Identifier: 'XisIn1_1_1'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' c2'
+                              TypeReference
+                                QualifiedName
+                                  QualifiedName
+                                    Identifier: ' TopLevelModule2'
+                                    Identifier: 'SubModule3'
+                                  Identifier: 'ClassA'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' c2'
+                              Identifier: 'AisIn2_3'
+          ClassDeclaration
+            Identifier: ' ClassA'
+            Constructor
+              Block
+                FunctionDeclaration
+                  Identifier: ' AA'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a2'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' SubSubModule1'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a2'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a3'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                Identifier: ' SubModule1'
+                                Identifier: 'SubSubModule1'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a3'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' a4'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' TopLevelModule1'
+                                  Identifier: 'SubModule1'
+                                Identifier: 'SubSubModule1'
+                              Identifier: 'ClassA'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a4'
+                          Identifier: 'AisIn1_1_1'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' d2'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' SubSubModule1'
+                              Identifier: 'InterfaceX'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' d2'
+                          Identifier: 'XisIn1_1_1'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' SubModule2'
+        ModuleBlock
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' SubSubModule2'
+            ModuleBlock
+              ClassDeclaration
+                ExportKeyword
+                Identifier: ' ClassA'
+                MethodDeclaration
+                  PublicKeyword
+                  Identifier: ' AisIn1_2_2'
+                  Block
+              ClassDeclaration
+                ExportKeyword
+                Identifier: ' ClassB'
+                MethodDeclaration
+                  PublicKeyword
+                  Identifier: ' BisIn1_2_2'
+                  Block
+              ClassDeclaration
+                ExportKeyword
+                Identifier: ' ClassC'
+                MethodDeclaration
+                  PublicKeyword
+                  Identifier: ' CisIn1_2_2'
+                  Block
+              InterfaceDeclaration
+                ExportKeyword
+                Identifier: ' InterfaceY'
+                MethodSignature
+                  Identifier: ' YisIn1_2_2'
+              InterfaceDeclaration
+                Identifier: ' NonExportedInterfaceQ'
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' InterfaceY'
+            MethodSignature
+              Identifier: ' YisIn1_2'
+      ClassDeclaration
+        Identifier: ' ClassA'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' AisIn1'
+          Block
+      InterfaceDeclaration
+        Identifier: ' InterfaceY'
+        MethodSignature
+          Identifier: '
+        YisIn1'
+      ModuleDeclaration
+        Identifier: ' NotExportedModule'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' ClassA'
+  ModuleDeclaration
+    Identifier: ' TopLevelModule2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' SubModule3'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' ClassA'
+            MethodDeclaration
+              PublicKeyword
+              Identifier: ' AisIn2_3'
+              Block

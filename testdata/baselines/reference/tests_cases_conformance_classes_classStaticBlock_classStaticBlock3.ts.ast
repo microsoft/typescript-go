@@ -1,0 +1,54 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' f1'
+      NumericLiteral
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              Identifier: 'C'
+              Identifier: 'f1'
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'f2'
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'f3'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' f2'
+      NumericLiteral
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              Identifier: 'C'
+              Identifier: 'f1'
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'f2'
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'f3'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' f3'
+      NumericLiteral

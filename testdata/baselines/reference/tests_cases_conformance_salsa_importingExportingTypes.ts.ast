@@ -1,0 +1,54 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' WriteFileOptions'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' writeFile'
+        Parameter
+          Identifier: 'path'
+          StringKeyword
+        Parameter
+          Identifier: ' data'
+          AnyKeyword
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' WriteFileOptions'
+        Parameter
+          Identifier: ' callback'
+          FunctionType
+            Parameter
+              Identifier: 'err'
+              TypeReference
+                Identifier: ' Error'
+            VoidKeyword
+        VoidKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' writeFile'
+        ImportSpecifier
+          Identifier: ' WriteFileOptions'
+        ImportSpecifier
+          Identifier: ' WriteFileOptions'
+          Identifier: ' OtherName'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' JSDocType'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' JSDocType'
+        Identifier: ' ThisIsFine'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' WriteFileOptions'

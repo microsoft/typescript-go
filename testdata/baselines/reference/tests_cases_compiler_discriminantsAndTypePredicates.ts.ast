@@ -1,0 +1,129 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: ' type'
+      LiteralType
+        StringLiteral
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: ' type'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' isA'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    TypePredicate
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' A'
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'type'
+          EqualsEqualsEqualsToken
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' isB'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    TypePredicate
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' B'
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'type'
+          EqualsEqualsEqualsToken
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    AnyKeyword
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        CallExpression
+          Identifier: 'isA'
+          Identifier: 'x'
+        Block
+          ReturnStatement
+            Identifier: ' x'
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        CallExpression
+          Identifier: 'isB'
+          Identifier: 'x'
+        Block
+          ReturnStatement
+            Identifier: ' x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    AnyKeyword
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'type'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+            Identifier: ' x'
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'type'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+            Identifier: ' x'
+      ExpressionStatement
+        Identifier: '
+    x'

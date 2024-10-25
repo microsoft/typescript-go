@@ -1,0 +1,215 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        TypeQuery
+          Identifier: ' x'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        TypeQuery
+          Identifier: ' y'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        TypeQuery
+          Identifier: ' C'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        TypeQuery
+          Identifier: ' c'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4b'
+        TypeQuery
+          Identifier: ' c2'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        TypeQuery
+          Identifier: ' i'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        TypeQuery
+          Identifier: ' i2'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            StringLiteral
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          StringKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        TypeQuery
+          Identifier: ' M'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        TypeQuery
+          QualifiedName
+            Identifier: ' M'
+            Identifier: 'foo'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' Z'
+    Identifier: ' M'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        TypeQuery
+          Identifier: ' Z'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        TypeQuery
+          QualifiedName
+            Identifier: ' Z'
+            Identifier: 'foo'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        TypeQuery
+          Identifier: ' E'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        TypeQuery
+          QualifiedName
+            Identifier: ' E'
+            Identifier: 'A'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12'
+        TypeQuery
+          Identifier: ' r12'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          StringKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13'
+        TypeQuery
+          Identifier: ' foo'

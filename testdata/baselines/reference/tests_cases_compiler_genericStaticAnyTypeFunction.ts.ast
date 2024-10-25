@@ -1,0 +1,47 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' one'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'source'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' value'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' source'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' goo'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' two'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'source'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'one'
+            TypeReference
+              Identifier: 'T'
+            Identifier: 'source'
+            NumericLiteral

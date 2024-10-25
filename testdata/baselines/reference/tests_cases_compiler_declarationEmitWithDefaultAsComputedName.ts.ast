@@ -1,0 +1,55 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Experiment'
+    TypeParameter
+      Identifier: 'Name'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    name'
+        TypeReference
+          Identifier: ' Name'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' createExperiment'
+        FunctionType
+          TypeParameter
+            Identifier: 'Name'
+            StringKeyword
+          Parameter
+            Identifier: '
+    options'
+            TypeReference
+              Identifier: ' Experiment'
+              TypeReference
+                Identifier: 'Name'
+          TypeReference
+            Identifier: ' Experiment'
+            TypeReference
+              Identifier: 'Name'
+  ExportAssignment
+    CallExpression
+      Identifier: ' createExperiment'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' other'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'other'
+                Identifier: 'name'
+            NumericLiteral

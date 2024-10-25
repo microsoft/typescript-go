@@ -1,0 +1,85 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Mapped'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' name'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' InferFromMapped'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' Mapped'
+        InferType
+          TypeParameter
+            Identifier: ' R'
+      TypeReference
+        Identifier: ' R'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' LiteralType'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+	first'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: '
+	second'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' MappedLiteralType'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+	first'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            LiteralType
+              StringLiteral
+      PropertySignature
+        Identifier: '
+	second'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            LiteralType
+              StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Inferred'
+    TypeReference
+      Identifier: ' InferFromMapped'
+      TypeReference
+        Identifier: 'MappedLiteralType'
+  TypeAliasDeclaration
+    Identifier: ' Test1'
+    ConditionalType
+      TypeReference
+        Identifier: ' Inferred'
+      TypeReference
+        Identifier: ' Record'
+        AnyKeyword
+        StringKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword

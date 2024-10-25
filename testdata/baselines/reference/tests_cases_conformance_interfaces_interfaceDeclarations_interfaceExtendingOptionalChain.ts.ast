@@ -1,0 +1,15 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Bar'
+  InterfaceDeclaration
+    Identifier: ' C1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' Foo'
+          QuestionDotToken
+          Identifier: 'Bar'

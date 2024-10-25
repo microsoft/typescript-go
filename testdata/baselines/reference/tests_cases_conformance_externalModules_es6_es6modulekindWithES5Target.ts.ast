@@ -1,0 +1,58 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    p'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' C'
+        Identifier: ' C2'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'foo'
+    ExportKeyword
+    Identifier: ' D'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    p'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' D'
+        Identifier: ' D2'
+  ClassDeclaration
+    Identifier: ' E'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'E'

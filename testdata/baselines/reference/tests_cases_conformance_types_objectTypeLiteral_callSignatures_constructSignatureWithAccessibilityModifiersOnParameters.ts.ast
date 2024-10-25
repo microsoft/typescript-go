@@ -1,0 +1,55 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+      Parameter
+        PrivateKeyword
+        Identifier: ' y'
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+      Block
+  ClassDeclaration
+    Identifier: ' C3'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' x'
+      Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    ConstructSignature
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    ConstructSignature
+      Parameter
+        PrivateKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              PublicKeyword
+              Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              PrivateKeyword
+              Identifier: ' x'

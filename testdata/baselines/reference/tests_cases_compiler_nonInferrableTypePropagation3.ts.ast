@@ -1,0 +1,100 @@
+SourceFile
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' Callback'
+    TypeParameter
+      Identifier: 'Args'
+      ArrayType
+        AnyKeyword
+    TypeParameter
+      Identifier: ' Out'
+    TypeParameter
+      Identifier: ' R'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' Args'
+      FunctionType
+        Parameter
+          Identifier: 'data'
+          TypeReference
+            Identifier: ' Out'
+        TypeReference
+          Identifier: ' R'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' factory'
+    TypeParameter
+      Identifier: 'Out'
+    FunctionType
+      TypeParameter
+        Identifier: 'Args'
+        ArrayType
+          AnyKeyword
+      TypeParameter
+        Identifier: ' R'
+      Parameter
+        Identifier: 'callback'
+        TypeReference
+          Identifier: ' Callback'
+          TypeReference
+            Identifier: 'Args'
+          TypeReference
+            Identifier: ' Out'
+          TypeReference
+            Identifier: ' R'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' Args'
+        TypeReference
+          Identifier: ' R'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' make'
+        CallExpression
+          Identifier: ' factory'
+          ArrayType
+            TypeLiteral
+              PropertySignature
+                Identifier: 'id'
+                StringKeyword
+              PropertySignature
+                Identifier: ' age'
+                NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' usersOverAge'
+        CallExpression
+          Identifier: ' make'
+          ArrowFunction
+            Parameter
+              Identifier: 'age'
+              NumberKeyword
+            EqualsGreaterThanToken
+            ArrowFunction
+              Parameter
+                Identifier: ' data'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' data'
+                      Identifier: 'filter'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'user'
+                      EqualsGreaterThanToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' user'
+                          Identifier: 'age'
+                        GreaterThanEqualsToken
+                        Identifier: ' age'

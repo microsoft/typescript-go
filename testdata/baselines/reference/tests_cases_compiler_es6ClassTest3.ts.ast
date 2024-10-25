@@ -1,0 +1,44 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Visibility'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' foo'
+          Block
+        SemicolonClassElement
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' bar'
+          Block
+        SemicolonClassElement
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' x'
+          NumberKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' y'
+          NumberKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' z'
+          NumberKeyword
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+                EqualsToken
+                NumericLiteral

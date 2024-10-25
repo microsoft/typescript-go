@@ -1,0 +1,54 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////interface I {
+////    prop: string;
+////}
+////class C implements I {
+////    public pr/**/: string | number;
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' isSnippet'
+                Identifier: ' undefined'
+              PropertyAssignment
+                Identifier: ' insertText'
+                Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: '
+    isNewIdentifierLocation'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithInsertText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithSnippetText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithClassMemberSnippets'
+              TrueKeyword

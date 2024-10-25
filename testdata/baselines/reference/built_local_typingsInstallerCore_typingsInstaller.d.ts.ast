@@ -1,0 +1,366 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MapLike'
+        ImportSpecifier
+          Identifier: ' Path'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' BeginInstallTypes'
+        ImportSpecifier
+          Identifier: ' CloseProject'
+        ImportSpecifier
+          Identifier: ' DiscoverTypings'
+        ImportSpecifier
+          Identifier: ' EndInstallTypes'
+        ImportSpecifier
+          Identifier: ' InstallPackageRequest'
+        ImportSpecifier
+          Identifier: ' InstallTypingHost'
+        ImportSpecifier
+          Identifier: ' InvalidateCachedTypings'
+        ImportSpecifier
+          Identifier: ' PackageInstalledResponse'
+        ImportSpecifier
+          Identifier: ' SetTypings'
+        ImportSpecifier
+          Identifier: ' TypesRegistryResponse'
+        ImportSpecifier
+          Identifier: ' TypingInstallerRequestUnion'
+        ImportSpecifier
+          Identifier: ' WatchTypingLocations'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Log'
+    MethodSignature
+      Identifier: '
+    isEnabled'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    writeLine'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' installNpmPackages'
+    Parameter
+      Identifier: 'npmPath'
+      StringKeyword
+    Parameter
+      Identifier: ' tsVersion'
+      StringKeyword
+    Parameter
+      Identifier: ' packageNames'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' install'
+      FunctionType
+        Parameter
+          Identifier: 'command'
+          StringKeyword
+        BooleanKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNpmCommandForInstallation'
+    Parameter
+      Identifier: 'npmPath'
+      StringKeyword
+    Parameter
+      Identifier: ' tsVersion'
+      StringKeyword
+    Parameter
+      Identifier: ' packageNames'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' remaining'
+      NumberKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    command'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    remaining'
+        NumberKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RequestCompletedAction'
+    FunctionType
+      Parameter
+        Identifier: 'success'
+        BooleanKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PendingRequest'
+    PropertySignature
+      Identifier: '
+    requestId'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    packageNames'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    cwd'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    onRequestCompleted'
+      TypeReference
+        Identifier: ' RequestCompletedAction'
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    AbstractKeyword
+    Identifier: ' TypingsInstaller'
+    PropertyDeclaration
+      ProtectedKeyword
+      ReadonlyKeyword
+      Identifier: ' installTypingHost'
+      TypeReference
+        Identifier: ' InstallTypingHost'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' globalCachePath'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' safeListPath'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' typesMapLocation'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' throttleLimit'
+    PropertyDeclaration
+      ProtectedKeyword
+      ReadonlyKeyword
+      Identifier: ' log'
+      TypeReference
+        Identifier: ' Log'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' packageNameToTypingLocation'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' missingTypingsSet'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' knownCachesSet'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' projectWatchers'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' safeList'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' pendingRunRequests'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' installRunCount'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' inFlightRequestCount'
+    PropertyDeclaration
+      AbstractKeyword
+      ReadonlyKeyword
+      Identifier: ' typesRegistry'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' MapLike'
+          StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'installTypingHost'
+        TypeReference
+          Identifier: ' InstallTypingHost'
+      Parameter
+        Identifier: ' globalCachePath'
+        StringKeyword
+      Parameter
+        Identifier: ' safeListPath'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' typesMapLocation'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' throttleLimit'
+        NumberKeyword
+      Parameter
+        Identifier: ' log'
+        QuestionToken
+        TypeReference
+          Identifier: ' Log'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    handleRequest'
+      Parameter
+        Identifier: 'req'
+        TypeReference
+          Identifier: ' TypingInstallerRequestUnion'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    closeProject'
+      Parameter
+        Identifier: 'req'
+        TypeReference
+          Identifier: ' CloseProject'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' closeWatchers'
+    MethodDeclaration
+      Identifier: '
+    install'
+      Parameter
+        Identifier: 'req'
+        TypeReference
+          Identifier: ' DiscoverTypings'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    installPackage'
+      Parameter
+        Identifier: 'req'
+        TypeReference
+          Identifier: ' InstallPackageRequest'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' initializeSafeList'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' processCacheLocation'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' filterTypings'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' ensurePackageDirectoryExists'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' installTypings'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' ensureDirectoryExists'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' watchFiles'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' createSetTypings'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' installTypingsAsync'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' executeWithThrottling'
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' installWorker'
+      Parameter
+        Identifier: 'requestId'
+        NumberKeyword
+      Parameter
+        Identifier: ' packageNames'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' cwd'
+        StringKeyword
+      Parameter
+        Identifier: ' onRequestCompleted'
+        TypeReference
+          Identifier: ' RequestCompletedAction'
+      VoidKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' sendResponse'
+      Parameter
+        Identifier: 'response'
+        UnionType
+          TypeReference
+            Identifier: ' SetTypings'
+          TypeReference
+            Identifier: ' InvalidateCachedTypings'
+          TypeReference
+            Identifier: ' BeginInstallTypes'
+          TypeReference
+            Identifier: ' EndInstallTypes'
+          TypeReference
+            Identifier: ' WatchTypingLocations'
+      VoidKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' sendResponse'
+      Parameter
+        Identifier: 'response'
+        UnionType
+          TypeReference
+            Identifier: ' SetTypings'
+          TypeReference
+            Identifier: ' InvalidateCachedTypings'
+          TypeReference
+            Identifier: ' BeginInstallTypes'
+          TypeReference
+            Identifier: ' EndInstallTypes'
+          TypeReference
+            Identifier: ' WatchTypingLocations'
+          TypeReference
+            Identifier: ' PackageInstalledResponse'
+          TypeReference
+            Identifier: ' TypesRegistryResponse'
+      VoidKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      ReadonlyKeyword
+      Identifier: ' latestDistTag'
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' typingsName'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    StringKeyword

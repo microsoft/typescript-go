@@ -1,0 +1,26 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Colors'
+    EnumMember
+      Identifier: '
+    /** Fancy name for 'blue'*/
+    Cornflower'
+    EnumMember
+      Identifier: '
+    /** Fancy name for 'pink'*/
+    FancyPink'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          Identifier: ' Colors'
+          Identifier: 'Cornflower'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' Colors'
+        Identifier: 'FancyPink'

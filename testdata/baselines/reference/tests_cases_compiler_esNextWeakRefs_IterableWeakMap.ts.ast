@@ -1,0 +1,493 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' IterableWeakMap_cleanup'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' ref'
+              BindingElement
+                Identifier: ' set'
+            TypeLiteral
+              PropertySignature
+                ReadonlyKeyword
+                Identifier: ' ref'
+                TypeReference
+                  Identifier: ' WeakRef'
+                  ObjectKeyword
+              PropertySignature
+                ReadonlyKeyword
+                Identifier: ' set'
+                TypeReference
+                  Identifier: ' Set'
+                  TypeReference
+                    Identifier: 'WeakRef'
+                    ObjectKeyword
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+    set'
+                  Identifier: 'delete'
+                Identifier: 'ref'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' IterableWeakMap'
+    TypeParameter
+      Identifier: 'K'
+      ObjectKeyword
+    TypeParameter
+      Identifier: ' V'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' WeakMap'
+        TypeReference
+          Identifier: 'K'
+        TypeReference
+          Identifier: ' V'
+    PropertyDeclaration
+      DeclareKeyword
+      ReadonlyKeyword
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      LiteralType
+        StringLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      NewExpression
+        Identifier: ' WeakMap'
+        TypeReference
+          Identifier: 'K'
+        TypeLiteral
+          PropertySignature
+            ReadonlyKeyword
+            Identifier: ' ref'
+            TypeReference
+              Identifier: ' WeakRef'
+              TypeReference
+                Identifier: 'K'
+          PropertySignature
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' V'
+    PropertyDeclaration
+      PrivateIdentifier
+      NewExpression
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'WeakRef'
+          TypeReference
+            Identifier: 'K'
+    PropertyDeclaration
+      PrivateIdentifier
+      NewExpression
+        Identifier: ' FinalizationRegistry'
+        Identifier: 'IterableWeakMap_cleanup'
+    Constructor
+      Parameter
+        Identifier: 'iterable'
+        UnionType
+          TypeReference
+            Identifier: ' Iterable'
+            TupleType
+              NamedTupleMember
+                Identifier: 'key'
+                TypeReference
+                  Identifier: ' K'
+              NamedTupleMember
+                Identifier: ' value'
+                TypeReference
+                  Identifier: ' V'
+          LiteralType
+            NullKeyword
+        NullKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'iterable'
+            ExclamationEqualsEqualsToken
+            NullKeyword
+          Block
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      NumericLiteral
+                      Identifier: ' key'
+                    BindingElement
+                      NumericLiteral
+                      Identifier: ' value'
+              Identifier: ' iterable'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'set'
+                    Identifier: 'key'
+                    Identifier: ' value'
+    MethodDeclaration
+      Identifier: '
+
+    set'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' V'
+      ThisType
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' entry'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+                  Identifier: 'get'
+                Identifier: 'key'
+        IfStatement
+          BinaryExpression
+            Identifier: 'entry'
+            ExclamationEqualsEqualsToken
+            Identifier: ' undefined'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            entry'
+                  Identifier: 'value'
+                EqualsToken
+                Identifier: ' value'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' ref'
+                  NewExpression
+                    Identifier: ' WeakRef'
+                    Identifier: 'key'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+                  Identifier: 'set'
+                Identifier: 'key'
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' ref'
+                  ShorthandPropertyAssignment
+                    Identifier: ' value'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+                  Identifier: 'add'
+                Identifier: 'ref'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+                  Identifier: 'register'
+                Identifier: 'key'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                set'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      PrivateIdentifier
+                  ShorthandPropertyAssignment
+                    Identifier: '
+                ref'
+                Identifier: ' ref'
+        ReturnStatement
+          ThisKeyword
+    MethodDeclaration
+      Identifier: '
+
+    has'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+              Identifier: 'has'
+            Identifier: 'key'
+    MethodDeclaration
+      Identifier: '
+
+    get'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      UnionType
+        TypeReference
+          Identifier: ' V'
+        UndefinedKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+                Identifier: 'get'
+              Identifier: 'key'
+            QuestionDotToken
+            Identifier: 'value'
+    MethodDeclaration
+      Identifier: '
+
+    delete'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      BooleanKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' entry'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+                  Identifier: 'get'
+                Identifier: 'key'
+        IfStatement
+          BinaryExpression
+            Identifier: 'entry'
+            EqualsEqualsEqualsToken
+            Identifier: ' undefined'
+          Block
+            ReturnStatement
+              FalseKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' ref'
+              Identifier: ' entry'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+              Identifier: 'delete'
+            Identifier: 'key'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+              Identifier: 'delete'
+            Identifier: 'ref'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+              Identifier: 'unregister'
+            Identifier: 'ref'
+        ReturnStatement
+          TrueKeyword
+    PropertyDeclaration
+      DeclareKeyword
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      IndexedAccessType
+        ThisType
+        LiteralType
+          StringLiteral
+    MethodDeclaration
+      AsteriskToken
+      Identifier: 'entries'
+      TypeReference
+        Identifier: ' Generator'
+        TupleType
+          NamedTupleMember
+            Identifier: 'key'
+            TypeReference
+              Identifier: ' K'
+          NamedTupleMember
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' V'
+        VoidKeyword
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' ref'
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' key'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ref'
+                      Identifier: 'deref'
+            IfStatement
+              BinaryExpression
+                Identifier: 'key'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              ContinueStatement
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' value'
+                  NonNullExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          PrivateIdentifier
+                        Identifier: 'get'
+                      Identifier: 'key'
+            ExpressionStatement
+              YieldExpression
+                ArrayLiteralExpression
+                  Identifier: 'key'
+                  Identifier: ' value'
+    MethodDeclaration
+      AsteriskToken
+      Identifier: 'keys'
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  NumericLiteral
+                  Identifier: ' key'
+          ThisKeyword
+          Block
+            ExpressionStatement
+              YieldExpression
+                Identifier: ' key'
+    MethodDeclaration
+      AsteriskToken
+      Identifier: 'values'
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  NumericLiteral
+                  Identifier: ' value'
+          ThisKeyword
+          Block
+            ExpressionStatement
+              YieldExpression
+                Identifier: ' value'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Object'
+        Identifier: 'defineProperties'
+      PropertyAccessExpression
+        Identifier: 'IterableWeakMap'
+        Identifier: 'prototype'
+      ObjectLiteralExpression
+        PropertyAssignment
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        configurable'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        enumerable'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        writable'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        value'
+              PropertyAccessExpression
+                NonNullExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Object'
+                      Identifier: 'getOwnPropertyDescriptor'
+                    PropertyAccessExpression
+                      Identifier: '
+            IterableWeakMap'
+                      Identifier: 'prototype'
+                    StringLiteral
+                Identifier: 'value'
+        PropertyAssignment
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'toStringTag'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        configurable'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        enumerable'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        writable'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        value'
+              StringLiteral

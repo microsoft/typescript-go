@@ -1,0 +1,131 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' JSX'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' IntrinsicElements'
+            PropertySignature
+              StringLiteral
+              AnyKeyword
+            PropertySignature
+              StringLiteral
+              AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Compa'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'x'
+                NumberKeyword
+          EqualsGreaterThanToken
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxExpression
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                Identifier: ' x'
+            JsxClosingElement
+              Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' video'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NullKeyword
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: '\u0061'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: 'a'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: '\u0061-b'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: 'a-b'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'a-\u0063'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: 'a-c'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Comp\u0061'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' x'
+          JsxExpression
+            NumericLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      PropertyAccessExpression
+        Identifier: 'x'
+        Identifier: '\u0076ideo'
+      JsxAttributes
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: '\u{0061}'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: 'a'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: '\u{0061}-b'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: 'a-b'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'a-\u{0063}'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: 'a-c'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Comp\u{0061}'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' x'
+          JsxExpression
+            NumericLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'video'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' data-\u0076ideo'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'video'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' \u0073rc'
+          StringLiteral

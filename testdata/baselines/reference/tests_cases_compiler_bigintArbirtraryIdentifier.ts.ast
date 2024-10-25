@@ -1,0 +1,61 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        BigintLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' foo'
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          StringLiteral
+          Identifier: ' foo'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' foo'
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+    AsExpression
+      BigintLiteral
+      TypeReference
+        Identifier: ' foo'
+  ExpressionStatement
+    Identifier: ' from'
+  ExpressionStatement
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' foo'
+          Identifier: ''
+    BigintLiteral
+  ExpressionStatement
+    Identifier: ' from'
+  ExpressionStatement
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' foo'
+        Identifier: ''
+  ExpressionStatement
+    BigintLiteral
+  EmptyStatement
+  ExportDeclaration
+    NamedExports
+  ExpressionStatement
+    AsExpression
+      BigintLiteral
+      TypeReference
+        Identifier: ' foo'
+  EmptyStatement

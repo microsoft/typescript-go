@@ -1,0 +1,385 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' publicProp'
+        StringKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' privateProp'
+        StringKeyword
+      Parameter
+        ProtectedKeyword
+        Identifier: ' protectedProp'
+        StringKeyword
+      Block
+    GetAccessor
+      Identifier: ' getter'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' setter'
+      Parameter
+        Identifier: '_v'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  DotDotDotToken
+                  Identifier: 'rest1'
+              ThisKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  DotDotDotToken
+                  Identifier: 'rest2'
+              AsExpression
+                ThisKeyword
+                TypeReference
+                  Identifier: ' A'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' publicProp'
+                  Identifier: ' _1'
+                BindingElement
+                  DotDotDotToken
+                  Identifier: 'rest3'
+              ThisKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' publicProp'
+                  Identifier: ' _2'
+                BindingElement
+                  DotDotDotToken
+                  Identifier: 'rest4'
+              AsExpression
+                ThisKeyword
+                TypeReference
+                  Identifier: ' A'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        rest1'
+            Identifier: 'publicProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest2'
+            Identifier: 'publicProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest3'
+            Identifier: 'publicProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest4'
+            Identifier: 'publicProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        rest1'
+            Identifier: 'privateProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest2'
+            Identifier: 'privateProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest3'
+            Identifier: 'privateProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest4'
+            Identifier: 'privateProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        rest1'
+            Identifier: 'protectedProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest2'
+            Identifier: 'protectedProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest3'
+            Identifier: 'protectedProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest4'
+            Identifier: 'protectedProp'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        rest1'
+            Identifier: 'getter'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest2'
+            Identifier: 'getter'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest3'
+            Identifier: 'getter'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest4'
+            Identifier: 'getter'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        rest1'
+            Identifier: 'setter'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest2'
+            Identifier: 'setter'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest3'
+            Identifier: 'setter'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest4'
+            Identifier: 'setter'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        rest1'
+            Identifier: 'method'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest2'
+            Identifier: 'method'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest3'
+            Identifier: 'method'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest4'
+            Identifier: 'method'
+  FunctionDeclaration
+    Identifier: ' destructure'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'rest1'
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'rest2'
+            AsExpression
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' A'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' publicProp'
+                Identifier: ' _1'
+              BindingElement
+                DotDotDotToken
+                Identifier: 'rest3'
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' publicProp'
+                Identifier: ' _2'
+              BindingElement
+                DotDotDotToken
+                Identifier: 'rest4'
+            AsExpression
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' A'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+
+    rest1'
+          Identifier: 'publicProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest2'
+          Identifier: 'publicProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest3'
+          Identifier: 'publicProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest4'
+          Identifier: 'publicProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+
+    rest1'
+          Identifier: 'privateProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest2'
+          Identifier: 'privateProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest3'
+          Identifier: 'privateProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest4'
+          Identifier: 'privateProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+
+    rest1'
+          Identifier: 'protectedProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest2'
+          Identifier: 'protectedProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest3'
+          Identifier: 'protectedProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest4'
+          Identifier: 'protectedProp'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+
+    rest1'
+          Identifier: 'getter'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest2'
+          Identifier: 'getter'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest3'
+          Identifier: 'getter'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest4'
+          Identifier: 'getter'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+
+    rest1'
+          Identifier: 'setter'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest2'
+          Identifier: 'setter'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest3'
+          Identifier: 'setter'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest4'
+          Identifier: 'setter'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+
+    rest1'
+          Identifier: 'method'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest2'
+          Identifier: 'method'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest3'
+          Identifier: 'method'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    rest4'
+          Identifier: 'method'

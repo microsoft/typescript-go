@@ -1,0 +1,24 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+
+ 
+
+    defaults'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+
+        done'
+          FalseKeyword
+    MethodDeclaration
+      Identifier: '
+
+ 
+
+    bar'
+      Block
+        ReturnStatement
+          NumericLiteral

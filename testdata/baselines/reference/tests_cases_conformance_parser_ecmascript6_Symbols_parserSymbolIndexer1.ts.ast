@@ -1,0 +1,8 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        SymbolKeyword
+      StringKeyword

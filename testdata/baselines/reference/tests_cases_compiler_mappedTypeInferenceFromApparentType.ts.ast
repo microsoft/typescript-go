@@ -1,0 +1,69 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Obj'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' foo'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'target'
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'K'
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' bar'
+    FunctionType
+      TypeParameter
+        Identifier: 'U'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: 'source'
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' U'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' Obj'
+            TypeReference
+              Identifier: 'K'
+      VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' bar'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' f'

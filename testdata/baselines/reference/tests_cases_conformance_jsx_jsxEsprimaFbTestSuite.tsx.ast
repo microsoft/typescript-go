@@ -1,0 +1,273 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 日本語'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' AbC_def'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' LeftRight'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' props'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'n:a'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' n:v'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'a'
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' n:foo'
+            StringLiteral
+      JsxText
+      JsxExpression
+        Identifier: 'value'
+      JsxText
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'b'
+          JsxAttributes
+        JsxSelfClosingElement
+          Identifier: 'c'
+          JsxAttributes
+        JsxClosingElement
+          Identifier: 'b'
+      JsxClosingElement
+        Identifier: 'a'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' b'
+          JsxExpression
+            StringLiteral
+        JsxAttribute
+          Identifier: ' c'
+          StringLiteral
+        JsxAttribute
+          Identifier: ' d'
+          StringLiteral
+        JsxAttribute
+          Identifier: ' e'
+          StringLiteral
+        JsxAttribute
+          Identifier: ' f'
+          StringLiteral
+        JsxAttribute
+          Identifier: ' g'
+          StringLiteral
+        JsxAttribute
+          Identifier: ' h'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' b'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a'
+      JsxAttributes
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: '日本語'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: '日本語'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'AbC_def'
+        JsxAttributes
+          JsxAttribute
+            Identifier: '
+  test'
+            StringLiteral
+      JsxText
+      JsxClosingElement
+        Identifier: 'AbC_def'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'a'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' b'
+          JsxExpression
+            ConditionalExpression
+              Identifier: 'x'
+              QuestionToken
+              JsxSelfClosingElement
+                Identifier: 'c'
+                JsxAttributes
+              ColonToken
+              JsxSelfClosingElement
+                Identifier: 'd'
+                JsxAttributes
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'a'
+        JsxAttributes
+      JsxExpression
+      JsxClosingElement
+        Identifier: 'a'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'a'
+        JsxAttributes
+      JsxExpression
+      JsxClosingElement
+        Identifier: 'a'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxSelfClosingElement
+        Identifier: 'br'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'LeftRight'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' left'
+          JsxSelfClosingElement
+            Identifier: 'a'
+            JsxAttributes
+        JsxAttribute
+          Identifier: ' right'
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'b'
+              JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'b'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        PropertyAccessExpression
+          Identifier: 'a'
+          Identifier: 'b'
+        JsxAttributes
+      JsxClosingElement
+        PropertyAccessExpression
+          Identifier: 'a'
+          Identifier: 'b'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'a'
+            Identifier: 'b'
+          Identifier: 'c'
+        JsxAttributes
+      JsxClosingElement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'a'
+            Identifier: 'b'
+          Identifier: 'c'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+      LessThanToken
+      Identifier: ' x'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'div'
+      JsxAttributes
+        JsxAttribute
+          Identifier: 'props'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'div'
+      JsxAttributes
+        JsxAttribute
+          Identifier: 'props'
+        JsxAttribute
+          Identifier: ' post'
+          StringLiteral
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+          JsxAttribute
+            Identifier: ' pre'
+            StringLiteral
+          JsxAttribute
+            Identifier: ' pre2'
+            StringLiteral
+          JsxAttribute
+            Identifier: 'props'
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'a'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'a'

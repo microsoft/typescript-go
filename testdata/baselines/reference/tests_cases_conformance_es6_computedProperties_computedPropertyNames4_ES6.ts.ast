@@ -1,0 +1,78 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 's'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'n'
+            Identifier: ' n'
+          PropertyAssignment
+            ComputedPropertyName
+              BinaryExpression
+                Identifier: 's'
+                PlusToken
+                Identifier: ' s'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              BinaryExpression
+                Identifier: 's'
+                PlusToken
+                Identifier: ' n'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PrefixUnaryExpression
+                Identifier: 's'
+            Identifier: ' s'
+          PropertyAssignment
+            ComputedPropertyName
+              StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              NumericLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'a'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              TypeAssertionExpression
+                AnyKeyword
+                TrueKeyword
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              NoSubstitutionTemplateLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'a'
+                  TemplateTail
+            NumericLiteral

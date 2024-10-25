@@ -1,0 +1,209 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' documents'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' fakes'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vfs'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' content'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        NewExpression
+                          PropertyAccessExpression
+                            Identifier: ' fakes'
+                            Identifier: 'CompilerHost'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'vfs'
+                              Identifier: 'createFromFileSystem'
+                            PropertyAccessExpression
+                              Identifier: '
+            Harness'
+                              Identifier: 'IO'
+                            TrueKeyword
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                documents'
+                                ArrayLiteralExpression
+                                  NewExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' documents'
+                                      Identifier: 'TextDocument'
+                                    StringLiteral
+                                    Identifier: ' content'
+                              PropertyAssignment
+                                Identifier: '
+                cwd'
+                                StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' program'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createProgram'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+            host'
+                            PropertyAssignment
+                              Identifier: '
+            rootNames'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+            options'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' strict'
+                                  TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' checker'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' program'
+                            Identifier: 'getTypeChecker'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' program'
+                              Identifier: 'getSourceFile'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' typeQueryNode'
+                        AsExpression
+                          PropertyAccessExpression
+                            ParenthesizedExpression
+                              AsExpression
+                                NonNullExpression
+                                  PropertyAccessExpression
+                                    ElementAccessExpression
+                                      PropertyAccessExpression
+                                        ParenthesizedExpression
+                                          AsExpression
+                                            ElementAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'file'
+                                                Identifier: 'statements'
+                                              NumericLiteral
+                                            TypeReference
+                                              QualifiedName
+                                                Identifier: ' ts'
+                                                Identifier: 'FunctionDeclaration'
+                                        Identifier: 'parameters'
+                                      NumericLiteral
+                                    Identifier: 'type'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'FunctionTypeNode'
+                            Identifier: 'type'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'TypeQueryNode'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' typeParameterDecl'
+                        ElementAccessExpression
+                          NonNullExpression
+                            PropertyAccessExpression
+                              ParenthesizedExpression
+                                AsExpression
+                                  ElementAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'file'
+                                      Identifier: 'statements'
+                                    NumericLiteral
+                                  TypeReference
+                                    QualifiedName
+                                      Identifier: ' ts'
+                                      Identifier: 'FunctionDeclaration'
+                              Identifier: 'typeParameters'
+                          NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' typeParameter'
+                        AsExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' checker'
+                              Identifier: 'getTypeAtLocation'
+                            Identifier: 'typeParameterDecl'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'TypeParameter'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' isReferenced'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' checker'
+                            Identifier: 'isTypeParameterPossiblyReferenced'
+                          Identifier: 'typeParameter'
+                          Identifier: ' typeQueryNode'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'ok'
+                      Identifier: 'isReferenced'
+                      StringLiteral

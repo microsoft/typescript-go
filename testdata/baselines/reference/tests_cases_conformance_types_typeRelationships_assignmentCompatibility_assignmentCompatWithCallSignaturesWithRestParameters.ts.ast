@@ -1,0 +1,498 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    PropertySignature
+      Identifier: ' 
+    a'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            NumberKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    a2'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'z'
+          ArrayType
+            NumberKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    a3'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          StringKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'z'
+          ArrayType
+            NumberKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    a4'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          StringKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'z'
+          ArrayType
+            NumberKeyword
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              NumberKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            StringKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error, type mismatch
+    a'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          NumberKeyword
+        Parameter
+          Identifier: ' z'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, rest param corresponds to infinite number of params
+    a'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          StringKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'z'
+            ArrayType
+              NumberKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+    a2'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            StringKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // should be type mismatch error
+    a2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, rest param corresponds to infinite number of params
+    a2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            QuestionToken
+            StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'z'
+            ArrayType
+              NumberKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+    a3'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          StringKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // ok, all present params match
+    a3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          NumberKeyword
+        Parameter
+          Identifier: ' z'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // error
+    a3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'z'
+          ArrayType
+            NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // error
+    a3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          StringKeyword
+        Parameter
+          Identifier: ' z'
+          QuestionToken
+          StringKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            QuestionToken
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            QuestionToken
+            StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'z'
+            ArrayType
+              NumberKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+    a4'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a4'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error, type mismatch
+    a4'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, all present params match
+    a4'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // error, second param has type mismatch
+    a4'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          StringKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // ok, same number of required params with matching types
+    a4'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            StringKeyword
+        EqualsGreaterThanToken
+        NumericLiteral

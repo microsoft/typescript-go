@@ -1,0 +1,19 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m3'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' m3'
+  ModuleDeclaration
+    Identifier: ' m3a'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' m3a'
+    MethodDeclaration
+      Identifier: ' foo'
+      Block

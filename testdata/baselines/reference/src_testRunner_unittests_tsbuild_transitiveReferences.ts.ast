@@ -1,0 +1,188 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' getSysForTransitiveReferences'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' modifyFsBTsToNonRelativeImport'
+            Parameter
+              Identifier: 'sys'
+              TypeReference
+                Identifier: ' TestServerHost'
+            Parameter
+              Identifier: ' moduleResolution'
+              UnionType
+                LiteralType
+                  StringLiteral
+                LiteralType
+                  StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        sys'
+                    Identifier: 'writeFile'
+                  StringLiteral
+                  NoSubstitutionTemplateLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        sys'
+                    Identifier: 'writeFile'
+                  StringLiteral
+                  CallExpression
+                    Identifier: '
+            jsonToReadableText'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                compilerOptions'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    composite'
+                            TrueKeyword
+                          ShorthandPropertyAssignment
+                            Identifier: '
+                    moduleResolution'
+                      PropertyAssignment
+                        Identifier: '
+                files'
+                        ArrayLiteralExpression
+                          StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                references'
+                        ArrayLiteralExpression
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' path'
+                              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getSysForTransitiveReferences'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getSysForTransitiveReferences'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' modifyFsBTsToNonRelativeImport'
+                      Identifier: 'sys'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getSysForTransitiveReferences'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' modifyFsBTsToNonRelativeImport'
+                      Identifier: 'sys'
+                      StringLiteral

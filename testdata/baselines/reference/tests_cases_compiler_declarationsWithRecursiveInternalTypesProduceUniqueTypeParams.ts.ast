@@ -1,0 +1,316 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Key'
+    TypeParameter
+      Identifier: 'U'
+    TypeOperator
+      TypeReference
+        Identifier: ' U'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Value'
+    TypeParameter
+      Identifier: 'K'
+      TypeReference
+        Identifier: ' Key'
+        TypeReference
+          Identifier: 'U'
+    TypeParameter
+      Identifier: ' U'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' U'
+      TypeReference
+        Identifier: 'K'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' updateIfChanged'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 't'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' reduce'
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'U'
+                    Parameter
+                      Identifier: 'u'
+                      TypeReference
+                        Identifier: ' U'
+                    Parameter
+                      Identifier: ' update'
+                      FunctionType
+                        Parameter
+                          Identifier: 'u'
+                          TypeReference
+                            Identifier: ' U'
+                        TypeReference
+                          Identifier: ' T'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' set'
+                            ArrowFunction
+                              Parameter
+                                Identifier: 'newU'
+                                TypeReference
+                                  Identifier: ' U'
+                              EqualsGreaterThanToken
+                              ConditionalExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' Object'
+                                    Identifier: 'is'
+                                  Identifier: 'u'
+                                  Identifier: ' newU'
+                                QuestionToken
+                                Identifier: ' t'
+                                ColonToken
+                                CallExpression
+                                  Identifier: ' update'
+                                  Identifier: 'newU'
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' Object'
+                            Identifier: 'assign'
+                          ArrowFunction
+                            TypeParameter
+                              Identifier: 'K'
+                              TypeReference
+                                Identifier: ' Key'
+                                TypeReference
+                                  Identifier: 'U'
+                            Parameter
+                              Identifier: 'key'
+                              TypeReference
+                                Identifier: ' K'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              Identifier: '
+                reduce'
+                              TypeReference
+                                Identifier: 'Value'
+                                TypeReference
+                                  Identifier: 'K'
+                                TypeReference
+                                  Identifier: ' U'
+                              AsExpression
+                                ElementAccessExpression
+                                  Identifier: 'u'
+                                  AsExpression
+                                    Identifier: 'key'
+                                    TypeOperator
+                                      TypeReference
+                                        Identifier: ' U'
+                                TypeReference
+                                  Identifier: ' Value'
+                                  TypeReference
+                                    Identifier: 'K'
+                                  TypeReference
+                                    Identifier: ' U'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: 'v'
+                                  TypeReference
+                                    Identifier: ' Value'
+                                    TypeReference
+                                      Identifier: 'K'
+                                    TypeReference
+                                      Identifier: ' U'
+                                EqualsGreaterThanToken
+                                Block
+                                  ReturnStatement
+                                    CallExpression
+                                      Identifier: ' update'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'Object'
+                                          Identifier: 'assign'
+                                        ConditionalExpression
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'Array'
+                                              Identifier: 'isArray'
+                                            Identifier: 'u'
+                                          QuestionToken
+                                          ArrayLiteralExpression
+                                          ColonToken
+                                          ObjectLiteralExpression
+                                        Identifier: ' u'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            ComputedPropertyName
+                                              Identifier: 'key'
+                                            Identifier: ' v'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' map'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: 'updater'
+                                  FunctionType
+                                    Parameter
+                                      Identifier: 'u'
+                                      TypeReference
+                                        Identifier: ' U'
+                                    TypeReference
+                                      Identifier: ' U'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  Identifier: ' set'
+                                  CallExpression
+                                    Identifier: 'updater'
+                                    Identifier: 'u'
+                            ShorthandPropertyAssignment
+                              Identifier: ' set'
+            ReturnStatement
+              CallExpression
+                Identifier: ' reduce'
+                TypeReference
+                  Identifier: 'T'
+                Identifier: 't'
+                ArrowFunction
+                  Parameter
+                    Identifier: 't'
+                    TypeReference
+                      Identifier: ' T'
+                  EqualsGreaterThanToken
+                  Identifier: ' t'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testRecFun'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Object'
+          Parameter
+            Identifier: 'parent'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        result'
+                  Identifier: ' parent'
+                PropertyAssignment
+                  Identifier: '
+        deeper'
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'U'
+                      TypeReference
+                        Identifier: ' Object'
+                    Parameter
+                      Identifier: 'child'
+                      TypeReference
+                        Identifier: ' U'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: '
+            testRecFun'
+                      IntersectionType
+                        TypeReference
+                          Identifier: 'T'
+                        TypeReference
+                          Identifier: ' U'
+                      ObjectLiteralExpression
+                        SpreadAssignment
+                          Identifier: 'parent'
+                        SpreadAssignment
+                          Identifier: 'child'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        CallExpression
+          Identifier: ' testRecFun'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' one'
+              StringLiteral
+  ExpressionStatement
+    VoidExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' p1'
+          Identifier: 'result'
+        Identifier: 'one'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' p1'
+            Identifier: 'deeper'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' two'
+              StringLiteral
+  ExpressionStatement
+    VoidExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' p2'
+          Identifier: 'result'
+        Identifier: 'one'
+  ExpressionStatement
+    VoidExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' p2'
+          Identifier: 'result'
+        Identifier: 'two'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' p2'
+            Identifier: 'deeper'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' three'
+              StringLiteral
+  ExpressionStatement
+    VoidExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' p3'
+          Identifier: 'result'
+        Identifier: 'one'
+  ExpressionStatement
+    VoidExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' p3'
+          Identifier: 'result'
+        Identifier: 'two'
+  ExpressionStatement
+    VoidExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' p3'
+          Identifier: 'result'
+        Identifier: 'three'

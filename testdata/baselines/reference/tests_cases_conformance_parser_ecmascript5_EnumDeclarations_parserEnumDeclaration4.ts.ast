@@ -1,0 +1,6 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ''
+  ExpressionStatement
+    VoidExpression
+      ObjectLiteralExpression

@@ -1,0 +1,69 @@
+SourceFile
+  ContinueStatement
+  LabeledStatement
+    Identifier: '
+
+// non-existent label
+ONE'
+    WhileStatement
+      TrueKeyword
+      ContinueStatement
+        Identifier: ' TWO'
+  LabeledStatement
+    Identifier: '
+
+// continue from inside function
+TWO'
+    WhileStatement
+      TrueKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ContinueStatement
+                    Identifier: ' TWO'
+  LabeledStatement
+    Identifier: '
+
+THREE'
+    WhileStatement
+      TrueKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fn'
+              FunctionExpression
+                Block
+                  ContinueStatement
+                    Identifier: ' THREE'
+  WhileStatement
+    TrueKeyword
+    Block
+      ContinueStatement
+        Identifier: ' FIVE'
+      LabeledStatement
+        Identifier: '
+    FIVE'
+        WhileStatement
+          TrueKeyword
+          Block
+  LabeledStatement
+    Identifier: '
+
+// label on non-loop statement
+NINE'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' y'
+          NumericLiteral
+  WhileStatement
+    TrueKeyword
+    Block
+      ContinueStatement
+        Identifier: ' NINE'

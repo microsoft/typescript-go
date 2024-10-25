@@ -1,0 +1,69 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        ArrowFunction
+          EqualsGreaterThanToken
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  ImportEqualsDeclaration
+    Identifier: ' file3'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        Identifier: ' v1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        Identifier: ' v2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        PropertyAccessExpression
+          Identifier: ' file3'
+          Identifier: 'v3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'a'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: ' b'
+            Identifier: ' NaN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        Identifier: ' v2'

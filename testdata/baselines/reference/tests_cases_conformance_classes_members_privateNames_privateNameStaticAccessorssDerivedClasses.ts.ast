@@ -1,0 +1,49 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    GetAccessor
+      StaticKeyword
+      PrivateIdentifier
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' method'
+      Parameter
+        Identifier: 'x'
+        TypeQuery
+          Identifier: ' Derived'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              Identifier: 'x'
+              PrivateIdentifier
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' method'
+      Parameter
+        Identifier: 'x'
+        TypeQuery
+          Identifier: ' Derived'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              Identifier: 'x'
+              PrivateIdentifier

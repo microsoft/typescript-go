@@ -1,0 +1,220 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Op'
+    TypeParameter
+      Identifier: 'I'
+    TypeParameter
+      Identifier: ' O'
+    FunctionType
+      Parameter
+        Identifier: 'thing'
+        TypeReference
+          Identifier: ' Thing'
+          TypeReference
+            Identifier: 'I'
+      TypeReference
+        Identifier: ' Thing'
+        TypeReference
+          Identifier: 'O'
+  TypeAliasDeclaration
+    Identifier: ' Thing'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    value'
+        TypeReference
+          Identifier: ' T'
+      MethodSignature
+        Identifier: '
+    pipe'
+        TypeParameter
+          Identifier: 'A'
+        TypeParameter
+          Identifier: ' B'
+        Parameter
+          Identifier: '
+        opA'
+          TypeReference
+            Identifier: ' Op'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' A'
+        Parameter
+          Identifier: '
+        opB'
+          TypeReference
+            Identifier: ' Op'
+            TypeReference
+              Identifier: 'A'
+            TypeReference
+              Identifier: ' B'
+        TypeReference
+          Identifier: ' Thing'
+          TypeReference
+            Identifier: 'B'
+  TypeAliasDeclaration
+    Identifier: ' Box'
+    TypeParameter
+      Identifier: 'V'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' V'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thing'
+        TypeReference
+          Identifier: ' Thing'
+          NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' map'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' R'
+    Parameter
+      Identifier: 'project'
+      FunctionType
+        Parameter
+          Identifier: 'value'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' R'
+    TypeReference
+      Identifier: ' Op'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' R'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' tap'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'next'
+      FunctionType
+        Parameter
+          Identifier: 'value'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    TypeReference
+      Identifier: ' Op'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' box'
+    TypeParameter
+      Identifier: 'V'
+    Parameter
+      Identifier: 'data'
+      TypeReference
+        Identifier: ' V'
+    TypeReference
+      Identifier: ' Box'
+      TypeReference
+        Identifier: 'V'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' createAndUnbox'
+    TypeParameter
+      Identifier: 'V'
+    Parameter
+      Identifier: 'factory'
+      FunctionType
+        TypeReference
+          Identifier: ' Thing'
+          UnionType
+            TypeReference
+              Identifier: 'V'
+            TypeReference
+              Identifier: ' Box'
+              TypeReference
+                Identifier: 'V'
+    TypeReference
+      Identifier: ' Thing'
+      TypeReference
+        Identifier: 'V'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' log'
+    Parameter
+      Identifier: 'value'
+      AnyKeyword
+    VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result1'
+        CallExpression
+          Identifier: ' createAndUnbox'
+          ArrowFunction
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' thing'
+                Identifier: 'pipe'
+              CallExpression
+                Identifier: '
+    map'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'data'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' box'
+                    Identifier: 'data'
+              CallExpression
+                Identifier: '
+    tap'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'v'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' log'
+                    Identifier: 'v'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result2'
+        CallExpression
+          Identifier: ' createAndUnbox'
+          ArrowFunction
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' thing'
+                Identifier: 'pipe'
+              CallExpression
+                Identifier: '
+    tap'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'v'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' log'
+                    Identifier: 'v'
+              CallExpression
+                Identifier: '
+    map'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'data'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' box'
+                    Identifier: 'data'

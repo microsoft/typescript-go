@@ -1,0 +1,15 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Tools'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' NullLogger'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' logger'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Tools'
+            Identifier: 'NullLogger'

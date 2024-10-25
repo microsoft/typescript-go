@@ -1,0 +1,36 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' forwardRef'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Something'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      CallExpression
+        Identifier: 'Something'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' v'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Identifier: ' Testing123'
+    ExportKeyword
+    Identifier: ' Testing123'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' prop0'
+      StringKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' prop1'
+      PropertyAccessExpression
+        Identifier: ' Testing123'
+        Identifier: 'prop0'

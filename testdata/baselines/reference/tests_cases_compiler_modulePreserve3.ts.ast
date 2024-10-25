@@ -1,0 +1,13 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+  ExportDeclaration
+    NamedExports
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'div'
+        RegularExpressionLiteral

@@ -1,0 +1,47 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' BoxOfFoo'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    item'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    self'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Bar'
+        TypeReference
+          Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    other'
+      TypeReference
+        Identifier: ' BoxOfFoo'
+        TypeReference
+          Identifier: 'T'

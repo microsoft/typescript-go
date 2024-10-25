@@ -1,0 +1,301 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' RulesMap'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CommentRange'
+        ImportSpecifier
+          Identifier: ' EditorSettings'
+        ImportSpecifier
+          Identifier: ' FormatCodeSettings'
+        ImportSpecifier
+          Identifier: ' FormattingHost'
+        ImportSpecifier
+          Identifier: ' LanguageVariant'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' SourceFileLike'
+        ImportSpecifier
+          Identifier: ' SyntaxKind'
+        ImportSpecifier
+          Identifier: ' TextChange'
+        ImportSpecifier
+          Identifier: ' TextRange'
+        ImportSpecifier
+          Identifier: ' TriviaSyntaxKind'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FormatContext'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' FormatCodeSettings'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' getRules'
+      TypeReference
+        Identifier: ' RulesMap'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' FormattingHost'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TextRangeWithKind'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' SyntaxKind'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' TextRange'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TextRangeWithTriviaKind'
+    TypeReference
+      Identifier: ' TextRangeWithKind'
+      TypeReference
+        Identifier: 'TriviaSyntaxKind'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TokenInfo'
+    PropertySignature
+      Identifier: '
+    leadingTrivia'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' TextRangeWithTriviaKind'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    token'
+      TypeReference
+        Identifier: ' TextRangeWithKind'
+    PropertySignature
+      Identifier: '
+    trailingTrivia'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' TextRangeWithTriviaKind'
+        UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createTextRangeWithKind'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    Parameter
+      Identifier: 'pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' end'
+      NumberKeyword
+    Parameter
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' TextRangeWithKind'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' formatOnEnter'
+    Parameter
+      Identifier: 'position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' formatContext'
+      TypeReference
+        Identifier: ' FormatContext'
+    ArrayType
+      TypeReference
+        Identifier: ' TextChange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' formatOnSemicolon'
+    Parameter
+      Identifier: 'position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' formatContext'
+      TypeReference
+        Identifier: ' FormatContext'
+    ArrayType
+      TypeReference
+        Identifier: ' TextChange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' formatOnOpeningCurly'
+    Parameter
+      Identifier: 'position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' formatContext'
+      TypeReference
+        Identifier: ' FormatContext'
+    ArrayType
+      TypeReference
+        Identifier: ' TextChange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' formatOnClosingCurly'
+    Parameter
+      Identifier: 'position'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' formatContext'
+      TypeReference
+        Identifier: ' FormatContext'
+    ArrayType
+      TypeReference
+        Identifier: ' TextChange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' formatDocument'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' formatContext'
+      TypeReference
+        Identifier: ' FormatContext'
+    ArrayType
+      TypeReference
+        Identifier: ' TextChange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' formatSelection'
+    Parameter
+      Identifier: 'start'
+      NumberKeyword
+    Parameter
+      Identifier: ' end'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' formatContext'
+      TypeReference
+        Identifier: ' FormatContext'
+    ArrayType
+      TypeReference
+        Identifier: ' TextChange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' formatNodeGivenIndentation'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFileLike'
+      TypeReference
+        Identifier: ' SourceFileLike'
+    Parameter
+      Identifier: ' languageVariant'
+      TypeReference
+        Identifier: ' LanguageVariant'
+    Parameter
+      Identifier: ' initialIndentation'
+      NumberKeyword
+    Parameter
+      Identifier: ' delta'
+      NumberKeyword
+    Parameter
+      Identifier: ' formatContext'
+      TypeReference
+        Identifier: ' FormatContext'
+    ArrayType
+      TypeReference
+        Identifier: ' TextChange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRangeOfEnclosingComment'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' precedingToken'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        LiteralType
+          NullKeyword
+    Parameter
+      Identifier: ' // eslint-disable-line no-restricted-syntax
+tokenAtPosition'
+      QuestionToken
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' CommentRange'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getIndentationString'
+    Parameter
+      Identifier: 'indentation'
+      NumberKeyword
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' EditorSettings'
+    StringKeyword

@@ -1,0 +1,21 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' panic'
+    Parameter
+      Identifier: 'val'
+      ArrayType
+        StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'opt'
+      ArrayType
+        StringKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+panic'
+      ArrayLiteralExpression
+      StringLiteral
+      StringLiteral

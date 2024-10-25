@@ -1,0 +1,180 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    bar'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' NotOptional'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        PropertySignature
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' Base'
+        PropertySignature
+          Identifier: '
+        bar'
+          TypeReference
+            Identifier: ' Derived'
+      InterfaceDeclaration
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+        PropertySignature
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' Derived'
+        PropertySignature
+          Identifier: ' // ok
+        bar'
+          TypeReference
+            Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' A2'
+        PropertySignature
+          NumericLiteral
+          TypeReference
+            Identifier: ' Base'
+        PropertySignature
+          NumericLiteral
+          TypeReference
+            Identifier: ' Derived'
+      InterfaceDeclaration
+        Identifier: ' B2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A2'
+        PropertySignature
+          NumericLiteral
+          TypeReference
+            Identifier: ' Derived'
+        PropertySignature
+          NumericLiteral
+          TypeReference
+            Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' A3'
+        PropertySignature
+          StringLiteral
+          TypeReference
+            Identifier: ' Base'
+        PropertySignature
+          StringLiteral
+          TypeReference
+            Identifier: ' Derived'
+      InterfaceDeclaration
+        Identifier: ' B3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A3'
+        PropertySignature
+          StringLiteral
+          TypeReference
+            Identifier: ' Derived'
+        PropertySignature
+          StringLiteral
+          TypeReference
+            Identifier: ' Base'
+  ModuleDeclaration
+    Identifier: ' Optional'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        PropertySignature
+          Identifier: '
+        foo'
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'
+        PropertySignature
+          Identifier: '
+        bar'
+          QuestionToken
+          TypeReference
+            Identifier: ' Derived'
+      InterfaceDeclaration
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+        PropertySignature
+          Identifier: '
+        foo'
+          QuestionToken
+          TypeReference
+            Identifier: ' Derived'
+        PropertySignature
+          Identifier: ' // ok
+        bar'
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' A2'
+        PropertySignature
+          NumericLiteral
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'
+        PropertySignature
+          NumericLiteral
+          QuestionToken
+          TypeReference
+            Identifier: ' Derived'
+      InterfaceDeclaration
+        Identifier: ' B2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A2'
+        PropertySignature
+          NumericLiteral
+          QuestionToken
+          TypeReference
+            Identifier: ' Derived'
+        PropertySignature
+          NumericLiteral
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' A3'
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          TypeReference
+            Identifier: ' Derived'
+      InterfaceDeclaration
+        Identifier: ' B3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A3'
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          TypeReference
+            Identifier: ' Derived'
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'

@@ -1,0 +1,108 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TranslationEntry'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    args'
+        UnionType
+          TupleType
+          TupleType
+            UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' Translations'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' args'
+            TupleType
+              StringKeyword
+      PropertySignature
+        Identifier: '
+    b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' args'
+            TupleType
+  TypeAliasDeclaration
+    Identifier: ' TProps'
+    TypeParameter
+      Identifier: 'Entry'
+      TypeReference
+        Identifier: ' TranslationEntry'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    getTranslationEntry'
+          FunctionType
+            Parameter
+              Identifier: 'allTranslations'
+              TypeReference
+                Identifier: ' Translations'
+            TypeReference
+              Identifier: ' Entry'
+      ParenthesizedType
+        ConditionalType
+          IndexedAccessType
+            TypeReference
+              Identifier: 'Entry'
+            LiteralType
+              StringLiteral
+          TupleType
+            UnknownKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    args'
+              IndexedAccessType
+                IndexedAccessType
+                  TypeReference
+                    Identifier: ' Entry'
+                  LiteralType
+                    StringLiteral
+                LiteralType
+                  NumericLiteral
+          TypeLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' T'
+    TypeParameter
+      Identifier: 'Entry'
+      TypeReference
+        Identifier: ' TranslationEntry'
+    Parameter
+      Identifier: '
+    props'
+      TypeReference
+        Identifier: ' TProps'
+        TypeReference
+          Identifier: 'Entry'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'T'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' getTranslationEntry'
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'allTranslations'
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' allTranslations'
+                Identifier: 'a'
+        JsxAttribute
+          Identifier: ' args'
+          StringLiteral

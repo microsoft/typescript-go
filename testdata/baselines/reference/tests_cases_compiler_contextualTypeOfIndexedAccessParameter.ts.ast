@@ -1,0 +1,95 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Keys'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' OptionsForKey'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' cb'
+              FunctionType
+                Parameter
+                  Identifier: 'p'
+                  NumberKeyword
+                NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          TypeLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'K'
+      TypeReference
+        Identifier: ' Keys'
+    Parameter
+      Identifier: 'key'
+      TypeReference
+        Identifier: ' K'
+    Parameter
+      Identifier: ' options'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' OptionsForKey'
+        TypeReference
+          Identifier: 'K'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    cb'
+          ArrowFunction
+            Parameter
+              Identifier: ' p'
+            EqualsGreaterThanToken
+            Identifier: ' p'
+  FunctionDeclaration
+    Identifier: ' g'
+    TypeParameter
+      Identifier: '
+    K'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: 'x'
+      IndexedAccessType
+        ParenthesizedType
+          IntersectionType
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                StringKeyword
+            TypeLiteral
+              PropertySignature
+                Identifier: ' b'
+                StringKeyword
+        TypeReference
+          Identifier: 'K'
+    Parameter
+      Identifier: ' y'
+      StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'

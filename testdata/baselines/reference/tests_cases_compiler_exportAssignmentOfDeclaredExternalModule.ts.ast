@@ -1,0 +1,43 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Sammy'
+    ConstructSignature
+      AnyKeyword
+    CallSignature
+      NumberKeyword
+  ExportAssignment
+    Identifier: ' Sammy'
+  ImportEqualsDeclaration
+    Identifier: ' Sammy'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' Sammy'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          Identifier: ' Sammy'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' Sammy'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' z'

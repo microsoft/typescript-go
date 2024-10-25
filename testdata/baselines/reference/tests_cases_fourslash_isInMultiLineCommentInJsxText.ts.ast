@@ -1,0 +1,31 @@
+SourceFile
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PrefixUnaryExpression
+      Identifier: 'i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'i'
+              Identifier: 'toString'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    verify'
+              Identifier: 'not'
+            Identifier: 'isInCommentAtPosition'

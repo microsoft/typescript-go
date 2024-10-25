@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'cla'
+      LessThanToken
+      Identifier: 'ss'
+  Block
+    ExpressionStatement
+      Identifier: '
+  _'
+    TryStatement
+      Block
+      Block

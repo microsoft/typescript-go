@@ -1,0 +1,16 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' JSONSchema4'
+    PropertySignature
+      Identifier: '
+  a'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+  extends'
+      QuestionToken
+      UnionType
+        StringKeyword
+        ArrayType
+          StringKeyword

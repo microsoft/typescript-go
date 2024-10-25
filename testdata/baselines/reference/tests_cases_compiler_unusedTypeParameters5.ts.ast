@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'Dummy'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' Dummy'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+            TypeParameter
+              Identifier: ' U'
+            TypeParameter
+              Identifier: ' K'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' A'
+              TypeReference
+                Identifier: 'U'

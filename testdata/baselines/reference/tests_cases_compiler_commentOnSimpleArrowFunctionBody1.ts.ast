@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Foo'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+ 
+Foo'
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral

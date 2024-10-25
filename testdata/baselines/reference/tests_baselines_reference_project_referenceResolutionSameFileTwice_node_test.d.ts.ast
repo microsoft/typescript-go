@@ -1,0 +1,4 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' test'

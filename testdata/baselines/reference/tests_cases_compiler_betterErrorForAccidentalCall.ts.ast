@@ -1,0 +1,66 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    StringKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          CallExpression
+            Identifier: '
+
+foo'
+          AsExpression
+            NumericLiteral
+            NumberKeyword
+        Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          CallExpression
+            Identifier: '
+
+foo'
+          AsExpression
+            NumericLiteral
+            NumberKeyword
+        Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          CallExpression
+            Identifier: '
+
+foo'
+          AsExpression
+            NumericLiteral
+            NumberKeyword
+        Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          CallExpression
+            Identifier: '
+
+foo'
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            NumericLiteral
+        Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          CallExpression
+            Identifier: '
+
+foo'
+          TypeAssertionExpression
+            NumberKeyword
+            NumericLiteral
+        Identifier: 'toString'

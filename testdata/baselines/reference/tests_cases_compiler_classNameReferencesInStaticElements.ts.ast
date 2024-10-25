@@ -1,0 +1,89 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            ThisKeyword
+            Identifier: ' Foo'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              ThisKeyword
+              Identifier: ' Foo'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y'
+      FunctionExpression
+        Parameter
+          Identifier: 'this'
+          UnknownKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              ThisKeyword
+              Identifier: ' Foo'
+    MethodDeclaration
+      PrivateIdentifier
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            Identifier: 'Foo'
+    MethodDeclaration
+      Identifier: '
+    x'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oldFoo'
+        Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        AsExpression
+          Identifier: 'Foo'
+          AnyKeyword
+      EqualsToken
+      NullKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+oldFoo'
+        Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+oldFoo'
+        Identifier: 'y'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' oldFoo'
+        Identifier: 'x'

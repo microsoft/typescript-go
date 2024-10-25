@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+/////** @typedef {string} Id */
+////
+/////** /**/ */
+////function foo(x, y, z) {}
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      NoSubstitutionTemplateLiteral

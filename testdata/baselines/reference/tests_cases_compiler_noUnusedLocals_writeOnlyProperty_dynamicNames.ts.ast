@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' Symbol'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          Identifier: ' Symbol'
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      ComputedPropertyName
+        Identifier: 'x'
+      NumberKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      ComputedPropertyName
+        Identifier: 'y'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          ElementAccessExpression
+            ThisKeyword
+            Identifier: 'y'

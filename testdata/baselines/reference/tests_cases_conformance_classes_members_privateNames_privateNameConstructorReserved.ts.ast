@@ -1,0 +1,6 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      PrivateIdentifier
+      Block

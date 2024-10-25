@@ -1,0 +1,42 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////class C {
+////    [|[Symbol.iterator]() {}|]
+////}
+
+verify'
+        Identifier: 'navigateTo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    pattern'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    expected'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' range'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+              PropertyAssignment
+                Identifier: ' containerName'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' containerKind'
+                StringLiteral

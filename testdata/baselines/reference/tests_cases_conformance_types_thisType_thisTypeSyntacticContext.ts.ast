@@ -1,0 +1,84 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'this'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' n'
+          NumberKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' test'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'this'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' n'
+                    NumberKeyword
+              VoidKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+o'
+        Identifier: 'test'
+      EqualsToken
+      Identifier: ' f'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+o'
+        Identifier: 'test'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NonNullExpression
+          Identifier: '
+o'
+        Identifier: 'test'
+  ExpressionStatement
+    CallExpression
+      NonNullExpression
+        PropertyAccessExpression
+          Identifier: '
+o'
+          Identifier: 'test'
+  ExpressionStatement
+    CallExpression
+      NonNullExpression
+        NonNullExpression
+          NonNullExpression
+            PropertyAccessExpression
+              Identifier: '
+o'
+              Identifier: 'test'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        NonNullExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            Identifier: 'test'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'o'
+          Identifier: 'test'

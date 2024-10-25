@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'n'
+    Parameter
+      Identifier: ' s'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      NumericLiteral
+      StringLiteral

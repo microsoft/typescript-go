@@ -1,0 +1,75 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' bar'
+    NumberKeyword
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' MutableRefObject'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    current'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' useRef'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'current'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' MutableRefObject'
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' current'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' useCsvParser'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' parserRef'
+                  CallExpression
+                    Identifier: ' useRef'
+                    ImportType
+                      LiteralType
+                        StringLiteral
+                    NullKeyword
+            ReturnStatement
+              Identifier: ' parserRef'

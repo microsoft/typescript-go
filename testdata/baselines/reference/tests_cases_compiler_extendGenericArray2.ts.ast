@@ -1,0 +1,34 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IFoo'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Array'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IFoo'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          StringKeyword
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' arr'
+          Identifier: 'x'

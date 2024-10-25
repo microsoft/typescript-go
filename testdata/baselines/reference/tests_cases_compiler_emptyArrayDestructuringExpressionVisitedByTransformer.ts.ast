@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BinaryExpression
+          ArrayLiteralExpression
+          EqualsToken
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                NumericLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: '_'
+              EqualsGreaterThanToken
+              Identifier: ' _'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              NumericLiteral
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            EqualsGreaterThanToken
+            Identifier: ' _'

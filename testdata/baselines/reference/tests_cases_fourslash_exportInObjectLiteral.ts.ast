@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: a.ts
+//// const k = {
+////     [|export|] f() { }
+//// }
+
+verify'
+        Identifier: 'baselineDocumentHighlights'
+      ElementAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'test'
+            Identifier: 'ranges'
+        NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' filesToSearch'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              ElementAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'test'
+                    Identifier: 'ranges'
+                NumericLiteral
+              Identifier: 'fileName'

@@ -1,0 +1,41 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IFoo'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      StringKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'IFoo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NullKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'IFoo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            Identifier: ' undefined'
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'IFoo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' c'
+            NullKeyword

@@ -1,0 +1,7 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        StringKeyword

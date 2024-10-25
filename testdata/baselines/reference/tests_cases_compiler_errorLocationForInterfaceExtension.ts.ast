@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        StringLiteral
+  InterfaceDeclaration
+    Identifier: ' x'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' string'

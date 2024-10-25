@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' ns'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+ns'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+ns'
+      Identifier: 'b'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' foo'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+
+foo'
+        Identifier: 'ns'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'ns'
+      Identifier: 'b'

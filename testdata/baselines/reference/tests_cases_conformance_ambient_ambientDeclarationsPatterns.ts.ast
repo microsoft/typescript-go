@@ -1,0 +1,76 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        VoidKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' baz'
+            StringKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foos'
+            StringKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            StringKeyword
+      ExportAssignment
+        Identifier: ' x'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'foo'
+        ImportSpecifier
+          Identifier: ' baz'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'baz'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'foos'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'foos'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' fileText'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'fileText'

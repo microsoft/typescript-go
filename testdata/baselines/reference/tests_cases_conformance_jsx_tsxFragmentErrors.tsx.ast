@@ -1,0 +1,33 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxText
+      JsxClosingFragment
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'div'
+      GreaterThanToken
+      JsxFragment
+        JsxOpeningFragment
+        JsxText
+        JsxClosingFragment

@@ -1,0 +1,719 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    closeFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f1'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' tmp'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'f1'
+                            Identifier: ' tmp'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // send open request
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'f1'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // reload from tmp file
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'ReloadRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'Reload'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' file'
+                              PropertyAccessExpression
+                                Identifier: ' f1'
+                                Identifier: 'path'
+                            PropertyAssignment
+                              Identifier: ' tmpfile'
+                              PropertyAccessExpression
+                                Identifier: ' tmp'
+                                Identifier: 'path'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' snap1'
+                        CallExpression
+                          PropertyAccessExpression
+                            NonNullExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' session'
+                                      Identifier: 'getProjectService'
+                                  Identifier: 'getScriptInfo'
+                                PropertyAccessExpression
+                                  Identifier: 'f1'
+                                  Identifier: 'path'
+                            Identifier: 'getSnapshot'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'logger'
+                        Identifier: 'log'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          PropertyAccessExpression
+                            Identifier: 'f1'
+                            Identifier: 'path'
+                          TemplateMiddle
+                        TemplateSpan
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'getSnapshotText'
+                            Identifier: 'snap1'
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // reload from original file file
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'ReloadRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'Reload'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' file'
+                              PropertyAccessExpression
+                                Identifier: ' f1'
+                                Identifier: 'path'
+                            PropertyAssignment
+                              Identifier: ' tmpfile'
+                              NonNullExpression
+                                Identifier: ' undefined'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' snap2'
+                        CallExpression
+                          PropertyAccessExpression
+                            NonNullExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' session'
+                                      Identifier: 'getProjectService'
+                                  Identifier: 'getScriptInfo'
+                                PropertyAccessExpression
+                                  Identifier: 'f1'
+                                  Identifier: 'path'
+                            Identifier: 'getSnapshot'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        session'
+                          Identifier: 'logger'
+                        Identifier: 'log'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          PropertyAccessExpression
+                            Identifier: 'f1'
+                            Identifier: 'path'
+                          TemplateMiddle
+                        TemplateSpan
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'getSnapshotText'
+                            Identifier: 'snap2'
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f1'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' tmp'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'f1'
+                            Identifier: ' tmp'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' openContent'
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        // send open request
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' file'
+                            PropertyAccessExpression
+                              Identifier: ' f1'
+                              Identifier: 'path'
+                          PropertyAssignment
+                            Identifier: ' content'
+                            Identifier: ' openContent'
+                      Identifier: ' session'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' info'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' session'
+                                  Identifier: 'getProjectService'
+                              Identifier: 'getScriptInfo'
+                            PropertyAccessExpression
+                              Identifier: 'f1'
+                              Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isDefined'
+                      Identifier: 'info'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkScriptInfoContents'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // send close request
+        closeFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'f1'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkScriptInfoAndProjects'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Can reload contents of the file when its not open and has no project
+        // reload from temp file
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'ReloadRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'Reload'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' file'
+                              PropertyAccessExpression
+                                Identifier: ' f1'
+                                Identifier: 'path'
+                            PropertyAssignment
+                              Identifier: ' tmpfile'
+                              PropertyAccessExpression
+                                Identifier: ' tmp'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkScriptInfoAndProjects'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // reload from own file
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'ReloadRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'Reload'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' file'
+                              PropertyAccessExpression
+                                Identifier: ' f1'
+                                Identifier: 'path'
+                            PropertyAssignment
+                              Identifier: ' tmpfile'
+                              NonNullExpression
+                                Identifier: ' undefined'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkScriptInfoAndProjects'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Open file again without setting its content
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'f1'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkScriptInfoAndProjects'
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' snap'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' info'
+                            Identifier: 'getSnapshot'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // send close request
+        closeFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'f1'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkScriptInfoAndProjects'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'info'
+                          Identifier: 'getSnapshot'
+                      Identifier: ' snap'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // reload from temp file
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'ReloadRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'Reload'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' file'
+                              PropertyAccessExpression
+                                Identifier: ' f1'
+                                Identifier: 'path'
+                            PropertyAssignment
+                              Identifier: ' tmpfile'
+                              PropertyAccessExpression
+                                Identifier: ' tmp'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkScriptInfoAndProjects'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'notStrictEqual'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'info'
+                          Identifier: 'getSnapshot'
+                      Identifier: ' snap'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // reload from own file
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'ReloadRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'Reload'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' file'
+                              PropertyAccessExpression
+                                Identifier: ' f1'
+                                Identifier: 'path'
+                            PropertyAssignment
+                              Identifier: ' tmpfile'
+                              NonNullExpression
+                                Identifier: ' undefined'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkScriptInfoAndProjects'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'notStrictEqual'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'info'
+                          Identifier: 'getSnapshot'
+                      Identifier: ' snap'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+                  FunctionDeclaration
+                    Identifier: ' checkScriptInfoAndProjects'
+                    Parameter
+                      Identifier: 'captionForContents'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'strictEqual'
+                          CallExpression
+                            PropertyAccessExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'session'
+                                  Identifier: 'getProjectService'
+                              Identifier: 'getScriptInfo'
+                            PropertyAccessExpression
+                              Identifier: 'f1'
+                              Identifier: 'path'
+                          Identifier: ' info'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            checkScriptInfoContents'
+                          Identifier: 'captionForContents'
+                  FunctionDeclaration
+                    Identifier: ' checkScriptInfoContents'
+                    Parameter
+                      Identifier: 'captionForContents'
+                      StringKeyword
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' snap'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' info'
+                                Identifier: 'getSnapshot'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            session'
+                              Identifier: 'logger'
+                            Identifier: 'log'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'captionForContents'
+                              TemplateMiddle
+                            TemplateSpan
+                              PropertyAccessExpression
+                                Identifier: 'info'
+                                Identifier: 'fileName'
+                              TemplateMiddle
+                            TemplateSpan
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'getSnapshotText'
+                                Identifier: 'snap'
+                              TemplateTail

@@ -1,0 +1,55 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @allowJs: true
+
+// @Filename: /a.js
+////import Foo /*a*/
+////
+////function fromBar() {}
+
+// @Filename: /b.jsx
+////import Foo /*b*/
+////
+////function fromBar() {}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'GlobalsOrKeywords'
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsForImportStatements'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeInsertTextCompletions'
+              TrueKeyword

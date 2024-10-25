@@ -1,0 +1,30 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' x'
+    Block
+      ReturnStatement
+        TrueKeyword
+  ImportEqualsDeclaration
+    Identifier: ' foo1'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          Identifier: ' foo1'
+          Identifier: 'x'
+  ExportAssignment
+    Identifier: ' x'
+  ImportEqualsDeclaration
+    Identifier: ' foo2'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' foo2'

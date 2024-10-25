@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'args'
+      ArrayType
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+            NumberKeyword
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' args'
+          Identifier: 'length'

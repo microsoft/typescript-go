@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Greeter'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Greeter'
+          Identifier: 'prototype'
+        Identifier: 'greet'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExportAssignment
+    NewExpression
+      Identifier: ' Greeter'

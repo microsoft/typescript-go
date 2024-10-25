@@ -1,0 +1,47 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' sayHello'
+    StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anything'
+        AnyKeyword
+  ExportAssignment
+    Identifier: ' anything'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anything'
+        AnyKeyword
+  ExportAssignment
+    Identifier: ' anything'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' sayHello'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' path'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' fs'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+
+path'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+sayHello'
+  ExpressionStatement
+    Identifier: '
+fs'

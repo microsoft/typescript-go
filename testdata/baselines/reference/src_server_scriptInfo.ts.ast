@@ -1,0 +1,3333 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    assign'
+        ImportSpecifier
+          Identifier: '
+    clear'
+        ImportSpecifier
+          Identifier: '
+    closeFileWatcherOf'
+        ImportSpecifier
+          Identifier: '
+    computeLineAndCharacterOfPosition'
+        ImportSpecifier
+          Identifier: '
+    computeLineStarts'
+        ImportSpecifier
+          Identifier: '
+    computePositionOfLineAndCharacter'
+        ImportSpecifier
+          Identifier: '
+    contains'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromBounds'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    directorySeparator'
+        ImportSpecifier
+          Identifier: '
+    DocumentPositionMapper'
+        ImportSpecifier
+          Identifier: '
+    DocumentRegistryBucketKeyWithMode'
+        ImportSpecifier
+          Identifier: '
+    emptyOptions'
+        ImportSpecifier
+          Identifier: '
+    FileWatcher'
+        ImportSpecifier
+          Identifier: '
+    FileWatcherEventKind'
+        ImportSpecifier
+          Identifier: '
+    forEach'
+        ImportSpecifier
+          Identifier: '
+    FormatCodeSettings'
+        ImportSpecifier
+          Identifier: '
+    getBaseFileName'
+        ImportSpecifier
+          Identifier: '
+    getDefaultFormatCodeSettings'
+        ImportSpecifier
+          Identifier: '
+    getLineInfo'
+        ImportSpecifier
+          Identifier: '
+    getScriptKindFromFileName'
+        ImportSpecifier
+          Identifier: '
+    getSnapshotText'
+        ImportSpecifier
+          Identifier: '
+    hasTSFileExtension'
+        ImportSpecifier
+          Identifier: '
+    IScriptSnapshot'
+        ImportSpecifier
+          Identifier: '
+    isString'
+        ImportSpecifier
+          Identifier: '
+    LineInfo'
+        ImportSpecifier
+          Identifier: '
+    missingFileModifiedTime'
+        ImportSpecifier
+          Identifier: '
+    orderedRemoveItem'
+        ImportSpecifier
+          Identifier: '
+    Path'
+        ImportSpecifier
+          Identifier: '
+    ScriptKind'
+        ImportSpecifier
+          Identifier: '
+    ScriptSnapshot'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SourceFileLike'
+        ImportSpecifier
+          Identifier: '
+    TextSpan'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    AbsolutePositionAndLineText'
+        ImportSpecifier
+          Identifier: '
+    ConfiguredProject'
+        ImportSpecifier
+          Identifier: '
+    Errors'
+        ImportSpecifier
+          Identifier: '
+    InferredProject'
+        ImportSpecifier
+          Identifier: '
+    isBackgroundProject'
+        ImportSpecifier
+          Identifier: '
+    isConfiguredProject'
+        ImportSpecifier
+          Identifier: '
+    isExternalProject'
+        ImportSpecifier
+          Identifier: '
+    isInferredProject'
+        ImportSpecifier
+          Identifier: '
+    isProjectDeferredClose'
+        ImportSpecifier
+          Identifier: '
+    maxFileSize'
+        ImportSpecifier
+          Identifier: '
+    NormalizedPath'
+        ImportSpecifier
+          Identifier: '
+    Project'
+        ImportSpecifier
+          Identifier: '
+    ScriptVersionCache'
+        ImportSpecifier
+          Identifier: '
+    ServerHost'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' protocol'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' TextStorage'
+    PropertyDeclaration
+      Identifier: '
+    version'
+      NumberKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' svc'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptVersionCache'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' text'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' textSnapshot'
+      UnionType
+        TypeReference
+          Identifier: ' IScriptSnapshot'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' lineMap'
+      UnionType
+        ArrayType
+          NumberKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fileSize'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' isOpen'
+      FalseKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' ownFileText'
+      FalseKeyword
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * True when reloading contents of file from the disk is pending
+     */
+    pendingReloadFromDisk'
+      FalseKeyword
+    Constructor
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' ServerHost'
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' info'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      Parameter
+        Identifier: ' initialVersion'
+        QuestionToken
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'version'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' initialVersion'
+              BarBarToken
+              NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getVersion'
+      StringKeyword
+      Block
+        ReturnStatement
+          ConditionalExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'svc'
+            QuestionToken
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'version'
+                TemplateMiddle
+              TemplateSpan
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'svc'
+                    Identifier: 'getSnapshotVersion'
+                TemplateTail
+            ColonToken
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'version'
+                TemplateTail
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' hasScriptVersionCache_TestOnly'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'svc'
+            ExclamationEqualsEqualsToken
+            Identifier: ' undefined'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' resetSourceMapInfo'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'info'
+              Identifier: 'sourceFileLike'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'info'
+              Identifier: 'closeSourceMapFileWatcher'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'info'
+              Identifier: 'sourceMapFilePath'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'info'
+              Identifier: 'declarationInfoPath'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'info'
+              Identifier: 'sourceInfos'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'info'
+              Identifier: 'documentPositionMapper'
+            EqualsToken
+            Identifier: ' undefined'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' useText'
+      Parameter
+        Identifier: 'newText'
+        StringKeyword
+      VoidKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'svc'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'text'
+            EqualsToken
+            Identifier: ' newText'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'textSnapshot'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'lineMap'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fileSize'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'resetSourceMapInfo'
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'version'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' edit'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        NumberKeyword
+      Parameter
+        Identifier: ' newText'
+        StringKeyword
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'switchToScriptVersionCache'
+              Identifier: 'edit'
+            Identifier: 'start'
+            BinaryExpression
+              Identifier: ' end'
+              MinusToken
+              Identifier: ' start'
+            Identifier: ' newText'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ownFileText'
+            EqualsToken
+            FalseKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'text'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'textSnapshot'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'lineMap'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fileSize'
+            EqualsToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'resetSourceMapInfo'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' reload'
+      Parameter
+        Identifier: 'newText'
+        StringKeyword
+      BooleanKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        Debug'
+              Identifier: 'assert'
+            BinaryExpression
+              Identifier: 'newText'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'pendingReloadFromDisk'
+            EqualsToken
+            FalseKeyword
+        IfStatement
+          BinaryExpression
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'text'
+            AmpersandAmpersandToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'svc'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'text'
+                EqualsToken
+                CallExpression
+                  Identifier: ' getSnapshotText'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'svc'
+                      Identifier: 'getSnapshot'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'text'
+            ExclamationEqualsEqualsToken
+            Identifier: ' newText'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'useText'
+                Identifier: 'newText'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'ownFileText'
+                EqualsToken
+                FalseKeyword
+            ReturnStatement
+              TrueKeyword
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' reloadWithFileText'
+      Parameter
+        Identifier: 'tempFileName'
+        QuestionToken
+        StringKeyword
+      BooleanKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' text'
+                  Identifier: ' newText'
+                BindingElement
+                  Identifier: ' fileSize'
+              ConditionalExpression
+                BinaryExpression
+                  Identifier: ' tempFileName'
+                  BarBarToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'info'
+                        Identifier: 'isDynamicOrHasMixedContent'
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'getFileTextAndSize'
+                  Identifier: 'tempFileName'
+                ColonToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' text'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' fileSize'
+                    Identifier: ' undefined'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' reloaded'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'reload'
+                Identifier: 'newText'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fileSize'
+            EqualsToken
+            Identifier: ' fileSize'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ownFileText'
+            EqualsToken
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'tempFileName'
+              BarBarToken
+              BinaryExpression
+                Identifier: ' tempFileName'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'info'
+                  Identifier: 'fileName'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ownFileText'
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'info'
+                Identifier: 'mTime'
+              EqualsEqualsEqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' missingFileModifiedTime'
+                  Identifier: 'getTime'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'info'
+                  Identifier: 'mTime'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      BinaryExpression
+                        CallExpression
+                          NonNullExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'host'
+                              Identifier: 'getModifiedTime'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'info'
+                            Identifier: 'fileName'
+                        BarBarToken
+                        Identifier: ' missingFileModifiedTime'
+                    Identifier: 'getTime'
+        ReturnStatement
+          Identifier: ' reloaded'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' scheduleReloadIfNeeded'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          ConditionalExpression
+            BinaryExpression
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'pendingReloadFromDisk'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'ownFileText'
+            QuestionToken
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pendingReloadFromDisk'
+              EqualsToken
+              TrueKeyword
+            ColonToken
+            FalseKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' delayReloadFromFileIntoText'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'pendingReloadFromDisk'
+            EqualsToken
+            TrueKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getTelemetryFileSize'
+      NumberKeyword
+      Block
+        ReturnStatement
+          ConditionalExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'fileSize'
+            QuestionToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fileSize'
+            ColonToken
+            ConditionalExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'text'
+              QuestionToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'text'
+                Identifier: 'length'
+              ColonToken
+              ConditionalExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'svc'
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'svc'
+                        Identifier: 'getSnapshot'
+                    Identifier: 'getLength'
+                ColonToken
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'getSnapshot'
+                    Identifier: 'getLength'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getSnapshot'
+      TypeReference
+        Identifier: ' IScriptSnapshot'
+      Block
+        ReturnStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'tryUseScriptVersionCache'
+                QuestionDotToken
+                Identifier: 'getSnapshot'
+            BarBarToken
+            ParenthesizedExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'textSnapshot'
+                QuestionQuestionEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ScriptSnapshot'
+                    Identifier: 'fromString'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'Debug'
+                      Identifier: 'checkDefined'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'text'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getAbsolutePositionAndLineText'
+      Parameter
+        Identifier: 'oneBasedLine'
+        NumberKeyword
+      TypeReference
+        Identifier: ' AbsolutePositionAndLineText'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' svc'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'tryUseScriptVersionCache'
+        IfStatement
+          Identifier: 'svc'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' svc'
+                Identifier: 'getAbsolutePositionAndLineText'
+              Identifier: 'oneBasedLine'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lineMap'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getLineMap'
+        ReturnStatement
+          ConditionalExpression
+            BinaryExpression
+              Identifier: ' oneBasedLine'
+              LessThanEqualsToken
+              PropertyAccessExpression
+                Identifier: ' lineMap'
+                Identifier: 'length'
+            QuestionToken
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+                absolutePosition'
+                ElementAccessExpression
+                  Identifier: ' lineMap'
+                  BinaryExpression
+                    Identifier: 'oneBasedLine'
+                    MinusToken
+                    NumericLiteral
+              PropertyAssignment
+                Identifier: '
+                lineText'
+                CallExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'text'
+                    Identifier: 'substring'
+                  ElementAccessExpression
+                    Identifier: 'lineMap'
+                    BinaryExpression
+                      Identifier: 'oneBasedLine'
+                      MinusToken
+                      NumericLiteral
+                  ElementAccessExpression
+                    Identifier: ' lineMap'
+                    Identifier: 'oneBasedLine'
+            ColonToken
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+                absolutePosition'
+                PropertyAccessExpression
+                  NonNullExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'text'
+                  Identifier: 'length'
+              PropertyAssignment
+                Identifier: '
+                lineText'
+                Identifier: ' undefined'
+    MethodDeclaration
+      Identifier: '
+    /**
+     *  @param line 0 based index
+     */
+    lineToTextSpan'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      TypeReference
+        Identifier: ' TextSpan'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' svc'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'tryUseScriptVersionCache'
+        IfStatement
+          Identifier: 'svc'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' svc'
+                Identifier: 'lineToTextSpan'
+              Identifier: 'line'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lineMap'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getLineMap'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' start'
+              ElementAccessExpression
+                Identifier: ' lineMap'
+                Identifier: 'line'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' end'
+              ConditionalExpression
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' line'
+                    PlusToken
+                    NumericLiteral
+                  LessThanToken
+                  PropertyAccessExpression
+                    Identifier: ' lineMap'
+                    Identifier: 'length'
+                QuestionToken
+                ElementAccessExpression
+                  Identifier: ' lineMap'
+                  BinaryExpression
+                    Identifier: 'line'
+                    PlusToken
+                    NumericLiteral
+                ColonToken
+                PropertyAccessExpression
+                  NonNullExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'text'
+                  Identifier: 'length'
+        ReturnStatement
+          CallExpression
+            Identifier: ' createTextSpanFromBounds'
+            Identifier: 'start'
+            Identifier: ' end'
+    MethodDeclaration
+      Identifier: '
+
+    /**
+     * @param line 1 based index
+     * @param offset 1 based index
+     */
+    lineOffsetToPosition'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      Parameter
+        Identifier: ' offset'
+        NumberKeyword
+      Parameter
+        Identifier: ' allowEdits'
+        QuestionToken
+        LiteralType
+          TrueKeyword
+      NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' svc'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'tryUseScriptVersionCache'
+        ReturnStatement
+          ConditionalExpression
+            Identifier: ' svc'
+            QuestionToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+            svc'
+                Identifier: 'lineOffsetToPosition'
+              Identifier: 'line'
+              Identifier: ' offset'
+            ColonToken
+            CallExpression
+              Identifier: '
+            computePositionOfLineAndCharacter'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getLineMap'
+              BinaryExpression
+                Identifier: ' line'
+                MinusToken
+                NumericLiteral
+              BinaryExpression
+                Identifier: ' offset'
+                MinusToken
+                NumericLiteral
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'text'
+              Identifier: ' allowEdits'
+    MethodDeclaration
+      Identifier: '
+
+    positionToLineOffset'
+      Parameter
+        Identifier: 'position'
+        NumberKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Location'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' svc'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'tryUseScriptVersionCache'
+        IfStatement
+          Identifier: 'svc'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' svc'
+                Identifier: 'positionToLineOffset'
+              Identifier: 'position'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' line'
+                BindingElement
+                  Identifier: ' character'
+              CallExpression
+                Identifier: ' computeLineAndCharacterOfPosition'
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'getLineMap'
+                Identifier: ' position'
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' line'
+              BinaryExpression
+                Identifier: ' line'
+                PlusToken
+                NumericLiteral
+            PropertyAssignment
+              Identifier: ' offset'
+              BinaryExpression
+                Identifier: ' character'
+                PlusToken
+                NumericLiteral
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' getFileTextAndSize'
+      Parameter
+        Identifier: 'tempFileName'
+        QuestionToken
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' text'
+          StringKeyword
+        PropertySignature
+          Identifier: ' fileSize'
+          QuestionToken
+          NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' text'
+              StringKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fileName'
+              BinaryExpression
+                Identifier: ' tempFileName'
+                BarBarToken
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'info'
+                  Identifier: 'fileName'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' getText'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' text'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' undefined'
+                  QuestionToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'text'
+                      EqualsToken
+                      BinaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'host'
+                            Identifier: 'readFile'
+                          Identifier: 'fileName'
+                        BarBarToken
+                        StringLiteral
+                  ColonToken
+                  Identifier: ' text'
+        IfStatement
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'hasTSFileExtension'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'info'
+                Identifier: 'fileName'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' fileSize'
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'host'
+                      Identifier: 'getFileSize'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'host'
+                        Identifier: 'getFileSize'
+                      Identifier: 'fileName'
+                    ColonToken
+                    PropertyAccessExpression
+                      CallExpression
+                        Identifier: ' getText'
+                      Identifier: 'length'
+            IfStatement
+              BinaryExpression
+                Identifier: 'fileSize'
+                GreaterThanToken
+                Identifier: ' maxFileSize'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                Debug'
+                      Identifier: 'assert'
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'info'
+                            Identifier: 'containingProjects'
+                          Identifier: 'length'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' service'
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'info'
+                            Identifier: 'containingProjects'
+                          NumericLiteral
+                        Identifier: 'projectService'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                service'
+                        Identifier: 'logger'
+                      Identifier: 'info'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'fileName'
+                        TemplateMiddle
+                      TemplateSpan
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'info'
+                          Identifier: 'fileName'
+                        TemplateMiddle
+                      TemplateSpan
+                        Identifier: 'fileSize'
+                        TemplateTail
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'info'
+                            Identifier: 'containingProjects'
+                          NumericLiteral
+                        Identifier: 'projectService'
+                      Identifier: 'sendLargeFileReferencedEvent'
+                    Identifier: 'fileName'
+                    Identifier: ' fileSize'
+                ReturnStatement
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' text'
+                      StringLiteral
+                    ShorthandPropertyAssignment
+                      Identifier: ' fileSize'
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' text'
+              CallExpression
+                Identifier: ' getText'
+    MethodDeclaration
+      Identifier: '
+
+    /** @internal */
+    switchToScriptVersionCache'
+      TypeReference
+        Identifier: ' ScriptVersionCache'
+      Block
+        IfStatement
+          BinaryExpression
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'svc'
+            BarBarToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'pendingReloadFromDisk'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'svc'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ScriptVersionCache'
+                    Identifier: 'fromString'
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'getOrLoadText'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'textSnapshot'
+                EqualsToken
+                Identifier: ' undefined'
+            ExpressionStatement
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'version'
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'svc'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' tryUseScriptVersionCache'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptVersionCache'
+        UndefinedKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'svc'
+            BarBarToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'pendingReloadFromDisk'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getOrLoadText'
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'isOpen'
+          Block
+            IfStatement
+              BinaryExpression
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'svc'
+                AmpersandAmpersandToken
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'textSnapshot'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'svc'
+                    EqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ScriptVersionCache'
+                        Identifier: 'fromString'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'Debug'
+                          Identifier: 'checkDefined'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'text'
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'textSnapshot'
+                    EqualsToken
+                    Identifier: ' undefined'
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'svc'
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'svc'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' getOrLoadText'
+      Block
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'text'
+              EqualsEqualsEqualsToken
+              Identifier: ' undefined'
+            BarBarToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'pendingReloadFromDisk'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            Debug'
+                  Identifier: 'assert'
+                BinaryExpression
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'svc'
+                  BarBarToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'pendingReloadFromDisk'
+                StringLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'reloadWithFileText'
+        ReturnStatement
+          NonNullExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'text'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' getLineMap'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        Debug'
+              Identifier: 'assert'
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'svc'
+            StringLiteral
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'lineMap'
+            BarBarToken
+            ParenthesizedExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'lineMap'
+                EqualsToken
+                CallExpression
+                  Identifier: ' computeLineStarts'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'Debug'
+                      Identifier: 'checkDefined'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'text'
+    MethodDeclaration
+      Identifier: '
+
+    getLineInfo'
+      TypeReference
+        Identifier: ' LineInfo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' svc'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'tryUseScriptVersionCache'
+        IfStatement
+          Identifier: 'svc'
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+                getLineCount'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' svc'
+                        Identifier: 'getLineCount'
+                PropertyAssignment
+                  Identifier: '
+                getLineText'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' line'
+                    EqualsGreaterThanToken
+                    NonNullExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' svc'
+                            Identifier: 'getAbsolutePositionAndLineText'
+                          BinaryExpression
+                            Identifier: 'line'
+                            PlusToken
+                            NumericLiteral
+                        Identifier: 'lineText'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lineMap'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getLineMap'
+        ReturnStatement
+          CallExpression
+            Identifier: ' getLineInfo'
+            NonNullExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'text'
+            Identifier: ' lineMap'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isDynamicFileName'
+    Parameter
+      Identifier: 'fileName'
+      TypeReference
+        Identifier: ' NormalizedPath'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: ' fileName'
+                NumericLiteral
+              EqualsEqualsEqualsToken
+              StringLiteral
+            BarBarToken
+            ParenthesizedExpression
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'fileName'
+                        Identifier: 'includes'
+                      StringLiteral
+                    BarBarToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' fileName'
+                        Identifier: 'includes'
+                      StringLiteral
+                AmpersandAmpersandToken
+                BinaryExpression
+                  ElementAccessExpression
+                    CallExpression
+                      Identifier: '
+            getBaseFileName'
+                      Identifier: 'fileName'
+                    NumericLiteral
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+          BarBarToken
+          ParenthesizedExpression
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'fileName'
+                  Identifier: 'includes'
+                StringLiteral
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'fileName'
+                    Identifier: 'includes'
+                  Identifier: 'directorySeparator'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DocumentRegistrySourceFileCache'
+    PropertySignature
+      Identifier: '
+    key'
+      TypeReference
+        Identifier: ' DocumentRegistryBucketKeyWithMode'
+    PropertySignature
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SourceMapFileWatcher'
+    PropertySignature
+      Identifier: '
+    watcher'
+      TypeReference
+        Identifier: ' FileWatcher'
+    PropertySignature
+      Identifier: '
+    sourceInfos'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'Path'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ScriptInfo'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' containingProjects'
+      ArrayType
+        TypeReference
+          Identifier: ' Project'
+      ArrayLiteralExpression
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' formatSettings'
+      UnionType
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' preferences'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' protocol'
+            Identifier: 'UserPreferences'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    /** @internal */
+    fileWatcher'
+      UnionType
+        TypeReference
+          Identifier: ' FileWatcher'
+        UndefinedKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' textStorage'
+      TypeReference
+        Identifier: ' TextStorage'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' isDynamic'
+      BooleanKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' realpath'
+      UnionType
+        TypeReference
+          Identifier: ' Path'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    /** @internal */
+    cacheSourceFile'
+      UnionType
+        TypeReference
+          Identifier: ' DocumentRegistrySourceFileCache'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    /** @internal */
+    mTime'
+      QuestionToken
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    /** @internal */
+    sourceFileLike'
+      QuestionToken
+      TypeReference
+        Identifier: ' SourceFileLike'
+    PropertyDeclaration
+      Identifier: '
+
+    /** @internal */
+    sourceMapFilePath'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' Path'
+        TypeReference
+          Identifier: ' SourceMapFileWatcher'
+        LiteralType
+          FalseKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    // Present on sourceMapFile info
+    /** @internal */
+    declarationInfoPath'
+      QuestionToken
+      TypeReference
+        Identifier: ' Path'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    sourceInfos'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'Path'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    documentPositionMapper'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' DocumentPositionMapper'
+        LiteralType
+          FalseKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    /** @internal */
+    deferredDelete'
+      QuestionToken
+      BooleanKeyword
+    Constructor
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' ServerHost'
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' fileName'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' scriptKind'
+        TypeReference
+          Identifier: ' ScriptKind'
+      Parameter
+        PublicKeyword
+        ReadonlyKeyword
+        Identifier: ' hasMixedContent'
+        BooleanKeyword
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' path'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: '
+        initialVersion'
+        QuestionToken
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'isDynamic'
+            EqualsToken
+            CallExpression
+              Identifier: ' isDynamicFileName'
+              Identifier: 'fileName'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'textStorage'
+            EqualsToken
+            NewExpression
+              Identifier: ' TextStorage'
+              Identifier: 'host'
+              ThisKeyword
+              Identifier: ' initialVersion'
+        IfStatement
+          BinaryExpression
+            Identifier: 'hasMixedContent'
+            BarBarToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'isDynamic'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'realpath'
+                EqualsToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'path'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'scriptKind'
+            EqualsToken
+            ConditionalExpression
+              Identifier: ' scriptKind'
+              QuestionToken
+              Identifier: ' scriptKind'
+              ColonToken
+              CallExpression
+                Identifier: ' getScriptKindFromFileName'
+                Identifier: 'fileName'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' isDynamicOrHasMixedContent'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'hasMixedContent'
+            BarBarToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'isDynamic'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' isScriptOpen'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'textStorage'
+            Identifier: 'isOpen'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' open'
+      Parameter
+        Identifier: 'newText'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      VoidKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textStorage'
+              Identifier: 'isOpen'
+            EqualsToken
+            TrueKeyword
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              Identifier: '
+            newText'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+            AmpersandAmpersandToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'textStorage'
+                Identifier: 'reload'
+              Identifier: 'newText'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'markContainingProjectsAsDirty'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' close'
+      Parameter
+        Identifier: 'fileExists'
+        TrueKeyword
+      VoidKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textStorage'
+              Identifier: 'isOpen'
+            EqualsToken
+            FalseKeyword
+        IfStatement
+          BinaryExpression
+            Identifier: 'fileExists'
+            AmpersandAmpersandToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'textStorage'
+                Identifier: 'scheduleReloadIfNeeded'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'markContainingProjectsAsDirty'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getSnapshot'
+      TypeReference
+        Identifier: ' IScriptSnapshot'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textStorage'
+              Identifier: 'getSnapshot'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' ensureRealPath'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'realpath'
+            EqualsEqualsEqualsToken
+            Identifier: ' undefined'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'realpath'
+                EqualsToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'path'
+            IfStatement
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'host'
+                Identifier: 'realpath'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                Debug'
+                      Identifier: 'assert'
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'containingProjects'
+                          Identifier: 'length'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' project'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'containingProjects'
+                        NumericLiteral
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' realpath'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'host'
+                          Identifier: 'realpath'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'path'
+                IfStatement
+                  Identifier: 'realpath'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'realpath'
+                        EqualsToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'toPath'
+                          Identifier: 'realpath'
+                    IfStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'realpath'
+                        ExclamationEqualsEqualsToken
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'path'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        project'
+                                    Identifier: 'projectService'
+                                  Identifier: 'realpathToScriptInfos'
+                              Identifier: 'add'
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'realpath'
+                            ThisKeyword
+    MethodDeclaration
+      Identifier: '
+
+    /** @internal */
+    getRealpathIfDifferent'
+      UnionType
+        TypeReference
+          Identifier: ' Path'
+        UndefinedKeyword
+      Block
+        ReturnStatement
+          ConditionalExpression
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'realpath'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'realpath'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'path'
+            QuestionToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'realpath'
+            ColonToken
+            Identifier: ' undefined'
+    MethodDeclaration
+      Identifier: '
+
+    /**
+     * @internal
+     * Does not compute realpath; uses precomputed result. Use `ensureRealPath`
+     * first if a definite result is needed.
+     */
+    isSymlink'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'realpath'
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'realpath'
+              ExclamationEqualsEqualsToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'path'
+    MethodDeclaration
+      Identifier: '
+
+    getFormatCodeSettings'
+      UnionType
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+        UndefinedKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'formatSettings'
+    MethodDeclaration
+      Identifier: '
+    getPreferences'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' protocol'
+            Identifier: 'UserPreferences'
+        UndefinedKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'preferences'
+    MethodDeclaration
+      Identifier: '
+
+    attachToProject'
+      Parameter
+        Identifier: 'project'
+        TypeReference
+          Identifier: ' Project'
+      BooleanKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' isNew'
+              PrefixUnaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'isAttached'
+                  Identifier: 'project'
+        IfStatement
+          Identifier: 'isNew'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'containingProjects'
+                  Identifier: 'push'
+                Identifier: 'project'
+            IfStatement
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'project'
+                      Identifier: 'getCompilerOptions'
+                  Identifier: 'preserveSymlinks'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'ensureRealPath'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            project'
+                  Identifier: 'onFileAddedOrRemoved'
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'isSymlink'
+        ReturnStatement
+          Identifier: ' isNew'
+    MethodDeclaration
+      Identifier: '
+
+    isAttached'
+      Parameter
+        Identifier: 'project'
+        TypeReference
+          Identifier: ' Project'
+      BooleanKeyword
+      Block
+        SwitchStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'containingProjects'
+            Identifier: 'length'
+          CaseBlock
+            CaseClause
+              NumericLiteral
+              ReturnStatement
+                FalseKeyword
+            CaseClause
+              NumericLiteral
+              ReturnStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'containingProjects'
+                    NumericLiteral
+                  EqualsEqualsEqualsToken
+                  Identifier: ' project'
+            CaseClause
+              NumericLiteral
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'containingProjects'
+                      NumericLiteral
+                    EqualsEqualsEqualsToken
+                    Identifier: ' project'
+                  BarBarToken
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'containingProjects'
+                      NumericLiteral
+                    EqualsEqualsEqualsToken
+                    Identifier: ' project'
+            DefaultClause
+              ReturnStatement
+                CallExpression
+                  Identifier: ' contains'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'containingProjects'
+                  Identifier: ' project'
+    MethodDeclaration
+      Identifier: '
+
+    detachFromProject'
+      Parameter
+        Identifier: 'project'
+        TypeReference
+          Identifier: ' Project'
+      VoidKeyword
+      Block
+        SwitchStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'containingProjects'
+            Identifier: 'length'
+          CaseBlock
+            CaseClause
+              NumericLiteral
+              ReturnStatement
+            CaseClause
+              NumericLiteral
+              IfStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'containingProjects'
+                    NumericLiteral
+                  EqualsEqualsEqualsToken
+                  Identifier: ' project'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    project'
+                        Identifier: 'onFileAddedOrRemoved'
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'isSymlink'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'containingProjects'
+                        Identifier: 'pop'
+              BreakStatement
+            CaseClause
+              NumericLiteral
+              IfStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'containingProjects'
+                    NumericLiteral
+                  EqualsEqualsEqualsToken
+                  Identifier: ' project'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    project'
+                        Identifier: 'onFileAddedOrRemoved'
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'isSymlink'
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'containingProjects'
+                        NumericLiteral
+                      EqualsToken
+                      NonNullExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'containingProjects'
+                            Identifier: 'pop'
+                IfStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'containingProjects'
+                      NumericLiteral
+                    EqualsEqualsEqualsToken
+                    Identifier: ' project'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    project'
+                          Identifier: 'onFileAddedOrRemoved'
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'isSymlink'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'containingProjects'
+                          Identifier: 'pop'
+              BreakStatement
+            DefaultClause
+              IfStatement
+                CallExpression
+                  Identifier: 'orderedRemoveItem'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'containingProjects'
+                  Identifier: ' project'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    project'
+                        Identifier: 'onFileAddedOrRemoved'
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'isSymlink'
+              BreakStatement
+    MethodDeclaration
+      Identifier: '
+
+    detachAllProjects'
+      VoidKeyword
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' p'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'containingProjects'
+          Block
+            IfStatement
+              CallExpression
+                Identifier: 'isConfiguredProject'
+                Identifier: 'p'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                p'
+                          Identifier: 'getCachedDirectoryStructureHost'
+                      Identifier: 'addOrDeleteFile'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'fileName'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'path'
+                    PropertyAccessExpression
+                      Identifier: ' FileWatcherEventKind'
+                      Identifier: 'Deleted'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' existingRoot'
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' p'
+                          Identifier: 'getRootFilesMap'
+                      Identifier: 'get'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'path'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            // detach is unnecessary since we'll clean the list of containing projects anyways
+            p'
+                  Identifier: 'removeFile'
+                ThisKeyword
+                FalseKeyword
+                FalseKeyword
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            p'
+                  Identifier: 'onFileAddedOrRemoved'
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'isSymlink'
+            IfStatement
+              BinaryExpression
+                Identifier: 'existingRoot'
+                AmpersandAmpersandToken
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isInferredProject'
+                    Identifier: 'p'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                p'
+                      Identifier: 'addMissingFileRoot'
+                    PropertyAccessExpression
+                      Identifier: 'existingRoot'
+                      Identifier: 'fileName'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        clear'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'containingProjects'
+    MethodDeclaration
+      Identifier: '
+
+    getDefaultProject'
+      TypeReference
+        Identifier: ' Project'
+      Block
+        SwitchStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'containingProjects'
+            Identifier: 'length'
+          CaseBlock
+            CaseClause
+              NumericLiteral
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Errors'
+                    Identifier: 'ThrowNoProject'
+            CaseClause
+              NumericLiteral
+              ReturnStatement
+                ConditionalExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: ' isProjectDeferredClose'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'containingProjects'
+                        NumericLiteral
+                    BarBarToken
+                    CallExpression
+                      Identifier: ' isBackgroundProject'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'containingProjects'
+                        NumericLiteral
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                    Errors'
+                      Identifier: 'ThrowNoProject'
+                  ColonToken
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'containingProjects'
+                    NumericLiteral
+            DefaultClause
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' firstConfiguredProject'
+                    UnionType
+                      TypeReference
+                        Identifier: ' ConfiguredProject'
+                      UndefinedKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' firstInferredProject'
+                    UnionType
+                      TypeReference
+                        Identifier: ' InferredProject'
+                      UndefinedKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' firstNonSourceOfProjectReferenceRedirect'
+                    UnionType
+                      TypeReference
+                        Identifier: ' ConfiguredProject'
+                      UndefinedKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' defaultConfiguredProject'
+                    UnionType
+                      TypeReference
+                        Identifier: ' ConfiguredProject'
+                      LiteralType
+                        FalseKeyword
+                      UndefinedKeyword
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' index'
+                    NumericLiteral
+                BinaryExpression
+                  Identifier: ' index'
+                  LessThanToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'containingProjects'
+                    Identifier: 'length'
+                PostfixUnaryExpression
+                  Identifier: ' index'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' project'
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'containingProjects'
+                          Identifier: 'index'
+                  IfStatement
+                    CallExpression
+                      Identifier: 'isConfiguredProject'
+                      Identifier: 'project'
+                    Block
+                      IfStatement
+                        PropertyAccessExpression
+                          Identifier: 'project'
+                          Identifier: 'deferredClose'
+                        ContinueStatement
+                      IfStatement
+                        PrefixUnaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'project'
+                              Identifier: 'isSourceOfProjectReferenceRedirect'
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'fileName'
+                        Block
+                          IfStatement
+                            BinaryExpression
+                              BinaryExpression
+                                Identifier: '
+                                defaultConfiguredProject'
+                                EqualsEqualsEqualsToken
+                                Identifier: ' undefined'
+                              AmpersandAmpersandToken
+                              BinaryExpression
+                                Identifier: '
+                                index'
+                                ExclamationEqualsEqualsToken
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'containingProjects'
+                                    Identifier: 'length'
+                                  MinusToken
+                                  NumericLiteral
+                            Block
+                              ExpressionStatement
+                                BinaryExpression
+                                  Identifier: '
+                                defaultConfiguredProject'
+                                  EqualsToken
+                                  BinaryExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' project'
+                                          Identifier: 'projectService'
+                                        Identifier: 'findDefaultConfiguredProject'
+                                      ThisKeyword
+                                    BarBarToken
+                                    FalseKeyword
+                          IfStatement
+                            BinaryExpression
+                              Identifier: 'defaultConfiguredProject'
+                              EqualsEqualsEqualsToken
+                              Identifier: ' project'
+                            ReturnStatement
+                              Identifier: ' project'
+                          IfStatement
+                            PrefixUnaryExpression
+                              Identifier: 'firstNonSourceOfProjectReferenceRedirect'
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: ' firstNonSourceOfProjectReferenceRedirect'
+                                EqualsToken
+                                Identifier: ' project'
+                      IfStatement
+                        PrefixUnaryExpression
+                          Identifier: 'firstConfiguredProject'
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: ' firstConfiguredProject'
+                            EqualsToken
+                            Identifier: ' project'
+                    IfStatement
+                      CallExpression
+                        Identifier: 'isExternalProject'
+                        Identifier: 'project'
+                      Block
+                        ReturnStatement
+                          Identifier: ' project'
+                      IfStatement
+                        BinaryExpression
+                          PrefixUnaryExpression
+                            Identifier: 'firstInferredProject'
+                          AmpersandAmpersandToken
+                          CallExpression
+                            Identifier: ' isInferredProject'
+                            Identifier: 'project'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                        firstInferredProject'
+                              EqualsToken
+                              Identifier: ' project'
+              ReturnStatement
+                BinaryExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          Identifier: 'defaultConfiguredProject'
+                          BarBarToken
+                          Identifier: '
+                    firstNonSourceOfProjectReferenceRedirect'
+                        BarBarToken
+                        Identifier: '
+                    firstConfiguredProject'
+                      BarBarToken
+                      Identifier: '
+                    firstInferredProject'
+                  QuestionQuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Errors'
+                      Identifier: 'ThrowNoProject'
+    MethodDeclaration
+      Identifier: '
+
+    registerFileUpdate'
+      VoidKeyword
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' p'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'containingProjects'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            p'
+                  Identifier: 'registerFileUpdate'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'path'
+    MethodDeclaration
+      Identifier: '
+
+    setOptions'
+      Parameter
+        Identifier: 'formatSettings'
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      Parameter
+        Identifier: ' preferences'
+        UnionType
+          TypeReference
+            QualifiedName
+              Identifier: ' protocol'
+              Identifier: 'UserPreferences'
+          UndefinedKeyword
+      VoidKeyword
+      Block
+        IfStatement
+          Identifier: 'formatSettings'
+          Block
+            IfStatement
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'formatSettings'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'formatSettings'
+                    EqualsToken
+                    CallExpression
+                      Identifier: ' getDefaultFormatCodeSettings'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'host'
+                        Identifier: 'newLine'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+                assign'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'formatSettings'
+                    Identifier: ' formatSettings'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'formatSettings'
+                    EqualsToken
+                    ObjectLiteralExpression
+                      SpreadAssignment
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'formatSettings'
+                      SpreadAssignment
+                        Identifier: 'formatSettings'
+        IfStatement
+          Identifier: 'preferences'
+          Block
+            IfStatement
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'preferences'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'preferences'
+                    EqualsToken
+                    Identifier: ' emptyOptions'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'preferences'
+                EqualsToken
+                ObjectLiteralExpression
+                  SpreadAssignment
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'preferences'
+                  SpreadAssignment
+                    Identifier: 'preferences'
+    MethodDeclaration
+      Identifier: '
+
+    getLatestVersion'
+      StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textStorage'
+              Identifier: 'getSnapshot'
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textStorage'
+              Identifier: 'getVersion'
+    MethodDeclaration
+      Identifier: '
+
+    saveTo'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'host'
+              Identifier: 'writeFile'
+            Identifier: 'fileName'
+            CallExpression
+              Identifier: ' getSnapshotText'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'textStorage'
+                  Identifier: 'getSnapshot'
+    MethodDeclaration
+      Identifier: '
+
+    /** @internal */
+    delayReloadNonMixedContentFile'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        Debug'
+              Identifier: 'assert'
+            PrefixUnaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'isDynamicOrHasMixedContent'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textStorage'
+              Identifier: 'delayReloadFromFileIntoText'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'markContainingProjectsAsDirty'
+    MethodDeclaration
+      Identifier: '
+
+    reloadFromFile'
+      Parameter
+        Identifier: 'tempFileName'
+        QuestionToken
+        TypeReference
+          Identifier: ' NormalizedPath'
+      BooleanKeyword
+      Block
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textStorage'
+              Identifier: 'reloadWithFileText'
+            Identifier: 'tempFileName'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'markContainingProjectsAsDirty'
+            ReturnStatement
+              TrueKeyword
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      Identifier: '
+
+    editContent'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        NumberKeyword
+      Parameter
+        Identifier: ' newText'
+        StringKeyword
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textStorage'
+              Identifier: 'edit'
+            Identifier: 'start'
+            Identifier: ' end'
+            Identifier: ' newText'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'markContainingProjectsAsDirty'
+    MethodDeclaration
+      Identifier: '
+
+    markContainingProjectsAsDirty'
+      VoidKeyword
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' p'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'containingProjects'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            p'
+                  Identifier: 'markFileAsDirty'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'path'
+    MethodDeclaration
+      Identifier: '
+
+    isOrphan'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'deferredDelete'
+            BarBarToken
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'forEach'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'containingProjects'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' p'
+                  EqualsGreaterThanToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'p'
+                        Identifier: 'isOrphan'
+    MethodDeclaration
+      Identifier: '
+
+    /**
+     *  @param line 1 based index
+     */
+    lineToTextSpan'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      TypeReference
+        Identifier: ' TextSpan'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textStorage'
+              Identifier: 'lineToTextSpan'
+            Identifier: 'line'
+    MethodDeclaration
+      Identifier: '
+
+    /**
+     * @param line 1 based index
+     * @param offset 1 based index
+     */
+    lineOffsetToPosition'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      Parameter
+        Identifier: ' offset'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    lineOffsetToPosition'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      Parameter
+        Identifier: ' offset'
+        NumberKeyword
+      Parameter
+        Identifier: ' allowEdits'
+        QuestionToken
+        LiteralType
+          TrueKeyword
+      NumberKeyword
+    MethodDeclaration
+      Identifier: ' // eslint-disable-line @typescript-eslint/unified-signatures
+    lineOffsetToPosition'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      Parameter
+        Identifier: ' offset'
+        NumberKeyword
+      Parameter
+        Identifier: ' allowEdits'
+        QuestionToken
+        LiteralType
+          TrueKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textStorage'
+              Identifier: 'lineOffsetToPosition'
+            Identifier: 'line'
+            Identifier: ' offset'
+            Identifier: ' allowEdits'
+    MethodDeclaration
+      Identifier: '
+
+    positionToLineOffset'
+      Parameter
+        Identifier: 'position'
+        NumberKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Location'
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        failIfInvalidPosition'
+            Identifier: 'position'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' location'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'textStorage'
+                  Identifier: 'positionToLineOffset'
+                Identifier: 'position'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        failIfInvalidLocation'
+            Identifier: 'location'
+        ReturnStatement
+          Identifier: ' location'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' isJavaScript'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'scriptKind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' ScriptKind'
+                Identifier: 'JS'
+            BarBarToken
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'scriptKind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' ScriptKind'
+                Identifier: 'JSX'
+    MethodDeclaration
+      Identifier: '
+
+    /** @internal */
+    closeSourceMapFileWatcher'
+      VoidKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'sourceMapFilePath'
+            AmpersandAmpersandToken
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'isString'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'sourceMapFilePath'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            closeFileWatcherOf'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'sourceMapFilePath'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'sourceMapFilePath'
+                EqualsToken
+                Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' failIfInvalidPosition'
+    Parameter
+      Identifier: 'position'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' position'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'position'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            Identifier: 'position'
+            GreaterThanEqualsToken
+            NumericLiteral
+          NoSubstitutionTemplateLiteral
+  FunctionDeclaration
+    Identifier: ' failIfInvalidLocation'
+    Parameter
+      Identifier: 'location'
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Location'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            TypeOfExpression
+              PropertyAccessExpression
+                Identifier: ' location'
+                Identifier: 'line'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'location'
+                Identifier: 'line'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            TypeOfExpression
+              PropertyAccessExpression
+                Identifier: ' location'
+                Identifier: 'offset'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'location'
+                Identifier: 'offset'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'location'
+              Identifier: 'line'
+            GreaterThanToken
+            NumericLiteral
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'location'
+                    Identifier: 'line'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                QuestionToken
+                StringLiteral
+                ColonToken
+                StringLiteral
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'location'
+              Identifier: 'offset'
+            GreaterThanToken
+            NumericLiteral
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'location'
+                    Identifier: 'offset'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                QuestionToken
+                StringLiteral
+                ColonToken
+                StringLiteral
+              TemplateTail
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' scriptInfoIsContainedByBackgroundProject'
+    Parameter
+      Identifier: 'info'
+      TypeReference
+        Identifier: ' ScriptInfo'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' some'
+          PropertyAccessExpression
+            Identifier: '
+        info'
+            Identifier: 'containingProjects'
+          Identifier: '
+        isBackgroundProject'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' scriptInfoIsContainedByDeferredClosedProject'
+    Parameter
+      Identifier: 'info'
+      TypeReference
+        Identifier: ' ScriptInfo'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' some'
+          PropertyAccessExpression
+            Identifier: '
+        info'
+            Identifier: 'containingProjects'
+          Identifier: '
+        isProjectDeferredClose'

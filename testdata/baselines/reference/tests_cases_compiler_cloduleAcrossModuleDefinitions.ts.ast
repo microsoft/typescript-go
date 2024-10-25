@@ -1,0 +1,36 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        MethodDeclaration
+          Identifier: '
+        foo'
+          Block
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' bar'
+          Block
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          QualifiedName
+            Identifier: ' A'
+            Identifier: 'B'

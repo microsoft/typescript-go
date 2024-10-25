@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' markers'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'markers'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ranges'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      PropertyAccessExpression
+        Identifier: ' markers'
+        Identifier: 'length'
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'completions'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              ElementAccessExpression
+                Identifier: ' markers'
+                Identifier: 'i'
+            PropertyAssignment
+              Identifier: '
+        includes'
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    StringLiteral
+                  PropertyAssignment
+                    StringLiteral
+                    ElementAccessExpression
+                      Identifier: ' ranges'
+                      Identifier: 'i'

@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' data'
+        UnionType
+          ArrayType
+            NumberKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'value'
+        Identifier: ' data'

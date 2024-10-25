@@ -1,0 +1,101 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' J'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' J'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    s'
+          ArrowFunction
+            Parameter
+              Identifier: ' t'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskToken
+              Identifier: ' t'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: ' t'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskToken
+              Identifier: ' t'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    s'
+          ArrowFunction
+            Parameter
+              Identifier: ' t'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskToken
+              Identifier: ' t'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: ' t'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskToken
+              Identifier: ' t'

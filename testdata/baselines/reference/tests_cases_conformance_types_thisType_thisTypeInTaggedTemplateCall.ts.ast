@@ -1,0 +1,38 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'this'
+        ConstructorType
+          TypeReference
+            Identifier: ' T'
+      Parameter
+        Identifier: ' strings'
+        UnionType
+          TypeReference
+            Identifier: ' TemplateStringsArray'
+          StringKeyword
+      Block
+        ReturnStatement
+          NewExpression
+            ThisKeyword
+  ExpressionStatement
+    TaggedTemplateExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Foo'
+        Identifier: 'm'
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    TaggedTemplateExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'Foo'
+          Identifier: 'm'
+      NoSubstitutionTemplateLiteral

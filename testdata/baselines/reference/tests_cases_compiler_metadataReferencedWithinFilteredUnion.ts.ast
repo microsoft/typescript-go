@@ -1,0 +1,33 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Class1'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Class1'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' decorate'
+    Parameter
+      Identifier: 'target'
+      AnyKeyword
+    Parameter
+      Identifier: ' propertyKey'
+      StringKeyword
+    Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Class2'
+    GetAccessor
+      Decorator
+        Identifier: 'decorate'
+      Identifier: ' prop'
+      UnionType
+        TypeReference
+          Identifier: ' Class1'
+        UndefinedKeyword
+      Block
+        ReturnStatement
+          Identifier: ' undefined'

@@ -1,0 +1,657 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Named'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' name'
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' duplicateIndetifiers'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' alias'
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' alias2'
+      TypeReference
+        Identifier: ' Named'
+    Block
+  FunctionDeclaration
+    Identifier: ' duplicateIndetifiers2'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' alias'
+      TypeReference
+        Identifier: ' Named'
+    Block
+  FunctionDeclaration
+    Identifier: ' duplicateIndetifiers3'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' alias'
+      TypeReference
+        Identifier: ' Named'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' alias2'
+      TypeReference
+        Identifier: ' Named'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' shadowedVariable'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' value'
+          Identifier: ' alias'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' value'
+          StringKeyword
+    TypeQuery
+      Identifier: ' value'
+    Block
+      ReturnStatement
+        Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' notReferenced'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' alias'
+      TypeReference
+        Identifier: ' Named'
+    Block
+  FunctionDeclaration
+    Identifier: ' notReferencedNestedAlias'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' p'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' name'
+              Identifier: ' alias'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' p'
+          TypeReference
+            Identifier: ' Named'
+    Block
+  FunctionDeclaration
+    Identifier: ' notReferencedArrayAlias'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+        BindingElement
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' name'
+              Identifier: ' alias'
+      ArrayType
+        TypeReference
+          Identifier: ' Named'
+    Block
+  FunctionDeclaration
+    Identifier: ' referencedInCode'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' alias'
+      TypeReference
+        Identifier: ' Named'
+    Block
+      ReturnStatement
+        Identifier: ' alias'
+  FunctionDeclaration
+    Identifier: ' referencedInSignarture'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' alias'
+      TypeReference
+        Identifier: ' Named'
+    TypeQuery
+      Identifier: ' alias'
+    Block
+      ReturnStatement
+        Identifier: ' alias'
+  FunctionDeclaration
+    Identifier: ' referencedInSignartureKeyword'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' function'
+          Identifier: ' alias'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' function'
+          StringKeyword
+    TypeQuery
+      Identifier: ' alias'
+    Block
+      ReturnStatement
+        NonNullExpression
+          NullKeyword
+  FunctionDeclaration
+    Identifier: ' referencedInInferredType'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' alias'
+      TypeReference
+        Identifier: ' Named'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' Named2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            TypeQuery
+              Identifier: ' alias'
+      ReturnStatement
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          TypeReference
+            Identifier: ' Named2'
+  FunctionDeclaration
+    Identifier: ' referencedInNestedFunction'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' alias'
+      TypeReference
+        Identifier: ' Named'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Parameter
+            Identifier: 'p'
+            TypeQuery
+              Identifier: ' alias'
+          Block
+  FunctionDeclaration
+    Identifier: ' referencedNestedAlias'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' p'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' name'
+              Identifier: ' alias'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' p'
+          TypeReference
+            Identifier: ' Named'
+    TypeQuery
+      Identifier: ' alias'
+    Block
+      ReturnStatement
+        Identifier: ' alias'
+  FunctionDeclaration
+    Identifier: ' referencedArrayAlias'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+        BindingElement
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' name'
+              Identifier: ' alias'
+      ArrayType
+        TypeReference
+          Identifier: ' Named'
+    TypeQuery
+      Identifier: ' alias'
+    Block
+      ReturnStatement
+        Identifier: ' alias'
+  ClassDeclaration
+    Identifier: ' NotReferencedClass'
+    Constructor
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Block
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            Identifier: 'alias'
+    MethodDeclaration
+      Identifier: '
+	m'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            Identifier: 'alias'
+  ClassDeclaration
+    Identifier: ' ReferencedInCodeClas'
+    Constructor
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+		console'
+              Identifier: 'log'
+            Identifier: 'alias'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            Identifier: 'alias'
+    MethodDeclaration
+      Identifier: '
+	m'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            Identifier: 'alias'
+  ClassDeclaration
+    Identifier: ' ReferencedInSignartureClass'
+    Constructor
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Parameter
+        Identifier: ' p'
+        TypeQuery
+          Identifier: ' alias'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+		console'
+              Identifier: 'log'
+            Identifier: 'alias'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        IntersectionType
+          TypeReference
+            Identifier: ' Named'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' o'
+              TypeQuery
+                Identifier: ' alias'
+      Block
+    MethodDeclaration
+      Identifier: '
+	mReturnType'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      TypeQuery
+        Identifier: ' alias'
+      Block
+        ReturnStatement
+          NonNullExpression
+            NullKeyword
+    MethodDeclaration
+      Identifier: '
+	mRerturnTypeNested'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      TypeReference
+        Identifier: ' NonNullable'
+        TypeQuery
+          Identifier: ' alias'
+      Block
+        ReturnStatement
+          NonNullExpression
+            NullKeyword
+    MethodDeclaration
+      Identifier: '
+    mParameter'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Parameter
+        Identifier: ' p'
+        TypeQuery
+          Identifier: ' alias'
+      Block
+        ReturnStatement
+          NonNullExpression
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' notReferencedFnType'
+        FunctionType
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' name'
+                Identifier: ' alias'
+            TypeReference
+              Identifier: ' Named'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' referencedInSignartureReturnTypeFnType'
+        FunctionType
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' name'
+                Identifier: ' alias'
+            TypeReference
+              Identifier: ' Named'
+          TypeQuery
+            Identifier: ' alias'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' referencedInSignartureParamTypeFnType'
+        FunctionType
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' name'
+                Identifier: ' alias'
+            TypeReference
+              Identifier: ' Named'
+          Parameter
+            Identifier: ' p'
+            TypeQuery
+              Identifier: ' alias'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' notReferencedCtorType'
+        ConstructorType
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' name'
+                Identifier: ' alias'
+            TypeReference
+              Identifier: ' Named'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' referencedInSignartureReturnTypeCtorType'
+        ConstructorType
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' name'
+                Identifier: ' alias'
+            TypeReference
+              Identifier: ' Named'
+          TypeQuery
+            Identifier: ' alias'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' referencedInSignartureParamTypeCtorType'
+        ConstructorType
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' name'
+                Identifier: ' alias'
+            TypeReference
+              Identifier: ' Named'
+          Parameter
+            Identifier: ' p'
+            TypeQuery
+              Identifier: ' alias'
+          VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' NotReferencedInterface'
+    CallSignature
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      VoidKeyword
+    ConstructSignature
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      VoidKeyword
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+    MethodSignature
+      Identifier: '
+	m'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+  InterfaceDeclaration
+    Identifier: ' ReferencedInSignartureInterface'
+    CallSignature
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Parameter
+        Identifier: ' p'
+        TypeQuery
+          Identifier: ' alias'
+      VoidKeyword
+    CallSignature
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      TypeQuery
+        Identifier: ' alias'
+    ConstructSignature
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Parameter
+        Identifier: ' p'
+        TypeQuery
+          Identifier: ' alias'
+      VoidKeyword
+    ConstructSignature
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      TypeQuery
+        Identifier: ' alias'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        IntersectionType
+          TypeReference
+            Identifier: ' Named'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' o'
+              TypeQuery
+                Identifier: ' alias'
+    MethodSignature
+      Identifier: '
+	mReturnType'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      TypeQuery
+        Identifier: ' alias'
+    MethodSignature
+      Identifier: '
+	mRerturnTypeNested'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      TypeReference
+        Identifier: ' NonNullable'
+        TypeQuery
+          Identifier: ' alias'
+    MethodSignature
+      Identifier: '
+    mParameter'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' name'
+            Identifier: ' alias'
+        TypeReference
+          Identifier: ' Named'
+      Parameter
+        Identifier: ' p'
+        TypeQuery
+          Identifier: ' alias'

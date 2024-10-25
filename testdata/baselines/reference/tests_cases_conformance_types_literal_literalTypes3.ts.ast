@@ -1,0 +1,218 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 's'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        s'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 's'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          BarBarToken
+          BinaryExpression
+            Identifier: ' s'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        s'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+      SwitchStatement
+        Identifier: 's'
+        CaseBlock
+          CaseClause
+            StringLiteral
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              Identifier: '
+            s'
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              Identifier: '
+            s'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              Identifier: '
+            s'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: ' s'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            BarBarToken
+            BinaryExpression
+              Identifier: ' s'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          QuestionToken
+          Identifier: ' s'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'x'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          BarBarToken
+          BinaryExpression
+            Identifier: ' x'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+        Block
+          ReturnStatement
+            Identifier: ' x'
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' y'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'x'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          BarBarToken
+          BinaryExpression
+            Identifier: ' x'
+            EqualsEqualsEqualsToken
+            Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' y'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'y'
+            EqualsEqualsEqualsToken
+            Identifier: ' x'
+          BarBarToken
+          BinaryExpression
+            NumericLiteral
+            EqualsEqualsEqualsToken
+            Identifier: ' x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f7'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: ' y'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          Identifier: ' y'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f8'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            NumericLiteral
+          CaseClause
+            NumericLiteral
+            ExpressionStatement
+              Identifier: '
+            x'
+            BreakStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              Identifier: '
+            x'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              Identifier: '
+            x'

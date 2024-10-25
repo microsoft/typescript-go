@@ -1,0 +1,640 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+// @experimentalDecorators: true
+
+// @Filename: a.ts
+//// export namespace foo {
+////     /** @deprecated */
+////     export function faff () { }
+////     [|faff|]()
+//// }
+//// const [|a|] = foo.[|faff|]()
+//// foo[[|"faff"|]]
+//// const { [|faff|] } = foo
+//// [|faff|]()
+//// /** @deprecated */
+//// export function bar () {
+////     foo?.[|faff|]()
+//// }
+//// foo?.[[|"faff"|]]?.()
+//// [|bar|]();
+//// /** @deprecated */
+//// export interface Foo {
+////     /** @deprecated */
+////     zzz: number
+//// }
+//// /** @deprecated */
+//// export type QW = [|Foo|][[|"zzz"|]]
+//// export type WQ = [|QW|]
+//// class C {
+////     /** @deprecated */
+////     constructor() {
+////     }
+////     /** @deprecated */
+////     m() { }
+//// }
+//// /** @deprecated */
+//// class D {
+////     constructor() {
+////     }
+//// }
+//// var c = new [|C|]()
+//// c.[|m|]()
+//// c.[|m|]
+//// new [|D|]()
+//// C
+//// [|D|]
+// @Filename: j.tsx
+//// type Props = { someProp?: any }
+//// declare var props: Props
+//// /** @deprecated */
+//// function Compi(_props: Props) {
+////     return <div></div>
+//// }
+//// [|Compi|];
+//// <[|Compi|] />;
+//// <[|Compi|] {...props}><div></div></[|Compi|]>;
+//// /** @deprecated */
+//// function ttf(_x: unknown) {
+//// }
+//// [|ttf|]``
+//// [|ttf|]
+//// /** @deprecated */
+//// function dec(_c: unknown) { }
+//// [|dec|]
+//// @[|dec|]
+//// class K { }
+
+// @Filename: b.ts
+//// // imports and aliases
+//// import * as f from './a';
+//// import { [|bar|], [|QW|] } from './a';
+//// f.[|bar|]();
+//// f.foo.[|faff|]();
+//// [|bar|]();
+//// type Z = [|QW|];
+//// type A = f.[|Foo|];
+//// type B = f.[|QW|];
+//// type C = f.WQ;
+//// type [|O|] = Z | A | B | C;
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ranges'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              Identifier: ' ranges'
+              NumericLiteral

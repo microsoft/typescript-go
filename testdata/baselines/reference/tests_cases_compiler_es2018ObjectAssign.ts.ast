@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'assign'
+          ObjectLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' test'
+              TrueKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Promise'
+          NumberKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+p'
+        Identifier: 'finally'

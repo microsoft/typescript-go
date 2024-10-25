@@ -1,0 +1,109 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t0'
+        TupleType
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        TupleType
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' len0'
+        LiteralType
+          NumericLiteral
+        PropertyAccessExpression
+          Identifier: ' t0'
+          Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' len1'
+        LiteralType
+          NumericLiteral
+        PropertyAccessExpression
+          Identifier: ' t1'
+          Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' len2'
+        LiteralType
+          NumericLiteral
+        PropertyAccessExpression
+          Identifier: ' t2'
+          Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lena'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' arr'
+          Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        Identifier: ' t2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        Identifier: ' t1'
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T'
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' A'
+          TupleType
+            BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        LiteralType
+          NumericLiteral
+        Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+t1'
+      EqualsToken
+      Identifier: ' arr'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error with or without strict
+arr'
+      EqualsToken
+      Identifier: ' t1'

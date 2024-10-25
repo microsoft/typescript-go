@@ -1,0 +1,105 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' E1'
+    EnumMember
+      Identifier: ' A'
+      StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' E2'
+    EnumMember
+      Identifier: ' B'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' keys'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'keys'
+                Identifier: 'n'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'keys'
+                Identifier: 'n'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'keys'
+                Identifier: 's'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'keys'
+                Identifier: 's'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'keys'
+                  Identifier: 'E1'
+                Identifier: 'A'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'keys'
+                  Identifier: 'E1'
+                Identifier: 'A'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'keys'
+                  Identifier: 'E2'
+                Identifier: 'B'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'keys'
+                  Identifier: 'E2'
+                Identifier: 'B'
+            NumericLiteral

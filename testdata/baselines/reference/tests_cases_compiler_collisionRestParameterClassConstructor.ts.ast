@@ -1,0 +1,172 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c1'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'restParameters'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _i'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' c1NoError'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _i'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' c2'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'restParameters'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _i'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' c2NoError'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _i'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' c3'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' _i'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'restParameters'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _i'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' c3NoError'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' _i'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _i'
+              NumericLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' c4'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'restParameters'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' c4NoError'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        NumberKeyword
+  ClassDeclaration
+    Identifier: ' c5'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        AnyKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _i'
+              AnyKeyword
+  ClassDeclaration
+    Identifier: ' c5NoError'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: '_i'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: '_i'
+        AnyKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _i'
+              AnyKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' c6'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' c6NoError'
+    Constructor
+      Parameter
+        Identifier: '_i'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: '_i'
+        StringKeyword

@@ -1,0 +1,103 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// Tests that we use the name "foo".
+
+// @module: esnext
+
+// @Filename: /a.ts
+////const foo = 0;
+////export default foo;
+
+// @Filename: /b.ts
+////f/**/;
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        source'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        sourceDisplay'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        kindModifiers'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        hasAction'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

@@ -1,0 +1,50 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' greeter'
+    Parameter
+      Identifier: 'person'
+      StringKeyword
+    Parameter
+      Identifier: ' person2'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unused'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' maker'
+            FunctionExpression
+              Parameter
+                Identifier: 'child'
+                StringKeyword
+              VoidKeyword
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' unused2'
+                      NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' maker2'
+            FunctionExpression
+              Parameter
+                Identifier: 'child2'
+                StringKeyword
+              VoidKeyword
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' unused3'
+                      NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    maker2'
+          Identifier: 'person2'

@@ -1,0 +1,55 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////function foo() {
+////    /*1*/if (true) {
+////        console.log(1);
+////    } else {
+////        console.log(1);
+////    }
+////
+////    do {
+////        console.log(1);
+////    }
+////
+////    while (true);
+////
+////    try {
+////        console.log(1);
+////    } catch {
+////        void 0;
+////    } finally {
+////        void 0;
+////    }/*2*/
+////}
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newContent'
+          NoSubstitutionTemplateLiteral

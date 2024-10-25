@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrowFunction
+          Parameter
+            Identifier: ' n'
+          EqualsGreaterThanToken
+          Identifier: ' n'

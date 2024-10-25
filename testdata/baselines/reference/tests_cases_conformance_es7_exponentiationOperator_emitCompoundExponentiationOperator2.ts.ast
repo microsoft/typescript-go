@@ -1,0 +1,319 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' comp'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      PlusToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      MinusToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      SlashToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        NumericLiteral
+        MinusToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      PlusToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      MinusToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      SlashToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+      AsteriskAsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          MinusToken
+          NumericLiteral
+      AsteriskAsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          AsteriskToken
+          NumericLiteral
+      AsteriskAsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' comp'
+      AsteriskAsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          SlashToken
+          NumericLiteral
+      AsteriskAsteriskToken
+      NumericLiteral

@@ -1,0 +1,62 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+            EqualsToken
+            StringLiteral
+    MethodDeclaration
+      Identifier: '
+    slicey'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'foo'
+                Identifier: 'slice'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'foo'
+  FunctionDeclaration
+    Identifier: ' C'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+          EqualsToken
+          FunctionExpression
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'x'
+                    Identifier: 'toString'

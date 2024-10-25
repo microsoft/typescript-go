@@ -1,0 +1,352 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNumber'
+        UnionType
+          StringKeyword
+          NumberKeyword
+        BinaryExpression
+          Identifier: ' str'
+          BarBarToken
+          Identifier: ' num'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objStr'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' prop'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objNum'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' prop'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objStrOrNum1'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              NumberKeyword
+        BinaryExpression
+          Identifier: ' objStr'
+          BarBarToken
+          Identifier: ' objNum'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objStrOrNum2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' prop'
+            UnionType
+              StringKeyword
+              NumberKeyword
+        BinaryExpression
+          Identifier: ' objStr'
+          BarBarToken
+          Identifier: ' objNum'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objStrOrNum3'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    prop'
+            Identifier: ' strOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objStrOrNum4'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' prop'
+            UnionType
+              StringKeyword
+              NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    prop'
+            Identifier: ' strOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objStrOrNum5'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              StringKeyword
+            PropertySignature
+              Identifier: ' anotherP'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' prop'
+            Identifier: ' strOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objStrOrNum6'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              StringKeyword
+            PropertySignature
+              Identifier: ' anotherP'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    prop'
+            Identifier: ' strOrNumber'
+          PropertyAssignment
+            Identifier: '
+    anotherP'
+            Identifier: ' str'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objStrOrNum7'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              StringKeyword
+            PropertySignature
+              Identifier: ' anotherP'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' anotherP1'
+              NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    prop'
+            Identifier: ' strOrNumber'
+          PropertyAssignment
+            Identifier: '
+    anotherP'
+            Identifier: ' str'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objStrOrNum8'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              StringKeyword
+            PropertySignature
+              Identifier: ' anotherP'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' anotherP1'
+              NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    prop'
+            Identifier: ' strOrNumber'
+          PropertyAssignment
+            Identifier: '
+    anotherP'
+            Identifier: ' str'
+          PropertyAssignment
+            Identifier: '
+    anotherP1'
+            Identifier: ' num'
+  InterfaceDeclaration
+    Identifier: ' I11'
+    MethodSignature
+      Identifier: '
+    commonMethodDifferentReturnType'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        Identifier: ' b'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I21'
+    MethodSignature
+      Identifier: '
+    commonMethodDifferentReturnType'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Parameter
+        Identifier: ' b'
+        NumberKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i11'
+        TypeReference
+          Identifier: ' I11'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i21'
+        TypeReference
+          Identifier: ' I21'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i11Ori21'
+        UnionType
+          TypeReference
+            Identifier: ' I11'
+          TypeReference
+            Identifier: ' I21'
+        Identifier: ' i11'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i11Ori21'
+        UnionType
+          TypeReference
+            Identifier: ' I11'
+          TypeReference
+            Identifier: ' I21'
+        Identifier: ' i21'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i11Ori21'
+        UnionType
+          TypeReference
+            Identifier: ' I11'
+          TypeReference
+            Identifier: ' I21'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' // Like i1
+    commonMethodDifferentReturnType'
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+              Parameter
+                Identifier: ' b'
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' z'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a'
+                          Identifier: 'charAt'
+                        Identifier: 'b'
+                ReturnStatement
+                  Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i11Ori21'
+        UnionType
+          TypeReference
+            Identifier: ' I11'
+          TypeReference
+            Identifier: ' I21'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' // Like i2
+    commonMethodDifferentReturnType'
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+              Parameter
+                Identifier: ' b'
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' z'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' a'
+                          Identifier: 'charCodeAt'
+                        Identifier: 'b'
+                ReturnStatement
+                  Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNumber'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i11Ori21'
+        UnionType
+          TypeReference
+            Identifier: ' I11'
+          TypeReference
+            Identifier: ' I21'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' // Like i1 and i2 both
+    commonMethodDifferentReturnType'
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+              Parameter
+                Identifier: ' b'
+              EqualsGreaterThanToken
+              Identifier: ' strOrNumber'

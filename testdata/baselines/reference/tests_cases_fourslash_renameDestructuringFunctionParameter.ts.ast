@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0Def'
+          BindingElement
+            Identifier: ' r0'
+          BindingElement
+            Identifier: ' r1'
+          BindingElement
+            Identifier: ' r2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      ArrayLiteralExpression
+        Identifier: '
+    // renames the local
+    r0'
+        Identifier: ' r2'
+        Identifier: '
+    // renames the property
+    r1'

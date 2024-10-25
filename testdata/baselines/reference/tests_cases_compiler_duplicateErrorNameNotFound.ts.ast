@@ -1,0 +1,9 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' RoomInterfae'
+    TypeLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: '
+    RoomInterface'

@@ -1,0 +1,81 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Element'
+  InterfaceDeclaration
+    Identifier: ' EventTarget'
+  InterfaceDeclaration
+    Identifier: ' HTMLElement'
+  InterfaceDeclaration
+    Identifier: ' HTMLInputElement'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        AsExpression
+          AsExpression
+            ObjectLiteralExpression
+            AnyKeyword
+          TypeReference
+            Identifier: ' Element'
+      Identifier: 'textContent'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        AsExpression
+          AsExpression
+            ObjectLiteralExpression
+            AnyKeyword
+          TypeReference
+            Identifier: ' HTMLElement'
+      Identifier: 'textContent'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        AsExpression
+          AsExpression
+            ObjectLiteralExpression
+            AnyKeyword
+          TypeReference
+            Identifier: ' HTMLInputElement'
+      Identifier: 'textContent'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        AsExpression
+          AsExpression
+            ObjectLiteralExpression
+            AnyKeyword
+          IntersectionType
+            TypeReference
+              Identifier: ' EventTarget'
+            TypeReference
+              Identifier: ' HTMLInputElement'
+      Identifier: 'textContent'
+  InterfaceDeclaration
+    Identifier: ' HTMLElementFake'
+  InterfaceDeclaration
+    Identifier: ' Node'
+    PropertySignature
+      Identifier: '
+    actuallyNotTheSame'
+      NumberKeyword
+  EmptyStatement
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        AsExpression
+          AsExpression
+            ObjectLiteralExpression
+            AnyKeyword
+          TypeReference
+            Identifier: ' HTMLElementFake'
+      Identifier: 'textContent'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        AsExpression
+          AsExpression
+            ObjectLiteralExpression
+            AnyKeyword
+          TypeReference
+            Identifier: ' Node'
+      Identifier: 'textContent'

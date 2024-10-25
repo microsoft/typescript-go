@@ -1,0 +1,11 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: '
+    methods'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+        foo'
+            Block

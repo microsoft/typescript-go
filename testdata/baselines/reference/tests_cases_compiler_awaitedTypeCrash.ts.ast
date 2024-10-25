@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Promise'
+        NeverKeyword
+    TypeReference
+      Identifier: ' AsyncGenerator'
+      TypeReference
+        Identifier: 'T'
+      VoidKeyword
+      VoidKeyword
+    Block

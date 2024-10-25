@@ -1,0 +1,132 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' friendA'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' getX'
+            Parameter
+              Identifier: 'o'
+              TypeReference
+                Identifier: ' A'
+            NumberKeyword
+          MethodSignature
+            Identifier: ' setX'
+            Parameter
+              Identifier: 'o'
+              TypeReference
+                Identifier: ' A'
+            Parameter
+              Identifier: ' v'
+              NumberKeyword
+            VoidKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'v'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            Identifier: ' v'
+    MethodDeclaration
+      Identifier: '
+
+  getX'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+    friendA'
+            EqualsToken
+            ObjectLiteralExpression
+              MethodDeclaration
+                Identifier: '
+      getX'
+                Parameter
+                  Identifier: 'obj'
+                Block
+                  ReturnStatement
+                    PropertyAccessExpression
+                      Identifier: ' obj'
+                      PrivateIdentifier
+              MethodDeclaration
+                Identifier: '
+      setX'
+                Parameter
+                  Identifier: 'obj'
+                Parameter
+                  Identifier: ' value'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' obj'
+                        PrivateIdentifier
+                      EqualsToken
+                      Identifier: ' value'
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' B'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' friendA'
+                  Identifier: 'getX'
+                Identifier: 'a'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' // ok
+    friendA'
+              Identifier: 'setX'
+            Identifier: 'a'
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              NumericLiteral
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' A'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' B'
+          Identifier: 'a'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+a'
+        Identifier: 'getX'

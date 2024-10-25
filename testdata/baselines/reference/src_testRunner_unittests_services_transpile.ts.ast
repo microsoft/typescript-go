@@ -1,0 +1,3374 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          InterfaceDeclaration
+            Identifier: ' TranspileTestSettings'
+            PropertySignature
+              Identifier: '
+        options'
+              QuestionToken
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'TranspileOptions'
+            PropertySignature
+              Identifier: '
+        noSetFileName'
+              QuestionToken
+              BooleanKeyword
+            PropertySignature
+              Identifier: '
+        testVerbatimModuleSyntax'
+              QuestionToken
+              UnionType
+                LiteralType
+                  TrueKeyword
+                LiteralType
+                  StringLiteral
+          FunctionDeclaration
+            Identifier: ' transpilesCorrectly'
+            Parameter
+              Identifier: 'nameIn'
+              StringKeyword
+            Parameter
+              Identifier: ' input'
+              StringKeyword
+            Parameter
+              Identifier: ' testSettings'
+              TypeReference
+                Identifier: ' TranspileTestSettings'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' runOnce'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'name'
+                        StringKeyword
+                      Parameter
+                        Identifier: ' testSettings'
+                        TypeReference
+                          Identifier: ' TranspileTestSettings'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: '
+            describe'
+                        Identifier: 'name'
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' transpileResult'
+                                  TypeReference
+                                    QualifiedName
+                                      Identifier: ' ts'
+                                      Identifier: 'TranspileOutput'
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' oldTranspileResult'
+                                  StringKeyword
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' oldTranspileDiagnostics'
+                                  ArrayType
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'Diagnostic'
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' transpileOptions'
+                                  TypeReference
+                                    QualifiedName
+                                      Identifier: ' ts'
+                                      Identifier: 'TranspileOptions'
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' testSettings'
+                                      Identifier: 'options'
+                                    BarBarToken
+                                    ObjectLiteralExpression
+                            IfStatement
+                              PrefixUnaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'transpileOptions'
+                                  Identifier: 'compilerOptions'
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                    transpileOptions'
+                                      Identifier: 'compilerOptions'
+                                    EqualsToken
+                                    ObjectLiteralExpression
+                            IfStatement
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'transpileOptions'
+                                    Identifier: 'compilerOptions'
+                                  Identifier: 'target'
+                                EqualsEqualsEqualsToken
+                                Identifier: ' undefined'
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    transpileOptions'
+                                        Identifier: 'compilerOptions'
+                                      Identifier: 'target'
+                                    EqualsToken
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'ScriptTarget'
+                                      Identifier: 'ES5'
+                            IfStatement
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'transpileOptions'
+                                    Identifier: 'compilerOptions'
+                                  Identifier: 'newLine'
+                                EqualsEqualsEqualsToken
+                                Identifier: ' undefined'
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    // use \r\n as default new line
+                    transpileOptions'
+                                        Identifier: 'compilerOptions'
+                                      Identifier: 'newLine'
+                                    EqualsToken
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'NewLineKind'
+                                      Identifier: 'CarriageReturnLineFeed'
+                            ExpressionStatement
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+
+                transpileOptions'
+                                    Identifier: 'compilerOptions'
+                                  Identifier: 'sourceMap'
+                                EqualsToken
+                                TrueKeyword
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' unitName'
+                                  PropertyAccessExpression
+                                    Identifier: ' transpileOptions'
+                                    Identifier: 'fileName'
+                            IfStatement
+                              PrefixUnaryExpression
+                                Identifier: 'unitName'
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    Identifier: '
+                    unitName'
+                                    EqualsToken
+                                    ConditionalExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' transpileOptions'
+                                          Identifier: 'compilerOptions'
+                                        Identifier: 'jsx'
+                                      QuestionToken
+                                      StringLiteral
+                                      ColonToken
+                                      StringLiteral
+                                IfStatement
+                                  PrefixUnaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'testSettings'
+                                      Identifier: 'noSetFileName'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                        transpileOptions'
+                                          Identifier: 'fileName'
+                                        EqualsToken
+                                        Identifier: ' unitName'
+                            ExpressionStatement
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+
+                transpileOptions'
+                                  Identifier: 'reportDiagnostics'
+                                EqualsToken
+                                TrueKeyword
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' justName'
+                                  BinaryExpression
+                                    BinaryExpression
+                                      StringLiteral
+                                      PlusToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' name'
+                                          Identifier: 'replace'
+                                        RegularExpressionLiteral
+                                        StringLiteral
+                                    PlusToken
+                                    ParenthesizedExpression
+                                      ConditionalExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'transpileOptions'
+                                            Identifier: 'compilerOptions'
+                                          Identifier: 'jsx'
+                                        QuestionToken
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'Extension'
+                                          Identifier: 'Tsx'
+                                        ColonToken
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'Extension'
+                                          Identifier: 'Ts'
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' toBeCompiled'
+                                  ArrayLiteralExpression
+                                    ObjectLiteralExpression
+                                      ShorthandPropertyAssignment
+                                        Identifier: '
+                    unitName'
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        Identifier: ' input'
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' canUseOldTranspile'
+                                  PrefixUnaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'transpileOptions'
+                                      Identifier: 'renamedDependencies'
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: '
+
+                before'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                    transpileResult'
+                                        EqualsToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'transpileModule'
+                                          Identifier: 'input'
+                                          Identifier: ' transpileOptions'
+                                    IfStatement
+                                      Identifier: 'canUseOldTranspile'
+                                      Block
+                                        ExpressionStatement
+                                          BinaryExpression
+                                            Identifier: '
+                        oldTranspileDiagnostics'
+                                            EqualsToken
+                                            ArrayLiteralExpression
+                                        ExpressionStatement
+                                          BinaryExpression
+                                            Identifier: '
+                        oldTranspileResult'
+                                            EqualsToken
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'transpile'
+                                              Identifier: 'input'
+                                              PropertyAccessExpression
+                                                Identifier: ' transpileOptions'
+                                                Identifier: 'compilerOptions'
+                                              PropertyAccessExpression
+                                                Identifier: ' transpileOptions'
+                                                Identifier: 'fileName'
+                                              Identifier: ' oldTranspileDiagnostics'
+                                              PropertyAccessExpression
+                                                Identifier: ' transpileOptions'
+                                                Identifier: 'moduleName'
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: '
+
+                after'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                    transpileResult'
+                                        EqualsToken
+                                        NonNullExpression
+                                          Identifier: ' undefined'
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                    oldTranspileResult'
+                                        EqualsToken
+                                        NonNullExpression
+                                          Identifier: ' undefined'
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                    oldTranspileDiagnostics'
+                                        EqualsToken
+                                        NonNullExpression
+                                          Identifier: ' undefined'
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: '
+
+                /* eslint-disable no-restricted-syntax */
+                it'
+                                BinaryExpression
+                                  StringLiteral
+                                  PlusToken
+                                  Identifier: ' justName'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                    Harness'
+                                            Identifier: 'Baseline'
+                                          Identifier: 'runBaseline'
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'justName'
+                                            Identifier: 'replace'
+                                          RegularExpressionLiteral
+                                          StringLiteral
+                                        ConditionalExpression
+                                          BinaryExpression
+                                            PropertyAccessExpression
+                                              NonNullExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' transpileResult'
+                                                  Identifier: 'diagnostics'
+                                              Identifier: 'length'
+                                            EqualsEqualsEqualsToken
+                                            NumericLiteral
+                                          QuestionToken
+                                          NullKeyword
+                                          ColonToken
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' Harness'
+                                                Identifier: 'Compiler'
+                                              Identifier: 'getErrorBaseline'
+                                            Identifier: 'toBeCompiled'
+                                            NonNullExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' transpileResult'
+                                                Identifier: 'diagnostics'
+                            IfStatement
+                              Identifier: 'canUseOldTranspile'
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    Identifier: '
+                    it'
+                                    BinaryExpression
+                                      StringLiteral
+                                      PlusToken
+                                      Identifier: ' justName'
+                                    ArrowFunction
+                                      EqualsGreaterThanToken
+                                      Block
+                                        ExpressionStatement
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+                        Harness'
+                                                Identifier: 'Baseline'
+                                              Identifier: 'runBaseline'
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'justName'
+                                                Identifier: 'replace'
+                                              RegularExpressionLiteral
+                                              StringLiteral
+                                            ConditionalExpression
+                                              BinaryExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' oldTranspileDiagnostics'
+                                                  Identifier: 'length'
+                                                EqualsEqualsEqualsToken
+                                                NumericLiteral
+                                              QuestionToken
+                                              NullKeyword
+                                              ColonToken
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' Harness'
+                                                    Identifier: 'Compiler'
+                                                  Identifier: 'getErrorBaseline'
+                                                Identifier: 'toBeCompiled'
+                                                Identifier: ' oldTranspileDiagnostics'
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: '
+                /* eslint-enable no-restricted-syntax */
+
+                it'
+                                BinaryExpression
+                                  StringLiteral
+                                  PlusToken
+                                  Identifier: ' justName'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                    Harness'
+                                            Identifier: 'Baseline'
+                                          Identifier: 'runBaseline'
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'justName'
+                                            Identifier: 'replace'
+                                          RegularExpressionLiteral
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' ts'
+                                              Identifier: 'Extension'
+                                            Identifier: 'Js'
+                                        PropertyAccessExpression
+                                          Identifier: ' transpileResult'
+                                          Identifier: 'outputText'
+                            IfStatement
+                              Identifier: 'canUseOldTranspile'
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    Identifier: '
+                    it'
+                                    BinaryExpression
+                                      StringLiteral
+                                      PlusToken
+                                      Identifier: ' justName'
+                                    ArrowFunction
+                                      EqualsGreaterThanToken
+                                      Block
+                                        ExpressionStatement
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+                        Harness'
+                                                Identifier: 'Baseline'
+                                              Identifier: 'runBaseline'
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: 'justName'
+                                                Identifier: 'replace'
+                                              RegularExpressionLiteral
+                                              StringLiteral
+                                            Identifier: ' oldTranspileResult'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'testSettings'
+                    Identifier: 'testVerbatimModuleSyntax'
+                  ExclamationEqualsEqualsToken
+                  StringLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            runOnce'
+                      Identifier: 'nameIn'
+                      Identifier: ' testSettings'
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'testSettings'
+                  Identifier: 'testVerbatimModuleSyntax'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            runOnce'
+                      BinaryExpression
+                        Identifier: 'nameIn'
+                        PlusToken
+                        StringLiteral
+                      ObjectLiteralExpression
+                        SpreadAssignment
+                          Identifier: 'testSettings'
+                        PropertyAssignment
+                          Identifier: '
+                options'
+                          ObjectLiteralExpression
+                            SpreadAssignment
+                              PropertyAccessExpression
+                                Identifier: 'testSettings'
+                                Identifier: 'options'
+                            PropertyAssignment
+                              Identifier: '
+                    compilerOptions'
+                              ObjectLiteralExpression
+                                SpreadAssignment
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'testSettings'
+                                      Identifier: 'options'
+                                    QuestionDotToken
+                                    Identifier: 'compilerOptions'
+                                PropertyAssignment
+                                  Identifier: '
+                        verbatimModuleSyntax'
+                                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                PropertyAssignment
+                  Identifier: '
+            testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'AMD'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                        PropertyAssignment
+                          Identifier: ' newLine'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'NewLineKind'
+                            Identifier: 'LineFeed'
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'System'
+                        PropertyAssignment
+                          Identifier: ' newLine'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'NewLineKind'
+                            Identifier: 'LineFeed'
+                    PropertyAssignment
+                      Identifier: ' moduleName'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              BinaryExpression
+                BinaryExpression
+                  NoSubstitutionTemplateLiteral
+                  PlusToken
+                  NoSubstitutionTemplateLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'System'
+                        PropertyAssignment
+                          Identifier: ' newLine'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'NewLineKind'
+                            Identifier: 'LineFeed'
+                    PropertyAssignment
+                      Identifier: ' renamedDependencies'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' SomeName'
+                          StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              BinaryExpression
+                BinaryExpression
+                  NoSubstitutionTemplateLiteral
+                  PlusToken
+                  NoSubstitutionTemplateLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'AMD'
+                        PropertyAssignment
+                          Identifier: ' newLine'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'NewLineKind'
+                            Identifier: 'LineFeed'
+                    PropertyAssignment
+                      Identifier: ' renamedDependencies'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' SomeName'
+                          StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              BinaryExpression
+                BinaryExpression
+                  NoSubstitutionTemplateLiteral
+                  PlusToken
+                  NoSubstitutionTemplateLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'UMD'
+                        PropertyAssignment
+                          Identifier: ' newLine'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'NewLineKind'
+                            Identifier: 'LineFeed'
+                    PropertyAssignment
+                      Identifier: ' renamedDependencies'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' SomeName'
+                          StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    BinaryExpression
+                                      NoSubstitutionTemplateLiteral
+                                      PlusToken
+                                      NoSubstitutionTemplateLiteral
+                                    PlusToken
+                                    NoSubstitutionTemplateLiteral
+                                  PlusToken
+                                  NoSubstitutionTemplateLiteral
+                                PlusToken
+                                NoSubstitutionTemplateLiteral
+                              PlusToken
+                              NoSubstitutionTemplateLiteral
+                            PlusToken
+                            NoSubstitutionTemplateLiteral
+                          PlusToken
+                          NoSubstitutionTemplateLiteral
+                        PlusToken
+                        NoSubstitutionTemplateLiteral
+                      PlusToken
+                      NoSubstitutionTemplateLiteral
+                    PlusToken
+                    NoSubstitutionTemplateLiteral
+                  PlusToken
+                  NoSubstitutionTemplateLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                        PropertyAssignment
+                          Identifier: '
+                    newLine'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'NewLineKind'
+                            Identifier: 'LineFeed'
+                        PropertyAssignment
+                          Identifier: '
+                    noEmitHelpers'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+                    emitDecoratorMetadata'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+                    experimentalDecorators'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+                    target'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ES5'
+                PropertyAssignment
+                  Identifier: '
+            testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' jsx'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'JsxEmit'
+                            Identifier: 'React'
+                        PropertyAssignment
+                          Identifier: ' newLine'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'NewLineKind'
+                            Identifier: 'LineFeed'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' newLine'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'NewLineKind'
+                            Identifier: 'LineFeed'
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                module'
+                          AsExpression
+                            AsExpression
+                              StringLiteral
+                              AnyKeyword
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' ts'
+                                Identifier: 'ModuleKind'
+                        PropertyAssignment
+                          Identifier: '
+                // Capitalization and spaces ignored
+                target'
+                          AsExpression
+                            AsExpression
+                              StringLiteral
+                              AnyKeyword
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          AsExpression
+                            AsExpression
+                              NumericLiteral
+                              AnyKeyword
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' ts'
+                                Identifier: 'ModuleKind'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          AsExpression
+                            AsExpression
+                              NumericLiteral
+                              AnyKeyword
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' ts'
+                                Identifier: 'ModuleKind'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' lib'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' types'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' allowJs'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' allowSyntheticDefaultImports'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' allowUnreachableCode'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' allowUnusedLabels'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' alwaysStrict'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' baseUrl'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' charset'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' declaration'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' declarationMap'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' declarationDir'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' emitBOM'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' emitDecoratorMetadata'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: ' experimentalDecorators'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' experimentalDecorators'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' forceConsistentCasingInFileNames'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' isolatedModules'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' isolatedModules'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' jsx'
+                          NumericLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' lib'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' locale'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' moduleResolution'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleResolutionKind'
+                            Identifier: 'Node10'
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' newLine'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'NewLineKind'
+                            Identifier: 'CarriageReturnLineFeed'
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noEmit'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noEmitHelpers'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noEmitOnError'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noErrorTruncation'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noFallthroughCasesInSwitch'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noImplicitAny'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noImplicitReturns'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noImplicitThis'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noImplicitUseStrict'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noLib'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' noResolve'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' out'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' outDir'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' outFile'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' paths'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              StringLiteral
+                              ArrayLiteralExpression
+                                StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' preserveConstEnums'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' reactNamespace'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' jsxFactory'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' jsxFactory'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: ' jsxFragmentFactory'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' removeComments'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' rootDir'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' rootDirs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' skipLibCheck'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' skipDefaultLibCheck'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' strictNullChecks'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' stripInternal'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' suppressExcessPropertyErrors'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' suppressImplicitAnyIndexErrors'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' target'
+                          NumericLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' types'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' typeRoots'
+                          ArrayLiteralExpression
+                            StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' incremental'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' composite'
+                          TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' incremental'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: ' tsBuildInfoFile'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' reportDiagnostics'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        NoSubstitutionTemplateLiteral
+                        PlusToken
+                        NoSubstitutionTemplateLiteral
+                      PlusToken
+                      NoSubstitutionTemplateLiteral
+                    PlusToken
+                    NoSubstitutionTemplateLiteral
+                  PlusToken
+                  NoSubstitutionTemplateLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    target'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ES5'
+                        PropertyAssignment
+                          Identifier: '
+                    module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                        PropertyAssignment
+                          Identifier: '
+                    moduleResolution'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleResolutionKind'
+                            Identifier: 'Node10'
+                        PropertyAssignment
+                          Identifier: '
+                    emitDecoratorMetadata'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+                    experimentalDecorators'
+                          TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        NoSubstitutionTemplateLiteral
+                        PlusToken
+                        NoSubstitutionTemplateLiteral
+                      PlusToken
+                      NoSubstitutionTemplateLiteral
+                    PlusToken
+                    NoSubstitutionTemplateLiteral
+                  PlusToken
+                  NoSubstitutionTemplateLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    target'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ES5'
+                        PropertyAssignment
+                          Identifier: '
+                    module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'System'
+                        PropertyAssignment
+                          Identifier: '
+                    moduleResolution'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleResolutionKind'
+                            Identifier: 'Node10'
+                        PropertyAssignment
+                          Identifier: '
+                    emitDecoratorMetadata'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+                    experimentalDecorators'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+                    isolatedModules'
+                          TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        noSetFileName'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            noSetFileName'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              BinaryExpression
+                NoSubstitutionTemplateLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              BinaryExpression
+                NoSubstitutionTemplateLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                PropertyAssignment
+                  Identifier: '
+            testVerbatimModuleSyntax'
+                  StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              BinaryExpression
+                NoSubstitutionTemplateLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              BinaryExpression
+                NoSubstitutionTemplateLiteral
+                PlusToken
+                NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'CommonJS'
+                PropertyAssignment
+                  Identifier: '
+            testVerbatimModuleSyntax'
+                  StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'ESNext'
+                        PropertyAssignment
+                          Identifier: ' target'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ESNext'
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'ESNext'
+                        PropertyAssignment
+                          Identifier: ' allowImportingTsExtensions'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: ' target'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ESNext'
+                PropertyAssignment
+                  Identifier: '
+        testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'ESNext'
+                        PropertyAssignment
+                          Identifier: ' target'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ESNext'
+                PropertyAssignment
+                  Identifier: '
+            testVerbatimModuleSyntax'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'ESNext'
+                        PropertyAssignment
+                          Identifier: ' target'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ESNext'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    transpilesCorrectly'
+              StringLiteral
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            options'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' compilerOptions'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' target'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ScriptTarget'
+                            Identifier: 'ESNext'

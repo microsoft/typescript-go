@@ -1,0 +1,109 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test1'
+    TypeParameter
+      Identifier: '
+  TContext'
+    TypeParameter
+      Identifier: '
+  TMethods'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        FunctionType
+          Parameter
+            Identifier: 'ctx'
+            TypeReference
+              Identifier: ' TContext'
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              NeverKeyword
+          UnknownKeyword
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TContext'
+    Parameter
+      Identifier: ' methods'
+      TypeReference
+        Identifier: ' TMethods'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    count'
+          NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    checkLimit'
+          ArrowFunction
+            Parameter
+              Identifier: 'ctx'
+            Parameter
+              Identifier: ' max'
+              NumericLiteral
+            EqualsGreaterThanToken
+            Block
+        PropertyAssignment
+          Identifier: '
+    hasAccess'
+          ArrowFunction
+            Parameter
+              Identifier: 'ctx'
+            Parameter
+              Identifier: ' user'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' name'
+                  StringKeyword
+            EqualsGreaterThanToken
+            Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test2'
+        FunctionType
+          Parameter
+            Identifier: 'arg'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+          VoidKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'arg'
+            Identifier: ' num'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test3'
+        FunctionType
+          Parameter
+            Identifier: 'arg'
+            NumberKeyword
+          VoidKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'arg'
+            NumericLiteral
+          EqualsGreaterThanToken
+          Block

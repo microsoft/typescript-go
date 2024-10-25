@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' baz'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'bar'
+        QuestionToken
+        AnyKeyword
+      Block

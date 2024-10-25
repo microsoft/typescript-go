@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' T'
+    NumberKeyword

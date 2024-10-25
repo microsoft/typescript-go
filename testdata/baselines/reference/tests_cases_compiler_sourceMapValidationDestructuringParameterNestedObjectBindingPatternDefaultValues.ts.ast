@@ -1,0 +1,225 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              StringKeyword
+            VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Robot'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    skills'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        primary'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        secondary'
+          QuestionToken
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robotA'
+        TypeReference
+          Identifier: ' Robot'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' skills'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' primary'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' secondary'
+                StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '
+        skills'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: '
+            primary'
+              Identifier: ' primaryA'
+              StringLiteral
+            BindingElement
+              Identifier: '
+            secondary'
+              Identifier: ' secondaryA'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' primary'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' secondary'
+              StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+      Identifier: ' robotA'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'primaryA'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '
+        name'
+          Identifier: ' nameC'
+          StringLiteral
+        BindingElement
+          Identifier: '
+        skills'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: '
+            primary'
+              Identifier: ' primaryB'
+              StringLiteral
+            BindingElement
+              Identifier: '
+            secondary'
+              Identifier: ' secondaryB'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' primary'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' secondary'
+              StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+      Identifier: ' robotA'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'secondaryB'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' skills'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' primary'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' secondary'
+              StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+      Identifier: ' robotA'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'skills'
+            Identifier: 'primary'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo1'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skills'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' primary'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' secondary'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo2'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skills'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' primary'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' secondary'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo3'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skills'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' primary'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' secondary'
+              StringLiteral

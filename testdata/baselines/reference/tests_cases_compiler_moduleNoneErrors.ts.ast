@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword

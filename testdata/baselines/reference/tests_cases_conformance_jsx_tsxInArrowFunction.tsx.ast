@@ -1,0 +1,88 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          Identifier: '
+        div'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+            text'
+              QuestionToken
+              StringKeyword
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxExpression
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' text'
+                StringLiteral
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' text'
+                StringLiteral
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxExpression
+        ArrowFunction
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            JsxSelfClosingElement
+              Identifier: 'div'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' text'
+                  StringLiteral
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxExpression
+        ArrowFunction
+          EqualsGreaterThanToken
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' text'
+                  StringLiteral
+            JsxClosingElement
+              Identifier: 'div'
+      JsxClosingElement
+        Identifier: 'div'

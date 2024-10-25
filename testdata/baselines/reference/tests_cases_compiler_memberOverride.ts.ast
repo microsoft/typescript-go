@@ -1,0 +1,22 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' 
+    a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'a'

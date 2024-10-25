@@ -1,0 +1,974 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    BaseType'
+        ImportSpecifier
+          Identifier: '
+    clear'
+        ImportSpecifier
+          Identifier: '
+    EntityNameOrEntityNameExpression'
+        ImportSpecifier
+          Identifier: '
+    forEach'
+        ImportSpecifier
+          Identifier: '
+    getOwnValues'
+        ImportSpecifier
+          Identifier: '
+    getSymbolId'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    IndexedAccessType'
+        ImportSpecifier
+          Identifier: '
+    IndexType'
+        ImportSpecifier
+          Identifier: '
+    InterfaceType'
+        ImportSpecifier
+          Identifier: '
+    MappedType'
+        ImportSpecifier
+          Identifier: '
+    ObjectFlags'
+        ImportSpecifier
+          Identifier: '
+    ObjectType'
+        ImportSpecifier
+          Identifier: '
+    ResolvedType'
+        ImportSpecifier
+          Identifier: '
+    Signature'
+        ImportSpecifier
+          Identifier: '
+    Symbol'
+        ImportSpecifier
+          Identifier: '
+    SymbolWalker'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    Type'
+        ImportSpecifier
+          Identifier: '
+    TypeFlags'
+        ImportSpecifier
+          Identifier: '
+    TypeParameter'
+        ImportSpecifier
+          Identifier: '
+    TypePredicate'
+        ImportSpecifier
+          Identifier: '
+    TypeQueryNode'
+        ImportSpecifier
+          Identifier: '
+    TypeReference'
+        ImportSpecifier
+          Identifier: '
+    UnionOrIntersectionType'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createGetSymbolWalker'
+    Parameter
+      Identifier: '
+    getRestTypeOfSignature'
+      FunctionType
+        Parameter
+          Identifier: 'sig'
+          TypeReference
+            Identifier: ' Signature'
+        TypeReference
+          Identifier: ' Type'
+    Parameter
+      Identifier: '
+    getTypePredicateOfSignature'
+      FunctionType
+        Parameter
+          Identifier: 'sig'
+          TypeReference
+            Identifier: ' Signature'
+        UnionType
+          TypeReference
+            Identifier: ' TypePredicate'
+          UndefinedKeyword
+    Parameter
+      Identifier: '
+    getReturnTypeOfSignature'
+      FunctionType
+        Parameter
+          Identifier: 'sig'
+          TypeReference
+            Identifier: ' Signature'
+        TypeReference
+          Identifier: ' Type'
+    Parameter
+      Identifier: '
+    getBaseTypes'
+      FunctionType
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' InterfaceType'
+        ArrayType
+          TypeReference
+            Identifier: ' BaseType'
+    Parameter
+      Identifier: '
+    resolveStructuredTypeMembers'
+      FunctionType
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' ObjectType'
+        TypeReference
+          Identifier: ' ResolvedType'
+    Parameter
+      Identifier: '
+    getTypeOfSymbol'
+      FunctionType
+        Parameter
+          Identifier: 'sym'
+          TypeReference
+            Identifier: ' Symbol'
+        TypeReference
+          Identifier: ' Type'
+    Parameter
+      Identifier: '
+    getResolvedSymbol'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Identifier'
+        TypeReference
+          Identifier: ' Symbol'
+    Parameter
+      Identifier: '
+    getConstraintOfTypeParameter'
+      FunctionType
+        Parameter
+          Identifier: 'typeParameter'
+          TypeReference
+            Identifier: ' TypeParameter'
+        UnionType
+          TypeReference
+            Identifier: ' Type'
+          UndefinedKeyword
+    Parameter
+      Identifier: '
+    getFirstIdentifier'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' EntityNameOrEntityNameExpression'
+        TypeReference
+          Identifier: ' Identifier'
+    Parameter
+      Identifier: '
+    getTypeArguments'
+      FunctionType
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' TypeReference'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Type'
+    FunctionType
+      Parameter
+        Identifier: 'accept'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'symbol'
+            TypeReference
+              Identifier: ' Symbol'
+          BooleanKeyword
+      TypeReference
+        Identifier: ' SymbolWalker'
+    Block
+      ReturnStatement
+        Identifier: ' getSymbolWalker'
+      FunctionDeclaration
+        Identifier: ' getSymbolWalker'
+        Parameter
+          Identifier: 'accept'
+          FunctionType
+            Parameter
+              Identifier: 'symbol'
+              TypeReference
+                Identifier: ' Symbol'
+            BooleanKeyword
+          ArrowFunction
+            EqualsGreaterThanToken
+            TrueKeyword
+        TypeReference
+          Identifier: ' SymbolWalker'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' visitedTypes'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Type'
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' visitedSymbols'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Symbol'
+                ArrayLiteralExpression
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            walkType'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' type'
+                  EqualsGreaterThanToken
+                  Block
+                    TryStatement
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                    visitType'
+                            Identifier: 'type'
+                        ReturnStatement
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' visitedTypes'
+                              CallExpression
+                                Identifier: ' getOwnValues'
+                                Identifier: 'visitedTypes'
+                            PropertyAssignment
+                              Identifier: ' visitedSymbols'
+                              CallExpression
+                                Identifier: ' getOwnValues'
+                                Identifier: 'visitedSymbols'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                    clear'
+                            Identifier: 'visitedTypes'
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                    clear'
+                            Identifier: 'visitedSymbols'
+              PropertyAssignment
+                Identifier: '
+            walkSymbol'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' symbol'
+                  EqualsGreaterThanToken
+                  Block
+                    TryStatement
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                    visitSymbol'
+                            Identifier: 'symbol'
+                        ReturnStatement
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' visitedTypes'
+                              CallExpression
+                                Identifier: ' getOwnValues'
+                                Identifier: 'visitedTypes'
+                            PropertyAssignment
+                              Identifier: ' visitedSymbols'
+                              CallExpression
+                                Identifier: ' getOwnValues'
+                                Identifier: 'visitedSymbols'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                    clear'
+                            Identifier: 'visitedTypes'
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                    clear'
+                            Identifier: 'visitedSymbols'
+          FunctionDeclaration
+            Identifier: ' visitType'
+            Parameter
+              Identifier: 'type'
+              UnionType
+                TypeReference
+                  Identifier: ' Type'
+                UndefinedKeyword
+            VoidKeyword
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'type'
+                Block
+                  ReturnStatement
+              IfStatement
+                ElementAccessExpression
+                  Identifier: 'visitedTypes'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'id'
+                Block
+                  ReturnStatement
+              ExpressionStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: '
+            visitedTypes'
+                    PropertyAccessExpression
+                      Identifier: 'type'
+                      Identifier: 'id'
+                  EqualsToken
+                  Identifier: ' type'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' shouldBail'
+                    CallExpression
+                      Identifier: ' visitSymbol'
+                      PropertyAccessExpression
+                        Identifier: 'type'
+                        Identifier: 'symbol'
+              IfStatement
+                Identifier: 'shouldBail'
+                ReturnStatement
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'flags'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' TypeFlags'
+                    Identifier: 'Object'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' objectType'
+                        AsExpression
+                          Identifier: ' type'
+                          TypeReference
+                            Identifier: ' ObjectType'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' objectFlags'
+                        PropertyAccessExpression
+                          Identifier: ' objectType'
+                          Identifier: 'objectFlags'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'objectFlags'
+                      AmpersandToken
+                      PropertyAccessExpression
+                        Identifier: ' ObjectFlags'
+                        Identifier: 'Reference'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                    visitTypeReference'
+                          AsExpression
+                            Identifier: 'type'
+                            TypeReference
+                              Identifier: ' TypeReference'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'objectFlags'
+                      AmpersandToken
+                      PropertyAccessExpression
+                        Identifier: ' ObjectFlags'
+                        Identifier: 'Mapped'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                    visitMappedType'
+                          AsExpression
+                            Identifier: 'type'
+                            TypeReference
+                              Identifier: ' MappedType'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'objectFlags'
+                      AmpersandToken
+                      ParenthesizedExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'ObjectFlags'
+                            Identifier: 'Class'
+                          BarToken
+                          PropertyAccessExpression
+                            Identifier: ' ObjectFlags'
+                            Identifier: 'Interface'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                    visitInterfaceType'
+                          AsExpression
+                            Identifier: 'type'
+                            TypeReference
+                              Identifier: ' InterfaceType'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'objectFlags'
+                      AmpersandToken
+                      ParenthesizedExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'ObjectFlags'
+                            Identifier: 'Tuple'
+                          BarToken
+                          PropertyAccessExpression
+                            Identifier: ' ObjectFlags'
+                            Identifier: 'Anonymous'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                    visitObjectType'
+                          Identifier: 'objectType'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'flags'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' TypeFlags'
+                    Identifier: 'TypeParameter'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitTypeParameter'
+                      AsExpression
+                        Identifier: 'type'
+                        TypeReference
+                          Identifier: ' TypeParameter'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'flags'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' TypeFlags'
+                    Identifier: 'UnionOrIntersection'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitUnionOrIntersectionType'
+                      AsExpression
+                        Identifier: 'type'
+                        TypeReference
+                          Identifier: ' UnionOrIntersectionType'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'flags'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' TypeFlags'
+                    Identifier: 'Index'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitIndexType'
+                      AsExpression
+                        Identifier: 'type'
+                        TypeReference
+                          Identifier: ' IndexType'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'flags'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' TypeFlags'
+                    Identifier: 'IndexedAccess'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitIndexedAccessType'
+                      AsExpression
+                        Identifier: 'type'
+                        TypeReference
+                          Identifier: ' IndexedAccessType'
+          FunctionDeclaration
+            Identifier: ' visitTypeReference'
+            Parameter
+              Identifier: 'type'
+              TypeReference
+                Identifier: ' TypeReference'
+            VoidKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'target'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            forEach'
+                  CallExpression
+                    Identifier: 'getTypeArguments'
+                    Identifier: 'type'
+                  Identifier: ' visitType'
+          FunctionDeclaration
+            Identifier: ' visitTypeParameter'
+            Parameter
+              Identifier: 'type'
+              TypeReference
+                Identifier: ' TypeParameter'
+            VoidKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  CallExpression
+                    Identifier: 'getConstraintOfTypeParameter'
+                    Identifier: 'type'
+          FunctionDeclaration
+            Identifier: ' visitUnionOrIntersectionType'
+            Parameter
+              Identifier: 'type'
+              TypeReference
+                Identifier: ' UnionOrIntersectionType'
+            VoidKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            forEach'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'types'
+                  Identifier: ' visitType'
+          FunctionDeclaration
+            Identifier: ' visitIndexType'
+            Parameter
+              Identifier: 'type'
+              TypeReference
+                Identifier: ' IndexType'
+            VoidKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'type'
+          FunctionDeclaration
+            Identifier: ' visitIndexedAccessType'
+            Parameter
+              Identifier: 'type'
+              TypeReference
+                Identifier: ' IndexedAccessType'
+            VoidKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'objectType'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'indexType'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'constraint'
+          FunctionDeclaration
+            Identifier: ' visitMappedType'
+            Parameter
+              Identifier: 'type'
+              TypeReference
+                Identifier: ' MappedType'
+            VoidKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'typeParameter'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'constraintType'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'templateType'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'modifiersType'
+          FunctionDeclaration
+            Identifier: ' visitSignature'
+            Parameter
+              Identifier: 'signature'
+              TypeReference
+                Identifier: ' Signature'
+            VoidKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' typePredicate'
+                    CallExpression
+                      Identifier: ' getTypePredicateOfSignature'
+                      Identifier: 'signature'
+              IfStatement
+                Identifier: 'typePredicate'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitType'
+                      PropertyAccessExpression
+                        Identifier: 'typePredicate'
+                        Identifier: 'type'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            forEach'
+                  PropertyAccessExpression
+                    Identifier: 'signature'
+                    Identifier: 'typeParameters'
+                  Identifier: ' visitType'
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' parameter'
+                PropertyAccessExpression
+                  Identifier: ' signature'
+                  Identifier: 'parameters'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitSymbol'
+                      Identifier: 'parameter'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  CallExpression
+                    Identifier: 'getRestTypeOfSignature'
+                    Identifier: 'signature'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  CallExpression
+                    Identifier: 'getReturnTypeOfSignature'
+                    Identifier: 'signature'
+          FunctionDeclaration
+            Identifier: ' visitInterfaceType'
+            Parameter
+              Identifier: 'interfaceT'
+              TypeReference
+                Identifier: ' InterfaceType'
+            VoidKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitObjectType'
+                  Identifier: 'interfaceT'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            forEach'
+                  PropertyAccessExpression
+                    Identifier: 'interfaceT'
+                    Identifier: 'typeParameters'
+                  Identifier: ' visitType'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            forEach'
+                  CallExpression
+                    Identifier: 'getBaseTypes'
+                    Identifier: 'interfaceT'
+                  Identifier: ' visitType'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  PropertyAccessExpression
+                    Identifier: 'interfaceT'
+                    Identifier: 'thisType'
+          FunctionDeclaration
+            Identifier: ' visitObjectType'
+            Parameter
+              Identifier: 'type'
+              TypeReference
+                Identifier: ' ObjectType'
+            VoidKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' resolved'
+                    CallExpression
+                      Identifier: ' resolveStructuredTypeMembers'
+                      Identifier: 'type'
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' info'
+                PropertyAccessExpression
+                  Identifier: ' resolved'
+                  Identifier: 'indexInfos'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitType'
+                      PropertyAccessExpression
+                        Identifier: 'info'
+                        Identifier: 'keyType'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitType'
+                      PropertyAccessExpression
+                        Identifier: 'info'
+                        Identifier: 'type'
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' signature'
+                PropertyAccessExpression
+                  Identifier: ' resolved'
+                  Identifier: 'callSignatures'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitSignature'
+                      Identifier: 'signature'
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' signature'
+                PropertyAccessExpression
+                  Identifier: ' resolved'
+                  Identifier: 'constructSignatures'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitSignature'
+                      Identifier: 'signature'
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' p'
+                PropertyAccessExpression
+                  Identifier: ' resolved'
+                  Identifier: 'properties'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                visitSymbol'
+                      Identifier: 'p'
+          FunctionDeclaration
+            Identifier: ' visitSymbol'
+            Parameter
+              Identifier: 'symbol'
+              UnionType
+                TypeReference
+                  Identifier: ' Symbol'
+                UndefinedKeyword
+            BooleanKeyword
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'symbol'
+                Block
+                  ReturnStatement
+                    FalseKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' symbolId'
+                    CallExpression
+                      Identifier: ' getSymbolId'
+                      Identifier: 'symbol'
+              IfStatement
+                ElementAccessExpression
+                  Identifier: 'visitedSymbols'
+                  Identifier: 'symbolId'
+                Block
+                  ReturnStatement
+                    FalseKeyword
+              ExpressionStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: '
+            visitedSymbols'
+                    Identifier: 'symbolId'
+                  EqualsToken
+                  Identifier: ' symbol'
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'accept'
+                    Identifier: 'symbol'
+                Block
+                  ReturnStatement
+                    TrueKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' t'
+                    CallExpression
+                      Identifier: ' getTypeOfSymbol'
+                      Identifier: 'symbol'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            visitType'
+                  Identifier: 't'
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'symbol'
+                  Identifier: 'exports'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                symbol'
+                          Identifier: 'exports'
+                        Identifier: 'forEach'
+                      Identifier: 'visitSymbol'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            forEach'
+                  PropertyAccessExpression
+                    Identifier: 'symbol'
+                    Identifier: 'declarations'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' d'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            ParenthesizedExpression
+                              AsExpression
+                                Identifier: 'd'
+                                AnyKeyword
+                            Identifier: 'type'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ParenthesizedExpression
+                                  AsExpression
+                                    Identifier: 'd'
+                                    AnyKeyword
+                                Identifier: 'type'
+                              Identifier: 'kind'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SyntaxKind'
+                              Identifier: 'TypeQuery'
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' query'
+                                AsExpression
+                                  PropertyAccessExpression
+                                    ParenthesizedExpression
+                                      AsExpression
+                                        Identifier: 'd'
+                                        AnyKeyword
+                                    Identifier: 'type'
+                                  TypeReference
+                                    Identifier: ' TypeQueryNode'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' entity'
+                                CallExpression
+                                  Identifier: ' getResolvedSymbol'
+                                  CallExpression
+                                    Identifier: 'getFirstIdentifier'
+                                    PropertyAccessExpression
+                                      Identifier: 'query'
+                                      Identifier: 'exprName'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                    visitSymbol'
+                              Identifier: 'entity'
+              ReturnStatement
+                FalseKeyword

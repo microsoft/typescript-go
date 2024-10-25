@@ -1,0 +1,32 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' MyEnum'
+    EnumMember
+      Identifier: '
+  a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+  b'
+    EnumMember
+      Identifier: '
+  c'
+    EnumMember
+      Identifier: '
+  d'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyEnum'
+          Identifier: ' MyEnumFromModule'
+    StringLiteral
+  EnumDeclaration
+    Identifier: ' MyEnum'
+    EnumMember
+      Identifier: '
+  a'
+      PropertyAccessExpression
+        Identifier: ' MyEnumFromModule'
+        Identifier: 'a'

@@ -1,0 +1,52 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' TestType'
+    EnumMember
+      Identifier: ' foo'
+    EnumMember
+      Identifier: ' bar'
+  TypeAliasDeclaration
+    Identifier: ' TestTypeStr'
+    TypeOperator
+      TypeQuery
+        Identifier: ' TestType'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' TestType'
+    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' TestTypeStr'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f1'
+      PropertyAccessExpression
+        Identifier: 'TestType'
+        Identifier: 'foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      PropertyAccessExpression
+        Identifier: 'TestType'
+        Identifier: 'bar'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      StringLiteral

@@ -1,0 +1,38 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Validator'
+        FunctionExpression
+          Identifier: ' VFunc'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'flags'
+                EqualsToken
+                StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+Validator'
+          Identifier: 'prototype'
+        Identifier: 'num'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validateRegExpFlags'
+        FunctionExpression
+          Parameter
+            Identifier: 'state'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' state'
+                Identifier: 'flags'

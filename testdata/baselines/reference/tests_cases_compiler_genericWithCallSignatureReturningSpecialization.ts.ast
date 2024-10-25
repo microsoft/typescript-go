@@ -1,0 +1,29 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    f'
+      TypeReference
+        Identifier: ' B'
+        NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' B'
+          BooleanKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+x'
+      TrueKeyword

@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Component'
+    Block
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ComponentProps'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Component'
+        ImportSpecifier
+          Identifier: ' ComponentProps'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Component'
+        ImportSpecifier
+          Identifier: ' ComponentProps'
+    StringLiteral

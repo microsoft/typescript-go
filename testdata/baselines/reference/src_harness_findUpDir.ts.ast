@@ -1,0 +1,95 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' existsSync'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    dirname'
+        ImportSpecifier
+          Identifier: '
+    join'
+        ImportSpecifier
+          Identifier: '
+    resolve'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' findUpFile'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' dir'
+            Identifier: ' __dirname'
+      WhileStatement
+        TrueKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' fullPath'
+                CallExpression
+                  Identifier: ' join'
+                  Identifier: 'dir'
+                  Identifier: ' name'
+          IfStatement
+            CallExpression
+              Identifier: 'existsSync'
+              Identifier: 'fullPath'
+            ReturnStatement
+              Identifier: ' fullPath'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' up'
+                CallExpression
+                  Identifier: ' resolve'
+                  Identifier: 'dir'
+                  StringLiteral
+          IfStatement
+            BinaryExpression
+              Identifier: 'up'
+              EqualsEqualsEqualsToken
+              Identifier: ' dir'
+            ReturnStatement
+              Identifier: ' name'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: ' // it'll fail anyway
+        dir'
+              EqualsToken
+              Identifier: ' up'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' findUpRoot'
+        TypeLiteral
+          CallSignature
+            StringKeyword
+          PropertySignature
+            Identifier: ' cached'
+            QuestionToken
+            StringKeyword
+        ArrowFunction
+          EqualsGreaterThanToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' findUpRoot'
+              Identifier: 'cached'
+            BarBarEqualsToken
+            CallExpression
+              Identifier: ' dirname'
+              CallExpression
+                Identifier: 'findUpFile'
+                StringLiteral

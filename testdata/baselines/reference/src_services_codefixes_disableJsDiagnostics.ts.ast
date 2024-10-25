@@ -1,0 +1,400 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixActionWithoutFixAll'
+        ImportSpecifier
+          Identifier: '
+    createFileTextChanges'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    createTextChange'
+        ImportSpecifier
+          Identifier: '
+    createTextSpan'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromBounds'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticCategory'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    getLineAndCharacterOfPosition'
+        ImportSpecifier
+          Identifier: '
+    getNewLineOrDefaultFromHost'
+        ImportSpecifier
+          Identifier: '
+    isCheckJsEnabledForFile'
+        ImportSpecifier
+          Identifier: '
+    isInJSFile'
+        ImportSpecifier
+          Identifier: '
+    mapDefined'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    tryAddToSet'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixName'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        CallExpression
+          Identifier: ' mapDefined'
+          AsExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Object'
+                Identifier: 'keys'
+              Identifier: 'Diagnostics'
+            TypeOperator
+              ArrayType
+                ParenthesizedType
+                  TypeOperator
+                    TypeQuery
+                      Identifier: ' Diagnostics'
+          ArrowFunction
+            Parameter
+              Identifier: ' key'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' diag'
+                    ElementAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'key'
+              ReturnStatement
+                ConditionalExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' diag'
+                      Identifier: 'category'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' DiagnosticCategory'
+                      Identifier: 'Error'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' diag'
+                    Identifier: 'code'
+                  ColonToken
+                  Identifier: ' undefined'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToDisableJsDiagnostics'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' sourceFile'
+                      BindingElement
+                        Identifier: ' program'
+                      BindingElement
+                        Identifier: ' span'
+                      BindingElement
+                        Identifier: ' host'
+                      BindingElement
+                        Identifier: ' formatContext'
+                    Identifier: ' context'
+              IfStatement
+                BinaryExpression
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isInJSFile'
+                      Identifier: 'sourceFile'
+                  BarBarToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isCheckJsEnabledForFile'
+                      Identifier: 'sourceFile'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' program'
+                          Identifier: 'getCompilerOptions'
+                Block
+                  ReturnStatement
+                    Identifier: ' undefined'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' newLineCharacter'
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' sourceFile'
+                        Identifier: 'checkJsDirective'
+                      QuestionToken
+                      StringLiteral
+                      ColonToken
+                      CallExpression
+                        Identifier: ' getNewLineOrDefaultFromHost'
+                        Identifier: 'host'
+                        PropertyAccessExpression
+                          Identifier: ' formatContext'
+                          Identifier: 'options'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' fixes'
+                    ArrayType
+                      TypeReference
+                        Identifier: ' CodeFixAction'
+                    ArrayLiteralExpression
+                      CallExpression
+                        Identifier: '
+            // fixId unnecessary because adding `// @ts-nocheck` even once will ignore every error in the file.
+            createCodeFixActionWithoutFixAll'
+                        Identifier: '
+                fixName'
+                        ArrayLiteralExpression
+                          CallExpression
+                            Identifier: 'createFileTextChanges'
+                            PropertyAccessExpression
+                              Identifier: 'sourceFile'
+                              Identifier: 'fileName'
+                            ArrayLiteralExpression
+                              CallExpression
+                                Identifier: '
+                    createTextChange'
+                                ConditionalExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        sourceFile'
+                                    Identifier: 'checkJsDirective'
+                                  QuestionToken
+                                  CallExpression
+                                    Identifier: ' createTextSpanFromBounds'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'sourceFile'
+                                        Identifier: 'checkJsDirective'
+                                      Identifier: 'pos'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' sourceFile'
+                                        Identifier: 'checkJsDirective'
+                                      Identifier: 'end'
+                                  ColonToken
+                                  CallExpression
+                                    Identifier: ' createTextSpan'
+                                    NumericLiteral
+                                    NumericLiteral
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'newLineCharacter'
+                                    TemplateTail
+                        PropertyAccessExpression
+                          Identifier: '
+                Diagnostics'
+                          Identifier: 'Disable_checking_for_this_file'
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'textChanges'
+                    Identifier: 'isValidLocationToAddComment'
+                  Identifier: 'sourceFile'
+                  PropertyAccessExpression
+                    Identifier: ' span'
+                    Identifier: 'start'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            fixes'
+                        Identifier: 'unshift'
+                      CallExpression
+                        Identifier: 'createCodeFixAction'
+                        Identifier: 'fixName'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' textChanges'
+                              Identifier: 'ChangeTracker'
+                            Identifier: 'with'
+                          Identifier: 'context'
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' t'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              Identifier: ' makeChange'
+                              Identifier: 't'
+                              Identifier: ' sourceFile'
+                              PropertyAccessExpression
+                                Identifier: ' span'
+                                Identifier: 'start'
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'Ignore_this_error_message'
+                        Identifier: ' fixId'
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'Add_ts_ignore_to_all_error_messages'
+              ReturnStatement
+                Identifier: ' fixes'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' seenLines'
+                    NewExpression
+                      Identifier: ' Set'
+                      NumberKeyword
+              ReturnStatement
+                CallExpression
+                  Identifier: ' codeFixAll'
+                  Identifier: 'context'
+                  Identifier: ' errorCodes'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'changes'
+                    Parameter
+                      Identifier: ' diag'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'textChanges'
+                            Identifier: 'isValidLocationToAddComment'
+                          PropertyAccessExpression
+                            Identifier: 'diag'
+                            Identifier: 'file'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'start'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                makeChange'
+                              Identifier: 'changes'
+                              PropertyAccessExpression
+                                Identifier: ' diag'
+                                Identifier: 'file'
+                              PropertyAccessExpression
+                                Identifier: ' diag'
+                                Identifier: 'start'
+                              Identifier: ' seenLines'
+  FunctionDeclaration
+    Identifier: ' makeChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' seenLines'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' line'
+                Identifier: ' lineNumber'
+            CallExpression
+              Identifier: ' getLineAndCharacterOfPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' position'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'seenLines'
+          BarBarToken
+          CallExpression
+            Identifier: ' tryAddToSet'
+            Identifier: 'seenLines'
+            Identifier: ' lineNumber'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changes'
+                Identifier: 'insertCommentBeforeLine'
+              Identifier: 'sourceFile'
+              Identifier: ' lineNumber'
+              Identifier: ' position'
+              StringLiteral

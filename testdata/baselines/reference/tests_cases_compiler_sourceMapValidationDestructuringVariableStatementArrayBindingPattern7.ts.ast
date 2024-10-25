@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x'
+            NumericLiteral
+          BindingElement
+            Identifier: ' j'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral

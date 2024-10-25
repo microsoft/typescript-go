@@ -1,0 +1,38 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' I'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    I'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeQuery
+        Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        TypeQuery
+          QualifiedName
+            Identifier: ' k'
+            Identifier: 'foo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral

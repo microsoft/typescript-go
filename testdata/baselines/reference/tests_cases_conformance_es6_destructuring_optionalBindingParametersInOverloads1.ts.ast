@@ -1,0 +1,42 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+        BindingElement
+          Identifier: ' y'
+        BindingElement
+          Identifier: ' z'
+      QuestionToken
+      TupleType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+      ArrayType
+        AnyKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ArrayLiteralExpression
+        StringLiteral
+        NumericLiteral
+        FalseKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ArrayLiteralExpression
+        FalseKeyword
+        NumericLiteral
+        StringLiteral

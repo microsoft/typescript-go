@@ -1,0 +1,20 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' y'
+          EqualsToken
+          Identifier: 'x'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            Identifier: 'y'

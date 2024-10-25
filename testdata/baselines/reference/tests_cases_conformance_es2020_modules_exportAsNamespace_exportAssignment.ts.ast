@@ -1,0 +1,7 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' ns'
+    StringLiteral

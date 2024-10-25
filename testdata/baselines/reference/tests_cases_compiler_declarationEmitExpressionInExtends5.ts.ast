@@ -1,0 +1,38 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Test'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IFace'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' SomeClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' IFace'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Derived'
+        HeritageClause
+          ExpressionWithTypeArguments
+            CallExpression
+              Identifier: ' getClass'
+              TypeReference
+                Identifier: 'IFace'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' getClass'
+        TypeParameter
+          Identifier: 'T'
+        ConstructorType
+          TypeReference
+            Identifier: ' T'
+        Block
+          ReturnStatement
+            AsExpression
+              Identifier: ' SomeClass'
+              ParenthesizedType
+                ConstructorType
+                  TypeReference
+                    Identifier: ' T'

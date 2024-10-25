@@ -1,0 +1,44 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////interface Foo {
+////    x: "abc" | "def";
+////}
+////function bar(f: Foo) { };
+////bar({x: "[|/**/|]"});
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: '
+    name'
+                  PropertyAssignment
+                    Identifier: '
+    replacementSpan'
+                    ElementAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' test'
+                          Identifier: 'ranges'
+                      NumericLiteral

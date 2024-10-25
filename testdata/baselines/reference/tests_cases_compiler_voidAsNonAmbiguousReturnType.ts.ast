@@ -1,0 +1,38 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' mkdirSync'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' mode'
+      QuestionToken
+      NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' mkdirSync'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' mode'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+    Block
+  ImportEqualsDeclaration
+    Identifier: ' fs'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' main'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+ fs'
+            Identifier: 'mkdirSync'
+          StringLiteral

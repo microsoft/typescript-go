@@ -1,0 +1,300 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ApplicableRefactorInfo'
+        ImportSpecifier
+          Identifier: ' Diagnostic'
+        ImportSpecifier
+          Identifier: ' DiagnosticMessage'
+        ImportSpecifier
+          Identifier: ' Expression'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' RefactorContext'
+        ImportSpecifier
+          Identifier: ' RefactorEditInfo'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' Statement'
+        ImportSpecifier
+          Identifier: ' TextSpan'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRefactorActionsToExtractSymbol'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' RefactorContext'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' ApplicableRefactorInfo'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRefactorEditsToExtractSymbol'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' RefactorContext'
+    Parameter
+      Identifier: ' actionName'
+      StringKeyword
+    UnionType
+      TypeReference
+        Identifier: ' RefactorEditInfo'
+      UndefinedKeyword
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Messages'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractRange'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractImport'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractSuper'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractJSDoc'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractEmpty'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expressionExpected'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' uselessConstantType'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statementOrExpressionExpected'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractRangeContainingConditionalBreakOrContinueStatements'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractRangeContainingConditionalReturnStatement'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractRangeContainingLabeledBreakOrContinueStatementWithTargetOutsideOfTheRange'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractRangeThatContainsWritesToReferencesLocatedOutsideOfTheTargetRangeInGenerators'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeWillNotBeVisibleInTheNewScope'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' functionWillNotBeVisibleInTheNewScope'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractIdentifier'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractExportedEntity'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotWriteInExpression'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractReadonlyPropertyInitializerOutsideConstructor'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractAmbientBlock'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotAccessVariablesFromNestedScopes'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractToJSClass'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractToExpressionArrowFunction'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cannotExtractFunctionsContainingThisToMethod'
+            TypeReference
+              Identifier: ' DiagnosticMessage'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' RangeFacts'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    HasReturn'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    IsGenerator'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    IsAsyncFunction'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    UsesThis'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    UsesThisInFunction'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * The range is in a function which needs the 'static' modifier in a class
+     */
+    InStaticRegion'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TargetRange'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' range'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        ArrayType
+          TypeReference
+            Identifier: ' Statement'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' facts'
+      TypeReference
+        Identifier: ' RangeFacts'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' thisNode'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RangeToExtract'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' targetRange'
+          QuestionToken
+          NeverKeyword
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' errors'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Diagnostic'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' targetRange'
+          TypeReference
+            Identifier: ' TargetRange'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' errors'
+          QuestionToken
+          NeverKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRangeToExtract'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' invoked'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' RangeToExtract'

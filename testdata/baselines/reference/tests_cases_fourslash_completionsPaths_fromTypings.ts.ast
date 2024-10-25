@@ -1,0 +1,63 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /node_modules/@types/foo/index.d.ts
+////
+
+// @Filename: /node_modules/@types/foo/bar.d.ts
+////
+
+// @Filename: /a.ts
+////import {} from "unrelated//*0*/";
+////import {} from "foo//*1*/";
+/////// <reference types="foo//*2*/" />
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' name'
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' kindModifiers'
+                    StringLiteral
+        PropertyAssignment
+          Identifier: '
+        isNewIdentifierLocation'
+          TrueKeyword

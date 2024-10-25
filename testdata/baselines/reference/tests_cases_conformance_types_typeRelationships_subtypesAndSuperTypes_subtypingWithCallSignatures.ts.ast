@@ -1,0 +1,102 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' CallSignature'
+    ModuleBlock
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' foo1'
+        Parameter
+          Identifier: 'cb'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            VoidKeyword
+        TypeQuery
+          Identifier: ' cb'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' foo1'
+        Parameter
+          Identifier: 'cb'
+          AnyKeyword
+        AnyKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            CallExpression
+              Identifier: ' foo1'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                  NumberKeyword
+                EqualsGreaterThanToken
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            CallExpression
+              Identifier: ' foo1'
+              ArrowFunction
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                EqualsGreaterThanToken
+                StringLiteral
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' foo2'
+        Parameter
+          Identifier: 'cb'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            Parameter
+              Identifier: ' y'
+              NumberKeyword
+            VoidKeyword
+        TypeQuery
+          Identifier: ' cb'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' foo2'
+        Parameter
+          Identifier: 'cb'
+          AnyKeyword
+        AnyKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            CallExpression
+              Identifier: ' foo2'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                  NumberKeyword
+                Parameter
+                  Identifier: ' y'
+                  NumberKeyword
+                EqualsGreaterThanToken
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r4'
+            CallExpression
+              Identifier: ' foo2'
+              ArrowFunction
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                EqualsGreaterThanToken
+                StringLiteral

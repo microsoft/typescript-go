@@ -1,0 +1,141 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' DestructuringAssignment'
+        ImportSpecifier
+          Identifier: ' Expression'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' ParameterDeclaration'
+        ImportSpecifier
+          Identifier: ' TextRange'
+        ImportSpecifier
+          Identifier: ' TransformationContext'
+        ImportSpecifier
+          Identifier: ' VariableDeclaration'
+        ImportSpecifier
+          Identifier: ' VisitResult'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' FlattenLevel'
+    EnumMember
+      Identifier: '
+    All'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ObjectRest'
+      NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' flattenDestructuringAssignment'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' VariableDeclaration'
+        TypeReference
+          Identifier: ' DestructuringAssignment'
+    Parameter
+      Identifier: ' visitor'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypeReference
+          Identifier: ' VisitResult'
+          UnionType
+            TypeReference
+              Identifier: 'Node'
+            UndefinedKeyword
+    Parameter
+      Identifier: ' context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' level'
+      TypeReference
+        Identifier: ' FlattenLevel'
+    Parameter
+      Identifier: ' needsValue'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' createAssignmentCallback'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'name'
+          TypeReference
+            Identifier: ' Identifier'
+        Parameter
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' location'
+          QuestionToken
+          TypeReference
+            Identifier: ' TextRange'
+        TypeReference
+          Identifier: ' Expression'
+    TypeReference
+      Identifier: ' Expression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' flattenDestructuringBinding'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' VariableDeclaration'
+        TypeReference
+          Identifier: ' ParameterDeclaration'
+    Parameter
+      Identifier: ' visitor'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypeReference
+          Identifier: ' VisitResult'
+          UnionType
+            TypeReference
+              Identifier: 'Node'
+            UndefinedKeyword
+    Parameter
+      Identifier: ' context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' level'
+      TypeReference
+        Identifier: ' FlattenLevel'
+    Parameter
+      Identifier: ' rval'
+      QuestionToken
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' hoistTempVariables'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' skipInitializer'
+      QuestionToken
+      BooleanKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' VariableDeclaration'

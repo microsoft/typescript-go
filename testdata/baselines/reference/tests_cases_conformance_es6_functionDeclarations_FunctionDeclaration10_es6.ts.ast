@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      YieldExpression
+    Parameter
+      Identifier: ' yield'
+    Block

@@ -1,0 +1,62 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////class C {
+////    constructor() {
+////        this.foo({
+////            'foo.a': '',
+////            'foo.b': '',
+////            'foo.c': '',
+////            'foo.d': '',
+////            'foo.e': '',
+////            'foo.f': '',
+////            'foo.g': '',
+////            'foo.h': '',
+////            'foo.i': '',
+////            'foo.j': '',
+////            'foo.k': '',
+////            'foo.l': '',
+////            'foo.m': '',
+////            'foo.n': '',
+////            'foo.o': '',
+////            'foo.p': '',
+////            'foo.q': '',
+////            'foo.r': '',
+////            'foo.s': '',
+////            'foo.t': '',
+////            'foo.u': '',
+////            'foo.v': '',
+////            'foo.w': '',
+////            'foo.x': '',
+////            'foo.y': '',
+////            'foo.z': '',
+////        });
+////    }
+////}
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Declare_method_0'
+              Identifier: 'message'
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

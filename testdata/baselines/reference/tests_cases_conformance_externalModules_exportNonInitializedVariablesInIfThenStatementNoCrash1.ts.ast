@@ -1,0 +1,12 @@
+SourceFile
+  IfStatement
+    TrueKeyword
+    VariableStatement
+      ExportKeyword
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' cssExports'
+          TypeReference
+            Identifier: ' CssExports'
+  ExportAssignment
+    Identifier: ' cssExports'

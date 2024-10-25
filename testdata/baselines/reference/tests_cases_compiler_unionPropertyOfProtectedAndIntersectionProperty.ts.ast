@@ -1,0 +1,91 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' foo'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' Bar'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' foo'
+      NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Nothing'
+    TypeParameter
+      Identifier: 'V'
+      TypeReference
+        Identifier: ' Foo'
+    VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Broken'
+    TypeParameter
+      Identifier: 'V'
+      TypeReference
+        Identifier: ' Array'
+        UnionType
+          TypeReference
+            Identifier: 'Foo'
+          TypeReference
+            Identifier: ' Bar'
+    MappedType
+      ReadonlyKeyword
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' V'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' V'
+          TypeReference
+            Identifier: 'P'
+        TypeReference
+          Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Nothing'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'V'
+            TypeReference
+              Identifier: 'P'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' _3'
+    IndexedAccessType
+      ParenthesizedType
+        IntersectionType
+          TypeReference
+            Identifier: 'Foo'
+          TypeReference
+            Identifier: ' Bar'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' _4'
+    IndexedAccessType
+      ParenthesizedType
+        UnionType
+          TypeReference
+            Identifier: 'Foo'
+          TypeReference
+            Identifier: ' Bar'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' _5'
+    IndexedAccessType
+      ParenthesizedType
+        UnionType
+          TypeReference
+            Identifier: 'Foo'
+          ParenthesizedType
+            IntersectionType
+              TypeReference
+                Identifier: 'Foo'
+              TypeReference
+                Identifier: ' Bar'
+      LiteralType
+        StringLiteral

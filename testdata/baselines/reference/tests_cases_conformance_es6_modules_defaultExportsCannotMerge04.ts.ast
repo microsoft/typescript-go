@@ -1,0 +1,19 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+    Block
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'

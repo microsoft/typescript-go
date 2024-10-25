@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' consoleTestResultHandler'
+    Parameter
+      Identifier: 'testResult'
+      AnyKeyword
+    BooleanKeyword
+    Block
+      ExpressionStatement
+        VoidExpression
+          Identifier: ' a'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' q'
+        Identifier: ' a'
+        Block
+          ExpressionStatement
+            VoidExpression
+              Identifier: ' a'
+          IfStatement
+            Identifier: 'a'
+            Block
+            Block
+      ReturnStatement
+        TrueKeyword

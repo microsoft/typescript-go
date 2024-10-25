@@ -1,0 +1,280 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' int8ArraySubarray'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            NewExpression
+              Identifier: ' Int8Array'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' uint8ArraySubarray'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            NewExpression
+              Identifier: ' Uint8Array'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' uint8ClampedArraySubarray'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            NewExpression
+              Identifier: ' Uint8ClampedArray'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' int16ArraySubarray'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            NewExpression
+              Identifier: ' Int16Array'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' uint16ArraySubarray'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            NewExpression
+              Identifier: ' Uint16Array'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' int32ArraySubarray'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            NewExpression
+              Identifier: ' Int32Array'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' uint32ArraySubarray'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            NewExpression
+              Identifier: ' Uint32Array'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' float32ArraySubarray'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            NewExpression
+              Identifier: ' Float32Array'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' float64ArraySubarray'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            NewExpression
+              Identifier: ' Float64Array'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'subarray'
+          NumericLiteral
+          NumericLiteral

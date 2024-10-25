@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' symbol'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Symbol'
+            Identifier: 'for'
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      ComputedPropertyName
+        Identifier: 'symbol'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    MethodDeclaration
+      ComputedPropertyName
+        Identifier: 'symbol'
+      Block
+        ReturnStatement
+          CallExpression
+            ElementAccessExpression
+              SuperKeyword
+              Identifier: 'Bar'

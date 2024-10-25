@@ -1,0 +1,295 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' MapLike'
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' TypeAcquisition'
+        ImportSpecifier
+          Identifier: ' Version'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TypingResolutionHost'
+    MethodSignature
+      Identifier: '
+    directoryExists'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    fileExists'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    readFile'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' encoding'
+        QuestionToken
+        StringKeyword
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    readDirectory'
+      Parameter
+        Identifier: 'rootDir'
+        StringKeyword
+      Parameter
+        Identifier: ' extensions'
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' excludes'
+        UnionType
+          TypeOperator
+            ArrayType
+              StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' includes'
+        UnionType
+          TypeOperator
+            ArrayType
+              StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' depth'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CachedTyping'
+    PropertySignature
+      Identifier: '
+    typingLocation'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    version'
+      TypeReference
+        Identifier: ' Version'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTypingUpToDate'
+    Parameter
+      Identifier: 'cachedTyping'
+      TypeReference
+        Identifier: ' CachedTyping'
+    Parameter
+      Identifier: ' availableTypingVersions'
+      TypeReference
+        Identifier: ' MapLike'
+        StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' nonRelativeModuleNameForTypingCache'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SafeList'
+    TypeReference
+      Identifier: ' ReadonlyMap'
+      StringKeyword
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' loadSafeList'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' TypingResolutionHost'
+    Parameter
+      Identifier: ' safeListPath'
+      TypeReference
+        Identifier: ' Path'
+    TypeReference
+      Identifier: ' SafeList'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' loadTypesMap'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' TypingResolutionHost'
+    Parameter
+      Identifier: ' typesMapPath'
+      TypeReference
+        Identifier: ' Path'
+    UnionType
+      TypeReference
+        Identifier: ' SafeList'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' discoverTypings'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' TypingResolutionHost'
+    Parameter
+      Identifier: ' log'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'message'
+              StringKeyword
+            VoidKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' fileNames'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' projectRootPath'
+      TypeReference
+        Identifier: ' Path'
+    Parameter
+      Identifier: ' safeList'
+      TypeReference
+        Identifier: ' SafeList'
+    Parameter
+      Identifier: ' packageNameToTypingLocation'
+      TypeReference
+        Identifier: ' ReadonlyMap'
+        StringKeyword
+        TypeReference
+          Identifier: ' CachedTyping'
+    Parameter
+      Identifier: ' typeAcquisition'
+      TypeReference
+        Identifier: ' TypeAcquisition'
+    Parameter
+      Identifier: ' unresolvedImports'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: ' typesRegistry'
+      TypeReference
+        Identifier: ' ReadonlyMap'
+        StringKeyword
+        TypeReference
+          Identifier: ' MapLike'
+          StringKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    cachedTypingPaths'
+        ArrayType
+          StringKeyword
+      PropertySignature
+        Identifier: '
+    newTypingNames'
+        ArrayType
+          StringKeyword
+      PropertySignature
+        Identifier: '
+    filesToWatch'
+        ArrayType
+          StringKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' NameValidationResult'
+    EnumMember
+      Identifier: '
+    Ok'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    EmptyName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NameTooLong'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NameStartsWithDot'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NameStartsWithUnderscore'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NameContainsNonURISafeCharacters'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ScopedPackageNameValidationResult'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    isScopeName'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    result'
+      TypeReference
+        Identifier: ' NameValidationResult'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PackageNameValidationResult'
+    UnionType
+      TypeReference
+        Identifier: ' NameValidationResult'
+      TypeReference
+        Identifier: ' ScopedPackageNameValidationResult'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' validatePackageName'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    TypeReference
+      Identifier: ' PackageNameValidationResult'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' renderPackageNameValidationFailure'
+    Parameter
+      Identifier: 'result'
+      TypeReference
+        Identifier: ' PackageNameValidationResult'
+    Parameter
+      Identifier: ' typing'
+      StringKeyword
+    StringKeyword

@@ -1,0 +1,3582 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createCodeFixActionWithoutFixAll'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    __String'
+        ImportSpecifier
+          Identifier: '
+    arrayFrom'
+        ImportSpecifier
+          Identifier: '
+    ArrowFunction'
+        ImportSpecifier
+          Identifier: '
+    BinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    BindingElement'
+        ImportSpecifier
+          Identifier: '
+    BindingName'
+        ImportSpecifier
+          Identifier: '
+    ClassDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ClassExpression'
+        ImportSpecifier
+          Identifier: '
+    concatenate'
+        ImportSpecifier
+          Identifier: '
+    copyEntries'
+        ImportSpecifier
+          Identifier: '
+    createMultiMap'
+        ImportSpecifier
+          Identifier: '
+    createRange'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    emptyMap'
+        ImportSpecifier
+          Identifier: '
+    ExportDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ExportSpecifier'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    ExpressionStatement'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    filter'
+        ImportSpecifier
+          Identifier: '
+    findChildOfKind'
+        ImportSpecifier
+          Identifier: '
+    flatMap'
+        ImportSpecifier
+          Identifier: '
+    forEach'
+        ImportSpecifier
+          Identifier: '
+    FunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    FunctionExpression'
+        ImportSpecifier
+          Identifier: '
+    getEmitScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    getQuotePreference'
+        ImportSpecifier
+          Identifier: '
+    getSynthesizedDeepClone'
+        ImportSpecifier
+          Identifier: '
+    getSynthesizedDeepClones'
+        ImportSpecifier
+          Identifier: '
+    getSynthesizedDeepClonesWithReplacements'
+        ImportSpecifier
+          Identifier: '
+    getSynthesizedDeepCloneWithReplacements'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    ImportDeclaration'
+        ImportSpecifier
+          Identifier: '
+    importFromModuleSpecifier'
+        ImportSpecifier
+          Identifier: '
+    ImportSpecifier'
+        ImportSpecifier
+          Identifier: '
+    InternalSymbolName'
+        ImportSpecifier
+          Identifier: '
+    isArray'
+        ImportSpecifier
+          Identifier: '
+    isArrowFunction'
+        ImportSpecifier
+          Identifier: '
+    isBinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    isClassExpression'
+        ImportSpecifier
+          Identifier: '
+    isExportsOrModuleExportsOrAlias'
+        ImportSpecifier
+          Identifier: '
+    isFunctionExpression'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isIdentifierANonContextualKeyword'
+        ImportSpecifier
+          Identifier: '
+    isObjectLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    isPropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    isRequireCall'
+        ImportSpecifier
+          Identifier: '
+    isVariableStatement'
+        ImportSpecifier
+          Identifier: '
+    makeImport'
+        ImportSpecifier
+          Identifier: '
+    map'
+        ImportSpecifier
+          Identifier: '
+    mapAllOrFail'
+        ImportSpecifier
+          Identifier: '
+    mapIterator'
+        ImportSpecifier
+          Identifier: '
+    MethodDeclaration'
+        ImportSpecifier
+          Identifier: '
+    Modifier'
+        ImportSpecifier
+          Identifier: '
+    moduleSpecifierToValidIdentifier'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeArray'
+        ImportSpecifier
+          Identifier: '
+    NodeFlags'
+        ImportSpecifier
+          Identifier: '
+    ObjectLiteralElementLike'
+        ImportSpecifier
+          Identifier: '
+    ObjectLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    PropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    QuotePreference'
+        ImportSpecifier
+          Identifier: '
+    rangeContainsRange'
+        ImportSpecifier
+          Identifier: '
+    ReadonlyCollection'
+        ImportSpecifier
+          Identifier: '
+    ScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    Statement'
+        ImportSpecifier
+          Identifier: '
+    StringLiteralLike'
+        ImportSpecifier
+          Identifier: '
+    SymbolFlags'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+        ImportSpecifier
+          Identifier: '
+    VariableStatement'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    errorCodes'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'Diagnostics'
+                Identifier: 'File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module'
+              Identifier: 'code'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                    BindingElement
+                      Identifier: ' program'
+                    BindingElement
+                      Identifier: ' preferences'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' changes'
+                      EqualsGreaterThanToken
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' moduleExportsChangedToDefault'
+                              CallExpression
+                                Identifier: ' convertFileToEsModule'
+                                Identifier: 'sourceFile'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' program'
+                                    Identifier: 'getTypeChecker'
+                                Identifier: ' changes'
+                                CallExpression
+                                  Identifier: ' getEmitScriptTarget'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'program'
+                                      Identifier: 'getCompilerOptions'
+                                CallExpression
+                                  Identifier: ' getQuotePreference'
+                                  Identifier: 'sourceFile'
+                                  Identifier: ' preferences'
+                        IfStatement
+                          Identifier: 'moduleExportsChangedToDefault'
+                          Block
+                            ForOfStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' importingFile'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' program'
+                                  Identifier: 'getSourceFiles'
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    Identifier: '
+                    fixImportOfModuleExports'
+                                    Identifier: 'importingFile'
+                                    Identifier: ' sourceFile'
+                                    Identifier: ' program'
+                                    Identifier: ' changes'
+                                    CallExpression
+                                      Identifier: ' getQuotePreference'
+                                      Identifier: 'importingFile'
+                                      Identifier: ' preferences'
+            ReturnStatement
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'createCodeFixActionWithoutFixAll'
+                  StringLiteral
+                  Identifier: ' changes'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Convert_to_ES_module'
+  FunctionDeclaration
+    Identifier: ' fixImportOfModuleExports'
+    Parameter
+      Identifier: '
+    importingFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    exportingFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: '
+    changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: '
+    quotePreference'
+      TypeReference
+        Identifier: ' QuotePreference'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleSpecifier'
+        PropertyAccessExpression
+          Identifier: ' importingFile'
+          Identifier: 'imports'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' imported'
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' program'
+                      Identifier: 'getResolvedModuleFromModuleSpecifier'
+                    Identifier: 'moduleSpecifier'
+                    Identifier: ' importingFile'
+                  QuestionDotToken
+                  Identifier: 'resolvedModule'
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'imported'
+              BarBarToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' imported'
+                  Identifier: 'resolvedFileName'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' exportingFile'
+                  Identifier: 'fileName'
+            Block
+              ContinueStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' importNode'
+                CallExpression
+                  Identifier: ' importFromModuleSpecifier'
+                  Identifier: 'moduleSpecifier'
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'importNode'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ImportEqualsDeclaration'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                changes'
+                      Identifier: 'replaceNode'
+                    Identifier: 'importingFile'
+                    Identifier: ' importNode'
+                    CallExpression
+                      Identifier: ' makeImport'
+                      PropertyAccessExpression
+                        Identifier: 'importNode'
+                        Identifier: 'name'
+                      Identifier: ' /*namedImports*/ undefined'
+                      Identifier: ' moduleSpecifier'
+                      Identifier: ' quotePreference'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CallExpression'
+                IfStatement
+                  CallExpression
+                    Identifier: 'isRequireCall'
+                    Identifier: 'importNode'
+                    FalseKeyword
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    changes'
+                          Identifier: 'replaceNode'
+                        Identifier: 'importingFile'
+                        Identifier: ' importNode'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' factory'
+                            Identifier: 'createPropertyAccessExpression'
+                          CallExpression
+                            Identifier: 'getSynthesizedDeepClone'
+                            Identifier: 'importNode'
+                          StringLiteral
+                BreakStatement
+  FunctionDeclaration
+    Identifier: ' convertFileToEsModule'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' target'
+      TypeReference
+        Identifier: ' ScriptTarget'
+    Parameter
+      Identifier: ' quotePreference'
+      TypeReference
+        Identifier: ' QuotePreference'
+    TypeReference
+      Identifier: ' ModuleExportsChanged'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' identifiers'
+            TypeReference
+              Identifier: ' Identifiers'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' original'
+                CallExpression
+                  Identifier: ' collectFreeIdentifiers'
+                  Identifier: 'sourceFile'
+              PropertyAssignment
+                Identifier: ' additional'
+                NewExpression
+                  Identifier: ' Set'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exports'
+            CallExpression
+              Identifier: ' collectExportRenames'
+              Identifier: 'sourceFile'
+              Identifier: ' checker'
+              Identifier: ' identifiers'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    convertExportsAccesses'
+          Identifier: 'sourceFile'
+          Identifier: ' exports'
+          Identifier: ' changes'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleExportsChangedToDefault'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' useSitesToUnqualify'
+            UnionType
+              TypeReference
+                Identifier: ' Map'
+                TypeReference
+                  Identifier: 'Node'
+                TypeReference
+                  Identifier: ' Node'
+              UndefinedKeyword
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statement'
+        CallExpression
+          Identifier: ' filter'
+          PropertyAccessExpression
+            Identifier: 'sourceFile'
+            Identifier: 'statements'
+          Identifier: ' isVariableStatement'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newUseSites'
+                CallExpression
+                  Identifier: ' convertVariableStatement'
+                  Identifier: 'sourceFile'
+                  Identifier: ' statement'
+                  Identifier: ' changes'
+                  Identifier: ' checker'
+                  Identifier: ' identifiers'
+                  Identifier: ' target'
+                  Identifier: ' quotePreference'
+          IfStatement
+            Identifier: 'newUseSites'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            copyEntries'
+                  Identifier: 'newUseSites'
+                  BinaryExpression
+                    Identifier: ' useSitesToUnqualify'
+                    QuestionQuestionEqualsToken
+                    NewExpression
+                      Identifier: ' Map'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statement'
+        CallExpression
+          Identifier: ' filter'
+          PropertyAccessExpression
+            Identifier: 'sourceFile'
+            Identifier: 'statements'
+          ArrowFunction
+            Parameter
+              Identifier: ' s'
+            EqualsGreaterThanToken
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'isVariableStatement'
+                Identifier: 's'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' moduleExportsChanged'
+                CallExpression
+                  Identifier: ' convertStatement'
+                  Identifier: 'sourceFile'
+                  Identifier: ' statement'
+                  Identifier: ' checker'
+                  Identifier: ' changes'
+                  Identifier: ' identifiers'
+                  Identifier: ' target'
+                  Identifier: ' exports'
+                  Identifier: ' useSitesToUnqualify'
+                  Identifier: ' quotePreference'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        moduleExportsChangedToDefault'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' moduleExportsChangedToDefault'
+                BarBarToken
+                Identifier: ' moduleExportsChanged'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    // Remaining use sites can be changed directly
+    useSitesToUnqualify'
+            QuestionDotToken
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'replacement'
+            Parameter
+              Identifier: ' original'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        changes'
+                    Identifier: 'replaceNode'
+                  Identifier: 'sourceFile'
+                  Identifier: ' original'
+                  Identifier: ' replacement'
+      ReturnStatement
+        Identifier: ' moduleExportsChangedToDefault'
+  TypeAliasDeclaration
+    Identifier: ' ExportRenames'
+    TypeReference
+      Identifier: ' ReadonlyMap'
+      StringKeyword
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' collectExportRenames'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' identifiers'
+      TypeReference
+        Identifier: ' Identifiers'
+    TypeReference
+      Identifier: ' ExportRenames'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' res'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              StringKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachExportReference'
+          Identifier: 'sourceFile'
+          ArrowFunction
+            Parameter
+              Identifier: ' node'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' text'
+                    PropertyAccessExpression
+                      Identifier: ' node'
+                      Identifier: 'name'
+              IfStatement
+                BinaryExpression
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'res'
+                        Identifier: 'has'
+                      Identifier: 'text'
+                  AmpersandAmpersandToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      CallExpression
+                        Identifier: 'isIdentifierANonContextualKeyword'
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'name'
+                      BarBarToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' checker'
+                          Identifier: 'resolveName'
+                        Identifier: 'text'
+                        Identifier: ' node'
+                        PropertyAccessExpression
+                          Identifier: ' SymbolFlags'
+                          Identifier: 'Value'
+                        TrueKeyword
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            // Unconditionally add an underscore in case `text` is a keyword.
+            res'
+                        Identifier: 'set'
+                      Identifier: 'text'
+                      CallExpression
+                        Identifier: ' makeUniqueName'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            Identifier: 'text'
+                            TemplateTail
+                        Identifier: ' identifiers'
+      ReturnStatement
+        Identifier: ' res'
+  FunctionDeclaration
+    Identifier: ' convertExportsAccesses'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' exports'
+      TypeReference
+        Identifier: ' ExportRenames'
+    Parameter
+      Identifier: ' changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachExportReference'
+          Identifier: 'sourceFile'
+          ArrowFunction
+            Parameter
+              Identifier: 'node'
+            Parameter
+              Identifier: ' isAssignmentLhs'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                Identifier: 'isAssignmentLhs'
+                Block
+                  ReturnStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' text'
+                    PropertyAccessExpression
+                      Identifier: ' node'
+                      Identifier: 'name'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        changes'
+                    Identifier: 'replaceNode'
+                  Identifier: 'sourceFile'
+                  Identifier: ' node'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createIdentifier'
+                    BinaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'exports'
+                          Identifier: 'get'
+                        Identifier: 'text'
+                      BarBarToken
+                      Identifier: ' text'
+  FunctionDeclaration
+    Identifier: ' forEachExportReference'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          IntersectionType
+            TypeReference
+              Identifier: ' PropertyAccessExpression'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' name'
+                TypeReference
+                  Identifier: ' Identifier'
+        Parameter
+          Identifier: ' isAssignmentLhs'
+          BooleanKeyword
+        VoidKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    sourceFile'
+            Identifier: 'forEachChild'
+          FunctionExpression
+            Identifier: ' recur'
+            Parameter
+              Identifier: 'node'
+            Block
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'isPropertyAccessExpression'
+                      Identifier: 'node'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: ' isExportsOrModuleExportsOrAlias'
+                      Identifier: 'sourceFile'
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'expression'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' isIdentifier'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'name'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' parent'
+                        Identifier: ' node'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            cb'
+                      AsExpression
+                        Identifier: 'node'
+                        IntersectionType
+                          TypeQuery
+                            Identifier: ' node'
+                          TypeLiteral
+                            PropertySignature
+                              Identifier: ' name'
+                              TypeReference
+                                Identifier: ' Identifier'
+                      BinaryExpression
+                        BinaryExpression
+                          CallExpression
+                            Identifier: ' isBinaryExpression'
+                            Identifier: 'parent'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' parent'
+                              Identifier: 'left'
+                            EqualsEqualsEqualsToken
+                            Identifier: ' node'
+                        AmpersandAmpersandToken
+                        BinaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' parent'
+                              Identifier: 'operatorToken'
+                            Identifier: 'kind'
+                          EqualsEqualsEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'EqualsToken'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        node'
+                    Identifier: 'forEachChild'
+                  Identifier: 'recur'
+  TypeAliasDeclaration
+    Identifier: ' ModuleExportsChanged'
+    BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' convertStatement'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    statement'
+      TypeReference
+        Identifier: ' Statement'
+    Parameter
+      Identifier: '
+    checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: '
+    changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: '
+    identifiers'
+      TypeReference
+        Identifier: ' Identifiers'
+    Parameter
+      Identifier: '
+    target'
+      TypeReference
+        Identifier: ' ScriptTarget'
+    Parameter
+      Identifier: '
+    exports'
+      TypeReference
+        Identifier: ' ExportRenames'
+    Parameter
+      Identifier: '
+    useSitesToUnqualify'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Node'
+          TypeReference
+            Identifier: ' Node'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    quotePreference'
+      TypeReference
+        Identifier: ' QuotePreference'
+    TypeReference
+      Identifier: ' ModuleExportsChanged'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'statement'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'VariableStatement'
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            convertVariableStatement'
+                Identifier: 'sourceFile'
+                AsExpression
+                  Identifier: ' statement'
+                  TypeReference
+                    Identifier: ' VariableStatement'
+                Identifier: ' changes'
+                Identifier: ' checker'
+                Identifier: ' identifiers'
+                Identifier: ' target'
+                Identifier: ' quotePreference'
+            ReturnStatement
+              FalseKeyword
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ExpressionStatement'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' expression'
+                    AsExpression
+                      Identifier: ' statement'
+                      TypeReference
+                        Identifier: ' ExpressionStatement'
+              SwitchStatement
+                PropertyAccessExpression
+                  Identifier: 'expression'
+                  Identifier: 'kind'
+                CaseBlock
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'CallExpression'
+                    Block
+                      IfStatement
+                        CallExpression
+                          Identifier: 'isRequireCall'
+                          Identifier: 'expression'
+                          TrueKeyword
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                        // For side-effecting require() call, just make a side-effecting import.
+                        changes'
+                                Identifier: 'replaceNode'
+                              Identifier: 'sourceFile'
+                              Identifier: ' statement'
+                              CallExpression
+                                Identifier: ' makeImport'
+                                Identifier: '/*defaultImport*/ undefined'
+                                Identifier: ' /*namedImports*/ undefined'
+                                ElementAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' expression'
+                                    Identifier: 'arguments'
+                                  NumericLiteral
+                                Identifier: ' quotePreference'
+                      ReturnStatement
+                        FalseKeyword
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'BinaryExpression'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' operatorToken'
+                            AsExpression
+                              Identifier: ' expression'
+                              TypeReference
+                                Identifier: ' BinaryExpression'
+                      ReturnStatement
+                        BinaryExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' operatorToken'
+                              Identifier: 'kind'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SyntaxKind'
+                              Identifier: 'EqualsToken'
+                          AmpersandAmpersandToken
+                          CallExpression
+                            Identifier: ' convertAssignment'
+                            Identifier: 'sourceFile'
+                            Identifier: ' checker'
+                            AsExpression
+                              Identifier: ' expression'
+                              TypeReference
+                                Identifier: ' BinaryExpression'
+                            Identifier: ' changes'
+                            Identifier: ' exports'
+                            Identifier: ' useSitesToUnqualify'
+          DefaultClause
+            ReturnStatement
+              FalseKeyword
+  FunctionDeclaration
+    Identifier: ' convertVariableStatement'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    statement'
+      TypeReference
+        Identifier: ' VariableStatement'
+    Parameter
+      Identifier: '
+    changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: '
+    checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: '
+    identifiers'
+      TypeReference
+        Identifier: ' Identifiers'
+    Parameter
+      Identifier: '
+    target'
+      TypeReference
+        Identifier: ' ScriptTarget'
+    Parameter
+      Identifier: '
+    quotePreference'
+      TypeReference
+        Identifier: ' QuotePreference'
+    UnionType
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Node'
+        TypeReference
+          Identifier: ' Node'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' declarationList'
+            Identifier: ' statement'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foundImport'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' converted'
+            CallExpression
+              Identifier: ' map'
+              PropertyAccessExpression
+                Identifier: 'declarationList'
+                Identifier: 'declarations'
+              ArrowFunction
+                Parameter
+                  Identifier: ' decl'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' name'
+                          BindingElement
+                            Identifier: ' initializer'
+                        Identifier: ' decl'
+                  IfStatement
+                    Identifier: 'initializer'
+                    Block
+                      IfStatement
+                        CallExpression
+                          Identifier: 'isExportsOrModuleExportsOrAlias'
+                          Identifier: 'sourceFile'
+                          Identifier: ' initializer'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                // `const alias = module.exports;` can be removed.
+                foundImport'
+                              EqualsToken
+                              TrueKeyword
+                          ReturnStatement
+                            CallExpression
+                              Identifier: ' convertedImports'
+                              ArrayLiteralExpression
+                        IfStatement
+                          CallExpression
+                            Identifier: 'isRequireCall'
+                            Identifier: 'initializer'
+                            TrueKeyword
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                foundImport'
+                                EqualsToken
+                                TrueKeyword
+                            ReturnStatement
+                              CallExpression
+                                Identifier: ' convertSingleImport'
+                                Identifier: 'name'
+                                ElementAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' initializer'
+                                    Identifier: 'arguments'
+                                  NumericLiteral
+                                Identifier: ' checker'
+                                Identifier: ' identifiers'
+                                Identifier: ' target'
+                                Identifier: ' quotePreference'
+                          IfStatement
+                            BinaryExpression
+                              CallExpression
+                                Identifier: 'isPropertyAccessExpression'
+                                Identifier: 'initializer'
+                              AmpersandAmpersandToken
+                              CallExpression
+                                Identifier: ' isRequireCall'
+                                PropertyAccessExpression
+                                  Identifier: 'initializer'
+                                  Identifier: 'expression'
+                                TrueKeyword
+                            Block
+                              ExpressionStatement
+                                BinaryExpression
+                                  Identifier: '
+                foundImport'
+                                  EqualsToken
+                                  TrueKeyword
+                              ReturnStatement
+                                CallExpression
+                                  Identifier: ' convertPropertyAccessImport'
+                                  Identifier: 'name'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' initializer'
+                                      Identifier: 'name'
+                                    Identifier: 'text'
+                                  ElementAccessExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' initializer'
+                                        Identifier: 'expression'
+                                      Identifier: 'arguments'
+                                    NumericLiteral
+                                  Identifier: ' identifiers'
+                                  Identifier: ' quotePreference'
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' convertedImports'
+                      ArrayLiteralExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'factory'
+                            Identifier: 'createVariableStatement'
+                          Identifier: '/*modifiers*/ undefined'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' factory'
+                              Identifier: 'createVariableDeclarationList'
+                            ArrayLiteralExpression
+                              Identifier: 'decl'
+                            PropertyAccessExpression
+                              Identifier: ' declarationList'
+                              Identifier: 'flags'
+      IfStatement
+        Identifier: 'foundImport'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        // useNonAdjustedEndPosition to ensure we don't eat the newline after the statement.
+        changes'
+                Identifier: 'replaceNodeWithNodes'
+              Identifier: 'sourceFile'
+              Identifier: ' statement'
+              CallExpression
+                Identifier: ' flatMap'
+                Identifier: 'converted'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' c'
+                  EqualsGreaterThanToken
+                  PropertyAccessExpression
+                    Identifier: ' c'
+                    Identifier: 'newImports'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' combinedUseSites'
+                UnionType
+                  TypeReference
+                    Identifier: ' Map'
+                    TypeReference
+                      Identifier: 'Node'
+                    TypeReference
+                      Identifier: ' Node'
+                  UndefinedKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        forEach'
+              Identifier: 'converted'
+              ArrowFunction
+                Parameter
+                  Identifier: ' c'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    PropertyAccessExpression
+                      Identifier: 'c'
+                      Identifier: 'useSitesToUnqualify'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                copyEntries'
+                          PropertyAccessExpression
+                            Identifier: 'c'
+                            Identifier: 'useSitesToUnqualify'
+                          BinaryExpression
+                            Identifier: ' combinedUseSites'
+                            QuestionQuestionEqualsToken
+                            NewExpression
+                              Identifier: ' Map'
+          ReturnStatement
+            Identifier: ' combinedUseSites'
+  FunctionDeclaration
+    Identifier: ' convertPropertyAccessImport'
+    Parameter
+      Identifier: 'name'
+      TypeReference
+        Identifier: ' BindingName'
+    Parameter
+      Identifier: ' propertyName'
+      StringKeyword
+    Parameter
+      Identifier: ' moduleSpecifier'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+    Parameter
+      Identifier: ' identifiers'
+      TypeReference
+        Identifier: ' Identifiers'
+    Parameter
+      Identifier: ' quotePreference'
+      TypeReference
+        Identifier: ' QuotePreference'
+    TypeReference
+      Identifier: ' ConvertedImports'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'name'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ObjectBindingPattern'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ArrayBindingPattern'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' tmp'
+                    CallExpression
+                      Identifier: ' makeUniqueName'
+                      Identifier: 'propertyName'
+                      Identifier: ' identifiers'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' convertedImports'
+                  ArrayLiteralExpression
+                    CallExpression
+                      Identifier: '
+                makeSingleImport'
+                      Identifier: 'tmp'
+                      Identifier: ' propertyName'
+                      Identifier: ' moduleSpecifier'
+                      Identifier: ' quotePreference'
+                    CallExpression
+                      Identifier: '
+                makeConst'
+                      Identifier: '/*modifiers*/ undefined'
+                      Identifier: ' name'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createIdentifier'
+                        Identifier: 'tmp'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Identifier'
+            ReturnStatement
+              CallExpression
+                Identifier: ' convertedImports'
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'makeSingleImport'
+                    PropertyAccessExpression
+                      Identifier: 'name'
+                      Identifier: 'text'
+                    Identifier: ' propertyName'
+                    Identifier: ' moduleSpecifier'
+                    Identifier: ' quotePreference'
+          DefaultClause
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Debug'
+                  Identifier: 'assertNever'
+                Identifier: 'name'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'name'
+                          TypeReference
+                            Identifier: ' BindingName'
+                      Identifier: 'kind'
+                    TemplateTail
+  FunctionDeclaration
+    Identifier: ' convertAssignment'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: '
+    assignment'
+      TypeReference
+        Identifier: ' BinaryExpression'
+    Parameter
+      Identifier: '
+    changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: '
+    exports'
+      TypeReference
+        Identifier: ' ExportRenames'
+    Parameter
+      Identifier: '
+    useSitesToUnqualify'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Node'
+          TypeReference
+            Identifier: ' Node'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' ModuleExportsChanged'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' left'
+              BindingElement
+                Identifier: ' right'
+            Identifier: ' assignment'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isPropertyAccessExpression'
+            Identifier: 'left'
+        Block
+          ReturnStatement
+            FalseKeyword
+      IfStatement
+        CallExpression
+          Identifier: 'isExportsOrModuleExportsOrAlias'
+          Identifier: 'sourceFile'
+          Identifier: ' left'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isExportsOrModuleExportsOrAlias'
+              Identifier: 'sourceFile'
+              Identifier: ' right'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            // `const alias = module.exports;` or `module.exports = alias;` can be removed.
+            changes'
+                    Identifier: 'delete'
+                  Identifier: 'sourceFile'
+                  PropertyAccessExpression
+                    Identifier: ' assignment'
+                    Identifier: 'parent'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' replacement'
+                    ConditionalExpression
+                      CallExpression
+                        Identifier: ' isObjectLiteralExpression'
+                        Identifier: 'right'
+                      QuestionToken
+                      CallExpression
+                        Identifier: ' tryChangeModuleExportsObject'
+                        Identifier: 'right'
+                        Identifier: ' useSitesToUnqualify'
+                      ColonToken
+                      ConditionalExpression
+                        CallExpression
+                          Identifier: ' isRequireCall'
+                          Identifier: 'right'
+                          TrueKeyword
+                        QuestionToken
+                        CallExpression
+                          Identifier: ' convertReExportAll'
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'right'
+                              Identifier: 'arguments'
+                            NumericLiteral
+                          Identifier: ' checker'
+                        ColonToken
+                        Identifier: ' undefined'
+              IfStatement
+                Identifier: 'replacement'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                changes'
+                        Identifier: 'replaceNodeWithNodes'
+                      Identifier: 'sourceFile'
+                      PropertyAccessExpression
+                        Identifier: ' assignment'
+                        Identifier: 'parent'
+                      ElementAccessExpression
+                        Identifier: ' replacement'
+                        NumericLiteral
+                  ReturnStatement
+                    ElementAccessExpression
+                      Identifier: ' replacement'
+                      NumericLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                changes'
+                        Identifier: 'replaceRangeWithText'
+                      Identifier: 'sourceFile'
+                      CallExpression
+                        Identifier: ' createRange'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'left'
+                            Identifier: 'getStart'
+                          Identifier: 'sourceFile'
+                        PropertyAccessExpression
+                          Identifier: ' right'
+                          Identifier: 'pos'
+                      StringLiteral
+                  ReturnStatement
+                    TrueKeyword
+        IfStatement
+          CallExpression
+            Identifier: 'isExportsOrModuleExportsOrAlias'
+            Identifier: 'sourceFile'
+            PropertyAccessExpression
+              Identifier: ' left'
+              Identifier: 'expression'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+        convertNamedExport'
+                Identifier: 'sourceFile'
+                AsExpression
+                  Identifier: ' assignment'
+                  IntersectionType
+                    TypeReference
+                      Identifier: ' BinaryExpression'
+                    TypeLiteral
+                      PropertySignature
+                        Identifier: ' left'
+                        TypeReference
+                          Identifier: ' PropertyAccessExpression'
+                Identifier: ' changes'
+                Identifier: ' exports'
+      ReturnStatement
+        FalseKeyword
+  FunctionDeclaration
+    Identifier: ' tryChangeModuleExportsObject'
+    Parameter
+      Identifier: 'object'
+      TypeReference
+        Identifier: ' ObjectLiteralExpression'
+    Parameter
+      Identifier: ' useSitesToUnqualify'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Node'
+          TypeReference
+            Identifier: ' Node'
+        UndefinedKeyword
+    UnionType
+      TupleType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Statement'
+        TypeReference
+          Identifier: ' ModuleExportsChanged'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statements'
+            CallExpression
+              Identifier: ' mapAllOrFail'
+              PropertyAccessExpression
+                Identifier: 'object'
+                Identifier: 'properties'
+              ArrowFunction
+                Parameter
+                  Identifier: ' prop'
+                EqualsGreaterThanToken
+                Block
+                  SwitchStatement
+                    PropertyAccessExpression
+                      Identifier: 'prop'
+                      Identifier: 'kind'
+                    CaseBlock
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'GetAccessor'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'SetAccessor'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'ShorthandPropertyAssignment'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'SpreadAssignment'
+                        ReturnStatement
+                          Identifier: ' undefined'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'PropertyAssignment'
+                        ReturnStatement
+                          ConditionalExpression
+                            PrefixUnaryExpression
+                              CallExpression
+                                Identifier: 'isIdentifier'
+                                PropertyAccessExpression
+                                  Identifier: 'prop'
+                                  Identifier: 'name'
+                            QuestionToken
+                            Identifier: ' undefined'
+                            ColonToken
+                            CallExpression
+                              Identifier: ' convertExportsDotXEquals_replaceNode'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'prop'
+                                  Identifier: 'name'
+                                Identifier: 'text'
+                              PropertyAccessExpression
+                                Identifier: ' prop'
+                                Identifier: 'initializer'
+                              Identifier: ' useSitesToUnqualify'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'MethodDeclaration'
+                        ReturnStatement
+                          ConditionalExpression
+                            PrefixUnaryExpression
+                              CallExpression
+                                Identifier: 'isIdentifier'
+                                PropertyAccessExpression
+                                  Identifier: 'prop'
+                                  Identifier: 'name'
+                            QuestionToken
+                            Identifier: ' undefined'
+                            ColonToken
+                            CallExpression
+                              Identifier: ' functionExpressionToDeclaration'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'prop'
+                                  Identifier: 'name'
+                                Identifier: 'text'
+                              ArrayLiteralExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'factory'
+                                    Identifier: 'createToken'
+                                  PropertyAccessExpression
+                                    Identifier: 'SyntaxKind'
+                                    Identifier: 'ExportKeyword'
+                              Identifier: ' prop'
+                              Identifier: ' useSitesToUnqualify'
+                      DefaultClause
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                Debug'
+                              Identifier: 'assertNever'
+                            Identifier: 'prop'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                PropertyAccessExpression
+                                  ParenthesizedExpression
+                                    AsExpression
+                                      Identifier: 'prop'
+                                      TypeReference
+                                        Identifier: ' ObjectLiteralElementLike'
+                                  Identifier: 'kind'
+                                TemplateTail
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' statements'
+          AmpersandAmpersandToken
+          ArrayLiteralExpression
+            Identifier: 'statements'
+            FalseKeyword
+  FunctionDeclaration
+    Identifier: ' convertNamedExport'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    assignment'
+      IntersectionType
+        TypeReference
+          Identifier: ' BinaryExpression'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' left'
+            TypeReference
+              Identifier: ' PropertyAccessExpression'
+    Parameter
+      Identifier: '
+    changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: '
+    exports'
+      TypeReference
+        Identifier: ' ExportRenames'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' text'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' assignment'
+                Identifier: 'left'
+              Identifier: 'name'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rename'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' exports'
+                Identifier: 'get'
+              Identifier: 'text'
+      IfStatement
+        BinaryExpression
+          Identifier: 'rename'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newNodes'
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: '
+            makeConst'
+                    Identifier: '/*modifiers*/ undefined'
+                    Identifier: ' rename'
+                    PropertyAccessExpression
+                      Identifier: ' assignment'
+                      Identifier: 'right'
+                  CallExpression
+                    Identifier: '
+            makeExportDeclaration'
+                    ArrayLiteralExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'factory'
+                          Identifier: 'createExportSpecifier'
+                        FalseKeyword
+                        Identifier: ' rename'
+                        Identifier: ' text'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changes'
+                Identifier: 'replaceNodeWithNodes'
+              Identifier: 'sourceFile'
+              PropertyAccessExpression
+                Identifier: ' assignment'
+                Identifier: 'parent'
+              Identifier: ' newNodes'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        convertExportsPropertyAssignment'
+              Identifier: 'assignment'
+              Identifier: ' sourceFile'
+              Identifier: ' changes'
+  FunctionDeclaration
+    Identifier: ' convertReExportAll'
+    Parameter
+      Identifier: 'reExported'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    TupleType
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Statement'
+      TypeReference
+        Identifier: ' ModuleExportsChanged'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleSpecifier'
+            PropertyAccessExpression
+              Identifier: ' reExported'
+              Identifier: 'text'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleSymbol'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getSymbolAtLocation'
+              Identifier: 'reExported'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exports'
+            ConditionalExpression
+              Identifier: ' moduleSymbol'
+              QuestionToken
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: ' moduleSymbol'
+                  Identifier: 'exports'
+              ColonToken
+              AsExpression
+                Identifier: ' emptyMap'
+                TypeReference
+                  Identifier: ' ReadonlyCollection'
+                  TypeReference
+                    Identifier: '__String'
+      ReturnStatement
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exports'
+              Identifier: 'has'
+            PropertyAccessExpression
+              Identifier: 'InternalSymbolName'
+              Identifier: 'ExportEquals'
+          QuestionToken
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              CallExpression
+                Identifier: 'reExportDefault'
+                Identifier: 'moduleSpecifier'
+            TrueKeyword
+          ColonToken
+          ConditionalExpression
+            PrefixUnaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'exports'
+                  Identifier: 'has'
+                PropertyAccessExpression
+                  Identifier: 'InternalSymbolName'
+                  Identifier: 'Default'
+            QuestionToken
+            ArrayLiteralExpression
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'reExportStar'
+                  Identifier: 'moduleSpecifier'
+              FalseKeyword
+            ColonToken
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+        // If there's some non-default export, must include both `export *` and `export default`.
+        exports'
+                  Identifier: 'size'
+                GreaterThanToken
+                NumericLiteral
+              QuestionToken
+              ArrayLiteralExpression
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'reExportStar'
+                    Identifier: 'moduleSpecifier'
+                  CallExpression
+                    Identifier: ' reExportDefault'
+                    Identifier: 'moduleSpecifier'
+                TrueKeyword
+              ColonToken
+              ArrayLiteralExpression
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'reExportDefault'
+                    Identifier: 'moduleSpecifier'
+                TrueKeyword
+  FunctionDeclaration
+    Identifier: ' reExportStar'
+    Parameter
+      Identifier: 'moduleSpecifier'
+      StringKeyword
+    TypeReference
+      Identifier: ' ExportDeclaration'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' makeExportDeclaration'
+          Identifier: '/*exportSpecifiers*/ undefined'
+          Identifier: ' moduleSpecifier'
+  FunctionDeclaration
+    Identifier: ' reExportDefault'
+    Parameter
+      Identifier: 'moduleSpecifier'
+      StringKeyword
+    TypeReference
+      Identifier: ' ExportDeclaration'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' makeExportDeclaration'
+          ArrayLiteralExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'factory'
+                Identifier: 'createExportSpecifier'
+              FalseKeyword
+              Identifier: ' /*propertyName*/ undefined'
+              StringLiteral
+          Identifier: ' moduleSpecifier'
+  FunctionDeclaration
+    Identifier: ' convertExportsPropertyAssignment'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' left'
+        BindingElement
+          Identifier: ' right'
+        BindingElement
+          Identifier: ' parent'
+      IntersectionType
+        TypeReference
+          Identifier: ' BinaryExpression'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' left'
+            TypeReference
+              Identifier: ' PropertyAccessExpression'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' name'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' left'
+                Identifier: 'name'
+              Identifier: 'text'
+      IfStatement
+        BinaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: 'isFunctionExpression'
+                  Identifier: 'right'
+                BarBarToken
+                CallExpression
+                  Identifier: ' isArrowFunction'
+                  Identifier: 'right'
+              BarBarToken
+              CallExpression
+                Identifier: ' isClassExpression'
+                Identifier: 'right'
+          AmpersandAmpersandToken
+          ParenthesizedExpression
+            BinaryExpression
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'right'
+                  Identifier: 'name'
+              BarBarToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' right'
+                    Identifier: 'name'
+                  Identifier: 'text'
+                EqualsEqualsEqualsToken
+                Identifier: ' name'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        // `exports.f = function() {}` -> `export function f() {}` -- Replace `exports.f = ` with `export `, and insert the name after `function`.
+        changes'
+                Identifier: 'replaceRange'
+              Identifier: 'sourceFile'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' pos'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' left'
+                      Identifier: 'getStart'
+                    Identifier: 'sourceFile'
+                PropertyAssignment
+                  Identifier: ' end'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' right'
+                      Identifier: 'getStart'
+                    Identifier: 'sourceFile'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createToken'
+                PropertyAccessExpression
+                  Identifier: 'SyntaxKind'
+                  Identifier: 'ExportKeyword'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' suffix'
+                  StringLiteral
+          IfStatement
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'right'
+                Identifier: 'name'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' changes'
+                  Identifier: 'insertName'
+                Identifier: 'sourceFile'
+                Identifier: ' right'
+                Identifier: ' name'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' semi'
+                CallExpression
+                  Identifier: ' findChildOfKind'
+                  Identifier: 'parent'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'SemicolonToken'
+                  Identifier: ' sourceFile'
+          IfStatement
+            Identifier: 'semi'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' changes'
+                  Identifier: 'delete'
+                Identifier: 'sourceFile'
+                Identifier: ' semi'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        // `exports.f = function g() {}` -> `export const f = function g() {}` -- just replace `exports.` with `export const `
+        changes'
+                Identifier: 'replaceNodeRangeWithNodes'
+              Identifier: 'sourceFile'
+              PropertyAccessExpression
+                Identifier: ' left'
+                Identifier: 'expression'
+              NonNullExpression
+                CallExpression
+                  Identifier: ' findChildOfKind'
+                  Identifier: 'left'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'DotToken'
+                  Identifier: ' sourceFile'
+              ArrayLiteralExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'factory'
+                    Identifier: 'createToken'
+                  PropertyAccessExpression
+                    Identifier: 'SyntaxKind'
+                    Identifier: 'ExportKeyword'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createToken'
+                  PropertyAccessExpression
+                    Identifier: 'SyntaxKind'
+                    Identifier: 'ConstKeyword'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' joiner'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' suffix'
+                  StringLiteral
+  FunctionDeclaration
+    Identifier: ' convertExportsDotXEquals_replaceNode'
+    Parameter
+      Identifier: 'name'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' exported'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' useSitesToUnqualify'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Node'
+          TypeReference
+            Identifier: ' Node'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' Statement'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' modifiers'
+            ArrayLiteralExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createToken'
+                PropertyAccessExpression
+                  Identifier: 'SyntaxKind'
+                  Identifier: 'ExportKeyword'
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'exported'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'FunctionExpression'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' name'
+                        Identifier: ' expressionName'
+                    AsExpression
+                      Identifier: ' exported'
+                      TypeReference
+                        Identifier: ' FunctionExpression'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'expressionName'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' expressionName'
+                      Identifier: 'text'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' name'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' exportConst'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ArrowFunction'
+            ReturnStatement
+              CallExpression
+                Identifier: ' functionExpressionToDeclaration'
+                Identifier: 'name'
+                Identifier: ' modifiers'
+                AsExpression
+                  Identifier: ' exported'
+                  UnionType
+                    TypeReference
+                      Identifier: ' FunctionExpression'
+                    TypeReference
+                      Identifier: ' ArrowFunction'
+                Identifier: ' useSitesToUnqualify'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ClassExpression'
+            ReturnStatement
+              CallExpression
+                Identifier: ' classExpressionToDeclaration'
+                Identifier: 'name'
+                Identifier: ' modifiers'
+                AsExpression
+                  Identifier: ' exported'
+                  TypeReference
+                    Identifier: ' ClassExpression'
+                Identifier: ' useSitesToUnqualify'
+          DefaultClause
+            ReturnStatement
+              CallExpression
+                Identifier: ' exportConst'
+      FunctionDeclaration
+        Identifier: ' exportConst'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' makeConst'
+              Identifier: 'modifiers'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createIdentifier'
+                NonNullExpression
+                  Identifier: 'name'
+              CallExpression
+                Identifier: ' replaceImportUseSites'
+                Identifier: 'exported'
+                Identifier: ' useSitesToUnqualify'
+  FunctionDeclaration
+    Identifier: ' replaceImportUseSites'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' useSitesToUnqualify'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Node'
+          TypeReference
+            Identifier: ' Node'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' replaceImportUseSites'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'nodes'
+      TypeReference
+        Identifier: ' NodeArray'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' useSitesToUnqualify'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Node'
+          TypeReference
+            Identifier: ' Node'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' NodeArray'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' replaceImportUseSites'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'nodeOrNodes'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'T'
+    Parameter
+      Identifier: ' useSitesToUnqualify'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Node'
+          TypeReference
+            Identifier: ' Node'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'useSitesToUnqualify'
+          BarBarToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'some'
+              CallExpression
+                Identifier: 'arrayFrom'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'useSitesToUnqualify'
+                    Identifier: 'keys'
+              ArrowFunction
+                Parameter
+                  Identifier: ' original'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' rangeContainsRange'
+                  Identifier: 'nodeOrNodes'
+                  Identifier: ' original'
+        Block
+          ReturnStatement
+            Identifier: ' nodeOrNodes'
+      ReturnStatement
+        ConditionalExpression
+          CallExpression
+            Identifier: ' isArray'
+            Identifier: 'nodeOrNodes'
+          QuestionToken
+          CallExpression
+            Identifier: ' getSynthesizedDeepClonesWithReplacements'
+            Identifier: 'nodeOrNodes'
+            TrueKeyword
+            Identifier: ' replaceNode'
+          ColonToken
+          CallExpression
+            Identifier: ' getSynthesizedDeepCloneWithReplacements'
+            Identifier: 'nodeOrNodes'
+            TrueKeyword
+            Identifier: ' replaceNode'
+      FunctionDeclaration
+        Identifier: ' replaceNode'
+        Parameter
+          Identifier: 'original'
+          TypeReference
+            Identifier: ' Node'
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'original'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'PropertyAccessExpression'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' replacement'
+                    CallExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          Identifier: ' useSitesToUnqualify'
+                        Identifier: 'get'
+                      Identifier: 'original'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      Identifier: '
+            // Remove entry from `useSitesToUnqualify` so the refactor knows it's taken care of by the parent statement we're replacing
+            useSitesToUnqualify'
+                    Identifier: 'delete'
+                  Identifier: 'original'
+              ReturnStatement
+                Identifier: ' replacement'
+  FunctionDeclaration
+    Identifier: ' convertSingleImport'
+    Parameter
+      Identifier: '
+    name'
+      TypeReference
+        Identifier: ' BindingName'
+    Parameter
+      Identifier: '
+    moduleSpecifier'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+    Parameter
+      Identifier: '
+    checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: '
+    identifiers'
+      TypeReference
+        Identifier: ' Identifiers'
+    Parameter
+      Identifier: '
+    target'
+      TypeReference
+        Identifier: ' ScriptTarget'
+    Parameter
+      Identifier: '
+    quotePreference'
+      TypeReference
+        Identifier: ' QuotePreference'
+    TypeReference
+      Identifier: ' ConvertedImports'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'name'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ObjectBindingPattern'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' importSpecifiers'
+                    CallExpression
+                      Identifier: ' mapAllOrFail'
+                      PropertyAccessExpression
+                        Identifier: 'name'
+                        Identifier: 'elements'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' e'
+                        EqualsGreaterThanToken
+                        ConditionalExpression
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                e'
+                                  Identifier: 'dotDotDotToken'
+                                BarBarToken
+                                PropertyAccessExpression
+                                  Identifier: ' e'
+                                  Identifier: 'initializer'
+                              BarBarToken
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: ' e'
+                                  Identifier: 'propertyName'
+                                AmpersandAmpersandToken
+                                PrefixUnaryExpression
+                                  CallExpression
+                                    Identifier: 'isIdentifier'
+                                    PropertyAccessExpression
+                                      Identifier: 'e'
+                                      Identifier: 'propertyName'
+                            BarBarToken
+                            PrefixUnaryExpression
+                              CallExpression
+                                Identifier: 'isIdentifier'
+                                PropertyAccessExpression
+                                  Identifier: 'e'
+                                  Identifier: 'name'
+                          QuestionToken
+                          Identifier: ' undefined'
+                          ColonToken
+                          CallExpression
+                            Identifier: ' makeImportSpecifier'
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: 'e'
+                                Identifier: 'propertyName'
+                              AmpersandAmpersandToken
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' e'
+                                  Identifier: 'propertyName'
+                                Identifier: 'text'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' e'
+                                Identifier: 'name'
+                              Identifier: 'text'
+              IfStatement
+                Identifier: 'importSpecifiers'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' convertedImports'
+                      ArrayLiteralExpression
+                        CallExpression
+                          Identifier: 'makeImport'
+                          Identifier: '/*defaultImport*/ undefined'
+                          Identifier: ' importSpecifiers'
+                          Identifier: ' moduleSpecifier'
+                          Identifier: ' quotePreference'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ArrayBindingPattern'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' tmp'
+                    CallExpression
+                      Identifier: ' makeUniqueName'
+                      CallExpression
+                        Identifier: 'moduleSpecifierToValidIdentifier'
+                        PropertyAccessExpression
+                          Identifier: 'moduleSpecifier'
+                          Identifier: 'text'
+                        Identifier: ' target'
+                      Identifier: ' identifiers'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' convertedImports'
+                  ArrayLiteralExpression
+                    CallExpression
+                      Identifier: '
+                makeImport'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'factory'
+                          Identifier: 'createIdentifier'
+                        Identifier: 'tmp'
+                      Identifier: ' /*namedImports*/ undefined'
+                      Identifier: ' moduleSpecifier'
+                      Identifier: ' quotePreference'
+                    CallExpression
+                      Identifier: '
+                makeConst'
+                      Identifier: '/*modifiers*/ undefined'
+                      CallExpression
+                        Identifier: ' getSynthesizedDeepClone'
+                        Identifier: 'name'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createIdentifier'
+                        Identifier: 'tmp'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Identifier'
+            ReturnStatement
+              CallExpression
+                Identifier: ' convertSingleIdentifierImport'
+                Identifier: 'name'
+                Identifier: ' moduleSpecifier'
+                Identifier: ' checker'
+                Identifier: ' identifiers'
+                Identifier: ' quotePreference'
+          DefaultClause
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Debug'
+                  Identifier: 'assertNever'
+                Identifier: 'name'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'name'
+                          TypeReference
+                            Identifier: ' BindingName'
+                      Identifier: 'kind'
+                    TemplateTail
+  FunctionDeclaration
+    Identifier: ' convertSingleIdentifierImport'
+    Parameter
+      Identifier: 'name'
+      TypeReference
+        Identifier: ' Identifier'
+    Parameter
+      Identifier: ' moduleSpecifier'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' identifiers'
+      TypeReference
+        Identifier: ' Identifiers'
+    Parameter
+      Identifier: ' quotePreference'
+      TypeReference
+        Identifier: ' QuotePreference'
+    TypeReference
+      Identifier: ' ConvertedImports'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nameSymbol'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getSymbolAtLocation'
+              Identifier: 'name'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' namedBindingsNames'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' needDefaultImport'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' useSitesToUnqualify'
+            UnionType
+              TypeReference
+                Identifier: ' Map'
+                TypeReference
+                  Identifier: 'Node'
+                TypeReference
+                  Identifier: ' Node'
+              UndefinedKeyword
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' use'
+        NonNullExpression
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' identifiers'
+                Identifier: 'original'
+              Identifier: 'get'
+            PropertyAccessExpression
+              Identifier: 'name'
+              Identifier: 'text'
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'checker'
+                    Identifier: 'getSymbolAtLocation'
+                  Identifier: 'use'
+                ExclamationEqualsEqualsToken
+                Identifier: ' nameSymbol'
+              BarBarToken
+              BinaryExpression
+                Identifier: ' use'
+                EqualsEqualsEqualsToken
+                Identifier: ' name'
+            Block
+              ContinueStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' parent'
+                Identifier: ' use'
+          IfStatement
+            CallExpression
+              Identifier: 'isPropertyAccessExpression'
+              Identifier: 'parent'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' name'
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' text'
+                            Identifier: ' propertyName'
+                    Identifier: ' parent'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'propertyName'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                needDefaultImport'
+                      EqualsToken
+                      TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' importDefaultName'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' use'
+                            Identifier: 'getText'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            Identifier: 'useSitesToUnqualify'
+                            QuestionQuestionEqualsToken
+                            NewExpression
+                              Identifier: ' Map'
+                        Identifier: 'set'
+                      Identifier: 'parent'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createIdentifier'
+                        Identifier: 'importDefaultName'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                Debug'
+                        Identifier: 'assert'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'parent'
+                          Identifier: 'expression'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' use'
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' idName'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' namedBindingsNames'
+                            Identifier: 'get'
+                          Identifier: 'propertyName'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'idName'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' undefined'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    idName'
+                          EqualsToken
+                          CallExpression
+                            Identifier: ' makeUniqueName'
+                            Identifier: 'propertyName'
+                            Identifier: ' identifiers'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    namedBindingsNames'
+                            Identifier: 'set'
+                          Identifier: 'propertyName'
+                          Identifier: ' idName'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            Identifier: 'useSitesToUnqualify'
+                            QuestionQuestionEqualsToken
+                            NewExpression
+                              Identifier: ' Map'
+                        Identifier: 'set'
+                      Identifier: 'parent'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createIdentifier'
+                        Identifier: 'idName'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            needDefaultImport'
+                  EqualsToken
+                  TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' namedBindings'
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' namedBindingsNames'
+                  Identifier: 'size'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              QuestionToken
+              Identifier: ' undefined'
+              ColonToken
+              CallExpression
+                Identifier: ' arrayFrom'
+                CallExpression
+                  Identifier: 'mapIterator'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'namedBindingsNames'
+                      Identifier: 'entries'
+                  ArrowFunction
+                    Parameter
+                      ArrayBindingPattern
+                        BindingElement
+                          Identifier: 'propertyName'
+                        BindingElement
+                          Identifier: ' idName'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createImportSpecifier'
+                      FalseKeyword
+                      ConditionalExpression
+                        BinaryExpression
+                          Identifier: ' propertyName'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' idName'
+                        QuestionToken
+                        Identifier: ' undefined'
+                        ColonToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' factory'
+                            Identifier: 'createIdentifier'
+                          Identifier: 'propertyName'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createIdentifier'
+                        Identifier: 'idName'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'namedBindings'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        // If it was unused, ensure that we at least import *something*.
+        needDefaultImport'
+              EqualsToken
+              TrueKeyword
+      ReturnStatement
+        CallExpression
+          Identifier: ' convertedImports'
+          ArrayLiteralExpression
+            CallExpression
+              Identifier: 'makeImport'
+              ConditionalExpression
+                Identifier: 'needDefaultImport'
+                QuestionToken
+                CallExpression
+                  Identifier: ' getSynthesizedDeepClone'
+                  Identifier: 'name'
+                ColonToken
+                Identifier: ' undefined'
+              Identifier: ' namedBindings'
+              Identifier: ' moduleSpecifier'
+              Identifier: ' quotePreference'
+          Identifier: '
+        useSitesToUnqualify'
+  FunctionDeclaration
+    Identifier: ' makeUniqueName'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' identifiers'
+      TypeReference
+        Identifier: ' Identifiers'
+    StringKeyword
+    Block
+      WhileStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'identifiers'
+                Identifier: 'original'
+              Identifier: 'has'
+            Identifier: 'name'
+          BarBarToken
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' identifiers'
+                Identifier: 'additional'
+              Identifier: 'has'
+            Identifier: 'name'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        name'
+              EqualsToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    identifiers'
+              Identifier: 'additional'
+            Identifier: 'add'
+          Identifier: 'name'
+      ReturnStatement
+        Identifier: ' name'
+  InterfaceDeclaration
+    Identifier: ' Identifiers'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' original'
+      TypeReference
+        Identifier: ' FreeIdentifiers'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' additional'
+      TypeReference
+        Identifier: ' Set'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' FreeIdentifiers'
+    TypeReference
+      Identifier: ' ReadonlyMap'
+      StringKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Identifier'
+  FunctionDeclaration
+    Identifier: ' collectFreeIdentifiers'
+    Parameter
+      Identifier: 'file'
+      TypeReference
+        Identifier: ' SourceFile'
+    TypeReference
+      Identifier: ' FreeIdentifiers'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' map'
+            CallExpression
+              Identifier: ' createMultiMap'
+              StringKeyword
+              TypeReference
+                Identifier: ' Identifier'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachFreeIdentifier'
+          Identifier: 'file'
+          ArrowFunction
+            Parameter
+              Identifier: ' id'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' map'
+                Identifier: 'add'
+              PropertyAccessExpression
+                Identifier: 'id'
+                Identifier: 'text'
+              Identifier: ' id'
+      ReturnStatement
+        Identifier: ' map'
+  FunctionDeclaration
+    Identifier: ' forEachFreeIdentifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'id'
+          TypeReference
+            Identifier: ' Identifier'
+        VoidKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isIdentifier'
+            Identifier: 'node'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isFreeIdentifier'
+            Identifier: 'node'
+        ExpressionStatement
+          CallExpression
+            Identifier: ' cb'
+            Identifier: 'node'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    node'
+            Identifier: 'forEachChild'
+          ArrowFunction
+            Parameter
+              Identifier: 'child'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' forEachFreeIdentifier'
+              Identifier: 'child'
+              Identifier: ' cb'
+  FunctionDeclaration
+    Identifier: ' isFreeIdentifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Identifier'
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' parent'
+            Identifier: ' node'
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'parent'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'PropertyAccessExpression'
+            ReturnStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      Identifier: 'parent'
+                      TypeReference
+                        Identifier: ' PropertyAccessExpression'
+                  Identifier: 'name'
+                ExclamationEqualsEqualsToken
+                Identifier: ' node'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'BindingElement'
+            ReturnStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      Identifier: 'parent'
+                      TypeReference
+                        Identifier: ' BindingElement'
+                  Identifier: 'propertyName'
+                ExclamationEqualsEqualsToken
+                Identifier: ' node'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ImportSpecifier'
+            ReturnStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      Identifier: 'parent'
+                      TypeReference
+                        Identifier: ' ImportSpecifier'
+                  Identifier: 'propertyName'
+                ExclamationEqualsEqualsToken
+                Identifier: ' node'
+          DefaultClause
+            ReturnStatement
+              TrueKeyword
+  FunctionDeclaration
+    Identifier: ' functionExpressionToDeclaration'
+    Parameter
+      Identifier: 'name'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' additionalModifiers'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Modifier'
+    Parameter
+      Identifier: ' fn'
+      UnionType
+        TypeReference
+          Identifier: ' FunctionExpression'
+        TypeReference
+          Identifier: ' ArrowFunction'
+        TypeReference
+          Identifier: ' MethodDeclaration'
+    Parameter
+      Identifier: ' useSitesToUnqualify'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Node'
+          TypeReference
+            Identifier: ' Node'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' FunctionDeclaration'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createFunctionDeclaration'
+          CallExpression
+            Identifier: '
+        concatenate'
+            Identifier: 'additionalModifiers'
+            CallExpression
+              Identifier: ' getSynthesizedDeepClones'
+              PropertyAccessExpression
+                Identifier: 'fn'
+                Identifier: 'modifiers'
+          CallExpression
+            Identifier: '
+        getSynthesizedDeepClone'
+            PropertyAccessExpression
+              Identifier: 'fn'
+              Identifier: 'asteriskToken'
+          Identifier: '
+        name'
+          CallExpression
+            Identifier: '
+        getSynthesizedDeepClones'
+            PropertyAccessExpression
+              Identifier: 'fn'
+              Identifier: 'typeParameters'
+          CallExpression
+            Identifier: '
+        getSynthesizedDeepClones'
+            PropertyAccessExpression
+              Identifier: 'fn'
+              Identifier: 'parameters'
+          CallExpression
+            Identifier: '
+        getSynthesizedDeepClone'
+            PropertyAccessExpression
+              Identifier: 'fn'
+              Identifier: 'type'
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        factory'
+                Identifier: 'converters'
+              Identifier: 'convertToFunctionBlock'
+            CallExpression
+              Identifier: 'replaceImportUseSites'
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: 'fn'
+                  Identifier: 'body'
+              Identifier: ' useSitesToUnqualify'
+  FunctionDeclaration
+    Identifier: ' classExpressionToDeclaration'
+    Parameter
+      Identifier: 'name'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' additionalModifiers'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Modifier'
+    Parameter
+      Identifier: ' cls'
+      TypeReference
+        Identifier: ' ClassExpression'
+    Parameter
+      Identifier: ' useSitesToUnqualify'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Node'
+          TypeReference
+            Identifier: ' Node'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' ClassDeclaration'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createClassDeclaration'
+          CallExpression
+            Identifier: '
+        concatenate'
+            Identifier: 'additionalModifiers'
+            CallExpression
+              Identifier: ' getSynthesizedDeepClones'
+              PropertyAccessExpression
+                Identifier: 'cls'
+                Identifier: 'modifiers'
+          Identifier: '
+        name'
+          CallExpression
+            Identifier: '
+        getSynthesizedDeepClones'
+            PropertyAccessExpression
+              Identifier: 'cls'
+              Identifier: 'typeParameters'
+          CallExpression
+            Identifier: '
+        getSynthesizedDeepClones'
+            PropertyAccessExpression
+              Identifier: 'cls'
+              Identifier: 'heritageClauses'
+          CallExpression
+            Identifier: '
+        replaceImportUseSites'
+            PropertyAccessExpression
+              Identifier: 'cls'
+              Identifier: 'members'
+            Identifier: ' useSitesToUnqualify'
+  FunctionDeclaration
+    Identifier: ' makeSingleImport'
+    Parameter
+      Identifier: 'localName'
+      StringKeyword
+    Parameter
+      Identifier: ' propertyName'
+      StringKeyword
+    Parameter
+      Identifier: ' moduleSpecifier'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+    Parameter
+      Identifier: ' quotePreference'
+      TypeReference
+        Identifier: ' QuotePreference'
+    TypeReference
+      Identifier: ' ImportDeclaration'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' propertyName'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          QuestionToken
+          CallExpression
+            Identifier: ' makeImport'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'factory'
+                Identifier: 'createIdentifier'
+              Identifier: 'localName'
+            Identifier: ' /*namedImports*/ undefined'
+            Identifier: ' moduleSpecifier'
+            Identifier: ' quotePreference'
+          ColonToken
+          CallExpression
+            Identifier: ' makeImport'
+            Identifier: '/*defaultImport*/ undefined'
+            ArrayLiteralExpression
+              CallExpression
+                Identifier: 'makeImportSpecifier'
+                Identifier: 'propertyName'
+                Identifier: ' localName'
+            Identifier: ' moduleSpecifier'
+            Identifier: ' quotePreference'
+  FunctionDeclaration
+    Identifier: ' makeImportSpecifier'
+    Parameter
+      Identifier: 'propertyName'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' name'
+      StringKeyword
+    TypeReference
+      Identifier: ' ImportSpecifier'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createImportSpecifier'
+          FalseKeyword
+          ConditionalExpression
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' propertyName'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' propertyName'
+                ExclamationEqualsEqualsToken
+                Identifier: ' name'
+            QuestionToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createIdentifier'
+              Identifier: 'propertyName'
+            ColonToken
+            Identifier: ' undefined'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' factory'
+              Identifier: 'createIdentifier'
+            Identifier: 'name'
+  FunctionDeclaration
+    Identifier: ' makeConst'
+    Parameter
+      Identifier: 'modifiers'
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Modifier'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' name'
+      UnionType
+        StringKeyword
+        TypeReference
+          Identifier: ' BindingName'
+    Parameter
+      Identifier: ' init'
+      TypeReference
+        Identifier: ' Expression'
+    TypeReference
+      Identifier: ' VariableStatement'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createVariableStatement'
+          Identifier: '
+        modifiers'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        factory'
+              Identifier: 'createVariableDeclarationList'
+            ArrayLiteralExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createVariableDeclaration'
+                Identifier: 'name'
+                Identifier: ' /*exclamationToken*/ undefined'
+                Identifier: ' /*type*/ undefined'
+                Identifier: ' init'
+            PropertyAccessExpression
+              Identifier: '
+            NodeFlags'
+              Identifier: 'Const'
+  FunctionDeclaration
+    Identifier: ' makeExportDeclaration'
+    Parameter
+      Identifier: 'exportSpecifiers'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' ExportSpecifier'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' moduleSpecifier'
+      QuestionToken
+      StringKeyword
+    TypeReference
+      Identifier: ' ExportDeclaration'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createExportDeclaration'
+          Identifier: '
+        /*modifiers*/ undefined'
+          FalseKeyword
+          BinaryExpression
+            Identifier: '
+        exportSpecifiers'
+            AmpersandAmpersandToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createNamedExports'
+              Identifier: 'exportSpecifiers'
+          ConditionalExpression
+            BinaryExpression
+              Identifier: '
+        moduleSpecifier'
+              EqualsEqualsEqualsToken
+              Identifier: ' undefined'
+            QuestionToken
+            Identifier: ' undefined'
+            ColonToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createStringLiteral'
+              Identifier: 'moduleSpecifier'
+  InterfaceDeclaration
+    Identifier: ' ConvertedImports'
+    PropertySignature
+      Identifier: '
+    newImports'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Node'
+    PropertySignature
+      Identifier: '
+    useSitesToUnqualify'
+      QuestionToken
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Node'
+        TypeReference
+          Identifier: ' Node'
+  FunctionDeclaration
+    Identifier: ' convertedImports'
+    Parameter
+      Identifier: 'newImports'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Node'
+    Parameter
+      Identifier: ' useSitesToUnqualify'
+      QuestionToken
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Node'
+        TypeReference
+          Identifier: ' Node'
+    TypeReference
+      Identifier: ' ConvertedImports'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        newImports'
+          ShorthandPropertyAssignment
+            Identifier: '
+        useSitesToUnqualify'

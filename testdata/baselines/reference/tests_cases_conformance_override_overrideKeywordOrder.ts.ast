@@ -1,0 +1,120 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' Base'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' s1'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' s2'
+      Block
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' m1'
+      VoidKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' m2'
+      VoidKeyword
+    PropertyDeclaration
+      Identifier: '
+  p1'
+      AnyKeyword
+    PropertyDeclaration
+      Identifier: '
+  p2'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' Test1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      OverrideKeyword
+      AsyncKeyword
+      Identifier: ' m1'
+      Block
+    MethodDeclaration
+      AsyncKeyword
+      OverrideKeyword
+      Identifier: ' m2'
+      Block
+  ClassDeclaration
+    Identifier: ' Test2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      OverrideKeyword
+      StaticKeyword
+      Identifier: ' s1'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      OverrideKeyword
+      Identifier: ' s2'
+      Block
+    MethodDeclaration
+      Identifier: '
+  m1'
+      Block
+    MethodDeclaration
+      Identifier: '
+  m2'
+      Block
+  ClassDeclaration
+    Identifier: ' Test3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      OverrideKeyword
+      PublicKeyword
+      Identifier: ' m1'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      OverrideKeyword
+      Identifier: ' m2'
+      Block
+  ClassDeclaration
+    Identifier: ' Test4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      OverrideKeyword
+      ReadonlyKeyword
+      Identifier: ' p1'
+      AnyKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      OverrideKeyword
+      Identifier: ' p2'
+      AnyKeyword
+    MethodDeclaration
+      Identifier: ' // error
+  m1'
+      Block
+    MethodDeclaration
+      Identifier: '
+  m2'
+      Block
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' Test5'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      OverrideKeyword
+      AbstractKeyword
+      Identifier: ' m1'
+      VoidKeyword
+    MethodDeclaration
+      AbstractKeyword
+      OverrideKeyword
+      Identifier: ' m2'
+      VoidKeyword

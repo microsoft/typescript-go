@@ -1,0 +1,16 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+  prop'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' A'
+        TypeLiteral
+          ConstructSignature
+            TypeReference
+              Identifier: ' A'
+        ClassExpression

@@ -1,0 +1,160 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+      InterfaceDeclaration
+        Identifier: ' Point3d'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Point'
+        PropertySignature
+          Identifier: '
+        z'
+          NumberKeyword
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Line'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' start'
+            TypeReference
+              QualifiedName
+                Identifier: ' A'
+                Identifier: 'Point'
+          Parameter
+            PublicKeyword
+            Identifier: ' end'
+            TypeReference
+              QualifiedName
+                Identifier: ' A'
+                Identifier: 'Point'
+          Block
+  ModuleDeclaration
+    Identifier: ' Geometry'
+    ModuleBlock
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' Points'
+        Identifier: ' A'
+      ImportEqualsDeclaration
+        Identifier: ' Lines'
+        Identifier: ' B'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Origin'
+            TypeReference
+              QualifiedName
+                Identifier: ' Points'
+                Identifier: 'Point'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Unit'
+            TypeReference
+              QualifiedName
+                Identifier: ' Lines'
+                Identifier: 'Line'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Lines'
+                Identifier: 'Line'
+              Identifier: 'Origin'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' x'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' y'
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' Geometry'
+              Identifier: 'Points'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        PropertyAccessExpression
+          Identifier: ' Geometry'
+          Identifier: 'Origin'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' line'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' start'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' y'
+                NumberKeyword
+          PropertySignature
+            Identifier: ' end'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' y'
+                NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' line'
+        PropertyAccessExpression
+          Identifier: ' Geometry'
+          Identifier: 'Unit'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' line'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' Geometry'
+            Identifier: 'Lines'
+          Identifier: 'Line'

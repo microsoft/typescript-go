@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ParenthesizedExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail

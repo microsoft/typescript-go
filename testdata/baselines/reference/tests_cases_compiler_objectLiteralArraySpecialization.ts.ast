@@ -1,0 +1,84 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' create'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'initialValues'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' MyArrayWrapper'
+      TypeReference
+        Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' MyArrayWrapper'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+	constructor'
+      Parameter
+        Identifier: 'initialItems'
+        QuestionToken
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    MethodSignature
+      Identifier: '
+	doSomething'
+      Parameter
+        Identifier: 'predicate'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+          BooleanKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thing'
+        CallExpression
+          Identifier: ' create'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' id'
+                NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' id'
+                NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // should not error
+thing'
+        Identifier: 'doSomething'
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+        Parameter
+          Identifier: ' y'
+        EqualsGreaterThanToken
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'name'
+          EqualsEqualsEqualsToken
+          StringLiteral

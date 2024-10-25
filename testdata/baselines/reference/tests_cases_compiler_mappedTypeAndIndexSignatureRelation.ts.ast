@@ -1,0 +1,181 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Same'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'PropertyKey'
+        NumberKeyword
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeParameter
+      Identifier: 'U'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'PropertyKey'
+        NumberKeyword
+    TypeReference
+      Identifier: ' T1'
+      TypeReference
+        Identifier: 'Same'
+        TypeReference
+          Identifier: 'U'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'IdentifierT'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'PropertyKey'
+        TypeReference
+          Identifier: ' PropertyKey'
+    TypeReference
+      Identifier: '
+    IdentifierT'
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'IdentifierT'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'PropertyKey'
+        TypeReference
+          Identifier: ' PropertyKey'
+    TypeParameter
+      Identifier: ' T'
+    MappedType
+      TypeParameter
+        Identifier: 'k'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' Foo'
+        IntersectionType
+          TypeReference
+            Identifier: 'IdentifierT'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' k'
+              TypeReference
+                Identifier: ' k'
+  TypeAliasDeclaration
+    Identifier: ' Merge2'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'k'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'k'
+  TypeAliasDeclaration
+    Identifier: ' Bar2'
+    TypeParameter
+      Identifier: 'IdentifierT'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'PropertyKey'
+        TypeReference
+          Identifier: ' PropertyKey'
+    TypeParameter
+      Identifier: ' T'
+    MappedType
+      TypeParameter
+        Identifier: 'k'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'Merge2'
+          IntersectionType
+            TypeReference
+              Identifier: 'IdentifierT'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' k'
+                TypeReference
+                  Identifier: ' k'
+  TypeAliasDeclaration
+    Identifier: ' Identity'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Merge3'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Identity'
+      MappedType
+        TypeParameter
+          Identifier: 'k'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'k'
+  TypeAliasDeclaration
+    Identifier: ' Bar3'
+    TypeParameter
+      Identifier: 'IdentifierT'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'PropertyKey'
+        TypeReference
+          Identifier: ' PropertyKey'
+    TypeParameter
+      Identifier: ' T'
+    MappedType
+      TypeParameter
+        Identifier: 'k'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'Merge3'
+          IntersectionType
+            TypeReference
+              Identifier: 'IdentifierT'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' k'
+                TypeReference
+                  Identifier: ' k'

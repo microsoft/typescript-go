@@ -1,0 +1,86 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numStrTuple'
+        TupleType
+          NumberKeyword
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numNumTuple'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numEmptyObjTuple'
+        TupleType
+          NumberKeyword
+          TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' emptyObjTuple'
+        TupleType
+          TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numArray'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' emptyObjArray'
+        ArrayType
+          TypeLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// no error
+numArray'
+      EqualsToken
+      Identifier: ' numNumTuple'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+emptyObjArray'
+      EqualsToken
+      Identifier: ' emptyObjTuple'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+emptyObjArray'
+      EqualsToken
+      Identifier: ' numStrTuple'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+emptyObjArray'
+      EqualsToken
+      Identifier: ' numNumTuple'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+emptyObjArray'
+      EqualsToken
+      Identifier: ' numEmptyObjTuple'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// error
+numArray'
+      EqualsToken
+      Identifier: ' numStrTuple'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+emptyObjTuple'
+      EqualsToken
+      Identifier: ' emptyObjArray'

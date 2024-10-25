@@ -1,0 +1,123 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Entry'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    /**
+     * @param {any} x
+     * @return {this is Entry}
+     */
+    isInit'
+      Parameter
+        Identifier: 'x'
+      Block
+        ReturnStatement
+          TrueKeyword
+  ClassDeclaration
+    Identifier: ' Group'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'd'
+            EqualsToken
+            StringLiteral
+    MethodDeclaration
+      Identifier: '
+    /**
+     * @param {any} x
+     * @return {false}
+     */
+    isInit'
+      Parameter
+        Identifier: 'x'
+      Block
+        ReturnStatement
+          FalseKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'chunk'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ConditionalExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' chunk'
+                  Identifier: 'isInit'
+                Identifier: 'chunk'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' chunk'
+                Identifier: 'c'
+              ColonToken
+              PropertyAccessExpression
+                Identifier: ' chunk'
+                Identifier: 'd'
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' isBoolean'
+    Parameter
+      Identifier: 'value'
+    Block
+      ReturnStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' value'
+          EqualsEqualsEqualsToken
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'val'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isBoolean'
+          Identifier: 'val'
+        Block
+          ExpressionStatement
+            Identifier: '
+        val'
+  FunctionDeclaration
+    Identifier: ' isNumber'
+    Parameter
+      Identifier: 'x'
+    Block
+      ReturnStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 'x'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isNumber'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              AsteriskToken
+              NumericLiteral

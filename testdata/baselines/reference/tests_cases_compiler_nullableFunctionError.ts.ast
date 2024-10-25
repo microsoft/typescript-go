@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      NullKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        UnionType
+          LiteralType
+            NullKeyword
+          UndefinedKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'

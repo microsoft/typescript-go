@@ -1,0 +1,664 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    every'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isArrayLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    isAssignmentExpression'
+        ImportSpecifier
+          Identifier: '
+    isBinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    isExpressionStatement'
+        ImportSpecifier
+          Identifier: '
+    isForInOrOfStatement'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    tryAddToSet'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Cannot_find_name_0'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'No_value_exists_in_scope_for_the_shorthand_property_0_Either_declare_one_or_provide_an_initializer'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToAddMissingConst'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' changes'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'ChangeTracker'
+                        Identifier: 'with'
+                      Identifier: 'context'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' t'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' makeChange'
+                          Identifier: 't'
+                          PropertyAccessExpression
+                            Identifier: ' context'
+                            Identifier: 'sourceFile'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' context'
+                              Identifier: 'span'
+                            Identifier: 'start'
+                          PropertyAccessExpression
+                            Identifier: ' context'
+                            Identifier: 'program'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'changes'
+                    Identifier: 'length'
+                  GreaterThanToken
+                  NumericLiteral
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      CallExpression
+                        Identifier: 'createCodeFixAction'
+                        Identifier: 'fixId'
+                        Identifier: ' changes'
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'Add_const_to_unresolved_variable'
+                        Identifier: ' fixId'
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'Add_const_to_all_unresolved_variables'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' fixedNodes'
+                    NewExpression
+                      Identifier: ' Set'
+                      TypeReference
+                        Identifier: 'Node'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' codeFixAll'
+                  Identifier: 'context'
+                  Identifier: ' errorCodes'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'changes'
+                    Parameter
+                      Identifier: ' diag'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' makeChange'
+                      Identifier: 'changes'
+                      PropertyAccessExpression
+                        Identifier: ' diag'
+                        Identifier: 'file'
+                      PropertyAccessExpression
+                        Identifier: ' diag'
+                        Identifier: 'start'
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'program'
+                      Identifier: ' fixedNodes'
+  FunctionDeclaration
+    Identifier: ' makeChange'
+    Parameter
+      Identifier: 'changeTracker'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' fixedNodes'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'Node'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' forInitializer'
+            CallExpression
+              Identifier: ' findAncestor'
+              Identifier: 'token'
+              ArrowFunction
+                Parameter
+                  Identifier: ' node'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  CallExpression
+                    Identifier: '
+        isForInOrOfStatement'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                  QuestionToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'parent'
+                      Identifier: 'initializer'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' node'
+                  ColonToken
+                  ConditionalExpression
+                    CallExpression
+                      Identifier: '
+            isPossiblyPartOfDestructuring'
+                      Identifier: 'node'
+                    QuestionToken
+                    FalseKeyword
+                    ColonToken
+                    StringLiteral
+      IfStatement
+        Identifier: 'forInitializer'
+        ReturnStatement
+          CallExpression
+            Identifier: ' applyChange'
+            Identifier: 'changeTracker'
+            Identifier: ' forInitializer'
+            Identifier: ' sourceFile'
+            Identifier: ' fixedNodes'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' parent'
+            PropertyAccessExpression
+              Identifier: ' token'
+              Identifier: 'parent'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            CallExpression
+              Identifier: 'isBinaryExpression'
+              Identifier: 'parent'
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' parent'
+                  Identifier: 'operatorToken'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'EqualsToken'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isExpressionStatement'
+            PropertyAccessExpression
+              Identifier: 'parent'
+              Identifier: 'parent'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' applyChange'
+              Identifier: 'changeTracker'
+              Identifier: ' token'
+              Identifier: ' sourceFile'
+              Identifier: ' fixedNodes'
+      IfStatement
+        CallExpression
+          Identifier: 'isArrayLiteralExpression'
+          Identifier: 'parent'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' checker'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getTypeChecker'
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'every'
+                PropertyAccessExpression
+                  Identifier: 'parent'
+                  Identifier: 'elements'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' element'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' arrayElementCouldBeVariableDeclaration'
+                    Identifier: 'element'
+                    Identifier: ' checker'
+            Block
+              ReturnStatement
+          ReturnStatement
+            CallExpression
+              Identifier: ' applyChange'
+              Identifier: 'changeTracker'
+              Identifier: ' parent'
+              Identifier: ' sourceFile'
+              Identifier: ' fixedNodes'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' commaExpression'
+            CallExpression
+              Identifier: ' findAncestor'
+              Identifier: 'token'
+              ArrowFunction
+                Parameter
+                  Identifier: ' node'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  CallExpression
+                    Identifier: '
+        isExpressionStatement'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                  QuestionToken
+                  TrueKeyword
+                  ColonToken
+                  ConditionalExpression
+                    CallExpression
+                      Identifier: '
+            isPossiblyPartOfCommaSeperatedInitializer'
+                      Identifier: 'node'
+                    QuestionToken
+                    FalseKeyword
+                    ColonToken
+                    StringLiteral
+      IfStatement
+        Identifier: 'commaExpression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' checker'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getTypeChecker'
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'expressionCouldBeVariableDeclaration'
+                Identifier: 'commaExpression'
+                Identifier: ' checker'
+            Block
+              ReturnStatement
+          ReturnStatement
+            CallExpression
+              Identifier: ' applyChange'
+              Identifier: 'changeTracker'
+              Identifier: ' commaExpression'
+              Identifier: ' sourceFile'
+              Identifier: ' fixedNodes'
+  FunctionDeclaration
+    Identifier: ' applyChange'
+    Parameter
+      Identifier: 'changeTracker'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' initializer'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' fixedNodes'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'Node'
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'fixedNodes'
+          BarBarToken
+          CallExpression
+            Identifier: ' tryAddToSet'
+            Identifier: 'fixedNodes'
+            Identifier: ' initializer'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changeTracker'
+                Identifier: 'insertModifierBefore'
+              Identifier: 'sourceFile'
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'ConstKeyword'
+              Identifier: ' initializer'
+  FunctionDeclaration
+    Identifier: ' isPossiblyPartOfDestructuring'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'node'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Identifier'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ArrayLiteralExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ObjectLiteralExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'PropertyAssignment'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ShorthandPropertyAssignment'
+            ReturnStatement
+              TrueKeyword
+          DefaultClause
+            ReturnStatement
+              FalseKeyword
+  FunctionDeclaration
+    Identifier: ' arrayElementCouldBeVariableDeclaration'
+    Parameter
+      Identifier: 'expression'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' identifier'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isIdentifier'
+                Identifier: 'expression'
+              QuestionToken
+              Identifier: ' expression'
+              ColonToken
+              ConditionalExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: '
+        isAssignmentExpression'
+                    Identifier: 'expression'
+                    TrueKeyword
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' isIdentifier'
+                    PropertyAccessExpression
+                      Identifier: 'expression'
+                      Identifier: 'left'
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' expression'
+                  Identifier: 'left'
+                ColonToken
+                Identifier: '
+        undefined'
+      ReturnStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              Identifier: 'identifier'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'checker'
+                Identifier: 'getSymbolAtLocation'
+              Identifier: 'identifier'
+  FunctionDeclaration
+    Identifier: ' isPossiblyPartOfCommaSeperatedInitializer'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'node'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Identifier'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'BinaryExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CommaToken'
+            ReturnStatement
+              TrueKeyword
+          DefaultClause
+            ReturnStatement
+              FalseKeyword
+  FunctionDeclaration
+    Identifier: ' expressionCouldBeVariableDeclaration'
+    Parameter
+      Identifier: 'expression'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    BooleanKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isBinaryExpression'
+            Identifier: 'expression'
+        Block
+          ReturnStatement
+            FalseKeyword
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'expression'
+              Identifier: 'operatorToken'
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'CommaToken'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' every'
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  Identifier: 'expression'
+                  Identifier: 'left'
+                PropertyAccessExpression
+                  Identifier: ' expression'
+                  Identifier: 'right'
+              ArrowFunction
+                Parameter
+                  Identifier: ' expression'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' expressionCouldBeVariableDeclaration'
+                  Identifier: 'expression'
+                  Identifier: ' checker'
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' expression'
+                  Identifier: 'operatorToken'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'EqualsToken'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isIdentifier'
+              PropertyAccessExpression
+                Identifier: 'expression'
+                Identifier: 'left'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'checker'
+                Identifier: 'getSymbolAtLocation'
+              PropertyAccessExpression
+                Identifier: 'expression'
+                Identifier: 'left'

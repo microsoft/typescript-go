@@ -1,0 +1,1253 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            TupleType
+              NumberKeyword
+              StringKeyword
+              BooleanKeyword
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionType
+          Parameter
+            Identifier: 'x0'
+            NumberKeyword
+          Parameter
+            Identifier: ' x1'
+            StringKeyword
+          Parameter
+            Identifier: ' x2'
+            BooleanKeyword
+          VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+f1'
+      EqualsToken
+      Identifier: ' f2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+f2'
+      EqualsToken
+      Identifier: ' f1'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        TupleType
+          NumberKeyword
+          StringKeyword
+          BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TupleType
+          StringKeyword
+          BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        TupleType
+          BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t0'
+        TupleType
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ns'
+        TupleType
+          NumberKeyword
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sn'
+        TupleType
+          StringKeyword
+          NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f1'
+      NumericLiteral
+      StringLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      ElementAccessExpression
+        Identifier: 't3'
+        NumericLiteral
+      ElementAccessExpression
+        Identifier: ' t3'
+        NumericLiteral
+      ElementAccessExpression
+        Identifier: ' t3'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      SpreadElement
+        Identifier: 't3'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      NumericLiteral
+      SpreadElement
+        Identifier: 't2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      NumericLiteral
+      StringLiteral
+      SpreadElement
+        Identifier: 't1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      NumericLiteral
+      StringLiteral
+      TrueKeyword
+      SpreadElement
+        Identifier: 't0'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      ElementAccessExpression
+        Identifier: 'ns'
+        NumericLiteral
+      ElementAccessExpression
+        Identifier: ' ns'
+        NumericLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      SpreadElement
+        Identifier: 'ns'
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // FIXME: Error, since ...ns is considered as string|number here
+
+f2'
+      NumericLiteral
+      StringLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      ElementAccessExpression
+        Identifier: 't3'
+        NumericLiteral
+      ElementAccessExpression
+        Identifier: ' t3'
+        NumericLiteral
+      ElementAccessExpression
+        Identifier: ' t3'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      SpreadElement
+        Identifier: 't3'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      NumericLiteral
+      SpreadElement
+        Identifier: 't2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      NumericLiteral
+      StringLiteral
+      SpreadElement
+        Identifier: 't1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      NumericLiteral
+      StringLiteral
+      TrueKeyword
+      SpreadElement
+        Identifier: 't0'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      ElementAccessExpression
+        Identifier: 'ns'
+        NumericLiteral
+      ElementAccessExpression
+        Identifier: ' ns'
+        NumericLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      SpreadElement
+        Identifier: 'ns'
+      TrueKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f10'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x10'
+        CallExpression
+          Identifier: ' f10'
+          NumericLiteral
+          StringLiteral
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+        CallExpression
+          Identifier: ' f10'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x12'
+        CallExpression
+          Identifier: ' f10'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x13'
+        CallExpression
+          Identifier: ' f10'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x14'
+        CallExpression
+          Identifier: ' f10'
+          SpreadElement
+            Identifier: 't3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x15'
+        CallExpression
+          Identifier: ' f10'
+          NumericLiteral
+          SpreadElement
+            Identifier: 't2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x16'
+        CallExpression
+          Identifier: ' f10'
+          NumericLiteral
+          StringLiteral
+          SpreadElement
+            Identifier: 't1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x17'
+        CallExpression
+          Identifier: ' f10'
+          NumericLiteral
+          StringLiteral
+          TrueKeyword
+          SpreadElement
+            Identifier: 't0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x18'
+        CallExpression
+          Identifier: ' f10'
+          SpreadElement
+            Identifier: 'ns'
+          TrueKeyword
+  FunctionDeclaration
+    Identifier: ' g10'
+    TypeParameter
+      Identifier: 'U'
+      ArrayType
+        StringKeyword
+    TypeParameter
+      Identifier: ' V'
+      TupleType
+        NumberKeyword
+        NumberKeyword
+    Parameter
+      Identifier: 'u'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' V'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            CallExpression
+              Identifier: ' f10'
+              SpreadElement
+                Identifier: 'u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            CallExpression
+              Identifier: ' f10'
+              SpreadElement
+                Identifier: 'v'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            CallExpression
+              Identifier: ' f10'
+              NumericLiteral
+              SpreadElement
+                Identifier: 'u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x4'
+            CallExpression
+              Identifier: ' f10'
+              SpreadElement
+                Identifier: 'u'
+              SpreadElement
+                Identifier: 'v'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f11'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            StringKeyword
+            NumberKeyword
+            BooleanKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z10'
+        CallExpression
+          Identifier: ' f11'
+          NumericLiteral
+          StringLiteral
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z11'
+        CallExpression
+          Identifier: ' f11'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z12'
+        CallExpression
+          Identifier: ' f11'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z13'
+        CallExpression
+          Identifier: ' f11'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z14'
+        CallExpression
+          Identifier: ' f11'
+          SpreadElement
+            Identifier: 't3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z15'
+        CallExpression
+          Identifier: ' f11'
+          NumericLiteral
+          SpreadElement
+            Identifier: 't2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z16'
+        CallExpression
+          Identifier: ' f11'
+          NumericLiteral
+          StringLiteral
+          SpreadElement
+            Identifier: 't1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z17'
+        CallExpression
+          Identifier: ' f11'
+          NumericLiteral
+          StringLiteral
+          TrueKeyword
+          SpreadElement
+            Identifier: 't0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z18'
+        CallExpression
+          Identifier: ' f11'
+          SpreadElement
+            Identifier: 'ns'
+          TrueKeyword
+  FunctionDeclaration
+    Identifier: ' g11'
+    TypeParameter
+      Identifier: 'U'
+      ArrayType
+        StringKeyword
+    TypeParameter
+      Identifier: ' V'
+      TupleType
+        NumberKeyword
+        NumberKeyword
+    Parameter
+      Identifier: 'u'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' V'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            CallExpression
+              Identifier: ' f11'
+              SpreadElement
+                Identifier: 'u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            CallExpression
+              Identifier: ' f11'
+              SpreadElement
+                Identifier: 'v'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            CallExpression
+              Identifier: ' f11'
+              NumericLiteral
+              SpreadElement
+                Identifier: 'u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x4'
+            CallExpression
+              Identifier: ' f11'
+              SpreadElement
+                Identifier: 'u'
+              SpreadElement
+                Identifier: 'v'
+  FunctionDeclaration
+    Identifier: ' call'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' f'
+          SpreadElement
+            Identifier: 'args'
+  FunctionDeclaration
+    Identifier: ' callr'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' f'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' f'
+          SpreadElement
+            Identifier: 'args'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f15'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    UnionType
+      StringKeyword
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f16'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x20'
+        CallExpression
+          Identifier: ' call'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            Parameter
+              Identifier: ' y'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x21'
+        CallExpression
+          Identifier: ' call'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            Parameter
+              Identifier: ' y'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x22'
+        CallExpression
+          Identifier: ' call'
+          Identifier: 'f15'
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x23'
+        CallExpression
+          Identifier: ' call'
+          Identifier: 'f16'
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x24'
+        CallExpression
+          Identifier: ' call'
+          TupleType
+            StringKeyword
+            NumberKeyword
+          UnionType
+            StringKeyword
+            NumberKeyword
+          Identifier: 'f16'
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x30'
+        CallExpression
+          Identifier: ' callr'
+          Identifier: 'sn'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            Parameter
+              Identifier: ' y'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x31'
+        CallExpression
+          Identifier: ' callr'
+          Identifier: 'sn'
+          Identifier: ' f15'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x32'
+        CallExpression
+          Identifier: ' callr'
+          Identifier: 'sn'
+          Identifier: ' f16'
+  FunctionDeclaration
+    Identifier: ' bind'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      ArrayType
+        UnknownKeyword
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          DotDotDotToken
+          Identifier: 'rest'
+          TypeReference
+            Identifier: ' U'
+        TypeReference
+          Identifier: ' V'
+    Parameter
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'rest'
+            TypeReference
+              Identifier: ' U'
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' f'
+            Identifier: 'x'
+            SpreadElement
+              Identifier: 'rest'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f20'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            StringKeyword
+          Parameter
+            Identifier: ' z'
+            BooleanKeyword
+          ArrayType
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f21'
+        CallExpression
+          Identifier: ' bind'
+          Identifier: 'f20'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f22'
+        CallExpression
+          Identifier: ' bind'
+          Identifier: 'f21'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f23'
+        CallExpression
+          Identifier: ' bind'
+          Identifier: 'f22'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // () => string[]
+
+f20'
+      NumericLiteral
+      StringLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f21'
+      StringLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f22'
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f23'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g20'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            QuestionToken
+            StringKeyword
+          Parameter
+            Identifier: ' z'
+            QuestionToken
+            BooleanKeyword
+          ArrayType
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g21'
+        CallExpression
+          Identifier: ' bind'
+          Identifier: 'g20'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g22'
+        CallExpression
+          Identifier: ' bind'
+          Identifier: 'g21'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g23'
+        CallExpression
+          Identifier: ' bind'
+          Identifier: 'g22'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // () => string[]
+
+g20'
+      NumericLiteral
+      StringLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g20'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g20'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g21'
+      StringLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g21'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g21'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g22'
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g22'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g23'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f30'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      ArrayType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            AnyKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' U'
+    TypeReference
+      Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c30'
+        CallExpression
+          Identifier: ' f30'
+          NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              Identifier: ' x'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T01'
+    TypeReference
+      Identifier: ' Parameters'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          StringKeyword
+        Parameter
+          Identifier: ' z'
+          BooleanKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T02'
+    TypeReference
+      Identifier: ' Parameters'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TupleType
+            NumberKeyword
+            StringKeyword
+            BooleanKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T03'
+    TypeReference
+      Identifier: ' ConstructorParameters'
+      ConstructorType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          StringKeyword
+        Parameter
+          Identifier: ' z'
+          BooleanKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T04'
+    TypeReference
+      Identifier: ' ConstructorParameters'
+      ConstructorType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TupleType
+            NumberKeyword
+            StringKeyword
+            BooleanKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T05'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Parameters'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T06'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' ConstructorParameters'
+      ConstructorType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TupleType
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T07'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    TypeReference
+      Identifier: ' Parameters'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T08'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    TypeReference
+      Identifier: ' ConstructorParameters'
+      ConstructorType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T09'
+    TypeReference
+      Identifier: ' Parameters'
+      TypeReference
+        Identifier: 'Function'
+  TypeAliasDeclaration
+    Identifier: ' Record1'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  move'
+        TupleType
+          NumberKeyword
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+      PropertySignature
+        Identifier: '
+  jump'
+        TupleType
+          NumberKeyword
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+      PropertySignature
+        Identifier: '
+  stop'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+  done'
+        TupleType
+  TypeAliasDeclaration
+    Identifier: ' EventType'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+  emit'
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        Parameter
+          Identifier: 'e'
+          TypeReference
+            Identifier: ' K'
+        Parameter
+          DotDotDotToken
+          Identifier: 'payload'
+          ConditionalType
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeReference
+                Identifier: 'K'
+            ArrayType
+              AnyKeyword
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeReference
+                Identifier: 'K'
+            TupleType
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: 'K'
+        VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' events'
+        TypeReference
+          Identifier: ' EventType'
+          TypeReference
+            Identifier: 'Record1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+events'
+        Identifier: 'emit'
+      StringLiteral
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+events'
+        Identifier: 'emit'
+      StringLiteral
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+events'
+        Identifier: 'emit'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+events'
+        Identifier: 'emit'
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ff1'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: ' args'
+            ArrayType
+              AnyKeyword
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ff2'
+        FunctionType
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ff3'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TupleType
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ff4'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            NeverKeyword
+          VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+ff1'
+      EqualsToken
+      Identifier: ' ff2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ff1'
+      EqualsToken
+      Identifier: ' ff3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ff1'
+      EqualsToken
+      Identifier: ' ff4'

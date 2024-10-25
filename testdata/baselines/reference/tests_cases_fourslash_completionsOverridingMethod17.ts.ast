@@ -1,0 +1,77 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: a.ts
+// @newline: LF
+
+// Issue #52211
+
+//// interface Interface {
+////     method(): void;
+//// }
+////
+//// export class Class implements Interface {
+////     property = "yadda";
+////
+////     /**/
+//// }
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    isNewIdentifierLocation'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithInsertText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithSnippetText'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithClassMemberSnippets'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'LocationPriority'
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            replacementSpan'
+                Identifier: ' undefined'
+              PropertyAssignment
+                Identifier: '
+            filterText'
+                StringLiteral

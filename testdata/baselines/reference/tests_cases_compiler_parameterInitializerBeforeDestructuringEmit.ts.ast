@@ -1,0 +1,64 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    bar'
+      QuestionToken
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    baz'
+      QuestionToken
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' foobar'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' bar'
+          ObjectLiteralExpression
+        BindingElement
+          DotDotDotToken
+          Identifier: 'opts'
+      TypeReference
+        Identifier: ' Foo'
+      ObjectLiteralExpression
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    opts'
+            Identifier: 'baz'
+          Identifier: 'bar'
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' bar'
+            ObjectLiteralExpression
+          BindingElement
+            DotDotDotToken
+            Identifier: 'opts'
+        TypeReference
+          Identifier: ' Foo'
+        ObjectLiteralExpression
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        opts'
+              Identifier: 'baz'
+            Identifier: 'bar'

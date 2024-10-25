@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    GetAccessor
+      ComputedPropertyName
+        Identifier: 'e'
+      NumberKeyword

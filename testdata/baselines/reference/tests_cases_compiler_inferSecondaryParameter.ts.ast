@@ -1,0 +1,48 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Ib'
+    MethodSignature
+      Identifier: ' m'
+      Parameter
+        Identifier: 'test'
+        StringKeyword
+      Parameter
+        Identifier: ' fn'
+        TypeReference
+          Identifier: ' Function'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' Ib'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' m'
+            FunctionExpression
+              Parameter
+                Identifier: 'test'
+                StringKeyword
+              Parameter
+                Identifier: ' fn'
+                TypeReference
+                  Identifier: ' Function'
+              Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+b'
+        Identifier: 'm'
+      StringLiteral
+      FunctionExpression
+        Parameter
+          Identifier: 'bug'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                NumberKeyword
+                Identifier: ' bug'

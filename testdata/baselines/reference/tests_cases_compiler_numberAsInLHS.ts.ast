@@ -1,0 +1,8 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      InKeyword
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral

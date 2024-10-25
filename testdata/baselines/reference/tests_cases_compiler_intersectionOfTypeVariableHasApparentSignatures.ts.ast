@@ -1,0 +1,69 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Component'
+    TypeParameter
+      Identifier: 'P'
+    PropertySignature
+      Identifier: '
+    props'
+      IntersectionType
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'P'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' children'
+              QuestionToken
+              TypeLiteral
+  InterfaceDeclaration
+    Identifier: ' Props'
+    PropertySignature
+      Identifier: '
+    children'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'items'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'x'
+              NumberKeyword
+        VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Props'
+    Parameter
+      Identifier: 'i'
+      TypeReference
+        Identifier: ' Component'
+        TypeReference
+          Identifier: 'T'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    props'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        children'
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' x'
+                  EqualsGreaterThanToken
+                  Block

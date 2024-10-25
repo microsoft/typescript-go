@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '//@target: ES6
+Symbol'
+        Identifier: 'isConcatSpreadable'
+      InKeyword
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      StringLiteral
+      InKeyword
+      PropertyAccessExpression
+        Identifier: ' Symbol'
+        Identifier: 'toPrimitive'

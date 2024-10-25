@@ -1,0 +1,195 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    references'
+                                ArrayLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    files'
+                                ArrayLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        declaration'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        forceConsistentCasingInFileNames'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        skipDefaultLibCheck'
+                                    TrueKeyword
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' currentDirectory'
+                          StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        declaration'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        declarationMap'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        skipDefaultLibCheck'
+                                    TrueKeyword
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    references'
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    files'
+                                ArrayLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        declaration'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        forceConsistentCasingInFileNames'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        skipDefaultLibCheck'
+                                    TrueKeyword
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' currentDirectory'
+                          StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral

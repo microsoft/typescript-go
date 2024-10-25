@@ -1,0 +1,33 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+      BinaryExpression
+        Identifier: ' y'
+        PlusToken
+        NumericLiteral

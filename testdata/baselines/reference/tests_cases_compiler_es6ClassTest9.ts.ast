@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+  ExpressionStatement
+    ParenthesizedExpression
+      Identifier: ''
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block

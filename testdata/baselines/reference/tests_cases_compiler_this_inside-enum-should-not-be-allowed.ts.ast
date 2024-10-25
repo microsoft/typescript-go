@@ -1,0 +1,16 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' TopLevelEnum'
+    EnumMember
+      Identifier: '
+    ThisWasAllowedButShouldNotBe'
+      ThisKeyword
+  ModuleDeclaration
+    Identifier: ' ModuleEnum'
+    ModuleBlock
+      EnumDeclaration
+        Identifier: ' EnumInModule'
+        EnumMember
+          Identifier: '
+        WasADifferentError'
+          ThisKeyword

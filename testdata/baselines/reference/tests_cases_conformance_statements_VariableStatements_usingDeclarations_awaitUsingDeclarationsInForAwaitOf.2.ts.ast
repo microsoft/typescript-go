@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' test'
+    Block
+      ForOfStatement
+        AwaitKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' of'
+        Identifier: ' of'
+        Block
+      EmptyStatement

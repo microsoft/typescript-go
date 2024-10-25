@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// interface IFoo<T> { }
+//// interface Array<T> /**/extends IFoo<T> { }
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'deleteAtCaret'
+      PropertyAccessExpression
+        StringLiteral
+        Identifier: 'length'

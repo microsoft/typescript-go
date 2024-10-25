@@ -1,0 +1,60 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        DotDotDotToken
+        Identifier: 'y'
+        ArrayType
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    CallSignature
+      TypeParameter
+        Identifier: 'S'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' S'
+      Parameter
+        DotDotDotToken
+        Identifier: 'y'
+        ArrayType
+          TypeReference
+            Identifier: ' S'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Both errors
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' a'

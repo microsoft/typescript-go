@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' a'
+    GetAccessor
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'aValue'
+        StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' b'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+    GetAccessor
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'aValue'
+        StringKeyword
+      Block

@@ -1,0 +1,48 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @esModuleInterop: true
+// @checkJs: true
+// @module: commonjs
+// @target: es5
+// @outDir: ./out
+
+// @Filename: ./test.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+   message'
+          StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' test'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' test'
+    ImportType
+      TypeReference
+        Identifier: ' test'
+  ExpressionStatement
+    Identifier: ' from'
+  ExpressionStatement
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' test'
+    ImportType
+      TypeReference
+        Identifier: ' test'
+  ExpressionStatement
+    Identifier: ' from'
+  ExpressionStatement
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' test'
+    TypeReference
+      Identifier: ' test'

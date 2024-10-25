@@ -1,0 +1,48 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' util'
+        BinaryExpression
+          Identifier: ' exports'
+          EqualsToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' module'
+              Identifier: 'exports'
+            EqualsToken
+            ObjectLiteralExpression
+  IfStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        FalseKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    util'
+            Identifier: 'existy'
+          EqualsToken
+          FunctionExpression
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' util'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' n'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    util'
+          Identifier: 'existy'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+util'
+      Identifier: 'existy'

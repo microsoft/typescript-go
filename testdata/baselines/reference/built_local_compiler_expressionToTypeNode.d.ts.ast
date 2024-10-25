@@ -1,0 +1,25 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' SyntacticNodeBuilder'
+        ImportSpecifier
+          Identifier: ' SyntacticTypeNodeBuilderResolver'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createSyntacticTypeNodeBuilder'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' resolver'
+      TypeReference
+        Identifier: ' SyntacticTypeNodeBuilderResolver'
+    TypeReference
+      Identifier: ' SyntacticNodeBuilder'

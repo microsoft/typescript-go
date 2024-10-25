@@ -1,0 +1,30 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        ArrayLiteralExpression
+          StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ios'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' base'
+    Block

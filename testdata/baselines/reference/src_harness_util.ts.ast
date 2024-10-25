@@ -1,0 +1,911 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testPathPrefixRegExp'
+        RegularExpressionLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' removeTestPathPrefixes'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' retainTrailingDirectorySeparator'
+      QuestionToken
+      BooleanKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' text'
+            ExclamationEqualsEqualsToken
+            Identifier: ' undefined'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' text'
+              Identifier: 'replace'
+            Identifier: 'testPathPrefixRegExp'
+            ArrowFunction
+              Parameter
+                Identifier: '_'
+              Parameter
+                Identifier: ' scheme'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' scheme'
+                BarBarToken
+                ParenthesizedExpression
+                  ConditionalExpression
+                    Identifier: 'retainTrailingDirectorySeparator'
+                    QuestionToken
+                    StringLiteral
+                    ColonToken
+                    StringLiteral
+          ColonToken
+          NonNullExpression
+            Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' createDiagnosticMessageReplacer'
+    TypeParameter
+      Identifier: 'R'
+      FunctionType
+        Parameter
+          Identifier: 'messageArgs'
+          ArrayType
+            StringKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            StringKeyword
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: 'diagnosticMessage'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'DiagnosticMessage'
+    Parameter
+      Identifier: ' replacer'
+      TypeReference
+        Identifier: ' R'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' messageParts'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' diagnosticMessage'
+                  Identifier: 'message'
+                Identifier: 'split'
+              RegularExpressionLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' regExp'
+            NewExpression
+              Identifier: ' RegExp'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'messageParts'
+                          Identifier: 'map'
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'regExpEscape'
+                      Identifier: 'join'
+                    StringLiteral
+                  TemplateTail
+      TypeAliasDeclaration
+        Identifier: ' Args'
+        TypeParameter
+          Identifier: 'R'
+        ConditionalType
+          TypeReference
+            Identifier: ' R'
+          FunctionType
+            Parameter
+              Identifier: 'messageArgs'
+              ArrayType
+                StringKeyword
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              InferType
+                TypeParameter
+                  Identifier: ' A'
+            ArrayType
+              StringKeyword
+          TypeReference
+            Identifier: ' A'
+          TupleType
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'text'
+            StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TypeReference
+              Identifier: ' Args'
+              TypeReference
+                Identifier: 'R'
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' text'
+              Identifier: 'replace'
+            Identifier: 'regExp'
+            ArrowFunction
+              Parameter
+                Identifier: '_'
+              Parameter
+                DotDotDotToken
+                Identifier: 'fixedArgs'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'formatStringFromArgs'
+                PropertyAccessExpression
+                  Identifier: 'diagnosticMessage'
+                  Identifier: 'message'
+                CallExpression
+                  Identifier: ' replacer'
+                  Identifier: 'fixedArgs'
+                  SpreadElement
+                    Identifier: 'args'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' replaceTypesVersionsMessage'
+        CallExpression
+          Identifier: ' createDiagnosticMessageReplacer'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    ts'
+              Identifier: 'Diagnostics'
+            Identifier: 'package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2'
+          ArrowFunction
+            Parameter
+              ArrayBindingPattern
+                BindingElement
+                  Identifier: 'entry'
+                OmittedExpression
+                BindingElement
+                  Identifier: ' moduleName'
+            Parameter
+              Identifier: ' compilerVersion'
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'entry'
+              Identifier: ' compilerVersion'
+              Identifier: ' moduleName'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' sanitizeTraceResolutionLogEntry'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' text'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' replaceTypesVersionsMessage'
+            Identifier: 'text'
+            StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' dedent'
+    Parameter
+      Identifier: 'array'
+      TypeReference
+        Identifier: ' TemplateStringsArray'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' text'
+            ElementAccessExpression
+              Identifier: ' array'
+              NumericLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' args'
+            Identifier: 'length'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        text'
+              PlusEqualsToken
+              ElementAccessExpression
+                Identifier: ' args'
+                Identifier: 'i'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        text'
+              PlusEqualsToken
+              ElementAccessExpression
+                Identifier: ' array'
+                BinaryExpression
+                  Identifier: 'i'
+                  PlusToken
+                  NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lineTerminatorRegExp'
+            RegularExpressionLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lines'
+            ArrayType
+              StringKeyword
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lineTerminators'
+            ArrayType
+              StringKeyword
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' match'
+            UnionType
+              TypeReference
+                Identifier: ' RegExpExecArray'
+              LiteralType
+                NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lineStart'
+            NumericLiteral
+      WhileStatement
+        BinaryExpression
+          Identifier: 'match'
+          EqualsToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' lineTerminatorRegExp'
+              Identifier: 'exec'
+            Identifier: 'text'
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'lineStart'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' match'
+                  Identifier: 'index'
+              BarBarToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' lines'
+                  Identifier: 'length'
+                GreaterThanToken
+                NumericLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            lines'
+                    Identifier: 'push'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'text'
+                      Identifier: 'slice'
+                    Identifier: 'lineStart'
+                    PropertyAccessExpression
+                      Identifier: ' match'
+                      Identifier: 'index'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            lineTerminators'
+                    Identifier: 'push'
+                  ElementAccessExpression
+                    Identifier: 'match'
+                    NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lineStart'
+              EqualsToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' match'
+                  Identifier: 'index'
+                PlusToken
+                PropertyAccessExpression
+                  ElementAccessExpression
+                    Identifier: ' match'
+                    NumericLiteral
+                  Identifier: 'length'
+      IfStatement
+        BinaryExpression
+          Identifier: 'lineStart'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' text'
+            Identifier: 'length'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        lines'
+                Identifier: 'push'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'text'
+                  Identifier: 'slice'
+                Identifier: 'lineStart'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' indentation'
+            CallExpression
+              Identifier: ' guessIndentation'
+              Identifier: 'lines'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            StringLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' lines'
+            Identifier: 'length'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineText'
+                ElementAccessExpression
+                  Identifier: ' lines'
+                  Identifier: 'i'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' line'
+                ConditionalExpression
+                  Identifier: ' indentation'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' lineText'
+                      Identifier: 'slice'
+                    Identifier: 'indentation'
+                  ColonToken
+                  Identifier: ' lineText'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        result'
+              PlusEqualsToken
+              Identifier: ' line'
+          IfStatement
+            BinaryExpression
+              Identifier: 'i'
+              LessThanToken
+              PropertyAccessExpression
+                Identifier: ' lineTerminators'
+                Identifier: 'length'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            result'
+                  PlusEqualsToken
+                  ElementAccessExpression
+                    Identifier: ' lineTerminators'
+                    Identifier: 'i'
+      ReturnStatement
+        Identifier: ' result'
+  FunctionDeclaration
+    Identifier: ' guessIndentation'
+    Parameter
+      Identifier: 'lines'
+      ArrayType
+        StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' indentation'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' line'
+        Identifier: ' lines'
+        Block
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                NumericLiteral
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' line'
+                  Identifier: 'length'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: 'indentation'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' undefined'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' i'
+                    LessThanToken
+                    Identifier: ' indentation'
+            PostfixUnaryExpression
+              Identifier: ' i'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'ts'
+                      Identifier: 'isWhiteSpaceLike'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'line'
+                        Identifier: 'charCodeAt'
+                      Identifier: 'i'
+                Block
+                  IfStatement
+                    BinaryExpression
+                      BinaryExpression
+                        Identifier: 'indentation'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' undefined'
+                      BarBarToken
+                      BinaryExpression
+                        Identifier: ' i'
+                        LessThanToken
+                        Identifier: ' indentation'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    indentation'
+                          EqualsToken
+                          Identifier: ' i'
+                      BreakStatement
+      ReturnStatement
+        Identifier: ' indentation'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getByteOrderMarkLength'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'text'
+            Identifier: 'length'
+          GreaterThanEqualsToken
+          NumericLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' ch0'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' text'
+                    Identifier: 'charCodeAt'
+                  NumericLiteral
+          IfStatement
+            BinaryExpression
+              Identifier: 'ch0'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            ReturnStatement
+              NumericLiteral
+          IfStatement
+            BinaryExpression
+              Identifier: 'ch0'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            ReturnStatement
+              ConditionalExpression
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' text'
+                      Identifier: 'length'
+                    GreaterThanEqualsToken
+                    NumericLiteral
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' text'
+                        Identifier: 'charCodeAt'
+                      NumericLiteral
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+                QuestionToken
+                NumericLiteral
+                ColonToken
+                NumericLiteral
+          IfStatement
+            BinaryExpression
+              Identifier: 'ch0'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            ReturnStatement
+              ConditionalExpression
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' text'
+                      Identifier: 'length'
+                    GreaterThanEqualsToken
+                    NumericLiteral
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' text'
+                        Identifier: 'charCodeAt'
+                      NumericLiteral
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+                QuestionToken
+                NumericLiteral
+                ColonToken
+                NumericLiteral
+          IfStatement
+            BinaryExpression
+              Identifier: 'ch0'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            ReturnStatement
+              ConditionalExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' text'
+                        Identifier: 'length'
+                      GreaterThanEqualsToken
+                      NumericLiteral
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' text'
+                          Identifier: 'charCodeAt'
+                        NumericLiteral
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' text'
+                        Identifier: 'charCodeAt'
+                      NumericLiteral
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+                QuestionToken
+                NumericLiteral
+                ColonToken
+                NumericLiteral
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' removeByteOrderMark'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' length'
+            CallExpression
+              Identifier: ' getByteOrderMarkLength'
+              Identifier: 'text'
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' length'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' text'
+              Identifier: 'slice'
+            Identifier: 'length'
+          ColonToken
+          Identifier: ' text'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' addUTF8ByteOrderMark'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              Identifier: ' getByteOrderMarkLength'
+              Identifier: 'text'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          QuestionToken
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            Identifier: ' text'
+          ColonToken
+          Identifier: ' text'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' theory'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    Parameter
+      Identifier: ' data'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    VoidKeyword
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' entry'
+        Identifier: ' data'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        it'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateMiddle
+                TemplateSpan
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'entry'
+                          Identifier: 'map'
+                        Identifier: 'formatTheoryDatum'
+                      Identifier: 'join'
+                    StringLiteral
+                  TemplateTail
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' cb'
+                  SpreadElement
+                    Identifier: 'entry'
+  FunctionDeclaration
+    Identifier: ' formatTheoryDatum'
+    Parameter
+      Identifier: 'value'
+      AnyKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' value'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          QuestionToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' value'
+              Identifier: 'name'
+            BarBarToken
+            StringLiteral
+          ColonToken
+          ConditionalExpression
+            BinaryExpression
+              Identifier: '
+        value'
+              EqualsEqualsEqualsToken
+              Identifier: ' undefined'
+            QuestionToken
+            StringLiteral
+            ColonToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        JSON'
+                Identifier: 'stringify'
+              Identifier: 'value'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Deferred'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    resolve'
+      FunctionType
+        Parameter
+          Identifier: 'value'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: ' PromiseLike'
+              TypeReference
+                Identifier: 'T'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    reject'
+      FunctionType
+        Parameter
+          Identifier: 'reason'
+          UnknownKeyword
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    promise'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' defer'
+    TypeParameter
+      Identifier: 'T'
+      VoidKeyword
+    TypeReference
+      Identifier: ' Deferred'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' resolve'
+            ExclamationToken
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                UnionType
+                  TypeReference
+                    Identifier: ' T'
+                  TypeReference
+                    Identifier: ' PromiseLike'
+                    TypeReference
+                      Identifier: 'T'
+              VoidKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' reject'
+            ExclamationToken
+            FunctionType
+              Parameter
+                Identifier: 'reason'
+                UnknownKeyword
+              VoidKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' promise'
+            NewExpression
+              Identifier: ' Promise'
+              TypeReference
+                Identifier: 'T'
+              ArrowFunction
+                Parameter
+                  Identifier: '_resolve'
+                Parameter
+                  Identifier: ' _reject'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        resolve'
+                      EqualsToken
+                      Identifier: ' _resolve'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        reject'
+                      EqualsToken
+                      Identifier: ' _reject'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' resolve'
+          ShorthandPropertyAssignment
+            Identifier: ' reject'
+          ShorthandPropertyAssignment
+            Identifier: ' promise'

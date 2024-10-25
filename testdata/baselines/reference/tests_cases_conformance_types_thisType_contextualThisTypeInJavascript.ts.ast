@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    prop'
+            NumericLiteral
+          MethodDeclaration
+            Identifier: '
+    method'
+            Block
+              ExpressionStatement
+                ThisKeyword
+              ExpressionStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'prop'
+              ExpressionStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'method'
+              ExpressionStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'unknown'

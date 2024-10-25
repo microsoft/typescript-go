@@ -1,0 +1,44 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    // "Identifier expected." error on "!" and two "Duplicate identifier '(Missing)'." errors on space.
+    prop'
+                PrefixUnaryExpression
+                  Identifier: 'value'
+              PropertyAssignment
+                Identifier: ' // remove ! to see that errors will be gone
+    run'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'a'
+                            Identifier: 'b'
+                      Block
+                        ReturnStatement
+                          StringLiteral
+                    ReturnStatement
+                      StringLiteral

@@ -1,0 +1,26 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' X'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' X'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      BinaryExpression
+        StringLiteral
+        PlusToken
+        Identifier: ' X'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' X'
+    TypeLiteral

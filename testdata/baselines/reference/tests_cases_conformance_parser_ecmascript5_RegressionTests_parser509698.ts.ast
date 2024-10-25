@@ -1,0 +1,9 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' bar'
+    VoidKeyword

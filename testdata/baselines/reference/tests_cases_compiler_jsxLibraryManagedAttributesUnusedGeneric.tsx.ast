@@ -1,0 +1,97 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' jsx'
+        TypeQuery
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'createElement'
+  ModuleDeclaration
+    Identifier: ' jsx'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' JSX'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' Element'
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' ElementClass'
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' ElementAttributesProperty'
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' ElementChildrenAttribute'
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' IntrinsicAttributes'
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' IntrinsicClassAttributes'
+            TypeParameter
+              Identifier: 'T'
+          TypeAliasDeclaration
+            ExportKeyword
+            Identifier: ' IntrinsicElements'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+            div'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' className'
+                    StringKeyword
+          TypeAliasDeclaration
+            ExportKeyword
+            Identifier: ' WithCSSProp'
+            TypeParameter
+              Identifier: 'P'
+            IntersectionType
+              TypeReference
+                Identifier: ' P'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' css'
+                  StringKeyword
+          TypeAliasDeclaration
+            ExportKeyword
+            Identifier: ' LibraryManagedAttributes'
+            TypeParameter
+              Identifier: 'C'
+            TypeParameter
+              Identifier: ' P'
+            TypeReference
+              Identifier: ' WithCSSProp'
+              TypeReference
+                Identifier: 'P'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Comp'
+        FunctionType
+          Parameter
+            Identifier: 'p'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' className'
+                QuestionToken
+                StringKeyword
+          LiteralType
+            NullKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Comp'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' css'
+          StringLiteral

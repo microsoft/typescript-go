@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' makeBaseClass'
+  FunctionDeclaration
+    Identifier: ' makeBaseClass'
+    Block
+      ReturnStatement
+        ClassExpression
+          Identifier: ' Base'

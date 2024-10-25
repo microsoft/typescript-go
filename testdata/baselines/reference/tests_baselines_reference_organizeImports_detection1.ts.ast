@@ -1,0 +1,71 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' abc'
+        ImportSpecifier
+          Identifier: ' Abc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' I'
+        ImportSpecifier
+          Identifier: ' M'
+        ImportSpecifier
+          Identifier: ' R'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' abc'
+                PlusToken
+                Identifier: ' Abc'
+              PlusToken
+              Identifier: ' I'
+            PlusToken
+            Identifier: ' M'
+          PlusToken
+          Identifier: ' R'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' I'
+        ImportSpecifier
+          Identifier: ' M'
+        ImportSpecifier
+          Identifier: ' R'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' abc'
+        ImportSpecifier
+          Identifier: ' Abc'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' abc'
+                PlusToken
+                Identifier: ' Abc'
+              PlusToken
+              Identifier: ' I'
+            PlusToken
+            Identifier: ' M'
+          PlusToken
+          Identifier: ' R'

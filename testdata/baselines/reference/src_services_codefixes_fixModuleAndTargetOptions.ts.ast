@@ -1,0 +1,318 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createCodeFixActionWithoutFixAll'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+        ImportSpecifier
+          Identifier: '
+    setJsonCompilerOptionValue'
+        ImportSpecifier
+          Identifier: '
+    setJsonCompilerOptionValues'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    getEmitModuleKind'
+        ImportSpecifier
+          Identifier: '
+    getEmitScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    getTsConfigObjectLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    ModuleKind'
+        ImportSpecifier
+          Identifier: '
+    ScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    errorCodes'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Top_level_await_expressions_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Top_level_await_using_statements_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher'
+              Identifier: 'code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        Diagnostics'
+                Identifier: 'Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher'
+              Identifier: 'code'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToFixModuleAndTarget'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' compilerOptions'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'program'
+                        Identifier: 'getCompilerOptions'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' configFile'
+                    Identifier: ' compilerOptions'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'configFile'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  ReturnStatement
+                    Identifier: ' undefined'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' codeFixes'
+                    ArrayType
+                      TypeReference
+                        Identifier: ' CodeFixAction'
+                    ArrayLiteralExpression
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' moduleKind'
+                    CallExpression
+                      Identifier: ' getEmitModuleKind'
+                      Identifier: 'compilerOptions'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' moduleOutOfRange'
+                    BinaryExpression
+                      BinaryExpression
+                        Identifier: ' moduleKind'
+                        GreaterThanEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' ModuleKind'
+                          Identifier: 'ES2015'
+                      AmpersandAmpersandToken
+                      BinaryExpression
+                        Identifier: ' moduleKind'
+                        LessThanToken
+                        PropertyAccessExpression
+                          Identifier: ' ModuleKind'
+                          Identifier: 'ESNext'
+              IfStatement
+                Identifier: 'moduleOutOfRange'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' changes'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' textChanges'
+                              Identifier: 'ChangeTracker'
+                            Identifier: 'with'
+                          Identifier: 'context'
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' changes'
+                            EqualsGreaterThanToken
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                setJsonCompilerOptionValue'
+                                  Identifier: 'changes'
+                                  Identifier: ' configFile'
+                                  StringLiteral
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' factory'
+                                      Identifier: 'createStringLiteral'
+                                    StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            codeFixes'
+                        Identifier: 'push'
+                      CallExpression
+                        Identifier: 'createCodeFixActionWithoutFixAll'
+                        StringLiteral
+                        Identifier: ' changes'
+                        ArrayLiteralExpression
+                          PropertyAccessExpression
+                            Identifier: 'Diagnostics'
+                            Identifier: 'Set_the_module_option_in_your_configuration_file_to_0'
+                          StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' target'
+                    CallExpression
+                      Identifier: ' getEmitScriptTarget'
+                      Identifier: 'compilerOptions'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' targetOutOfRange'
+                    BinaryExpression
+                      BinaryExpression
+                        Identifier: ' target'
+                        LessThanToken
+                        PropertyAccessExpression
+                          Identifier: ' ScriptTarget'
+                          Identifier: 'ES2017'
+                      BarBarToken
+                      BinaryExpression
+                        Identifier: ' target'
+                        GreaterThanToken
+                        PropertyAccessExpression
+                          Identifier: ' ScriptTarget'
+                          Identifier: 'ESNext'
+              IfStatement
+                Identifier: 'targetOutOfRange'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' changes'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' textChanges'
+                              Identifier: 'ChangeTracker'
+                            Identifier: 'with'
+                          Identifier: 'context'
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' tracker'
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configObject'
+                                    CallExpression
+                                      Identifier: ' getTsConfigObjectLiteralExpression'
+                                      Identifier: 'configFile'
+                              IfStatement
+                                PrefixUnaryExpression
+                                  Identifier: 'configObject'
+                                ReturnStatement
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' options'
+                                    ArrayType
+                                      TupleType
+                                        StringKeyword
+                                        TypeReference
+                                          Identifier: ' Expression'
+                                    ArrayLiteralExpression
+                                      ArrayLiteralExpression
+                                        StringLiteral
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' factory'
+                                            Identifier: 'createStringLiteral'
+                                          StringLiteral
+                              IfStatement
+                                BinaryExpression
+                                  Identifier: 'moduleKind'
+                                  EqualsEqualsEqualsToken
+                                  PropertyAccessExpression
+                                    Identifier: ' ModuleKind'
+                                    Identifier: 'CommonJS'
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    // Ensure we preserve the default module kind (commonjs), as targets >= ES2015 have a default module kind of es2015.
+                    options'
+                                        Identifier: 'push'
+                                      ArrayLiteralExpression
+                                        StringLiteral
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' factory'
+                                            Identifier: 'createStringLiteral'
+                                          StringLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+
+                setJsonCompilerOptionValues'
+                                  Identifier: 'tracker'
+                                  Identifier: ' configFile'
+                                  Identifier: ' options'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+            codeFixes'
+                        Identifier: 'push'
+                      CallExpression
+                        Identifier: 'createCodeFixActionWithoutFixAll'
+                        StringLiteral
+                        Identifier: ' changes'
+                        ArrayLiteralExpression
+                          PropertyAccessExpression
+                            Identifier: 'Diagnostics'
+                            Identifier: 'Set_the_target_option_in_your_configuration_file_to_0'
+                          StringLiteral
+              ReturnStatement
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' codeFixes'
+                    Identifier: 'length'
+                  QuestionToken
+                  Identifier: ' codeFixes'
+                  ColonToken
+                  Identifier: ' undefined'

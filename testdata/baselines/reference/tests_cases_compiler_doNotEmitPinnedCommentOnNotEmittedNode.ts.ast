@@ -1,0 +1,33 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      Parameter
+        Identifier: ' y'
+        AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      Parameter
+        Identifier: ' y'
+        NumberKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' OData'
+        AnyKeyword

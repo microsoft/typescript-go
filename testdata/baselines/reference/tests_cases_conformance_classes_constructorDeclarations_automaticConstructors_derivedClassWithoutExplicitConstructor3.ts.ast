@@ -1,0 +1,182 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumericLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+            EqualsToken
+            Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    b'
+      StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'y'
+        StringKeyword
+      Parameter
+        Identifier: ' z'
+        StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'b'
+            EqualsToken
+            Identifier: ' y'
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    y'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        NewExpression
+          Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        NewExpression
+          Identifier: ' Derived2'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        NewExpression
+          Identifier: ' Derived'
+          StringLiteral
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' Base2'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' T'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+            EqualsToken
+            Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' T'
+      NullKeyword
+    Constructor
+      Parameter
+        Identifier: 'y'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'b'
+            EqualsToken
+            Identifier: ' y'
+  ClassDeclaration
+    Identifier: ' D2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+        TypeReference
+          Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' T'
+      NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' D2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        NewExpression
+          Identifier: ' D2'
+          NewExpression
+            Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d3'
+        NewExpression
+          Identifier: ' D2'
+          NewExpression
+            Identifier: ' Date'
+          NewExpression
+            Identifier: ' Date'

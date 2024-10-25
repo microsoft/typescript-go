@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowUnreachableCode: true
+
+////if (false) 0;
+
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression

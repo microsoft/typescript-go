@@ -1,0 +1,24 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' e1'
+    EnumMember
+      Identifier: ' One'
+  InterfaceDeclaration
+    Identifier: ' e1'
+    MethodSignature
+      Identifier: ' // error
+    foo'
+      VoidKeyword
+  EnumDeclaration
+    Identifier: ' e2'
+    EnumMember
+      Identifier: ' One'
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' e2'
+    MethodDeclaration
+      Identifier: ' // error
+    foo'
+      Block
+        ReturnStatement
+          NumericLiteral

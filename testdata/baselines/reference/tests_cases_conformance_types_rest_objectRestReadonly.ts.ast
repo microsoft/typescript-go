@@ -1,0 +1,52 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' ObjType'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  foo'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+  baz'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+  quux'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'ObjType'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  foo'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+  baz'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+  quux'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' foo'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest'
+        Identifier: ' obj'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' rest'
+        Identifier: 'baz'

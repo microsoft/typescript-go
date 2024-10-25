@@ -1,0 +1,54 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Promise'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    MethodSignature
+      Identifier: '
+    bar'
+      Parameter
+        Identifier: 'value'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Promise'
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    bar'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'value'
+        StringKeyword
+      Parameter
+        Identifier: ' element'
+        StringKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    bar'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'value'
+        StringKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'T'

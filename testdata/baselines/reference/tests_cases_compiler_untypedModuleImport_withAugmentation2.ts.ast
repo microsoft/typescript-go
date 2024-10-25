@@ -1,0 +1,36 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            NumberKeyword
+  ExportDeclaration
+    NamedExports
+  ExpressionStatement
+    Identifier: '
+
+// @Filename: /node_modules/js/index.js
+This'
+  ExpressionStatement
+    Identifier: ' file'
+  ExpressionStatement
+    Identifier: ' is'
+  ExpressionStatement
+    Identifier: ' not'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' processed'
+      Identifier: '
+
+// @Filename: /a.ts
+import'
+  Block
+  ExpressionStatement
+    Identifier: ' from'
+  ExpressionStatement
+    StringLiteral

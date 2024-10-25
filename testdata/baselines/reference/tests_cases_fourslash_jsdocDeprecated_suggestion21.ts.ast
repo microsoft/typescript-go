@@ -1,0 +1,54 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: esnext
+// @filename: /a.ts
+////export const a = 1;
+////export const b = 1;
+
+// @filename: /b.ts
+////export {
+////    /** @deprecated a is deprecated */
+////    a
+////} from "./a";
+
+// @filename: /c.ts
+////export {
+////    a
+////} from "./b";
+
+// @filename: /d.ts
+////import * as _ from "./c";
+////_.[|a|]
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            ElementAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' test'
+                  Identifier: 'ranges'
+              NumericLiteral

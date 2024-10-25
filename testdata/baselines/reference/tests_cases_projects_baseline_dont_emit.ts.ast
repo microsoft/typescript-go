@@ -1,0 +1,20 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' g'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            Identifier: ' g'
+            Identifier: 'Point'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            NumericLiteral

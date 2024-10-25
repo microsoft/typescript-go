@@ -1,0 +1,121 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' GenericObject'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        AsExpression
+          NewExpression
+            Identifier: ' GenericObject'
+          IntersectionType
+            TypeReference
+              Identifier: ' GenericObject'
+            ParenthesizedType
+              UnionType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' a'
+                    QuestionToken
+                    StringKeyword
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' b'
+                    QuestionToken
+                    NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+v1'
+        Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' GenericObjectWithoutSetter'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    PropertyDeclaration
+      DeclareKeyword
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        AsExpression
+          NewExpression
+            Identifier: ' GenericObjectWithoutSetter'
+          IntersectionType
+            TypeReference
+              Identifier: ' GenericObjectWithoutSetter'
+            ParenthesizedType
+              UnionType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' a'
+                    QuestionToken
+                    StringKeyword
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' b'
+                    QuestionToken
+                    NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+v2'
+        Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' NormalObject'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        AsExpression
+          NewExpression
+            Identifier: ' NormalObject'
+          IntersectionType
+            TypeReference
+              Identifier: ' NormalObject'
+            ParenthesizedType
+              UnionType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' a'
+                    QuestionToken
+                    StringKeyword
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' b'
+                    QuestionToken
+                    NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+v3'
+        Identifier: 'x'
+      EqualsToken
+      NumericLiteral

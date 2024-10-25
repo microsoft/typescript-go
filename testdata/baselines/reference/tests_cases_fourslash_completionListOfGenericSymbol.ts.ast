@@ -1,0 +1,64 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// Ensure kind is set correctly on completions of a generic symbol
+
+////var a = [1,2,3];
+////a./**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            documentation'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            kindModifiers'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            text'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            documentation'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            kindModifiers'
+                StringLiteral

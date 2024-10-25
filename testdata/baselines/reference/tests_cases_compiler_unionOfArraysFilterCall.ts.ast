@@ -1,0 +1,209 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Fizz'
+    PropertySignature
+      Identifier: '
+    id'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    fizz'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Buzz'
+    PropertySignature
+      Identifier: '
+    id'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    buzz'
+      StringKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          AsExpression
+            ArrayLiteralExpression
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Fizz'
+              ArrayType
+                TypeReference
+                  Identifier: ' Buzz'
+        Identifier: 'filter'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' item'
+            Identifier: 'id'
+          LessThanToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          AsExpression
+            ArrayLiteralExpression
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Fizz'
+              TypeOperator
+                ArrayType
+                  TypeReference
+                    Identifier: ' Buzz'
+        Identifier: 'filter'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' item'
+            Identifier: 'id'
+          LessThanToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          AsExpression
+            ArrayLiteralExpression
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Fizz'
+              ArrayType
+                TypeReference
+                  Identifier: ' Buzz'
+        Identifier: 'find'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        Identifier: ' item'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isFizz'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' Fizz'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          AsExpression
+            ArrayLiteralExpression
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Fizz'
+              ArrayType
+                TypeReference
+                  Identifier: ' Buzz'
+        Identifier: 'find'
+      Identifier: 'isFizz'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isBuzz'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' Buzz'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          AsExpression
+            ArrayLiteralExpression
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Fizz'
+              ArrayType
+                TypeReference
+                  Identifier: ' Buzz'
+        Identifier: 'find'
+      Identifier: 'isBuzz'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          AsExpression
+            ArrayLiteralExpression
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Fizz'
+              ArrayType
+                TypeReference
+                  Identifier: ' Buzz'
+        Identifier: 'every'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' item'
+            Identifier: 'id'
+          LessThanToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          AsExpression
+            ArrayLiteralExpression
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Fizz'
+              ArrayType
+                TypeReference
+                  Identifier: ' Buzz'
+        Identifier: 'reduce'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        Identifier: ' item'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          AsExpression
+            ArrayLiteralExpression
+            UnionType
+              TupleType
+                TypeReference
+                  Identifier: 'Fizz'
+              TypeOperator
+                TupleType
+                  OptionalType
+                    TypeReference
+                      Identifier: 'Buzz'
+        Identifier: 'filter'
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' item'
+            QuestionDotToken
+            Identifier: 'id'
+          LessThanToken
+          NumericLiteral

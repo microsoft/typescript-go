@@ -1,0 +1,47 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: '  ImportAttributes'
+        PropertySignature
+          Identifier: '
+        type'
+          LiteralType
+            StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ns'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    EmptyStatement
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' ns'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          CallExpression
+            ImportKeyword
+            StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        with'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            type'
+                    StringLiteral

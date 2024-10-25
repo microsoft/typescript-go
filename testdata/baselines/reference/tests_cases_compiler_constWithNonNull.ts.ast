@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+  ExpressionStatement
+    PostfixUnaryExpression
+      NonNullExpression
+        Identifier: '
+x'

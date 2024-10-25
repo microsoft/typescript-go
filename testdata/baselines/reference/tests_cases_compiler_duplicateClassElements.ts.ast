@@ -1,0 +1,86 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' a'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' b'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' b'
+      Block
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+    GetAccessor
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: '_x'
+        NumberKeyword
+      Block
+    GetAccessor
+      Identifier: ' y'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' y'
+      Parameter
+        Identifier: '_y'
+        StringKeyword
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' z'
+      Block
+    GetAccessor
+      Identifier: ' z'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' z'
+      Parameter
+        Identifier: '_y'
+        StringKeyword
+      Block
+    GetAccessor
+      Identifier: ' x2'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' x2'
+      Parameter
+        Identifier: '_x'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x2'
+    GetAccessor
+      Identifier: ' z2'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' z2'
+      Parameter
+        Identifier: '_y'
+        StringKeyword
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' z2'
+      Block

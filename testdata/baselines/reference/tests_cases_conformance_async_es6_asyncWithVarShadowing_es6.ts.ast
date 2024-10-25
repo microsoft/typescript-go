@@ -1,0 +1,560 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        AnyKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn1'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn2'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+          VariableDeclaration
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn3'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn4'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn5'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn6'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+              BindingElement
+                Identifier: ' z'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn7'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+                Identifier: ' y'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn8'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' z'
+                Identifier: ' x'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn9'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' z'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' x'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn10'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' z'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' x'
+                Identifier: ' y'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn11'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'x'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn12'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'x'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn13'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'x'
+                Identifier: ' y'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn14'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              OmittedExpression
+              BindingElement
+                Identifier: ' x'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn15'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'x'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn16'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'x'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn17'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'x'
+                Identifier: ' y'
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn18'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn19'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn20'
+    Parameter
+      Identifier: 'x'
+    Block
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn21'
+    Parameter
+      Identifier: 'x'
+    Block
+      IfStatement
+        Identifier: 'y'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn22'
+    Parameter
+      Identifier: 'x'
+    Block
+      IfStatement
+        Identifier: 'y'
+        Block
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn23'
+    Parameter
+      Identifier: 'x'
+    Block
+      TryStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn24'
+    Parameter
+      Identifier: 'x'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn25'
+    Parameter
+      Identifier: 'x'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'x'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn26'
+    Parameter
+      Identifier: 'x'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn27'
+    Parameter
+      Identifier: 'x'
+    Block
+      TryStatement
+        Block
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn28'
+    Parameter
+      Identifier: 'x'
+    Block
+      WhileStatement
+        Identifier: 'y'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn29'
+    Parameter
+      Identifier: 'x'
+    Block
+      DoStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+        Identifier: 'y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn30'
+    Parameter
+      Identifier: 'x'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn31'
+    Parameter
+      Identifier: 'x'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+            Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn32'
+    Parameter
+      Identifier: 'x'
+    Block
+      ForStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn33'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Block
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn34'
+    Parameter
+      Identifier: 'x'
+    Block
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+        Identifier: ' y'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn35'
+    Parameter
+      Identifier: 'x'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn36'
+    Parameter
+      Identifier: 'x'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+        Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn37'
+    Parameter
+      Identifier: 'x'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+        Identifier: ' y'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn38'
+    Parameter
+      Identifier: 'x'
+    Block
+      SwitchStatement
+        Identifier: 'y'
+        CaseBlock
+          CaseClause
+            Identifier: ' y'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn39'
+    Parameter
+      Identifier: 'x'
+    Block
+      LabeledStatement
+        Identifier: '
+    foo'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+          BreakStatement
+            Identifier: ' foo'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn40'
+    Parameter
+      Identifier: 'x'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'

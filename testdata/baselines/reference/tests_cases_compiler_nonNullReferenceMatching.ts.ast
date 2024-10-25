@@ -1,0 +1,290 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' ElementRef'
+    FunctionType
+      Parameter
+        Identifier: 'element'
+        UnionType
+          TypeReference
+            Identifier: ' HTMLElement'
+          LiteralType
+            NullKeyword
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' ThumbProps'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    elementRef'
+        QuestionToken
+        TypeReference
+          Identifier: ' ElementRef'
+  TypeAliasDeclaration
+    Identifier: ' ComponentProps'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    thumbYProps'
+        QuestionToken
+        TypeReference
+          Identifier: ' ThumbProps'
+      PropertySignature
+        Identifier: '
+    thumbXProps'
+        TypeReference
+          Identifier: ' ThumbProps'
+  ClassDeclaration
+    Identifier: ' Component'
+    PropertyDeclaration
+      Identifier: '
+    props'
+      ExclamationToken
+      TypeReference
+        Identifier: ' ComponentProps'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' thumbYElementRef'
+      ArrowFunction
+        Parameter
+          Identifier: 'ref'
+          UnionType
+            TypeReference
+              Identifier: ' HTMLElement'
+            LiteralType
+              NullKeyword
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'props'
+                        Identifier: 'thumbYProps'
+                    Identifier: 'elementRef'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  NonNullExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'props'
+                      Identifier: 'thumbYProps'
+                  Identifier: 'elementRef'
+                Identifier: 'ref'
+          ExpressionStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  ParenthesizedExpression
+                    PropertyAccessExpression
+                      NonNullExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'props'
+                          Identifier: 'thumbYProps'
+                      Identifier: 'elementRef'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  NonNullExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'props'
+                      Identifier: 'thumbYProps'
+                  Identifier: 'elementRef'
+                Identifier: 'ref'
+          ExpressionStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  NonNullExpression
+                    ParenthesizedExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          PropertyAccessExpression
+                            ParenthesizedExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'props'
+                            Identifier: 'thumbYProps'
+                        Identifier: 'elementRef'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  NonNullExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'props'
+                      Identifier: 'thumbYProps'
+                  Identifier: 'elementRef'
+                Identifier: 'ref'
+          ExpressionStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'props'
+                      Identifier: 'thumbXProps'
+                    Identifier: 'elementRef'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'props'
+                    Identifier: 'thumbXProps'
+                  Identifier: 'elementRef'
+                Identifier: 'ref'
+          ExpressionStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'props'
+                      Identifier: 'thumbXProps'
+                    Identifier: 'elementRef'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'props'
+                    Identifier: 'thumbXProps'
+                  Identifier: 'elementRef'
+                Identifier: 'ref'
+          ExpressionStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'props'
+                      Identifier: 'thumbXProps'
+                    Identifier: 'elementRef'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'props'
+                      Identifier: 'thumbXProps'
+                  Identifier: 'elementRef'
+                Identifier: 'ref'
+          ExpressionStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'props'
+                      Identifier: 'thumbXProps'
+                    Identifier: 'elementRef'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  NonNullExpression
+                    ParenthesizedExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          ParenthesizedExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'props'
+                        Identifier: 'thumbXProps'
+                  Identifier: 'elementRef'
+                Identifier: 'ref'
+          ExpressionStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'props'
+                        Identifier: 'thumbXProps'
+                    Identifier: 'elementRef'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  NonNullExpression
+                    ParenthesizedExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          ParenthesizedExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'props'
+                        Identifier: 'thumbXProps'
+                  Identifier: 'elementRef'
+                Identifier: 'ref'
+          ExpressionStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'props'
+                        Identifier: 'thumbXProps'
+                    Identifier: 'elementRef'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  NonNullExpression
+                    ParenthesizedExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          ParenthesizedExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'props'
+                        Identifier: 'thumbXProps'
+                  Identifier: 'elementRef'
+                Identifier: 'ref'

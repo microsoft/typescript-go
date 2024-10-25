@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'args'
+    Parameter
+      Identifier: ' bwarg'
+    Block
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 'arg'
+      StringKeyword
+    Block

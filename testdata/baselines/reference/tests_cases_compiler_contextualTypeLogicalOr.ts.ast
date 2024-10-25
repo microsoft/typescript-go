@@ -1,0 +1,151 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                BinaryExpression
+                                  Identifier: '
+    x'
+                                  AmpersandAmpersandToken
+                                  ArrayLiteralExpression
+                                    NumericLiteral
+                                    NumericLiteral
+                                    NumericLiteral
+                                    NumericLiteral
+                                BarBarToken
+                                BinaryExpression
+                                  Identifier: '
+    x'
+                                  AmpersandAmpersandToken
+                                  ArrayLiteralExpression
+                                    NumericLiteral
+                                    NumericLiteral
+                                    NumericLiteral
+                                    NumericLiteral
+                              BarBarToken
+                              BinaryExpression
+                                Identifier: '
+    x'
+                                AmpersandAmpersandToken
+                                ArrayLiteralExpression
+                                  NumericLiteral
+                                  NumericLiteral
+                                  NumericLiteral
+                                  NumericLiteral
+                            BarBarToken
+                            BinaryExpression
+                              Identifier: '
+    x'
+                              AmpersandAmpersandToken
+                              ArrayLiteralExpression
+                                NumericLiteral
+                                NumericLiteral
+                                NumericLiteral
+                                NumericLiteral
+                          BarBarToken
+                          BinaryExpression
+                            Identifier: '
+    x'
+                            AmpersandAmpersandToken
+                            ArrayLiteralExpression
+                              NumericLiteral
+                              NumericLiteral
+                              NumericLiteral
+                              NumericLiteral
+                        BarBarToken
+                        BinaryExpression
+                          Identifier: '
+    x'
+                          AmpersandAmpersandToken
+                          ArrayLiteralExpression
+                            NumericLiteral
+                            NumericLiteral
+                            NumericLiteral
+                            NumericLiteral
+                      BarBarToken
+                      BinaryExpression
+                        Identifier: '
+    x'
+                        AmpersandAmpersandToken
+                        ArrayLiteralExpression
+                          NumericLiteral
+                          NumericLiteral
+                          NumericLiteral
+                          NumericLiteral
+                    BarBarToken
+                    BinaryExpression
+                      Identifier: '
+    x'
+                      AmpersandAmpersandToken
+                      ArrayLiteralExpression
+                        NumericLiteral
+                        NumericLiteral
+                        NumericLiteral
+                        NumericLiteral
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: '
+    x'
+                    AmpersandAmpersandToken
+                    ArrayLiteralExpression
+                      NumericLiteral
+                      NumericLiteral
+                      NumericLiteral
+                      NumericLiteral
+                BarBarToken
+                BinaryExpression
+                  Identifier: '
+    x'
+                  AmpersandAmpersandToken
+                  ArrayLiteralExpression
+                    NumericLiteral
+                    NumericLiteral
+                    NumericLiteral
+                    NumericLiteral
+              BarBarToken
+              BinaryExpression
+                Identifier: '
+    x'
+                AmpersandAmpersandToken
+                ArrayLiteralExpression
+                  NumericLiteral
+                  NumericLiteral
+                  NumericLiteral
+                  NumericLiteral
+            BarBarToken
+            BinaryExpression
+              Identifier: '
+    x'
+              AmpersandAmpersandToken
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+          BarBarToken
+          BinaryExpression
+            Identifier: '
+    x'
+            AmpersandAmpersandToken
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral

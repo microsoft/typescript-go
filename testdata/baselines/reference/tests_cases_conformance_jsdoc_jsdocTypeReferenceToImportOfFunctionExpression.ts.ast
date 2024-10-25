@@ -1,0 +1,53 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MW'
+    Constructor
+      Parameter
+        Identifier: 'compiler'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'compiler'
+            EqualsToken
+            Identifier: ' compiler'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' MW'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MW'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+/** @typedef {number} Meyerhauser */
+
+/** @class */
+module'
+        Identifier: 'exports'
+      EqualsToken
+      FunctionExpression
+        Identifier: ' MC'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                ObjectLiteralExpression
+          ReturnStatement
+            NewExpression
+              Identifier: ' MW'
+              Identifier: 'x'

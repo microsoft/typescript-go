@@ -1,0 +1,70 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' union'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+union'
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnUnion'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fnUnion'
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fnUnion2'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              TypeParameter
+                Identifier: 'T'
+                NumberKeyword
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              VoidKeyword
+          ParenthesizedType
+            FunctionType
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fnUnion2'
+      StringLiteral

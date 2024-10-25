@@ -1,0 +1,138 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' TestWithStatics'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' dd'
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' TestWithStatics'
+        PrivateIdentifier
+    PropertyDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        StringLiteral
+      ClassExpression
+        Identifier: ' Inner'
+        PropertyDeclaration
+          PrivateIdentifier
+          NumericLiteral
+        MethodDeclaration
+          Identifier: '
+        m'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                NewExpression
+                  Identifier: ' TestWithStatics'
+                PrivateIdentifier
+        PropertyDeclaration
+          StaticKeyword
+          Identifier: ' C'
+          ClassExpression
+            Identifier: ' InnerInner'
+            MethodDeclaration
+              Identifier: '
+            m'
+              Block
+                ExpressionStatement
+                  PropertyAccessExpression
+                    NewExpression
+                      Identifier: ' TestWithStatics'
+                    PrivateIdentifier
+                ExpressionStatement
+                  PropertyAccessExpression
+                    NewExpression
+                      Identifier: ' Inner'
+                    PrivateIdentifier
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' M'
+          Block
+            ReturnStatement
+              ClassExpression
+                MethodDeclaration
+                  Identifier: '
+                m'
+                  Block
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        NewExpression
+                          Identifier: ' TestWithStatics'
+                        PrivateIdentifier
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        NewExpression
+                          Identifier: ' Inner'
+                        PrivateIdentifier
+  ClassDeclaration
+    Identifier: ' TestNonStatics'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    dd'
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' TestNonStatics'
+        PrivateIdentifier
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      ClassExpression
+        Identifier: ' Inner'
+        PropertyDeclaration
+          PrivateIdentifier
+          NumericLiteral
+        MethodDeclaration
+          Identifier: '
+        m'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                NewExpression
+                  Identifier: ' TestNonStatics'
+                PrivateIdentifier
+        PropertyDeclaration
+          Identifier: '
+        C'
+          ClassExpression
+            Identifier: ' InnerInner'
+            MethodDeclaration
+              Identifier: '
+            m'
+              Block
+                ExpressionStatement
+                  PropertyAccessExpression
+                    NewExpression
+                      Identifier: ' TestNonStatics'
+                    PrivateIdentifier
+                ExpressionStatement
+                  PropertyAccessExpression
+                    NewExpression
+                      Identifier: ' Inner'
+                    PrivateIdentifier
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' M'
+          Block
+            ReturnStatement
+              ClassExpression
+                MethodDeclaration
+                  Identifier: '
+                m'
+                  Block
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        NewExpression
+                          Identifier: ' TestNonStatics'
+                        PrivateIdentifier
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        NewExpression
+                          Identifier: ' Inner'
+                        PrivateIdentifier

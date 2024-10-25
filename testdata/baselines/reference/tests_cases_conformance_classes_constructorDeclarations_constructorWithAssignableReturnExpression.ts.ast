@@ -1,0 +1,65 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    Constructor
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' E'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    Constructor
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    Constructor
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' G'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    Constructor
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'T'
+                NullKeyword

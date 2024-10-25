@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          Identifier: 'a'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        BarBarToken
+        BinaryExpression
+          Identifier: ' a'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      BarBarToken
+      BinaryExpression
+        Identifier: ' a'
+        EqualsEqualsEqualsToken
+        NumericLiteral
+    Block
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' message'
+            StringLiteral

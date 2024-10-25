@@ -1,0 +1,72 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ResizablePanelProps'
+    PropertySignature
+      Identifier: '
+  children'
+      TupleType
+        TypeReference
+          QualifiedName
+            Identifier: 'React'
+            Identifier: 'ReactNode'
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ReactNode'
+  ClassDeclaration
+    Identifier: ' ResizablePanel'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: '
+  ResizablePanelProps'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'ResizablePanel'
+            JsxAttributes
+          JsxText
+          JsxSelfClosingElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxSelfClosingElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'ResizablePanel'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testErr'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'ResizablePanel'
+            JsxAttributes
+          JsxText
+          JsxSelfClosingElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxSelfClosingElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxSelfClosingElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'ResizablePanel'

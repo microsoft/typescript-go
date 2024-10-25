@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              BinaryExpression
+                StringLiteral
+                BarBarToken
+                NumericLiteral
+            NumericLiteral

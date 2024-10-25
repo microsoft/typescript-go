@@ -1,0 +1,403 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    noChangeRun'
+        ImportSpecifier
+          Identifier: '
+    TestTscEdit'
+        ImportSpecifier
+          Identifier: '
+    verifyTsc'
+        ImportSpecifier
+          Identifier: '
+    VerifyTscWithEditsInput'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' noChangeProject'
+                TypeReference
+                  Identifier: ' TestTscEdit'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        edit'
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'noop'
+                  PropertyAssignment
+                    Identifier: '
+        caption'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        commandLineArgs'
+                    ArrayLiteralExpression
+                      StringLiteral
+                      StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' edits'
+                ArrayType
+                  TypeReference
+                    Identifier: ' TestTscEdit'
+                ArrayLiteralExpression
+                  Identifier: '
+        noChangeRun'
+                  Identifier: '
+        noChangeProject'
+          FunctionDeclaration
+            Identifier: ' verify'
+            Parameter
+              Identifier: 'input'
+              TypeReference
+                Identifier: ' Pick'
+                TypeReference
+                  Identifier: 'VerifyTscWithEditsInput'
+                UnionType
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+            Parameter
+              Identifier: ' expectedOuptutNames'
+              TypeOperator
+                ArrayType
+                  StringKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        verifyTsc'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            scenario'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            commandLineArgs'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                    SpreadAssignment
+                      Identifier: 'input'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+        it'
+                  StringLiteral
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' sys'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' input'
+                                Identifier: 'sys'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'deepEqual'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'getOutputFileNames'
+                            NonNullExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    ts'
+                                  Identifier: 'parseConfigFileWithSystem'
+                                StringLiteral
+                                ObjectLiteralExpression
+                                Identifier: '
+                        /*extendedConfigCache*/ undefined'
+                                ObjectLiteralExpression
+                                Identifier: '
+                        sys'
+                                PropertyAccessExpression
+                                  Identifier: '
+                        ts'
+                                  Identifier: 'noop'
+                            StringLiteral
+                            FalseKeyword
+                          Identifier: '
+                expectedOuptutNames'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verify'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        outDir'
+                                    StringLiteral
+                ShorthandPropertyAssignment
+                  Identifier: '
+        edits'
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verify'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        outDir'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                ShorthandPropertyAssignment
+                  Identifier: '
+        edits'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verify'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        outDir'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        rootDir'
+                                    StringLiteral
+                ShorthandPropertyAssignment
+                  Identifier: '
+        edits'
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verify'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        outDir'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        rootDir'
+                                    StringLiteral
+                ShorthandPropertyAssignment
+                  Identifier: '
+        edits'
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verify'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        outDir'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        rootDir'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                ShorthandPropertyAssignment
+                  Identifier: '
+        edits'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral

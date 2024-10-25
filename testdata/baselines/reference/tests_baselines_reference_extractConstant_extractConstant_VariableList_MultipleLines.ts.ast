@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' /*About A*/a'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: '
+    /*About B*/b'
+        BinaryExpression
+          Identifier: ' /*[#|*/a'
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' /*About A*/a'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: '
+    newLocal'
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          NumericLiteral
+      VariableDeclaration
+        Identifier: '     /*About B*/b'
+        Identifier: ' /*RENAME*/newLocal'

@@ -1,0 +1,49 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    Parameter
+      Identifier: 'data'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' handlers'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeReference
+                Identifier: 'P'
+          Parameter
+            Identifier: ' prop'
+            TypeReference
+              Identifier: ' P'
+          VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' data'
+          NumericLiteral
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: ' data'
+          Parameter
+            Identifier: 'value'
+          Parameter
+            Identifier: ' key'
+          Block

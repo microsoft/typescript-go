@@ -1,0 +1,565 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' noop'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    noChangeOnlyRuns'
+        ImportSpecifier
+          Identifier: '
+    verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' getProjectReferenceWithRootDirInParentSys'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' TestServerHost'
+                    Identifier: 'createWatchedSystem'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                references'
+                            ArrayLiteralExpression
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' path'
+                                  StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                extends'
+                            StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    composite'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    declaration'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    rootDir'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    outDir'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    skipDefaultLibCheck'
+                                TrueKeyword
+                          PropertyAssignment
+                            Identifier: '
+                exclude'
+                            ArrayLiteralExpression
+                              StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' currentDirectory'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getProjectReferenceWithRootDirInParentSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getProjectReferenceWithRootDirInParentSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' sys'
+                        Identifier: 'replaceFileText'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getProjectReferenceWithRootDirInParentSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'writeFile'
+                          StringLiteral
+                          CallExpression
+                            Identifier: '
+                jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: ' outDir'
+                                    StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    references'
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'writeFile'
+                          StringLiteral
+                          CallExpression
+                            Identifier: '
+                jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: ' outDir'
+                                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  Identifier: ' noChangeOnlyRuns'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getProjectReferenceWithRootDirInParentSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'writeFile'
+                          StringLiteral
+                          CallExpression
+                            Identifier: '
+                jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' outDir'
+                                    StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    references'
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'writeFile'
+                          StringLiteral
+                          CallExpression
+                            Identifier: '
+                jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: ' outDir'
+                                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getProjectReferenceWithRootDirInParentSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'writeFile'
+                          StringLiteral
+                          CallExpression
+                            Identifier: '
+                jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' outDir'
+                                    StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    references'
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'writeFile'
+                          StringLiteral
+                          CallExpression
+                            Identifier: '
+                jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: ' outDir'
+                                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        Identifier: ' noop'
+                      PropertyAssignment
+                        Identifier: '
+                commandLineArgs'
+                        ArrayLiteralExpression
+                          StringLiteral
+                          StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getProjectReferenceWithRootDirInParentSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'renameFile'
+                          StringLiteral
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'renameFile'
+                          StringLiteral
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'writeFile'
+                          StringLiteral
+                          CallExpression
+                            Identifier: '
+                jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: ' outDir'
+                                    StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    references'
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'writeFile'
+                          StringLiteral
+                          CallExpression
+                            Identifier: '
+                jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: ' outDir'
+                                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  Identifier: ' noChangeOnlyRuns'

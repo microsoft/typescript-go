@@ -1,0 +1,26 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    ModuleDeclaration
+      Identifier: 'B'
+      ModuleDeclaration
+        Identifier: 'C'
+        ModuleBlock
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' foo'
+            Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' bar'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' A'
+                Identifier: 'B'
+              Identifier: 'C'
+            Identifier: 'foo'

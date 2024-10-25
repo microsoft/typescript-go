@@ -1,0 +1,28 @@
+SourceFile
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: ' // ok
+    b'
+      NumericLiteral
+    EnumMember
+      Identifier: ' // ok
+    c'
+      NumericLiteral
+    EnumMember
+      Identifier: ' // error
+    d'
+      NumericLiteral
+    EnumMember
+      Identifier: ' // error
+    e'
+      NumericLiteral
+    EnumMember
+      Identifier: ' // ok
+    f'
+      NumericLiteral

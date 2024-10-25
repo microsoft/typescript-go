@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @filename: enumTagOnExports.js
+// @allowjs: true
+// @checkjs: true
+// @noemit: true
+
+/** @enum {number} */
+exports'
+        Identifier: 'a'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+/** @enum {string} */
+module'
+          Identifier: 'exports'
+        Identifier: 'b'
+      EqualsToken
+      ObjectLiteralExpression

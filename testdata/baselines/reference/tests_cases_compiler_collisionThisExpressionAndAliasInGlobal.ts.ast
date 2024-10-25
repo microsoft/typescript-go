@@ -1,0 +1,20 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' a'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ThisKeyword
+  ImportEqualsDeclaration
+    Identifier: ' _this'
+    Identifier: ' a'

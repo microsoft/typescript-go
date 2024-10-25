@@ -1,0 +1,41 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  LabeledStatement
+    Identifier: '
+loop'
+    WhileStatement
+      TrueKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'x'
+            EqualsEqualsToken
+            NumericLiteral
+          Block
+            BreakStatement
+          Block
+            ExpressionStatement
+              PostfixUnaryExpression
+                Identifier: '
+        x'
+  Block
+    LabeledStatement
+      Identifier: '
+    x'
+      ExpressionStatement
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            LabeledStatement
+              Identifier: ' f'
+              ExpressionStatement
+                NumericLiteral

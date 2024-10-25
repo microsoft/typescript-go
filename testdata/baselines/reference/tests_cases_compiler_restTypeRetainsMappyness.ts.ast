@@ -1,0 +1,53 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  FunctionDeclaration
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    Parameter
+      Identifier: 'fn'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr'
+            TypeReference
+              Identifier: ' Foo'
+              TypeReference
+                Identifier: 'T'
+            AsExpression
+              ObjectLiteralExpression
+              AnyKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    fn'
+          SpreadElement
+            Identifier: 'arr'

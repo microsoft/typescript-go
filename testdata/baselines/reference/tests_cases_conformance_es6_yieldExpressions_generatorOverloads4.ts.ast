@@ -1,0 +1,31 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      TypeReference
+        Identifier: ' Iterable'
+        AnyKeyword
+    MethodDeclaration
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Iterable'
+        AnyKeyword
+    MethodDeclaration
+      AsteriskToken
+      Identifier: 'f'
+      Parameter
+        Identifier: 's'
+        AnyKeyword
+      TypeReference
+        Identifier: ' Iterable'
+        AnyKeyword
+      Block

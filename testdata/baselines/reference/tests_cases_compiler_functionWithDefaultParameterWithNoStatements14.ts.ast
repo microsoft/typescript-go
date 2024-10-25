@@ -1,0 +1,29 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ArrayType
+          AnyKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      ElementAccessExpression
+        Identifier: ' v'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'a'
+      ElementAccessExpression
+        Identifier: ' v'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+    Block

@@ -1,0 +1,108 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////class C {
+////    constructor(x: number) { }
+////    foo() { }
+////    bar() { }
+////    static boo() { }
+////}
+////
+////module C {
+////    export var x = 1;
+////    var y = 2;
+////}
+////module C {
+////    export function foo() { }
+////    function baz() { return ''; }
+////}
+////
+////var c = new C/*1*/(C./*2*/x);
+////c./*3*/foo = C./*4*/foo;
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'functionMembersPlus'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocalDeclarationPriority'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocationPriority'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocationPriority'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocationPriority'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'noErrors'

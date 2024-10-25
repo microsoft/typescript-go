@@ -1,0 +1,24 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' foo'
+    StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          ArrayLiteralExpression
+            StringLiteral

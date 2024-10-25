@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    ParenthesizedExpression
+      ObjectLiteralExpression
+        MethodDeclaration
+          AsyncKeyword
+          Identifier: ' m'
+          Block
+            ForStatement
+              Block

@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    check'
+      TypeParameter
+        Identifier: 'TProp'
+        ThisType
+      Parameter
+        Identifier: 'prop'
+        TypeReference
+          Identifier: ' TProp'
+      BooleanKeyword
+  ClassDeclaration
+    Identifier: ' Test'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'check'
+            ThisKeyword

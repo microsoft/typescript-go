@@ -1,0 +1,8 @@
+SourceFile
+  LabeledStatement
+    Identifier: 'target'
+    WhileStatement
+      TrueKeyword
+      Block
+        ContinueStatement
+          Identifier: ' target'

@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'classRange'
+          BindingElement
+            Identifier: ' exportKeywordRange'
+          BindingElement
+            Identifier: ' propertyNameRange'
+          BindingElement
+            Identifier: ' asKeywordRange'
+          BindingElement
+            Identifier: ' nameRange'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineDocumentHighlights'

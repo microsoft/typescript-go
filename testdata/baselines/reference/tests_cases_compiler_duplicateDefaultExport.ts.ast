@@ -1,0 +1,7 @@
+SourceFile
+  ExportAssignment
+    NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Block

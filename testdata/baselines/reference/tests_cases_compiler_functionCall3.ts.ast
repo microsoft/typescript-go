@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    ArrayType
+      AnyKeyword
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' foo'

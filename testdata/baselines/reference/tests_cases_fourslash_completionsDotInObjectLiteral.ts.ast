@@ -1,0 +1,51 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////const o = {
+////    a: 1,
+////    [|.|]/**/
+////[|}|];
+
+verify'
+        Identifier: 'getSyntacticDiagnostics'
+      CallExpression
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'test'
+              Identifier: 'ranges'
+          Identifier: 'map'
+        ArrowFunction
+          Parameter
+            Identifier: 'range'
+          TypeReference
+            QualifiedName
+              Identifier: ' FourSlashInterface'
+              Identifier: 'Diagnostic'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' code'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' message'
+                StringLiteral
+              ShorthandPropertyAssignment
+                Identifier: ' range'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'

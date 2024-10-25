@@ -1,0 +1,24 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    item'
+      TypeReference
+        Identifier: ' Bar'
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    MethodSignature
+      Identifier: '
+    baz'
+      VoidKeyword
+  ModuleDeclaration
+    Identifier: ' Bar'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' biz'
+        Block
+          ReturnStatement
+            NumericLiteral

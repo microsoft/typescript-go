@@ -1,0 +1,38 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+// @Filename: /tsconfig.json
+////{
+////  "compilerOptions": {
+////    "module": "Node16",
+////    "rootDirs": ["src"]
+////  }
+////}
+
+// @Filename: /src/person.ts
+////export const name = 0;
+
+// @Filename: /src/index.ts
+////import {name} from "./person.js";
+
+verify'
+        Identifier: 'getEditsForFileRename'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+	oldPath'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+	newPath'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+	newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              StringLiteral

@@ -1,0 +1,103 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      LiteralType
+        StringLiteral
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' f'
+  FunctionDeclaration
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' f'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        CallExpression
+          Identifier: ' foo'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fResult'
+        CallExpression
+          Identifier: ' f'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        CallExpression
+          Identifier: ' foo'
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' gResult'
+        CallExpression
+          Identifier: ' g'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        CallExpression
+          Identifier: ' bar'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' hResult'
+        CallExpression
+          Identifier: ' h'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+hResult'
+      EqualsToken
+      CallExpression
+        Identifier: ' h'
+        StringLiteral

@@ -1,0 +1,201 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Attributes'
+    TypeParameter
+      Identifier: 'Keys'
+      TypeOperator
+        AnyKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'Key'
+        TypeReference
+          Identifier: ' Keys'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Query'
+    TypeParameter
+      Identifier: 'A'
+      TypeReference
+        Identifier: ' Attributes'
+        TypeOperator
+          TypeReference
+            Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    multiply'
+      TypeParameter
+        Identifier: 'B'
+        TypeReference
+          Identifier: ' Attributes'
+          TypeOperator
+            TypeReference
+              Identifier: ' B'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' B'
+      TypeReference
+        Identifier: ' Query'
+        IntersectionType
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' ClassName'
+    TypeParameter
+      Identifier: 'S'
+    TypeOperator
+      TypeReference
+        Identifier: ' S'
+  TypeAliasDeclaration
+    Identifier: ' ClassNameMap'
+    TypeParameter
+      Identifier: 'S'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' S'
+      QuestionToken
+      BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' ClassNameObjectMap'
+    TypeParameter
+      Identifier: 'S'
+    IntersectionType
+      ObjectKeyword
+      TypeReference
+        Identifier: ' ClassNameMap'
+        TypeReference
+          Identifier: 'S'
+  TypeAliasDeclaration
+    Identifier: ' ClassNameArg'
+    TypeParameter
+      Identifier: 'S'
+    UnionType
+      TypeReference
+        Identifier: ' ClassName'
+        TypeReference
+          Identifier: 'S'
+      TypeReference
+        Identifier: ' ClassNameObjectMap'
+        TypeReference
+          Identifier: 'S'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' css'
+    TypeParameter
+      Identifier: 'S'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' S'
+        StringKeyword
+    Parameter
+      Identifier: 'styles'
+      TypeReference
+        Identifier: ' S'
+    Parameter
+      DotDotDotToken
+      Identifier: 'classNames'
+      ArrayType
+        TypeReference
+          Identifier: ' ClassNameArg'
+          TypeReference
+            Identifier: 'S'
+    StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' args'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' classNames'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'arg'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'arg'
+                      EqualsEqualsToken
+                      NullKeyword
+                    Block
+                      ReturnStatement
+                        NullKeyword
+                  IfStatement
+                    BinaryExpression
+                      TypeOfExpression
+                        Identifier: ' arg'
+                      EqualsEqualsToken
+                      StringLiteral
+                    Block
+                      ReturnStatement
+                        ElementAccessExpression
+                          Identifier: ' styles'
+                          Identifier: 'arg'
+                  IfStatement
+                    BinaryExpression
+                      TypeOfExpression
+                        Identifier: ' arg'
+                      EqualsEqualsToken
+                      StringLiteral
+                    Block
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' Object'
+                                Identifier: 'keys'
+                              Identifier: 'arg'
+                            Identifier: 'reduce'
+                          TypeReference
+                            Identifier: 'ClassNameObject'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'obj'
+                              TypeReference
+                                Identifier: ' ClassNameObject'
+                            Parameter
+                              Identifier: ' key'
+                              TypeOperator
+                                TypeReference
+                                  Identifier: ' S'
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' exportedClassName'
+                                    ElementAccessExpression
+                                      Identifier: ' styles'
+                                      Identifier: 'key'
+                              ExpressionStatement
+                                BinaryExpression
+                                  ElementAccessExpression
+                                    Identifier: '
+        obj'
+                                    Identifier: 'exportedClassName'
+                                  EqualsToken
+                                  ElementAccessExpression
+                                    ParenthesizedExpression
+                                      AsExpression
+                                        Identifier: 'arg'
+                                        TypeReference
+                                          Identifier: ' ClassNameMap'
+                                          TypeReference
+                                            Identifier: 'S'
+                                    Identifier: 'key'
+                              ReturnStatement
+                                Identifier: ' obj'
+                          ObjectLiteralExpression
+      ReturnStatement
+        StringLiteral

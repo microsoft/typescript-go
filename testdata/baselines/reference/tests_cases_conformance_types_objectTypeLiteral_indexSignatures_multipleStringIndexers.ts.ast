@@ -1,0 +1,87 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' y'
+            StringLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword

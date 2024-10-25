@@ -1,0 +1,239 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' HelloWorld'
+        ArrowFunction
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'h1'
+            Identifier: 'Hello'
+      VariableDeclaration
+        Identifier: ' world'
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: ''
+      RegularExpressionLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' frag'
+        BinaryExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: ''
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'div'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: ''
+                RegularExpressionLiteral
+          GreaterThanToken
+          Identifier: ''
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' selfClosing'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'img'
+          Identifier: ' src'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        StringLiteral
+        SlashToken
+        Identifier: ''
+      GreaterThanToken
+      Identifier: ''
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' HelloWorld'
+        ArrowFunction
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'h1'
+            Identifier: 'Hello'
+      VariableDeclaration
+        Identifier: ' world'
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: ''
+      RegularExpressionLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' frag'
+        BinaryExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: ''
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'div'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: ''
+                RegularExpressionLiteral
+          GreaterThanToken
+          Identifier: ''
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' selfClosing'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'img'
+          Identifier: ' src'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        StringLiteral
+        SlashToken
+        Identifier: ''
+      GreaterThanToken
+      Identifier: ''
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' HelloWorld'
+        ArrowFunction
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'h1'
+            Identifier: 'Hello'
+      VariableDeclaration
+        Identifier: ' world'
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: ''
+      RegularExpressionLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' frag'
+        BinaryExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: ''
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'div'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: ''
+                RegularExpressionLiteral
+          GreaterThanToken
+          Identifier: ''
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' selfClosing'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'img'
+          Identifier: ' src'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        StringLiteral
+        SlashToken
+        Identifier: ''
+      GreaterThanToken
+      Identifier: ''
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' HelloWorld'
+        ArrowFunction
+          EqualsGreaterThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'h1'
+            Identifier: 'Hello'
+      VariableDeclaration
+        Identifier: ' world'
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: ''
+      RegularExpressionLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' frag'
+        BinaryExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: ''
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'div'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: ''
+                RegularExpressionLiteral
+          GreaterThanToken
+          Identifier: ''
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' selfClosing'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'img'
+          Identifier: ' src'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        StringLiteral
+        SlashToken
+        Identifier: ''
+      GreaterThanToken
+      Identifier: ''
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' one'
+    StringLiteral
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' two'
+    StringLiteral
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' three'
+    StringLiteral
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' four'
+    StringLiteral

@@ -1,0 +1,105 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'freeze'
+          FunctionExpression
+            Identifier: ' foo'
+            Parameter
+              Identifier: 'a'
+              NumberKeyword
+            Parameter
+              Identifier: ' b'
+              StringKeyword
+            Block
+              ReturnStatement
+                FalseKeyword
+  ExpressionStatement
+    BinaryExpression
+      CallExpression
+        Identifier: '
+f'
+        NumericLiteral
+        StringLiteral
+      EqualsEqualsEqualsToken
+      FalseKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'freeze'
+          Identifier: 'C'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' c'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'freeze'
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+a'
+        NumericLiteral
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          ElementAccessExpression
+            Identifier: ' a'
+            NumericLiteral
+          Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Object'
+            Identifier: 'freeze'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' c'
+              TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+o'
+        Identifier: 'b'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' o'
+            Identifier: 'a'
+          Identifier: 'toString'

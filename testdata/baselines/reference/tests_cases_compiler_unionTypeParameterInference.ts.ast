@@ -1,0 +1,49 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: ' prop'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' lift'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        TypeReference
+          Identifier: ' U'
+        TypeReference
+          Identifier: ' Foo'
+          TypeReference
+            Identifier: 'U'
+    TypeReference
+      Identifier: ' Foo'
+      TypeReference
+        Identifier: 'U'
+  FunctionDeclaration
+    Identifier: ' unlift'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        TypeReference
+          Identifier: ' U'
+        TypeReference
+          Identifier: ' Foo'
+          TypeReference
+            Identifier: 'U'
+    TypeReference
+      Identifier: ' U'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' lift'
+            Identifier: 'value'
+          Identifier: 'prop'

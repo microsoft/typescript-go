@@ -1,0 +1,45 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'x'
+          Block
+        Block
+      TryStatement
+        Block
+        Block
+      EmptyStatement
+  FunctionDeclaration
+    Identifier: ' fn2'
+    Block
+      TryStatement
+        Block
+        Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'x'
+          Block
+      TryStatement
+        Block
+        Block
+      TryStatement
+        Block
+        Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'x'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: ''
+          Block

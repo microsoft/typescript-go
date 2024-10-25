@@ -1,0 +1,60 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+      VariableDeclaration
+        Identifier: ' c4'
+      VariableDeclaration
+        Identifier: ' c5'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' c6'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+    ObjectLiteralExpression
+    Block
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c8'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' c8'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' c8'
+    Block
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c9'
+    BinaryExpression
+      Identifier: ' c9'
+      LessThanToken
+      NumericLiteral
+    Block
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c10'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' c11'
+    BinaryExpression
+      Identifier: ' c10'
+      LessThanToken
+      NumericLiteral
+    Block

@@ -1,0 +1,559 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nominalTypeHack'
+        TypeOperator
+          SymbolKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' IsOptional'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      UnionType
+        UndefinedKeyword
+        LiteralType
+          NullKeyword
+      TypeReference
+        Identifier: ' T'
+      LiteralType
+        TrueKeyword
+      ConditionalType
+        UndefinedKeyword
+        TypeReference
+          Identifier: ' T'
+        LiteralType
+          TrueKeyword
+        ConditionalType
+          LiteralType
+            NullKeyword
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            TrueKeyword
+          LiteralType
+            FalseKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RequiredKeys'
+    TypeParameter
+      Identifier: 'V'
+    IndexedAccessType
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' V'
+        MinusToken
+        ConditionalType
+          TypeReference
+            Identifier: ' Exclude'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'V'
+              TypeReference
+                Identifier: 'K'
+            UndefinedKeyword
+          TypeReference
+            Identifier: ' Validator'
+            InferType
+              TypeParameter
+                Identifier: ' T'
+          ConditionalType
+            TypeReference
+              Identifier: ' IsOptional'
+              TypeReference
+                Identifier: 'T'
+            LiteralType
+              TrueKeyword
+            NeverKeyword
+            TypeReference
+              Identifier: ' K'
+          NeverKeyword
+      TypeOperator
+        TypeReference
+          Identifier: ' V'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' OptionalKeys'
+    TypeParameter
+      Identifier: 'V'
+    TypeReference
+      Identifier: ' Exclude'
+      TypeOperator
+        TypeReference
+          Identifier: ' V'
+      TypeReference
+        Identifier: ' RequiredKeys'
+        TypeReference
+          Identifier: 'V'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' InferPropsInner'
+    TypeParameter
+      Identifier: 'V'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' V'
+      MinusToken
+      TypeReference
+        Identifier: ' InferType'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'V'
+          TypeReference
+            Identifier: 'K'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Validator'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'props'
+        ObjectKeyword
+      Parameter
+        Identifier: ' propName'
+        StringKeyword
+      Parameter
+        Identifier: ' componentName'
+        StringKeyword
+      Parameter
+        Identifier: ' location'
+        StringKeyword
+      Parameter
+        Identifier: ' propFullName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' Error'
+        LiteralType
+          NullKeyword
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'nominalTypeHack'
+      QuestionToken
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Requireable'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Validator'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    isRequired'
+      TypeReference
+        Identifier: ' Validator'
+        TypeReference
+          Identifier: 'NonNullable'
+          TypeReference
+            Identifier: 'T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ValidationMap'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      QuestionToken
+      TypeReference
+        Identifier: ' Validator'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'K'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' InferType'
+    TypeParameter
+      Identifier: 'V'
+    ConditionalType
+      TypeReference
+        Identifier: ' V'
+      TypeReference
+        Identifier: ' Validator'
+        InferType
+          TypeParameter
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      AnyKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' InferProps'
+    TypeParameter
+      Identifier: 'V'
+    IntersectionType
+      TypeReference
+        Identifier: ' InferPropsInner'
+        TypeReference
+          Identifier: 'Pick'
+          TypeReference
+            Identifier: 'V'
+          TypeReference
+            Identifier: ' RequiredKeys'
+            TypeReference
+              Identifier: 'V'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'InferPropsInner'
+          TypeReference
+            Identifier: 'Pick'
+            TypeReference
+              Identifier: 'V'
+            TypeReference
+              Identifier: ' OptionalKeys'
+              TypeReference
+                Identifier: 'V'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' any'
+        TypeReference
+          Identifier: ' Requireable'
+          AnyKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array'
+        TypeReference
+          Identifier: ' Requireable'
+          ArrayType
+            AnyKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bool'
+        TypeReference
+          Identifier: ' Requireable'
+          BooleanKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' string'
+        TypeReference
+          Identifier: ' Requireable'
+          StringKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' number'
+        TypeReference
+          Identifier: ' Requireable'
+          NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' shape'
+    TypeParameter
+      Identifier: 'P'
+      TypeReference
+        Identifier: ' ValidationMap'
+        AnyKeyword
+    Parameter
+      Identifier: 'type'
+      TypeReference
+        Identifier: ' P'
+    TypeReference
+      Identifier: ' Requireable'
+      TypeReference
+        Identifier: 'InferProps'
+        TypeReference
+          Identifier: 'P'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' oneOfType'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Validator'
+        AnyKeyword
+    Parameter
+      Identifier: 'types'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' Requireable'
+      TypeReference
+        Identifier: 'NonNullable'
+        TypeReference
+          Identifier: 'InferType'
+          TypeReference
+            Identifier: 'T'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' PropTypes'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Props'
+    PropertySignature
+      Identifier: '
+    any'
+      QuestionToken
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    array'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    bool'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    shape'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        foo'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        bar'
+          QuestionToken
+          BooleanKeyword
+        PropertySignature
+          Identifier: '
+        baz'
+          QuestionToken
+          AnyKeyword
+    PropertySignature
+      Identifier: '
+    oneOfType'
+      UnionType
+        StringKeyword
+        BooleanKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        foo'
+            QuestionToken
+            StringKeyword
+          PropertySignature
+            Identifier: '
+        bar'
+            NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' PropTypesMap'
+    TypeReference
+      QualifiedName
+        Identifier: ' PropTypes'
+        Identifier: 'ValidationMap'
+      TypeReference
+        Identifier: 'Props'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' innerProps'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    foo'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' PropTypes'
+                Identifier: 'string'
+              Identifier: 'isRequired'
+          PropertyAssignment
+            Identifier: '
+    bar'
+            PropertyAccessExpression
+              Identifier: ' PropTypes'
+              Identifier: 'bool'
+          PropertyAssignment
+            Identifier: '
+    baz'
+            PropertyAccessExpression
+              Identifier: ' PropTypes'
+              Identifier: 'any'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrayOfTypes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            Identifier: 'PropTypes'
+            Identifier: 'string'
+          PropertyAccessExpression
+            Identifier: ' PropTypes'
+            Identifier: 'bool'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' PropTypes'
+              Identifier: 'shape'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    foo'
+                PropertyAccessExpression
+                  Identifier: ' PropTypes'
+                  Identifier: 'string'
+              PropertyAssignment
+                Identifier: '
+    bar'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' PropTypes'
+                    Identifier: 'number'
+                  Identifier: 'isRequired'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' propTypes'
+        TypeReference
+          Identifier: ' PropTypesMap'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    any'
+            PropertyAccessExpression
+              Identifier: ' PropTypes'
+              Identifier: 'any'
+          PropertyAssignment
+            Identifier: '
+    array'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' PropTypes'
+                Identifier: 'array'
+              Identifier: 'isRequired'
+          PropertyAssignment
+            Identifier: '
+    bool'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' PropTypes'
+                Identifier: 'bool'
+              Identifier: 'isRequired'
+          PropertyAssignment
+            Identifier: '
+    shape'
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' PropTypes'
+                  Identifier: 'shape'
+                Identifier: 'innerProps'
+              Identifier: 'isRequired'
+          PropertyAssignment
+            Identifier: '
+    oneOfType'
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' PropTypes'
+                  Identifier: 'oneOfType'
+                Identifier: 'arrayOfTypes'
+              Identifier: 'isRequired'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' propTypesWithoutAnnotation'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    any'
+            PropertyAccessExpression
+              Identifier: ' PropTypes'
+              Identifier: 'any'
+          PropertyAssignment
+            Identifier: '
+    array'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' PropTypes'
+                Identifier: 'array'
+              Identifier: 'isRequired'
+          PropertyAssignment
+            Identifier: '
+    bool'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' PropTypes'
+                Identifier: 'bool'
+              Identifier: 'isRequired'
+          PropertyAssignment
+            Identifier: '
+    shape'
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' PropTypes'
+                  Identifier: 'shape'
+                Identifier: 'innerProps'
+              Identifier: 'isRequired'
+          PropertyAssignment
+            Identifier: '
+    oneOfType'
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' PropTypes'
+                  Identifier: 'oneOfType'
+                Identifier: 'arrayOfTypes'
+              Identifier: 'isRequired'
+  TypeAliasDeclaration
+    Identifier: ' ExtractedProps'
+    TypeReference
+      QualifiedName
+        Identifier: ' PropTypes'
+        Identifier: 'InferProps'
+      TypeQuery
+        Identifier: ' propTypes'
+  TypeAliasDeclaration
+    Identifier: ' ExtractedPropsWithoutAnnotation'
+    TypeReference
+      QualifiedName
+        Identifier: ' PropTypes'
+        Identifier: 'InferProps'
+      TypeQuery
+        Identifier: ' propTypesWithoutAnnotation'
+  TypeAliasDeclaration
+    Identifier: ' ExtractPropsMatch'
+    ConditionalType
+      TypeReference
+        Identifier: ' ExtractedProps'
+      TypeReference
+        Identifier: ' ExtractedPropsWithoutAnnotation'
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        LiteralType
+          TrueKeyword
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            TypeReference
+              Identifier: ' ExtractPropsMatch'

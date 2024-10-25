@@ -1,0 +1,15 @@
+SourceFile
+  IfStatement
+    FalseKeyword
+    Block
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' myClass'
+            NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' MyClass'
+    TypeQuery
+      Identifier: ' myClass'

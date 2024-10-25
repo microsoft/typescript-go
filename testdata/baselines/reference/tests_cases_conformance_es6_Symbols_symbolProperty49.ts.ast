@@ -1,0 +1,17 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Symbol'
+      ClassDeclaration
+        Identifier: ' C'
+        MethodDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+          Block

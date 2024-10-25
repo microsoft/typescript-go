@@ -1,0 +1,62 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' x'
+      StringKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' fn'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    GetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' a'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' a'
+      Parameter
+        Identifier: 'v'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' x'
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' fn'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    GetAccessor
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' a'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' a'
+      Parameter
+        Identifier: 'v'
+      Block

@@ -1,0 +1,24 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      StringKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Foo'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    b'
+      StringKeyword

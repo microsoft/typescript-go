@@ -1,0 +1,58 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    unused'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    x'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    y'
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+ab'
+      EqualsToken
+      ObjectLiteralExpression
+        SpreadAssignment
+          Identifier: 'a'
+        PropertyAssignment
+          Identifier: ' y'
+          ParenthesizedExpression
+            AsExpression
+              AsExpression
+                NullKeyword
+                AnyKeyword
+              UnionType
+                StringKeyword
+                UndefinedKeyword

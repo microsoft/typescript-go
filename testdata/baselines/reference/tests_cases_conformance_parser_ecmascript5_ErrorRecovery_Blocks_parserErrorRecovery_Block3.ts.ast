@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' a'
+      BooleanKeyword
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' b'
+      BooleanKeyword
+      Block

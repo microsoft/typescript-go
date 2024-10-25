@@ -1,0 +1,96 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ErrorResult'
+    PropertySignature
+      Identifier: ' error'
+      LiteralType
+        TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' AsyncLoaderProps'
+    TypeParameter
+      Identifier: 'TResult'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' prop1'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'TResult'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' prop2'
+      FunctionType
+        Parameter
+          Identifier: 'result'
+          TypeReference
+            Identifier: ' Exclude'
+            TypeReference
+              Identifier: 'TResult'
+            TypeReference
+              Identifier: ' ErrorResult'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' AsyncLoader'
+    TypeParameter
+      Identifier: 'TResult'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'AsyncLoaderProps'
+          TypeReference
+            Identifier: 'TResult'
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          NullKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' load'
+    TypeReference
+      Identifier: ' Promise'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' success'
+            LiteralType
+              TrueKeyword
+        TypeReference
+          Identifier: ' ErrorResult'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' success'
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' loader'
+        JsxSelfClosingElement
+          Identifier: 'AsyncLoader'
+          JsxAttributes
+            JsxAttribute
+              Identifier: '
+    prop1'
+              JsxExpression
+                Identifier: 'load'
+            JsxAttribute
+              Identifier: '
+    prop2'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'result'
+                  EqualsGreaterThanToken
+                  Identifier: ' result'

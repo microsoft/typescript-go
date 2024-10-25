@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' getSecurity'
+    Parameter
+      Identifier: 'level'
+    Block
+      SwitchStatement
+        Identifier: 'level'
+        CaseBlock
+          CaseClause
+            NumericLiteral
+          CaseClause
+            NumericLiteral
+          CaseClause
+            NumericLiteral
+            ReturnStatement
+              StringLiteral
+          CaseClause
+            NumericLiteral
+          CaseClause
+            NumericLiteral
+            ReturnStatement
+              StringLiteral
+          CaseClause
+            NumericLiteral
+          DefaultClause
+            ReturnStatement
+              StringLiteral

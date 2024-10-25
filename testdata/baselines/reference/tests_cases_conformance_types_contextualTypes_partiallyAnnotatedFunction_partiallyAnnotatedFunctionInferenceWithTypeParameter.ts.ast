@@ -1,0 +1,223 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+  test'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+  test2'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 't'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' t1'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testRest'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 't'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' t1'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          DotDotDotToken
+          Identifier: 'ts'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+        VoidKeyword
+    TypeReference
+      Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+
+// exactly
+test'
+      ArrowFunction
+        Parameter
+          Identifier: 't1'
+          TypeReference
+            Identifier: ' D'
+        Parameter
+          Identifier: ' t2'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: ' t2'
+              Identifier: 'test2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+test'
+      ArrowFunction
+        Parameter
+          Identifier: 't1'
+        Parameter
+          Identifier: ' t2'
+          TypeReference
+            Identifier: ' D'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: ' t2'
+              Identifier: 'test2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// zero arg
+test'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// fewer args
+test'
+      ArrowFunction
+        Parameter
+          Identifier: 't1'
+          TypeReference
+            Identifier: ' D'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// rest arg
+test'
+      ArrowFunction
+        Parameter
+          DotDotDotToken
+          Identifier: 'ts'
+          ArrayType
+            TypeReference
+              Identifier: ' D'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// source function has rest arg
+testRest'
+      ArrowFunction
+        Parameter
+          Identifier: 't1'
+          TypeReference
+            Identifier: ' D'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+testRest'
+      ArrowFunction
+        Parameter
+          Identifier: 't1'
+        Parameter
+          Identifier: ' t2'
+        Parameter
+          Identifier: ' t3'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+testRest'
+      ArrowFunction
+        Parameter
+          Identifier: 't1'
+          TypeReference
+            Identifier: ' D'
+        Parameter
+          Identifier: ' t2'
+        Parameter
+          Identifier: ' t3'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+testRest'
+      ArrowFunction
+        Parameter
+          Identifier: 't1'
+        Parameter
+          Identifier: ' t2'
+          TypeReference
+            Identifier: ' D'
+        Parameter
+          Identifier: ' t3'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+testRest'
+      ArrowFunction
+        Parameter
+          Identifier: 't2'
+          TypeReference
+            Identifier: ' D'
+        Parameter
+          DotDotDotToken
+          Identifier: 't3'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+testRest'
+      ArrowFunction
+        Parameter
+          Identifier: 't2'
+        Parameter
+          DotDotDotToken
+          Identifier: 't3'
+          ArrayType
+            TypeReference
+              Identifier: ' D'
+        EqualsGreaterThanToken
+        Block

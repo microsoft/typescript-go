@@ -1,0 +1,24 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noUnusedParameters: true
+
+////interface I {
+////    m(x: number): void;
+////}
+////
+////class C implements I {
+////    m(x: number): void {}
+////}
+
+// No codefix to remove the parameter, it's inherited
+verify'
+        Identifier: 'codeFixAvailable'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' description'
+            StringLiteral

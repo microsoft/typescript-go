@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        MethodDeclaration
+          Decorator
+            ParenthesizedExpression
+              YieldExpression
+                StringLiteral
+          Identifier: '
+        m'
+          Block
+      EmptyStatement

@@ -1,0 +1,100 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Registry'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a1'
+            TypeLiteral
+      PropertySignature
+        Identifier: '
+  b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b1'
+            TypeLiteral
+  TypeAliasDeclaration
+    Identifier: ' Keyof'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: '
+  Scope'
+      TypeReference
+        Identifier: ' Keyof'
+        TypeReference
+          Identifier: 'Registry'
+    TypeParameter
+      Identifier: '
+  Event'
+      TypeReference
+        Identifier: ' Keyof'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'Registry'
+          TypeReference
+            Identifier: 'Scope'
+    Parameter
+      Identifier: 'eventPath'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Scope'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Event'
+          TemplateTail
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: '
+  Scope'
+      TypeReference
+        Identifier: ' Keyof'
+        TypeReference
+          Identifier: 'Registry'
+    TypeParameter
+      Identifier: '
+  Event'
+      TypeReference
+        Identifier: ' Keyof'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'Registry'
+          TypeReference
+            Identifier: 'Scope'
+    Parameter
+      Identifier: 'scope'
+      TypeReference
+        Identifier: ' Scope'
+    Parameter
+      Identifier: ' event'
+      TypeReference
+        Identifier: ' Event'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f1'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'scope'
+              TemplateMiddle
+            TemplateSpan
+              Identifier: 'event'
+              TemplateTail

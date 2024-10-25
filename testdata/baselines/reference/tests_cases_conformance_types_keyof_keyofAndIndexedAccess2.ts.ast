@@ -1,0 +1,1084 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'obj'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+        PropertySignature
+          Identifier: ' c'
+          StringKeyword
+    Parameter
+      Identifier: ' k0'
+      LiteralType
+        StringLiteral
+    Parameter
+      Identifier: ' k1'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: ' k2'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'k0'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'k0'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'k0'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '  // Error
+    obj'
+            Identifier: 'k1'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'k1'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '    // Error
+    obj'
+            Identifier: 'k1'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '  // Error
+    obj'
+            Identifier: 'k2'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '    // Error
+    obj'
+            Identifier: 'k2'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '    // Error
+    obj'
+            Identifier: 'k2'
+          EqualsToken
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          NumberKeyword
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+    Parameter
+      Identifier: ' b'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          NumberKeyword
+    Parameter
+      Identifier: ' c'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error, index signature in source doesn't imply properties are present
+    a'
+          EqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error, index signature in source doesn't imply properties are present
+    b'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error, constraint on target doesn't imply any properties or signatures
+    c'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '  // Error, constraint on target doesn't imply any properties or signatures
+    a'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    b'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'x'
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'k'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    a'
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    b'
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    c'
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '  // Error, cannot write to index signature through constraint
+    c'
+            Identifier: 'k'
+          EqualsToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'a'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeReference
+            Identifier: ' K'
+        NumberKeyword
+    Parameter
+      Identifier: ' b'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          NumberKeyword
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error, index signature doesn't imply properties are present
+    b'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    a'
+          Identifier: 'k'
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    a'
+            Identifier: 'k'
+          EqualsToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3b'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'a'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeReference
+            Identifier: ' K'
+        NumberKeyword
+    Parameter
+      Identifier: ' b'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          StringKeyword
+        NumberKeyword
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error, index signature doesn't imply properties are present
+    b'
+          EqualsToken
+          Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'a'
+      IndexedAccessType
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'key'
+              StringKeyword
+            NumberKeyword
+        TypeReference
+          Identifier: 'K'
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+  a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+  b'
+          EqualsToken
+          Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' Item'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        StringKeyword
+      PropertySignature
+        Identifier: ' b'
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f10'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Item'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k1'
+      StringKeyword
+    Parameter
+      Identifier: ' k2'
+      TypeOperator
+        TypeReference
+          Identifier: ' Item'
+    Parameter
+      Identifier: ' k3'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' k4'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+  obj'
+            Identifier: 'k1'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '  // Error
+  obj'
+            Identifier: 'k2'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '  // Error
+  obj'
+            Identifier: 'k3'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '  // Error
+  obj'
+            Identifier: 'k4'
+          EqualsToken
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Dict'
+    TypeReference
+      Identifier: ' Record'
+      StringKeyword
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f11'
+    TypeParameter
+      Identifier: 'K'
+      TypeOperator
+        TypeReference
+          Identifier: ' Dict'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Dict'
+    Parameter
+      Identifier: ' k1'
+      TypeOperator
+        TypeReference
+          Identifier: ' Dict'
+    Parameter
+      Identifier: ' k2'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+  obj'
+            Identifier: 'foo'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+  obj'
+            Identifier: 'k1'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+  obj'
+            Identifier: 'k2'
+          EqualsToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f12'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'Dict'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k1'
+      TypeOperator
+        TypeReference
+          Identifier: ' Dict'
+    Parameter
+      Identifier: ' k2'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' k3'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+  obj'
+            Identifier: 'foo'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '  // Error
+  obj'
+            Identifier: 'k1'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '  // Error
+  obj'
+            Identifier: 'k2'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '  // Error
+  obj'
+            Identifier: 'k3'
+          EqualsToken
+          NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Entity'
+    PropertySignature
+      Identifier: '
+    id'
+      UnionType
+        NumberKeyword
+        StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' IdOf'
+    TypeParameter
+      Identifier: 'E'
+      TypeReference
+        Identifier: ' Entity'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' E'
+      LiteralType
+        StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' EntityState'
+    TypeParameter
+      Identifier: 'E'
+      TypeReference
+        Identifier: ' Entity'
+    PropertySignature
+      Identifier: '
+    ids'
+      ArrayType
+        TypeReference
+          Identifier: ' IdOf'
+          TypeReference
+            Identifier: 'E'
+    PropertySignature
+      Identifier: '
+    entities'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' E'
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            NumberKeyword
+          TypeReference
+            Identifier: ' E'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getAllEntities'
+    TypeParameter
+      Identifier: 'E'
+      TypeReference
+        Identifier: ' Entity'
+    Parameter
+      Identifier: 'state'
+      TypeReference
+        Identifier: ' EntityState'
+        TypeReference
+          Identifier: 'E'
+    ArrayType
+      TypeReference
+        Identifier: ' E'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' ids'
+              BindingElement
+                Identifier: ' entities'
+            Identifier: ' state'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' ids'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'id'
+            EqualsGreaterThanToken
+            ElementAccessExpression
+              Identifier: ' entities'
+              Identifier: 'id'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getEntity'
+    TypeParameter
+      Identifier: 'E'
+      TypeReference
+        Identifier: ' Entity'
+    Parameter
+      Identifier: 'id'
+      TypeReference
+        Identifier: ' IdOf'
+        TypeReference
+          Identifier: 'E'
+    Parameter
+      Identifier: ' state'
+      TypeReference
+        Identifier: ' EntityState'
+        TypeReference
+          Identifier: 'E'
+    UnionType
+      TypeReference
+        Identifier: ' E'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' ids'
+              BindingElement
+                Identifier: ' entities'
+            Identifier: ' state'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ids'
+              Identifier: 'includes'
+            Identifier: 'id'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      ReturnStatement
+        ElementAccessExpression
+          Identifier: ' entities'
+          Identifier: 'id'
+  InterfaceDeclaration
+    Identifier: ' Type'
+    PropertySignature
+      Identifier: '
+    a'
+      LiteralType
+        NumericLiteral
+    PropertySignature
+      Identifier: '
+    b'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' get123'
+    TypeParameter
+      Identifier: 'K'
+      TypeOperator
+        TypeReference
+          Identifier: ' Type'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' Type'
+      TypeReference
+        Identifier: 'K'
+    Block
+      ReturnStatement
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' StrictExtract'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: ' U'
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' StrictExclude'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' StrictExtract'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+      NeverKeyword
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'Q'
+        IndexedAccessType
+          MappedType
+            TypeParameter
+              Identifier: 'P'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T'
+            TypeReference
+              Identifier: ' P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'Q'
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' V'
+    TypeReference
+      Identifier: ' A'
+      MappedType
+        TypeParameter
+          Identifier: 'Q'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        TypeReference
+          Identifier: ' StrictExclude'
+          TypeReference
+            Identifier: 'B'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: 'Q'
+            TypeReference
+              Identifier: ' V'
+          TypeLiteral
+  FunctionDeclaration
+    Identifier: ' fn'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: 'elements'
+            TypeReference
+              Identifier: ' Array'
+              StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: 'elements'
+            TypeReference
+              Identifier: ' Array'
+              NumberKeyword
+    Parameter
+      Identifier: 'param'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'element'
+          IndexedAccessType
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              LiteralType
+                StringLiteral
+            NumberKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    cb'
+          ElementAccessExpression
+            PropertyAccessExpression
+              Identifier: 'param'
+              Identifier: 'elements'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' fn2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Array'
+        StringKeyword
+    Parameter
+      Identifier: 'param'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'element'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            NumberKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    cb'
+          ElementAccessExpression
+            Identifier: 'param'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' fn3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        StringKeyword
+    Parameter
+      Identifier: 'param'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'element'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            NumberKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    cb'
+          ElementAccessExpression
+            Identifier: 'param'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' fn4'
+    TypeParameter
+      Identifier: 'K'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' Array'
+                StringKeyword
+              TypeReference
+                Identifier: 'K'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' ReadonlyArray'
+                StringKeyword
+              TypeReference
+                Identifier: 'K'
+            StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' c'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+            EqualsToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              ThisKeyword
+              StringLiteral
+            EqualsToken
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 'key'
+          StringKeyword
+        IndexedAccessType
+          MappedType
+            TypeParameter
+              Identifier: 'K'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T'
+            TypeReference
+              Identifier: ' K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 'key'
+          StringKeyword
+        IndexedAccessType
+          MappedType
+            TypeParameter
+              Identifier: 'K'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T'
+            TupleType
+              TypeReference
+                Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Baz'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' Q'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' Q'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'Q'
+          TypeReference
+            Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' Qux'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' Q'
+      TypeReference
+        Identifier: ' Bar'
+        TypeReference
+          Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' Q'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        IndexedAccessType
+          IndexedAccessType
+            TypeReference
+              Identifier: 'Q'
+            TypeReference
+              Identifier: 'K'
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' actions'
+        AsExpression
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+          TypeReference
+            Identifier: ' const'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' action'
+    Identifier: ' actions'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+	window'
+            Identifier: 'action'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            Parameter
+              Identifier: ' y'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  ElementAccessExpression
+                    Identifier: '
+		window'
+                    Identifier: 'action'
+                  Identifier: 'x'
+                  Identifier: ' y'

@@ -1,0 +1,107 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' module'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' exports'
+            AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' require'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+// @Filename: mod1.js
+/// <reference path='./requires.d.ts' />
+module'
+          Identifier: 'exports'
+        Identifier: 'bothBefore'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    justExport'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    bothBefore'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    bothAfter'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'bothAfter'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'justProperty'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mod1'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+mod1'
+          Identifier: 'justExport'
+        Identifier: 'toFixed'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+mod1'
+          Identifier: 'bothBefore'
+        Identifier: 'toFixed'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' // error, 'toFixed' not on 'string | number'
+mod1'
+          Identifier: 'bothAfter'
+        Identifier: 'toFixed'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: ' // error, 'toFixed' not on 'string | number'
+mod1'
+        Identifier: 'justProperty'
+      Identifier: 'length'

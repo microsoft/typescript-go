@@ -1,0 +1,17 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' B'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' B'
+                  Identifier: 'B'
+            Identifier: 'Create'

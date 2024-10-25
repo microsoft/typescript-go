@@ -1,0 +1,111 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' S'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyT'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anyT'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyT1'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anyT1'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+x'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+y'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+x1'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+x2'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' props'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' props'
+        ObjectLiteralExpression

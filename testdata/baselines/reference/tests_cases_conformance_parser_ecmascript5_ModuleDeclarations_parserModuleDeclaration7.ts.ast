@@ -1,0 +1,6 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' number'
+    ModuleDeclaration
+      Identifier: 'a'
+      ModuleBlock

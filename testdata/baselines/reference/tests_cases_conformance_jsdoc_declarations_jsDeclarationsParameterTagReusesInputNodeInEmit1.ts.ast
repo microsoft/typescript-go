@@ -1,0 +1,49 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BaseFactory'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+BaseFactory'
+        Identifier: 'Base'
+      EqualsToken
+      Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' BaseFactory'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' couldntThinkOfAny'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        ArrowFunction
+          Parameter
+            Identifier: 'base'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              Identifier: ' base'

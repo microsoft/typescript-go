@@ -1,0 +1,41 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' BarProps'
+    PropertySignature
+      Identifier: '
+    barProp'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FooProps'
+    PropertySignature
+      Identifier: '
+    fooProps'
+      QuestionToken
+      IntersectionType
+        TypeReference
+          Identifier: ' BarProps'
+        ObjectKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' FooProps'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' fooProps'
+            ObjectLiteralExpression
+        Identifier: ' foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+fooProps'
+      Identifier: 'barProp'

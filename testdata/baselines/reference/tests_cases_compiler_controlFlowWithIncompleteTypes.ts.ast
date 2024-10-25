@@ -1,0 +1,83 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cond'
+        BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+            NumericLiteral
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' x'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            x'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'slice'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            x'
+                  EqualsToken
+                  StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+            NumericLiteral
+      WhileStatement
+        Identifier: 'cond'
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' x'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            x'
+                  EqualsToken
+                  StringLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            x'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'slice'

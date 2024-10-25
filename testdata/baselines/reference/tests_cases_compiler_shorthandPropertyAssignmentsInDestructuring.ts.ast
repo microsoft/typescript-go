@@ -1,0 +1,514 @@
+SourceFile
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s0'
+          ForOfStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' s0'
+                EqualsToken
+                NumericLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' s0'
+                  NumericLiteral
+            Block
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s0'
+          ForOfStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' s0'
+                BinaryExpression
+                  Identifier: 's0'
+                  EqualsToken
+                  NumericLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' s0'
+                  NumericLiteral
+            Block
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s1'
+          ForOfStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' s1'
+                EqualsToken
+                NumericLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+            Block
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s1'
+          ForOfStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' s1'
+                BinaryExpression
+                  Identifier: 's1'
+                  EqualsToken
+                  NumericLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+            Block
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s2'
+          ForOfStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' s2'
+                EqualsToken
+                NumericLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' s2'
+                  StringLiteral
+            Block
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s2'
+          ForOfStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' s2'
+                BinaryExpression
+                  Identifier: 's2'
+                  EqualsToken
+                  NumericLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' s2'
+                  StringLiteral
+            Block
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s3'
+                StringKeyword
+          ForOfStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' s3'
+                EqualsToken
+                NumericLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' s3'
+                  StringLiteral
+            Block
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s3'
+                StringKeyword
+          ForOfStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' s3'
+                BinaryExpression
+                  Identifier: 's3'
+                  EqualsToken
+                  NumericLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' s3'
+                  StringLiteral
+            Block
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' y'
+                    EqualsToken
+                    NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' y'
+                    NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' y'
+                    BinaryExpression
+                      Identifier: 'y'
+                      EqualsToken
+                      NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' y'
+                    NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y0'
+                NumberKeyword
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' y0'
+                    EqualsToken
+                    NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' y0'
+                    NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y0'
+                NumberKeyword
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' y0'
+                    BinaryExpression
+                      Identifier: 'y0'
+                      EqualsToken
+                      NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' y0'
+                    NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y1'
+                StringKeyword
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' y1'
+                    EqualsToken
+                    NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y1'
+                StringKeyword
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' y1'
+                    BinaryExpression
+                      Identifier: 'y1'
+                      EqualsToken
+                      NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y2'
+                StringKeyword
+              VariableDeclaration
+                Identifier: ' y3'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' x'
+                    StringKeyword
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' y2'
+                    EqualsToken
+                    NumericLiteral
+                  ShorthandPropertyAssignment
+                    Identifier: ' y3'
+                    EqualsToken
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' x'
+                        NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y2'
+                StringKeyword
+              VariableDeclaration
+                Identifier: ' y3'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' x'
+                    StringKeyword
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' y2'
+                    BinaryExpression
+                      Identifier: 'y2'
+                      EqualsToken
+                      NumericLiteral
+                  PropertyAssignment
+                    Identifier: ' y3'
+                    BinaryExpression
+                      Identifier: 'y3'
+                      EqualsToken
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' x'
+                          NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y4'
+                NumberKeyword
+              VariableDeclaration
+                Identifier: ' y5'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' x'
+                    NumberKeyword
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' y4'
+                    EqualsToken
+                    NumericLiteral
+                  ShorthandPropertyAssignment
+                    Identifier: ' y5'
+                    EqualsToken
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' x'
+                        NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y4'
+                NumberKeyword
+              VariableDeclaration
+                Identifier: ' y5'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' x'
+                    NumberKeyword
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' y4'
+                    BinaryExpression
+                      Identifier: 'y4'
+                      EqualsToken
+                      NumericLiteral
+                  PropertyAssignment
+                    Identifier: ' y5'
+                    BinaryExpression
+                      Identifier: 'y5'
+                      EqualsToken
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' x'
+                          NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' z'
+                    EqualsToken
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' x'
+                        NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' z'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' x'
+                        NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' z'
+                    BinaryExpression
+                      Identifier: 'z'
+                      EqualsToken
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' x'
+                          NumericLiteral
+                EqualsToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' z'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' x'
+                        NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' s'
+                    EqualsToken
+                    NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+          NumericLiteral
+        BindingElement
+          Identifier: ' b'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+    Block

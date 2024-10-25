@@ -1,0 +1,5395 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addRange'
+        ImportSpecifier
+          Identifier: '
+    BuilderProgram'
+        ImportSpecifier
+          Identifier: '
+    CancellationToken'
+        ImportSpecifier
+          Identifier: '
+    chainDiagnosticMessages'
+        ImportSpecifier
+          Identifier: '
+    CharacterCodes'
+        ImportSpecifier
+          Identifier: '
+    combinePaths'
+        ImportSpecifier
+          Identifier: '
+    CompilerHost'
+        ImportSpecifier
+          Identifier: '
+    CompilerOptions'
+        ImportSpecifier
+          Identifier: '
+    contains'
+        ImportSpecifier
+          Identifier: '
+    convertToRelativePath'
+        ImportSpecifier
+          Identifier: '
+    copyProperties'
+        ImportSpecifier
+          Identifier: '
+    countWhere'
+        ImportSpecifier
+          Identifier: '
+    createCompilerDiagnostic'
+        ImportSpecifier
+          Identifier: '
+    createEmitAndSemanticDiagnosticsBuilderProgram'
+        ImportSpecifier
+          Identifier: '
+    createGetCanonicalFileName'
+        ImportSpecifier
+          Identifier: '
+    createGetSourceFile'
+        ImportSpecifier
+          Identifier: '
+    createIncrementalCompilerHost'
+        ImportSpecifier
+          Identifier: '
+    createIncrementalProgram'
+        ImportSpecifier
+          Identifier: '
+    CreateProgram'
+        ImportSpecifier
+          Identifier: '
+    createWriteFileMeasuringIO'
+        ImportSpecifier
+          Identifier: '
+    CustomTransformers'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostic'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticAndArguments'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticCategory'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticMessage'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticMessageChain'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticReporter'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    DirectoryStructureHost'
+        ImportSpecifier
+          Identifier: '
+    EmitAndSemanticDiagnosticsBuilderProgram'
+        ImportSpecifier
+          Identifier: '
+    EmitResult'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    endsWith'
+        ImportSpecifier
+          Identifier: '
+    ExitStatus'
+        ImportSpecifier
+          Identifier: '
+    ExtendedConfigCacheEntry'
+        ImportSpecifier
+          Identifier: '
+    Extension'
+        ImportSpecifier
+          Identifier: '
+    externalHelpersModuleNameText'
+        ImportSpecifier
+          Identifier: '
+    FileExtensionInfo'
+        ImportSpecifier
+          Identifier: '
+    fileExtensionIs'
+        ImportSpecifier
+          Identifier: '
+    FileIncludeKind'
+        ImportSpecifier
+          Identifier: '
+    FileIncludeReason'
+        ImportSpecifier
+          Identifier: '
+    FileWatcher'
+        ImportSpecifier
+          Identifier: '
+    filter'
+        ImportSpecifier
+          Identifier: '
+    find'
+        ImportSpecifier
+          Identifier: '
+    findIndex'
+        ImportSpecifier
+          Identifier: '
+    flattenDiagnosticMessageText'
+        ImportSpecifier
+          Identifier: '
+    forEach'
+        ImportSpecifier
+          Identifier: '
+    ForegroundColorEscapeSequences'
+        ImportSpecifier
+          Identifier: '
+    formatColorAndReset'
+        ImportSpecifier
+          Identifier: '
+    formatDiagnostic'
+        ImportSpecifier
+          Identifier: '
+    FormatDiagnosticsHost'
+        ImportSpecifier
+          Identifier: '
+    formatDiagnosticsWithColorAndContext'
+        ImportSpecifier
+          Identifier: '
+    generateDjb2Hash'
+        ImportSpecifier
+          Identifier: '
+    getDefaultLibFileName'
+        ImportSpecifier
+          Identifier: '
+    getDirectoryPath'
+        ImportSpecifier
+          Identifier: '
+    getEmitDeclarations'
+        ImportSpecifier
+          Identifier: '
+    getEmitScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    getImpliedNodeFormatForEmitWorker'
+        ImportSpecifier
+          Identifier: '
+    getLineAndCharacterOfPosition'
+        ImportSpecifier
+          Identifier: '
+    getNameOfScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    getNewLineCharacter'
+        ImportSpecifier
+          Identifier: '
+    getNormalizedAbsolutePath'
+        ImportSpecifier
+          Identifier: '
+    getParsedCommandLineOfConfigFile'
+        ImportSpecifier
+          Identifier: '
+    getPatternFromSpec'
+        ImportSpecifier
+          Identifier: '
+    getReferencedFileLocation'
+        ImportSpecifier
+          Identifier: '
+    getRegexFromPattern'
+        ImportSpecifier
+          Identifier: '
+    getRelativePathFromDirectory'
+        ImportSpecifier
+          Identifier: '
+    getWatchFactory'
+        ImportSpecifier
+          Identifier: '
+    HasCurrentDirectory'
+        ImportSpecifier
+          Identifier: '
+    isExternalOrCommonJsModule'
+        ImportSpecifier
+          Identifier: '
+    isLineBreak'
+        ImportSpecifier
+          Identifier: '
+    isReferencedFile'
+        ImportSpecifier
+          Identifier: '
+    isReferenceFileLocation'
+        ImportSpecifier
+          Identifier: '
+    isString'
+        ImportSpecifier
+          Identifier: '
+    last'
+        ImportSpecifier
+          Identifier: '
+    maxBy'
+        ImportSpecifier
+          Identifier: '
+    maybeBind'
+        ImportSpecifier
+          Identifier: '
+    memoize'
+        ImportSpecifier
+          Identifier: '
+    ModuleKind'
+        ImportSpecifier
+          Identifier: '
+    noop'
+        ImportSpecifier
+          Identifier: '
+    normalizePath'
+        ImportSpecifier
+          Identifier: '
+    packageIdToString'
+        ImportSpecifier
+          Identifier: '
+    ParseConfigFileHost'
+        ImportSpecifier
+          Identifier: '
+    ParsedCommandLine'
+        ImportSpecifier
+          Identifier: '
+    pathIsAbsolute'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    ProgramHost'
+        ImportSpecifier
+          Identifier: '
+    ProjectReference'
+        ImportSpecifier
+          Identifier: '
+    ReportEmitErrorSummary'
+        ImportSpecifier
+          Identifier: '
+    ReportFileInError'
+        ImportSpecifier
+          Identifier: '
+    sortAndDeduplicateDiagnostics'
+        ImportSpecifier
+          Identifier: '
+    SortedReadonlyArray'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    sourceMapCommentRegExp'
+        ImportSpecifier
+          Identifier: '
+    sourceMapCommentRegExpDontCareLineStart'
+        ImportSpecifier
+          Identifier: '
+    sys'
+        ImportSpecifier
+          Identifier: '
+    System'
+        ImportSpecifier
+          Identifier: '
+    WatchCompilerHost'
+        ImportSpecifier
+          Identifier: '
+    WatchCompilerHostOfConfigFile'
+        ImportSpecifier
+          Identifier: '
+    WatchCompilerHostOfFilesAndCompilerOptions'
+        ImportSpecifier
+          Identifier: '
+    WatchFactory'
+        ImportSpecifier
+          Identifier: '
+    WatchFactoryHost'
+        ImportSpecifier
+          Identifier: '
+    WatchHost'
+        ImportSpecifier
+          Identifier: '
+    WatchLogLevel'
+        ImportSpecifier
+          Identifier: '
+    WatchOptions'
+        ImportSpecifier
+          Identifier: '
+    WatchStatusReporter'
+        ImportSpecifier
+          Identifier: '
+    whitespaceOrMapCommentRegExp'
+        ImportSpecifier
+          Identifier: '
+    WriteFileCallback'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sysFormatDiagnosticsHost'
+        UnionType
+          TypeReference
+            Identifier: ' FormatDiagnosticsHost'
+          UndefinedKeyword
+        ConditionalExpression
+          Identifier: ' sys'
+          QuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    getCurrentDirectory'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' sys'
+                    Identifier: 'getCurrentDirectory'
+            PropertyAssignment
+              Identifier: '
+    getNewLine'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' sys'
+                  Identifier: 'newLine'
+            PropertyAssignment
+              Identifier: '
+    getCanonicalFileName'
+              CallExpression
+                Identifier: ' createGetCanonicalFileName'
+                PropertyAccessExpression
+                  Identifier: 'sys'
+                  Identifier: 'useCaseSensitiveFileNames'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createDiagnosticReporter'
+    Parameter
+      Identifier: 'system'
+      TypeReference
+        Identifier: ' System'
+    Parameter
+      Identifier: ' pretty'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' DiagnosticReporter'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            TypeReference
+              Identifier: ' FormatDiagnosticsHost'
+            ConditionalExpression
+              BinaryExpression
+                BinaryExpression
+                  Identifier: ' system'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' sys'
+                AmpersandAmpersandToken
+                Identifier: ' sysFormatDiagnosticsHost'
+              QuestionToken
+              Identifier: ' sysFormatDiagnosticsHost'
+              ColonToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        getCurrentDirectory'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' system'
+                        Identifier: 'getCurrentDirectory'
+                PropertyAssignment
+                  Identifier: '
+        getNewLine'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      Identifier: ' system'
+                      Identifier: 'newLine'
+                PropertyAssignment
+                  Identifier: '
+        getCanonicalFileName'
+                  CallExpression
+                    Identifier: ' createGetCanonicalFileName'
+                    PropertyAccessExpression
+                      Identifier: 'system'
+                      Identifier: 'useCaseSensitiveFileNames'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'pretty'
+        Block
+          ReturnStatement
+            ArrowFunction
+              Parameter
+                Identifier: ' diagnostic'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'write'
+                CallExpression
+                  Identifier: 'formatDiagnostic'
+                  Identifier: 'diagnostic'
+                  Identifier: ' host'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' diagnostics'
+            ArrayType
+              TypeReference
+                Identifier: ' Diagnostic'
+            NewExpression
+              Identifier: ' Array'
+              NumericLiteral
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' diagnostic'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: '
+        diagnostics'
+                  NumericLiteral
+                EqualsToken
+                Identifier: ' diagnostic'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        system'
+                  Identifier: 'write'
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'formatDiagnosticsWithColorAndContext'
+                    Identifier: 'diagnostics'
+                    Identifier: ' host'
+                  PlusToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'getNewLine'
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: '
+        diagnostics'
+                  NumericLiteral
+                EqualsToken
+                NonNullExpression
+                  Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' clearScreenIfNotWatchingForFileChanges'
+    Parameter
+      Identifier: 'system'
+      TypeReference
+        Identifier: ' System'
+    Parameter
+      Identifier: ' diagnostic'
+      TypeReference
+        Identifier: ' Diagnostic'
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    BooleanKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+        system'
+                  Identifier: 'clearScreen'
+                AmpersandAmpersandToken
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'options'
+                    Identifier: 'preserveWatchOutput'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'options'
+                  Identifier: 'extendedDiagnostics'
+            AmpersandAmpersandToken
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'options'
+                Identifier: 'diagnostics'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: '
+        contains'
+            Identifier: 'screenStartingMessageCodes'
+            PropertyAccessExpression
+              Identifier: ' diagnostic'
+              Identifier: 'code'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        system'
+                Identifier: 'clearScreen'
+          ReturnStatement
+            TrueKeyword
+      ReturnStatement
+        FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' screenStartingMessageCodes'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Starting_compilation_in_watch_mode'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'File_change_detected_Starting_incremental_compilation'
+            Identifier: 'code'
+  FunctionDeclaration
+    Identifier: ' getPlainDiagnosticFollowingNewLines'
+    Parameter
+      Identifier: 'diagnostic'
+      TypeReference
+        Identifier: ' Diagnostic'
+    Parameter
+      Identifier: ' newLine'
+      StringKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          CallExpression
+            Identifier: ' contains'
+            Identifier: 'screenStartingMessageCodes'
+            PropertyAccessExpression
+              Identifier: ' diagnostic'
+              Identifier: 'code'
+          QuestionToken
+          BinaryExpression
+            Identifier: ' newLine'
+            PlusToken
+            Identifier: ' newLine'
+          ColonToken
+          Identifier: ' newLine'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getLocaleTimeString'
+    Parameter
+      Identifier: 'system'
+      TypeReference
+        Identifier: ' System'
+    StringKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'system'
+              Identifier: 'now'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              NewExpression
+                Identifier: ' Date'
+              Identifier: 'toLocaleTimeString'
+          ColonToken
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        // On some systems / builds of Node, there's a non-breaking space between the time and AM/PM.
+        // This branch is solely for testing, so just switch it to a normal space for baseline stability.
+        // See:
+        //     - https://github.com/nodejs/node/issues/45171
+        //     - https://github.com/nodejs/node/issues/45753
+        system'
+                      Identifier: 'now'
+                  Identifier: 'toLocaleTimeString'
+                StringLiteral
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' timeZone'
+                    StringLiteral
+              Identifier: 'replace'
+            StringLiteral
+            StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createWatchStatusReporter'
+    Parameter
+      Identifier: 'system'
+      TypeReference
+        Identifier: ' System'
+    Parameter
+      Identifier: ' pretty'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' WatchStatusReporter'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' pretty'
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'diagnostic'
+            Parameter
+              Identifier: ' newLine'
+            Parameter
+              Identifier: ' options'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            clearScreenIfNotWatchingForFileChanges'
+                  Identifier: 'system'
+                  Identifier: ' diagnostic'
+                  Identifier: ' options'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' output'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        CallExpression
+                          Identifier: 'formatColorAndReset'
+                          CallExpression
+                            Identifier: 'getLocaleTimeString'
+                            Identifier: 'system'
+                          PropertyAccessExpression
+                            Identifier: ' ForegroundColorEscapeSequences'
+                            Identifier: 'Grey'
+                        TemplateTail
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            output'
+                  PlusEqualsToken
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      CallExpression
+                        Identifier: 'flattenDiagnosticMessageText'
+                        PropertyAccessExpression
+                          Identifier: 'diagnostic'
+                          Identifier: 'messageText'
+                        PropertyAccessExpression
+                          Identifier: ' system'
+                          Identifier: 'newLine'
+                      TemplateMiddle
+                    TemplateSpan
+                      BinaryExpression
+                        Identifier: 'newLine'
+                        PlusToken
+                        Identifier: ' newLine'
+                      TemplateTail
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            system'
+                    Identifier: 'write'
+                  Identifier: 'output'
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: 'diagnostic'
+            Parameter
+              Identifier: ' newLine'
+            Parameter
+              Identifier: ' options'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' output'
+                    StringLiteral
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'clearScreenIfNotWatchingForFileChanges'
+                    Identifier: 'system'
+                    Identifier: ' diagnostic'
+                    Identifier: ' options'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                output'
+                      PlusEqualsToken
+                      Identifier: ' newLine'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            output'
+                  PlusEqualsToken
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      CallExpression
+                        Identifier: 'getLocaleTimeString'
+                        Identifier: 'system'
+                      TemplateTail
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            output'
+                  PlusEqualsToken
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      CallExpression
+                        Identifier: 'flattenDiagnosticMessageText'
+                        PropertyAccessExpression
+                          Identifier: 'diagnostic'
+                          Identifier: 'messageText'
+                        PropertyAccessExpression
+                          Identifier: ' system'
+                          Identifier: 'newLine'
+                      TemplateMiddle
+                    TemplateSpan
+                      CallExpression
+                        Identifier: 'getPlainDiagnosticFollowingNewLines'
+                        Identifier: 'diagnostic'
+                        Identifier: ' newLine'
+                      TemplateTail
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            system'
+                    Identifier: 'write'
+                  Identifier: 'output'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' parseConfigFileWithSystem'
+    Parameter
+      Identifier: 'configFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' optionsToExtend'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' extendedConfigCache'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          StringKeyword
+          TypeReference
+            Identifier: ' ExtendedConfigCacheEntry'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' watchOptionsToExtend'
+      UnionType
+        TypeReference
+          Identifier: ' WatchOptions'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' system'
+      TypeReference
+        Identifier: ' System'
+    Parameter
+      Identifier: ' reportDiagnostic'
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    UnionType
+      TypeReference
+        Identifier: ' ParsedCommandLine'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            TypeReference
+              Identifier: ' ParseConfigFileHost'
+            AsExpression
+              Identifier: ' system'
+              AnyKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'onUnRecoverableConfigFileDiagnostic'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' diagnostic'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' reportUnrecoverableDiagnostic'
+              Identifier: 'system'
+              Identifier: ' reportDiagnostic'
+              Identifier: ' diagnostic'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            CallExpression
+              Identifier: ' getParsedCommandLineOfConfigFile'
+              Identifier: 'configFileName'
+              Identifier: ' optionsToExtend'
+              Identifier: ' host'
+              Identifier: ' extendedConfigCache'
+              Identifier: ' watchOptionsToExtend'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'onUnRecoverableConfigFileDiagnostic'
+          EqualsToken
+          NonNullExpression
+            Identifier: ' undefined'
+      ReturnStatement
+        Identifier: ' result'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getErrorCountForSummary'
+    Parameter
+      Identifier: 'diagnostics'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    NumberKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' countWhere'
+          Identifier: 'diagnostics'
+          ArrowFunction
+            Parameter
+              Identifier: ' diagnostic'
+            EqualsGreaterThanToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' diagnostic'
+                Identifier: 'category'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' DiagnosticCategory'
+                Identifier: 'Error'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFilesInErrorForSummary'
+    Parameter
+      Identifier: 'diagnostics'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    ArrayType
+      ParenthesizedType
+        UnionType
+          TypeReference
+            Identifier: 'ReportFileInError'
+          UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' filesInError'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' filter'
+                  Identifier: 'diagnostics'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' diagnostic'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' diagnostic'
+                        Identifier: 'category'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' DiagnosticCategory'
+                        Identifier: 'Error'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: '
+            errorDiagnostic'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'errorDiagnostic'
+                        Identifier: 'file'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' undefined'
+                    ReturnStatement
+                  ReturnStatement
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'errorDiagnostic'
+                            Identifier: 'file'
+                          Identifier: 'fileName'
+                        TemplateTail
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' filesInError'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'fileName'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'fileName'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  ReturnStatement
+                    Identifier: ' undefined'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' diagnosticForFileName'
+                    CallExpression
+                      Identifier: ' find'
+                      Identifier: 'diagnostics'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' diagnostic'
+                        EqualsGreaterThanToken
+                        BinaryExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' diagnostic'
+                              Identifier: 'file'
+                            ExclamationEqualsEqualsToken
+                            Identifier: ' undefined'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' diagnostic'
+                                Identifier: 'file'
+                              Identifier: 'fileName'
+                            EqualsEqualsEqualsToken
+                            Identifier: ' fileName'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'diagnosticForFileName'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' line'
+                        CallExpression
+                          Identifier: ' getLineAndCharacterOfPosition'
+                          NonNullExpression
+                            PropertyAccessExpression
+                              Identifier: 'diagnosticForFileName'
+                              Identifier: 'file'
+                          NonNullExpression
+                            PropertyAccessExpression
+                              Identifier: ' diagnosticForFileName'
+                              Identifier: 'start'
+                  ReturnStatement
+                    ObjectLiteralExpression
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                fileName'
+                      PropertyAssignment
+                        Identifier: '
+                line'
+                        BinaryExpression
+                          Identifier: ' line'
+                          PlusToken
+                          NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getWatchErrorSummaryDiagnosticMessage'
+    Parameter
+      Identifier: 'errorCount'
+      NumberKeyword
+    TypeReference
+      Identifier: ' DiagnosticMessage'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' errorCount'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          QuestionToken
+          PropertyAccessExpression
+            Identifier: '
+        Diagnostics'
+            Identifier: 'Found_1_error_Watching_for_file_changes'
+          ColonToken
+          PropertyAccessExpression
+            Identifier: '
+        Diagnostics'
+            Identifier: 'Found_0_errors_Watching_for_file_changes'
+  FunctionDeclaration
+    Identifier: ' prettyPathForFileError'
+    Parameter
+      Identifier: 'error'
+      TypeReference
+        Identifier: ' ReportFileInError'
+    Parameter
+      Identifier: ' cwd'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' line'
+            CallExpression
+              Identifier: ' formatColorAndReset'
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                PropertyAccessExpression
+                  Identifier: ' error'
+                  Identifier: 'line'
+              PropertyAccessExpression
+                Identifier: ' ForegroundColorEscapeSequences'
+                Identifier: 'Grey'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'pathIsAbsolute'
+            PropertyAccessExpression
+              Identifier: 'error'
+              Identifier: 'fileName'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' pathIsAbsolute'
+            Identifier: 'cwd'
+        Block
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                Identifier: ' getRelativePathFromDirectory'
+                Identifier: 'cwd'
+                PropertyAccessExpression
+                  Identifier: ' error'
+                  Identifier: 'fileName'
+                FalseKeyword
+              PlusToken
+              Identifier: ' line'
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' error'
+            Identifier: 'fileName'
+          PlusToken
+          Identifier: ' line'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getErrorSummaryText'
+    Parameter
+      Identifier: '
+    errorCount'
+      NumberKeyword
+    Parameter
+      Identifier: '
+    filesInError'
+      TypeOperator
+        ArrayType
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'ReportFileInError'
+              UndefinedKeyword
+    Parameter
+      Identifier: '
+    newLine'
+      StringKeyword
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' HasCurrentDirectory'
+    StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'errorCount'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        ReturnStatement
+          StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nonNilFiles'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' filesInError'
+                Identifier: 'filter'
+              ArrowFunction
+                Parameter
+                  Identifier: 'fileInError'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  Identifier: ' fileInError'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' distinctFileNamesWithLines'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' nonNilFiles'
+                    Identifier: 'map'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'fileInError'
+                    EqualsGreaterThanToken
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        PropertyAccessExpression
+                          Identifier: 'fileInError'
+                          Identifier: 'fileName'
+                        TemplateMiddle
+                      TemplateSpan
+                        PropertyAccessExpression
+                          Identifier: 'fileInError'
+                          Identifier: 'line'
+                        TemplateTail
+                Identifier: 'filter'
+              ArrowFunction
+                Parameter
+                  Identifier: 'value'
+                Parameter
+                  Identifier: ' index'
+                Parameter
+                  Identifier: ' self'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' self'
+                      Identifier: 'indexOf'
+                    Identifier: 'value'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' index'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' firstFileReference'
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: ' nonNilFiles'
+                NumericLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' prettyPathForFileError'
+                ElementAccessExpression
+                  Identifier: 'nonNilFiles'
+                  NumericLiteral
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'getCurrentDirectory'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' messageAndArgs'
+            TypeReference
+              Identifier: ' DiagnosticAndArguments'
+      IfStatement
+        BinaryExpression
+          Identifier: 'errorCount'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        messageAndArgs'
+              EqualsToken
+              ConditionalExpression
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: ' filesInError'
+                    NumericLiteral
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                QuestionToken
+                ArrayLiteralExpression
+                  PropertyAccessExpression
+                    Identifier: 'Diagnostics'
+                    Identifier: 'Found_1_error_in_0'
+                  Identifier: ' firstFileReference'
+                ColonToken
+                ArrayLiteralExpression
+                  PropertyAccessExpression
+                    Identifier: 'Diagnostics'
+                    Identifier: 'Found_1_error'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        messageAndArgs'
+              EqualsToken
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' distinctFileNamesWithLines'
+                    Identifier: 'length'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                QuestionToken
+                ArrayLiteralExpression
+                  PropertyAccessExpression
+                    Identifier: 'Diagnostics'
+                    Identifier: 'Found_0_errors'
+                  Identifier: ' errorCount'
+                ColonToken
+                ConditionalExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            distinctFileNamesWithLines'
+                      Identifier: 'length'
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+                  QuestionToken
+                  ArrayLiteralExpression
+                    PropertyAccessExpression
+                      Identifier: 'Diagnostics'
+                      Identifier: 'Found_0_errors_in_the_same_file_starting_at_Colon_1'
+                    Identifier: ' errorCount'
+                    Identifier: ' firstFileReference'
+                  ColonToken
+                  ArrayLiteralExpression
+                    PropertyAccessExpression
+                      Identifier: 'Diagnostics'
+                      Identifier: 'Found_0_errors_in_1_files'
+                    Identifier: ' errorCount'
+                    PropertyAccessExpression
+                      Identifier: ' distinctFileNamesWithLines'
+                      Identifier: 'length'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            CallExpression
+              Identifier: ' createCompilerDiagnostic'
+              SpreadElement
+                Identifier: 'messageAndArgs'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' suffix'
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' distinctFileNamesWithLines'
+                  Identifier: 'length'
+                GreaterThanToken
+                NumericLiteral
+              QuestionToken
+              CallExpression
+                Identifier: ' createTabularErrorsDisplay'
+                Identifier: 'nonNilFiles'
+                Identifier: ' host'
+              ColonToken
+              StringLiteral
+      ReturnStatement
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            Identifier: 'newLine'
+            TemplateMiddle
+          TemplateSpan
+            CallExpression
+              Identifier: 'flattenDiagnosticMessageText'
+              PropertyAccessExpression
+                Identifier: 'd'
+                Identifier: 'messageText'
+              Identifier: ' newLine'
+            TemplateMiddle
+          TemplateSpan
+            Identifier: 'newLine'
+            TemplateMiddle
+          TemplateSpan
+            Identifier: 'newLine'
+            TemplateMiddle
+          TemplateSpan
+            Identifier: 'suffix'
+            TemplateTail
+  FunctionDeclaration
+    Identifier: ' createTabularErrorsDisplay'
+    Parameter
+      Identifier: 'filesInError'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            TypeReference
+              Identifier: 'ReportFileInError'
+            UndefinedKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' HasCurrentDirectory'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' distinctFiles'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' filesInError'
+                Identifier: 'filter'
+              ArrowFunction
+                Parameter
+                  Identifier: 'value'
+                Parameter
+                  Identifier: ' index'
+                Parameter
+                  Identifier: ' self'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  Identifier: ' index'
+                  EqualsEqualsEqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' self'
+                      Identifier: 'findIndex'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'file'
+                      EqualsGreaterThanToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' file'
+                          QuestionDotToken
+                          Identifier: 'fileName'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' value'
+                          QuestionDotToken
+                          Identifier: 'fileName'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'distinctFiles'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        ReturnStatement
+          StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' numberLength'
+            ArrowFunction
+              Parameter
+                Identifier: 'num'
+                NumberKeyword
+              EqualsGreaterThanToken
+              BinaryExpression
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Math'
+                      Identifier: 'log'
+                    Identifier: 'num'
+                  AsteriskToken
+                  PropertyAccessExpression
+                    Identifier: ' Math'
+                    Identifier: 'LOG10E'
+                PlusToken
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fileToErrorCount'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' distinctFiles'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'file'
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  AsExpression
+                    ArrayLiteralExpression
+                      Identifier: 'file'
+                      CallExpression
+                        Identifier: ' countWhere'
+                        Identifier: 'filesInError'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' fileInError'
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              NonNullExpression
+                                Identifier: ' fileInError'
+                              Identifier: 'fileName'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              NonNullExpression
+                                Identifier: ' file'
+                              Identifier: 'fileName'
+                    TypeReference
+                      Identifier: ' const'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' maxErrors'
+            CallExpression
+              Identifier: ' maxBy'
+              Identifier: 'fileToErrorCount'
+              NumericLiteral
+              ArrowFunction
+                Parameter
+                  Identifier: ' value'
+                EqualsGreaterThanToken
+                ElementAccessExpression
+                  Identifier: ' value'
+                  NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' headerRow'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' Diagnostics'
+                Identifier: 'Errors_Files'
+              Identifier: 'message'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' leftColumnHeadingLength'
+            PropertyAccessExpression
+              ElementAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' headerRow'
+                    Identifier: 'split'
+                  StringLiteral
+                NumericLiteral
+              Identifier: 'length'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' leftPaddingGoal'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Math'
+                Identifier: 'max'
+              Identifier: 'leftColumnHeadingLength'
+              CallExpression
+                Identifier: ' numberLength'
+                Identifier: 'maxErrors'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' headerPadding'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Math'
+                Identifier: 'max'
+              BinaryExpression
+                CallExpression
+                  Identifier: 'numberLength'
+                  Identifier: 'maxErrors'
+                MinusToken
+                Identifier: ' leftColumnHeadingLength'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tabularData'
+            StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tabularData'
+          PlusEqualsToken
+          BinaryExpression
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  StringLiteral
+                  Identifier: 'repeat'
+                Identifier: 'headerPadding'
+              PlusToken
+              Identifier: ' headerRow'
+            PlusToken
+            StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    fileToErrorCount'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'row'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ArrayBindingPattern
+                      BindingElement
+                        Identifier: 'file'
+                      BindingElement
+                        Identifier: ' errorCount'
+                    Identifier: ' row'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' errorCountDigitsLength'
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' Math'
+                              Identifier: 'log'
+                            Identifier: 'errorCount'
+                          AsteriskToken
+                          PropertyAccessExpression
+                            Identifier: ' Math'
+                            Identifier: 'LOG10E'
+                        PlusToken
+                        NumericLiteral
+                      BarToken
+                      NumericLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' leftPadding'
+                    ConditionalExpression
+                      BinaryExpression
+                        Identifier: ' errorCountDigitsLength'
+                        LessThanToken
+                        Identifier: ' leftPaddingGoal'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          StringLiteral
+                          Identifier: 'repeat'
+                        BinaryExpression
+                          Identifier: 'leftPaddingGoal'
+                          MinusToken
+                          Identifier: ' errorCountDigitsLength'
+                      ColonToken
+                      StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' fileRef'
+                    CallExpression
+                      Identifier: ' prettyPathForFileError'
+                      NonNullExpression
+                        Identifier: 'file'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' host'
+                          Identifier: 'getCurrentDirectory'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+        tabularData'
+                  PlusEqualsToken
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'leftPadding'
+                      TemplateMiddle
+                    TemplateSpan
+                      Identifier: 'errorCount'
+                      TemplateMiddle
+                    TemplateSpan
+                      Identifier: 'fileRef'
+                      TemplateTail
+      ReturnStatement
+        Identifier: ' tabularData'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isBuilderProgram'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    Parameter
+      Identifier: 'program'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        TypeReference
+          Identifier: ' BuilderProgram'
+    TypePredicate
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              ParenthesizedExpression
+                AsExpression
+                  Identifier: 'program'
+                  TypeReference
+                    Identifier: ' T'
+              Identifier: 'state'
+  FunctionDeclaration
+    Identifier: ' listFiles'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    Parameter
+      Identifier: 'program'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' write'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' options'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getCompilerOptions'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'options'
+          Identifier: 'explainFiles'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        explainFiles'
+              ConditionalExpression
+                CallExpression
+                  Identifier: 'isBuilderProgram'
+                  Identifier: 'program'
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getProgram'
+                ColonToken
+                Identifier: ' program'
+              Identifier: ' write'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'options'
+              Identifier: 'listFiles'
+            BarBarToken
+            PropertyAccessExpression
+              Identifier: ' options'
+              Identifier: 'listFilesOnly'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+        forEach'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'program'
+                    Identifier: 'getSourceFiles'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' file'
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+            write'
+                        PropertyAccessExpression
+                          Identifier: 'file'
+                          Identifier: 'fileName'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' explainFiles'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' write'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        VoidKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' reasons'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getFileIncludeReasons'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' relativeFileName'
+            ArrowFunction
+              Parameter
+                Identifier: 'fileName'
+                StringKeyword
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' convertToRelativePath'
+                Identifier: 'fileName'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getCurrentDirectory'
+                PropertyAccessExpression
+                  Identifier: ' program'
+                  Identifier: 'getCanonicalFileName'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' file'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' program'
+            Identifier: 'getSourceFiles'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        write'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  CallExpression
+                    Identifier: 'toFileName'
+                    Identifier: 'file'
+                    Identifier: ' relativeFileName'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        reasons'
+                    Identifier: 'get'
+                  PropertyAccessExpression
+                    Identifier: 'file'
+                    Identifier: 'path'
+                QuestionDotToken
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'reason'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' write'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      PropertyAccessExpression
+                        CallExpression
+                          Identifier: 'fileIncludeReasonToDiagnostics'
+                          Identifier: 'program'
+                          Identifier: ' reason'
+                          Identifier: ' relativeFileName'
+                        Identifier: 'messageText'
+                      TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: '
+        explainIfFileIsRedirectAndImpliedFormat'
+                  Identifier: 'file'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' program'
+                      Identifier: 'getCompilerOptionsForFile'
+                    Identifier: 'file'
+                  Identifier: ' relativeFileName'
+                QuestionDotToken
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'd'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' write'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'd'
+                        Identifier: 'messageText'
+                      TemplateTail
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' explainIfFileIsRedirectAndImpliedFormat'
+    Parameter
+      Identifier: '
+    file'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: '
+    fileNameConvertor'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        StringKeyword
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' DiagnosticMessageChain'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' DiagnosticMessageChain'
+              UndefinedKeyword
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'file'
+            Identifier: 'path'
+          ExclamationEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' file'
+            Identifier: 'resolvedPath'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'result'
+                    QuestionQuestionEqualsToken
+                    ArrayLiteralExpression
+                Identifier: 'push'
+              CallExpression
+                Identifier: 'chainDiagnosticMessages'
+                Identifier: '
+            /*details*/ undefined'
+                PropertyAccessExpression
+                  Identifier: '
+            Diagnostics'
+                  Identifier: 'File_is_output_of_project_reference_source_0'
+                CallExpression
+                  Identifier: '
+            toFileName'
+                  PropertyAccessExpression
+                    Identifier: 'file'
+                    Identifier: 'originalFileName'
+                  Identifier: ' fileNameConvertor'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'file'
+          Identifier: 'redirectInfo'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'result'
+                    QuestionQuestionEqualsToken
+                    ArrayLiteralExpression
+                Identifier: 'push'
+              CallExpression
+                Identifier: 'chainDiagnosticMessages'
+                Identifier: '
+            /*details*/ undefined'
+                PropertyAccessExpression
+                  Identifier: '
+            Diagnostics'
+                  Identifier: 'File_redirects_to_file_0'
+                CallExpression
+                  Identifier: '
+            toFileName'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'file'
+                      Identifier: 'redirectInfo'
+                    Identifier: 'redirectTarget'
+                  Identifier: ' fileNameConvertor'
+      IfStatement
+        CallExpression
+          Identifier: 'isExternalOrCommonJsModule'
+          Identifier: 'file'
+        Block
+          SwitchStatement
+            CallExpression
+              Identifier: 'getImpliedNodeFormatForEmitWorker'
+              Identifier: 'file'
+              Identifier: ' options'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ModuleKind'
+                  Identifier: 'ESNext'
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'file'
+                    Identifier: 'packageJsonScope'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            BinaryExpression
+                              Identifier: 'result'
+                              QuestionQuestionEqualsToken
+                              ArrayLiteralExpression
+                          Identifier: 'push'
+                        CallExpression
+                          Identifier: 'chainDiagnosticMessages'
+                          Identifier: '
+                        /*details*/ undefined'
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'File_is_ECMAScript_module_because_0_has_field_type_with_value_module'
+                          CallExpression
+                            Identifier: '
+                        toFileName'
+                            CallExpression
+                              Identifier: 'last'
+                              NonNullExpression
+                                PropertyAccessExpression
+                                  Identifier: 'file'
+                                  Identifier: 'packageJsonLocations'
+                            Identifier: ' fileNameConvertor'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ModuleKind'
+                  Identifier: 'CommonJS'
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'file'
+                    Identifier: 'packageJsonScope'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            BinaryExpression
+                              Identifier: 'result'
+                              QuestionQuestionEqualsToken
+                              ArrayLiteralExpression
+                          Identifier: 'push'
+                        CallExpression
+                          Identifier: 'chainDiagnosticMessages'
+                          Identifier: '
+                        /*details*/ undefined'
+                          ConditionalExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        file'
+                                    Identifier: 'packageJsonScope'
+                                  Identifier: 'contents'
+                                Identifier: 'packageJsonContent'
+                              Identifier: 'type'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: '
+                            Diagnostics'
+                              Identifier: 'File_is_CommonJS_module_because_0_has_field_type_whose_value_is_not_module'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: '
+                            Diagnostics'
+                              Identifier: 'File_is_CommonJS_module_because_0_does_not_have_field_type'
+                          CallExpression
+                            Identifier: '
+                        toFileName'
+                            CallExpression
+                              Identifier: 'last'
+                              NonNullExpression
+                                PropertyAccessExpression
+                                  Identifier: 'file'
+                                  Identifier: 'packageJsonLocations'
+                            Identifier: ' fileNameConvertor'
+                  IfStatement
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'file'
+                        Identifier: 'packageJsonLocations'
+                      QuestionDotToken
+                      Identifier: 'length'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            ParenthesizedExpression
+                              BinaryExpression
+                                Identifier: 'result'
+                                QuestionQuestionEqualsToken
+                                ArrayLiteralExpression
+                            Identifier: 'push'
+                          CallExpression
+                            Identifier: 'chainDiagnosticMessages'
+                            Identifier: '
+                        /*details*/ undefined'
+                            PropertyAccessExpression
+                              Identifier: '
+                        Diagnostics'
+                              Identifier: 'File_is_CommonJS_module_because_package_json_was_not_found'
+                BreakStatement
+      ReturnStatement
+        Identifier: ' result'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getMatchedFileSpec'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' fileName'
+      StringKeyword
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' configFile'
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' program'
+                  Identifier: 'getCompilerOptions'
+              Identifier: 'configFile'
+      IfStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'configFile'
+              QuestionDotToken
+              Identifier: 'configFileSpecs'
+            QuestionDotToken
+            Identifier: 'validatedFilesSpec'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' filePath'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getCanonicalFileName'
+              Identifier: 'fileName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' basePath'
+            CallExpression
+              Identifier: ' getDirectoryPath'
+              CallExpression
+                Identifier: 'getNormalizedAbsolutePath'
+                PropertyAccessExpression
+                  Identifier: 'configFile'
+                  Identifier: 'fileName'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getCurrentDirectory'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' index'
+            CallExpression
+              Identifier: ' findIndex'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'configFile'
+                  Identifier: 'configFileSpecs'
+                Identifier: 'validatedFilesSpec'
+              ArrowFunction
+                Parameter
+                  Identifier: ' fileSpec'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' program'
+                      Identifier: 'getCanonicalFileName'
+                    CallExpression
+                      Identifier: 'getNormalizedAbsolutePath'
+                      Identifier: 'fileSpec'
+                      Identifier: ' basePath'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' filePath'
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' index'
+            ExclamationEqualsEqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          QuestionToken
+          ElementAccessExpression
+            NonNullExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' configFile'
+                  Identifier: 'configFileSpecs'
+                Identifier: 'validatedFilesSpecBeforeSubstitution'
+            Identifier: 'index'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getMatchedIncludeSpec'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' fileName'
+      StringKeyword
+    UnionType
+      StringKeyword
+      LiteralType
+        TrueKeyword
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' configFile'
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' program'
+                  Identifier: 'getCompilerOptions'
+              Identifier: 'configFile'
+      IfStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'configFile'
+              QuestionDotToken
+              Identifier: 'configFileSpecs'
+            QuestionDotToken
+            Identifier: 'validatedIncludeSpecs'
+        ReturnStatement
+          Identifier: ' undefined'
+      IfStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'configFile'
+            Identifier: 'configFileSpecs'
+          Identifier: 'isDefaultIncludeSpec'
+        ReturnStatement
+          TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isJsonFile'
+            CallExpression
+              Identifier: ' fileExtensionIs'
+              Identifier: 'fileName'
+              PropertyAccessExpression
+                Identifier: ' Extension'
+                Identifier: 'Json'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' basePath'
+            CallExpression
+              Identifier: ' getDirectoryPath'
+              CallExpression
+                Identifier: 'getNormalizedAbsolutePath'
+                PropertyAccessExpression
+                  Identifier: 'configFile'
+                  Identifier: 'fileName'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getCurrentDirectory'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' useCaseSensitiveFileNames'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'useCaseSensitiveFileNames'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' index'
+            CallExpression
+              Identifier: ' findIndex'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'configFile'
+                  QuestionDotToken
+                  Identifier: 'configFileSpecs'
+                QuestionDotToken
+                Identifier: 'validatedIncludeSpecs'
+              ArrowFunction
+                Parameter
+                  Identifier: ' includeSpec'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'isJsonFile'
+                      AmpersandAmpersandToken
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'endsWith'
+                          Identifier: 'includeSpec'
+                          PropertyAccessExpression
+                            Identifier: ' Extension'
+                            Identifier: 'Json'
+                    ReturnStatement
+                      FalseKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' pattern'
+                        CallExpression
+                          Identifier: ' getPatternFromSpec'
+                          Identifier: 'includeSpec'
+                          Identifier: ' basePath'
+                          StringLiteral
+                  ReturnStatement
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          Identifier: 'pattern'
+                      AmpersandAmpersandToken
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            Identifier: ' getRegexFromPattern'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'pattern'
+                                TemplateTail
+                            Identifier: ' useCaseSensitiveFileNames'
+                          Identifier: 'test'
+                        Identifier: 'fileName'
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' index'
+            ExclamationEqualsEqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          QuestionToken
+          ElementAccessExpression
+            NonNullExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' configFile'
+                  Identifier: 'configFileSpecs'
+                Identifier: 'validatedIncludeSpecsBeforeSubstitution'
+            Identifier: 'index'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fileIncludeReasonToDiagnostics'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' reason'
+      TypeReference
+        Identifier: ' FileIncludeReason'
+    Parameter
+      Identifier: ' fileNameConvertor'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        StringKeyword
+    TypeReference
+      Identifier: ' DiagnosticMessageChain'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' options'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getCompilerOptions'
+      IfStatement
+        CallExpression
+          Identifier: 'isReferencedFile'
+          Identifier: 'reason'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' referenceLocation'
+                CallExpression
+                  Identifier: ' getReferencedFileLocation'
+                  Identifier: 'program'
+                  Identifier: ' reason'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' referenceText'
+                ConditionalExpression
+                  CallExpression
+                    Identifier: ' isReferenceFileLocation'
+                    Identifier: 'referenceLocation'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' referenceLocation'
+                          Identifier: 'file'
+                        Identifier: 'text'
+                      Identifier: 'substring'
+                    PropertyAccessExpression
+                      Identifier: 'referenceLocation'
+                      Identifier: 'pos'
+                    PropertyAccessExpression
+                      Identifier: ' referenceLocation'
+                      Identifier: 'end'
+                  ColonToken
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'referenceLocation'
+                        Identifier: 'text'
+                      TemplateTail
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' message'
+                TypeReference
+                  Identifier: ' DiagnosticMessage'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                CallExpression
+                  Identifier: 'isReferenceFileLocation'
+                  Identifier: 'referenceLocation'
+                BarBarToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' reason'
+                    Identifier: 'kind'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' FileIncludeKind'
+                    Identifier: 'Import'
+              StringLiteral
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'reason'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' FileIncludeKind'
+                  Identifier: 'Import'
+                IfStatement
+                  CallExpression
+                    Identifier: 'isReferenceFileLocation'
+                    Identifier: 'referenceLocation'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    message'
+                        EqualsToken
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            Identifier: ' referenceLocation'
+                            Identifier: 'packageId'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Imported_via_0_from_file_1_with_packageId_2'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: '
+                        Diagnostics'
+                            Identifier: 'Imported_via_0_from_file_1'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'referenceLocation'
+                        Identifier: 'text'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' externalHelpersModuleNameText'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    message'
+                          EqualsToken
+                          ConditionalExpression
+                            PropertyAccessExpression
+                              Identifier: ' referenceLocation'
+                              Identifier: 'packageId'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: '
+                        Diagnostics'
+                              Identifier: 'Imported_via_0_from_file_1_with_packageId_2_to_import_importHelpers_as_specified_in_compilerOptions'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: '
+                        Diagnostics'
+                              Identifier: 'Imported_via_0_from_file_1_to_import_importHelpers_as_specified_in_compilerOptions'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    message'
+                          EqualsToken
+                          ConditionalExpression
+                            PropertyAccessExpression
+                              Identifier: ' referenceLocation'
+                              Identifier: 'packageId'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: '
+                        Diagnostics'
+                              Identifier: 'Imported_via_0_from_file_1_with_packageId_2_to_import_jsx_and_jsxs_factory_functions'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: '
+                        Diagnostics'
+                              Identifier: 'Imported_via_0_from_file_1_to_import_jsx_and_jsxs_factory_functions'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' FileIncludeKind'
+                  Identifier: 'ReferenceFile'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                Debug'
+                      Identifier: 'assert'
+                    PrefixUnaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'referenceLocation'
+                        Identifier: 'packageId'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                message'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Referenced_via_0_from_file_1'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' FileIncludeKind'
+                  Identifier: 'TypeReferenceDirective'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                message'
+                    EqualsToken
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' referenceLocation'
+                        Identifier: 'packageId'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Type_library_referenced_via_0_from_file_1_with_packageId_2'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: '
+                    Diagnostics'
+                        Identifier: 'Type_library_referenced_via_0_from_file_1'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' FileIncludeKind'
+                  Identifier: 'LibReferenceDirective'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                Debug'
+                      Identifier: 'assert'
+                    PrefixUnaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'referenceLocation'
+                        Identifier: 'packageId'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                message'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Library_referenced_via_0_from_file_1'
+                BreakStatement
+              DefaultClause
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                Debug'
+                      Identifier: 'assertNever'
+                    Identifier: 'reason'
+          ReturnStatement
+            CallExpression
+              Identifier: ' chainDiagnosticMessages'
+              Identifier: '
+            /*details*/ undefined'
+              Identifier: '
+            message'
+              Identifier: '
+            referenceText'
+              CallExpression
+                Identifier: '
+            toFileName'
+                PropertyAccessExpression
+                  Identifier: 'referenceLocation'
+                  Identifier: 'file'
+                Identifier: ' fileNameConvertor'
+              NonNullExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'referenceLocation'
+                      Identifier: 'packageId'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: ' packageIdToString'
+                      PropertyAccessExpression
+                        Identifier: 'referenceLocation'
+                        Identifier: 'packageId'
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'reason'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' FileIncludeKind'
+              Identifier: 'RootFile'
+            IfStatement
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'options'
+                    Identifier: 'configFile'
+                  QuestionDotToken
+                  Identifier: 'configFileSpecs'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' chainDiagnosticMessages'
+                  Identifier: '/*details*/ undefined'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Root_file_specified_for_compilation'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' fileName'
+                  CallExpression
+                    Identifier: ' getNormalizedAbsolutePath'
+                    ElementAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'program'
+                          Identifier: 'getRootFileNames'
+                      PropertyAccessExpression
+                        Identifier: 'reason'
+                        Identifier: 'index'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' program'
+                        Identifier: 'getCurrentDirectory'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' matchedByFiles'
+                  CallExpression
+                    Identifier: ' getMatchedFileSpec'
+                    Identifier: 'program'
+                    Identifier: ' fileName'
+            IfStatement
+              Identifier: 'matchedByFiles'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' chainDiagnosticMessages'
+                  Identifier: '/*details*/ undefined'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Part_of_files_list_in_tsconfig_json'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' matchedByInclude'
+                  CallExpression
+                    Identifier: ' getMatchedIncludeSpec'
+                    Identifier: 'program'
+                    Identifier: ' fileName'
+            ReturnStatement
+              ConditionalExpression
+                CallExpression
+                  Identifier: ' isString'
+                  Identifier: 'matchedByInclude'
+                QuestionToken
+                CallExpression
+                  Identifier: '
+                chainDiagnosticMessages'
+                  Identifier: '
+                    /*details*/ undefined'
+                  PropertyAccessExpression
+                    Identifier: '
+                    Diagnostics'
+                    Identifier: 'Matched_by_include_pattern_0_in_1'
+                  Identifier: '
+                    matchedByInclude'
+                  CallExpression
+                    Identifier: '
+                    toFileName'
+                    PropertyAccessExpression
+                      Identifier: 'options'
+                      Identifier: 'configFile'
+                    Identifier: ' fileNameConvertor'
+                ColonToken
+                CallExpression
+                  Identifier: '
+                // Could be additional files specified as roots or matched by default include
+                chainDiagnosticMessages'
+                  Identifier: '
+                    /*details*/ undefined'
+                  ConditionalExpression
+                    Identifier: '
+                    matchedByInclude'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                        Diagnostics'
+                      Identifier: 'Matched_by_default_include_pattern_Asterisk_Asterisk_Slash_Asterisk'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                        Diagnostics'
+                      Identifier: 'Root_file_specified_for_compilation'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' FileIncludeKind'
+              Identifier: 'SourceFromProjectReference'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' FileIncludeKind'
+              Identifier: 'OutputFromProjectReference'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' isOutput'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' reason'
+                      Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' FileIncludeKind'
+                      Identifier: 'OutputFromProjectReference'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' referencedResolvedRef'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Debug'
+                      Identifier: 'checkDefined'
+                    ElementAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'program'
+                          Identifier: 'getResolvedProjectReferences'
+                      QuestionDotToken
+                      PropertyAccessExpression
+                        Identifier: 'reason'
+                        Identifier: 'index'
+            ReturnStatement
+              CallExpression
+                Identifier: ' chainDiagnosticMessages'
+                Identifier: '
+                /*details*/ undefined'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                options'
+                    Identifier: 'outFile'
+                  QuestionToken
+                  ConditionalExpression
+                    Identifier: '
+                    isOutput'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                        Diagnostics'
+                      Identifier: 'Output_from_referenced_project_0_included_because_1_specified'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                        Diagnostics'
+                      Identifier: 'Source_from_referenced_project_0_included_because_1_specified'
+                  ColonToken
+                  ConditionalExpression
+                    Identifier: '
+                    isOutput'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Output_from_referenced_project_0_included_because_module_is_specified_as_none'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: '
+                    Diagnostics'
+                      Identifier: 'Source_from_referenced_project_0_included_because_module_is_specified_as_none'
+                CallExpression
+                  Identifier: '
+                toFileName'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'referencedResolvedRef'
+                      Identifier: 'sourceFile'
+                    Identifier: 'fileName'
+                  Identifier: ' fileNameConvertor'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                options'
+                    Identifier: 'outFile'
+                  QuestionToken
+                  StringLiteral
+                  ColonToken
+                  StringLiteral
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' FileIncludeKind'
+              Identifier: 'AutomaticTypeDirectiveFile'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' messageAndArgs'
+                    TypeReference
+                      Identifier: ' DiagnosticAndArguments'
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' options'
+                        Identifier: 'types'
+                      QuestionToken
+                      ConditionalExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                reason'
+                          Identifier: 'packageId'
+                        QuestionToken
+                        ArrayLiteralExpression
+                          PropertyAccessExpression
+                            Identifier: 'Diagnostics'
+                            Identifier: 'Entry_point_of_type_library_0_specified_in_compilerOptions_with_packageId_1'
+                          PropertyAccessExpression
+                            Identifier: ' reason'
+                            Identifier: 'typeReference'
+                          CallExpression
+                            Identifier: ' packageIdToString'
+                            PropertyAccessExpression
+                              Identifier: 'reason'
+                              Identifier: 'packageId'
+                        ColonToken
+                        ArrayLiteralExpression
+                          PropertyAccessExpression
+                            Identifier: 'Diagnostics'
+                            Identifier: 'Entry_point_of_type_library_0_specified_in_compilerOptions'
+                          PropertyAccessExpression
+                            Identifier: ' reason'
+                            Identifier: 'typeReference'
+                      ColonToken
+                      ConditionalExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                reason'
+                          Identifier: 'packageId'
+                        QuestionToken
+                        ArrayLiteralExpression
+                          PropertyAccessExpression
+                            Identifier: 'Diagnostics'
+                            Identifier: 'Entry_point_for_implicit_type_library_0_with_packageId_1'
+                          PropertyAccessExpression
+                            Identifier: ' reason'
+                            Identifier: 'typeReference'
+                          CallExpression
+                            Identifier: ' packageIdToString'
+                            PropertyAccessExpression
+                              Identifier: 'reason'
+                              Identifier: 'packageId'
+                        ColonToken
+                        ArrayLiteralExpression
+                          PropertyAccessExpression
+                            Identifier: 'Diagnostics'
+                            Identifier: 'Entry_point_for_implicit_type_library_0'
+                          PropertyAccessExpression
+                            Identifier: ' reason'
+                            Identifier: 'typeReference'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' chainDiagnosticMessages'
+                  Identifier: '/*details*/ undefined'
+                  SpreadElement
+                    Identifier: 'messageAndArgs'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' FileIncludeKind'
+              Identifier: 'LibFile'
+            Block
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'reason'
+                    Identifier: 'index'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' chainDiagnosticMessages'
+                    Identifier: '/*details*/ undefined'
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Library_0_specified_in_compilerOptions'
+                    ElementAccessExpression
+                      NonNullExpression
+                        PropertyAccessExpression
+                          Identifier: ' options'
+                          Identifier: 'lib'
+                      PropertyAccessExpression
+                        Identifier: 'reason'
+                        Identifier: 'index'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' target'
+                    CallExpression
+                      Identifier: ' getNameOfScriptTarget'
+                      CallExpression
+                        Identifier: 'getEmitScriptTarget'
+                        Identifier: 'options'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' messageAndArgs'
+                    TypeReference
+                      Identifier: ' DiagnosticAndArguments'
+                    ConditionalExpression
+                      Identifier: ' target'
+                      QuestionToken
+                      ArrayLiteralExpression
+                        PropertyAccessExpression
+                          Identifier: 'Diagnostics'
+                          Identifier: 'Default_library_for_target_0'
+                        Identifier: ' target'
+                      ColonToken
+                      ArrayLiteralExpression
+                        PropertyAccessExpression
+                          Identifier: 'Diagnostics'
+                          Identifier: 'Default_library'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' chainDiagnosticMessages'
+                  Identifier: '/*details*/ undefined'
+                  SpreadElement
+                    Identifier: 'messageAndArgs'
+          DefaultClause
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            Debug'
+                  Identifier: 'assertNever'
+                Identifier: 'reason'
+  FunctionDeclaration
+    Identifier: ' toFileName'
+    Parameter
+      Identifier: 'file'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        StringKeyword
+    Parameter
+      Identifier: ' fileNameConvertor'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fileName'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isString'
+                Identifier: 'file'
+              QuestionToken
+              Identifier: ' file'
+              ColonToken
+              PropertyAccessExpression
+                Identifier: ' file'
+                Identifier: 'fileName'
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' fileNameConvertor'
+          QuestionToken
+          CallExpression
+            Identifier: ' fileNameConvertor'
+            Identifier: 'fileName'
+          ColonToken
+          Identifier: ' fileName'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' emitFilesAndReportErrors'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    Parameter
+      Identifier: '
+    program'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: '
+    reportDiagnostic'
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    Parameter
+      Identifier: '
+    write'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        VoidKeyword
+    Parameter
+      Identifier: '
+    reportSummary'
+      QuestionToken
+      TypeReference
+        Identifier: ' ReportEmitErrorSummary'
+    Parameter
+      Identifier: '
+    writeFile'
+      QuestionToken
+      TypeReference
+        Identifier: ' WriteFileCallback'
+    Parameter
+      Identifier: '
+    cancellationToken'
+      QuestionToken
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: '
+    emitOnlyDtsFiles'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: '
+    customTransformers'
+      QuestionToken
+      TypeReference
+        Identifier: ' CustomTransformers'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    emitResult'
+        TypeReference
+          Identifier: ' EmitResult'
+      PropertySignature
+        Identifier: '
+    diagnostics'
+        TypeReference
+          Identifier: ' SortedReadonlyArray'
+          TypeReference
+            Identifier: 'Diagnostic'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' options'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getCompilerOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' allDiagnostics'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getConfigFileParsingDiagnostics'
+                Identifier: 'slice'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' configFileParsingDiagnosticsLength'
+            PropertyAccessExpression
+              Identifier: ' allDiagnostics'
+              Identifier: 'length'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    addRange'
+          Identifier: 'allDiagnostics'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' program'
+              Identifier: 'getSyntacticDiagnostics'
+            Identifier: '/*sourceFile*/ undefined'
+            Identifier: ' cancellationToken'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'allDiagnostics'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          Identifier: ' configFileParsingDiagnosticsLength'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        addRange'
+              Identifier: 'allDiagnostics'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' program'
+                  Identifier: 'getOptionsDiagnostics'
+                Identifier: 'cancellationToken'
+          IfStatement
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'options'
+                Identifier: 'listFilesOnly'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addRange'
+                  Identifier: 'allDiagnostics'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' program'
+                      Identifier: 'getGlobalDiagnostics'
+                    Identifier: 'cancellationToken'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'allDiagnostics'
+                    Identifier: 'length'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' configFileParsingDiagnosticsLength'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                addRange'
+                      Identifier: 'allDiagnostics'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' program'
+                          Identifier: 'getSemanticDiagnostics'
+                        Identifier: '/*sourceFile*/ undefined'
+                        Identifier: ' cancellationToken'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                options'
+                      Identifier: 'noEmit'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: '
+                getEmitDeclarations'
+                      Identifier: 'options'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                allDiagnostics'
+                      Identifier: 'length'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' configFileParsingDiagnosticsLength'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                addRange'
+                      Identifier: 'allDiagnostics'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' program'
+                          Identifier: 'getDeclarationDiagnostics'
+                        Identifier: '/*sourceFile*/ undefined'
+                        Identifier: ' cancellationToken'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' emitResult'
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' options'
+                Identifier: 'listFilesOnly'
+              QuestionToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' emitSkipped'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: ' diagnostics'
+                  Identifier: ' emptyArray'
+              ColonToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' program'
+                  Identifier: 'emit'
+                Identifier: '/*targetSourceFile*/ undefined'
+                Identifier: ' writeFile'
+                Identifier: ' cancellationToken'
+                Identifier: ' emitOnlyDtsFiles'
+                Identifier: ' customTransformers'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    addRange'
+          Identifier: 'allDiagnostics'
+          PropertyAccessExpression
+            Identifier: ' emitResult'
+            Identifier: 'diagnostics'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' diagnostics'
+            CallExpression
+              Identifier: ' sortAndDeduplicateDiagnostics'
+              Identifier: 'allDiagnostics'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    diagnostics'
+            Identifier: 'forEach'
+          Identifier: 'reportDiagnostic'
+      IfStatement
+        Identifier: 'write'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' currentDir'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getCurrentDirectory'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        forEach'
+              PropertyAccessExpression
+                Identifier: 'emitResult'
+                Identifier: 'emittedFiles'
+              ArrowFunction
+                Parameter
+                  Identifier: ' file'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' filepath'
+                        CallExpression
+                          Identifier: ' getNormalizedAbsolutePath'
+                          Identifier: 'file'
+                          Identifier: ' currentDir'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            write'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'filepath'
+                          TemplateTail
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        listFiles'
+              Identifier: 'program'
+              Identifier: ' write'
+      IfStatement
+        Identifier: 'reportSummary'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        reportSummary'
+              CallExpression
+                Identifier: 'getErrorCountForSummary'
+                Identifier: 'diagnostics'
+              CallExpression
+                Identifier: ' getFilesInErrorForSummary'
+                Identifier: 'diagnostics'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        emitResult'
+          ShorthandPropertyAssignment
+            Identifier: '
+        diagnostics'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' emitFilesAndReportErrorsAndGetExitStatus'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    Parameter
+      Identifier: '
+    program'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: '
+    reportDiagnostic'
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    Parameter
+      Identifier: '
+    write'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        VoidKeyword
+    Parameter
+      Identifier: '
+    reportSummary'
+      QuestionToken
+      TypeReference
+        Identifier: ' ReportEmitErrorSummary'
+    Parameter
+      Identifier: '
+    writeFile'
+      QuestionToken
+      TypeReference
+        Identifier: ' WriteFileCallback'
+    Parameter
+      Identifier: '
+    cancellationToken'
+      QuestionToken
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: '
+    emitOnlyDtsFiles'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: '
+    customTransformers'
+      QuestionToken
+      TypeReference
+        Identifier: ' CustomTransformers'
+    TypeReference
+      Identifier: ' ExitStatus'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' emitResult'
+              BindingElement
+                Identifier: ' diagnostics'
+            CallExpression
+              Identifier: ' emitFilesAndReportErrors'
+              Identifier: '
+        program'
+              Identifier: '
+        reportDiagnostic'
+              Identifier: '
+        write'
+              Identifier: '
+        reportSummary'
+              Identifier: '
+        writeFile'
+              Identifier: '
+        cancellationToken'
+              Identifier: '
+        emitOnlyDtsFiles'
+              Identifier: '
+        customTransformers'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'emitResult'
+            Identifier: 'emitSkipped'
+          AmpersandAmpersandToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' diagnostics'
+              Identifier: 'length'
+            GreaterThanToken
+            NumericLiteral
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' ExitStatus'
+              Identifier: 'DiagnosticsPresent_OutputsSkipped'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'diagnostics'
+              Identifier: 'length'
+            GreaterThanToken
+            NumericLiteral
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' ExitStatus'
+                Identifier: 'DiagnosticsPresent_OutputsGenerated'
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' ExitStatus'
+          Identifier: 'Success'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noopFileWatcher'
+        TypeReference
+          Identifier: ' FileWatcher'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' close'
+            Identifier: ' noop'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' returnNoopFileWatcher'
+        ArrowFunction
+          TypeReference
+            Identifier: ' FileWatcher'
+          EqualsGreaterThanToken
+          Identifier: ' noopFileWatcher'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createWatchHost'
+    Parameter
+      Identifier: 'system'
+      TypeReference
+        Identifier: ' System'
+      Identifier: ' sys'
+    Parameter
+      Identifier: ' reportWatchStatus'
+      QuestionToken
+      TypeReference
+        Identifier: ' WatchStatusReporter'
+    TypeReference
+      Identifier: ' WatchHost'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' onWatchStatusChange'
+            BinaryExpression
+              Identifier: ' reportWatchStatus'
+              BarBarToken
+              CallExpression
+                Identifier: ' createWatchStatusReporter'
+                Identifier: 'system'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        onWatchStatusChange'
+          PropertyAssignment
+            Identifier: '
+        watchFile'
+            BinaryExpression
+              CallExpression
+                Identifier: ' maybeBind'
+                Identifier: 'system'
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'watchFile'
+              BarBarToken
+              Identifier: ' returnNoopFileWatcher'
+          PropertyAssignment
+            Identifier: '
+        watchDirectory'
+            BinaryExpression
+              CallExpression
+                Identifier: ' maybeBind'
+                Identifier: 'system'
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'watchDirectory'
+              BarBarToken
+              Identifier: ' returnNoopFileWatcher'
+          PropertyAssignment
+            Identifier: '
+        setTimeout'
+            BinaryExpression
+              CallExpression
+                Identifier: ' maybeBind'
+                Identifier: 'system'
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'setTimeout'
+              BarBarToken
+              Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+        clearTimeout'
+            BinaryExpression
+              CallExpression
+                Identifier: ' maybeBind'
+                Identifier: 'system'
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'clearTimeout'
+              BarBarToken
+              Identifier: ' noop'
+          PropertyAssignment
+            Identifier: '
+        preferNonRecursiveWatch'
+            PropertyAccessExpression
+              Identifier: ' system'
+              Identifier: 'preferNonRecursiveWatch'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' WatchType'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' WatchTypeRegistry'
+      TypeOperator
+        TypeReference
+          Identifier: ' WatchTypeRegistry'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' WatchType'
+        TypeReference
+          Identifier: ' WatchTypeRegistry'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    ConfigFile'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    ExtendedConfigFile'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    SourceFile'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    MissingFile'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    WildcardDirectory'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    FailedLookupLocations'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    AffectingFileLocation'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    TypeRoots'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    ConfigFileOfReferencedProject'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    ExtendedConfigOfReferencedProject'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    WildcardDirectoryOfReferencedProject'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    PackageJson'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    ClosedScriptInfo'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    ConfigFileForInferredRoot'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    NodeModules'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    MissingSourceMapFile'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    NoopConfigFileForInferredRoot'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    MissingGeneratedFile'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    NodeModulesForModuleSpecifierCache'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    TypingInstallerLocationFile'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    TypingInstallerLocationDirectory'
+            StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' WatchTypeRegistry'
+    PropertySignature
+      Identifier: '
+    ConfigFile'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    ExtendedConfigFile'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    SourceFile'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    MissingFile'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    WildcardDirectory'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    FailedLookupLocations'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    AffectingFileLocation'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    TypeRoots'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    ConfigFileOfReferencedProject'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    ExtendedConfigOfReferencedProject'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    WildcardDirectoryOfReferencedProject'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    PackageJson'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+
+    // Additional tsserver specific watch information
+    ClosedScriptInfo'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    ConfigFileForInferredRoot'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    NodeModules'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    MissingSourceMapFile'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    NoopConfigFileForInferredRoot'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    MissingGeneratedFile'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    NodeModulesForModuleSpecifierCache'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    TypingInstallerLocationFile'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    TypingInstallerLocationDirectory'
+      LiteralType
+        StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' WatchFactoryWithLog'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' Y'
+      UndefinedKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' WatchFactory'
+        TypeReference
+          Identifier: 'X'
+        TypeReference
+          Identifier: ' Y'
+    PropertySignature
+      Identifier: '
+    writeLog'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createWatchFactory'
+    TypeParameter
+      Identifier: 'Y'
+      UndefinedKeyword
+    Parameter
+      Identifier: 'host'
+      IntersectionType
+        TypeReference
+          Identifier: ' WatchFactoryHost'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' trace'
+            QuestionToken
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            VoidKeyword
+    Parameter
+      Identifier: ' options'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' extendedDiagnostics'
+          QuestionToken
+          BooleanKeyword
+        PropertySignature
+          Identifier: ' diagnostics'
+          QuestionToken
+          BooleanKeyword
+    TypeReference
+      Identifier: ' WatchFactoryWithLog'
+      TypeReference
+        Identifier: 'WatchType'
+      TypeReference
+        Identifier: ' Y'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' watchLogLevel'
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' host'
+                Identifier: 'trace'
+              QuestionToken
+              ConditionalExpression
+                PropertyAccessExpression
+                  Identifier: ' options'
+                  Identifier: 'extendedDiagnostics'
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' WatchLogLevel'
+                  Identifier: 'Verbose'
+                ColonToken
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' options'
+                    Identifier: 'diagnostics'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' WatchLogLevel'
+                    Identifier: 'TriggerOnly'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' WatchLogLevel'
+                    Identifier: 'None'
+              ColonToken
+              PropertyAccessExpression
+                Identifier: ' WatchLogLevel'
+                Identifier: 'None'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' writeLog'
+            FunctionType
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              VoidKeyword
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' watchLogLevel'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' WatchLogLevel'
+                  Identifier: 'None'
+              QuestionToken
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 's'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        Identifier: ' host'
+                        Identifier: 'trace'
+                    Identifier: 's'
+              ColonToken
+              Identifier: ' noop'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            AsExpression
+              CallExpression
+                Identifier: ' getWatchFactory'
+                TypeReference
+                  Identifier: 'WatchType'
+                TypeReference
+                  Identifier: ' Y'
+                Identifier: 'host'
+                Identifier: ' watchLogLevel'
+                Identifier: ' writeLog'
+              TypeReference
+                Identifier: ' WatchFactoryWithLog'
+                TypeReference
+                  Identifier: 'WatchType'
+                TypeReference
+                  Identifier: ' Y'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    result'
+            Identifier: 'writeLog'
+          EqualsToken
+          Identifier: ' writeLog'
+      ReturnStatement
+        Identifier: ' result'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createCompilerHostFromProgramHost'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' ProgramHost'
+        AnyKeyword
+    Parameter
+      Identifier: ' getCompilerOptions'
+      FunctionType
+        TypeReference
+          Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' directoryStructureHost'
+      TypeReference
+        Identifier: ' DirectoryStructureHost'
+      Identifier: ' host'
+    TypeReference
+      Identifier: ' CompilerHost'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' useCaseSensitiveFileNames'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' host'
+                Identifier: 'useCaseSensitiveFileNames'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' compilerHost'
+            TypeReference
+              Identifier: ' CompilerHost'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        getSourceFile'
+                CallExpression
+                  Identifier: ' createGetSourceFile'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'fileName'
+                    Parameter
+                      Identifier: ' encoding'
+                    EqualsGreaterThanToken
+                    ConditionalExpression
+                      PrefixUnaryExpression
+                        Identifier: 'encoding'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' compilerHost'
+                          Identifier: 'readFile'
+                        Identifier: 'fileName'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' host'
+                          Identifier: 'readFile'
+                        Identifier: 'fileName'
+                        Identifier: ' encoding'
+                  Identifier: '
+            /*setParentNodes*/ undefined'
+              PropertyAssignment
+                Identifier: '
+        getDefaultLibLocation'
+                CallExpression
+                  Identifier: ' maybeBind'
+                  Identifier: 'host'
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'getDefaultLibLocation'
+              PropertyAssignment
+                Identifier: '
+        getDefaultLibFileName'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' options'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'getDefaultLibFileName'
+                    Identifier: 'options'
+              PropertyAssignment
+                Identifier: '
+        writeFile'
+                CallExpression
+                  Identifier: ' createWriteFileMeasuringIO'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'path'
+                    Parameter
+                      Identifier: ' data'
+                    Parameter
+                      Identifier: ' writeByteOrderMark'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      NonNullExpression
+                        PropertyAccessExpression
+                          Identifier: ' host'
+                          Identifier: 'writeFile'
+                      Identifier: 'path'
+                      Identifier: ' data'
+                      Identifier: ' writeByteOrderMark'
+                  ArrowFunction
+                    Parameter
+                      Identifier: '
+            path'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      NonNullExpression
+                        PropertyAccessExpression
+                          Identifier: ' host'
+                          Identifier: 'createDirectory'
+                      Identifier: 'path'
+                  ArrowFunction
+                    Parameter
+                      Identifier: '
+            path'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      NonNullExpression
+                        PropertyAccessExpression
+                          Identifier: ' host'
+                          Identifier: 'directoryExists'
+                      Identifier: 'path'
+              PropertyAssignment
+                Identifier: '
+        getCurrentDirectory'
+                CallExpression
+                  Identifier: ' memoize'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' host'
+                        Identifier: 'getCurrentDirectory'
+              PropertyAssignment
+                Identifier: '
+        useCaseSensitiveFileNames'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' useCaseSensitiveFileNames'
+              PropertyAssignment
+                Identifier: '
+        getCanonicalFileName'
+                CallExpression
+                  Identifier: ' createGetCanonicalFileName'
+                  Identifier: 'useCaseSensitiveFileNames'
+              PropertyAssignment
+                Identifier: '
+        getNewLine'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' getNewLineCharacter'
+                    CallExpression
+                      Identifier: 'getCompilerOptions'
+              PropertyAssignment
+                Identifier: '
+        fileExists'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' f'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'fileExists'
+                    Identifier: 'f'
+              PropertyAssignment
+                Identifier: '
+        readFile'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' f'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'readFile'
+                    Identifier: 'f'
+              PropertyAssignment
+                Identifier: '
+        trace'
+                CallExpression
+                  Identifier: ' maybeBind'
+                  Identifier: 'host'
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'trace'
+              PropertyAssignment
+                Identifier: '
+        directoryExists'
+                CallExpression
+                  Identifier: ' maybeBind'
+                  Identifier: 'directoryStructureHost'
+                  PropertyAccessExpression
+                    Identifier: ' directoryStructureHost'
+                    Identifier: 'directoryExists'
+              PropertyAssignment
+                Identifier: '
+        getDirectories'
+                CallExpression
+                  Identifier: ' maybeBind'
+                  Identifier: 'directoryStructureHost'
+                  PropertyAccessExpression
+                    Identifier: ' directoryStructureHost'
+                    Identifier: 'getDirectories'
+              PropertyAssignment
+                Identifier: '
+        realpath'
+                CallExpression
+                  Identifier: ' maybeBind'
+                  Identifier: 'host'
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'realpath'
+              PropertyAssignment
+                Identifier: '
+        getEnvironmentVariable'
+                BinaryExpression
+                  CallExpression
+                    Identifier: ' maybeBind'
+                    Identifier: 'host'
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'getEnvironmentVariable'
+                  BarBarToken
+                  ParenthesizedExpression
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      StringLiteral
+              PropertyAssignment
+                Identifier: '
+        createHash'
+                CallExpression
+                  Identifier: ' maybeBind'
+                  Identifier: 'host'
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'createHash'
+              PropertyAssignment
+                Identifier: '
+        readDirectory'
+                CallExpression
+                  Identifier: ' maybeBind'
+                  Identifier: 'host'
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'readDirectory'
+              PropertyAssignment
+                Identifier: '
+        storeSignatureInfo'
+                PropertyAccessExpression
+                  Identifier: ' host'
+                  Identifier: 'storeSignatureInfo'
+              PropertyAssignment
+                Identifier: '
+        jsDocParsingMode'
+                PropertyAccessExpression
+                  Identifier: ' host'
+                  Identifier: 'jsDocParsingMode'
+      ReturnStatement
+        Identifier: ' compilerHost'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getSourceFileVersionAsHashFromText'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'CompilerHost'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: ' text'
+      StringKeyword
+    StringKeyword
+    Block
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'text'
+            Identifier: 'match'
+          Identifier: 'sourceMapCommentRegExpDontCareLineStart'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineEnd'
+                PropertyAccessExpression
+                  Identifier: ' text'
+                  Identifier: 'length'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineStart'
+                Identifier: ' lineEnd'
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' pos'
+                BinaryExpression
+                  Identifier: ' lineEnd'
+                  MinusToken
+                  NumericLiteral
+            BinaryExpression
+              Identifier: ' pos'
+              GreaterThanEqualsToken
+              NumericLiteral
+            PostfixUnaryExpression
+              Identifier: ' pos'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' ch'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' text'
+                        Identifier: 'charCodeAt'
+                      Identifier: 'pos'
+              SwitchStatement
+                Identifier: 'ch'
+                CaseBlock
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' CharacterCodes'
+                      Identifier: 'lineFeed'
+                    IfStatement
+                      BinaryExpression
+                        Identifier: 'pos'
+                        AmpersandAmpersandToken
+                        BinaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' text'
+                              Identifier: 'charCodeAt'
+                            BinaryExpression
+                              Identifier: 'pos'
+                              MinusToken
+                              NumericLiteral
+                          EqualsEqualsEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' CharacterCodes'
+                            Identifier: 'carriageReturn'
+                      Block
+                        ExpressionStatement
+                          PostfixUnaryExpression
+                            Identifier: '
+                        pos'
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' CharacterCodes'
+                      Identifier: 'carriageReturn'
+                    BreakStatement
+                  DefaultClause
+                    IfStatement
+                      BinaryExpression
+                        BinaryExpression
+                          Identifier: 'ch'
+                          LessThanToken
+                          PropertyAccessExpression
+                            Identifier: ' CharacterCodes'
+                            Identifier: 'maxAsciiCharacter'
+                        BarBarToken
+                        PrefixUnaryExpression
+                          CallExpression
+                            Identifier: 'isLineBreak'
+                            Identifier: 'ch'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                        lineStart'
+                            EqualsToken
+                            Identifier: ' pos'
+                        ContinueStatement
+                    BreakStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' line'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' text'
+                        Identifier: 'substring'
+                      Identifier: 'lineStart'
+                      Identifier: ' lineEnd'
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'line'
+                    Identifier: 'match'
+                  Identifier: 'sourceMapCommentRegExp'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                text'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' text'
+                          Identifier: 'substring'
+                        NumericLiteral
+                        Identifier: ' lineStart'
+                  BreakStatement
+                IfStatement
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'line'
+                        Identifier: 'match'
+                      Identifier: 'whitespaceOrMapCommentRegExp'
+                  Block
+                    BreakStatement
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lineEnd'
+                  EqualsToken
+                  Identifier: ' lineStart'
+      ReturnStatement
+        CallExpression
+          ParenthesizedExpression
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'host'
+                Identifier: 'createHash'
+              BarBarToken
+              Identifier: ' generateDjb2Hash'
+          Identifier: 'text'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' setGetSourceFileAsHashVersioned'
+    Parameter
+      Identifier: 'compilerHost'
+      TypeReference
+        Identifier: ' CompilerHost'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' originalGetSourceFile'
+            PropertyAccessExpression
+              Identifier: ' compilerHost'
+              Identifier: 'getSourceFile'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'getSourceFile'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' result'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' originalGetSourceFile'
+                        Identifier: 'call'
+                      Identifier: 'compilerHost'
+                      SpreadElement
+                        Identifier: 'args'
+              IfStatement
+                Identifier: 'result'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            result'
+                        Identifier: 'version'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' getSourceFileVersionAsHashFromText'
+                        Identifier: 'compilerHost'
+                        PropertyAccessExpression
+                          Identifier: ' result'
+                          Identifier: 'text'
+              ReturnStatement
+                Identifier: ' result'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createProgramHost'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+      TypeReference
+        Identifier: ' EmitAndSemanticDiagnosticsBuilderProgram'
+    Parameter
+      Identifier: 'system'
+      TypeReference
+        Identifier: ' System'
+    Parameter
+      Identifier: ' createProgram'
+      UnionType
+        TypeReference
+          Identifier: ' CreateProgram'
+          TypeReference
+            Identifier: 'T'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' ProgramHost'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' getDefaultLibLocation'
+            CallExpression
+              Identifier: ' memoize'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' getDirectoryPath'
+                  CallExpression
+                    Identifier: 'normalizePath'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'system'
+                        Identifier: 'getExecutingFilePath'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        useCaseSensitiveFileNames'
+            ArrowFunction
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' system'
+                Identifier: 'useCaseSensitiveFileNames'
+          PropertyAssignment
+            Identifier: '
+        getNewLine'
+            ArrowFunction
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' system'
+                Identifier: 'newLine'
+          PropertyAssignment
+            Identifier: '
+        getCurrentDirectory'
+            CallExpression
+              Identifier: ' memoize'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' system'
+                    Identifier: 'getCurrentDirectory'
+          ShorthandPropertyAssignment
+            Identifier: '
+        getDefaultLibLocation'
+          PropertyAssignment
+            Identifier: '
+        getDefaultLibFileName'
+            ArrowFunction
+              Parameter
+                Identifier: ' options'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' combinePaths'
+                CallExpression
+                  Identifier: 'getDefaultLibLocation'
+                CallExpression
+                  Identifier: ' getDefaultLibFileName'
+                  Identifier: 'options'
+          PropertyAssignment
+            Identifier: '
+        fileExists'
+            ArrowFunction
+              Parameter
+                Identifier: ' path'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'fileExists'
+                Identifier: 'path'
+          PropertyAssignment
+            Identifier: '
+        readFile'
+            ArrowFunction
+              Parameter
+                Identifier: 'path'
+              Parameter
+                Identifier: ' encoding'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'readFile'
+                Identifier: 'path'
+                Identifier: ' encoding'
+          PropertyAssignment
+            Identifier: '
+        directoryExists'
+            ArrowFunction
+              Parameter
+                Identifier: ' path'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'directoryExists'
+                Identifier: 'path'
+          PropertyAssignment
+            Identifier: '
+        getDirectories'
+            ArrowFunction
+              Parameter
+                Identifier: ' path'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'getDirectories'
+                Identifier: 'path'
+          PropertyAssignment
+            Identifier: '
+        readDirectory'
+            ArrowFunction
+              Parameter
+                Identifier: 'path'
+              Parameter
+                Identifier: ' extensions'
+              Parameter
+                Identifier: ' exclude'
+              Parameter
+                Identifier: ' include'
+              Parameter
+                Identifier: ' depth'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'readDirectory'
+                Identifier: 'path'
+                Identifier: ' extensions'
+                Identifier: ' exclude'
+                Identifier: ' include'
+                Identifier: ' depth'
+          PropertyAssignment
+            Identifier: '
+        realpath'
+            CallExpression
+              Identifier: ' maybeBind'
+              Identifier: 'system'
+              PropertyAccessExpression
+                Identifier: ' system'
+                Identifier: 'realpath'
+          PropertyAssignment
+            Identifier: '
+        getEnvironmentVariable'
+            CallExpression
+              Identifier: ' maybeBind'
+              Identifier: 'system'
+              PropertyAccessExpression
+                Identifier: ' system'
+                Identifier: 'getEnvironmentVariable'
+          PropertyAssignment
+            Identifier: '
+        trace'
+            ArrowFunction
+              Parameter
+                Identifier: ' s'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'write'
+                BinaryExpression
+                  Identifier: 's'
+                  PlusToken
+                  PropertyAccessExpression
+                    Identifier: ' system'
+                    Identifier: 'newLine'
+          PropertyAssignment
+            Identifier: '
+        createDirectory'
+            ArrowFunction
+              Parameter
+                Identifier: ' path'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'createDirectory'
+                Identifier: 'path'
+          PropertyAssignment
+            Identifier: '
+        writeFile'
+            ArrowFunction
+              Parameter
+                Identifier: 'path'
+              Parameter
+                Identifier: ' data'
+              Parameter
+                Identifier: ' writeByteOrderMark'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'writeFile'
+                Identifier: 'path'
+                Identifier: ' data'
+                Identifier: ' writeByteOrderMark'
+          PropertyAssignment
+            Identifier: '
+        createHash'
+            CallExpression
+              Identifier: ' maybeBind'
+              Identifier: 'system'
+              PropertyAccessExpression
+                Identifier: ' system'
+                Identifier: 'createHash'
+          PropertyAssignment
+            Identifier: '
+        createProgram'
+            BinaryExpression
+              Identifier: ' createProgram'
+              BarBarToken
+              AsExpression
+                AsExpression
+                  Identifier: ' createEmitAndSemanticDiagnosticsBuilderProgram'
+                  AnyKeyword
+                TypeReference
+                  Identifier: ' CreateProgram'
+                  TypeReference
+                    Identifier: 'T'
+          PropertyAssignment
+            Identifier: '
+        storeSignatureInfo'
+            PropertyAccessExpression
+              Identifier: ' system'
+              Identifier: 'storeSignatureInfo'
+          PropertyAssignment
+            Identifier: '
+        now'
+            CallExpression
+              Identifier: ' maybeBind'
+              Identifier: 'system'
+              PropertyAccessExpression
+                Identifier: ' system'
+                Identifier: 'now'
+  FunctionDeclaration
+    Identifier: ' createWatchCompilerHost'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+      TypeReference
+        Identifier: ' EmitAndSemanticDiagnosticsBuilderProgram'
+    Parameter
+      Identifier: 'system'
+      Identifier: ' sys'
+    Parameter
+      Identifier: ' createProgram'
+      UnionType
+        TypeReference
+          Identifier: ' CreateProgram'
+          TypeReference
+            Identifier: 'T'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' reportDiagnostic'
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    Parameter
+      Identifier: ' reportWatchStatus'
+      QuestionToken
+      TypeReference
+        Identifier: ' WatchStatusReporter'
+    TypeReference
+      Identifier: ' WatchCompilerHost'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' write'
+            ArrowFunction
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' system'
+                  Identifier: 'write'
+                BinaryExpression
+                  Identifier: 's'
+                  PlusToken
+                  PropertyAccessExpression
+                    Identifier: ' system'
+                    Identifier: 'newLine'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            AsExpression
+              CallExpression
+                Identifier: ' createProgramHost'
+                Identifier: 'system'
+                Identifier: ' createProgram'
+              TypeReference
+                Identifier: ' WatchCompilerHost'
+                TypeReference
+                  Identifier: 'T'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    copyProperties'
+          Identifier: 'result'
+          CallExpression
+            Identifier: ' createWatchHost'
+            Identifier: 'system'
+            Identifier: ' reportWatchStatus'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    result'
+            Identifier: 'afterProgramCreate'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' builderProgram'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' compilerOptions'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' builderProgram'
+                        Identifier: 'getCompilerOptions'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' newLine'
+                    CallExpression
+                      Identifier: ' getNewLineCharacter'
+                      Identifier: 'compilerOptions'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+        emitFilesAndReportErrors'
+                  Identifier: '
+            builderProgram'
+                  Identifier: '
+            reportDiagnostic'
+                  Identifier: '
+            write'
+                  ArrowFunction
+                    Parameter
+                      Identifier: '
+            errorCount'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      NonNullExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                result'
+                          Identifier: 'onWatchStatusChange'
+                      CallExpression
+                        Identifier: '
+                    createCompilerDiagnostic'
+                        CallExpression
+                          Identifier: 'getWatchErrorSummaryDiagnosticMessage'
+                          Identifier: 'errorCount'
+                        Identifier: ' errorCount'
+                      Identifier: '
+                    newLine'
+                      Identifier: '
+                    compilerOptions'
+                      Identifier: '
+                    errorCount'
+      ReturnStatement
+        Identifier: ' result'
+  FunctionDeclaration
+    Identifier: ' reportUnrecoverableDiagnostic'
+    Parameter
+      Identifier: 'system'
+      TypeReference
+        Identifier: ' System'
+    Parameter
+      Identifier: ' reportDiagnostic'
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    Parameter
+      Identifier: ' diagnostic'
+      TypeReference
+        Identifier: ' Diagnostic'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    reportDiagnostic'
+          Identifier: 'diagnostic'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    system'
+            Identifier: 'exit'
+          PropertyAccessExpression
+            Identifier: 'ExitStatus'
+            Identifier: 'DiagnosticsPresent_OutputsSkipped'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CreateWatchCompilerHostInput'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    PropertySignature
+      Identifier: '
+    system'
+      TypeReference
+        Identifier: ' System'
+    PropertySignature
+      Identifier: '
+    createProgram'
+      QuestionToken
+      TypeReference
+        Identifier: ' CreateProgram'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    reportDiagnostic'
+      QuestionToken
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    PropertySignature
+      Identifier: '
+    reportWatchStatus'
+      QuestionToken
+      TypeReference
+        Identifier: ' WatchStatusReporter'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CreateWatchCompilerHostOfConfigFileInput'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CreateWatchCompilerHostInput'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    configFileName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    optionsToExtend'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompilerOptions'
+    PropertySignature
+      Identifier: '
+    watchOptionsToExtend'
+      QuestionToken
+      TypeReference
+        Identifier: ' WatchOptions'
+    PropertySignature
+      Identifier: '
+    extraFileExtensions'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' FileExtensionInfo'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createWatchCompilerHostOfConfigFile'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+      TypeReference
+        Identifier: ' EmitAndSemanticDiagnosticsBuilderProgram'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '
+    configFileName'
+        BindingElement
+          Identifier: '
+    optionsToExtend'
+        BindingElement
+          Identifier: '
+    watchOptionsToExtend'
+        BindingElement
+          Identifier: '
+    extraFileExtensions'
+        BindingElement
+          Identifier: '
+    system'
+        BindingElement
+          Identifier: '
+    createProgram'
+        BindingElement
+          Identifier: '
+    reportDiagnostic'
+        BindingElement
+          Identifier: '
+    reportWatchStatus'
+      TypeReference
+        Identifier: ' CreateWatchCompilerHostOfConfigFileInput'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' WatchCompilerHostOfConfigFile'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' diagnosticReporter'
+            BinaryExpression
+              Identifier: ' reportDiagnostic'
+              BarBarToken
+              CallExpression
+                Identifier: ' createDiagnosticReporter'
+                Identifier: 'system'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            AsExpression
+              CallExpression
+                Identifier: ' createWatchCompilerHost'
+                Identifier: 'system'
+                Identifier: ' createProgram'
+                Identifier: ' diagnosticReporter'
+                Identifier: ' reportWatchStatus'
+              TypeReference
+                Identifier: ' WatchCompilerHostOfConfigFile'
+                TypeReference
+                  Identifier: 'T'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'onUnRecoverableConfigFileDiagnostic'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' diagnostic'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' reportUnrecoverableDiagnostic'
+              Identifier: 'system'
+              Identifier: ' diagnosticReporter'
+              Identifier: ' diagnostic'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'configFileName'
+          EqualsToken
+          Identifier: ' configFileName'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'optionsToExtend'
+          EqualsToken
+          Identifier: ' optionsToExtend'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'watchOptionsToExtend'
+          EqualsToken
+          Identifier: ' watchOptionsToExtend'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'extraFileExtensions'
+          EqualsToken
+          Identifier: ' extraFileExtensions'
+      ReturnStatement
+        Identifier: ' host'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CreateWatchCompilerHostOfFilesAndCompilerOptionsInput'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CreateWatchCompilerHostInput'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    rootFiles'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    PropertySignature
+      Identifier: '
+    watchOptions'
+      UnionType
+        TypeReference
+          Identifier: ' WatchOptions'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    projectReferences'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ProjectReference'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createWatchCompilerHostOfFilesAndCompilerOptions'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+      TypeReference
+        Identifier: ' EmitAndSemanticDiagnosticsBuilderProgram'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '
+    rootFiles'
+        BindingElement
+          Identifier: '
+    options'
+        BindingElement
+          Identifier: '
+    watchOptions'
+        BindingElement
+          Identifier: '
+    projectReferences'
+        BindingElement
+          Identifier: '
+    system'
+        BindingElement
+          Identifier: '
+    createProgram'
+        BindingElement
+          Identifier: '
+    reportDiagnostic'
+        BindingElement
+          Identifier: '
+    reportWatchStatus'
+      TypeReference
+        Identifier: ' CreateWatchCompilerHostOfFilesAndCompilerOptionsInput'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' WatchCompilerHostOfFilesAndCompilerOptions'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            AsExpression
+              CallExpression
+                Identifier: ' createWatchCompilerHost'
+                Identifier: 'system'
+                Identifier: ' createProgram'
+                BinaryExpression
+                  Identifier: ' reportDiagnostic'
+                  BarBarToken
+                  CallExpression
+                    Identifier: ' createDiagnosticReporter'
+                    Identifier: 'system'
+                Identifier: ' reportWatchStatus'
+              TypeReference
+                Identifier: ' WatchCompilerHostOfFilesAndCompilerOptions'
+                TypeReference
+                  Identifier: 'T'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'rootFiles'
+          EqualsToken
+          Identifier: ' rootFiles'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'options'
+          EqualsToken
+          Identifier: ' options'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'watchOptions'
+          EqualsToken
+          Identifier: ' watchOptions'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'projectReferences'
+          EqualsToken
+          Identifier: ' projectReferences'
+      ReturnStatement
+        Identifier: ' host'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IncrementalCompilationOptions'
+    PropertySignature
+      Identifier: '
+    rootNames'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    PropertySignature
+      Identifier: '
+    configFileParsingDiagnostics'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    PropertySignature
+      Identifier: '
+    projectReferences'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ProjectReference'
+    PropertySignature
+      Identifier: '
+    host'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompilerHost'
+    PropertySignature
+      Identifier: '
+    reportDiagnostic'
+      QuestionToken
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    PropertySignature
+      Identifier: '
+    reportErrorSummary'
+      QuestionToken
+      TypeReference
+        Identifier: ' ReportEmitErrorSummary'
+    MethodSignature
+      Identifier: '
+    afterProgramEmitAndDiagnostics'
+      QuestionToken
+      Parameter
+        Identifier: 'program'
+        TypeReference
+          Identifier: ' EmitAndSemanticDiagnosticsBuilderProgram'
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+    system'
+      QuestionToken
+      TypeReference
+        Identifier: ' System'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' performIncrementalCompilation'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' IncrementalCompilationOptions'
+    TypeReference
+      Identifier: ' ExitStatus'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' system'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'system'
+              BarBarToken
+              Identifier: ' sys'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'host'
+              BarBarToken
+              ParenthesizedExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'input'
+                    Identifier: 'host'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' createIncrementalCompilerHost'
+                    PropertyAccessExpression
+                      Identifier: 'input'
+                      Identifier: 'options'
+                    Identifier: ' system'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' builderProgram'
+            CallExpression
+              Identifier: ' createIncrementalProgram'
+              Identifier: 'input'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exitStatus'
+            CallExpression
+              Identifier: ' emitFilesAndReportErrorsAndGetExitStatus'
+              Identifier: '
+        builderProgram'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+        input'
+                  Identifier: 'reportDiagnostic'
+                BarBarToken
+                CallExpression
+                  Identifier: ' createDiagnosticReporter'
+                  Identifier: 'system'
+              ArrowFunction
+                Parameter
+                  Identifier: '
+        s'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'trace'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'trace'
+                    Identifier: 's'
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        input'
+                    Identifier: 'reportErrorSummary'
+                  BarBarToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' input'
+                      Identifier: 'options'
+                    Identifier: 'pretty'
+                QuestionToken
+                ArrowFunction
+                  Parameter
+                    Identifier: 'errorCount'
+                  Parameter
+                    Identifier: ' filesInError'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' system'
+                      Identifier: 'write'
+                    CallExpression
+                      Identifier: 'getErrorSummaryText'
+                      Identifier: 'errorCount'
+                      Identifier: ' filesInError'
+                      PropertyAccessExpression
+                        Identifier: ' system'
+                        Identifier: 'newLine'
+                      Identifier: ' host'
+                ColonToken
+                Identifier: ' undefined'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'input'
+          Identifier: 'afterProgramEmitAndDiagnostics'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' input'
+              Identifier: 'afterProgramEmitAndDiagnostics'
+            Identifier: 'builderProgram'
+      ReturnStatement
+        Identifier: ' exitStatus'

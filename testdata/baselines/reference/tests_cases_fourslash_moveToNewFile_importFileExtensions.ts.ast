@@ -1,0 +1,60 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+// @Filename: /tsconfig.json
+////{
+////  "compilerOptions": {
+////    "moduleResolution": "Node16",
+////  }
+////}
+
+// @Filename: /package.json
+//// { "type": "module" }
+
+// @Filename: /src/main.ts
+////[|export function someLibFn(): string {
+////     return main();
+////}|]
+////
+////function main(): string {
+////    return "hello world!";
+////}
+////console.log(someLibFn());
+
+// @Filename: /other.ts
+////import { someLibFn } from "./src/main.js";
+////
+////function someOtherFn(): string {
+////    return someLibFn();
+////}
+
+// @Filename: /act/action.ts
+////import { someLibFn } from "../src/main.js";
+////
+////function doAction(): string {
+////    return someLibFn();
+////}
+
+
+verify'
+        Identifier: 'moveToNewFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral

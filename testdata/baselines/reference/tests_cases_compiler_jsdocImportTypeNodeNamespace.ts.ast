@@ -1,0 +1,20 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' _default'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' POINT'
+            StringKeyword
+  ExportAssignment
+    Identifier: ' _default'
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Block
+      ReturnStatement
+        ParenthesizedExpression
+          StringLiteral

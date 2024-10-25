@@ -1,0 +1,39 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ITestEventInterval'
+    PropertySignature
+      Identifier: '
+    begin'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' IIntervalTreeNode'
+    PropertySignature
+      Identifier: '
+    interval'
+      TypeReference
+        Identifier: ' ITestEventInterval'
+    PropertySignature
+      Identifier: '
+    children'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' IIntervalTreeNode'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        ArrayType
+          TypeReference
+            Identifier: ' IIntervalTreeNode'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' interval'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' begin'
+                  NumericLiteral
+            PropertyAssignment
+              Identifier: ' children'
+              NullKeyword

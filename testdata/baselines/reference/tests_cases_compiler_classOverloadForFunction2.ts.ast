@@ -1,0 +1,6 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' bar'
+    StringKeyword
+  ClassDeclaration
+    Identifier: ' bar'

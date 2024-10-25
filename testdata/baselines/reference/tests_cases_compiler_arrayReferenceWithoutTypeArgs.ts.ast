@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' Array'
+      Block

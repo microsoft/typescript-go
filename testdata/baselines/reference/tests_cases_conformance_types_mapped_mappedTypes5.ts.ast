@@ -1,0 +1,418 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' r'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' pr'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'Readonly'
+          TypeReference
+            Identifier: 'T'
+    Parameter
+      Identifier: ' rp'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'Partial'
+          TypeReference
+            Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a1'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'T'
+            Identifier: ' p'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a2'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'T'
+            Identifier: ' r'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a3'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'T'
+            Identifier: ' pr'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a4'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'T'
+            Identifier: ' rp'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b1'
+            TypeReference
+              Identifier: ' Readonly'
+              TypeReference
+                Identifier: 'T'
+            Identifier: ' p'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b2'
+            TypeReference
+              Identifier: ' Readonly'
+              TypeReference
+                Identifier: 'T'
+            Identifier: ' r'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b3'
+            TypeReference
+              Identifier: ' Readonly'
+              TypeReference
+                Identifier: 'T'
+            Identifier: ' pr'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b4'
+            TypeReference
+              Identifier: ' Readonly'
+              TypeReference
+                Identifier: 'T'
+            Identifier: ' rp'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'Readonly'
+                TypeReference
+                  Identifier: 'T'
+            Identifier: ' p'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'Readonly'
+                TypeReference
+                  Identifier: 'T'
+            Identifier: ' r'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'Readonly'
+                TypeReference
+                  Identifier: 'T'
+            Identifier: ' pr'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c4'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'Readonly'
+                TypeReference
+                  Identifier: 'T'
+            Identifier: ' rp'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d1'
+            TypeReference
+              Identifier: ' Readonly'
+              TypeReference
+                Identifier: 'Partial'
+                TypeReference
+                  Identifier: 'T'
+            Identifier: ' p'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d2'
+            TypeReference
+              Identifier: ' Readonly'
+              TypeReference
+                Identifier: 'Partial'
+                TypeReference
+                  Identifier: 'T'
+            Identifier: ' r'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d3'
+            TypeReference
+              Identifier: ' Readonly'
+              TypeReference
+                Identifier: 'Partial'
+                TypeReference
+                  Identifier: 'T'
+            Identifier: ' pr'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d4'
+            TypeReference
+              Identifier: ' Readonly'
+              TypeReference
+                Identifier: 'Partial'
+                TypeReference
+                  Identifier: 'T'
+            Identifier: ' rp'
+  TypeAliasDeclaration
+    Identifier: ' State'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 'key'
+          StringKeyword
+        UnionType
+          StringKeyword
+          BooleanKeyword
+          NumberKeyword
+          LiteralType
+            NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' Args1'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' State'
+    TypeLiteral
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' previous'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'Partial'
+            TypeReference
+              Identifier: 'T'
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' current'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'Partial'
+            TypeReference
+              Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Args2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' State'
+    TypeLiteral
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' previous'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'Readonly'
+            TypeReference
+              Identifier: 'T'
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' current'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'Readonly'
+            TypeReference
+              Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' doit'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' State'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' previous'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'T'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Object'
+                Identifier: 'create'
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' current'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'T'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Object'
+                Identifier: 'create'
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' args1'
+            TypeReference
+              Identifier: ' Args1'
+              TypeReference
+                Identifier: 'T'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' previous'
+              ShorthandPropertyAssignment
+                Identifier: ' current'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' args2'
+            TypeReference
+              Identifier: ' Args2'
+              TypeReference
+                Identifier: 'T'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' previous'
+              ShorthandPropertyAssignment
+                Identifier: ' current'
+  TypeAliasDeclaration
+    Identifier: ' State2'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' foo'
+        NumberKeyword
+      PropertySignature
+        Identifier: ' bar'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Args3'
+    TypeLiteral
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' previous'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'Partial'
+            TypeReference
+              Identifier: 'State2'
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' current'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'Partial'
+            TypeReference
+              Identifier: 'State2'
+  TypeAliasDeclaration
+    Identifier: ' Args4'
+    TypeLiteral
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' previous'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'Readonly'
+            TypeReference
+              Identifier: 'State2'
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' current'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'Readonly'
+            TypeReference
+              Identifier: 'State2'
+  FunctionDeclaration
+    Identifier: ' doit2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' previous'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'State2'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Object'
+                Identifier: 'create'
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' current'
+            TypeReference
+              Identifier: ' Partial'
+              TypeReference
+                Identifier: 'State2'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Object'
+                Identifier: 'create'
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' args1'
+            TypeReference
+              Identifier: ' Args3'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' previous'
+              ShorthandPropertyAssignment
+                Identifier: ' current'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' args2'
+            TypeReference
+              Identifier: ' Args4'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' previous'
+              ShorthandPropertyAssignment
+                Identifier: ' current'

@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' a'
+          ShorthandPropertyAssignment
+            Identifier: ' b'
+          ShorthandPropertyAssignment
+            Identifier: ' c'

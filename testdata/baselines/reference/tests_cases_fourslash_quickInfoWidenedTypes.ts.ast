@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////var /*1*/a = null;                   // var a: any
+////var /*2*/b = undefined;              // var b: any
+////var /*3*/c = { x: 0, y: null };	// var c: { x: number, y: any }
+////var /*4*/d = [null, undefined];      // var d: any[]
+
+verify'
+        Identifier: 'quickInfos'
+      ObjectLiteralExpression
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral
+        PropertyAssignment
+          NumericLiteral
+          StringLiteral

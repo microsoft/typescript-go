@@ -1,0 +1,33 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+  bar'
+      UnionType
+        TypeReference
+          Identifier: ' Bar'
+        ArrayType
+          TypeReference
+            Identifier: ' Bar'
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+  prop'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayType
+          TypeReference
+            Identifier: ' Foo'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' bar'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' prop'
+                  NumericLiteral

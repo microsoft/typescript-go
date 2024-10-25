@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' while'
+            Identifier: ''
+          BindingElement
+            Identifier: ' while'
+            Identifier: ''
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' while'
+            NumericLiteral

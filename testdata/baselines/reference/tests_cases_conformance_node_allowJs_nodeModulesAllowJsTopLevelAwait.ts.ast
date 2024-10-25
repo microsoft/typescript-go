@@ -1,0 +1,55 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AwaitExpression
+          NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  ForOfStatement
+    AwaitKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+    ArrayLiteralExpression
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AwaitExpression
+          NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  ForOfStatement
+    AwaitKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+    ArrayLiteralExpression
+    Block
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral

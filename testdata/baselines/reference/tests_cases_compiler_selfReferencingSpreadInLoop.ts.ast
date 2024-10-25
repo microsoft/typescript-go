@@ -1,0 +1,24 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' additional'
+        ArrayLiteralExpression
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' subcomponent'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    additional'
+          EqualsToken
+          ArrayLiteralExpression
+            SpreadElement
+              Identifier: 'additional'
+            Identifier: ' subcomponent'

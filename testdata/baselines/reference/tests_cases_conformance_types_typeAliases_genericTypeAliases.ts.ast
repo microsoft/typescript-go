@@ -1,0 +1,369 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Tree'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' left'
+          TypeReference
+            Identifier: ' Tree'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: ' right'
+          TypeReference
+            Identifier: ' Tree'
+            TypeReference
+              Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tree'
+        TypeReference
+          Identifier: ' Tree'
+          NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    left'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        left'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: '
+        right'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            left'
+                    NumericLiteral
+                  PropertyAssignment
+                    Identifier: '
+            right'
+                    NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    right'
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Lazy'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      ParenthesizedType
+        FunctionType
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ls'
+        TypeReference
+          Identifier: ' Lazy'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ls'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ls'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'U'
+    UnionType
+      TypeReference
+        Identifier: ' U'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' Bar'
+            TypeReference
+              Identifier: 'U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Foo'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Bar'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' Foo'
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+z'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+z'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+z'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Strange'
+    TypeParameter
+      Identifier: 'T'
+    StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        TypeReference
+          Identifier: ' Strange'
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      EqualsToken
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' AB'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' Pair'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' AB'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' TaggedPair'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Pair'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    tag'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' TaggedPair'
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+p'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+p'
+        Identifier: 'b'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+p'
+        Identifier: 'tag'
+      EqualsToken
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'A'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' Foo'
+        TypeParameter
+          Identifier: 'T'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' Foo'
+              ArrayType
+                TypeReference
+                  Identifier: 'A'
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' g'
+    TypeParameter
+      Identifier: 'B'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' Bar'
+        TypeParameter
+          Identifier: 'U'
+        UnionType
+          TypeReference
+            Identifier: ' U'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' Bar'
+                TypeReference
+                  Identifier: 'U'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' Bar'
+              ArrayType
+                TypeReference
+                  Identifier: 'B'
+      ReturnStatement
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' f'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' g'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' b'

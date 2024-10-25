@@ -1,0 +1,28 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toPrimitive'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toPrimitive'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toPrimitive'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Block

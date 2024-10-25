@@ -1,0 +1,2879 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ApplyCodeActionCommandResult'
+        ImportSpecifier
+          Identifier: ' CachedDirectoryStructureHost'
+        ImportSpecifier
+          Identifier: ' CompilerHost'
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' Diagnostic'
+        ImportSpecifier
+          Identifier: ' DirectoryStructureHost'
+        ImportSpecifier
+          Identifier: ' DirectoryWatcherCallback'
+        ImportSpecifier
+          Identifier: ' DocumentPositionMapper'
+        ImportSpecifier
+          Identifier: ' ExportInfoMap'
+        ImportSpecifier
+          Identifier: ' FileReference'
+        ImportSpecifier
+          Identifier: ' FileWatcher'
+        ImportSpecifier
+          Identifier: ' FileWatcherCallback'
+        ImportSpecifier
+          Identifier: ' GetCanonicalFileName'
+        ImportSpecifier
+          Identifier: ' GetPackageJsonEntrypointsHost'
+        ImportSpecifier
+          Identifier: ' HasInvalidatedLibResolutions'
+        ImportSpecifier
+          Identifier: ' HasInvalidatedResolutions'
+        ImportSpecifier
+          Identifier: ' HostCancellationToken'
+        ImportSpecifier
+          Identifier: ' IncompleteCompletionsCache'
+        ImportSpecifier
+          Identifier: ' InstallPackageOptions'
+        ImportSpecifier
+          Identifier: ' IScriptSnapshot'
+        ImportSpecifier
+          Identifier: ' JSDocParsingMode'
+        ImportSpecifier
+          Identifier: ' JsTyping'
+        ImportSpecifier
+          Identifier: ' LanguageService'
+        ImportSpecifier
+          Identifier: ' LanguageServiceHost'
+        ImportSpecifier
+          Identifier: ' ModuleResolutionCache'
+        ImportSpecifier
+          Identifier: ' ModuleResolutionHost'
+        ImportSpecifier
+          Identifier: ' ModuleSpecifierCache'
+        ImportSpecifier
+          Identifier: ' PackageJsonAutoImportPreference'
+        ImportSpecifier
+          Identifier: ' ParsedCommandLine'
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' PerformanceEvent'
+        ImportSpecifier
+          Identifier: ' PluginImport'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' ProgramUpdateLevel'
+        ImportSpecifier
+          Identifier: ' ProjectPackageJsonInfo'
+        ImportSpecifier
+          Identifier: ' ProjectReference'
+        ImportSpecifier
+          Identifier: ' ResolutionCache'
+        ImportSpecifier
+          Identifier: ' ResolvedModuleWithFailedLookupLocations'
+        ImportSpecifier
+          Identifier: ' ResolvedProjectReference'
+        ImportSpecifier
+          Identifier: ' ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+        ImportSpecifier
+          Identifier: ' ScriptKind'
+        ImportSpecifier
+          Identifier: ' SortedReadonlyArray'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' SourceFileLike'
+        ImportSpecifier
+          Identifier: ' SourceMapper'
+        ImportSpecifier
+          Identifier: ' StringLiteralLike'
+        ImportSpecifier
+          Identifier: ' SymlinkCache'
+        ImportSpecifier
+          Identifier: ' TypeAcquisition'
+        ImportSpecifier
+          Identifier: ' WatchDirectoryFlags'
+        ImportSpecifier
+          Identifier: ' WatchOptions'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' FileStats'
+        ImportSpecifier
+          Identifier: ' NormalizedPath'
+        ImportSpecifier
+          Identifier: ' PackageJsonCache'
+        ImportSpecifier
+          Identifier: ' PackageJsonWatcher'
+        ImportSpecifier
+          Identifier: ' ProjectOptions'
+        ImportSpecifier
+          Identifier: ' ProjectService'
+        ImportSpecifier
+          Identifier: ' ScriptInfo'
+        ImportSpecifier
+          Identifier: ' ServerHost'
+        ImportSpecifier
+          Identifier: ' Session'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' protocol'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ProjectKind'
+    EnumMember
+      Identifier: '
+    Inferred'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Configured'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    External'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    AutoImportProvider'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Auxiliary'
+      NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Mutable'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      MinusToken
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' countEachFileTypes'
+    Parameter
+      Identifier: 'infos'
+      ArrayType
+        TypeReference
+          Identifier: ' ScriptInfo'
+    Parameter
+      Identifier: ' includeSizes'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' FileStats'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' allRootFilesAreJsOrDts'
+    Parameter
+      Identifier: 'project'
+      TypeReference
+        Identifier: ' Project'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' allFilesAreJsOrDts'
+    Parameter
+      Identifier: 'project'
+      TypeReference
+        Identifier: ' Project'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasNoTypeScriptSource'
+    Parameter
+      Identifier: 'fileNames'
+      ArrayType
+        StringKeyword
+    BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ProjectFilesWithTSDiagnostics'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' protocol'
+          Identifier: 'ProjectFiles'
+    PropertySignature
+      Identifier: '
+    projectErrors'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PluginCreateInfo'
+    PropertySignature
+      Identifier: '
+    project'
+      TypeReference
+        Identifier: ' Project'
+    PropertySignature
+      Identifier: '
+    languageService'
+      TypeReference
+        Identifier: ' LanguageService'
+    PropertySignature
+      Identifier: '
+    languageServiceHost'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    PropertySignature
+      Identifier: '
+    serverHost'
+      TypeReference
+        Identifier: ' ServerHost'
+    PropertySignature
+      Identifier: '
+    session'
+      QuestionToken
+      TypeReference
+        Identifier: ' Session'
+        UnknownKeyword
+    PropertySignature
+      Identifier: '
+    config'
+      AnyKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PluginModule'
+    MethodSignature
+      Identifier: '
+    create'
+      Parameter
+        Identifier: 'createInfo'
+        TypeReference
+          Identifier: ' PluginCreateInfo'
+      TypeReference
+        Identifier: ' LanguageService'
+    MethodSignature
+      Identifier: '
+    getExternalFiles'
+      QuestionToken
+      Parameter
+        Identifier: 'proj'
+        TypeReference
+          Identifier: ' Project'
+      Parameter
+        Identifier: ' updateLevel'
+        TypeReference
+          Identifier: ' ProgramUpdateLevel'
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    onConfigurationChanged'
+      QuestionToken
+      Parameter
+        Identifier: 'config'
+        AnyKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PluginModuleWithName'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    module'
+      TypeReference
+        Identifier: ' PluginModule'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PluginModuleFactory'
+    FunctionType
+      Parameter
+        Identifier: 'mod'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    typescript'
+            TypeQuery
+              Identifier: ' ts'
+      TypeReference
+        Identifier: ' PluginModule'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PluginImportResult'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    pluginConfigEntry'
+      TypeReference
+        Identifier: ' PluginImport'
+    PropertySignature
+      Identifier: '
+    resolvedModule'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    errorLogs'
+      UnionType
+        ArrayType
+          StringKeyword
+        UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' BeginEnablePluginResult'
+    TypeReference
+      Identifier: ' PluginImportResult'
+      TypeReference
+        Identifier: 'PluginModuleFactory'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ProjectRootFile'
+    PropertySignature
+      Identifier: '
+    fileName'
+      TypeReference
+        Identifier: ' NormalizedPath'
+    PropertySignature
+      Identifier: '
+    info'
+      QuestionToken
+      TypeReference
+        Identifier: ' ScriptInfo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' EmitResult'
+    PropertySignature
+      Identifier: '
+    emitSkipped'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    diagnostics'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    AbstractKeyword
+    Identifier: ' Project'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' LanguageServiceHost'
+      ExpressionWithTypeArguments
+        Identifier: ' ModuleResolutionHost'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' projectKind'
+      TypeReference
+        Identifier: ' ProjectKind'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' projectService'
+      TypeReference
+        Identifier: ' ProjectService'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' compilerOptions'
+    PropertyDeclaration
+      Identifier: '
+    compileOnSaveEnabled'
+      BooleanKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' watchOptions'
+      UnionType
+        TypeReference
+          Identifier: ' WatchOptions'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' rootFilesMap'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' program'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' externalFiles'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' missingFilesMap'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' generatedFilesMap'
+    PropertyDeclaration
+      ProtectedKeyword
+      ReadonlyKeyword
+      Identifier: ' plugins'
+      ArrayType
+        TypeReference
+          Identifier: ' PluginModuleWithName'
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * This is map from files to unresolved imports in it
+     * Maop does not contain entries for files that do not have unresolved imports
+     * This helps in containing the set of files to invalidate
+     *
+     * @internal
+     */
+    cachedUnresolvedImportsPerFile'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        TypeOperator
+          ArrayType
+            StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    lastCachedUnresolvedImportsList'
+      UnionType
+        TypeReference
+          Identifier: ' SortedReadonlyArray'
+          StringKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' hasAddedorRemovedFiles'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' hasAddedOrRemovedSymlinks'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    lastFileExceededProgramSize'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' languageService'
+      TypeReference
+        Identifier: ' LanguageService'
+    PropertyDeclaration
+      Identifier: '
+    languageServiceEnabled'
+      BooleanKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' trace'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        VoidKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' realpath'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'path'
+          StringKeyword
+        StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    hasInvalidatedResolutions'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' HasInvalidatedResolutions'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    hasInvalidatedLibResolutions'
+      UnionType
+        TypeReference
+          Identifier: ' HasInvalidatedLibResolutions'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    resolutionCache'
+      TypeReference
+        Identifier: ' ResolutionCache'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' builderState'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' updatedFileNames'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' lastReportedFileNames'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' lastReportedVersion'
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * Current project's program version. (incremented everytime new program is created that is not complete reuse from the old one)
+     * This property is changed in 'updateGraph' based on the set of files in program
+     * @internal
+     */
+    projectProgramVersion'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * Current version of the project state. It is changed when:
+     * - new root file was added/removed
+     * - edit happen in some file that is currently included in the project.
+     * This property is different from projectStructureVersion since in most cases edits don't affect set of files in the project
+     * @internal
+     */
+    projectStateVersion'
+      NumberKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' projectErrors'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    initialLoadPending'
+      BooleanKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    dirty'
+      BooleanKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    typingFiles'
+      TypeReference
+        Identifier: ' SortedReadonlyArray'
+        StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' typingsCache'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' typingWatchers'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    originalConfiguredProjects'
+      UnionType
+        TypeReference
+          Identifier: ' Set'
+          TypeReference
+            Identifier: 'NormalizedPath'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    packageJsonWatches'
+      UnionType
+        TypeReference
+          Identifier: ' Set'
+          TypeReference
+            Identifier: 'PackageJsonWatcher'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    noDtsResolutionProject'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' AuxiliaryProject'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getResolvedProjectReferenceToRedirect'
+      Parameter
+        Identifier: '_fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' ResolvedProjectReference'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */ useSourceOfProjectReferenceRedirect'
+      QuestionToken
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */ getParsedCommandLine'
+      QuestionToken
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' ParsedCommandLine'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' cancellationToken'
+    MethodDeclaration
+      Identifier: '
+    isNonTsProject'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    isJsOnlyProject'
+      BooleanKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' resolveModule'
+      Parameter
+        Identifier: 'moduleName'
+        StringKeyword
+      Parameter
+        Identifier: ' initialDir'
+        StringKeyword
+      Parameter
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' ServerHost'
+      Parameter
+        Identifier: ' log'
+        FunctionType
+          Parameter
+            Identifier: 'message'
+            StringKeyword
+          VoidKeyword
+      UnionType
+        TypeLiteral
+        UndefinedKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' importServicePluginSync'
+      TypeParameter
+        Identifier: 'T'
+        TypeLiteral
+      Parameter
+        Identifier: 'pluginConfigEntry'
+        TypeReference
+          Identifier: ' PluginImport'
+      Parameter
+        Identifier: ' searchPaths'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' ServerHost'
+      Parameter
+        Identifier: ' log'
+        FunctionType
+          Parameter
+            Identifier: 'message'
+            StringKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' PluginImportResult'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' importServicePluginAsync'
+      TypeParameter
+        Identifier: 'T'
+        TypeLiteral
+      Parameter
+        Identifier: 'pluginConfigEntry'
+        TypeReference
+          Identifier: ' PluginImport'
+      Parameter
+        Identifier: ' searchPaths'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' ServerHost'
+      Parameter
+        Identifier: ' log'
+        FunctionType
+          Parameter
+            Identifier: 'message'
+            StringKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'PluginImportResult'
+          TypeReference
+            Identifier: 'T'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' currentDirectory'
+      StringKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' projectName'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    directoryStructureHost'
+      TypeReference
+        Identifier: ' DirectoryStructureHost'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' exportMapCache'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' changedFilesForExportMapCache'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' moduleSpecifierCache'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' symlinks'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    autoImportProviderHost'
+      UnionType
+        TypeReference
+          Identifier: ' AutoImportProviderProject'
+        LiteralType
+          FalseKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' typeAcquisition'
+      UnionType
+        TypeReference
+          Identifier: ' TypeAcquisition'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    createHash'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'data'
+              StringKeyword
+            StringKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal*/ preferNonRecursiveWatch'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' jsDocParsingMode'
+      UnionType
+        TypeReference
+          Identifier: ' JSDocParsingMode'
+        UndefinedKeyword
+    Constructor
+      Parameter
+        Identifier: 'projectName'
+        StringKeyword
+      Parameter
+        Identifier: ' projectKind'
+        TypeReference
+          Identifier: ' ProjectKind'
+      Parameter
+        Identifier: ' projectService'
+        TypeReference
+          Identifier: ' ProjectService'
+      Parameter
+        Identifier: ' hasExplicitListOfFiles'
+        BooleanKeyword
+      Parameter
+        Identifier: ' lastFileExceededProgramSize'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' compilerOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' compileOnSaveEnabled'
+        BooleanKeyword
+      Parameter
+        Identifier: ' watchOptions'
+        UnionType
+          TypeReference
+            Identifier: ' WatchOptions'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' directoryStructureHost'
+        TypeReference
+          Identifier: ' DirectoryStructureHost'
+      Parameter
+        Identifier: ' currentDirectory'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    isKnownTypesPackageName'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    installPackage'
+      Parameter
+        Identifier: 'options'
+        TypeReference
+          Identifier: ' InstallPackageOptions'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'ApplyCodeActionCommandResult'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getGlobalTypingsCacheLocation'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getSymlinkCache'
+      TypeReference
+        Identifier: ' SymlinkCache'
+    MethodDeclaration
+      Identifier: '
+    getCompilationSettings'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    MethodDeclaration
+      Identifier: '
+    getCompilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    MethodDeclaration
+      Identifier: '
+    getNewLine'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    getProjectVersion'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    getProjectReferences'
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' ProjectReference'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    getScriptFileNames'
+      ArrayType
+        StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' getOrCreateScriptInfoAndAttachToProject'
+    MethodDeclaration
+      Identifier: '
+    getScriptKind'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' ScriptKind'
+    MethodDeclaration
+      Identifier: '
+    getScriptVersion'
+      Parameter
+        Identifier: 'filename'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    getScriptSnapshot'
+      Parameter
+        Identifier: 'filename'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' IScriptSnapshot'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    getCancellationToken'
+      TypeReference
+        Identifier: ' HostCancellationToken'
+    MethodDeclaration
+      Identifier: '
+    getCurrentDirectory'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    getDefaultLibFileName'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    useCaseSensitiveFileNames'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    readDirectory'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' extensions'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' exclude'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' include'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' depth'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    readFile'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    writeFile'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' content'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    fileExists'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    resolveModuleNameLiterals'
+      Parameter
+        Identifier: 'moduleLiterals'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' StringLiteralLike'
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' containingSourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' reusedNames'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' StringLiteralLike'
+          UndefinedKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ResolvedModuleWithFailedLookupLocations'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getModuleResolutionCache'
+      UnionType
+        TypeReference
+          Identifier: ' ModuleResolutionCache'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    resolveTypeReferenceDirectiveReferences'
+      TypeParameter
+        Identifier: 'T'
+        UnionType
+          StringKeyword
+          TypeReference
+            Identifier: ' FileReference'
+      Parameter
+        Identifier: 'typeDirectiveReferences'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' containingSourceFile'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' reusedNames'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          UndefinedKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    resolveLibrary'
+      Parameter
+        Identifier: 'libraryName'
+        StringKeyword
+      Parameter
+        Identifier: ' resolveFrom'
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' libFileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' ResolvedModuleWithFailedLookupLocations'
+    MethodDeclaration
+      Identifier: '
+    directoryExists'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    getDirectories'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      ArrayType
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getCachedDirectoryStructureHost'
+      TypeReference
+        Identifier: ' CachedDirectoryStructureHost'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    toPath'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' Path'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    watchDirectoryOfFailedLookupLocation'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      Parameter
+        Identifier: ' cb'
+        TypeReference
+          Identifier: ' DirectoryWatcherCallback'
+      Parameter
+        Identifier: ' flags'
+        TypeReference
+          Identifier: ' WatchDirectoryFlags'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    watchAffectingFileLocation'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      Parameter
+        Identifier: ' cb'
+        TypeReference
+          Identifier: ' FileWatcherCallback'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    clearInvalidateResolutionOfFailedLookupTimer'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    scheduleInvalidateResolutionsOfFailedLookupLocations'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    invalidateResolutionsOfFailedLookupLocations'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onInvalidatedResolution'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    watchTypeRootsDirectory'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      Parameter
+        Identifier: ' cb'
+        TypeReference
+          Identifier: ' DirectoryWatcherCallback'
+      Parameter
+        Identifier: ' flags'
+        TypeReference
+          Identifier: ' WatchDirectoryFlags'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    hasChangedAutomaticTypeDirectiveNames'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onChangedAutomaticTypeDirectiveNames'
+      VoidKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    globalCacheResolutionModuleName'
+      TypeQuery
+        QualifiedName
+          Identifier: ' JsTyping'
+          Identifier: 'nonRelativeModuleNameForTypingCache'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    fileIsOpen'
+      Parameter
+        Identifier: 'filePath'
+        TypeReference
+          Identifier: ' Path'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    writeLog'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    log'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    error'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' setInternalCompilerOptionsForEmittingJsFiles'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Get the errors that dont have any file name associated
+     */
+    getGlobalProjectErrors'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Get all the project errors
+     */
+    getAllProjectErrors'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    MethodDeclaration
+      Identifier: '
+    setProjectErrors'
+      Parameter
+        Identifier: 'projectErrors'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' Diagnostic'
+          UndefinedKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    getLanguageService'
+      Parameter
+        Identifier: 'ensureSynchronized'
+        QuestionToken
+        BooleanKeyword
+      TypeReference
+        Identifier: ' LanguageService'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getSourceMapper'
+      TypeReference
+        Identifier: ' SourceMapper'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    clearSourceMapperCache'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getDocumentPositionMapper'
+      Parameter
+        Identifier: 'generatedFileName'
+        StringKeyword
+      Parameter
+        Identifier: ' sourceFileName'
+        QuestionToken
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' DocumentPositionMapper'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getSourceFileLike'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' SourceFileLike'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    shouldEmitFile'
+      Parameter
+        Identifier: 'scriptInfo'
+        UnionType
+          TypeReference
+            Identifier: ' ScriptInfo'
+          UndefinedKeyword
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    getCompileOnSaveAffectedFileList'
+      Parameter
+        Identifier: 'scriptInfo'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      ArrayType
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Returns true if emit was conducted
+     */
+    emitFile'
+      Parameter
+        Identifier: 'scriptInfo'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      Parameter
+        Identifier: ' writeFile'
+        FunctionType
+          Parameter
+            Identifier: 'path'
+            StringKeyword
+          Parameter
+            Identifier: ' data'
+            StringKeyword
+          Parameter
+            Identifier: ' writeByteOrderMark'
+            QuestionToken
+            BooleanKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' EmitResult'
+    MethodDeclaration
+      Identifier: '
+    enableLanguageService'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    cleanupProgram'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    disableLanguageService'
+      Parameter
+        Identifier: 'lastFileExceededProgramSize'
+        QuestionToken
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    getProjectName'
+      StringKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' removeLocalTypingsFromTypeAcquisition'
+      Parameter
+        Identifier: 'newTypeAcquisition'
+        TypeReference
+          Identifier: ' TypeAcquisition'
+      TypeReference
+        Identifier: ' TypeAcquisition'
+    MethodDeclaration
+      Identifier: '
+    getExternalFiles'
+      Parameter
+        Identifier: 'updateLevel'
+        QuestionToken
+        TypeReference
+          Identifier: ' ProgramUpdateLevel'
+      TypeReference
+        Identifier: ' SortedReadonlyArray'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    getSourceFile'
+      Parameter
+        Identifier: 'path'
+        TypeReference
+          Identifier: ' Path'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getSourceFileOrConfigFile'
+      Parameter
+        Identifier: 'path'
+        TypeReference
+          Identifier: ' Path'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    close'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' detachScriptInfoIfNotRoot'
+    MethodDeclaration
+      Identifier: '
+    isClosed'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    hasRoots'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    isOrphan'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    getRootFiles'
+      ArrayType
+        TypeReference
+          Identifier: ' NormalizedPath'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getRootFilesMap'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        TypeReference
+          Identifier: ' ProjectRootFile'
+    MethodDeclaration
+      Identifier: '
+    getRootScriptInfos'
+      ArrayType
+        TypeReference
+          Identifier: ' ScriptInfo'
+    MethodDeclaration
+      Identifier: '
+    getScriptInfos'
+      ArrayType
+        TypeReference
+          Identifier: ' ScriptInfo'
+    MethodDeclaration
+      Identifier: '
+    getExcludedFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' NormalizedPath'
+    MethodDeclaration
+      Identifier: '
+    getFileNames'
+      Parameter
+        Identifier: 'excludeFilesFromExternalLibraries'
+        QuestionToken
+        BooleanKeyword
+      Parameter
+        Identifier: ' excludeConfigFiles'
+        QuestionToken
+        BooleanKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' NormalizedPath'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getFileNamesWithRedirectInfo'
+      Parameter
+        Identifier: 'includeProjectReferenceRedirectInfo'
+        BooleanKeyword
+      ArrayType
+        TypeReference
+          QualifiedName
+            Identifier: ' protocol'
+            Identifier: 'FileWithProjectReferenceRedirectInfo'
+    MethodDeclaration
+      Identifier: '
+    hasConfigFile'
+      Parameter
+        Identifier: 'configFilePath'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    containsScriptInfo'
+      Parameter
+        Identifier: 'info'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    containsFile'
+      Parameter
+        Identifier: 'filename'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      Parameter
+        Identifier: ' requireOpen'
+        QuestionToken
+        BooleanKeyword
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    isRoot'
+      Parameter
+        Identifier: 'info'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    addRoot'
+      Parameter
+        Identifier: 'info'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      Parameter
+        Identifier: ' fileName'
+        QuestionToken
+        TypeReference
+          Identifier: ' NormalizedPath'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    addMissingFileRoot'
+      Parameter
+        Identifier: 'fileName'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    removeFile'
+      Parameter
+        Identifier: 'info'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      Parameter
+        Identifier: ' fileExists'
+        BooleanKeyword
+      Parameter
+        Identifier: ' detachFromProject'
+        BooleanKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    registerFileUpdate'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    markFileAsDirty'
+      Parameter
+        Identifier: 'changedFile'
+        TypeReference
+          Identifier: ' Path'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    markAsDirty'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    markAutoImportProviderAsDirty'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onAutoImportProviderSettingsChanged'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onPackageJsonChange'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onFileAddedOrRemoved'
+      Parameter
+        Identifier: 'isSymlink'
+        UnionType
+          BooleanKeyword
+          UndefinedKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onDiscoveredSymlink'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onReleaseOldSourceFile'
+      Parameter
+        Identifier: 'oldSourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' _oldOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' hasSourceFileByPath'
+        BooleanKeyword
+      Parameter
+        Identifier: ' newSourceFileByResolvedPath'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          UndefinedKeyword
+      VoidKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    updateFromProjectInProgress'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    updateFromProject'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Updates set of files that contribute to this project
+     * @returns: true if set of files in the project stays the same and false - otherwise.
+     */
+    updateGraph'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    enqueueInstallTypingsForProject'
+      Parameter
+        Identifier: 'forceRefresh'
+        BooleanKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    updateTypingFiles'
+      Parameter
+        Identifier: 'compilerOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' typeAcquisition'
+        TypeReference
+          Identifier: ' TypeAcquisition'
+      Parameter
+        Identifier: ' unresolvedImports'
+        TypeReference
+          Identifier: ' SortedReadonlyArray'
+          StringKeyword
+      Parameter
+        Identifier: ' newTypings'
+        ArrayType
+          StringKeyword
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' closeWatchingTypingLocations'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' onTypingInstallerWatchInvoke'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    watchTypingLocations'
+      Parameter
+        Identifier: 'files'
+        UnionType
+          TypeOperator
+            ArrayType
+              StringKeyword
+          UndefinedKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getCurrentProgram'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' removeExistingTypings'
+      Parameter
+        Identifier: 'include'
+        ArrayType
+          StringKeyword
+      ArrayType
+        StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' updateGraphWorker'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    sendPerformanceEvent'
+      Parameter
+        Identifier: 'kind'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' PerformanceEvent'
+          LiteralType
+            StringLiteral
+      Parameter
+        Identifier: ' durationMs'
+        NumberKeyword
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' detachScriptInfoFromProject'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' addMissingFileWatcher'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' isWatchedMissingFile'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    addGeneratedFileWatch'
+      Parameter
+        Identifier: 'generatedFile'
+        StringKeyword
+      Parameter
+        Identifier: ' sourceFile'
+        StringKeyword
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' createGeneratedFileWatcher'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' isValidGeneratedFileWatcher'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' clearGeneratedFileWatch'
+    MethodDeclaration
+      Identifier: '
+    getScriptInfoForNormalizedPath'
+      Parameter
+        Identifier: 'fileName'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptInfo'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    getScriptInfo'
+      Parameter
+        Identifier: 'uncheckedFileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' ScriptInfo'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    filesToString'
+      Parameter
+        Identifier: 'writeProjectFileNames'
+        BooleanKeyword
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' filesToStringWorker'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    print'
+      Parameter
+        Identifier: 'writeProjectFileNames'
+        BooleanKeyword
+      Parameter
+        Identifier: ' writeFileExplaination'
+        BooleanKeyword
+      Parameter
+        Identifier: ' writeFileVersionAndText'
+        BooleanKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    setCompilerOptions'
+      Parameter
+        Identifier: 'compilerOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    setWatchOptions'
+      Parameter
+        Identifier: 'watchOptions'
+        UnionType
+          TypeReference
+            Identifier: ' WatchOptions'
+          UndefinedKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getWatchOptions'
+      UnionType
+        TypeReference
+          Identifier: ' WatchOptions'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    setTypeAcquisition'
+      Parameter
+        Identifier: 'newTypeAcquisition'
+        UnionType
+          TypeReference
+            Identifier: ' TypeAcquisition'
+          UndefinedKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    getTypeAcquisition'
+      TypeReference
+        Identifier: ' TypeAcquisition'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getChangesSinceVersion'
+      Parameter
+        Identifier: 'lastKnownVersion'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' includeProjectReferenceRedirectInfo'
+        QuestionToken
+        BooleanKeyword
+      TypeReference
+        Identifier: ' ProjectFilesWithTSDiagnostics'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' removeRoot'
+      Parameter
+        Identifier: 'info'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    isSourceOfProjectReferenceRedirect'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      BooleanKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' getGlobalPluginSearchPaths'
+      ArrayType
+        StringKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' enableGlobalPlugins'
+      Parameter
+        Identifier: 'options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      VoidKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' enablePlugin'
+      Parameter
+        Identifier: 'pluginConfigEntry'
+        TypeReference
+          Identifier: ' PluginImport'
+      Parameter
+        Identifier: ' searchPaths'
+        ArrayType
+          StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    enableProxy'
+      Parameter
+        Identifier: 'pluginModuleFactory'
+        TypeReference
+          Identifier: ' PluginModuleFactory'
+      Parameter
+        Identifier: ' configEntry'
+        TypeReference
+          Identifier: ' PluginImport'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onPluginConfigurationChanged'
+      Parameter
+        Identifier: 'pluginName'
+        StringKeyword
+      Parameter
+        Identifier: ' configuration'
+        AnyKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** Starts a new check for diagnostics. Call this if some file has updated that would cause diagnostics to be changed. */
+    refreshDiagnostics'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getPackageJsonsVisibleToFile'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' rootDir'
+        QuestionToken
+        StringKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ProjectPackageJsonInfo'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getNearestAncestorDirectoryWithPackageJson'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getPackageJsonsForAutoImport'
+      Parameter
+        Identifier: 'rootDir'
+        QuestionToken
+        StringKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ProjectPackageJsonInfo'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getPackageJsonCache'
+      TypeReference
+        Identifier: ' PackageJsonCache'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getCachedExportInfoMap'
+      TypeReference
+        Identifier: ' ExportInfoMap'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    clearCachedExportInfoMap'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getModuleSpecifierCache'
+      TypeReference
+        Identifier: ' ModuleSpecifierCache'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    includePackageJsonAutoImports'
+      TypeReference
+        Identifier: ' PackageJsonAutoImportPreference'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getHostForAutoImportProvider'
+      TypeReference
+        Identifier: ' GetPackageJsonEntrypointsHost'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getPackageJsonAutoImportProvider'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' isDefaultProjectForOpenFiles'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    watchNodeModulesForPackageJsonChanges'
+      Parameter
+        Identifier: 'directoryPath'
+        StringKeyword
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getIncompleteCompletionsCache'
+      TypeReference
+        Identifier: ' IncompleteCompletionsCache'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getNoDtsResolutionProject'
+      Parameter
+        Identifier: 'rootFile'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      TypeReference
+        Identifier: ' AuxiliaryProject'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    runWithTemporaryFileUpdate'
+      Parameter
+        Identifier: 'rootFile'
+        StringKeyword
+      Parameter
+        Identifier: ' updatedText'
+        StringKeyword
+      Parameter
+        Identifier: ' cb'
+        FunctionType
+          Parameter
+            Identifier: 'updatedProgram'
+            TypeReference
+              Identifier: ' Program'
+          Parameter
+            Identifier: ' originalProgram'
+            UnionType
+              TypeReference
+                Identifier: ' Program'
+              UndefinedKeyword
+          Parameter
+            Identifier: ' updatedFile'
+            TypeReference
+              Identifier: ' SourceFile'
+          VoidKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getCompilerOptionsForNoDtsResolutionProject'
+      TypeReference
+        Identifier: ' CompilerOptions'
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' InferredProject'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Project'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _isJsInferredProject'
+    MethodDeclaration
+      Identifier: '
+    toggleJsInferredProject'
+      Parameter
+        Identifier: 'isJsInferredProject'
+        BooleanKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    setCompilerOptions'
+      Parameter
+        Identifier: 'options'
+        QuestionToken
+        TypeReference
+          Identifier: ' CompilerOptions'
+      VoidKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' projectRootPath'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' canonicalCurrentDirectory'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Constructor
+      Parameter
+        Identifier: 'projectService'
+        TypeReference
+          Identifier: ' ProjectService'
+      Parameter
+        Identifier: ' compilerOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' watchOptions'
+        UnionType
+          TypeReference
+            Identifier: ' WatchOptions'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' projectRootPath'
+        UnionType
+          TypeReference
+            Identifier: ' NormalizedPath'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' currentDirectory'
+        StringKeyword
+      Parameter
+        Identifier: ' typeAcquisition'
+        UnionType
+          TypeReference
+            Identifier: ' TypeAcquisition'
+          UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    addRoot'
+      Parameter
+        Identifier: 'info'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    removeRoot'
+      Parameter
+        Identifier: 'info'
+        TypeReference
+          Identifier: ' ScriptInfo'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    isOrphan'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    isProjectWithSingleRoot'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    close'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    getTypeAcquisition'
+      TypeReference
+        Identifier: ' TypeAcquisition'
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' AuxiliaryProject'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Project'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */ rootFile'
+      UnionType
+        TypeReference
+          Identifier: ' NormalizedPath'
+        UndefinedKeyword
+    Constructor
+      Parameter
+        Identifier: 'hostProject'
+        TypeReference
+          Identifier: ' Project'
+    MethodDeclaration
+      Identifier: '
+    isOrphan'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    scheduleInvalidateResolutionsOfFailedLookupLocations'
+      VoidKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' AutoImportProviderProject'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Project'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' hostProject'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' maxDependencies'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' getRootFileNames'
+      Parameter
+        Identifier: 'dependencySelection'
+        TypeReference
+          Identifier: ' PackageJsonAutoImportPreference'
+      Parameter
+        Identifier: ' hostProject'
+        TypeReference
+          Identifier: ' Project'
+      Parameter
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' GetPackageJsonEntrypointsHost'
+      Parameter
+        Identifier: ' compilerOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      ArrayType
+        StringKeyword
+    PropertyDeclaration
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' compilerOptionsOverrides'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' create'
+      Parameter
+        Identifier: 'dependencySelection'
+        TypeReference
+          Identifier: ' PackageJsonAutoImportPreference'
+      Parameter
+        Identifier: ' hostProject'
+        TypeReference
+          Identifier: ' Project'
+      Parameter
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' GetPackageJsonEntrypointsHost'
+      UnionType
+        TypeReference
+          Identifier: ' AutoImportProviderProject'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' rootFileNames'
+    Constructor
+      Parameter
+        Identifier: 'hostProject'
+        TypeReference
+          Identifier: ' Project'
+      Parameter
+        Identifier: ' initialRootNames'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' compilerOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    isEmpty'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    isOrphan'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    updateGraph'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    scheduleInvalidateResolutionsOfFailedLookupLocations'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    hasRoots'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    markAsDirty'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    getScriptFileNames'
+      ArrayType
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    getLanguageService'
+      NeverKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onAutoImportProviderSettingsChanged'
+      NeverKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onPackageJsonChange'
+      NeverKeyword
+    MethodDeclaration
+      Identifier: '
+    getHostForAutoImportProvider'
+      NeverKeyword
+    MethodDeclaration
+      Identifier: '
+    getProjectReferences'
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' ProjectReference'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    includePackageJsonAutoImports'
+      TypeReference
+        Identifier: ' PackageJsonAutoImportPreference'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getSymlinkCache'
+      TypeReference
+        Identifier: ' SymlinkCache'
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getModuleResolutionCache'
+      UnionType
+        TypeReference
+          Identifier: ' ModuleResolutionCache'
+        UndefinedKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ConfiguredProject'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Project'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' canonicalConfigFilePath'
+      TypeReference
+        Identifier: ' NormalizedPath'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    pendingUpdateLevel'
+      TypeReference
+        Identifier: ' ProgramUpdateLevel'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    pendingUpdateReason'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    openFileWatchTriggered'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' ProgramUpdateLevel'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    parsedCommandLine'
+      UnionType
+        TypeReference
+          Identifier: ' ParsedCommandLine'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    resolvedChildConfigs'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'NormalizedPath'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' projectReferences'
+    PropertyDeclaration
+      Identifier: '
+    /**
+     * Potential project references before the project is actually loaded (read config file)
+     *
+     * @internal
+     */
+    potentialProjectReferences'
+      UnionType
+        TypeReference
+          Identifier: ' Set'
+          TypeReference
+            Identifier: 'NormalizedPath'
+        UndefinedKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    projectOptions'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' ProjectOptions'
+        LiteralType
+          TrueKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    initialLoadPending'
+      BooleanKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    sendLoadingProjectFinish'
+      BooleanKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' compilerHost'
+      QuestionToken
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    configDiagDiagnosticsReported'
+      QuestionToken
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    triggerFileForConfigFileDiag'
+      QuestionToken
+      TypeReference
+        Identifier: ' NormalizedPath'
+    PropertyDeclaration
+      Identifier: '
+    /** @internal */
+    deferredClose'
+      QuestionToken
+      BooleanKeyword
+    Constructor
+      Parameter
+        Identifier: 'configFileName'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      Parameter
+        Identifier: ' canonicalConfigFilePath'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      Parameter
+        Identifier: ' projectService'
+        TypeReference
+          Identifier: ' ProjectService'
+      Parameter
+        Identifier: ' cachedDirectoryStructureHost'
+        TypeReference
+          Identifier: ' CachedDirectoryStructureHost'
+      Parameter
+        Identifier: ' pendingUpdateReason'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    setCompilerHost'
+      Parameter
+        Identifier: 'host'
+        TypeReference
+          Identifier: ' CompilerHost'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getCompilerHost'
+      UnionType
+        TypeReference
+          Identifier: ' CompilerHost'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    useSourceOfProjectReferenceRedirect'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getParsedCommandLine'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' ParsedCommandLine'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    onReleaseParsedCommandLine'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' releaseParsedConfig'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * If the project has reload from disk pending, it reloads (and then updates graph as part of that) instead of just updating the graph
+     * @returns: true if set of files in the project stays the same and false - otherwise.
+     */
+    updateGraph'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getCachedDirectoryStructureHost'
+      TypeReference
+        Identifier: ' CachedDirectoryStructureHost'
+    MethodDeclaration
+      Identifier: '
+    getConfigFilePath'
+      TypeReference
+        Identifier: ' NormalizedPath'
+    MethodDeclaration
+      Identifier: '
+    getProjectReferences'
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' ProjectReference'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    updateReferences'
+      Parameter
+        Identifier: 'refs'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' ProjectReference'
+          UndefinedKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    setPotentialProjectReference'
+      Parameter
+        Identifier: 'canonicalConfigPath'
+        TypeReference
+          Identifier: ' NormalizedPath'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    getResolvedProjectReferenceToRedirect'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' ResolvedProjectReference'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    forEachResolvedProjectReference'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'cb'
+        FunctionType
+          Parameter
+            Identifier: 'resolvedProjectReference'
+            TypeReference
+              Identifier: ' ResolvedProjectReference'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    enablePluginsWithOptions'
+      Parameter
+        Identifier: 'options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Get the errors that dont have any file name associated
+     */
+    getGlobalProjectErrors'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Get all the project errors
+     */
+    getAllProjectErrors'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    MethodDeclaration
+      Identifier: '
+    setProjectErrors'
+      Parameter
+        Identifier: 'projectErrors'
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    close'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    markAsDirty'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    isOrphan'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    getEffectiveTypeRoots'
+      ArrayType
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    /** @internal */
+    updateErrorOnNoInputFiles'
+      Parameter
+        Identifier: 'parsedCommandLine'
+        TypeReference
+          Identifier: ' ParsedCommandLine'
+      VoidKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ExternalProject'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Project'
+    PropertyDeclaration
+      Identifier: '
+    externalProjectName'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    compileOnSaveEnabled'
+      BooleanKeyword
+    PropertyDeclaration
+      Identifier: '
+    excludedFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' NormalizedPath'
+    Constructor
+      Parameter
+        Identifier: 'externalProjectName'
+        StringKeyword
+      Parameter
+        Identifier: ' projectService'
+        TypeReference
+          Identifier: ' ProjectService'
+      Parameter
+        Identifier: ' compilerOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' lastFileExceededProgramSize'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' compileOnSaveEnabled'
+        BooleanKeyword
+      Parameter
+        Identifier: ' projectFilePath'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' watchOptions'
+        UnionType
+          TypeReference
+            Identifier: ' WatchOptions'
+          UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    updateGraph'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    getExcludedFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' NormalizedPath'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isInferredProject'
+    Parameter
+      Identifier: 'project'
+      TypeReference
+        Identifier: ' Project'
+    TypePredicate
+      Identifier: ' project'
+      TypeReference
+        Identifier: ' InferredProject'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isConfiguredProject'
+    Parameter
+      Identifier: 'project'
+      TypeReference
+        Identifier: ' Project'
+    TypePredicate
+      Identifier: ' project'
+      TypeReference
+        Identifier: ' ConfiguredProject'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isExternalProject'
+    Parameter
+      Identifier: 'project'
+      TypeReference
+        Identifier: ' Project'
+    TypePredicate
+      Identifier: ' project'
+      TypeReference
+        Identifier: ' ExternalProject'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isBackgroundProject'
+    Parameter
+      Identifier: 'project'
+      TypeReference
+        Identifier: ' Project'
+    TypePredicate
+      Identifier: ' project'
+      UnionType
+        TypeReference
+          Identifier: ' AutoImportProviderProject'
+        TypeReference
+          Identifier: ' AuxiliaryProject'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isProjectDeferredClose'
+    Parameter
+      Identifier: 'project'
+      TypeReference
+        Identifier: ' Project'
+    TypePredicate
+      Identifier: ' project'
+      TypeReference
+        Identifier: ' ConfiguredProject'

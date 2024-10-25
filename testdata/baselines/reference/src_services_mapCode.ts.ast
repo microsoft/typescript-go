@@ -1,0 +1,1307 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Block'
+        ImportSpecifier
+          Identifier: '
+    ClassElement'
+        ImportSpecifier
+          Identifier: '
+    ClassLikeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    createSourceFile'
+        ImportSpecifier
+          Identifier: '
+    FileTextChanges'
+        ImportSpecifier
+          Identifier: '
+    find'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    findLast'
+        ImportSpecifier
+          Identifier: '
+    flatten'
+        ImportSpecifier
+          Identifier: '
+    forEach'
+        ImportSpecifier
+          Identifier: '
+    formatting'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isBlock'
+        ImportSpecifier
+          Identifier: '
+    isClassElement'
+        ImportSpecifier
+          Identifier: '
+    isClassLike'
+        ImportSpecifier
+          Identifier: '
+    isForInOrOfStatement'
+        ImportSpecifier
+          Identifier: '
+    isForStatement'
+        ImportSpecifier
+          Identifier: '
+    isIfStatement'
+        ImportSpecifier
+          Identifier: '
+    isInterfaceDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isLabeledStatement'
+        ImportSpecifier
+          Identifier: '
+    isNamedDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isSourceFile'
+        ImportSpecifier
+          Identifier: '
+    isTypeElement'
+        ImportSpecifier
+          Identifier: '
+    isWhileStatement'
+        ImportSpecifier
+          Identifier: '
+    LanguageServiceHost'
+        ImportSpecifier
+          Identifier: '
+    Mutable'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeArray'
+        ImportSpecifier
+          Identifier: '
+    or'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    Statement'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TextSpan'
+        ImportSpecifier
+          Identifier: '
+    TypeElement'
+        ImportSpecifier
+          Identifier: '
+    UserPreferences'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ChangeTracker'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' mapCode'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    contents'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: '
+    focusLocations'
+      UnionType
+        ArrayType
+          ArrayType
+            TypeReference
+              Identifier: ' TextSpan'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: '
+    formatContext'
+      TypeReference
+        QualifiedName
+          Identifier: ' formatting'
+          Identifier: 'FormatContext'
+    Parameter
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    ArrayType
+      TypeReference
+        Identifier: ' FileTextChanges'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' textChanges'
+              Identifier: 'ChangeTracker'
+            Identifier: 'with'
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' host'
+            ShorthandPropertyAssignment
+              Identifier: ' formatContext'
+            ShorthandPropertyAssignment
+              Identifier: ' preferences'
+          ArrowFunction
+            Parameter
+              Identifier: '
+        changeTracker'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' parsed'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' contents'
+                        Identifier: 'map'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'c'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' parse'
+                          Identifier: 'sourceFile'
+                          Identifier: ' c'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' flattenedLocations'
+                    BinaryExpression
+                      Identifier: ' focusLocations'
+                      AmpersandAmpersandToken
+                      CallExpression
+                        Identifier: ' flatten'
+                        Identifier: 'focusLocations'
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' nodes'
+                Identifier: ' parsed'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                placeNodeGroup'
+                      Identifier: '
+                    sourceFile'
+                      Identifier: '
+                    changeTracker'
+                      Identifier: '
+                    nodes'
+                      Identifier: '
+                    flattenedLocations'
+  FunctionDeclaration
+    Identifier: ' parse'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' content'
+      StringKeyword
+    TypeReference
+      Identifier: ' NodeArray'
+      TypeReference
+        Identifier: 'Node'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nodeKinds'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            parse'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: '
+                createSourceFile'
+                      StringLiteral
+                      Identifier: '
+                    content'
+                      PropertyAccessExpression
+                        Identifier: '
+                    sourceFile'
+                        Identifier: 'languageVersion'
+                      TrueKeyword
+                      PropertyAccessExpression
+                        Identifier: '
+                    sourceFile'
+                        Identifier: 'scriptKind'
+                PropertyAssignment
+                  Identifier: '
+            body'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'sf'
+                      TypeReference
+                        Identifier: ' SourceFile'
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      Identifier: ' sf'
+                      Identifier: 'statements'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            parse'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: '
+                createSourceFile'
+                      StringLiteral
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'content'
+                          TemplateTail
+                      PropertyAccessExpression
+                        Identifier: '
+                    sourceFile'
+                        Identifier: 'languageVersion'
+                      TrueKeyword
+                      PropertyAccessExpression
+                        Identifier: '
+                    sourceFile'
+                        Identifier: 'scriptKind'
+                PropertyAssignment
+                  Identifier: '
+            body'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'cw'
+                      TypeReference
+                        Identifier: ' SourceFile'
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'cw'
+                              Identifier: 'statements'
+                            NumericLiteral
+                          TypeReference
+                            Identifier: ' ClassLikeDeclaration'
+                      Identifier: 'members'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' parsedNodes'
+            ArrayLiteralExpression
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' parse'
+              BindingElement
+                Identifier: ' body'
+        Identifier: ' nodeKinds'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sourceFile'
+                CallExpression
+                  Identifier: ' parse'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' bod'
+                CallExpression
+                  Identifier: ' body'
+                  Identifier: 'sourceFile'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'bod'
+                Identifier: 'length'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' sourceFile'
+                    Identifier: 'parseDiagnostics'
+                  Identifier: 'length'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+            Block
+              ReturnStatement
+                Identifier: ' bod'
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'bod'
+                Identifier: 'length'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            // Otherwise, we'll need to look at others.
+            parsedNodes'
+                      Identifier: 'push'
+                    ObjectLiteralExpression
+                      ShorthandPropertyAssignment
+                        Identifier: ' sourceFile'
+                      PropertyAssignment
+                        Identifier: ' body'
+                        Identifier: ' bod'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    // Heuristic: fewer errors = more likely to be the right kind.
+    parsedNodes'
+            Identifier: 'sort'
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            Parameter
+              Identifier: ' b'
+            EqualsGreaterThanToken
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            a'
+                    Identifier: 'sourceFile'
+                  Identifier: 'parseDiagnostics'
+                Identifier: 'length'
+              MinusToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            b'
+                    Identifier: 'sourceFile'
+                  Identifier: 'parseDiagnostics'
+                Identifier: 'length'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' body'
+            ElementAccessExpression
+              Identifier: ' parsedNodes'
+              NumericLiteral
+      ReturnStatement
+        Identifier: ' body'
+  FunctionDeclaration
+    Identifier: ' placeNodeGroup'
+    Parameter
+      Identifier: '
+    originalFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    changeTracker'
+      TypeReference
+        Identifier: ' ChangeTracker'
+    Parameter
+      Identifier: '
+    changes'
+      TypeReference
+        Identifier: ' NodeArray'
+        TypeReference
+          Identifier: 'Node'
+    Parameter
+      Identifier: '
+    focusLocations'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isClassElement'
+            ElementAccessExpression
+              Identifier: 'changes'
+              NumericLiteral
+          BarBarToken
+          CallExpression
+            Identifier: ' isTypeElement'
+            ElementAccessExpression
+              Identifier: 'changes'
+              NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        placeClassNodeGroup'
+              Identifier: '
+            originalFile'
+              Identifier: '
+            changeTracker'
+              AsExpression
+                Identifier: '
+            changes'
+                TypeReference
+                  Identifier: ' NodeArray'
+                  TypeReference
+                    Identifier: 'ClassElement'
+              Identifier: '
+            focusLocations'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        placeStatements'
+              Identifier: '
+            originalFile'
+              Identifier: '
+            changeTracker'
+              AsExpression
+                Identifier: '
+            changes'
+                TypeReference
+                  Identifier: ' NodeArray'
+                  TypeReference
+                    Identifier: 'Statement'
+              Identifier: '
+            focusLocations'
+  FunctionDeclaration
+    Identifier: ' placeClassNodeGroup'
+    Parameter
+      Identifier: '
+    originalFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    changeTracker'
+      TypeReference
+        Identifier: ' ChangeTracker'
+    Parameter
+      Identifier: '
+    changes'
+      UnionType
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'ClassElement'
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'TypeElement'
+    Parameter
+      Identifier: '
+    focusLocations'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' classOrInterface'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'focusLocations'
+          BarBarToken
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'focusLocations'
+              Identifier: 'length'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        classOrInterface'
+              EqualsToken
+              CallExpression
+                Identifier: ' find'
+                PropertyAccessExpression
+                  Identifier: 'originalFile'
+                  Identifier: 'statements'
+                CallExpression
+                  Identifier: ' or'
+                  Identifier: 'isClassLike'
+                  Identifier: ' isInterfaceDeclaration'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        classOrInterface'
+              EqualsToken
+              CallExpression
+                Identifier: ' forEach'
+                Identifier: 'focusLocations'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' location'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: '
+            findAncestor'
+                    CallExpression
+                      Identifier: '
+                getTokenAtPosition'
+                      Identifier: 'originalFile'
+                      PropertyAccessExpression
+                        Identifier: ' location'
+                        Identifier: 'start'
+                    CallExpression
+                      Identifier: '
+                or'
+                      Identifier: 'isClassLike'
+                      Identifier: ' isInterfaceDeclaration'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'classOrInterface'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' firstMatch'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' classOrInterface'
+                  Identifier: 'members'
+                Identifier: 'find'
+              ArrowFunction
+                Parameter
+                  Identifier: 'member'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' changes'
+                    Identifier: 'some'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'change'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' matchNode'
+                      Identifier: 'change'
+                      Identifier: ' member'
+      IfStatement
+        Identifier: 'firstMatch'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lastMatch'
+                NonNullExpression
+                  CallExpression
+                    Identifier: ' findLast'
+                    AsExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            classOrInterface'
+                        Identifier: 'members'
+                      TypeReference
+                        Identifier: ' NodeArray'
+                        UnionType
+                          TypeReference
+                            Identifier: 'ClassElement'
+                          TypeReference
+                            Identifier: ' TypeElement'
+                    ArrowFunction
+                      Parameter
+                        Identifier: '
+            member'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' changes'
+                          Identifier: 'some'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'change'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            Identifier: ' matchNode'
+                            Identifier: 'change'
+                            Identifier: ' member'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        forEach'
+              Identifier: 'changes'
+              Identifier: ' wipeNode'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changeTracker'
+                Identifier: 'replaceNodeRangeWithNodes'
+              Identifier: '
+            originalFile'
+              Identifier: '
+            firstMatch'
+              Identifier: '
+            lastMatch'
+              Identifier: '
+            changes'
+          ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    forEach'
+          Identifier: 'changes'
+          Identifier: ' wipeNode'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changeTracker'
+            Identifier: 'insertNodesAfter'
+          Identifier: '
+        originalFile'
+          ElementAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+        classOrInterface'
+              Identifier: 'members'
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'classOrInterface'
+                  Identifier: 'members'
+                Identifier: 'length'
+              MinusToken
+              NumericLiteral
+          Identifier: '
+        changes'
+  FunctionDeclaration
+    Identifier: ' placeStatements'
+    Parameter
+      Identifier: '
+    originalFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    changeTracker'
+      TypeReference
+        Identifier: ' ChangeTracker'
+    Parameter
+      Identifier: '
+    changes'
+      TypeReference
+        Identifier: ' NodeArray'
+        TypeReference
+          Identifier: 'Statement'
+    Parameter
+      Identifier: '
+    focusLocations'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'focusLocations'
+            QuestionDotToken
+            Identifier: 'length'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changeTracker'
+                Identifier: 'insertNodesAtEndOfFile'
+              Identifier: '
+            originalFile'
+              Identifier: '
+            changes'
+              FalseKeyword
+          ReturnStatement
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' location'
+        Identifier: ' focusLocations'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' scope'
+                CallExpression
+                  Identifier: ' findAncestor'
+                  CallExpression
+                    Identifier: '
+            getTokenAtPosition'
+                    Identifier: 'originalFile'
+                    PropertyAccessExpression
+                      Identifier: ' location'
+                      Identifier: 'start'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'block'
+                    TypePredicate
+                      Identifier: ' block'
+                      UnionType
+                        TypeReference
+                          Identifier: ' Block'
+                        TypeReference
+                          Identifier: ' SourceFile'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      CallExpression
+                        CallExpression
+                          Identifier: '
+                or'
+                          Identifier: 'isBlock'
+                          Identifier: ' isSourceFile'
+                        Identifier: 'block'
+                      AmpersandAmpersandToken
+                      CallExpression
+                        Identifier: '
+                some'
+                        PropertyAccessExpression
+                          Identifier: 'block'
+                          Identifier: 'statements'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' origStmt'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' changes'
+                              Identifier: 'some'
+                            ArrowFunction
+                              Parameter
+                                Identifier: 'newStmt'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                Identifier: ' matchNode'
+                                Identifier: 'newStmt'
+                                Identifier: ' origStmt'
+          IfStatement
+            Identifier: 'scope'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' start'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' scope'
+                          Identifier: 'statements'
+                        Identifier: 'find'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'stmt'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' changes'
+                            Identifier: 'some'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'node'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              Identifier: ' matchNode'
+                              Identifier: 'node'
+                              Identifier: ' stmt'
+              IfStatement
+                Identifier: 'start'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' end'
+                        NonNullExpression
+                          CallExpression
+                            Identifier: ' findLast'
+                            PropertyAccessExpression
+                              Identifier: 'scope'
+                              Identifier: 'statements'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' stmt'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' changes'
+                                  Identifier: 'some'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: 'node'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    Identifier: ' matchNode'
+                                    Identifier: 'node'
+                                    Identifier: ' stmt'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                forEach'
+                      Identifier: 'changes'
+                      Identifier: ' wipeNode'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                changeTracker'
+                        Identifier: 'replaceNodeRangeWithNodes'
+                      Identifier: '
+                    originalFile'
+                      Identifier: '
+                    start'
+                      Identifier: '
+                    end'
+                      Identifier: '
+                    changes'
+                  ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' scopeStatements'
+            TypeReference
+              Identifier: ' NodeArray'
+              TypeReference
+                Identifier: 'Statement'
+            PropertyAccessExpression
+              Identifier: ' originalFile'
+              Identifier: 'statements'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' location'
+        Identifier: ' focusLocations'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' block'
+                CallExpression
+                  Identifier: ' findAncestor'
+                  CallExpression
+                    Identifier: '
+            getTokenAtPosition'
+                    Identifier: 'originalFile'
+                    PropertyAccessExpression
+                      Identifier: ' location'
+                      Identifier: 'start'
+                  Identifier: '
+            isBlock'
+          IfStatement
+            Identifier: 'block'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            scopeStatements'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' block'
+                    Identifier: 'statements'
+              BreakStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEach'
+          Identifier: 'changes'
+          Identifier: ' wipeNode'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changeTracker'
+            Identifier: 'insertNodesAfter'
+          Identifier: '
+        originalFile'
+          ElementAccessExpression
+            Identifier: '
+        scopeStatements'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'scopeStatements'
+                Identifier: 'length'
+              MinusToken
+              NumericLiteral
+          Identifier: '
+        changes'
+  FunctionDeclaration
+    Identifier: ' matchNode'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'a'
+            Identifier: 'kind'
+          ExclamationEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' b'
+            Identifier: 'kind'
+        Block
+          ReturnStatement
+            FalseKeyword
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'a'
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'Constructor'
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' b'
+                Identifier: 'kind'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isNamedDeclaration'
+            Identifier: 'a'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isNamedDeclaration'
+            Identifier: 'b'
+        Block
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' a'
+                    Identifier: 'name'
+                  Identifier: 'getText'
+              EqualsEqualsEqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' b'
+                    Identifier: 'name'
+                  Identifier: 'getText'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isIfStatement'
+            Identifier: 'a'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isIfStatement'
+            Identifier: 'b'
+        Block
+          ReturnStatement
+            ParenthesizedExpression
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            a'
+                      Identifier: 'expression'
+                    Identifier: 'getText'
+                EqualsEqualsEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' b'
+                      Identifier: 'expression'
+                    Identifier: 'getText'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isWhileStatement'
+            Identifier: 'a'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isWhileStatement'
+            Identifier: 'b'
+        Block
+          ReturnStatement
+            ParenthesizedExpression
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            a'
+                      Identifier: 'expression'
+                    Identifier: 'getText'
+                EqualsEqualsEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                b'
+                      Identifier: 'expression'
+                    Identifier: 'getText'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isForStatement'
+            Identifier: 'a'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isForStatement'
+            Identifier: 'b'
+        Block
+          ReturnStatement
+            ParenthesizedExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            a'
+                          Identifier: 'initializer'
+                        QuestionDotToken
+                        Identifier: 'getText'
+                    EqualsEqualsEqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                b'
+                          Identifier: 'initializer'
+                        QuestionDotToken
+                        Identifier: 'getText'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            a'
+                          Identifier: 'incrementor'
+                        QuestionDotToken
+                        Identifier: 'getText'
+                    EqualsEqualsEqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                b'
+                          Identifier: 'incrementor'
+                        QuestionDotToken
+                        Identifier: 'getText'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            a'
+                        Identifier: 'condition'
+                      QuestionDotToken
+                      Identifier: 'getText'
+                  EqualsEqualsEqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' b'
+                        Identifier: 'condition'
+                      QuestionDotToken
+                      Identifier: 'getText'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isForInOrOfStatement'
+            Identifier: 'a'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isForInOrOfStatement'
+            Identifier: 'b'
+        Block
+          ReturnStatement
+            ParenthesizedExpression
+              BinaryExpression
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            a'
+                        Identifier: 'expression'
+                      Identifier: 'getText'
+                  EqualsEqualsEqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                b'
+                        Identifier: 'expression'
+                      Identifier: 'getText'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            a'
+                        Identifier: 'initializer'
+                      Identifier: 'getText'
+                  EqualsEqualsEqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                b'
+                        Identifier: 'initializer'
+                      Identifier: 'getText'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isLabeledStatement'
+            Identifier: 'a'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isLabeledStatement'
+            Identifier: 'b'
+        Block
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' a'
+                    Identifier: 'label'
+                  Identifier: 'getText'
+              EqualsEqualsEqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' b'
+                    Identifier: 'label'
+                  Identifier: 'getText'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'a'
+              Identifier: 'getText'
+          EqualsEqualsEqualsToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' b'
+              Identifier: 'getText'
+        Block
+          ReturnStatement
+            TrueKeyword
+      ReturnStatement
+        FalseKeyword
+  FunctionDeclaration
+    Identifier: ' wipeNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Mutable'
+        TypeReference
+          Identifier: 'Node'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    resetNodePositions'
+          Identifier: 'node'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    node'
+            Identifier: 'parent'
+          EqualsToken
+          NonNullExpression
+            Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' resetNodePositions'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Mutable'
+        TypeReference
+          Identifier: 'Node'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    node'
+            Identifier: 'pos'
+          EqualsToken
+          PrefixUnaryExpression
+            NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    node'
+            Identifier: 'end'
+          EqualsToken
+          PrefixUnaryExpression
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    node'
+            Identifier: 'forEachChild'
+          Identifier: 'resetNodePositions'

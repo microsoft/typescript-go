@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test24554'
+    GetAccessor
+      Identifier: ' property'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' test24554'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Test24554'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'property'

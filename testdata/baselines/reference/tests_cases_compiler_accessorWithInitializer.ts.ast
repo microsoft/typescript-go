@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    SetAccessor
+      Identifier: ' X'
+      Parameter
+        Identifier: 'v'
+        NumericLiteral
+      Block
+    SetAccessor
+      StaticKeyword
+      Identifier: ' X'
+      Parameter
+        Identifier: 'v2'
+        NumericLiteral
+      Block

@@ -1,0 +1,33 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' a'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' weekend'
+        EnumMember
+          Identifier: '
+        Friday'
+        EnumMember
+          Identifier: '
+        Saturday'
+        EnumMember
+          Identifier: '
+        Sunday'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' b'
+    QualifiedName
+      Identifier: ' a'
+      Identifier: 'weekend'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bVal'
+        TypeReference
+          Identifier: ' b'
+        PropertyAccessExpression
+          Identifier: ' b'
+          Identifier: 'Sunday'

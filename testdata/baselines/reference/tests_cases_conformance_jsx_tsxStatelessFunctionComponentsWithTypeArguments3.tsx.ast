@@ -1,0 +1,248 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' OverloadComponent'
+    TypeParameter
+      Identifier: 'U'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' OverloadComponent'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'attr'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b'
+          TypeReference
+            Identifier: ' U'
+        PropertySignature
+          Identifier: ' a'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          BooleanKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' OverloadComponent'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'attr'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b'
+          TypeReference
+            Identifier: ' U'
+        PropertySignature
+          Identifier: ' a'
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    Identifier: ' Baz'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b'
+          NumberKeyword
+    TypeParameter
+      Identifier: ' U'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          BooleanKeyword
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+    Parameter
+      Identifier: 'arg1'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' arg2'
+      TypeReference
+        Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a0'
+            JsxSelfClosingElement
+              Identifier: 'OverloadComponent'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: 'arg1'
+                JsxAttribute
+                  Identifier: ' a'
+                  StringLiteral
+                JsxAttribute
+                  Identifier: ' ignore-prop'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a1'
+            JsxSelfClosingElement
+              Identifier: 'OverloadComponent'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: 'arg2'
+                JsxAttribute
+                  Identifier: ' ignore-pro'
+                  StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a2'
+            JsxSelfClosingElement
+              Identifier: 'OverloadComponent'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: 'arg2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a3'
+            JsxSelfClosingElement
+              Identifier: 'OverloadComponent'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: 'arg1'
+                JsxAttribute
+                  Identifier: ' ignore-prop'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a4'
+            JsxSelfClosingElement
+              Identifier: 'OverloadComponent'
+              JsxAttributes
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a5'
+            JsxSelfClosingElement
+              Identifier: 'OverloadComponent'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: 'arg2'
+                JsxAttribute
+                  Identifier: ' ignore-prop'
+                  StringLiteral
+                JsxAttribute
+                  Identifier: 'arg1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a6'
+            JsxSelfClosingElement
+              Identifier: 'OverloadComponent'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: 'arg2'
+                JsxAttribute
+                  Identifier: ' ignore-prop'
+                JsxAttribute
+                  Identifier: 'arg1'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Link'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'l'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'func'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' U'
+            VoidKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' Link'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'l'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'func'
+          FunctionType
+            Parameter
+              Identifier: 'arg1'
+              TypeReference
+                Identifier: 'U'
+            Parameter
+              Identifier: ' arg2'
+              StringKeyword
+            VoidKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    Identifier: ' createLink'
+    Parameter
+      Identifier: 'func'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o'
+            JsxSelfClosingElement
+              Identifier: 'Link'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' func'
+                  JsxExpression
+                    Identifier: 'func'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o1'
+            JsxSelfClosingElement
+              Identifier: 'Link'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' func'
+                  JsxExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'a'
+                        NumberKeyword
+                      Parameter
+                        Identifier: ' b'
+                        StringKeyword
+                      EqualsGreaterThanToken
+                      Block

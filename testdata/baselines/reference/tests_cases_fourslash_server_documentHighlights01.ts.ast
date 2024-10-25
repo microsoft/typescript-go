@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts"/>
+
+// @Filename: a.ts
+////function [|f|](x: typeof [|f|]) {
+////    [|f|]([|f|]);
+////}
+
+verify'
+        Identifier: 'baselineDocumentHighlights'

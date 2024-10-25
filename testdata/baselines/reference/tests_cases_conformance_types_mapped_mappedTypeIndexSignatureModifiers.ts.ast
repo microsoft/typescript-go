@@ -1,0 +1,334 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Obj1'
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Res1'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: 'Obj1'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj1'
+  InterfaceDeclaration
+    Identifier: ' Obj2'
+    PropertySignature
+      Identifier: '
+    concreteProp'
+      LiteralType
+        StringLiteral
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Res2'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: 'Obj2'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj2'
+  InterfaceDeclaration
+    Identifier: ' Obj3'
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        NumberKeyword
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Res3'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: 'Obj3'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj3'
+  InterfaceDeclaration
+    Identifier: ' Obj4'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        NumberKeyword
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Res4'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: 'Obj4'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj4'
+  InterfaceDeclaration
+    Identifier: ' Obj5'
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        NumberKeyword
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Res5'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: 'Obj5'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj5'
+  TypeAliasDeclaration
+    Identifier: ' Identity'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  InterfaceDeclaration
+    Identifier: ' Obj6'
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            StringKeyword
+            TemplateTail
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Res6'
+    TypeReference
+      Identifier: ' Identity'
+      TypeReference
+        Identifier: 'Obj6'
+  InterfaceDeclaration
+    Identifier: ' Obj7'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            StringKeyword
+            TemplateTail
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Res7'
+    TypeReference
+      Identifier: ' Identity'
+      TypeReference
+        Identifier: 'Obj7'
+  InterfaceDeclaration
+    Identifier: ' Obj8'
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            StringKeyword
+            TemplateTail
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Res8'
+    TypeReference
+      Identifier: ' Identity'
+      TypeReference
+        Identifier: 'Obj8'
+  TypeAliasDeclaration
+    Identifier: ' StrippingPick'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    MappedType
+      MinusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  InterfaceDeclaration
+    Identifier: ' Obj9'
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Res9'
+    TypeReference
+      Identifier: ' StrippingPick'
+      TypeReference
+        Identifier: 'Obj9'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj9'
+  InterfaceDeclaration
+    Identifier: ' Obj10'
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        NumberKeyword
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Res10'
+    TypeReference
+      Identifier: ' StrippingPick'
+      TypeReference
+        Identifier: 'Obj10'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj10'
+  InterfaceDeclaration
+    Identifier: ' Obj11'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        NumberKeyword
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Res11'
+    TypeReference
+      Identifier: ' StrippingPick'
+      TypeReference
+        Identifier: 'Obj11'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj11'
+  InterfaceDeclaration
+    Identifier: ' Obj12'
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        NumberKeyword
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Res12'
+    TypeReference
+      Identifier: ' StrippingPick'
+      TypeReference
+        Identifier: 'Obj12'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj12'
+  TypeAliasDeclaration
+    Identifier: ' StrippingIdentity'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      MinusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  InterfaceDeclaration
+    Identifier: ' Obj13'
+    IndexSignature
+      ReadonlyKeyword
+      Parameter
+        Identifier: 'key'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            StringKeyword
+            TemplateTail
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Res13'
+    TypeReference
+      Identifier: ' StrippingIdentity'
+      TypeReference
+        Identifier: 'Obj13'

@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' bar'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foobar'
+    Parameter
+      Identifier: 'a'
+      TypeQuery
+        Identifier: ' foo'
+    TypeQuery
+      Identifier: ' bar'

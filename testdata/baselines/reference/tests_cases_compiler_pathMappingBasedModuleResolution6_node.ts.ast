@@ -1,0 +1,42 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'x'
+    StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' use'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+use'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'toFixed'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+    StringLiteral

@@ -1,0 +1,45 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' self'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+self'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' self'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+self'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' self'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+self'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral

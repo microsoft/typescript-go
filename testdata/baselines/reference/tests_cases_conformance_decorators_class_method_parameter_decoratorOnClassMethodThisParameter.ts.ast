@@ -1,0 +1,47 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' Object'
+    Parameter
+      Identifier: ' propertyKey'
+      UnionType
+        StringKeyword
+        SymbolKeyword
+    Parameter
+      Identifier: ' parameterIndex'
+      NumberKeyword
+    VoidKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' this'
+        TypeReference
+          Identifier: ' C'
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' allowed'
+        TypeReference
+          Identifier: ' C2'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' this'
+        TypeReference
+          Identifier: ' C2'
+      Block

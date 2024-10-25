@@ -1,0 +1,441 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' os'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' StartInput'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' initializeNodeSystem'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' findArgumentStringArray'
+    Parameter
+      Identifier: 'argName'
+      StringKeyword
+    TypeOperator
+      ArrayType
+        StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arg'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'server'
+                Identifier: 'findArgument'
+              Identifier: 'argName'
+      IfStatement
+        BinaryExpression
+          Identifier: 'arg'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'emptyArray'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' arg'
+                Identifier: 'split'
+              StringLiteral
+            Identifier: 'filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'name'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' name'
+              ExclamationEqualsEqualsToken
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' start'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' args'
+        BindingElement
+          Identifier: ' logger'
+        BindingElement
+          Identifier: ' cancellationToken'
+        BindingElement
+          Identifier: ' serverMode'
+        BindingElement
+          Identifier: ' unknownServerMode'
+        BindingElement
+          Identifier: ' startSession'
+          Identifier: ' startServer'
+      TypeReference
+        Identifier: ' StartInput'
+    Parameter
+      Identifier: ' platform'
+      StringKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    logger'
+            Identifier: 'info'
+          NoSubstitutionTemplateLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    logger'
+            Identifier: 'info'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'version'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    logger'
+            Identifier: 'info'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'args'
+                  Identifier: 'join'
+                StringLiteral
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    logger'
+            Identifier: 'info'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'platform'
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'process'
+                Identifier: 'version'
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'sys'
+                Identifier: 'useCaseSensitiveFileNames'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    logger'
+            Identifier: 'info'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'serverMode'
+              TemplateMiddle
+            TemplateSpan
+              Identifier: 'unknownServerMode'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    ts'
+            Identifier: 'setStackTraceLimit'
+      IfStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'ts'
+            Identifier: 'Debug'
+          Identifier: 'isDebugging'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'enableDebugInfo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'ts'
+              Identifier: 'sys'
+            Identifier: 'tryEnableSourceMapsForHost'
+          AmpersandAmpersandToken
+          CallExpression
+            PropertyAccessExpression
+              RegularExpressionLiteral
+              Identifier: 'test'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'sys'
+                Identifier: 'getEnvironmentVariable'
+              StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'sys'
+                Identifier: 'tryEnableSourceMapsForHost'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // Overwrites the current console messages to instead write to
+    // the log. This is so that language service plugins which use
+    // console.log don't break the message passing between tsserver
+    // and the client
+    console'
+            Identifier: 'log'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' logger'
+                Identifier: 'msg'
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'args'
+                    Identifier: 'length'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                QuestionToken
+                ElementAccessExpression
+                  Identifier: ' args'
+                  NumericLiteral
+                ColonToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' args'
+                    Identifier: 'join'
+                  StringLiteral
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'Msg'
+                Identifier: 'Info'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'warn'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' logger'
+                Identifier: 'msg'
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'args'
+                    Identifier: 'length'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                QuestionToken
+                ElementAccessExpression
+                  Identifier: ' args'
+                  NumericLiteral
+                ColonToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' args'
+                    Identifier: 'join'
+                  StringLiteral
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'Msg'
+                Identifier: 'Err'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'error'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' logger'
+                Identifier: 'msg'
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'args'
+                    Identifier: 'length'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                QuestionToken
+                ElementAccessExpression
+                  Identifier: ' args'
+                  NumericLiteral
+                ColonToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' args'
+                    Identifier: 'join'
+                  StringLiteral
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'Msg'
+                Identifier: 'Err'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    startServer'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            globalPlugins'
+              CallExpression
+                Identifier: ' findArgumentStringArray'
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+            pluginProbeLocations'
+              CallExpression
+                Identifier: ' findArgumentStringArray'
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+            allowLocalPluginLoads'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'hasArgument'
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+            useSingleInferredProject'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'hasArgument'
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+            useInferredProjectPerProjectRoot'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'hasArgument'
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+            suppressDiagnosticEvents'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'hasArgument'
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+            noGetErrOnBackgroundUpdate'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'hasArgument'
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+            canUseWatchEvents'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'hasArgument'
+                StringLiteral
+            ShorthandPropertyAssignment
+              Identifier: '
+            serverMode'
+          Identifier: '
+        logger'
+          Identifier: '
+        cancellationToken'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+ts'
+        Identifier: 'setStackTraceLimit'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+start'
+      CallExpression
+        Identifier: 'initializeNodeSystem'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' os'
+          Identifier: 'platform'

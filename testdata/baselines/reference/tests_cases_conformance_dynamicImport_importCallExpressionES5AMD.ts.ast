@@ -1,0 +1,79 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      ImportKeyword
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+p1'
+        Identifier: 'then'
+      ArrowFunction
+        Parameter
+          Identifier: 'zero'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' zero'
+                Identifier: 'foo'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p2'
+            CallExpression
+              ImportKeyword
+              StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' loadAsync'
+              CallExpression
+                ImportKeyword
+                StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' D'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' loadAsync'
+              CallExpression
+                ImportKeyword
+                StringLiteral

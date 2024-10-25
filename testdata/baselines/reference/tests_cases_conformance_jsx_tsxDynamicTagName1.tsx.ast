@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' CustomTag'
+        StringLiteral
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'CustomTag'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'CustomTag'

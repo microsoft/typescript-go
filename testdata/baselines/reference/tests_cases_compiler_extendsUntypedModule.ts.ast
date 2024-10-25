@@ -1,0 +1,45 @@
+SourceFile
+  ExpressionStatement
+    Identifier: '// Test that extending an untyped module is an error, unlike extending unknownSymbol.
+// @noImplicitReferences: true
+// @noUnusedLocals: true
+
+// @Filename: /node_modules/foo/index.js
+This'
+  ExpressionStatement
+    Identifier: ' file'
+  ExpressionStatement
+    Identifier: ' is'
+  ExpressionStatement
+    Identifier: ' not'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' read'
+      Identifier: ''
+  ExpressionStatement
+    Identifier: '
+
+// @Filename: /node_modules/bar/index.js
+Nor'
+  ExpressionStatement
+    Identifier: ' is'
+  ExpressionStatement
+    ThisKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' one'
+      Identifier: ''
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Foo'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Bar'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'

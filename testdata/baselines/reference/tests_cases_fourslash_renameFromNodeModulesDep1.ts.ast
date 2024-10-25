@@ -1,0 +1,73 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /index.ts
+////import { /*okWithAlias*/[|Foo|] } from "foo";
+////declare const f: Foo;
+////f./*notOk*/bar;
+
+// @Filename: /tsconfig.json
+//// { }
+
+// @Filename: /node_modules/foo/package.json
+//// { "types": "index.d.ts" }
+
+// @Filename: /node_modules/foo/index.d.ts
+////export interface Foo {
+////    bar: string;
+////}
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'renameInfoSucceeded'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' providePrefixAndSuffixTextForRename'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'renameInfoFailed'
+      Identifier: '
+    undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' providePrefixAndSuffixTextForRename'
+          FalseKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'renameInfoFailed'
+      StringLiteral

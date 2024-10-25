@@ -1,0 +1,120 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: a.ts
+// @newline: LF
+// Case: formatting: no semicolons
+////function foo() {
+////    const a = 1
+////    const b = 2
+////    foo()
+////    return a + b
+////}
+////
+////interface Base {
+////    a: string
+////    b(a: string): void
+////    c(a: string): string
+////    c(a: number): number
+////}
+////class Sub implements Base {
+////   /*a*/
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    isNewIdentifierLocation'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithInsertText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithSnippetText'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithClassMemberSnippets'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'LocationPriority'
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            filterText'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'LocationPriority'
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                NoSubstitutionTemplateLiteral
+              PropertyAssignment
+                Identifier: '
+            filterText'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'LocationPriority'
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                NoSubstitutionTemplateLiteral
+              PropertyAssignment
+                Identifier: '
+            filterText'
+                StringLiteral

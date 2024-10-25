@@ -1,0 +1,64 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @checkJs: true
+// @target: es5
+// @outDir: ./out
+// @declaration: true
+// @filename: jsDeclarationsExportAssignedConstructorFunctionWithSub.js
+/**
+ * @param {number} p
+ */
+module'
+        Identifier: 'exports'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'p'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 't'
+              EqualsToken
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                Identifier: ' p'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'Sub'
+      EqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'instance'
+              EqualsToken
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' module'
+                  Identifier: 'exports'
+                NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+module'
+            Identifier: 'exports'
+          Identifier: 'Sub'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression

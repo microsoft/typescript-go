@@ -1,0 +1,59 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' module'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' exports'
+            AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' require'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+// @Filename: mod1.js
+/// <reference path='./requires.d.ts' />
+module'
+        Identifier: 'exports'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/** @param {number} a */
+module'
+          Identifier: 'exports'
+        Identifier: 'f'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'a'
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mod1'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+mod1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+mod1'
+        Identifier: 'f'

@@ -1,0 +1,69 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TextProps'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' editable'
+          LiteralType
+            FalseKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' editable'
+          LiteralType
+            TrueKeyword
+        PropertySignature
+          Identifier: ' onEdit'
+          FunctionType
+            Parameter
+              Identifier: 'newText'
+              StringKeyword
+            VoidKeyword
+  ClassDeclaration
+    Identifier: ' TextComponent'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'TextProps'
+        TypeLiteral
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'span'
+              JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'span'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        JsxSelfClosingElement
+          Identifier: 'TextComponent'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' editable'
+              JsxExpression
+                TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' textProps'
+        TypeReference
+          Identifier: ' TextProps'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    editable'
+            FalseKeyword

@@ -1,0 +1,36 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' http'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Server'
+        PropertySignature
+          Identifier: ' openPort'
+          NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' server'
+    CallSignature
+      TypeReference
+        QualifiedName
+          Identifier: ' http'
+          Identifier: 'Server'
+    PropertySignature
+      Identifier: '
+    startTime'
+      TypeReference
+        Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' server'
+        NewExpression
+          Identifier: ' Date'
+  ExportAssignment
+    Identifier: ' server'

@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    const'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral

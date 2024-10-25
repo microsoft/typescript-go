@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    p1'
+            NumericLiteral
+          GetAccessor
+            Identifier: ' foo'
+            Block
+              IfStatement
+                BinaryExpression
+                  NumericLiteral
+                  EqualsEqualsToken
+                  NumericLiteral
+                Block
+                  ReturnStatement
+                    NumericLiteral
+          GetAccessor
+            ComputedPropertyName
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+            Block
+              ThrowStatement
+                NumericLiteral
+          SetAccessor
+            ComputedPropertyName
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+            Block
+              ThrowStatement
+                NumericLiteral
+          GetAccessor
+            ComputedPropertyName
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+            Block
+              ReturnStatement
+                NumericLiteral
+          GetAccessor
+            Identifier: ' foo'
+            Block
+              IfStatement
+                BinaryExpression
+                  NumericLiteral
+                  EqualsEqualsToken
+                  NumericLiteral
+                Block
+                  ReturnStatement
+                    NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    p2'
+            NumericLiteral

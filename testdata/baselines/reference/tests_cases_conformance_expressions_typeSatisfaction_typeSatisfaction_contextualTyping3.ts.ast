@@ -1,0 +1,81 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+   foo'
+              ArrowFunction
+                Parameter
+                  Identifier: 'param'
+                  StringLiteral
+                EqualsGreaterThanToken
+                Identifier: ' param'
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'key'
+                StringKeyword
+              FunctionType
+                Parameter
+                  DotDotDotToken
+                  Identifier: 'params'
+                  AnyKeyword
+                AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+   foo'
+              ArrowFunction
+                Parameter
+                  Identifier: 'param'
+                  StringLiteral
+                EqualsGreaterThanToken
+                Identifier: ' param'
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'key'
+                StringKeyword
+              TypeReference
+                Identifier: ' Function'
+  TypeAliasDeclaration
+    Identifier: ' StringOrNumberFunc'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        SatisfiesExpression
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                StringLiteral
+              EqualsGreaterThanToken
+              NullKeyword
+          TypeReference
+            Identifier: ' StringOrNumberFunc'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      NumericLiteral

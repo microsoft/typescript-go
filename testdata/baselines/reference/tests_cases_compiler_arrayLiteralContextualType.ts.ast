@@ -1,0 +1,85 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IAnimal'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Giraffe'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    neckLength'
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' Elephant'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    trunkDiameter'
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'animals'
+      ArrayType
+        TypeReference
+          Identifier: ' IAnimal'
+    Block
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'animals'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' IAnimal'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ArrayLiteralExpression
+        NewExpression
+          Identifier: ' Giraffe'
+        NewExpression
+          Identifier: ' Elephant'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // Legal because of the contextual type IAnimal provided by the parameter
+bar'
+      ArrayLiteralExpression
+        NewExpression
+          Identifier: ' Giraffe'
+        NewExpression
+          Identifier: ' Elephant'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayLiteralExpression
+          NewExpression
+            Identifier: ' Giraffe'
+          NewExpression
+            Identifier: ' Elephant'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'arr'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // ok because arr is Array<Giraffe|Elephant> not {}[]
+bar'
+      Identifier: 'arr'

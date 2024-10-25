@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'e1'
+          BindingElement
+            Identifier: ' e2'
+          BindingElement
+            Identifier: ' e3'
+        CallExpression
+          Identifier: ' f'
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+              TrueKeyword

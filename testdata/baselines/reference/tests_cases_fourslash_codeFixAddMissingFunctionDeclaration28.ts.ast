@@ -1,0 +1,52 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////foo({
+////    prop001: '',
+////    prop002: '',
+////    prop003: '',
+////    prop004: '',
+////    prop005: '',
+////    prop006: '',
+////    prop007: '',
+////    prop008: '',
+////    prop009: '',
+////    prop010: '',
+////    prop011: '',
+////    prop012: '',
+////    prop013: '',
+////    prop014: '',
+////    prop015: '',
+////    prop016: '',
+////    prop017: '',
+////    prop018: '',
+////    prop019: '',
+////    prop020: '',
+////});
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Add_missing_function_declaration_0'
+              Identifier: 'message'
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

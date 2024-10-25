@@ -1,0 +1,223 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' test1'
+    Parameter
+      Identifier: 'arg'
+      TupleType
+        UnionType
+          TupleType
+            UndefinedKeyword
+            TypeReference
+              Identifier: ' Error'
+          TupleType
+            NumberKeyword
+            UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'p1'
+                  BindingElement
+                    Identifier: ' p1Error'
+            Identifier: ' arg'
+      IfStatement
+        Identifier: 'p1Error'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        Identifier: '
+
+  p1'
+  FunctionDeclaration
+    Identifier: ' test2'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          ArrayBindingPattern
+            BindingElement
+              Identifier: 'p1'
+            BindingElement
+              Identifier: ' p1Error'
+      TupleType
+        UnionType
+          TupleType
+            UndefinedKeyword
+            TypeReference
+              Identifier: ' Error'
+          TupleType
+            NumberKeyword
+            UndefinedKeyword
+    Block
+      IfStatement
+        Identifier: 'p1Error'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        Identifier: '
+
+  p1'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' myAllSettled'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        ArrayType
+          UnknownKeyword
+    Parameter
+      Identifier: 'fn'
+      FunctionType
+        TypeReference
+          Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' promises'
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'allSettled'
+                CallExpression
+                  Identifier: 'fn'
+      ReturnStatement
+        AsExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' promises'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'result'
+              EqualsGreaterThanToken
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+    result'
+                    Identifier: 'status'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                QuestionToken
+                ArrayLiteralExpression
+                  PropertyAccessExpression
+                    Identifier: 'result'
+                    Identifier: 'value'
+                  Identifier: ' undefined'
+                ColonToken
+                ArrayLiteralExpression
+                  Identifier: 'undefined'
+                  NewExpression
+                    Identifier: ' Error'
+                    CallExpression
+                      Identifier: 'String'
+                      PropertyAccessExpression
+                        Identifier: 'result'
+                        Identifier: 'reason'
+          MappedType
+            TypeParameter
+              Identifier: 'K'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T'
+            UnionType
+              TupleType
+                TypeReference
+                  Identifier: 'Awaited'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: 'T'
+                    TypeReference
+                      Identifier: 'K'
+                UndefinedKeyword
+              TupleType
+                UndefinedKeyword
+                TypeReference
+                  Identifier: ' Error'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' test3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'p1'
+                  BindingElement
+                    Identifier: ' p1Error'
+              BindingElement
+                Identifier: ' _'
+            AwaitExpression
+              CallExpression
+                Identifier: ' myAllSettled'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  AsExpression
+                    ArrayLiteralExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'Promise'
+                          Identifier: 'resolve'
+                        NumericLiteral
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' Promise'
+                          Identifier: 'reject'
+                        NumericLiteral
+                    TypeReference
+                      Identifier: ' const'
+      IfStatement
+        Identifier: 'p1Error'
+        ReturnStatement
+      ExpressionStatement
+        Identifier: '
+
+  p1'
+  FunctionDeclaration
+    Identifier: ' test4'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          ArrayBindingPattern
+            BindingElement
+              Identifier: 'p1'
+            BindingElement
+              Identifier: ' p1Error'
+      TupleType
+        UnionType
+          TupleType
+            UndefinedKeyword
+            TypeReference
+              Identifier: ' Error'
+          TupleType
+            NumberKeyword
+            UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'Math'
+            Identifier: 'random'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+    p1'
+              EqualsToken
+              Identifier: ' undefined'
+      IfStatement
+        Identifier: 'p1Error'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        Identifier: '
+
+  p1'

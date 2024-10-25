@@ -1,0 +1,40 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' A'
+    ModuleDeclaration
+      Identifier: 'B'
+      ModuleDeclaration
+        Identifier: 'C'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' D'
+                AnyKeyword
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'A'
+              Identifier: 'B'
+            Identifier: 'C'
+          Identifier: 'D'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'A'
+              Identifier: ' B'
+            Identifier: ' C'
+          Identifier: 'D'

@@ -1,0 +1,44 @@
+SourceFile
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' x'
+      LessThanToken
+      Identifier: ' y'
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'x'
+      CommaToken
+      PrefixUnaryExpression
+        Identifier: 'y'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrowFunction
+              EqualsGreaterThanToken
+              BinaryExpression
+                PostfixUnaryExpression
+                  Identifier: ' x'
+                PlusToken
+                PostfixUnaryExpression
+                  Identifier: ' y'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsToken
+          NumericLiteral
+        BreakStatement
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' 
+        y'
+            EqualsToken
+            NumericLiteral

@@ -1,0 +1,66 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CallExpression'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' TaggedTemplateExpression'
+        ImportSpecifier
+          Identifier: ' TransformationContext'
+        ImportSpecifier
+          Identifier: ' Visitor'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ProcessLevel'
+    EnumMember
+      Identifier: '
+    LiftRestriction'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    All'
+      NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' processTaggedTemplateExpression'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TaggedTemplateExpression'
+    Parameter
+      Identifier: ' visitor'
+      TypeReference
+        Identifier: ' Visitor'
+    Parameter
+      Identifier: ' currentSourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' recordTaggedTemplateString'
+      FunctionType
+        Parameter
+          Identifier: 'temp'
+          TypeReference
+            Identifier: ' Identifier'
+        VoidKeyword
+    Parameter
+      Identifier: ' level'
+      TypeReference
+        Identifier: ' ProcessLevel'
+    UnionType
+      TypeReference
+        Identifier: ' CallExpression'
+      TypeReference
+        Identifier: ' TaggedTemplateExpression'

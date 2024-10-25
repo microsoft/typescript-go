@@ -1,0 +1,52 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' expected'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'getSemanticDiagnostics'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Reset checker
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'getRegionSemanticDiagnostics'
+      ArrayLiteralExpression
+        Identifier: 'r0'
+      Identifier: ' expected'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSemanticDiagnostics'
+      Identifier: 'expected'

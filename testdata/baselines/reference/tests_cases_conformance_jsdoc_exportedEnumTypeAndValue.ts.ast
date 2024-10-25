@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MyEnum'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+  b'
+            NumericLiteral
+  ExportAssignment
+    Identifier: ' MyEnum'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' MyEnum'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        PropertyAccessExpression
+          Identifier: ' MyEnum'
+          Identifier: 'b'

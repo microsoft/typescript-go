@@ -1,0 +1,122 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        NumericLiteral
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxExpression
+        Identifier: 'p'
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxExpression
+        Identifier: 'p'
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxExpression
+        Identifier: 'p'
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'div'

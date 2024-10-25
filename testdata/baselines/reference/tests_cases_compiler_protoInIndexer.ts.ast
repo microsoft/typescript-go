@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              ThisKeyword
+              StringLiteral
+            EqualsToken
+            NullKeyword

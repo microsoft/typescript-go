@@ -1,0 +1,116 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      LiteralType
+        StringLiteral
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'x'
+            LiteralType
+              StringLiteral
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            LiteralType
+              StringLiteral
+          Parameter
+            Identifier: ' y'
+            LiteralType
+              StringLiteral
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      Parameter
+        Identifier: ' y'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+            Block
+          PropertyAssignment
+            Identifier: '
+    a'
+            FunctionExpression
+              Identifier: ' foo'
+              Parameter
+                Identifier: 'x'
+                LiteralType
+                  StringLiteral
+              Parameter
+                Identifier: ' y'
+                LiteralType
+                  StringLiteral
+              Block
+          PropertyAssignment
+            Identifier: '
+    b'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                LiteralType
+                  StringLiteral
+              EqualsGreaterThanToken
+              Block

@@ -1,0 +1,80 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' ff'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Date'
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' V'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' zz'
+            TypeReference
+              Identifier: ' Object'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Ok
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Ok
+    x'
+          EqualsToken
+          Identifier: ' z'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    z'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    y'
+          EqualsToken
+          Identifier: ' z'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    z'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    x'
+          EqualsToken
+          Identifier: ' zz'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    zz'
+          EqualsToken
+          Identifier: ' x'

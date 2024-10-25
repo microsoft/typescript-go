@@ -1,0 +1,46 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////var foo: {
+////    (name: string): string;
+////    (name: 'order'): string;
+////    (name: 'content'): string;
+////    (name: 'done'): string;
+////}
+
+////var /*2*/x = foo(/*1*/
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    overloadsCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    text'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

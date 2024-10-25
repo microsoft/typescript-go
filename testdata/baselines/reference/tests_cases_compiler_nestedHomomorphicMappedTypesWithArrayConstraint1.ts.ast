@@ -1,0 +1,37 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' MatchArguments'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+  InterfaceDeclaration
+    Identifier: ' SinonSpyCallApi'
+    TypeParameter
+      Identifier: 'TArgs'
+      ArrayType
+        AnyKeyword
+      ArrayType
+        AnyKeyword
+    MethodSignature
+      Identifier: '
+    calledWith'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'MatchArguments'
+            TypeReference
+              Identifier: 'TArgs'
+      BooleanKeyword

@@ -1,0 +1,214 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' K'
+    PropertyDeclaration
+      Identifier: '
+    p'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+    GetAccessor
+      Identifier: ' g'
+      Block
+        ReturnStatement
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    p'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    m'
+      VoidKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' g'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        NewExpression
+          Identifier: ' K'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sk'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'k'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ssk'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'k'
+          SpreadAssignment
+            Identifier: 'k'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+sk'
+      Identifier: 'p'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+sk'
+        Identifier: 'm'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // error
+sk'
+      Identifier: 'g'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // error
+ssk'
+      Identifier: 'p'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+ssk'
+        Identifier: 'm'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // error
+ssk'
+      Identifier: 'g'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' p'
+            NumericLiteral
+          MethodDeclaration
+            Identifier: ' m'
+            Block
+          GetAccessor
+            Identifier: ' g'
+            Block
+              ReturnStatement
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' si'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ssi'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'i'
+          SpreadAssignment
+            Identifier: 'i'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+si'
+      Identifier: 'p'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+si'
+        Identifier: 'm'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // ok
+si'
+      Identifier: 'g'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // ok
+ssi'
+      Identifier: 'p'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+ssi'
+        Identifier: 'm'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // ok
+ssi'
+      Identifier: 'g'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' p'
+            NumericLiteral
+          MethodDeclaration
+            Identifier: ' m'
+            Block
+          GetAccessor
+            Identifier: ' g'
+            Block
+              ReturnStatement
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' so'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sso'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'o'
+          SpreadAssignment
+            Identifier: 'o'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+so'
+      Identifier: 'p'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+so'
+        Identifier: 'm'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // ok
+so'
+      Identifier: 'g'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // ok
+sso'
+      Identifier: 'p'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+sso'
+        Identifier: 'm'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // ok
+sso'
+      Identifier: 'g'

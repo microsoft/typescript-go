@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' y'
+        NumberKeyword
+        Identifier: ' x'
+      Block

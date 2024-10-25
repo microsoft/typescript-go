@@ -1,0 +1,149 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' z'
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+      VariableDeclaration
+        Identifier: ' c'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' objectLiteral0'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        a'
+              AwaitExpression
+                Identifier: ' y'
+            PropertyAssignment
+              Identifier: '
+        b'
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' objectLiteral1'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        a'
+              Identifier: ' y'
+            PropertyAssignment
+              Identifier: '
+        b'
+              AwaitExpression
+                Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' objectLiteral2'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              ComputedPropertyName
+                AwaitExpression
+                  Identifier: ' a'
+              Identifier: ' y'
+            PropertyAssignment
+              Identifier: '
+        b'
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' objectLiteral3'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              ComputedPropertyName
+                Identifier: 'a'
+              AwaitExpression
+                Identifier: ' y'
+            PropertyAssignment
+              Identifier: '
+        b'
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' objectLiteral4'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        a'
+              AwaitExpression
+                Identifier: ' y'
+            PropertyAssignment
+              ComputedPropertyName
+                Identifier: 'b'
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' objectLiteral5'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        a'
+              Identifier: ' y'
+            PropertyAssignment
+              ComputedPropertyName
+                AwaitExpression
+                  Identifier: ' b'
+              Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' objectLiteral6'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        a'
+              Identifier: ' y'
+            PropertyAssignment
+              ComputedPropertyName
+                Identifier: 'b'
+              AwaitExpression
+                Identifier: ' z'

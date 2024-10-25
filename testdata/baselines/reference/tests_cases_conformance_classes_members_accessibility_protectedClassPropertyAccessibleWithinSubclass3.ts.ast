@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    method1'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'x'

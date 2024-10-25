@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' A'
+    TypeParameter
+      Identifier: ' T'
+      TypeReference
+        Identifier: ' B'

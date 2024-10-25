@@ -1,0 +1,95 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ModuleDeclaration
+        Identifier: ' m1'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' M'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' p'
+                Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' m2'
+        ModuleBlock
+          ClassDeclaration
+            Identifier: ' M'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' p'
+                Identifier: ' x'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' p2'
+                NewExpression
+                  Identifier: ' M'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' m3'
+        ModuleBlock
+          FunctionDeclaration
+            Identifier: ' M'
+            Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' p'
+                Identifier: ' x'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' p2'
+                CallExpression
+                  Identifier: ' M'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' m3'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' M'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' p'
+                Identifier: ' x'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' p2'
+                TypeReference
+                  Identifier: ' M'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' m4'
+        ModuleBlock
+          ModuleDeclaration
+            Identifier: ' M'
+            ModuleBlock
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' p'
+                    Identifier: ' x'

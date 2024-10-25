@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'id'
+            NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'id'
+            NumericLiteral

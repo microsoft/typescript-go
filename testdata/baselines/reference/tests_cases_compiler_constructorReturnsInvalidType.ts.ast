@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    Constructor
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' X'

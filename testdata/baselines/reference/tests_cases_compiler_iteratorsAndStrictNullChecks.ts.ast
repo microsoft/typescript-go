@@ -1,0 +1,37 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ArrayLiteralExpression
+      StringLiteral
+      StringLiteral
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'substring'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xs'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ys'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+xs'
+        Identifier: 'push'
+      SpreadElement
+        Identifier: 'ys'

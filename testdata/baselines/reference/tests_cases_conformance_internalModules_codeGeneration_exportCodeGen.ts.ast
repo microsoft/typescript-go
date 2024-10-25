@@ -1,0 +1,113 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      FunctionDeclaration
+        Identifier: ' lt12'
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' x'
+              LessThanToken
+              NumericLiteral
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      FunctionDeclaration
+        Identifier: ' lt12'
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' x'
+              LessThanToken
+              NumericLiteral
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' no'
+        Block
+          ReturnStatement
+            FalseKeyword
+  ModuleDeclaration
+    Identifier: ' D'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' yes'
+        Block
+          ReturnStatement
+            TrueKeyword
+  ModuleDeclaration
+    Identifier: ' E'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' Color'
+        EnumMember
+          Identifier: ' Red'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fn'
+        Block
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' id'
+          NumberKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        PropertyDeclaration
+          Identifier: ' name'
+          StringKeyword
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' M'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+  ModuleDeclaration
+    Identifier: ' F'
+    ModuleBlock
+      EnumDeclaration
+        Identifier: ' Color'
+        EnumMember
+          Identifier: ' Red'
+      FunctionDeclaration
+        Identifier: ' fn'
+        Block
+      InterfaceDeclaration
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' id'
+          NumberKeyword
+      ClassDeclaration
+        Identifier: ' C'
+        PropertyDeclaration
+          Identifier: ' name'
+          StringKeyword
+      ModuleDeclaration
+        Identifier: ' M'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral

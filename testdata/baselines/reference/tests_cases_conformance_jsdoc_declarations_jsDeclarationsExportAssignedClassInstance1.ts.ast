@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      NewExpression
+        Identifier: ' Foo'

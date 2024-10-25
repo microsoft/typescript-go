@@ -1,0 +1,100 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+      VoidKeyword
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I3'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+            Parameter
+              Identifier: ' y'
+            TypeReference
+              Identifier: ' Object'
+          CallSignature
+            Parameter
+              Identifier: 'x'
+            Parameter
+              Identifier: ' y'
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            NumberKeyword
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            StringKeyword

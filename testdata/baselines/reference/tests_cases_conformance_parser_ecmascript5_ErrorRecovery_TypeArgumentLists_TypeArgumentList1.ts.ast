@@ -1,0 +1,24 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          Identifier: 'Foo'
+          LessThanToken
+          Identifier: 'A'
+        CommaToken
+        Identifier: 'B'
+      CommaToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' C'
+      GreaterThanToken
+      ParenthesizedExpression
+        BinaryExpression
+          BinaryExpression
+            NumericLiteral
+            CommaToken
+            NumericLiteral
+          CommaToken
+          NumericLiteral

@@ -1,0 +1,421 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    generateAccessorFromProperty'
+        ImportSpecifier
+          Identifier: '
+    getAllSupers'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CodeFixAllContext'
+        ImportSpecifier
+          Identifier: '
+    CodeFixContext'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    getSourceFileOfNode'
+        ImportSpecifier
+          Identifier: '
+    getTextOfPropertyName'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isAccessor'
+        ImportSpecifier
+          Identifier: '
+    isClassLike'
+        ImportSpecifier
+          Identifier: '
+    singleOrUndefined'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    unescapeLeadingUnderscores'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: '_0_is_defined_as_an_accessor_in_class_1_but_is_overridden_here_in_2_as_an_instance_property'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: '_0_is_defined_as_a_property_in_class_1_but_is_overridden_here_in_2_as_an_accessor'
+            Identifier: 'code'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' edits'
+                  CallExpression
+                    Identifier: ' doChange'
+                    PropertyAccessExpression
+                      Identifier: 'context'
+                      Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'span'
+                      Identifier: 'start'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'span'
+                      Identifier: 'length'
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'errorCode'
+                    Identifier: ' context'
+            IfStatement
+              Identifier: 'edits'
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    CallExpression
+                      Identifier: 'createCodeFixAction'
+                      Identifier: 'fixId'
+                      Identifier: ' edits'
+                      PropertyAccessExpression
+                        Identifier: ' Diagnostics'
+                        Identifier: 'Generate_get_and_set_accessors'
+                      Identifier: ' fixId'
+                      PropertyAccessExpression
+                        Identifier: ' Diagnostics'
+                        Identifier: 'Generate_get_and_set_accessors_for_all_overriding_properties'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' edits'
+                        CallExpression
+                          Identifier: ' doChange'
+                          PropertyAccessExpression
+                            Identifier: 'diag'
+                            Identifier: 'file'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'start'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'length'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'code'
+                          Identifier: ' context'
+                  IfStatement
+                    Identifier: 'edits'
+                    Block
+                      ForOfStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' edit'
+                        Identifier: ' edits'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    changes'
+                                Identifier: 'pushRaw'
+                              PropertyAccessExpression
+                                Identifier: 'context'
+                                Identifier: 'sourceFile'
+                              Identifier: ' edit'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'file'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' start'
+      NumberKeyword
+    Parameter
+      Identifier: ' length'
+      NumberKeyword
+    Parameter
+      Identifier: ' code'
+      NumberKeyword
+    Parameter
+      Identifier: ' context'
+      UnionType
+        TypeReference
+          Identifier: ' CodeFixContext'
+        TypeReference
+          Identifier: ' CodeFixAllContext'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' startPosition'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' endPosition'
+            NumberKeyword
+      IfStatement
+        BinaryExpression
+          Identifier: 'code'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' Diagnostics'
+              Identifier: '_0_is_defined_as_an_accessor_in_class_1_but_is_overridden_here_in_2_as_an_instance_property'
+            Identifier: 'code'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        startPosition'
+              EqualsToken
+              Identifier: ' start'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        endPosition'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' start'
+                PlusToken
+                Identifier: ' length'
+        IfStatement
+          BinaryExpression
+            Identifier: 'code'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' Diagnostics'
+                Identifier: '_0_is_defined_as_a_property_in_class_1_but_is_overridden_here_in_2_as_an_accessor'
+              Identifier: 'code'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' checker'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'program'
+                      Identifier: 'getTypeChecker'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' node'
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: ' getTokenAtPosition'
+                      Identifier: 'file'
+                      Identifier: ' start'
+                    Identifier: 'parent'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        Debug'
+                  Identifier: 'assert'
+                CallExpression
+                  Identifier: 'isAccessor'
+                  Identifier: 'node'
+                StringLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' containingClass'
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'parent'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        Debug'
+                  Identifier: 'assert'
+                CallExpression
+                  Identifier: 'isClassLike'
+                  Identifier: 'containingClass'
+                StringLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' base'
+                  CallExpression
+                    Identifier: ' singleOrUndefined'
+                    CallExpression
+                      Identifier: 'getAllSupers'
+                      Identifier: 'containingClass'
+                      Identifier: ' checker'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'base'
+              ReturnStatement
+                ArrayLiteralExpression
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' name'
+                  CallExpression
+                    Identifier: ' unescapeLeadingUnderscores'
+                    CallExpression
+                      Identifier: 'getTextOfPropertyName'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'name'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' baseProp'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' checker'
+                      Identifier: 'getPropertyOfType'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'checker'
+                        Identifier: 'getTypeAtLocation'
+                      Identifier: 'base'
+                    Identifier: ' name'
+            IfStatement
+              BinaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'baseProp'
+                BarBarToken
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'baseProp'
+                    Identifier: 'valueDeclaration'
+              ReturnStatement
+                ArrayLiteralExpression
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+
+        startPosition'
+                EqualsToken
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' baseProp'
+                    Identifier: 'valueDeclaration'
+                  Identifier: 'pos'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        endPosition'
+                EqualsToken
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' baseProp'
+                    Identifier: 'valueDeclaration'
+                  Identifier: 'end'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        file'
+                EqualsToken
+                CallExpression
+                  Identifier: ' getSourceFileOfNode'
+                  PropertyAccessExpression
+                    Identifier: 'baseProp'
+                    Identifier: 'valueDeclaration'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        Debug'
+                  Identifier: 'fail'
+                BinaryExpression
+                  StringLiteral
+                  PlusToken
+                  Identifier: ' code'
+      ReturnStatement
+        CallExpression
+          Identifier: ' generateAccessorFromProperty'
+          Identifier: 'file'
+          PropertyAccessExpression
+            Identifier: ' context'
+            Identifier: 'program'
+          Identifier: ' startPosition'
+          Identifier: ' endPosition'
+          Identifier: ' context'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' Diagnostics'
+              Identifier: 'Generate_get_and_set_accessors'
+            Identifier: 'message'

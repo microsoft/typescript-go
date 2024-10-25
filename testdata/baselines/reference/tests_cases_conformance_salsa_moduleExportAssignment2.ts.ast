@@ -1,0 +1,39 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' npm'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' module'
+            Identifier: 'exports'
+          EqualsToken
+          FunctionExpression
+            Parameter
+              Identifier: 'tree'
+            Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'asReadInstalled'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'tree'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    npm'
+              Identifier: 'tree'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' // both references should be callable
+    module'
+                Identifier: 'exports'
+              Identifier: 'tree'

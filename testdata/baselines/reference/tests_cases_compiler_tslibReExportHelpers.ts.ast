@@ -1,0 +1,58 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' __decorate'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    AnyKeyword
+  ExportDeclaration
+    StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        Block
+          ExpressionStatement
+            StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              StringLiteral
+              CommaToken
+              StringLiteral
+          ExpressionStatement
+            StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'decorator'
+    ExportKeyword
+    Identifier: ' Foo'

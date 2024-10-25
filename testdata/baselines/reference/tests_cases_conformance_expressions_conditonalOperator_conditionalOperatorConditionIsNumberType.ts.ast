@@ -1,0 +1,428 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' condNumber'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprAny1'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprBoolean1'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprNumber1'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprString1'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprIsObject1'
+        TypeReference
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprAny2'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprBoolean2'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprNumber2'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprString2'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exprIsObject2'
+        TypeReference
+          Identifier: ' Object'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+
+//Cond is a number type variable
+condNumber'
+      QuestionToken
+      Identifier: ' exprAny1'
+      ColonToken
+      Identifier: ' exprAny2'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+condNumber'
+      QuestionToken
+      Identifier: ' exprBoolean1'
+      ColonToken
+      Identifier: ' exprBoolean2'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+condNumber'
+      QuestionToken
+      Identifier: ' exprNumber1'
+      ColonToken
+      Identifier: ' exprNumber2'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+condNumber'
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprString2'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+condNumber'
+      QuestionToken
+      Identifier: ' exprIsObject1'
+      ColonToken
+      Identifier: ' exprIsObject2'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '
+condNumber'
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprBoolean1'
+  ExpressionStatement
+    ConditionalExpression
+      NumericLiteral
+      QuestionToken
+      Identifier: ' exprAny1'
+      ColonToken
+      Identifier: ' exprAny2'
+  ExpressionStatement
+    ConditionalExpression
+      NumericLiteral
+      QuestionToken
+      Identifier: ' exprBoolean1'
+      ColonToken
+      Identifier: ' exprBoolean2'
+  ExpressionStatement
+    ConditionalExpression
+      NumericLiteral
+      QuestionToken
+      Identifier: ' exprNumber1'
+      ColonToken
+      Identifier: ' exprNumber2'
+  ExpressionStatement
+    ConditionalExpression
+      PrefixUnaryExpression
+        NumericLiteral
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprString2'
+  ExpressionStatement
+    ConditionalExpression
+      NumericLiteral
+      QuestionToken
+      Identifier: ' exprIsObject1'
+      ColonToken
+      Identifier: ' exprIsObject2'
+  ExpressionStatement
+    ConditionalExpression
+      NumericLiteral
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprBoolean1'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        NumericLiteral
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    ConditionalExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskToken
+        NumericLiteral
+      QuestionToken
+      Identifier: ' exprAny1'
+      ColonToken
+      Identifier: ' exprAny2'
+  ExpressionStatement
+    ConditionalExpression
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        NumericLiteral
+      QuestionToken
+      Identifier: ' exprBoolean1'
+      ColonToken
+      Identifier: ' exprBoolean2'
+  ExpressionStatement
+    ConditionalExpression
+      PropertyAccessExpression
+        StringLiteral
+        Identifier: 'length'
+      QuestionToken
+      Identifier: ' exprNumber1'
+      ColonToken
+      Identifier: ' exprNumber2'
+  ExpressionStatement
+    ConditionalExpression
+      CallExpression
+        Identifier: '
+foo'
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprString2'
+  ExpressionStatement
+    ConditionalExpression
+      BinaryExpression
+        CallExpression
+          Identifier: '
+foo'
+        SlashToken
+        ElementAccessExpression
+          Identifier: ' array'
+          NumericLiteral
+      QuestionToken
+      Identifier: ' exprIsObject1'
+      ColonToken
+      Identifier: ' exprIsObject2'
+  ExpressionStatement
+    ConditionalExpression
+      CallExpression
+        Identifier: '
+foo'
+      QuestionToken
+      Identifier: ' exprString1'
+      ColonToken
+      Identifier: ' exprBoolean1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsAny1'
+        ConditionalExpression
+          Identifier: ' condNumber'
+          QuestionToken
+          Identifier: ' exprAny1'
+          ColonToken
+          Identifier: ' exprAny2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean1'
+        ConditionalExpression
+          Identifier: ' condNumber'
+          QuestionToken
+          Identifier: ' exprBoolean1'
+          ColonToken
+          Identifier: ' exprBoolean2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsNumber1'
+        ConditionalExpression
+          Identifier: ' condNumber'
+          QuestionToken
+          Identifier: ' exprNumber1'
+          ColonToken
+          Identifier: ' exprNumber2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsString1'
+        ConditionalExpression
+          Identifier: ' condNumber'
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprString2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsObject1'
+        ConditionalExpression
+          Identifier: ' condNumber'
+          QuestionToken
+          Identifier: ' exprIsObject1'
+          ColonToken
+          Identifier: ' exprIsObject2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsStringOrBoolean1'
+        ConditionalExpression
+          Identifier: ' condNumber'
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprBoolean1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsAny2'
+        ConditionalExpression
+          NumericLiteral
+          QuestionToken
+          Identifier: ' exprAny1'
+          ColonToken
+          Identifier: ' exprAny2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean2'
+        ConditionalExpression
+          NumericLiteral
+          QuestionToken
+          Identifier: ' exprBoolean1'
+          ColonToken
+          Identifier: ' exprBoolean2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsNumber2'
+        ConditionalExpression
+          NumericLiteral
+          QuestionToken
+          Identifier: ' exprNumber1'
+          ColonToken
+          Identifier: ' exprNumber2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsString2'
+        ConditionalExpression
+          PrefixUnaryExpression
+            NumericLiteral
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprString2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsObject2'
+        ConditionalExpression
+          NumericLiteral
+          QuestionToken
+          Identifier: ' exprIsObject1'
+          ColonToken
+          Identifier: ' exprIsObject2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsStringOrBoolean2'
+        ConditionalExpression
+          NumericLiteral
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprBoolean1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsAny3'
+        ConditionalExpression
+          BinaryExpression
+            NumericLiteral
+            AsteriskToken
+            NumericLiteral
+          QuestionToken
+          Identifier: ' exprAny1'
+          ColonToken
+          Identifier: ' exprAny2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean3'
+        ConditionalExpression
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            NumericLiteral
+          QuestionToken
+          Identifier: ' exprBoolean1'
+          ColonToken
+          Identifier: ' exprBoolean2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsNumber3'
+        ConditionalExpression
+          PropertyAccessExpression
+            StringLiteral
+            Identifier: 'length'
+          QuestionToken
+          Identifier: ' exprNumber1'
+          ColonToken
+          Identifier: ' exprNumber2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsString3'
+        ConditionalExpression
+          CallExpression
+            Identifier: ' foo'
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprString2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsObject3'
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              Identifier: ' foo'
+            SlashToken
+            ElementAccessExpression
+              Identifier: ' array'
+              NumericLiteral
+          QuestionToken
+          Identifier: ' exprIsObject1'
+          ColonToken
+          Identifier: ' exprIsObject2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsStringOrBoolean3'
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              Identifier: ' foo'
+            SlashToken
+            ElementAccessExpression
+              Identifier: ' array'
+              NumericLiteral
+          QuestionToken
+          Identifier: ' exprString1'
+          ColonToken
+          Identifier: ' exprBoolean1'

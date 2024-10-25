@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v30'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            NumericLiteral
+      VariableDeclaration
+        Identifier: ' v31'

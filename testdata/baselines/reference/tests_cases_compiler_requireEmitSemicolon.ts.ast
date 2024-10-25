@@ -1,0 +1,45 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Models'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Person'
+        Constructor
+          Parameter
+            Identifier: 'name'
+            StringKeyword
+          Block
+  ImportEqualsDeclaration
+    Identifier: ' P'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Database'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' DB'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' findPerson'
+          Parameter
+            Identifier: 'id'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              QualifiedName
+                Identifier: ' P'
+                Identifier: 'Models'
+              Identifier: 'Person'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' P'
+                    Identifier: 'Models'
+                  Identifier: 'Person'
+                StringLiteral

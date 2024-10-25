@@ -1,0 +1,74 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Editor'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' List'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          Identifier: '
+        next'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'T'
+        PropertyDeclaration
+          Identifier: '
+        prev'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'T'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' isHead'
+            BooleanKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' data'
+            TypeReference
+              Identifier: ' T'
+          Block
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' MakeHead'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'T'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' entry'
+                  TypeReference
+                    Identifier: ' List'
+                    TypeReference
+                      Identifier: 'T'
+                  NewExpression
+                    Identifier: ' List'
+                    TypeReference
+                      Identifier: 'T'
+                    TrueKeyword
+                    NullKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' // can't access T here
+            entry'
+                  Identifier: 'prev'
+                EqualsToken
+                Identifier: ' entry'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            entry'
+                  Identifier: 'next'
+                EqualsToken
+                Identifier: ' entry'
+            ReturnStatement
+              Identifier: ' entry'

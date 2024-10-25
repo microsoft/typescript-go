@@ -1,0 +1,93 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @checkJs: true
+// @noEmit: true
+// @Filename: mod.js
+
+exports'
+        Identifier: 'n'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+exports'
+          Identifier: 'n'
+        Identifier: 'K'
+      EqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'x'
+              EqualsToken
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'Classic'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'p'
+                EqualsToken
+                NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' s'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' s'
+              Identifier: 'n'
+            Identifier: 'K'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+k'
+      Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classic'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' s'
+            Identifier: 'Classic'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'c'
+    Parameter
+      Identifier: ' classic'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    classic'
+          Identifier: 'p'

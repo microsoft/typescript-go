@@ -1,0 +1,15 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' mod'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' call'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+	mod'
+            Identifier: 'call'

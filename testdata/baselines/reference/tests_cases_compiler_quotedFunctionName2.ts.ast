@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test1'
+    MethodDeclaration
+      StaticKeyword
+      StringLiteral
+      Block

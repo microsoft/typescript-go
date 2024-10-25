@@ -1,0 +1,61 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' readonly'
+        AnyKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' override'
+        AnyKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' out'
+        AnyKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' declare'
+        AnyKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ParenthesizedExpression
+          AsExpression
+            Identifier: 'readonly'
+            NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ParenthesizedExpression
+          AsExpression
+            Identifier: 'override'
+            NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ParenthesizedExpression
+          AsExpression
+            Identifier: 'out'
+            NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        ParenthesizedExpression
+          AsExpression
+            Identifier: 'declare'
+            NumberKeyword

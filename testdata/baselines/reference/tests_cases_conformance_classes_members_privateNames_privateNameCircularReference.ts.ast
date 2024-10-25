@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      PropertyAccessExpression
+        ThisKeyword
+        PrivateIdentifier
+    PropertyDeclaration
+      PrivateIdentifier
+      PropertyAccessExpression
+        ThisKeyword
+        PrivateIdentifier
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      ElementAccessExpression
+        ThisKeyword
+        StringLiteral

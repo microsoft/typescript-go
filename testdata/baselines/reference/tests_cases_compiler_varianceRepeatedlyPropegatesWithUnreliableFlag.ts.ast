@@ -1,0 +1,139 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' b'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'T'
+    IndexedAccessType
+      ParenthesizedType
+        IntersectionType
+          MappedType
+            TypeParameter
+              Identifier: 'K'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeReference
+                Identifier: 'K'
+          TypeReference
+            Identifier: ' Record'
+            StringKeyword
+            VoidKeyword
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' P1'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' X'
+          TypeReference
+            Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' P2'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' X'
+          TypeReference
+            Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    fn'
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      Parameter
+        Identifier: 'p1'
+        TypeReference
+          Identifier: ' P1'
+          TypeReference
+            Identifier: 'Pick'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' K'
+      Parameter
+        Identifier: ' p2'
+        TypeReference
+          Identifier: ' P2'
+          TypeReference
+            Identifier: 'Pick'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' K'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+          IntersectionType
+            TypeReference
+              Identifier: 'A'
+            TypeReference
+              Identifier: ' B'
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        TypeReference
+          Identifier: ' P2'
+          TypeReference
+            Identifier: 'A'
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Commenting out the below line will remove the error on the `const _i: I<A> = i;`
+i'
+        Identifier: 'fn'
+      AsExpression
+        NullKeyword
+        AnyKeyword
+      Identifier: ' p2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _i'
+        TypeReference
+          Identifier: ' I'
+          TypeReference
+            Identifier: 'A'
+        Identifier: ' i'

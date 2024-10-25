@@ -1,0 +1,578 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    cast'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    first'
+        ImportSpecifier
+          Identifier: '
+    getAllowSyntheticDefaultImports'
+        ImportSpecifier
+          Identifier: '
+    getQuotePreference'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    ImportSpecifier'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isNoSubstitutionTemplateLiteral'
+        ImportSpecifier
+          Identifier: '
+    isObjectBindingPattern'
+        ImportSpecifier
+          Identifier: '
+    isRequireCall'
+        ImportSpecifier
+          Identifier: '
+    isVariableDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isVariableStatement'
+        ImportSpecifier
+          Identifier: '
+    NamedImports'
+        ImportSpecifier
+          Identifier: '
+    ObjectBindingPattern'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    QuotePreference'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    StringLiteralLike'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    tryCast'
+        ImportSpecifier
+          Identifier: '
+    UserPreferences'
+        ImportSpecifier
+          Identifier: '
+    VariableStatement'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'require_call_may_be_converted_to_an_import'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' info'
+                  CallExpression
+                    Identifier: ' getInfo'
+                    PropertyAccessExpression
+                      Identifier: 'context'
+                      Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'program'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'span'
+                      Identifier: 'start'
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'preferences'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'info'
+              Block
+                ReturnStatement
+                  Identifier: ' undefined'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' t'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' doChange'
+                        Identifier: 't'
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'sourceFile'
+                        Identifier: ' info'
+            ReturnStatement
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'createCodeFixAction'
+                  Identifier: 'fixId'
+                  Identifier: ' changes'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Convert_require_to_import'
+                  Identifier: ' fixId'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Convert_all_require_to_import'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' info'
+                        CallExpression
+                          Identifier: ' getInfo'
+                          PropertyAccessExpression
+                            Identifier: 'diag'
+                            Identifier: 'file'
+                          PropertyAccessExpression
+                            Identifier: ' context'
+                            Identifier: 'program'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'start'
+                          PropertyAccessExpression
+                            Identifier: ' context'
+                            Identifier: 'preferences'
+                  IfStatement
+                    Identifier: 'info'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                doChange'
+                          Identifier: 'changes'
+                          PropertyAccessExpression
+                            Identifier: ' context'
+                            Identifier: 'sourceFile'
+                          Identifier: ' info'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' info'
+      TypeReference
+        Identifier: ' Info'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' allowSyntheticDefaults'
+              BindingElement
+                Identifier: ' defaultImportName'
+              BindingElement
+                Identifier: ' namedImports'
+              BindingElement
+                Identifier: ' statement'
+              BindingElement
+                Identifier: ' moduleSpecifier'
+            Identifier: ' info'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          Identifier: '
+        sourceFile'
+          Identifier: '
+        statement'
+          ConditionalExpression
+            BinaryExpression
+              Identifier: '
+        defaultImportName'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                Identifier: 'allowSyntheticDefaults'
+            QuestionToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createImportEqualsDeclaration'
+              Identifier: '/*modifiers*/ undefined'
+              FalseKeyword
+              Identifier: ' defaultImportName'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createExternalModuleReference'
+                Identifier: 'moduleSpecifier'
+            ColonToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createImportDeclaration'
+              Identifier: '/*modifiers*/ undefined'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createImportClause'
+                FalseKeyword
+                Identifier: ' defaultImportName'
+                Identifier: ' namedImports'
+              Identifier: ' moduleSpecifier'
+              Identifier: ' /*attributes*/ undefined'
+  InterfaceDeclaration
+    Identifier: ' Info'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' allowSyntheticDefaults'
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' defaultImportName'
+      UnionType
+        TypeReference
+          Identifier: ' Identifier'
+        UndefinedKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' namedImports'
+      UnionType
+        TypeReference
+          Identifier: ' NamedImports'
+        UndefinedKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' statement'
+      TypeReference
+        Identifier: ' VariableStatement'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' moduleSpecifier'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+  FunctionDeclaration
+    Identifier: ' getInfo'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    UnionType
+      TypeReference
+        Identifier: ' Info'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' parent'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isRequireCall'
+            Identifier: 'parent'
+            TrueKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'failBadSyntaxKind'
+              Identifier: 'parent'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' decl'
+            CallExpression
+              Identifier: ' cast'
+              PropertyAccessExpression
+                Identifier: 'parent'
+                Identifier: 'parent'
+              Identifier: ' isVariableDeclaration'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' quotePreference'
+            CallExpression
+              Identifier: ' getQuotePreference'
+              Identifier: 'sourceFile'
+              Identifier: ' preferences'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' defaultImportName'
+            CallExpression
+              Identifier: ' tryCast'
+              PropertyAccessExpression
+                Identifier: 'decl'
+                Identifier: 'name'
+              Identifier: ' isIdentifier'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' namedImports'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isObjectBindingPattern'
+                PropertyAccessExpression
+                  Identifier: 'decl'
+                  Identifier: 'name'
+              QuestionToken
+              CallExpression
+                Identifier: ' tryCreateNamedImportsFromObjectBindingPattern'
+                PropertyAccessExpression
+                  Identifier: 'decl'
+                  Identifier: 'name'
+              ColonToken
+              Identifier: ' undefined'
+      IfStatement
+        BinaryExpression
+          Identifier: 'defaultImportName'
+          BarBarToken
+          Identifier: ' namedImports'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' moduleSpecifier'
+                CallExpression
+                  Identifier: ' first'
+                  PropertyAccessExpression
+                    Identifier: 'parent'
+                    Identifier: 'arguments'
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            allowSyntheticDefaults'
+                CallExpression
+                  Identifier: ' getAllowSyntheticDefaultImports'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'program'
+                      Identifier: 'getCompilerOptions'
+              ShorthandPropertyAssignment
+                Identifier: '
+            defaultImportName'
+              ShorthandPropertyAssignment
+                Identifier: '
+            namedImports'
+              PropertyAssignment
+                Identifier: '
+            statement'
+                CallExpression
+                  Identifier: ' cast'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'decl'
+                      Identifier: 'parent'
+                    Identifier: 'parent'
+                  Identifier: ' isVariableStatement'
+              PropertyAssignment
+                Identifier: '
+            moduleSpecifier'
+                ConditionalExpression
+                  CallExpression
+                    Identifier: ' isNoSubstitutionTemplateLiteral'
+                    Identifier: 'moduleSpecifier'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createStringLiteral'
+                    PropertyAccessExpression
+                      Identifier: 'moduleSpecifier'
+                      Identifier: 'text'
+                    BinaryExpression
+                      Identifier: ' quotePreference'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' QuotePreference'
+                        Identifier: 'Single'
+                  ColonToken
+                  Identifier: ' moduleSpecifier'
+  FunctionDeclaration
+    Identifier: ' tryCreateNamedImportsFromObjectBindingPattern'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' ObjectBindingPattern'
+    UnionType
+      TypeReference
+        Identifier: ' NamedImports'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importSpecifiers'
+            ArrayType
+              TypeReference
+                Identifier: ' ImportSpecifier'
+            ArrayLiteralExpression
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' element'
+        PropertyAccessExpression
+          Identifier: ' node'
+          Identifier: 'elements'
+        Block
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'isIdentifier'
+                  PropertyAccessExpression
+                    Identifier: 'element'
+                    Identifier: 'name'
+              BarBarToken
+              PropertyAccessExpression
+                Identifier: ' element'
+                Identifier: 'initializer'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        importSpecifiers'
+                Identifier: 'push'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createImportSpecifier'
+                FalseKeyword
+                CallExpression
+                  Identifier: ' tryCast'
+                  PropertyAccessExpression
+                    Identifier: 'element'
+                    Identifier: 'propertyName'
+                  Identifier: ' isIdentifier'
+                PropertyAccessExpression
+                  Identifier: ' element'
+                  Identifier: 'name'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'importSpecifiers'
+          Identifier: 'length'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createNamedImports'
+              Identifier: 'importSpecifiers'

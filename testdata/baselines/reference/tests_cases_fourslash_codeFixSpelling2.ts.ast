@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////[|function foo<T extends number | string>(x: T) {
+////    return x.toStrang();
+////}|]
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      NoSubstitutionTemplateLiteral
+      FalseKeyword
+      Identifier: ' /*errorCode*/ undefined'
+      NumericLiteral

@@ -1,0 +1,23 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' A'
+            NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+  EnumDeclaration
+    Identifier: ' B'
+    EnumMember
+      Identifier: '
+    B'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' B'

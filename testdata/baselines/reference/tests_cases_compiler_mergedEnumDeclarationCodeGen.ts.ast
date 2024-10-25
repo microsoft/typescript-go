@@ -1,0 +1,16 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    a'
+    EnumMember
+      Identifier: '
+    b'
+      Identifier: ' a'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    c'
+      Identifier: ' a'

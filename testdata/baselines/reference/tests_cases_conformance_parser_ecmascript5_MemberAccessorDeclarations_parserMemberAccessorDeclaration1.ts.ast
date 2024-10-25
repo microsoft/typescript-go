@@ -1,0 +1,6 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      Identifier: ' a'
+      Block

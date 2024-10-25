@@ -1,0 +1,164 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'p'
+      VoidKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'p'
+      UndefinedKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'p'
+      UnknownKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'p'
+      AnyKeyword
+    VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: ' m'
+      Parameter
+        Identifier: 'p'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        TypeReference
+          Identifier: ' I'
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        TypeReference
+          Identifier: ' I'
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        TypeReference
+          Identifier: ' I'
+          UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o4'
+        TypeReference
+          Identifier: ' I'
+          AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// @filename: jsfile.js
+// current behavior: treat trailing `void` as optional
+f1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o1'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// new behavior: treat 'undefined', 'unknown', and 'any' as optional in non-strict mode
+f2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f3'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f4'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+o2'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o3'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o4'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// @filename: tsfile.ts
+// current behavior: treat trailing `void` as optional
+f1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o1'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// no change in behavior
+f2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f3'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f4'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+o2'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o3'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o4'
+        Identifier: 'm'

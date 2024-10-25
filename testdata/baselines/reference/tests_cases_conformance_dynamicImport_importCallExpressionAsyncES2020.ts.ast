@@ -1,0 +1,90 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' fn'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' req'
+            AwaitExpression
+              CallExpression
+                ImportKeyword
+                StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' cl1'
+    MethodDeclaration
+      PublicKeyword
+      AsyncKeyword
+      Identifier: ' m'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' req'
+              AwaitExpression
+                CallExpression
+                  ImportKeyword
+                  StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    m'
+            ArrowFunction
+              AsyncKeyword
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' req'
+                      AwaitExpression
+                        CallExpression
+                          ImportKeyword
+                          StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' cl2'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        m'
+          ArrowFunction
+            AsyncKeyword
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' req'
+                    AwaitExpression
+                      CallExpression
+                        ImportKeyword
+                        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' req'
+                  AwaitExpression
+                    CallExpression
+                      ImportKeyword
+                      StringLiteral

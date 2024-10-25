@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' x'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' foo'

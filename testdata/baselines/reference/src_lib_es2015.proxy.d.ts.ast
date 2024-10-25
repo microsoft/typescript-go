@@ -1,0 +1,328 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ProxyHandler'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * A trap method for a function call.
+     * @param target The original callable object which is being proxied.
+     */
+    apply'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' thisArg'
+        AnyKeyword
+      Parameter
+        Identifier: ' argArray'
+        ArrayType
+          AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for the `new` operator.
+     * @param target The original object which is being proxied.
+     * @param newTarget The constructor that was originally called.
+     */
+    construct'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' argArray'
+        ArrayType
+          AnyKeyword
+      Parameter
+        Identifier: ' newTarget'
+        TypeReference
+          Identifier: ' Function'
+      ObjectKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for `Object.defineProperty()`.
+     * @param target The original object which is being proxied.
+     * @returns A `Boolean` indicating whether or not the property has been defined.
+     */
+    defineProperty'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' property'
+        UnionType
+          StringKeyword
+          SymbolKeyword
+      Parameter
+        Identifier: ' attributes'
+        TypeReference
+          Identifier: ' PropertyDescriptor'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for the `delete` operator.
+     * @param target The original object which is being proxied.
+     * @param p The name or `Symbol` of the property to delete.
+     * @returns A `Boolean` indicating whether or not the property was deleted.
+     */
+    deleteProperty'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' p'
+        UnionType
+          StringKeyword
+          SymbolKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for getting a property value.
+     * @param target The original object which is being proxied.
+     * @param p The name or `Symbol` of the property to get.
+     * @param receiver The proxy or an object that inherits from the proxy.
+     */
+    get'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' p'
+        UnionType
+          StringKeyword
+          SymbolKeyword
+      Parameter
+        Identifier: ' receiver'
+        AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for `Object.getOwnPropertyDescriptor()`.
+     * @param target The original object which is being proxied.
+     * @param p The name of the property whose description should be retrieved.
+     */
+    getOwnPropertyDescriptor'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' p'
+        UnionType
+          StringKeyword
+          SymbolKeyword
+      UnionType
+        TypeReference
+          Identifier: ' PropertyDescriptor'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for the `[[GetPrototypeOf]]` internal method.
+     * @param target The original object which is being proxied.
+     */
+    getPrototypeOf'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      UnionType
+        ObjectKeyword
+        LiteralType
+          NullKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for the `in` operator.
+     * @param target The original object which is being proxied.
+     * @param p The name or `Symbol` of the property to check for existence.
+     */
+    has'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' p'
+        UnionType
+          StringKeyword
+          SymbolKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for `Object.isExtensible()`.
+     * @param target The original object which is being proxied.
+     */
+    isExtensible'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for `Reflect.ownKeys()`.
+     * @param target The original object which is being proxied.
+     */
+    ownKeys'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' ArrayLike'
+        UnionType
+          StringKeyword
+          SymbolKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for `Object.preventExtensions()`.
+     * @param target The original object which is being proxied.
+     */
+    preventExtensions'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for setting a property value.
+     * @param target The original object which is being proxied.
+     * @param p The name or `Symbol` of the property to set.
+     * @param receiver The object to which the assignment was originally directed.
+     * @returns A `Boolean` indicating whether or not the property was set.
+     */
+    set'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' p'
+        UnionType
+          StringKeyword
+          SymbolKeyword
+      Parameter
+        Identifier: ' newValue'
+        AnyKeyword
+      Parameter
+        Identifier: ' receiver'
+        AnyKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A trap for `Object.setPrototypeOf()`.
+     * @param target The original object which is being proxied.
+     * @param newPrototype The object's new prototype or `null`.
+     */
+    setPrototypeOf'
+      QuestionToken
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' v'
+        UnionType
+          ObjectKeyword
+          LiteralType
+            NullKeyword
+      BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' ProxyConstructor'
+    MethodSignature
+      Identifier: '
+    /**
+     * Creates a revocable Proxy object.
+     * @param target A target object to wrap with Proxy.
+     * @param handler An object whose properties define the behavior of Proxy when an operation is attempted on it.
+     */
+    revocable'
+      TypeParameter
+        Identifier: 'T'
+        ObjectKeyword
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' handler'
+        TypeReference
+          Identifier: ' ProxyHandler'
+          TypeReference
+            Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' proxy'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: ' revoke'
+          FunctionType
+            VoidKeyword
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+        ObjectKeyword
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' handler'
+        TypeReference
+          Identifier: ' ProxyHandler'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Proxy'
+        TypeReference
+          Identifier: ' ProxyConstructor'

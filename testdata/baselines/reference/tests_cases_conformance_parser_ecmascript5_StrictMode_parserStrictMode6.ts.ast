@@ -1,0 +1,7 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+eval'

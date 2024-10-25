@@ -1,0 +1,113 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @strict: true
+// @checkJs: true
+// @emitDeclarationOnly: true
+// @declaration: true
+// @filename: mod1.js
+exports'
+        Identifier: 'a'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+exports'
+        StringLiteral
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+exports'
+        StringLiteral
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        StringLiteral
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        ElementAccessExpression
+          Identifier: '
+module'
+          StringLiteral
+        StringLiteral
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ElementAccessExpression
+          ElementAccessExpression
+            Identifier: '
+module'
+            StringLiteral
+          StringLiteral
+        Identifier: 'e'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mod1'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+mod1'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+mod1'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+mod1'
+      Identifier: 'c'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+mod1'
+      Identifier: 'd'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+mod1'
+        Identifier: 'd'
+      Identifier: 'e'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+mod1'
+      Identifier: 'default'

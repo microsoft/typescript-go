@@ -1,0 +1,92 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyList'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' size'
+      NumberKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' data'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Constructor
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'size'
+            EqualsToken
+            Identifier: ' n'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'data'
+            EqualsToken
+            NewExpression
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'T'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'size'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' clone'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' MyList'
+            TypeReference
+              Identifier: 'T'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'size'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' MyList'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' MyList'
+          AnyKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'clone'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' MyList'
+          StringKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'clone'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' MyList'
+          NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'clone'

@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' n'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' k'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' s'
+                        StringKeyword
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'n'

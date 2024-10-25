@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    b'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    c'
+            StringLiteral

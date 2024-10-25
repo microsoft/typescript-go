@@ -1,0 +1,12 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    Block
+      FunctionDeclaration
+        AsteriskToken
+        Identifier: ' h'
+        Block
+          ExpressionStatement
+            YieldExpression
+              NumericLiteral

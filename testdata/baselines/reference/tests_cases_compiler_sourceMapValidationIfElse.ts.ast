@@ -1,0 +1,54 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'i'
+      EqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    i'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'i'
+      EqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    i'
+    IfStatement
+      BinaryExpression
+        Identifier: 'i'
+        EqualsEqualsToken
+        NumericLiteral
+      Block
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+    i'
+      IfStatement
+        BinaryExpression
+          Identifier: 'i'
+          EqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+    i'
+              PlusEqualsToken
+              NumericLiteral
+        Block
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+    i'

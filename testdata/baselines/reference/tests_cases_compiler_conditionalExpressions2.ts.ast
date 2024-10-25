@@ -1,0 +1,98 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ConditionalExpression
+          FalseKeyword
+          QuestionToken
+          NumericLiteral
+          ColonToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ConditionalExpression
+          FalseKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ConditionalExpression
+          FalseKeyword
+          QuestionToken
+          NumericLiteral
+          ColonToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        ConditionalExpression
+          FalseKeyword
+          QuestionToken
+          FalseKeyword
+          ColonToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        ConditionalExpression
+          FalseKeyword
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ConditionalExpression
+          FalseKeyword
+          QuestionToken
+          NullKeyword
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'g'
+              NumericLiteral
+          ColonToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'h'
+              NumericLiteral
+          NullKeyword
+  FunctionDeclaration
+    Identifier: ' i'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+        Block
+          ReturnStatement
+            NullKeyword

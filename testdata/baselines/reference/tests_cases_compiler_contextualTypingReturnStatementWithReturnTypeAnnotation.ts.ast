@@ -1,0 +1,78 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' PropOfRaw'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isString'
+    Parameter
+      Identifier: 'text'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' text'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getPropFromRaw'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: '
+  prop'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: '
+  validateElement'
+      FunctionType
+        Parameter
+          Identifier: 'value'
+          UnknownKeyword
+        BooleanKeyword
+    Parameter
+      Identifier: '
+  elementTypeName'
+      StringKeyword
+    TypeReference
+      Identifier: ' PropOfRaw'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' getSpecsFromRaw'
+    Parameter
+      Identifier: '
+  prop'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    TypeReference
+      Identifier: ' PropOfRaw'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' getPropFromRaw'
+          Identifier: 'prop'
+          Identifier: ' isString'
+          StringLiteral

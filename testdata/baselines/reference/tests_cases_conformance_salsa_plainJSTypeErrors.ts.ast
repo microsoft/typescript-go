@@ -1,0 +1,13 @@
+SourceFile
+  IfStatement
+    BinaryExpression
+      ObjectLiteralExpression
+      EqualsEqualsEqualsToken
+      ObjectLiteralExpression
+    Block
+  IfStatement
+    BinaryExpression
+      ObjectLiteralExpression
+      EqualsEqualsToken
+      ObjectLiteralExpression
+    Block

@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a1'
+        StringKeyword
+      Block
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      NewExpression
+        Identifier: ' A'
+        NumericLiteral
+    Block

@@ -1,0 +1,27 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @noEmit: true
+// @allowJs: true
+// @checkJs: true
+// @noImplicitAny: true
+// @Filename: mod.js
+
+// #24111 -- shouldn't assert
+C'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+C'
+            Identifier: 'prototype'
+          Identifier: 'bar'
+        Identifier: 'foo'
+      EqualsToken
+      ObjectLiteralExpression

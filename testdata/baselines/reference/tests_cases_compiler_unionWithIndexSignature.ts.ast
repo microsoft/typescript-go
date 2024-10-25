@@ -1,0 +1,111 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' NumList'
+    PropertySignature
+      Identifier: '
+  kind'
+      LiteralType
+        StringLiteral
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' StrList'
+    PropertySignature
+      Identifier: '
+  kind'
+      LiteralType
+        StringLiteral
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' NumList'
+        TypeReference
+          Identifier: ' StrList'
+    Parameter
+      Identifier: 'arr'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        ParenthesizedType
+          UnionType
+            TypeReference
+              Identifier: 'NumList'
+            TypeReference
+              Identifier: ' StrList'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' zz'
+            ElementAccessExpression
+              Identifier: ' arr'
+              NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TypedArray'
+    UnionType
+      TypeReference
+        Identifier: ' Int32Array'
+      TypeReference
+        Identifier: ' Uint8Array'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isTypedArray'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+    TypePredicate
+      Identifier: ' a'
+      UnionType
+        TypeReference
+          Identifier: ' Int32Array'
+        TypeReference
+          Identifier: ' Uint8Array'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' a'
+            InstanceOfKeyword
+            Identifier: ' Int32Array'
+          BarBarToken
+          BinaryExpression
+            Identifier: ' a'
+            InstanceOfKeyword
+            Identifier: ' Uint8Array'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' flatten'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        NumberKeyword
+        TypeReference
+          Identifier: 'TypedArray'
+    Parameter
+      Identifier: 'arr'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isTypedArray'
+          Identifier: 'arr'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+      arr'
+              NumericLiteral

@@ -1,0 +1,18 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowJs: true
+
+// @Filename: /a.js
+/////**
+//// * @typedef /**/A
+//// */
+////var x;
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

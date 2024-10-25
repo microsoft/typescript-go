@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'

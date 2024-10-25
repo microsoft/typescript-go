@@ -1,0 +1,26 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Array'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          StringKeyword
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' arr'
+            Identifier: 'foo'

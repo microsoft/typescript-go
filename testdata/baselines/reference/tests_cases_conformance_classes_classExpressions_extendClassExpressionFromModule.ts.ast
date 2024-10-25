@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' x'
+  ExportAssignment
+    Identifier: ' x'
+  ImportEqualsDeclaration
+    Identifier: ' foo1'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        Identifier: ' foo1'
+  ClassDeclaration
+    Identifier: ' y'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' x'

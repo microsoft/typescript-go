@@ -1,0 +1,32 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' String'
+    MethodSignature
+      Identifier: '
+    /** Removes the trailing white space and line terminator characters from a string. */
+    trimEnd'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** Removes the leading white space and line terminator characters from a string. */
+    trimStart'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * Removes the leading white space and line terminator characters from a string.
+     * @deprecated A legacy feature for browser compatibility. Use `trimStart` instead
+     */
+    trimLeft'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * Removes the trailing white space and line terminator characters from a string.
+     * @deprecated A legacy feature for browser compatibility. Use `trimEnd` instead
+     */
+    trimRight'
+      StringKeyword

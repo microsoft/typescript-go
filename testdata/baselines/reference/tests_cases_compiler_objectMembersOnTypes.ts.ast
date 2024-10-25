@@ -1,0 +1,43 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+  ClassDeclaration
+    Identifier: ' AAA'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+x'
+        Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i'
+        Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' AAA'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'toString'

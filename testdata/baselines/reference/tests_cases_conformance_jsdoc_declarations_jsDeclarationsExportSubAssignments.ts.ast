@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Strings'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    b'
+            StringLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'Strings'
+      EqualsToken
+      Identifier: ' Strings'

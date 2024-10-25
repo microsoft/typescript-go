@@ -1,0 +1,155 @@
+SourceFile
+  ForOfStatement
+    AwaitKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    Identifier: ' y'
+    Block
+  ForOfStatement
+    AwaitKeyword
+    Identifier: 'x'
+    Identifier: ' y'
+    Block
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    Identifier: ' y'
+    Block
+  ForInStatement
+    Identifier: 'x'
+    Identifier: ' y'
+    Block
+  FunctionDeclaration
+    Identifier: ' f5'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      ForOfStatement
+        AwaitKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        Identifier: ' y'
+        Block
+  FunctionDeclaration
+    Identifier: ' f6'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      ForOfStatement
+        AwaitKeyword
+        Identifier: 'x'
+        Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f7'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      ForOfStatement
+        AwaitKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f8'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      ForOfStatement
+        AwaitKeyword
+        Identifier: 'x'
+        Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f9'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      ForOfStatement
+        AwaitKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f10'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      ForOfStatement
+        AwaitKeyword
+        Identifier: 'x'
+        Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' f11'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      ForOfStatement
+        AwaitKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        Identifier: ' y'
+        Block
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' f12'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      ForOfStatement
+        AwaitKeyword
+        Identifier: 'x'
+        Identifier: ' y'
+        Block

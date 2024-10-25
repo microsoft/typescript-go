@@ -1,0 +1,19 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' i'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+    x'
+      StringKeyword

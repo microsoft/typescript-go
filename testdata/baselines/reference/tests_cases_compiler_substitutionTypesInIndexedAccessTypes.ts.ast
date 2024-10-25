@@ -1,0 +1,87 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' UserArgs'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  select'
+        QuestionToken
+        BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' Subset'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    MappedType
+      TypeParameter
+        Identifier: 'key'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      ConditionalType
+        TypeReference
+          Identifier: ' key'
+        TypeOperator
+          TypeReference
+            Identifier: ' U'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'key'
+        NeverKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' withBoundary'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' UserArgs'
+    Parameter
+      Identifier: 'args'
+      QuestionToken
+      TypeReference
+        Identifier: ' Subset'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' UserArgs'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' withoutBoundary'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' UserArgs'
+    Parameter
+      Identifier: 'args'
+      QuestionToken
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' boundaryResult'
+        CallExpression
+          Identifier: ' withBoundary'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  select'
+              TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' withoutBoundaryResult'
+        CallExpression
+          Identifier: ' withoutBoundary'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  select'
+              TrueKeyword

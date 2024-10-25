@@ -1,0 +1,22 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' types'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'types'
+          Identifier: 'A'

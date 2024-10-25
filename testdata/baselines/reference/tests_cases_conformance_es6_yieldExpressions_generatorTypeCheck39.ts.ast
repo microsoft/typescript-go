@@ -1,0 +1,29 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' decorator'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' y'
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    Block
+      ClassDeclaration
+        Decorator
+          CallExpression
+            Identifier: 'decorator'
+            YieldExpression
+              NumericLiteral
+        Identifier: ' C'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          YieldExpression
+            NumericLiteral

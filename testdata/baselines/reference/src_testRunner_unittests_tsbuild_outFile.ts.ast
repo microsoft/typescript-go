@@ -1,0 +1,1034 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createSolutionBuilderHostForBaseline'
+        ImportSpecifier
+          Identifier: '
+    solutionBuildWithBaseline'
+        ImportSpecifier
+          Identifier: '
+    verifySolutionBuilderWithDifferentTsVersion'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    noChangeOnlyRuns'
+        ImportSpecifier
+          Identifier: '
+    verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' getOutFileSys'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' TestServerHost'
+                    Identifier: 'createWatchedSystem'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    target'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    composite'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    removeComments'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    strict'
+                                FalseKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    sourceMap'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    declarationMap'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    outFile'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    skipDefaultLibCheck'
+                                TrueKeyword
+                          PropertyAssignment
+                            Identifier: '
+                files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                              StringLiteral
+                              StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                references'
+                            ArrayLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    target'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    composite'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    removeComments'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    strict'
+                                FalseKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    sourceMap'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    declarationMap'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    declaration'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    outFile'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    skipDefaultLibCheck'
+                                TrueKeyword
+                          PropertyAssignment
+                            Identifier: '
+                references'
+                            ArrayLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    target'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    composite'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    removeComments'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    strict'
+                                FalseKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    sourceMap'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    declarationMap'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    declaration'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    outFile'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    skipDefaultLibCheck'
+                                TrueKeyword
+                          PropertyAssignment
+                            Identifier: '
+                files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                references'
+                            ArrayLiteralExpression
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' path'
+                                  StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' path'
+                                  StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' currentDirectory'
+                      StringLiteral
+          FunctionDeclaration
+            Identifier: ' getOutFileSysAfterBuild'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sys'
+                    CallExpression
+                      Identifier: ' getOutFileSys'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        solutionBuildWithBaseline'
+                  Identifier: 'sys'
+                  ArrayLiteralExpression
+                    StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' dry'
+                      FalseKeyword
+                    PropertyAssignment
+                      Identifier: ' force'
+                      FalseKeyword
+                    PropertyAssignment
+                      Identifier: ' verbose'
+                      TrueKeyword
+              ReturnStatement
+                Identifier: ' sys'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    // Verify initial + incremental edits
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSys'
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        baselineSourceMap'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        baselineReadFileCalls'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'replaceFileText'
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'appendFile'
+                            StringLiteral
+                            StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    // Verify baseline with build info + dts unChanged
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSys'
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        baselineSourceMap'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' sys'
+                        Identifier: 'replaceFileText'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'appendFile'
+                            StringLiteral
+                            StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    // Verify baseline with build info
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSys'
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        baselineSourceMap'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' sys'
+                        Identifier: 'replaceFileText'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    // Verify baseline with build info
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSys'
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        baselineSourceMap'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            sys'
+                        Identifier: 'replaceFileText'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSysAfterBuild'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  Identifier: ' noChangeOnlyRuns'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSysAfterBuild'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' sys'
+                        Identifier: 'deleteFile'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' sys'
+                        Identifier: 'replaceFileText'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifySolutionBuilderWithDifferentTsVersion'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSysAfterBuild'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSys'
+                PropertyAssignment
+                  Identifier: '
+        // Make non composite third project
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' sys'
+                        Identifier: 'replaceFileText'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        // Build with command line incremental
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'appendFile'
+                            StringLiteral
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                commandLineArgs'
+                        ArrayLiteralExpression
+                          StringLiteral
+                          StringLiteral
+                          StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                discrepancyExplanation'
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'appendFile'
+                            StringLiteral
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                commandLineArgs'
+                        ArrayLiteralExpression
+                          StringLiteral
+                          StringLiteral
+                          StringLiteral
+                          StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'setModifiedTime'
+                            StringLiteral
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' sys'
+                                Identifier: 'now'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        compile'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' buildHost'
+                            CallExpression
+                              Identifier: ' createSolutionBuilderHostForBaseline'
+                              Identifier: 'sys'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' builder'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'createSolutionBuilder'
+                              Identifier: 'buildHost'
+                              ArrayLiteralExpression
+                                StringLiteral
+                              ObjectLiteralExpression
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'exit'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'builder'
+                              Identifier: 'build'
+                            StringLiteral
+                      ReturnStatement
+                        PropertyAccessExpression
+                          Identifier: ' buildHost'
+                          Identifier: 'getPrograms'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSysAfterBuild'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        compile'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' buildHost'
+                            CallExpression
+                              Identifier: ' createSolutionBuilderHostForBaseline'
+                              Identifier: 'sys'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' builder'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'createSolutionBuilder'
+                              Identifier: 'buildHost'
+                              ArrayLiteralExpression
+                                StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' verbose'
+                                  TrueKeyword
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'exit'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'builder'
+                              Identifier: 'clean'
+                            StringLiteral
+                      ReturnStatement
+                        PropertyAccessExpression
+                          Identifier: ' buildHost'
+                          Identifier: 'getPrograms'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getOutFileSys'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            // Non Modules
+            sys'
+                            Identifier: 'replaceFileText'
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                          NoSubstitutionTemplateLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'replaceFileText'
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                          NoSubstitutionTemplateLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'replaceFileText'
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                          NoSubstitutionTemplateLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+
+            // Own file emit
+            sys'
+                            Identifier: 'replaceFileText'
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'replaceFileText'
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'replaceFileText'
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                          StringLiteral

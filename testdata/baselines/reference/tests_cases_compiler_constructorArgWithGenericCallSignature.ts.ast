@@ -1,0 +1,57 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Test'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' MyFunc'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'value1'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' MyClass'
+        Constructor
+          Parameter
+            Identifier: 'func'
+            TypeReference
+              Identifier: ' MyFunc'
+          Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' F'
+        Parameter
+          Identifier: 'func'
+          TypeReference
+            Identifier: ' MyFunc'
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' func'
+        TypeReference
+          QualifiedName
+            Identifier: ' Test'
+            Identifier: 'MyFunc'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Test'
+        Identifier: 'F'
+      Identifier: 'func'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Test'
+            Identifier: 'MyClass'
+          Identifier: 'func'

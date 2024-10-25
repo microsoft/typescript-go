@@ -1,0 +1,13 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                NumericLiteral

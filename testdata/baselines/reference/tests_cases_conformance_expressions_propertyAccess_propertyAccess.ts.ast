@@ -1,0 +1,540 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    b'
+      NumberKeyword
+  EnumDeclaration
+    Identifier: ' Compass'
+    EnumMember
+      Identifier: '
+    North'
+    EnumMember
+      Identifier: ' South'
+    EnumMember
+      Identifier: ' East'
+    EnumMember
+      Identifier: ' West'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numIndex'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strIndex'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              StringKeyword
+            TypeReference
+              Identifier: ' Compass'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            PropertyAccessExpression
+              Identifier: ' Compass'
+              Identifier: 'North'
+          PropertyAssignment
+            StringLiteral
+            PropertyAccessExpression
+              Identifier: ' Compass'
+              Identifier: 'East'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bothIndex'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              StringKeyword
+            TypeReference
+              Identifier: ' A'
+          IndexSignature
+            Parameter
+              Identifier: 'm'
+              NumberKeyword
+            TypeReference
+              Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' noIndex'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    x'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    y'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    z'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' n'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' m'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' o'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  FalseKeyword
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyVar'
+        AnyKeyword
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' stringOrNumber'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someObject'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Assign to a property access
+obj'
+        Identifier: 'y'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Property access on value of type 'any'
+anyVar'
+        Identifier: 'x'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' anyVar'
+          Identifier: 'y'
+        EqualsToken
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' obj'
+            Identifier: 'x'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' anyVar'
+            Identifier: 'z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa'
+        PropertyAccessExpression
+          Identifier: ' obj'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bb'
+        PropertyAccessExpression
+          Identifier: ' obj'
+          Identifier: 'hasOwnProperty'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cc'
+        PropertyAccessExpression
+          Identifier: ' obj'
+          Identifier: 'qqq'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dd'
+        ElementAccessExpression
+          Identifier: ' obj'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dd'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ee'
+        ElementAccessExpression
+          Identifier: ' obj'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ee'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ff'
+        ElementAccessExpression
+          Identifier: ' obj'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ff'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' gg'
+        ElementAccessExpression
+          Identifier: ' obj'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' gg'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' hh'
+        ElementAccessExpression
+          Identifier: ' numIndex'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' hh'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ii'
+        ElementAccessExpression
+          Identifier: ' numIndex'
+          PropertyAccessExpression
+            Identifier: 'Compass'
+            Identifier: 'South'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ii'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' jj'
+        ElementAccessExpression
+          Identifier: ' numIndex'
+          Identifier: 'anyVar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' jj'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' kk'
+        ElementAccessExpression
+          Identifier: ' numIndex'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' kk'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ll'
+        ElementAccessExpression
+          Identifier: ' numIndex'
+          Identifier: 'someObject'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mm'
+        ElementAccessExpression
+          Identifier: ' strIndex'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mm'
+        TypeReference
+          Identifier: ' Compass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mm2'
+        ElementAccessExpression
+          Identifier: ' strIndex'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mm2'
+        TypeReference
+          Identifier: ' Compass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nn'
+        ElementAccessExpression
+          Identifier: ' strIndex'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nn'
+        TypeReference
+          Identifier: ' Compass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oo'
+        ElementAccessExpression
+          Identifier: ' strIndex'
+          PropertyAccessExpression
+            Identifier: 'Compass'
+            Identifier: 'East'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oo'
+        TypeReference
+          Identifier: ' Compass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pp'
+        ElementAccessExpression
+          Identifier: ' strIndex'
+          TypeAssertionExpression
+            AnyKeyword
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pp'
+        TypeReference
+          Identifier: ' Compass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qq'
+        ElementAccessExpression
+          Identifier: ' noIndex'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qq'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rr'
+        ElementAccessExpression
+          Identifier: ' noIndex'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rr'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ss'
+        ElementAccessExpression
+          Identifier: ' noIndex'
+          PropertyAccessExpression
+            Identifier: 'Compass'
+            Identifier: 'South'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ss'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tt'
+        ElementAccessExpression
+          Identifier: ' noIndex'
+          TypeAssertionExpression
+            AnyKeyword
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tt'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' uu'
+        ElementAccessExpression
+          Identifier: ' noIndex'
+          Identifier: 'someObject'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vv'
+        ElementAccessExpression
+          Identifier: ' noIndex'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vv'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ww'
+        ElementAccessExpression
+          Identifier: ' bothIndex'
+          PropertyAccessExpression
+            Identifier: 'Compass'
+            Identifier: 'East'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ww'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xx'
+        ElementAccessExpression
+          Identifier: ' bothIndex'
+          TypeAssertionExpression
+            AnyKeyword
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xx'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' yy'
+        ElementAccessExpression
+          Identifier: ' bothIndex'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' yy'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zz'
+        ElementAccessExpression
+          Identifier: ' bothIndex'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zz'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zzzz'
+        ElementAccessExpression
+          Identifier: ' bothIndex'
+          Identifier: 'someObject'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        ElementAccessExpression
+          Identifier: ' numIndex'
+          Identifier: 'stringOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        ElementAccessExpression
+          Identifier: ' strIndex'
+          Identifier: 'stringOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeReference
+          Identifier: ' Compass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        ElementAccessExpression
+          Identifier: ' bothIndex'
+          Identifier: 'stringOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeReference
+          Identifier: ' A'

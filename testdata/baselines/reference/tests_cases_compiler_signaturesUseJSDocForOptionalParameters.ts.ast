@@ -1,0 +1,58 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' MyClass'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'prop'
+          EqualsToken
+          NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/**
+ * @param  {string} required
+ * @param  {string} [notRequired]
+ * @returns {MyClass}
+ */
+MyClass'
+          Identifier: 'prototype'
+        Identifier: 'optionalParam'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'required'
+        Parameter
+          Identifier: ' notRequired'
+        Block
+          ReturnStatement
+            ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pInst'
+        NewExpression
+          Identifier: ' MyClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' pInst'
+            Identifier: 'optionalParam'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' pInst'
+            Identifier: 'optionalParam'
+          StringLiteral
+          NullKeyword

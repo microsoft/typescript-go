@@ -1,0 +1,16 @@
+SourceFile
+  EnumDeclaration
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' X'
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'X'

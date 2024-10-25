@@ -1,0 +1,60 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v0'
+        TypeReference
+          Identifier: ' T0'
+  TypeAliasDeclaration
+    Identifier: ' T0'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' I0'
+  ClassDeclaration
+    Identifier: ' I0'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        TypeReference
+          Identifier: ' T3'
+  TypeAliasDeclaration
+    Identifier: ' T3'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' I3'
+  ClassDeclaration
+    Identifier: ' I3'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        TypeReference
+          Identifier: ' T4'
+  TypeAliasDeclaration
+    Identifier: ' T4'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' I4'
+  ClassDeclaration
+    Identifier: ' I4'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T4'

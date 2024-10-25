@@ -1,0 +1,14 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '////function f(): string & {(): any} {
+////	return <any>{};
+////}
+////let x = f();
+////x/**/();
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

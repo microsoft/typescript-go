@@ -1,0 +1,64 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        LiteralType
+          NumericLiteral
+      PropertySignature
+        Identifier: ' b'
+        LiteralType
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' a'
+          ShorthandPropertyAssignment
+            Identifier: ' b'
+        EqualsToken
+        CallExpression
+          Identifier: ' fn'
+  Block
+    ExpressionStatement
+      BinaryExpression
+        Identifier: ' a'
+        CommaToken
+        Identifier: ' b'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' fn'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' a'
+          ShorthandPropertyAssignment
+            Identifier: ' b'
+        EqualsToken
+        CallExpression
+          Identifier: '
+fn'
+  Block
+    ExpressionStatement
+      BinaryExpression
+        Identifier: ' a'
+        CommaToken
+        Identifier: ' b'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' fn'

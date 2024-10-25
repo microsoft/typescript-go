@@ -1,0 +1,62 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Account'
+    PropertySignature
+      Identifier: '
+    myAccNum'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Account2'
+    PropertySignature
+      Identifier: '
+    myAccNum'
+      NumberKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' Account2'
+        Identifier: ' Acc'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Account'
+        PropertySignature
+          Identifier: '
+        someProp'
+          NumberKeyword
+      InterfaceDeclaration
+        Identifier: ' Acc'
+        PropertySignature
+          Identifier: '
+        someProp'
+          NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' model'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' func'
+        ArrowFunction
+          Parameter
+            Identifier: 'account'
+            TypeReference
+              QualifiedName
+                Identifier: ' model'
+                Identifier: 'Account'
+          Parameter
+            Identifier: ' acc2'
+            TypeReference
+              QualifiedName
+                Identifier: ' model'
+                Identifier: 'Acc'
+          EqualsGreaterThanToken
+          Block

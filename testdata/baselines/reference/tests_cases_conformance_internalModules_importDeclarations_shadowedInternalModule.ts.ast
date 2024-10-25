@@ -1,0 +1,145 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Point'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' A'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      ImportEqualsDeclaration
+        Identifier: ' Point'
+        Identifier: ' A'
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Y'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' Point'
+            PropertySignature
+              Identifier: '
+            x'
+              NumberKeyword
+            PropertySignature
+              Identifier: '
+            y'
+              NumberKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Y'
+        PropertyDeclaration
+          Identifier: '
+        name'
+          StringKeyword
+  ModuleDeclaration
+    Identifier: ' Z'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' Y'
+        QualifiedName
+          Identifier: ' X'
+          Identifier: 'Y'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Y'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' a'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        NumberKeyword
+  ModuleDeclaration
+    Identifier: ' b'
+    ModuleBlock
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        QualifiedName
+          Identifier: ' a'
+          Identifier: 'A'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        ModuleBlock
+  ModuleDeclaration
+    Identifier: ' c'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' any'
+        QualifiedName
+          Identifier: ' b'
+          Identifier: 'A'
+  ModuleDeclaration
+    Identifier: ' q'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Q'
+            ObjectLiteralExpression
+  ModuleDeclaration
+    Identifier: ' r'
+    ModuleBlock
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' Q'
+        QualifiedName
+          Identifier: ' q'
+          Identifier: 'Q'
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' Q'
+        NumberKeyword
+  ModuleDeclaration
+    Identifier: ' s'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' Q'
+        QualifiedName
+          Identifier: ' r'
+          Identifier: 'Q'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Q'
+            NumericLiteral

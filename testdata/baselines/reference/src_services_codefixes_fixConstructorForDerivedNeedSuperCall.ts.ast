@@ -1,0 +1,242 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ConstructorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isConstructorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Constructors_for_derived_classes_must_contain_a_super_call'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                    BindingElement
+                      Identifier: ' span'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' ctr'
+                  CallExpression
+                    Identifier: ' getNode'
+                    Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      Identifier: ' span'
+                      Identifier: 'start'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' t'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' doChange'
+                        Identifier: 't'
+                        Identifier: ' sourceFile'
+                        Identifier: ' ctr'
+            ReturnStatement
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'createCodeFixAction'
+                  Identifier: 'fixId'
+                  Identifier: ' changes'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_missing_super_call'
+                  Identifier: ' fixId'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_all_missing_super_calls'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' doChange'
+                  Identifier: 'changes'
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'sourceFile'
+                  CallExpression
+                    Identifier: ' getNode'
+                    PropertyAccessExpression
+                      Identifier: 'diag'
+                      Identifier: 'file'
+                    PropertyAccessExpression
+                      Identifier: ' diag'
+                      Identifier: 'start'
+  FunctionDeclaration
+    Identifier: ' getNode'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    TypeReference
+      Identifier: ' ConstructorDeclaration'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          CallExpression
+            Identifier: 'isConstructorDeclaration'
+            PropertyAccessExpression
+              Identifier: 'token'
+              Identifier: 'parent'
+          StringLiteral
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' token'
+          Identifier: 'parent'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' ctr'
+      TypeReference
+        Identifier: ' ConstructorDeclaration'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' superCall'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createExpressionStatement'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createCallExpression'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'factory'
+                    Identifier: 'createSuper'
+                Identifier: ' /*typeArguments*/ undefined'
+                Identifier: ' /*argumentsArray*/ emptyArray'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'insertNodeAtConstructorStart'
+          Identifier: 'sourceFile'
+          Identifier: ' ctr'
+          Identifier: ' superCall'

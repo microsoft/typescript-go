@@ -1,0 +1,52 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+//// label: while (true) {
+////    break /*1*/
+////    continue /*2*/
+////    testlabel: while (true) {
+////        break /*3*/
+////        continue /*4*/
+////        break tes/*5*/
+////        continue tes/*6*/
+////    }
+////    break /*7*/
+////    break; /*8*/
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' excludes'
+          ArrayLiteralExpression
+            StringLiteral

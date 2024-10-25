@@ -1,0 +1,72 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          Identifier: ''
+          LessThanLessThanToken
+          Identifier: ''
+        LessThanLessThanToken
+        Identifier: ''
+      LessThanLessThanToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: ' HEAD'
+        Identifier: '
+    v'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          Identifier: ''
+          BarBarToken
+          Identifier: ''
+        BarBarToken
+        Identifier: ''
+      BarBarToken
+      BinaryExpression
+        Identifier: ''
+        BarToken
+        Identifier: ' merged'
+  ExpressionStatement
+    Identifier: ' common'
+  ExpressionStatement
+    Identifier: ' ancestors'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+    v'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: ''
+        EqualsEqualsEqualsToken
+        Identifier: ''
+      EqualsEqualsEqualsToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+    v'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          Identifier: ''
+          GreaterThanGreaterThanGreaterThanToken
+          Identifier: ''
+        GreaterThanGreaterThanGreaterThanToken
+        Identifier: ''
+      GreaterThanToken
+      BinaryExpression
+        Identifier: ' Branch'
+        MinusToken
+        Identifier: 'a'

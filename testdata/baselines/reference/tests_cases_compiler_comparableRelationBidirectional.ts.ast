@@ -1,0 +1,79 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' AutomationMode'
+    EnumMember
+      Identifier: '
+    NONE'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    TIME'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    SYSTEM'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    LOCATION'
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ThemePreset'
+    PropertySignature
+      Identifier: '
+    id'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Automation'
+    PropertySignature
+      Identifier: '
+    mode'
+      TypeReference
+        Identifier: ' AutomationMode'
+  InterfaceDeclaration
+    Identifier: ' UserSettings'
+    PropertySignature
+      Identifier: '
+    presets'
+      ArrayType
+        TypeReference
+          Identifier: ' ThemePreset'
+    PropertySignature
+      Identifier: '
+    automation'
+      TypeReference
+        Identifier: ' Automation'
+  InterfaceDeclaration
+    Identifier: ' ExtensionData'
+    PropertySignature
+      Identifier: '
+    settings'
+      TypeReference
+        Identifier: ' UserSettings'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getMockData'
+    TypeReference
+      Identifier: ' ExtensionData'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        settings'
+            AsExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            presets'
+                  ArrayLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            automation'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                mode'
+                      StringLiteral
+              TypeReference
+                Identifier: ' UserSettings'

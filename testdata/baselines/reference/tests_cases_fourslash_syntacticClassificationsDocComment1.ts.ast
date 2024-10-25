@@ -1,0 +1,95 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' classification'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'syntacticClassificationsAre'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'comment'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'docCommentTagName'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'keyword'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'comment'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'keyword'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'identifier'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        CallExpression
+          Identifier: ' classification'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'semanticClassificationsAre'
+      StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c2'
+          Identifier: 'semanticToken'
+        StringLiteral
+        StringLiteral

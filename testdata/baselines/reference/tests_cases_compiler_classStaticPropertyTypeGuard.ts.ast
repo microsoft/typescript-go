@@ -1,0 +1,31 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' _a'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    GetAccessor
+      PublicKeyword
+      Identifier: ' a'
+      StringKeyword
+      Block
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'A'
+            Identifier: '_a'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' A'
+                Identifier: '_a'
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' A'
+              Identifier: '_a'
+            EqualsToken
+            StringLiteral

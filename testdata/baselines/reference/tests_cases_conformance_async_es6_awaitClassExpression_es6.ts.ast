@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Promise'
+          TypeQuery
+            Identifier: ' C'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' func'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      ClassDeclaration
+        Identifier: ' D'
+        HeritageClause
+          ExpressionWithTypeArguments
+            ParenthesizedExpression
+              AwaitExpression
+                Identifier: ' p'

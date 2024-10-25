@@ -1,0 +1,69 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Outer'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: a.js
+Outer'
+        Identifier: 'Inner'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+                EqualsToken
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' local'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+local'
+      Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inner'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Outer'
+            Identifier: 'Inner'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+inner'
+      Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Outer'
+            Identifier: 'Inner'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+z'
+      Identifier: 'y'

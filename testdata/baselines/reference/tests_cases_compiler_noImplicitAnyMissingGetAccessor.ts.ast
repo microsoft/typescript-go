@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' Parent'
+    SetAccessor
+      PublicKeyword
+      AbstractKeyword
+      Identifier: ' message'
+      Parameter
+        Identifier: 'str'
+  ClassDeclaration
+    Identifier: ' Child'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Parent'
+    PropertyDeclaration
+      Identifier: '
+    _x'
+      AnyKeyword
+    SetAccessor
+      PublicKeyword
+      Identifier: ' message'
+      Parameter
+        Identifier: 'str'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_x'
+            EqualsToken
+            Identifier: ' str'

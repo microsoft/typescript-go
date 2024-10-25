@@ -1,0 +1,103 @@
+SourceFile
+  SwitchStatement
+    StringLiteral
+    CaseBlock
+      CaseClause
+        StringLiteral
+        BreakStatement
+  LabeledStatement
+    Identifier: '
+
+ONE'
+    SwitchStatement
+      StringLiteral
+      CaseBlock
+        CaseClause
+          StringLiteral
+          BreakStatement
+            Identifier: ' ONE'
+  LabeledStatement
+    Identifier: '
+
+TWO'
+    LabeledStatement
+      Identifier: '
+THREE'
+      SwitchStatement
+        StringLiteral
+        CaseBlock
+          CaseClause
+            StringLiteral
+            BreakStatement
+              Identifier: ' THREE'
+  LabeledStatement
+    Identifier: '
+
+FOUR'
+    SwitchStatement
+      StringLiteral
+      CaseBlock
+        CaseClause
+          StringLiteral
+          LabeledStatement
+            Identifier: '
+        FIVE'
+            SwitchStatement
+              StringLiteral
+              CaseBlock
+                CaseClause
+                  StringLiteral
+                  BreakStatement
+                    Identifier: ' FOUR'
+  SwitchStatement
+    StringLiteral
+    CaseBlock
+      CaseClause
+        StringLiteral
+        LabeledStatement
+          Identifier: '
+        SIX'
+          SwitchStatement
+            StringLiteral
+            CaseBlock
+              CaseClause
+                StringLiteral
+                BreakStatement
+                  Identifier: ' SIX'
+  LabeledStatement
+    Identifier: '
+
+SEVEN'
+    SwitchStatement
+      StringLiteral
+      CaseBlock
+        CaseClause
+          StringLiteral
+          SwitchStatement
+            StringLiteral
+            CaseBlock
+              CaseClause
+                StringLiteral
+                SwitchStatement
+                  StringLiteral
+                  CaseBlock
+                    CaseClause
+                      StringLiteral
+                      BreakStatement
+                        Identifier: ' SEVEN'
+                      LabeledStatement
+                        Identifier: '
+                        EIGHT'
+                        SwitchStatement
+                          StringLiteral
+                          CaseBlock
+                            CaseClause
+                              StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' fn'
+                                    FunctionExpression
+                                      Block
+                              BreakStatement
+                                Identifier: ' EIGHT'

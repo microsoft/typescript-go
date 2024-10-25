@@ -1,0 +1,1187 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' ClassTypeParam'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Base'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I1'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I2'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I3'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I4'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I5'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I6'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I7'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I8'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I9'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I10'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I11'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I12'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I13'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I14'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I15'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I16'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I17'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I18'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  ModuleDeclaration
+    Identifier: ' GenericSignaturesInvalid'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I1'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I2'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I3'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I4'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I5'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I6'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I7'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I8'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I9'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I10'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I11'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I12'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I13'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I14'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I15'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I16'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I17'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I18'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  ModuleDeclaration
+    Identifier: ' GenericSignaturesValid'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I1'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I4'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I5'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I6'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a2'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I7'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I8'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I9'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I10'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a3'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I11'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I12'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I13'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I14'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a4'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I15'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I16'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I17'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I18'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+        PropertySignature
+          Identifier: '
+        a5'
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'

@@ -1,0 +1,199 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' OpTypes'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' equal'
+      TypeOperator
+        SymbolKeyword
+  ModuleDeclaration
+    Identifier: ' OpNamespace'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' equal'
+            TypeOperator
+              SymbolKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' uniqueSymbol0'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Symbol'
+            Identifier: 'for'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' uniqueSymbol1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Symbol'
+            Identifier: 'for'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' getUniqueSymbol0'
+    TypeQuery
+      Identifier: ' uniqueSymbol0'
+    Block
+      ReturnStatement
+        Identifier: ' uniqueSymbol0'
+  FunctionDeclaration
+    Identifier: ' getUniqueSymbol1'
+    TypeQuery
+      Identifier: ' uniqueSymbol1'
+    Block
+      ReturnStatement
+        Identifier: ' uniqueSymbol1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Op'
+        TypeReference
+          Identifier: ' OpTypes'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  equal'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Symbol'
+                  Identifier: 'for'
+                StringLiteral
+          TypeReference
+            Identifier: ' OpTypes'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t0'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  equal'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+  equal'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Op'
+                Identifier: 'equal'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Op'
+                Identifier: 'equal'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'OpNamespace'
+                Identifier: 'equal'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'OpNamespace'
+                Identifier: 'equal'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'getUniqueSymbol0'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'getUniqueSymbol0'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'getUniqueSymbol1'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'getUniqueSymbol1'
+            StringLiteral
+  ClassDeclaration
+    Identifier: ' Cls1'
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'uniqueSymbol0'
+      StringLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'uniqueSymbol0'
+      StringLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'uniqueSymbol1'
+      StringLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'uniqueSymbol1'
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' Cls2'
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'OpNamespace'
+          Identifier: 'equal'
+      StringLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'OpNamespace'
+          Identifier: 'equal'
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' Cls3'
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'getUniqueSymbol0'
+      StringLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'getUniqueSymbol0'
+      StringLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'getUniqueSymbol1'
+      StringLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'getUniqueSymbol1'
+      StringLiteral

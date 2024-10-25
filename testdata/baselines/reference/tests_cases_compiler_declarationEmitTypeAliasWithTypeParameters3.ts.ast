@@ -1,0 +1,24 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+    foo'
+        TypeParameter
+          Identifier: 'U'
+        TypeReference
+          Identifier: ' Foo'
+          TypeReference
+            Identifier: 'U'
+  FunctionDeclaration
+    Identifier: ' bar'
+    Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          TypeReference
+            Identifier: ' Foo'
+            NumberKeyword

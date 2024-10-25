@@ -1,0 +1,226 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' tag'
+    Parameter
+      Identifier: 'str'
+      AnyKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' str'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateMiddle
+            TemplateSpan
+              NumericLiteral
+              TemplateMiddle
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a7'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a8'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a10'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a11'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a12'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a13'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a14'
+        TaggedTemplateExpression
+          Identifier: ' tag'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail

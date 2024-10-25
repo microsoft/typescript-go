@@ -1,0 +1,30 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @strict: true
+
+////interface Foo {
+////    bar:{
+////        baz: string | null;
+////    }
+////}
+////declare let foo: Foo;
+/////*a*/foo && foo.bar ? foo.bar.baz : "whenFalse";/*b*/
+
+// Do not offer refactor when true condition can be null.
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'refactorAvailable'
+      StringLiteral

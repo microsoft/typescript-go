@@ -1,0 +1,199 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' User'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+      StringLiteral
+    MethodDeclaration
+      Identifier: '
+    sayHello'
+      VoidKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' RegisteredUser'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' User'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+      StringLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'sayHello'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'sayHello'
+    MethodDeclaration
+      Identifier: '
+    sayHello'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'sayHello'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'sayHello'
+  ClassDeclaration
+    Identifier: ' RegisteredUser2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' User'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+      StringLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: 'sayHello'
+    MethodDeclaration
+      Identifier: '
+    sayHello'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: 'sayHello'
+  ClassDeclaration
+    Identifier: ' RegisteredUser3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' User'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+      StringLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' superName'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'name'
+    MethodDeclaration
+      Identifier: '
+    sayHello'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' superName'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'name'
+  ClassDeclaration
+    Identifier: ' RegisteredUser4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' User'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+      StringLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: ''
+    MethodDeclaration
+      Identifier: '
+    sayHello'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: ''

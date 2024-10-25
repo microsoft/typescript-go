@@ -1,0 +1,5 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: 'foo'
+      Identifier: 'a'

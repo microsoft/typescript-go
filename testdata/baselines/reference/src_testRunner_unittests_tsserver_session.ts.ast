@@ -1,0 +1,3512 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' expect'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' incrementalVerifier'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createHasErrorMessageLogger'
+        ImportSpecifier
+          Identifier: '
+    nullLogger'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lastWrittenToHost'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noopFileWatcher'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'FileWatcher'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' close'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'noop'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mockHost'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'server'
+            Identifier: 'ServerHost'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    args'
+            ArrayLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    newLine'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    useCaseSensitiveFileNames'
+            TrueKeyword
+          MethodDeclaration
+            Identifier: '
+    write'
+            Parameter
+              Identifier: 's'
+            VoidKeyword
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+        lastWrittenToHost'
+                  EqualsToken
+                  Identifier: ' s'
+          PropertyAssignment
+            Identifier: '
+    readFile'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'returnUndefined'
+          PropertyAssignment
+            Identifier: '
+    writeFile'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'noop'
+          MethodDeclaration
+            Identifier: '
+    resolvePath'
+            StringKeyword
+            Block
+              ReturnStatement
+                NonNullExpression
+                  Identifier: ' undefined'
+          PropertyAssignment
+            Identifier: ' // TODO: GH#18217
+    fileExists'
+            ArrowFunction
+              EqualsGreaterThanToken
+              FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    directoryExists'
+            ArrowFunction
+              EqualsGreaterThanToken
+              FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    getDirectories'
+            ArrowFunction
+              EqualsGreaterThanToken
+              ArrayLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    createDirectory'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'noop'
+          MethodDeclaration
+            Identifier: '
+    getExecutingFilePath'
+            StringKeyword
+            Block
+              ReturnStatement
+                StringLiteral
+          MethodDeclaration
+            Identifier: '
+    getCurrentDirectory'
+            StringKeyword
+            Block
+              ReturnStatement
+                StringLiteral
+          MethodDeclaration
+            Identifier: '
+    getEnvironmentVariable'
+            StringKeyword
+            Block
+              ReturnStatement
+                StringLiteral
+          MethodDeclaration
+            Identifier: '
+    readDirectory'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    exit'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'noop'
+          MethodDeclaration
+            Identifier: '
+    setTimeout'
+            Block
+              ReturnStatement
+                NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    clearTimeout'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'noop'
+          PropertyAssignment
+            Identifier: '
+    setImmediate'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    clearImmediate'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'noop'
+          PropertyAssignment
+            Identifier: '
+    createHash'
+            PropertyAccessExpression
+              Identifier: ' Harness'
+              Identifier: 'mockHash'
+          PropertyAssignment
+            Identifier: '
+    watchFile'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Identifier: ' noopFileWatcher'
+          PropertyAssignment
+            Identifier: '
+    watchDirectory'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Identifier: ' noopFileWatcher'
+  ClassDeclaration
+    Identifier: ' TestSession'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'Session'
+    MethodDeclaration
+      Identifier: '
+    getProjectService'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'projectService'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' session'
+                TypeReference
+                  Identifier: ' TestSession'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lastSent'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Message'
+          FunctionDeclaration
+            Identifier: ' createSession'
+            TypeReference
+              Identifier: ' TestSession'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' opts'
+                    TypeReference
+                      QualifiedName
+                        QualifiedName
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'SessionOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            host'
+                        Identifier: ' mockHost'
+                      PropertyAssignment
+                        Identifier: '
+            cancellationToken'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'server'
+                          Identifier: 'nullCancellationToken'
+                      PropertyAssignment
+                        Identifier: '
+            useSingleInferredProject'
+                        FalseKeyword
+                      PropertyAssignment
+                        Identifier: '
+            useInferredProjectPerProjectRoot'
+                        FalseKeyword
+                      PropertyAssignment
+                        Identifier: '
+            byteLength'
+                        PropertyAccessExpression
+                          Identifier: ' Buffer'
+                          Identifier: 'byteLength'
+                      PropertyAssignment
+                        Identifier: '
+            hrtime'
+                        PropertyAccessExpression
+                          Identifier: ' process'
+                          Identifier: 'hrtime'
+                      PropertyAssignment
+                        Identifier: '
+            logger'
+                        CallExpression
+                          Identifier: ' nullLogger'
+                      PropertyAssignment
+                        Identifier: '
+            canUseEvents'
+                        TrueKeyword
+                      ShorthandPropertyAssignment
+                        Identifier: '
+            incrementalVerifier'
+              ReturnStatement
+                NewExpression
+                  Identifier: ' TestSession'
+                  Identifier: 'opts'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' oldPrepare'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'AnyFunction'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    before'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        oldPrepare'
+                      EqualsToken
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'Error'
+                            AnyKeyword
+                        Identifier: 'prepareStackTrace'
+                  ExpressionStatement
+                    DeleteExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'Error'
+                            AnyKeyword
+                        Identifier: 'prepareStackTrace'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    after'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'Error'
+                            AnyKeyword
+                        Identifier: 'prepareStackTrace'
+                      EqualsToken
+                      Identifier: ' oldPrepare'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    beforeEach'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        session'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' createSession'
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        session'
+                        Identifier: 'send'
+                      EqualsToken
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'msg'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'Message'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+            lastSent'
+                              EqualsToken
+                              Identifier: ' msg'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' req'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'FileRequest'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                command'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'server'
+                                          Identifier: 'protocol'
+                                        Identifier: 'CommandTypes'
+                                      Identifier: 'Open'
+                                  PropertyAssignment
+                                    Identifier: '
+                seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                type'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                arguments'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    file'
+                                        NonNullExpression
+                                          Identifier: ' undefined'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    Identifier: '
+
+            expect'
+                                    ArrowFunction
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' session'
+                                          Identifier: 'executeCommand'
+                                        Identifier: 'req'
+                                  Identifier: 'to'
+                                Identifier: 'throw'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' req'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'Request'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                command'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                type'
+                                    StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            session'
+                                Identifier: 'executeCommand'
+                              Identifier: 'req'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' expected'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'Response'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                command'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'server'
+                                          Identifier: 'protocol'
+                                        Identifier: 'CommandTypes'
+                                      Identifier: 'Unknown'
+                                  PropertyAssignment
+                                    Identifier: '
+                type'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                message'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                request_seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                success'
+                                    FalseKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                performanceData'
+                                    Identifier: ' undefined'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      Identifier: '
+            expect'
+                                      Identifier: 'lastSent'
+                                    Identifier: 'to'
+                                  Identifier: 'deep'
+                                Identifier: 'equal'
+                              Identifier: 'expected'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' req'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'ConfigureRequest'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                command'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'server'
+                                          Identifier: 'protocol'
+                                        Identifier: 'CommandTypes'
+                                      Identifier: 'Configure'
+                                  PropertyAssignment
+                                    Identifier: '
+                seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                type'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                arguments'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    hostInfo'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    formatOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        newLineCharacter'
+                                            StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      Identifier: '
+
+            expect'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'session'
+                                          Identifier: 'executeCommand'
+                                        Identifier: 'req'
+                                    Identifier: 'to'
+                                  Identifier: 'deep'
+                                Identifier: 'equal'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                responseRequired'
+                                  FalseKeyword
+                                PropertyAssignment
+                                  Identifier: '
+                performanceData'
+                                  Identifier: ' undefined'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      Identifier: '
+            expect'
+                                      Identifier: 'lastSent'
+                                    Identifier: 'to'
+                                  Identifier: 'deep'
+                                Identifier: 'equal'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                command'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'server'
+                                        Identifier: 'protocol'
+                                      Identifier: 'CommandTypes'
+                                    Identifier: 'Configure'
+                                PropertyAssignment
+                                  Identifier: '
+                type'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                success'
+                                  TrueKeyword
+                                PropertyAssignment
+                                  Identifier: '
+                request_seq'
+                                  NumericLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                seq'
+                                  NumericLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                body'
+                                  Identifier: ' undefined'
+                                PropertyAssignment
+                                  Identifier: '
+                performanceData'
+                                  Identifier: ' undefined'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' configureRequest'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'ConfigureRequest'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                command'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'server'
+                                          Identifier: 'protocol'
+                                        Identifier: 'CommandTypes'
+                                      Identifier: 'Configure'
+                                  PropertyAssignment
+                                    Identifier: '
+                seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                type'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                arguments'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    formatOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        indentStyle'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' ts'
+                                                    Identifier: 'server'
+                                                  Identifier: 'protocol'
+                                                Identifier: 'IndentStyle'
+                                              Identifier: 'Block'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            session'
+                                Identifier: 'onMessage'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'JSON'
+                                  Identifier: 'stringify'
+                                Identifier: 'configureRequest'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            assert'
+                                Identifier: 'equal'
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'session'
+                                        Identifier: 'getProjectService'
+                                    Identifier: 'getFormatCodeOptions'
+                                  AsExpression
+                                    StringLiteral
+                                    TypeReference
+                                      QualifiedName
+                                        QualifiedName
+                                          Identifier: ' ts'
+                                          Identifier: 'server'
+                                        Identifier: 'NormalizedPath'
+                                Identifier: 'indentStyle'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'IndentStyle'
+                                Identifier: 'Block'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' setOptionsRequest'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'SetCompilerOptionsForInferredProjectsRequest'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                command'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'server'
+                                          Identifier: 'protocol'
+                                        Identifier: 'CommandTypes'
+                                      Identifier: 'CompilerOptionsForInferredProjects'
+                                  PropertyAssignment
+                                    Identifier: '
+                seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                type'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                arguments'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        module'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' ts'
+                                                    Identifier: 'server'
+                                                  Identifier: 'protocol'
+                                                Identifier: 'ModuleKind'
+                                              Identifier: 'System'
+                                          PropertyAssignment
+                                            Identifier: '
+                        target'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' ts'
+                                                    Identifier: 'server'
+                                                  Identifier: 'protocol'
+                                                Identifier: 'ScriptTarget'
+                                              Identifier: 'ES5'
+                                          PropertyAssignment
+                                            Identifier: '
+                        jsx'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' ts'
+                                                    Identifier: 'server'
+                                                  Identifier: 'protocol'
+                                                Identifier: 'JsxEmit'
+                                              Identifier: 'React'
+                                          PropertyAssignment
+                                            Identifier: '
+                        newLine'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' ts'
+                                                    Identifier: 'server'
+                                                  Identifier: 'protocol'
+                                                Identifier: 'NewLineKind'
+                                              Identifier: 'Lf'
+                                          PropertyAssignment
+                                            Identifier: '
+                        moduleResolution'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' ts'
+                                                    Identifier: 'server'
+                                                  Identifier: 'protocol'
+                                                Identifier: 'ModuleResolutionKind'
+                                              Identifier: 'Node'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            session'
+                                Identifier: 'onMessage'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'JSON'
+                                  Identifier: 'stringify'
+                                Identifier: 'setOptionsRequest'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'deepEqual'
+                              CallExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                session'
+                                      Identifier: 'getProjectService'
+                                  Identifier: 'getCompilerOptionsForInferredProjects'
+                              AsExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    module'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'ModuleKind'
+                                      Identifier: 'System'
+                                  PropertyAssignment
+                                    Identifier: '
+                    target'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'ScriptTarget'
+                                      Identifier: 'ES5'
+                                  PropertyAssignment
+                                    Identifier: '
+                    jsx'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'JsxEmit'
+                                      Identifier: 'React'
+                                  PropertyAssignment
+                                    Identifier: '
+                    newLine'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'NewLineKind'
+                                      Identifier: 'LineFeed'
+                                  PropertyAssignment
+                                    Identifier: '
+                    moduleResolution'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'ModuleResolutionKind'
+                                      Identifier: 'Node10'
+                                  PropertyAssignment
+                                    Identifier: '
+                    allowNonTsExtensions'
+                                    TrueKeyword
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'CompilerOptions'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' req'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'StatusRequest'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                command'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'server'
+                                          Identifier: 'protocol'
+                                        Identifier: 'CommandTypes'
+                                      Identifier: 'Status'
+                                  PropertyAssignment
+                                    Identifier: '
+                seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                type'
+                                    StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' expected'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'StatusResponseBody'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                version'
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'version'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'deepEqual'
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'session'
+                                    Identifier: 'executeCommand'
+                                  Identifier: 'req'
+                                Identifier: 'response'
+                              Identifier: ' expected'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' allCommandNames'
+                        ArrayType
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' Object'
+                            Identifier: 'values'
+                          PropertyAccessExpression
+                            ParenthesizedExpression
+                              AsExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'server'
+                                  Identifier: 'protocol'
+                                AnyKeyword
+                            Identifier: 'CommandTypes'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' i'
+                                NumericLiteral
+                          ForOfStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' name'
+                            Identifier: ' allCommandNames'
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' req'
+                                    TypeReference
+                                      QualifiedName
+                                        QualifiedName
+                                          QualifiedName
+                                            Identifier: ' ts'
+                                            Identifier: 'server'
+                                          Identifier: 'protocol'
+                                        Identifier: 'Request'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    command'
+                                        Identifier: ' name'
+                                      PropertyAssignment
+                                        Identifier: '
+                    seq'
+                                        Identifier: ' i'
+                                      PropertyAssignment
+                                        Identifier: '
+                    type'
+                                        StringLiteral
+                              ExpressionStatement
+                                PostfixUnaryExpression
+                                  Identifier: '
+                i'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                session'
+                                    Identifier: 'onMessage'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'JSON'
+                                      Identifier: 'stringify'
+                                    Identifier: 'req'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                req'
+                                    Identifier: 'seq'
+                                  EqualsToken
+                                  Identifier: ' i'
+                              ExpressionStatement
+                                PostfixUnaryExpression
+                                  Identifier: '
+                i'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                req'
+                                    Identifier: 'arguments'
+                                  EqualsToken
+                                  ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                session'
+                                    Identifier: 'onMessage'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'JSON'
+                                      Identifier: 'stringify'
+                                    Identifier: 'req'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                req'
+                                    Identifier: 'seq'
+                                  EqualsToken
+                                  Identifier: ' i'
+                              ExpressionStatement
+                                PostfixUnaryExpression
+                                  Identifier: '
+                i'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                req'
+                                    Identifier: 'arguments'
+                                  EqualsToken
+                                  NullKeyword
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' // eslint-disable-line no-restricted-syntax
+                session'
+                                    Identifier: 'onMessage'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'JSON'
+                                      Identifier: 'stringify'
+                                    Identifier: 'req'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                req'
+                                    Identifier: 'seq'
+                                  EqualsToken
+                                  Identifier: ' i'
+                              ExpressionStatement
+                                PostfixUnaryExpression
+                                  Identifier: '
+                i'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                req'
+                                    Identifier: 'arguments'
+                                  EqualsToken
+                                  StringLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                session'
+                                    Identifier: 'onMessage'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'JSON'
+                                      Identifier: 'stringify'
+                                    Identifier: 'req'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                req'
+                                    Identifier: 'seq'
+                                  EqualsToken
+                                  Identifier: ' i'
+                              ExpressionStatement
+                                PostfixUnaryExpression
+                                  Identifier: '
+                i'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                req'
+                                    Identifier: 'arguments'
+                                  EqualsToken
+                                  NumericLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                session'
+                                    Identifier: 'onMessage'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'JSON'
+                                      Identifier: 'stringify'
+                                    Identifier: 'req'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                req'
+                                    Identifier: 'seq'
+                                  EqualsToken
+                                  Identifier: ' i'
+                              ExpressionStatement
+                                PostfixUnaryExpression
+                                  Identifier: '
+                i'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                req'
+                                    Identifier: 'arguments'
+                                  EqualsToken
+                                  ArrayLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                session'
+                                    Identifier: 'onMessage'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'JSON'
+                                      Identifier: 'stringify'
+                                    Identifier: 'req'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            session'
+                                Identifier: 'onMessage'
+                              StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' req'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'ConfigureRequest'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                command'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'server'
+                                          Identifier: 'protocol'
+                                        Identifier: 'CommandTypes'
+                                      Identifier: 'Configure'
+                                  PropertyAssignment
+                                    Identifier: '
+                seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                type'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                arguments'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    hostInfo'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    formatOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        newLineCharacter'
+                                            StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            session'
+                                Identifier: 'onMessage'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'JSON'
+                                  Identifier: 'stringify'
+                                Identifier: 'req'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      Identifier: '
+
+            expect'
+                                      Identifier: 'lastSent'
+                                    Identifier: 'to'
+                                  Identifier: 'deep'
+                                Identifier: 'equal'
+                              AsExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                command'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'server'
+                                          Identifier: 'protocol'
+                                        Identifier: 'CommandTypes'
+                                      Identifier: 'Configure'
+                                  PropertyAssignment
+                                    Identifier: '
+                type'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                success'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                request_seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                body'
+                                    Identifier: ' undefined'
+                                  PropertyAssignment
+                                    Identifier: '
+                performanceData'
+                                    Identifier: ' undefined'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'ConfigureResponse'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' msg'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'Request'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: ' type'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: ' command'
+                                    StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' strmsg'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' JSON'
+                                    Identifier: 'stringify'
+                                  Identifier: 'msg'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' len'
+                                BinaryExpression
+                                  NumericLiteral
+                                  PlusToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' Buffer'
+                                      Identifier: 'byteLength'
+                                    Identifier: 'strmsg'
+                                    StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' resultMsg'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'len'
+                                    TemplateMiddle
+                                  TemplateSpan
+                                    Identifier: 'strmsg'
+                                    TemplateTail
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            session'
+                                Identifier: 'send'
+                              EqualsToken
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'Session'
+                                  Identifier: 'prototype'
+                                Identifier: 'send'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            assert'
+                              PropertyAccessExpression
+                                Identifier: 'session'
+                                Identifier: 'send'
+                          ExpressionStatement
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    Identifier: '
+            expect'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'session'
+                                        Identifier: 'send'
+                                      Identifier: 'msg'
+                                  Identifier: 'to'
+                                Identifier: 'not'
+                              Identifier: 'exist'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    Identifier: ' // eslint-disable-line @typescript-eslint/no-unused-expressions
+            expect'
+                                    Identifier: 'lastWrittenToHost'
+                                  Identifier: 'to'
+                                Identifier: 'equal'
+                              Identifier: 'resultMsg'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' respBody'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                item'
+                                    FalseKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' command'
+                                StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' result'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'HandlerResponse'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                response'
+                                    Identifier: ' respBody'
+                                  PropertyAssignment
+                                    Identifier: '
+                responseRequired'
+                                    TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            session'
+                                Identifier: 'addProtocolHandler'
+                              Identifier: 'command'
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                Identifier: ' result'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      Identifier: '
+
+            expect'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'session'
+                                          Identifier: 'executeCommand'
+                                        ObjectLiteralExpression
+                                          ShorthandPropertyAssignment
+                                            Identifier: '
+                command'
+                                          PropertyAssignment
+                                            Identifier: '
+                seq'
+                                            NumericLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                type'
+                                            StringLiteral
+                                    Identifier: 'to'
+                                  Identifier: 'deep'
+                                Identifier: 'equal'
+                              Identifier: 'result'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' respBody'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                item'
+                                    FalseKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' resp'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'HandlerResponse'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                response'
+                                    Identifier: ' respBody'
+                                  PropertyAssignment
+                                    Identifier: '
+                responseRequired'
+                                    TrueKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' command'
+                                StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            session'
+                                Identifier: 'addProtocolHandler'
+                              Identifier: 'command'
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                Identifier: ' resp'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    Identifier: '
+
+            expect'
+                                    ArrowFunction
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' session'
+                                          Identifier: 'addProtocolHandler'
+                                        Identifier: 'command'
+                                        ArrowFunction
+                                          EqualsGreaterThanToken
+                                          Identifier: ' resp'
+                                  Identifier: 'to'
+                                Identifier: 'throw'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'command'
+                                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' evt'
+                                StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' info'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                test'
+                                    TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            session'
+                                Identifier: 'event'
+                              Identifier: 'info'
+                              Identifier: ' evt'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      Identifier: '
+
+            expect'
+                                      Identifier: 'lastSent'
+                                    Identifier: 'to'
+                                  Identifier: 'deep'
+                                Identifier: 'equal'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                type'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                seq'
+                                  NumericLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                event'
+                                  Identifier: ' evt'
+                                PropertyAssignment
+                                  Identifier: '
+                body'
+                                  Identifier: ' info'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' body'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                block'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    key'
+                                        StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' command'
+                                StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            session'
+                                Identifier: 'doOutput'
+                              Identifier: 'body'
+                              Identifier: ' command'
+                              NumericLiteral
+                              TrueKeyword
+                              Identifier: ' /*performanceData*/ undefined'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      Identifier: '
+
+            expect'
+                                      Identifier: 'lastSent'
+                                    Identifier: 'to'
+                                  Identifier: 'deep'
+                                Identifier: 'equal'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                seq'
+                                  NumericLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                request_seq'
+                                  NumericLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                type'
+                                  StringLiteral
+                                ShorthandPropertyAssignment
+                                  Identifier: '
+                command'
+                                ShorthandPropertyAssignment
+                                  Identifier: '
+                body'
+                                PropertyAssignment
+                                  Identifier: '
+                success'
+                                  TrueKeyword
+                                PropertyAssignment
+                                  Identifier: '
+                performanceData'
+                                  Identifier: ' undefined'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' oldPrepare'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'AnyFunction'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' oldStackTraceLimit'
+                NumberKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    before'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        oldStackTraceLimit'
+                      EqualsToken
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'Error'
+                            AnyKeyword
+                        Identifier: 'stackTraceLimit'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        oldPrepare'
+                      EqualsToken
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'Error'
+                            AnyKeyword
+                        Identifier: 'prepareStackTrace'
+                  ExpressionStatement
+                    DeleteExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'Error'
+                            AnyKeyword
+                        Identifier: 'prepareStackTrace'
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'Error'
+                            AnyKeyword
+                        Identifier: 'stackTraceLimit'
+                      EqualsToken
+                      NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    after'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'Error'
+                            AnyKeyword
+                        Identifier: 'prepareStackTrace'
+                      EqualsToken
+                      Identifier: ' oldPrepare'
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'Error'
+                            AnyKeyword
+                        Identifier: 'stackTraceLimit'
+                      EqualsToken
+                      Identifier: ' oldStackTraceLimit'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' command'
+                StringLiteral
+          ClassDeclaration
+            Identifier: ' TestSession'
+            HeritageClause
+              ExpressionWithTypeArguments
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'Session'
+            PropertyDeclaration
+              Identifier: '
+        lastSent'
+              UnionType
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Message'
+                UndefinedKeyword
+            MethodDeclaration
+              PrivateKeyword
+              Identifier: ' exceptionRaisingHandler'
+              Parameter
+                Identifier: '_request'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Request'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' response'
+                  QuestionToken
+                  AnyKeyword
+                PropertySignature
+                  Identifier: ' responseRequired'
+                  BooleanKeyword
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+            f1'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'Debug'
+                      Identifier: 'fail'
+                FunctionDeclaration
+                  Identifier: ' f1'
+                  Block
+                    ThrowStatement
+                      NewExpression
+                        Identifier: ' Error'
+                        StringLiteral
+            Constructor
+              Block
+                ExpressionStatement
+                  CallExpression
+                    SuperKeyword
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                host'
+                        Identifier: ' mockHost'
+                      PropertyAssignment
+                        Identifier: '
+                cancellationToken'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'server'
+                          Identifier: 'nullCancellationToken'
+                      PropertyAssignment
+                        Identifier: '
+                useSingleInferredProject'
+                        FalseKeyword
+                      PropertyAssignment
+                        Identifier: '
+                useInferredProjectPerProjectRoot'
+                        FalseKeyword
+                      PropertyAssignment
+                        Identifier: '
+                typingsInstaller'
+                        NonNullExpression
+                          Identifier: ' undefined'
+                      PropertyAssignment
+                        Identifier: ' // TODO: GH#18217
+                byteLength'
+                        PropertyAccessExpression
+                          Identifier: ' Buffer'
+                          Identifier: 'byteLength'
+                      PropertyAssignment
+                        Identifier: '
+                hrtime'
+                        PropertyAccessExpression
+                          Identifier: ' process'
+                          Identifier: 'hrtime'
+                      PropertyAssignment
+                        Identifier: '
+                logger'
+                        CallExpression
+                          Identifier: ' nullLogger'
+                      PropertyAssignment
+                        Identifier: '
+                canUseEvents'
+                        TrueKeyword
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                incrementalVerifier'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'addProtocolHandler'
+                    Identifier: 'command'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'exceptionRaisingHandler'
+            MethodDeclaration
+              OverrideKeyword
+              Identifier: ' send'
+              Parameter
+                Identifier: 'msg'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Message'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'lastSent'
+                    EqualsToken
+                    Identifier: ' msg'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' request'
+                        ObjectLiteralExpression
+                          ShorthandPropertyAssignment
+                            Identifier: '
+            command'
+                          PropertyAssignment
+                            Identifier: '
+            seq'
+                            NumericLiteral
+                          PropertyAssignment
+                            Identifier: '
+            type'
+                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        session'
+                        Identifier: 'onMessage'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'JSON'
+                          Identifier: 'stringify'
+                        Identifier: 'request'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' lastSent'
+                        AsExpression
+                          PropertyAccessExpression
+                            Identifier: ' session'
+                            Identifier: 'lastSent'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'Response'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            Identifier: '
+
+        expect'
+                            Identifier: 'lastSent'
+                          Identifier: 'to'
+                        Identifier: 'contain'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            seq'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: '
+            type'
+                          StringLiteral
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            command'
+                        PropertyAssignment
+                          Identifier: '
+            success'
+                          FalseKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    Identifier: '
+
+        expect'
+                                    PropertyAccessExpression
+                                      Identifier: 'lastSent'
+                                      Identifier: 'message'
+                                  Identifier: 'has'
+                                Identifier: 'string'
+                              StringLiteral
+                            Identifier: 'and'
+                          Identifier: 'has'
+                        Identifier: 'string'
+                      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ClassDeclaration
+            Identifier: ' TestSession'
+            HeritageClause
+              ExpressionWithTypeArguments
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'Session'
+            PropertyDeclaration
+              Identifier: '
+        lastSent'
+              UnionType
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Message'
+                UndefinedKeyword
+            PropertyDeclaration
+              Identifier: '
+        customHandler'
+              StringLiteral
+            Constructor
+              Block
+                ExpressionStatement
+                  CallExpression
+                    SuperKeyword
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                host'
+                        Identifier: ' mockHost'
+                      PropertyAssignment
+                        Identifier: '
+                cancellationToken'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'server'
+                          Identifier: 'nullCancellationToken'
+                      PropertyAssignment
+                        Identifier: '
+                useSingleInferredProject'
+                        FalseKeyword
+                      PropertyAssignment
+                        Identifier: '
+                useInferredProjectPerProjectRoot'
+                        FalseKeyword
+                      PropertyAssignment
+                        Identifier: '
+                typingsInstaller'
+                        NonNullExpression
+                          Identifier: ' undefined'
+                      PropertyAssignment
+                        Identifier: ' // TODO: GH#18217
+                byteLength'
+                        PropertyAccessExpression
+                          Identifier: ' Buffer'
+                          Identifier: 'byteLength'
+                      PropertyAssignment
+                        Identifier: '
+                hrtime'
+                        PropertyAccessExpression
+                          Identifier: ' process'
+                          Identifier: 'hrtime'
+                      PropertyAssignment
+                        Identifier: '
+                logger'
+                        CallExpression
+                          Identifier: ' createHasErrorMessageLogger'
+                      PropertyAssignment
+                        Identifier: '
+                canUseEvents'
+                        TrueKeyword
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                incrementalVerifier'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'addProtocolHandler'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'customHandler'
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      Block
+                        ReturnStatement
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' response'
+                              Identifier: ' undefined'
+                            PropertyAssignment
+                              Identifier: ' responseRequired'
+                              TrueKeyword
+            MethodDeclaration
+              OverrideKeyword
+              Identifier: ' send'
+              Parameter
+                Identifier: 'msg'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Message'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'lastSent'
+                    EqualsToken
+                    Identifier: ' msg'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' body'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            block'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                key'
+                                StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' command'
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        session'
+                        Identifier: 'doOutput'
+                      Identifier: 'body'
+                      Identifier: ' command'
+                      NumericLiteral
+                      TrueKeyword
+                      Identifier: ' /*performanceData*/ undefined'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              Identifier: '
+
+        expect'
+                              PropertyAccessExpression
+                                Identifier: 'session'
+                                Identifier: 'lastSent'
+                            Identifier: 'to'
+                          Identifier: 'deep'
+                        Identifier: 'equal'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            seq'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: '
+            request_seq'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: '
+            type'
+                          StringLiteral
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            command'
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            body'
+                        PropertyAssignment
+                          Identifier: '
+            success'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+            performanceData'
+                          Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              Identifier: '
+
+        expect'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'session'
+                                  Identifier: 'executeCommand'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+            seq'
+                                    NumericLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+            type'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+            command'
+                                    PropertyAccessExpression
+                                      Identifier: ' session'
+                                      Identifier: 'customHandler'
+                            Identifier: 'to'
+                          Identifier: 'deep'
+                        Identifier: 'equal'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            response'
+                          Identifier: ' undefined'
+                        PropertyAssignment
+                          Identifier: '
+            responseRequired'
+                          TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    NewExpression
+                      ClassExpression
+                        HeritageClause
+                          ExpressionWithTypeArguments
+                            Identifier: ' TestSession'
+                        Constructor
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                SuperKeyword
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: '
+                assert'
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'projectService'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      CallExpression
+                                        Identifier: '
+                expect'
+                                        PropertyAccessExpression
+                                          ThisKeyword
+                                          Identifier: 'projectService'
+                                      Identifier: 'to'
+                                    Identifier: 'be'
+                                  Identifier: 'instanceOf'
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'server'
+                                  Identifier: 'ProjectService'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ClassDeclaration
+            Identifier: ' InProcSession'
+            HeritageClause
+              ExpressionWithTypeArguments
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'server'
+                  Identifier: 'Session'
+            PropertyDeclaration
+              PrivateKeyword
+              Identifier: ' queue'
+              ArrayType
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Request'
+              ArrayLiteralExpression
+            Constructor
+              Parameter
+                PrivateKeyword
+                Identifier: ' client'
+                TypeReference
+                  Identifier: ' InProcClient'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    SuperKeyword
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                host'
+                        Identifier: ' mockHost'
+                      PropertyAssignment
+                        Identifier: '
+                cancellationToken'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'server'
+                          Identifier: 'nullCancellationToken'
+                      PropertyAssignment
+                        Identifier: '
+                useSingleInferredProject'
+                        FalseKeyword
+                      PropertyAssignment
+                        Identifier: '
+                useInferredProjectPerProjectRoot'
+                        FalseKeyword
+                      PropertyAssignment
+                        Identifier: '
+                typingsInstaller'
+                        NonNullExpression
+                          Identifier: ' undefined'
+                      PropertyAssignment
+                        Identifier: ' // TODO: GH#18217
+                byteLength'
+                        PropertyAccessExpression
+                          Identifier: ' Buffer'
+                          Identifier: 'byteLength'
+                      PropertyAssignment
+                        Identifier: '
+                hrtime'
+                        PropertyAccessExpression
+                          Identifier: ' process'
+                          Identifier: 'hrtime'
+                      PropertyAssignment
+                        Identifier: '
+                logger'
+                        CallExpression
+                          Identifier: ' createHasErrorMessageLogger'
+                      PropertyAssignment
+                        Identifier: '
+                canUseEvents'
+                        TrueKeyword
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                incrementalVerifier'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'addProtocolHandler'
+                    StringLiteral
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'req'
+                        TypeReference
+                          QualifiedName
+                            QualifiedName
+                              QualifiedName
+                                Identifier: ' ts'
+                                Identifier: 'server'
+                              Identifier: 'protocol'
+                            Identifier: 'Request'
+                      EqualsGreaterThanToken
+                      ParenthesizedExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                response'
+                            PropertyAccessExpression
+                              Identifier: ' req'
+                              Identifier: 'arguments'
+                          PropertyAssignment
+                            Identifier: '
+                responseRequired'
+                            TrueKeyword
+            MethodDeclaration
+              OverrideKeyword
+              Identifier: ' send'
+              Parameter
+                Identifier: 'msg'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Message'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'client'
+                      Identifier: 'handle'
+                    Identifier: 'msg'
+            MethodDeclaration
+              Identifier: '
+
+        enqueue'
+              Parameter
+                Identifier: 'msg'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Request'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'queue'
+                      Identifier: 'unshift'
+                    Identifier: 'msg'
+            MethodDeclaration
+              Identifier: '
+
+        handleRequest'
+              Parameter
+                Identifier: 'msg'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Request'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' response'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'Response'
+                TryStatement
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                response'
+                        EqualsToken
+                        AsExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'executeCommand'
+                              Identifier: 'msg'
+                            Identifier: 'response'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'Response'
+                  CatchClause
+                    VariableDeclaration
+                      Identifier: 'e'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'doOutput'
+                          Identifier: '/*info*/ undefined'
+                          PropertyAccessExpression
+                            Identifier: ' msg'
+                            Identifier: 'command'
+                          PropertyAccessExpression
+                            Identifier: ' msg'
+                            Identifier: 'seq'
+                          FalseKeyword
+                          Identifier: ' /*performanceData*/ undefined'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' e'
+                              Identifier: 'toString'
+                      ReturnStatement
+                IfStatement
+                  Identifier: 'response'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'doOutput'
+                        Identifier: 'response'
+                        PropertyAccessExpression
+                          Identifier: ' msg'
+                          Identifier: 'command'
+                        PropertyAccessExpression
+                          Identifier: ' msg'
+                          Identifier: 'seq'
+                        TrueKeyword
+                        Identifier: ' /*performanceData*/ undefined'
+            MethodDeclaration
+              Identifier: '
+
+        consumeQueue'
+              Block
+                WhileStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'queue'
+                      Identifier: 'length'
+                    GreaterThanToken
+                    NumericLiteral
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' elem'
+                          NonNullExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'queue'
+                                Identifier: 'pop'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'handleRequest'
+                        Identifier: 'elem'
+          ClassDeclaration
+            Identifier: ' InProcClient'
+            PropertyDeclaration
+              PrivateKeyword
+              Identifier: ' server'
+              UnionType
+                TypeReference
+                  Identifier: ' InProcSession'
+                UndefinedKeyword
+            PropertyDeclaration
+              PrivateKeyword
+              Identifier: ' seq'
+              NumericLiteral
+            PropertyDeclaration
+              PrivateKeyword
+              Identifier: ' callbacks'
+              ArrayType
+                ParenthesizedType
+                  FunctionType
+                    Parameter
+                      Identifier: 'resp'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'Response'
+                    VoidKeyword
+              ArrayLiteralExpression
+            PropertyDeclaration
+              PrivateKeyword
+              Identifier: ' eventHandlers'
+              NewExpression
+                Identifier: ' Map'
+                StringKeyword
+                FunctionType
+                  Parameter
+                    Identifier: 'args'
+                    AnyKeyword
+                  VoidKeyword
+            MethodDeclaration
+              Identifier: '
+
+        handle'
+              Parameter
+                Identifier: 'msg'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'server'
+                      Identifier: 'protocol'
+                    Identifier: 'Message'
+              VoidKeyword
+              Block
+                IfStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'msg'
+                      Identifier: 'type'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' response'
+                          AsExpression
+                            Identifier: ' msg'
+                            TypeReference
+                              QualifiedName
+                                QualifiedName
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'server'
+                                  Identifier: 'protocol'
+                                Identifier: 'Response'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' handler'
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'callbacks'
+                            PropertyAccessExpression
+                              Identifier: 'response'
+                              Identifier: 'request_seq'
+                    IfStatement
+                      Identifier: 'handler'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                    handler'
+                            Identifier: 'response'
+                        ExpressionStatement
+                          DeleteExpression
+                            ElementAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'callbacks'
+                              PropertyAccessExpression
+                                Identifier: 'response'
+                                Identifier: 'request_seq'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'msg'
+                        Identifier: 'type'
+                      EqualsEqualsEqualsToken
+                      StringLiteral
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' event'
+                            AsExpression
+                              Identifier: ' msg'
+                              TypeReference
+                                QualifiedName
+                                  QualifiedName
+                                    QualifiedName
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'Event'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'emit'
+                          PropertyAccessExpression
+                            Identifier: 'event'
+                            Identifier: 'event'
+                          PropertyAccessExpression
+                            Identifier: ' event'
+                            Identifier: 'body'
+            MethodDeclaration
+              Identifier: '
+
+        emit'
+              Parameter
+                Identifier: 'name'
+                StringKeyword
+              Parameter
+                Identifier: ' args'
+                AnyKeyword
+              VoidKeyword
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' handler'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'eventHandlers'
+                          Identifier: 'get'
+                        Identifier: 'name'
+                IfStatement
+                  Identifier: 'handler'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                handler'
+                        Identifier: 'args'
+            MethodDeclaration
+              Identifier: '
+
+        on'
+              Parameter
+                Identifier: 'name'
+                StringKeyword
+              Parameter
+                Identifier: ' handler'
+                FunctionType
+                  Parameter
+                    Identifier: 'args'
+                    AnyKeyword
+                  VoidKeyword
+              VoidKeyword
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'eventHandlers'
+                      Identifier: 'set'
+                    Identifier: 'name'
+                    Identifier: ' handler'
+            MethodDeclaration
+              Identifier: '
+
+        connect'
+              Parameter
+                Identifier: 'session'
+                TypeReference
+                  Identifier: ' InProcSession'
+              VoidKeyword
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'server'
+                    EqualsToken
+                    Identifier: ' session'
+            MethodDeclaration
+              Identifier: '
+
+        execute'
+              Parameter
+                Identifier: 'command'
+                StringKeyword
+              Parameter
+                Identifier: ' args'
+                AnyKeyword
+              Parameter
+                Identifier: ' callback'
+                FunctionType
+                  Parameter
+                    Identifier: 'resp'
+                    TypeReference
+                      QualifiedName
+                        QualifiedName
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'server'
+                          Identifier: 'protocol'
+                        Identifier: 'Response'
+                  VoidKeyword
+              VoidKeyword
+              Block
+                IfStatement
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'server'
+                  Block
+                    ReturnStatement
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'seq'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'server'
+                      Identifier: 'enqueue'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                seq'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'seq'
+                      PropertyAssignment
+                        Identifier: '
+                type'
+                        StringLiteral
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                command'
+                      PropertyAssignment
+                        Identifier: '
+                arguments'
+                        Identifier: ' args'
+                ExpressionStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'callbacks'
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'seq'
+                    EqualsToken
+                    Identifier: ' callback'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                Parameter
+                  Identifier: ' done'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' cli'
+                        NewExpression
+                          Identifier: ' InProcClient'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' InProcSession'
+                          Identifier: 'cli'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' toEcho'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            data'
+                            TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' toEvent'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            data'
+                            FalseKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' responses'
+                        NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Connect the client
+        cli'
+                        Identifier: 'connect'
+                      Identifier: 'session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Add an event handler
+        cli'
+                        Identifier: 'on'
+                      StringLiteral
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' eventinfo'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    Identifier: '
+            expect'
+                                    Identifier: 'eventinfo'
+                                  Identifier: 'to'
+                                Identifier: 'equal'
+                              Identifier: 'toEvent'
+                          ExpressionStatement
+                            PostfixUnaryExpression
+                              Identifier: '
+            responses'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    Identifier: '
+            expect'
+                                    Identifier: 'responses'
+                                  Identifier: 'to'
+                                Identifier: 'equal'
+                              NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Trigger said event from the server
+        session'
+                        Identifier: 'event'
+                      Identifier: 'toEvent'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Queue an echo command
+        cli'
+                        Identifier: 'execute'
+                      StringLiteral
+                      Identifier: ' toEcho'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' resp'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            assert'
+                              PropertyAccessExpression
+                                Identifier: 'resp'
+                                Identifier: 'success'
+                              PropertyAccessExpression
+                                Identifier: ' resp'
+                                Identifier: 'message'
+                          ExpressionStatement
+                            PostfixUnaryExpression
+                              Identifier: '
+            responses'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    Identifier: '
+            expect'
+                                    Identifier: 'responses'
+                                  Identifier: 'to'
+                                Identifier: 'equal'
+                              NumericLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      Identifier: '
+            expect'
+                                      PropertyAccessExpression
+                                        Identifier: 'resp'
+                                        Identifier: 'body'
+                                    Identifier: 'to'
+                                  Identifier: 'deep'
+                                Identifier: 'equal'
+                              Identifier: 'toEcho'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Queue a configure command
+        cli'
+                        Identifier: 'execute'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            hostInfo'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            formatOptions'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                newLineCharacter'
+                              StringLiteral
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' resp'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            assert'
+                              PropertyAccessExpression
+                                Identifier: 'resp'
+                                Identifier: 'success'
+                              PropertyAccessExpression
+                                Identifier: ' resp'
+                                Identifier: 'message'
+                          ExpressionStatement
+                            PostfixUnaryExpression
+                              Identifier: '
+            responses'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    Identifier: '
+            expect'
+                                    Identifier: 'responses'
+                                  Identifier: 'to'
+                                Identifier: 'equal'
+                              NumericLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            done'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        // Consume the queue and trigger the callbacks
+        session'
+                        Identifier: 'consumeQueue'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'server'
+                  Identifier: 'getLocationInNewDocument'
+                Identifier: 'name'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' text'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' renameLocationInOldText'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' text'
+                            Identifier: 'indexOf'
+                          StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' fileName'
+                        StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' edits'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'FileTextChanges'
+                        ObjectLiteralExpression
+                          ShorthandPropertyAssignment
+                            Identifier: '
+            fileName'
+                          PropertyAssignment
+                            Identifier: '
+            textChanges'
+                            ArrayLiteralExpression
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    span'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' start'
+                                      NumericLiteral
+                                    PropertyAssignment
+                                      Identifier: ' length'
+                                      NumericLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                    newText'
+                                  StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    span'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' start'
+                                      Identifier: ' renameLocationInOldText'
+                                    PropertyAssignment
+                                      Identifier: ' length'
+                                      NumericLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                    newText'
+                                  StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' renameLocationInNewText'
+                        BinaryExpression
+                          Identifier: ' renameLocationInOldText'
+                          PlusToken
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ElementAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' edits'
+                                  Identifier: 'textChanges'
+                                NumericLiteral
+                              Identifier: 'newText'
+                            Identifier: 'length'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' res'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'getLocationInNewDocument'
+                          Identifier: 'text'
+                          Identifier: ' fileName'
+                          Identifier: ' renameLocationInNewText'
+                          ArrayLiteralExpression
+                            Identifier: 'edits'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'res'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' line'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' offset'
+                          NumericLiteral

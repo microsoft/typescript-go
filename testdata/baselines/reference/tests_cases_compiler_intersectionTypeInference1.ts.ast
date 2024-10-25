@@ -1,0 +1,65 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' alert'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' parameterFn'
+        ArrowFunction
+          Parameter
+            Identifier: 'props'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'store'
+                StringKeyword
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' alert'
+            PropertyAccessExpression
+              Identifier: 'props'
+              Identifier: 'store'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' brokenFunction'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'OwnProps'
+          Parameter
+            Identifier: 'f'
+            FunctionType
+              Parameter
+                Identifier: 'p'
+                IntersectionType
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: 'dispatch'
+                      NumberKeyword
+                  TypeReference
+                    Identifier: ' OwnProps'
+              VoidKeyword
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'o'
+              TypeReference
+                Identifier: ' OwnProps'
+            EqualsGreaterThanToken
+            Identifier: ' o'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Form3'
+        CallExpression
+          CallExpression
+            Identifier: ' brokenFunction'
+            Identifier: 'parameterFn'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'store'
+              StringLiteral

@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someVariable'
+        TypeReference
+          Identifier: ' Class4'
+          TypeReference
+            Identifier: 'Class2'
+  ClassDeclaration
+    Identifier: ' Class1'
+  ClassDeclaration
+    Identifier: ' Class2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Class1'
+  ClassDeclaration
+    Identifier: ' Class3'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' memberVariable'
+      TypeReference
+        Identifier: ' Class2'
+  ClassDeclaration
+    Identifier: ' Class4'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Class3'
+        TypeReference
+          Identifier: 'T'

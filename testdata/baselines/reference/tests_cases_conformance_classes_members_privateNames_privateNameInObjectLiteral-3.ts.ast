@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          GetAccessor
+            PrivateIdentifier
+            Block
+              ReturnStatement
+                StringLiteral

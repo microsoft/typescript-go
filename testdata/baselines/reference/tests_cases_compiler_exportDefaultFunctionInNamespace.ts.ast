@@ -1,0 +1,16 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' ns_function'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        DefaultKeyword
+        Block
+  ModuleDeclaration
+    Identifier: ' ns_async_function'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        DefaultKeyword
+        AsyncKeyword
+        Block

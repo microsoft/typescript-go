@@ -1,0 +1,123 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SelectorMap'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'params'
+            ArrayType
+              UnknownKeyword
+          UnknownKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'key'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'key'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SelectorMap'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'params'
+            ArrayType
+              UnknownKeyword
+          UnknownKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'key'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'key'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value2'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    sliceSelectors'
+            FunctionType
+              TypeParameter
+                Identifier: 'FuncMap'
+                ImportType
+                  LiteralType
+                    StringLiteral
+                  Identifier: 'SelectorMap'
+                  TypeReference
+                    Identifier: 'FuncMap'
+              Parameter
+                Identifier: 'selectorsBySlice'
+                TypeReference
+                  Identifier: ' FuncMap'
+              MappedType
+                TypeParameter
+                  Identifier: 'P'
+                  TypeOperator
+                    TypeReference
+                      Identifier: ' FuncMap'
+                TypeReference
+                  Identifier: ' Parameters'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: 'FuncMap'
+                    TypeReference
+                      Identifier: 'P'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value3'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    sliceSelectors'
+            FunctionType
+              TypeParameter
+                Identifier: 'FuncMap'
+                TypeReference
+                  Identifier: ' SelectorMap'
+                  TypeReference
+                    Identifier: 'FuncMap'
+              Parameter
+                Identifier: 'selectorsBySlice'
+                TypeReference
+                  Identifier: ' FuncMap'
+              MappedType
+                TypeParameter
+                  Identifier: 'P'
+                  TypeOperator
+                    TypeReference
+                      Identifier: ' FuncMap'
+                TypeReference
+                  Identifier: ' Parameters'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: 'FuncMap'
+                    TypeReference
+                      Identifier: 'P'

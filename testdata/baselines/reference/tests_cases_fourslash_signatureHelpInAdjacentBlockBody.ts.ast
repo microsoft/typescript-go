@@ -1,0 +1,43 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////declare function foo(...args);
+////
+////foo(() => {/*1*/}/*2*/)
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'signatureHelpPresentForTriggerReason'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    kind'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'signatureHelpPresentForTriggerReason'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    kind'
+          StringLiteral

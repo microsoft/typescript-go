@@ -1,0 +1,220 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    IndexSignature
+      StaticKeyword
+      ReadonlyKeyword
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      NumberKeyword
+    IndexSignature
+      StaticKeyword
+      ReadonlyKeyword
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    IndexSignature
+      StaticKeyword
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      NumberKeyword
+    IndexSignature
+      StaticKeyword
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' IB'
+    IndexSignature
+      StaticKeyword
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      NumberKeyword
+    IndexSignature
+      StaticKeyword
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' IB'
+  IfStatement
+    BinaryExpression
+      Identifier: 'v'
+      EqualsEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    B'
+            Identifier: 'a'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' D'
+            Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    B'
+            NumericLiteral
+          EqualsToken
+          ElementAccessExpression
+            Identifier: ' D'
+            NumericLiteral
+    IfStatement
+      BinaryExpression
+        Identifier: 'v'
+        EqualsEqualsEqualsToken
+        NumericLiteral
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+    D'
+              Identifier: 'a'
+            EqualsToken
+            PropertyAccessExpression
+              Identifier: ' B'
+              Identifier: 'a'
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              Identifier: '
+    D'
+              NumericLiteral
+            EqualsToken
+            ElementAccessExpression
+              Identifier: ' B'
+              NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'v'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+    B'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' i'
+                Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+    B'
+                NumericLiteral
+              EqualsToken
+              ElementAccessExpression
+                Identifier: ' i'
+                NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+    D'
+                Identifier: 'a'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' i'
+                Identifier: 'a'
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+    D'
+                NumericLiteral
+              EqualsToken
+              ElementAccessExpression
+                Identifier: ' i'
+                NumericLiteral
+        IfStatement
+          BinaryExpression
+            Identifier: 'v'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+    i'
+                  Identifier: 'a'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' B'
+                  Identifier: 'a'
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: '
+    i'
+                  NumericLiteral
+                EqualsToken
+                ElementAccessExpression
+                  Identifier: ' B'
+                  NumericLiteral
+          IfStatement
+            BinaryExpression
+              Identifier: 'v'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+    i'
+                    Identifier: 'a'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' D'
+                    Identifier: 'a'
+              ExpressionStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: '
+    i'
+                    NumericLiteral
+                  EqualsToken
+                  ElementAccessExpression
+                    Identifier: ' B'
+                    NumericLiteral

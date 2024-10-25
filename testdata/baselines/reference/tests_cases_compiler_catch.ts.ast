@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block

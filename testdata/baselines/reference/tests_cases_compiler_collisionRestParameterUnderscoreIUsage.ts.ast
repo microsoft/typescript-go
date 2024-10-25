@@ -1,0 +1,38 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' log'
+            Parameter
+              Identifier: 'msg'
+              QuestionToken
+              StringKeyword
+            VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _i'
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            Identifier: '_i'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Foo'

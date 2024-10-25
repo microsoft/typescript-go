@@ -1,0 +1,36 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      CallExpression
+        Identifier: '//@target: ES6
+Symbol'
+      InstanceOfKeyword
+      Identifier: ' Symbol'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+Symbol'
+      InstanceOfKeyword
+      CallExpression
+        Identifier: ' Symbol'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          CallExpression
+            Identifier: 'Symbol'
+          BarBarToken
+          ObjectLiteralExpression
+      InstanceOfKeyword
+      Identifier: ' Object'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // This one should be okay, it's a valid way of distinguishing types
+Symbol'
+      InstanceOfKeyword
+      ParenthesizedExpression
+        BinaryExpression
+          CallExpression
+            Identifier: 'Symbol'
+          BarBarToken
+          ObjectLiteralExpression

@@ -1,0 +1,294 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    b'
+            StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oBad'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Math'
+                Identifier: 'random'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' V'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oBad2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        b'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Math'
+                    Identifier: 'random'
+          PropertyAssignment
+            Identifier: '
+    c'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        d'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: '
+        e'
+                Identifier: ' V'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oWithMethods'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    method'
+            Block
+          MethodDeclaration
+            Identifier: '
+    okMethod'
+            VoidKeyword
+            Block
+          PropertyAssignment
+            Identifier: '
+    a'
+            NumericLiteral
+          MethodDeclaration
+            Identifier: '
+    bad'
+            Block
+          PropertyAssignment
+            Identifier: '
+    e'
+            Identifier: ' V'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oWithMethodsNested'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    foo'
+            ObjectLiteralExpression
+              MethodDeclaration
+                Identifier: '
+        method'
+                Block
+              PropertyAssignment
+                Identifier: '
+        a'
+                NumericLiteral
+              MethodDeclaration
+                Identifier: '
+        okMethod'
+                VoidKeyword
+                Block
+              MethodDeclaration
+                Identifier: '
+        bad'
+                Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oWithAccessor'
+        ObjectLiteralExpression
+          GetAccessor
+            Identifier: ' singleGetterBad'
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            Identifier: ' singleSetterBad'
+            Parameter
+              Identifier: 'value'
+            Block
+          GetAccessor
+            Identifier: ' getSetBad'
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            Identifier: ' getSetBad'
+            Parameter
+              Identifier: 'value'
+            Block
+          GetAccessor
+            Identifier: ' getSetOk'
+            NumberKeyword
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            Identifier: ' getSetOk'
+            Parameter
+              Identifier: 'value'
+            Block
+          GetAccessor
+            Identifier: ' getSetOk2'
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            Identifier: ' getSetOk2'
+            Parameter
+              Identifier: 'value'
+              NumberKeyword
+            Block
+          GetAccessor
+            Identifier: ' getSetOk3'
+            NumberKeyword
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            Identifier: ' getSetOk3'
+            Parameter
+              Identifier: 'value'
+              NumberKeyword
+            Block
+  FunctionDeclaration
+    Identifier: ' prop'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'v'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' v'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        TypeOperator
+          SymbolKeyword
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        StringKeyword
+        StringLiteral
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    V'
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oWithComputedProperties'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              NumericLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'prop'
+                NumericLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 's'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'E'
+                Identifier: 'V'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'str'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' part'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oWithSpread'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    b'
+            NumericLiteral
+          SpreadAssignment
+            Identifier: 'part'
+          PropertyAssignment
+            Identifier: '
+    c'
+            NumericLiteral
+          ShorthandPropertyAssignment
+            Identifier: '
+    part'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oWithSpread2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    b'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    nested'
+            ObjectLiteralExpression
+              SpreadAssignment
+                Identifier: 'part'
+          PropertyAssignment
+            Identifier: '
+    c'
+            NumericLiteral

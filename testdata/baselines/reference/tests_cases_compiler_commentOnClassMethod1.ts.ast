@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' WebControls'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Render a control
+     */
+    createControl'
+      AnyKeyword
+      Block

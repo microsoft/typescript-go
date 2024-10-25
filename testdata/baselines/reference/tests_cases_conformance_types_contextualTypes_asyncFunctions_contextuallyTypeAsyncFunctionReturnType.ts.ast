@@ -1,0 +1,340 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Obj'
+    PropertySignature
+      Identifier: ' key'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn1'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'Obj'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' key'
+            StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn2'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'Obj'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' Promise'
+          ArrowFunction
+            Parameter
+              Identifier: 'resolve'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        resolve'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' key'
+                      StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn3'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'Obj'
+    Block
+      ReturnStatement
+        AwaitExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' key'
+              StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn4'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'Obj'
+    Block
+      ReturnStatement
+        AwaitExpression
+          NewExpression
+            Identifier: ' Promise'
+            ArrowFunction
+              Parameter
+                Identifier: 'resolve'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+        resolve'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' key'
+                        StringLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Context'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _runnable'
+  TypeAliasDeclaration
+    Identifier: ' Done'
+    FunctionType
+      Parameter
+        Identifier: 'err'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Func'
+    FunctionType
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' Context'
+      Parameter
+        Identifier: ' done'
+        TypeReference
+          Identifier: ' Done'
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' AsyncFunc'
+    FunctionType
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' Context'
+      TypeReference
+        Identifier: ' PromiseLike'
+        AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' TestFunction'
+    CallSignature
+      Parameter
+        Identifier: 'fn'
+        TypeReference
+          Identifier: ' Func'
+      VoidKeyword
+    CallSignature
+      Parameter
+        Identifier: 'fn'
+        TypeReference
+          Identifier: ' AsyncFunc'
+      VoidKeyword
+    CallSignature
+      Parameter
+        Identifier: 'title'
+        StringKeyword
+      Parameter
+        Identifier: ' fn'
+        QuestionToken
+        TypeReference
+          Identifier: ' Func'
+      VoidKeyword
+    CallSignature
+      Parameter
+        Identifier: 'title'
+        StringKeyword
+      Parameter
+        Identifier: ' fn'
+        QuestionToken
+        TypeReference
+          Identifier: ' AsyncFunc'
+      VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        TypeReference
+          Identifier: ' TestFunction'
+  InterfaceDeclaration
+    Identifier: ' ProcessTreeNode'
+    PropertySignature
+      Identifier: '
+  pid'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+  name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  memory'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+  commandLine'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  children'
+      ArrayType
+        TypeReference
+          Identifier: ' ProcessTreeNode'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getProcessTree'
+    Parameter
+      Identifier: '
+  rootPid'
+      NumberKeyword
+    Parameter
+      Identifier: '
+  callback'
+      FunctionType
+        Parameter
+          Identifier: 'tree'
+          TypeReference
+            Identifier: ' ProcessTreeNode'
+        VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      StringLiteral
+      ArrowFunction
+        AsyncKeyword
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' Promise'
+              ArrowFunction
+                Parameter
+                  Identifier: 'resolve'
+                Parameter
+                  Identifier: ' reject'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+    getProcessTree'
+                      NumericLiteral
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'tree'
+                        EqualsGreaterThanToken
+                        Block
+                          IfStatement
+                            Identifier: 'tree'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+        resolve'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+        reject'
+                                  NewExpression
+                                    Identifier: ' Error'
+                                    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ILocalExtension'
+    PropertySignature
+      Identifier: '
+  isApplicationScoped'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+  publisherId'
+      UnionType
+        StringKeyword
+        LiteralType
+          NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' Metadata'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  updated'
+        BooleanKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' scanMetadata'
+    Parameter
+      Identifier: '
+  local'
+      TypeReference
+        Identifier: ' ILocalExtension'
+    TypeReference
+      Identifier: ' Promise'
+      UnionType
+        TypeReference
+          Identifier: 'Metadata'
+        UndefinedKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' copyExtensions'
+    Parameter
+      Identifier: '
+  fromExtensions'
+      ArrayType
+        TypeReference
+          Identifier: ' ILocalExtension'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' extensions'
+            ArrayType
+              TupleType
+                TypeReference
+                  Identifier: 'ILocalExtension'
+                UnionType
+                  TypeReference
+                    Identifier: ' Metadata'
+                  UndefinedKeyword
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'all'
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+      fromExtensions'
+                        Identifier: 'filter'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'e'
+                        EqualsGreaterThanToken
+                        PrefixUnaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'e'
+                            Identifier: 'isApplicationScoped'
+                    Identifier: 'map'
+                  ArrowFunction
+                    AsyncKeyword
+                    Parameter
+                      Identifier: 'e'
+                    EqualsGreaterThanToken
+                    ArrayLiteralExpression
+                      Identifier: 'e'
+                      AwaitExpression
+                        CallExpression
+                          Identifier: ' scanMetadata'
+                          Identifier: 'e'

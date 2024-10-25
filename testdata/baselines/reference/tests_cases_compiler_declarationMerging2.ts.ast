@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' _f'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    getF'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: '_f'
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        MethodSignature
+          Identifier: '
+        run'

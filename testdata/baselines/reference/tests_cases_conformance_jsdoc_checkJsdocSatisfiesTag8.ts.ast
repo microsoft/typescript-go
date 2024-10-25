@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    m'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    s'
+              StringLiteral

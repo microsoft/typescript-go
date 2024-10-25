@@ -1,0 +1,34 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//@Filename: file.tsx
+////function foo() {
+////   return (
+////        <div>
+////hello
+////goodbye
+////        </div>
+////    )
+////}
+
+verify'
+        Identifier: 'currentFileContentIs'
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+format'
+        Identifier: 'document'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'currentFileContentIs'
+      NoSubstitutionTemplateLiteral

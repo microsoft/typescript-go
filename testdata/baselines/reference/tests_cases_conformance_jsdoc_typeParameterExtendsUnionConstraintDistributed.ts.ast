@@ -1,0 +1,64 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    UnionType
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    IntersectionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' B'
+    UnionType
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' A'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' B'
+    Parameter
+      Identifier: 'ab'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    IntersectionType
+      ParenthesizedType
+        UnionType
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' B'
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ReturnStatement
+        Identifier: ' ab'

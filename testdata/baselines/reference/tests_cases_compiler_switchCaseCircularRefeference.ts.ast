@@ -1,0 +1,29 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            LiteralType
+              StringLiteral
+          PropertySignature
+            Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            LiteralType
+              StringLiteral
+          PropertySignature
+            Identifier: ' e'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'a'
+        CaseBlock
+          CaseClause
+            Identifier: ' x'
+            BreakStatement

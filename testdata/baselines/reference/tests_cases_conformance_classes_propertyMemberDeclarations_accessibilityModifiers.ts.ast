@@ -1,0 +1,176 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateProperty'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateMethod'
+      Block
+    GetAccessor
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateGetter'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' privateSetter'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' protectedProperty'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' protectedMethod'
+      Block
+    GetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' protectedGetter'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' protectedSetter'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' publicProperty'
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' publicMethod'
+      Block
+    GetAccessor
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' publicGetter'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' publicSetter'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateKeyword
+      Identifier: ' privateProperty'
+    MethodDeclaration
+      StaticKeyword
+      PrivateKeyword
+      Identifier: ' privateMethod'
+      Block
+    GetAccessor
+      StaticKeyword
+      PrivateKeyword
+      Identifier: ' privateGetter'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      PrivateKeyword
+      Identifier: ' privateSetter'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      StaticKeyword
+      ProtectedKeyword
+      Identifier: ' protectedProperty'
+    MethodDeclaration
+      StaticKeyword
+      ProtectedKeyword
+      Identifier: ' protectedMethod'
+      Block
+    GetAccessor
+      StaticKeyword
+      ProtectedKeyword
+      Identifier: ' protectedGetter'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      ProtectedKeyword
+      Identifier: ' protectedSetter'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      StaticKeyword
+      PublicKeyword
+      Identifier: ' publicProperty'
+    MethodDeclaration
+      StaticKeyword
+      PublicKeyword
+      Identifier: ' publicMethod'
+      Block
+    GetAccessor
+      StaticKeyword
+      PublicKeyword
+      Identifier: ' publicGetter'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      PublicKeyword
+      Identifier: ' publicSetter'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' E'
+    PropertyDeclaration
+      PrivateKeyword
+      PublicKeyword
+      ProtectedKeyword
+      Identifier: ' property'
+    MethodDeclaration
+      PublicKeyword
+      ProtectedKeyword
+      Identifier: ' method'
+      Block
+    GetAccessor
+      PrivateKeyword
+      ProtectedKeyword
+      Identifier: ' getter'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      PublicKeyword
+      Identifier: ' setter'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block

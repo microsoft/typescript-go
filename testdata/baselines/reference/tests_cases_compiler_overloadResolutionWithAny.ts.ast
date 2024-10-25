@@ -1,0 +1,100 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' func'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            NumberKeyword
+          CallSignature
+            Parameter
+              Identifier: 's'
+              AnyKeyword
+            StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+func'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // number
+func'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+func'
+      Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' func2'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            Parameter
+              Identifier: ' t'
+              StringKeyword
+            NumberKeyword
+          CallSignature
+            Parameter
+              Identifier: 's'
+              AnyKeyword
+            Parameter
+              Identifier: ' t'
+              StringKeyword
+            BooleanKeyword
+          CallSignature
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            Parameter
+              Identifier: ' t'
+              AnyKeyword
+            TypeReference
+              Identifier: ' RegExp'
+          CallSignature
+            Parameter
+              Identifier: 's'
+              AnyKeyword
+            Parameter
+              Identifier: ' t'
+              AnyKeyword
+            StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+func2'
+      Identifier: 'x'
+      Identifier: ' x'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // string
+func2'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // number
+func2'
+      Identifier: 'x'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // boolean
+func2'
+      StringLiteral
+      Identifier: ' x'

@@ -1,0 +1,127 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'T'
+    ConstructorType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' WithLocation'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Constructor'
+              TypeReference
+                Identifier: 'Point'
+          Parameter
+            Identifier: 'Base'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Base'
+            MethodDeclaration
+              Identifier: '
+  getLocation'
+              TupleType
+                NumberKeyword
+                NumberKeyword
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      ArrayBindingPattern
+                        BindingElement
+                          Identifier: 'x'
+                        BindingElement
+                          Identifier: 'y'
+                      CallExpression
+                        PropertyAccessExpression
+                          SuperKeyword
+                          Identifier: 'getLocation'
+                ReturnStatement
+                  ArrayLiteralExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'x'
+                      BarToken
+                      Identifier: ' x'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'y'
+                      BarToken
+                      Identifier: ' y'
+  ClassDeclaration
+    Identifier: ' Point'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' y'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+  getLocation'
+      TupleType
+        NumberKeyword
+        NumberKeyword
+      Block
+        ReturnStatement
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' WithLocation'
+          Identifier: 'Point'
+    MethodDeclaration
+      Identifier: '
+  calculate'
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            PlusToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+    MethodDeclaration
+      Identifier: '
+  getLocation'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'getLocation'
+    MethodDeclaration
+      Identifier: '
+  whereAmI'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'getLocation'

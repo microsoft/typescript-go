@@ -1,0 +1,60 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+      NumberKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' bar'
+    MethodDeclaration
+      Identifier: '
+    bar'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' bar'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' baz'
+    MethodDeclaration
+      Identifier: '
+    baz'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' baz'
+    MethodDeclaration
+      Identifier: '
+    baz'
+      Block
+    MethodDeclaration
+      Identifier: '
+    
+    qux'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+      NumberKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'

@@ -1,0 +1,106 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' AggregateError'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Error'
+    PropertySignature
+      Identifier: '
+    errors'
+      ArrayType
+        AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' AggregateErrorConstructor'
+    ConstructSignature
+      Parameter
+        Identifier: 'errors'
+        TypeReference
+          Identifier: ' Iterable'
+          AnyKeyword
+      Parameter
+        Identifier: ' message'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' AggregateError'
+    CallSignature
+      Parameter
+        Identifier: 'errors'
+        TypeReference
+          Identifier: ' Iterable'
+          AnyKeyword
+      Parameter
+        Identifier: ' message'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' AggregateError'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' prototype'
+      TypeReference
+        Identifier: ' AggregateError'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' AggregateError'
+        TypeReference
+          Identifier: ' AggregateErrorConstructor'
+  InterfaceDeclaration
+    Identifier: ' PromiseConstructor'
+    MethodSignature
+      Identifier: '
+    /**
+     * The any function returns a promise that is fulfilled by the first given promise to be fulfilled, or rejected with an AggregateError containing an array of rejection reasons if all of the given promises are rejected. It resolves all elements of the passed iterable to promises as it runs this algorithm.
+     * @param values An array or iterable of Promises.
+     * @returns A new Promise.
+     */
+    any'
+      TypeParameter
+        Identifier: 'T'
+        UnionType
+          TypeOperator
+            ArrayType
+              UnknownKeyword
+          TupleType
+      Parameter
+        Identifier: 'values'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'Awaited'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    /**
+     * The any function returns a promise that is fulfilled by the first given promise to be fulfilled, or rejected with an AggregateError containing an array of rejection reasons if all of the given promises are rejected. It resolves all elements of the passed iterable to promises as it runs this algorithm.
+     * @param values An array or iterable of Promises.
+     * @returns A new Promise.
+     */
+    any'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'values'
+        TypeReference
+          Identifier: ' Iterable'
+          UnionType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' PromiseLike'
+              TypeReference
+                Identifier: 'T'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'Awaited'
+          TypeReference
+            Identifier: 'T'

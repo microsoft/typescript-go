@@ -1,0 +1,139 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+    Block
+  InterfaceDeclaration
+    Identifier: ' I2'
+    MethodSignature
+      Identifier: '
+    f'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    f'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I3'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              StringKeyword
+            TypeReference
+              Identifier: ' C2'
+              TypeReference
+                Identifier: 'T'
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              StringKeyword
+            TypeReference
+              Identifier: ' C2'
+              TypeReference
+                Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' D'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'

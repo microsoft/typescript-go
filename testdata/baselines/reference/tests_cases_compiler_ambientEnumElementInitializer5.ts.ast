@@ -1,0 +1,9 @@
+SourceFile
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+ e'
+      PrefixUnaryExpression
+        NumericLiteral

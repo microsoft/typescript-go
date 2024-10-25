@@ -1,0 +1,50 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Original'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FooOptions'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Augmentation'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Original'
+        ImportSpecifier
+          Identifier: ' Augmentation'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' FooOptions'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' _'
+    PropertySignature
+      Identifier: '
+    original'
+      TypeReference
+        Identifier: ' Original'
+    PropertySignature
+      Identifier: '
+    augmentation'
+      TypeReference
+        Identifier: ' Augmentation'
+    PropertySignature
+      Identifier: '
+    options'
+      TypeReference
+        Identifier: ' FooOptions'

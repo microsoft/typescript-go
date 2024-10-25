@@ -1,0 +1,56 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Record'
+              StringKeyword
+              NeverKeyword
+          Parameter
+            Identifier: 'schema'
+            MappedType
+              TypeParameter
+                Identifier: 'K'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' Required'
+                    TypeReference
+                      Identifier: 'T'
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' T'
+                TypeReference
+                  Identifier: 'K'
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' test2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        NeverKeyword
+    Parameter
+      Identifier: 'schema'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' Required'
+              TypeReference
+                Identifier: 'T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+    Block
+  EmptyStatement

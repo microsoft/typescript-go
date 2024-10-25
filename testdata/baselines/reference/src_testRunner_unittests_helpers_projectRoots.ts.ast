@@ -1,0 +1,316 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    noopChange'
+        ImportSpecifier
+          Identifier: '
+    TscWatchCompileChange'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' getSysForRootsFromReferencedProject'
+    Parameter
+      Identifier: 'forTsserver'
+      BooleanKeyword
+    Parameter
+      Identifier: ' serverFirst'
+      BooleanKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' TestServerHost'
+              Identifier: 'getCreateWatchedSystem'
+            Identifier: 'forTsserver'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                composite'
+                        TrueKeyword
+                  PropertyAssignment
+                    Identifier: '
+            references'
+                    ArrayLiteralExpression
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' path'
+                          StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' path'
+                          StringLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            extends'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                outDir'
+                        StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            include'
+                    ArrayLiteralExpression
+                      StringLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            extends'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                baseUrl'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                rootDir'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                outDir'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                paths'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            StringLiteral
+                            ArrayLiteralExpression
+                              StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            include'
+                    ConditionalExpression
+                      Identifier: ' serverFirst'
+                      QuestionToken
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                      ColonToken
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            references'
+                    ArrayLiteralExpression
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' path'
+                          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' currentDirectory'
+              StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachScenarioForRootsFromReferencedProject'
+    Parameter
+      Identifier: '
+    forTsserver'
+      BooleanKeyword
+    Parameter
+      Identifier: '
+    action'
+      FunctionType
+        Parameter
+          Identifier: '
+        subScenario'
+          StringKeyword
+        Parameter
+          Identifier: '
+        sys'
+          FunctionType
+            TypeReference
+              Identifier: ' TestServerHost'
+        Parameter
+          Identifier: '
+        edits'
+          FunctionType
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' TscWatchCompileChange'
+        VoidKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              TrueKeyword
+              FalseKeyword
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'serverFirst'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        action'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  ConditionalExpression
+                    PrefixUnaryExpression
+                      Identifier: 'serverFirst'
+                    QuestionToken
+                    StringLiteral
+                    ColonToken
+                    StringLiteral
+                  TemplateTail
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' getSysForRootsFromReferencedProject'
+                  Identifier: 'forTsserver'
+                  Identifier: ' serverFirst'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  Identifier: '
+                noopChange'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                    caption'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+                    edit'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' sys'
+                            Identifier: 'appendFile'
+                          StringLiteral
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+                    timeouts'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                        sys'
+                                Identifier: 'runQueuedTimeoutCallbacks'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' // build shared
+                        sys'
+                                Identifier: 'runQueuedTimeoutCallbacks'
+                  Identifier: '
+                noopChange'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                    caption'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+                    edit'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' sys'
+                            Identifier: 'deleteFile'
+                          StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+                    timeouts'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                        sys'
+                                Identifier: 'runQueuedTimeoutCallbacks'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' // build shared
+                        sys'
+                                Identifier: 'runQueuedTimeoutCallbacks'
+                  Identifier: '
+                noopChange'

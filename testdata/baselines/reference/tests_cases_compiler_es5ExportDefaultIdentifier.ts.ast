@@ -1,0 +1,7 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f'
+    Block
+  ExportAssignment
+    Identifier: ' f'

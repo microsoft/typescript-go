@@ -1,0 +1,63 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TypeB'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Broken'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+        ReturnStatement
+          AsExpression
+            ObjectLiteralExpression
+            TypeReference
+              Identifier: ' TypeB'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Merge'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TypeA'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TypeB'
+    TypeReference
+      Identifier: ' Merge'
+      TypeReference
+        Identifier: 'TypeA'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    b'
+          StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TypeA'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    a'
+        StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Merge'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    IntersectionType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' U'

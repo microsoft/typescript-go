@@ -1,0 +1,139 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ka'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nested'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' ki'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' other'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rest'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' complex'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' ka'
+              PropertySignature
+                Identifier: ' ki'
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'x'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' ka'
+              SpreadAssignment
+                Identifier: 'nested'
+          PropertyAssignment
+            Identifier: ' y'
+            Identifier: ' other'
+          SpreadAssignment
+            Identifier: 'rest'
+        EqualsToken
+        Identifier: ' complex'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' overEmit'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            ArrayType
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' ka'
+                  StringKeyword
+                PropertySignature
+                  Identifier: ' x'
+                  StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' z'
+                StringKeyword
+              PropertySignature
+                Identifier: ' ki'
+                StringKeyword
+              PropertySignature
+                Identifier: ' ku'
+                StringKeyword
+          PropertySignature
+            Identifier: ' ke'
+            StringKeyword
+          PropertySignature
+            Identifier: ' ko'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            ArrayBindingPattern
+              BindingElement
+                ObjectBindingPattern
+                  BindingElement
+                    DotDotDotToken
+                    Identifier: 'nested2'
+              BindingElement
+                DotDotDotToken
+                Identifier: 'y'
+          BindingElement
+            Identifier: ' b'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' z'
+              BindingElement
+                DotDotDotToken
+                Identifier: 'c'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest2'
+        Identifier: ' overEmit'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                SpreadAssignment
+                  Identifier: 'nested2'
+              SpreadElement
+                Identifier: 'y'
+          PropertyAssignment
+            Identifier: ' b'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' z'
+              SpreadAssignment
+                Identifier: 'c'
+          SpreadAssignment
+            Identifier: 'rest2'
+        EqualsToken
+        Identifier: ' overEmit'

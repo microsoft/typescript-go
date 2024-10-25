@@ -1,0 +1,49 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        FunctionType
+          Parameter
+            Identifier: 'target'
+            AnyKeyword
+          Parameter
+            Identifier: ' key'
+            TypeReference
+              Identifier: ' PropertyKey'
+          Parameter
+            Identifier: ' desc'
+            TypeReference
+              Identifier: ' PropertyDescriptor'
+          VoidKeyword
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      AccessorKeyword
+      Identifier: ' a'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' b'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      AccessorKeyword
+      PrivateIdentifier
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      AccessorKeyword
+      PrivateIdentifier
+      AnyKeyword

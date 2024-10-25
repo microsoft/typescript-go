@@ -1,0 +1,29 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            BinaryExpression
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'div'
+                Identifier: 'foo'
+              LessThanToken
+              RegularExpressionLiteral
+  ExportAssignment
+    Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Foo'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'Foo'
+          RegularExpressionLiteral

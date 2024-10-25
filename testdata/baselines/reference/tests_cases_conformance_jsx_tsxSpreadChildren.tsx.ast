@@ -1,0 +1,124 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' TodoProp'
+    PropertySignature
+      Identifier: '
+    id'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    todo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' TodoListProps'
+    PropertySignature
+      Identifier: '
+    todos'
+      ArrayType
+        TypeReference
+          Identifier: ' TodoProp'
+  FunctionDeclaration
+    Identifier: ' Todo'
+    Parameter
+      Identifier: 'prop'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' key'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' todo'
+          StringKeyword
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxExpression
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'prop'
+                    Identifier: 'key'
+                  Identifier: 'toString'
+              PlusToken
+              PropertyAccessExpression
+                Identifier: ' prop'
+                Identifier: 'todo'
+          JsxClosingElement
+            Identifier: 'div'
+  FunctionDeclaration
+    Identifier: ' TodoList'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' todos'
+      TypeReference
+        Identifier: ' TodoListProps'
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxExpression
+            DotDotDotToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'todos'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'todo'
+                EqualsGreaterThanToken
+                JsxSelfClosingElement
+                  Identifier: 'Todo'
+                  JsxAttributes
+                    JsxAttribute
+                      Identifier: ' key'
+                      JsxExpression
+                        PropertyAccessExpression
+                          Identifier: 'todo'
+                          Identifier: 'id'
+                    JsxAttribute
+                      Identifier: ' todo'
+                      JsxExpression
+                        PropertyAccessExpression
+                          Identifier: 'todo'
+                          Identifier: 'todo'
+          JsxText
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' TodoListProps'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'TodoList'
+      JsxAttributes
+        JsxAttribute
+          Identifier: 'x'

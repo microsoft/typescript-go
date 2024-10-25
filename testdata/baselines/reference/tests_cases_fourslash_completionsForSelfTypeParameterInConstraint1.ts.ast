@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// type StateMachine<Config> = {
+////   initial?: "states" extends keyof Config ? keyof Config["states"] : never;
+////   states?: Record<string, {}>;
+//// };
+
+//// declare function createMachine<Config extends StateMachine</*1*/>>(
+////   config: Config,
+//// ): void;
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          ArrayLiteralExpression
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ArrayLiteralExpression
+            StringLiteral

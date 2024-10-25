@@ -1,0 +1,10 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+    StringLiteral

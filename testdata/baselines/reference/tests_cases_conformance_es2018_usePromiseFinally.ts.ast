@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' promise1'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' Promise'
+              FunctionExpression
+                Parameter
+                  Identifier: 'resolve'
+                Parameter
+                  Identifier: ' reject'
+                Block
+            Identifier: 'finally'
+          FunctionExpression
+            Block

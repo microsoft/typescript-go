@@ -1,0 +1,54 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someVal'
+        TypeReference
+          Identifier: ' Required'
+          TypeLiteral
+            MethodSignature
+              Identifier: '
+    fn'
+              QuestionToken
+              Parameter
+                Identifier: 'key'
+                StringKeyword
+              UnionType
+                StringKeyword
+                LiteralType
+                  NullKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+someVal'
+        Identifier: 'fn'
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someVal2'
+        TypeReference
+          Identifier: ' Required'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    fn'
+              QuestionToken
+              FunctionType
+                Parameter
+                  Identifier: 'key'
+                  StringKeyword
+                UnionType
+                  StringKeyword
+                  LiteralType
+                    NullKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+someVal2'
+        Identifier: 'fn'
+      StringLiteral

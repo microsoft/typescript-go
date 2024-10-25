@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a27'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              TypeReference
+                Identifier: ' T27'
+  TypeAliasDeclaration
+    Identifier: ' T27'
+    TypeQuery
+      Identifier: ' a27'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' T27'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringKeyword
+        Identifier: ' b'

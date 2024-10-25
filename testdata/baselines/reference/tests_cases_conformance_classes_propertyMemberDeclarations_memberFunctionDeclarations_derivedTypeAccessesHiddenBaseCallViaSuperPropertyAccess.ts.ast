@@ -1,0 +1,93 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+
+    bar'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'foo'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' a'
+                    NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r2'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'foo'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' a'
+                    NumericLiteral
+                  PropertyAssignment
+                    Identifier: ' b'
+                    NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' r3'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'foo'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' a'
+                    NumericLiteral
+                  PropertyAssignment
+                    Identifier: ' b'
+                    NumericLiteral

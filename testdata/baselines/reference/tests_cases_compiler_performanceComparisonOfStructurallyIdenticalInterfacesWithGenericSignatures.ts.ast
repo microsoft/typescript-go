@@ -1,0 +1,645 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ThenArg'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      AnyKeyword
+      AnyKeyword
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' PromiseLike'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+        TypeReference
+          Identifier: ' U'
+        TypeReference
+          Identifier: ' T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InterfaceA'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    filter'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            Identifier: 'newValue'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' oldValue'
+            TypeReference
+              Identifier: ' T'
+          BooleanKeyword
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    map'
+      TypeParameter
+        Identifier: 'D'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' D'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'D'
+    MethodSignature
+      Identifier: '
+    await'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitLatest'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered2'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered3'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered4'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered5'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered6'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered7'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered8'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered9'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'R'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InterfaceB'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' InterfaceA'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    map'
+      TypeParameter
+        Identifier: 'D'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' D'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'D'
+    MethodSignature
+      Identifier: '
+    await'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitLatest'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered2'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered3'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered4'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered5'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered6'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered7'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered8'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+    MethodSignature
+      Identifier: '
+    awaitOrdered9'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'R'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' InterfaceB'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' filter'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            Identifier: 'newValue'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' oldValue'
+            TypeReference
+              Identifier: ' T'
+          BooleanKeyword
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'T'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' map'
+      TypeParameter
+        Identifier: 'D'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' D'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'D'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' await'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' awaitOrdered'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' awaitOrdered2'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' awaitOrdered3'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' awaitOrdered4'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' awaitOrdered5'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' awaitOrdered6'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' awaitOrdered7'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' awaitOrdered8'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' awaitOrdered9'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' awaitLatest'
+      TypeParameter
+        Identifier: 'R'
+        TypeReference
+          Identifier: ' ThenArg'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'R'
+      Block
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'

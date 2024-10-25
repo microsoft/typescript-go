@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' trimmed'
+        StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+trimmed'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          StringLiteral
+          Identifier: 'trimEnd'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+trimmed'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          StringLiteral
+          Identifier: 'trimStart'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+trimmed'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          StringLiteral
+          Identifier: 'trimLeft'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+trimmed'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          StringLiteral
+          Identifier: 'trimRight'

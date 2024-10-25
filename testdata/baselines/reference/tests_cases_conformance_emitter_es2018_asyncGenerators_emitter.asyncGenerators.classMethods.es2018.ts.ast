@@ -1,0 +1,129 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    MethodDeclaration
+      AsyncKeyword
+      AsteriskToken
+      Identifier: ' f'
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    MethodDeclaration
+      AsyncKeyword
+      AsteriskToken
+      Identifier: ' f'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              YieldExpression
+  ClassDeclaration
+    Identifier: ' C3'
+    MethodDeclaration
+      AsyncKeyword
+      AsteriskToken
+      Identifier: ' f'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              YieldExpression
+                NumericLiteral
+  ClassDeclaration
+    Identifier: ' C4'
+    MethodDeclaration
+      AsyncKeyword
+      AsteriskToken
+      Identifier: ' f'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              YieldExpression
+                AsteriskToken
+                ArrayLiteralExpression
+                  NumericLiteral
+  ClassDeclaration
+    Identifier: ' C5'
+    MethodDeclaration
+      AsyncKeyword
+      AsteriskToken
+      Identifier: ' f'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              YieldExpression
+                AsteriskToken
+                CallExpression
+                  ParenthesizedExpression
+                    FunctionExpression
+                      AsyncKeyword
+                      AsteriskToken
+                      Block
+                        ExpressionStatement
+                          YieldExpression
+                            NumericLiteral
+  ClassDeclaration
+    Identifier: ' C6'
+    MethodDeclaration
+      AsyncKeyword
+      AsteriskToken
+      Identifier: ' f'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              AwaitExpression
+                NumericLiteral
+  ClassDeclaration
+    Identifier: ' C7'
+    MethodDeclaration
+      AsyncKeyword
+      AsteriskToken
+      Identifier: ' f'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' C8'
+    MethodDeclaration
+      Identifier: '
+    g'
+      Block
+    MethodDeclaration
+      AsyncKeyword
+      AsteriskToken
+      Identifier: ' f'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'g'
+  ClassDeclaration
+    Identifier: ' B9'
+    MethodDeclaration
+      Identifier: '
+    g'
+      Block
+  ClassDeclaration
+    Identifier: ' C9'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B9'
+    MethodDeclaration
+      AsyncKeyword
+      AsteriskToken
+      Identifier: ' f'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'g'

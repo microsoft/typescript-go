@@ -1,0 +1,35 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////declare function f(a: "x"): void;
+////declare function f(a: string): void;
+////f("[|/**/|]");
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    replacementSpan'
+              ElementAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' test'
+                    Identifier: 'ranges'
+                NumericLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword

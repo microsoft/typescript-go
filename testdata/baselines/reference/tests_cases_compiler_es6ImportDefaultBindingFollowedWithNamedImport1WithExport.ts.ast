@@ -1,0 +1,101 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ExportAssignment
+    Identifier: ' a'
+  ImportDeclaration
+    ExportKeyword
+    ImportClause
+      Identifier: ' defaultBinding1'
+      NamedImports
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumberKeyword
+        Identifier: ' defaultBinding1'
+  ImportDeclaration
+    ExportKeyword
+    ImportClause
+      Identifier: ' defaultBinding2'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumberKeyword
+        Identifier: ' defaultBinding2'
+  ImportDeclaration
+    ExportKeyword
+    ImportClause
+      Identifier: ' defaultBinding3'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' b'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumberKeyword
+        Identifier: ' defaultBinding3'
+  ImportDeclaration
+    ExportKeyword
+    ImportClause
+      Identifier: ' defaultBinding4'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' x'
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' y'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumberKeyword
+        Identifier: ' defaultBinding4'
+  ImportDeclaration
+    ExportKeyword
+    ImportClause
+      Identifier: ' defaultBinding5'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' x'
+          Identifier: ' z'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumberKeyword
+        Identifier: ' defaultBinding5'
+  ImportDeclaration
+    ExportKeyword
+    ImportClause
+      Identifier: ' defaultBinding6'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' m'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumberKeyword
+        Identifier: ' defaultBinding6'

@@ -1,0 +1,20 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Test'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'p'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    then'
+      Parameter
+        Identifier: 'p'
+        StringKeyword
+      TypeReference
+        Identifier: ' Date'

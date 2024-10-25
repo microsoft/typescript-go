@@ -1,0 +1,75 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' _b'
+    Parameter
+      Identifier: ' c'
+    Parameter
+      Identifier: ' ___'
+    Parameter
+      Identifier: ' d'
+    Parameter
+      Identifier: 'e___'
+    Parameter
+      Identifier: ' _f'
+    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '_a'
+        BindingElement
+          Identifier: ' __b'
+    Block
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: '_a'
+        OmittedExpression
+        BindingElement
+          Identifier: '__b'
+    Block
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      DotDotDotToken
+      Identifier: 'arg'
+    Block
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      DotDotDotToken
+      Identifier: '_arg'
+    Block
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'arg'
+      QuestionToken
+    Parameter
+      Identifier: ' _arg'
+      QuestionToken
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f7'
+        ArrowFunction
+          Parameter
+            Identifier: ' _'
+          EqualsGreaterThanToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f8'
+        FunctionExpression
+          Parameter
+            Identifier: '_'
+          Block

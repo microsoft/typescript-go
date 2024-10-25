@@ -1,0 +1,17 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////import c from "C";
+////
+////import d from "D";
+////import a from "A"; // not count
+////import b from "B";
+////
+////console.log(a, b, c, d)
+
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral

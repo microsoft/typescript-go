@@ -1,0 +1,62 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' U'
+      TupleType
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+  TypeAliasDeclaration
+    Identifier: ' B'
+    FunctionType
+      TypeParameter
+        Identifier: 'S'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' S'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' S'
+      TupleType
+        TypeReference
+          Identifier: 'S'
+        TypeReference
+          Identifier: ' S'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error disabled here
+    b'
+          EqualsToken
+          Identifier: ' a'

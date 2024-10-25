@@ -1,0 +1,134 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' MorphTuple'
+    TupleType
+      StringKeyword
+      LiteralType
+        StringLiteral
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' validateMorph'
+    TypeParameter
+      Identifier: 'def'
+      TypeReference
+        Identifier: ' MorphTuple'
+    ConditionalType
+      IndexedAccessType
+        TypeReference
+          Identifier: ' def'
+        LiteralType
+          NumericLiteral
+      LiteralType
+        StringLiteral
+      TupleType
+        TypeReference
+          Identifier: 'validateDefinition'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'def'
+            LiteralType
+              NumericLiteral
+        LiteralType
+          StringLiteral
+        FunctionType
+          Parameter
+            Identifier: 'In'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' def'
+              LiteralType
+                NumericLiteral
+          UnknownKeyword
+      TypeReference
+        Identifier: ' def'
+  TypeAliasDeclaration
+    Identifier: ' validateDefinition'
+    TypeParameter
+      Identifier: 'def'
+    ConditionalType
+      TypeReference
+        Identifier: ' def'
+      TypeReference
+        Identifier: ' MorphTuple'
+      TypeReference
+        Identifier: ' validateMorph'
+        TypeReference
+          Identifier: 'def'
+      MappedType
+        TypeParameter
+          Identifier: 'k'
+          TypeOperator
+            TypeReference
+              Identifier: ' def'
+        TypeReference
+          Identifier: ' validateDefinition'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'def'
+            TypeReference
+              Identifier: 'k'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' type'
+    TypeParameter
+      Identifier: 'def'
+    Parameter
+      Identifier: 'def'
+      TypeReference
+        Identifier: ' validateDefinition'
+        TypeReference
+          Identifier: 'def'
+    TypeReference
+      Identifier: ' def'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shallow'
+        CallExpression
+          Identifier: ' type'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objectLiteral'
+        CallExpression
+          Identifier: ' type'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nestedTuple'
+        CallExpression
+          Identifier: ' type'
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'length'

@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' default'
+          Identifier: ' b'
+    StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' b'

@@ -1,0 +1,230 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' MyPromise'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MyPromise'
+        TypeQuery
+          Identifier: ' Promise'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Promise'
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mp'
+        TypeReference
+          Identifier: ' MyPromise'
+          NumberKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f0'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f1'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f3'
+    TypeReference
+      Identifier: ' MyPromise'
+      VoidKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        FunctionExpression
+          AsyncKeyword
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f5'
+        FunctionExpression
+          AsyncKeyword
+          TypeReference
+            Identifier: ' Promise'
+            VoidKeyword
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f6'
+        FunctionExpression
+          AsyncKeyword
+          TypeReference
+            Identifier: ' MyPromise'
+            VoidKeyword
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f7'
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f8'
+        ArrowFunction
+          AsyncKeyword
+          TypeReference
+            Identifier: ' Promise'
+            VoidKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f9'
+        ArrowFunction
+          AsyncKeyword
+          TypeReference
+            Identifier: ' MyPromise'
+            VoidKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f10'
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          Identifier: ' p'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f11'
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          Identifier: ' mp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f12'
+        ArrowFunction
+          AsyncKeyword
+          TypeReference
+            Identifier: ' Promise'
+            NumberKeyword
+          EqualsGreaterThanToken
+          Identifier: ' mp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f13'
+        ArrowFunction
+          AsyncKeyword
+          TypeReference
+            Identifier: ' MyPromise'
+            NumberKeyword
+          EqualsGreaterThanToken
+          Identifier: ' p'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          MethodDeclaration
+            AsyncKeyword
+            Identifier: ' m1'
+            Block
+          MethodDeclaration
+            AsyncKeyword
+            Identifier: ' m2'
+            TypeReference
+              Identifier: ' Promise'
+              VoidKeyword
+            Block
+          MethodDeclaration
+            AsyncKeyword
+            Identifier: ' m3'
+            TypeReference
+              Identifier: ' MyPromise'
+              VoidKeyword
+            Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' m1'
+      Block
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' m2'
+      TypeReference
+        Identifier: ' Promise'
+        VoidKeyword
+      Block
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' m3'
+      TypeReference
+        Identifier: ' MyPromise'
+        VoidKeyword
+      Block
+    MethodDeclaration
+      StaticKeyword
+      AsyncKeyword
+      Identifier: ' m4'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      AsyncKeyword
+      Identifier: ' m5'
+      TypeReference
+        Identifier: ' Promise'
+        VoidKeyword
+      Block
+    MethodDeclaration
+      StaticKeyword
+      AsyncKeyword
+      Identifier: ' m6'
+      TypeReference
+        Identifier: ' MyPromise'
+        VoidKeyword
+      Block
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        AsyncKeyword
+        Identifier: ' f1'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f14'
+    Block
+      LabeledStatement
+        Identifier: '
+    block'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              NumericLiteral
+          BreakStatement
+            Identifier: ' block'

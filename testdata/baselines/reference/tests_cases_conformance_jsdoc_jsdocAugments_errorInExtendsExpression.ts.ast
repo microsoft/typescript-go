@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' err'

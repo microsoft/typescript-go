@@ -1,0 +1,55 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Style'
+    PropertySignature
+      Identifier: '
+    flashy'
+      AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' mergeStyleSets'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'cssSets'
+      ArrayType
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeReference
+              Identifier: ' K'
+          QuestionToken
+          TypeReference
+            Identifier: ' Style'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      TypeReference
+        Identifier: ' Style'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' mergeStyleSets'
+          ObjectLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        a'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' flashy'
+                  TrueKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        b'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' flashy'
+                  TrueKeyword

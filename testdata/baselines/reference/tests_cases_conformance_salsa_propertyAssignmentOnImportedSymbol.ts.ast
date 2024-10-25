@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' hurk'
+        ObjectLiteralExpression
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' hurk'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+hurk'
+        Identifier: 'expando'
+      EqualsToken
+      NumericLiteral

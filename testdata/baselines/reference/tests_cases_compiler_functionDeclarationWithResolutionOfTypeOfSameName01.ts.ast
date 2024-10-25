@@ -1,0 +1,11 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' f'
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ExpressionStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'f'
+          Identifier: 'f'

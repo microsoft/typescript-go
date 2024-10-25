@@ -1,0 +1,109 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Color'
+    Parameter
+      Identifier: 'obj'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'example'
+          EqualsToken
+          TrueKeyword
+  EmptyStatement
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Color'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+	negate'
+          FunctionExpression
+            Block
+              ReturnStatement
+                ThisKeyword
+        PropertyAssignment
+          Identifier: '
+	lighten'
+          FunctionExpression
+            Parameter
+              Identifier: 'ratio'
+            Block
+              ReturnStatement
+                ThisKeyword
+        PropertyAssignment
+          Identifier: '
+	darken'
+          FunctionExpression
+            Parameter
+              Identifier: 'ratio'
+            Block
+              ReturnStatement
+                ThisKeyword
+        PropertyAssignment
+          Identifier: '
+	saturate'
+          FunctionExpression
+            Parameter
+              Identifier: 'ratio'
+            Block
+              ReturnStatement
+                ThisKeyword
+        PropertyAssignment
+          Identifier: '
+	desaturate'
+          FunctionExpression
+            Parameter
+              Identifier: 'ratio'
+            Block
+              ReturnStatement
+                ThisKeyword
+        PropertyAssignment
+          Identifier: '
+	whiten'
+          FunctionExpression
+            Parameter
+              Identifier: 'ratio'
+            Block
+              ReturnStatement
+                ThisKeyword
+        PropertyAssignment
+          Identifier: '
+	blacken'
+          FunctionExpression
+            Parameter
+              Identifier: 'ratio'
+            Block
+              ReturnStatement
+                ThisKeyword
+        PropertyAssignment
+          Identifier: '
+	greyscale'
+          FunctionExpression
+            Block
+              ReturnStatement
+                ThisKeyword
+        PropertyAssignment
+          Identifier: '
+	clearer'
+          FunctionExpression
+            Parameter
+              Identifier: 'ratio'
+            Block
+              ReturnStatement
+                ThisKeyword
+        PropertyAssignment
+          Identifier: '
+	toJSON'
+          FunctionExpression
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'rgb'

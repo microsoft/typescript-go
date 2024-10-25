@@ -1,0 +1,15 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      StringLiteral
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    bar'
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: ' E'
+          StringLiteral
+        PlusToken
+        NumericLiteral

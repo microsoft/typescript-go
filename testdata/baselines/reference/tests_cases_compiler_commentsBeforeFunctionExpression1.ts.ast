@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    f'
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+              EqualsGreaterThanToken
+              NumericLiteral

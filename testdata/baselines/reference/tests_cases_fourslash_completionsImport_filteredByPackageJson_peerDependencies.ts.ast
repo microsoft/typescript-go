@@ -1,0 +1,87 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//@noEmit: true
+
+//@Filename: /package.json
+////{
+////  "peerDependencies": {
+////    "react": "*"
+////  }
+////}
+
+//@Filename: /node_modules/react/index.d.ts
+////export declare var React: any;
+
+//@Filename: /node_modules/react/package.json
+////{
+////  "name": "react",
+////  "types": "./index.d.ts"
+////}
+
+//@Filename: /node_modules/fake-react/index.d.ts
+////export declare var ReactFake: any;
+
+//@Filename: /node_modules/fake-react/package.json
+////{
+////  "name": "fake-react",
+////  "types": "./index.d.ts"
+////}
+
+//@Filename: /src/index.ts
+////const x = Re/**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'marker'
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+  isNewIdentifierLocation'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    hasAction'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    source'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+  excludes'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword

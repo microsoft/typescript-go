@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Preferences'
+    SemicolonClassElement
+    PropertyDeclaration
+      Identifier: '
+  /** @type {A} */
+  a'
+      StringLiteral

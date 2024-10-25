@@ -1,0 +1,41 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' exports'
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' require'
+    ArrayType
+      StringKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' m1'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' exports'
+        StringKeyword
+      FunctionDeclaration
+        Identifier: ' require'
+        NumberKeyword
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' exports'
+        StringKeyword
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' require'
+        ArrayType
+          StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral

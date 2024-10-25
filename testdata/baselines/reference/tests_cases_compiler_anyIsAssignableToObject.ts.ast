@@ -1,0 +1,16 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' P'
+    PropertySignature
+      Identifier: '
+    p'
+      TypeLiteral
+  InterfaceDeclaration
+    Identifier: ' Q'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' P'
+    PropertySignature
+      Identifier: ' // Check assignability here. Any is assignable to {}
+    p'
+      AnyKeyword

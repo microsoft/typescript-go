@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m1_a1'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' m1_c1'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' m1_c1_p1'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m1_instance1'
+        NewExpression
+          Identifier: ' m1_c1'
+  FunctionDeclaration
+    Identifier: ' m1_f1'
+    Block
+      ReturnStatement
+        Identifier: ' m1_instance1'

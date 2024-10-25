@@ -1,0 +1,123 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' // ok
+    b'
+      TypeReference
+        Identifier: ' B'
+    PropertyDeclaration
+      Identifier: ' // ok
+    c'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: ' // error
+    d'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Foo2'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' A'
+    PropertySignature
+      Identifier: ' // ok
+    b'
+      TypeReference
+        Identifier: ' B'
+    PropertySignature
+      Identifier: ' // ok
+    c'
+      NumberKeyword
+    PropertySignature
+      Identifier: ' // error
+    d'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            TypeReference
+              Identifier: ' A'
+          PropertySignature
+            Identifier: '
+    a'
+            TypeReference
+              Identifier: ' A'
+          PropertySignature
+            Identifier: ' // ok
+    b'
+            TypeReference
+              Identifier: ' B'
+          PropertySignature
+            Identifier: ' // ok
+    c'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' // error
+    d'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            TypeReference
+              Identifier: ' A'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            Identifier: ' A'
+          PropertyAssignment
+            Identifier: '
+    b'
+            Identifier: ' B'

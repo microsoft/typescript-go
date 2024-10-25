@@ -1,0 +1,75 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Foo'
+    StringLiteral
+  EnumDeclaration
+    Identifier: ' Bar'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        AsExpression
+          PropertyAccessExpression
+            Identifier: ' Foo'
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        AsExpression
+          PropertyAccessExpression
+            Identifier: ' Bar'
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' const'
+  ModuleDeclaration
+    Identifier: ' ns'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' Foo'
+        EnumMember
+          Identifier: ' X'
+      ExpressionStatement
+        AsExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    ns'
+              Identifier: 'Foo'
+            Identifier: 'X'
+          TypeReference
+            Identifier: ' const'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    EnumMember
+      Identifier: ' X'
+  ExpressionStatement
+    AsExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          Identifier: 'Foo'
+        Identifier: 'X'
+      TypeReference
+        Identifier: ' const'

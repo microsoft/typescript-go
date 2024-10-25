@@ -1,0 +1,79 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C1'
+    MethodDeclaration
+      Identifier: '
+    C1'
+      Block
+    MethodDeclaration
+      Identifier: ' // has to be the same as the class name
+
+    bar'
+      Block
+        ReturnStatement
+          FunctionExpression
+            Parameter
+              Identifier: 't'
+              TypeQuery
+                Identifier: ' C1'
+            Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    C2'
+      AnyKeyword
+    MethodDeclaration
+      Identifier: ' // has to be the same as the class name
+
+    bar'
+      Block
+        ReturnStatement
+          FunctionExpression
+            Parameter
+              Identifier: 't'
+              TypeQuery
+                Identifier: ' C2'
+            Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C3'
+    GetAccessor
+      Identifier: ' C3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: ' // has to be the same as the class name
+
+    bar'
+      Block
+        ReturnStatement
+          FunctionExpression
+            Parameter
+              Identifier: 't'
+              TypeQuery
+                Identifier: ' C3'
+            Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C4'
+    SetAccessor
+      Identifier: ' C4'
+      Parameter
+        Identifier: 'v'
+      Block
+    MethodDeclaration
+      Identifier: ' // has to be the same as the class name
+
+    bar'
+      Block
+        ReturnStatement
+          FunctionExpression
+            Parameter
+              Identifier: 't'
+              TypeQuery
+                Identifier: ' C4'
+            Block

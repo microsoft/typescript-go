@@ -1,0 +1,200 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exhaustiveCaseCompletion'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    source'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' completion'
+                Identifier: 'CompletionSource'
+              Identifier: 'SwitchCases'
+          PropertyAssignment
+            Identifier: '
+    sortText'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' completion'
+                Identifier: 'SortText'
+              Identifier: 'GlobalsOrKeywords'
+          PropertyAssignment
+            Identifier: '
+    insertText'
+            NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        isNewIdentifierLocation'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            Identifier: '
+            exhaustiveCaseCompletion'
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            Identifier: '
+            exhaustiveCaseCompletion'
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            Identifier: '
+            exhaustiveCaseCompletion'
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            Identifier: '
+            exhaustiveCaseCompletion'
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            Identifier: '
+            exhaustiveCaseCompletion'
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            SpreadElement
+              PropertyAccessExpression
+                Identifier: 'completion'
+                Identifier: 'globals'
+            Identifier: '
+            exhaustiveCaseCompletion'
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            Identifier: '
+            exhaustiveCaseCompletion'
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword

@@ -1,0 +1,49 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '  bar'
+      NumberKeyword
+    PropertySignature
+      Identifier: ' foo'
+      UnionType
+        ObjectKeyword
+        LiteralType
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+  test'
+            TypeParameter
+              Identifier: 'K'
+              TypeOperator
+                TypeReference
+                  Identifier: ' Bar'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' K'
+            Parameter
+              Identifier: '  b'
+              QuestionToken
+              UnionType
+                IndexedAccessType
+                  TypeReference
+                    Identifier: ' Bar'
+                  TypeReference
+                    Identifier: 'K'
+                LiteralType
+                  NullKeyword
+            Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+a'
+        Identifier: 'test'
+      StringLiteral
+      NullKeyword

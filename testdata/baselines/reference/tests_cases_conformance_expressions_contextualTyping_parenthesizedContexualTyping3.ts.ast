@@ -1,0 +1,277 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' tempFun'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'tempStrs'
+      TypeReference
+        Identifier: ' TemplateStringsArray'
+    Parameter
+      Identifier: ' g'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' tempFun'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'tempStrs'
+      TypeReference
+        Identifier: ' TemplateStringsArray'
+    Parameter
+      Identifier: ' g'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' h'
+      FunctionType
+        Parameter
+          Identifier: 'y'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' tempFun'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'tempStrs'
+      TypeReference
+        Identifier: ' TemplateStringsArray'
+    Parameter
+      Identifier: ' g'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' g'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TaggedTemplateExpression
+          Identifier: ' tempFun'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ArrowFunction
+                Parameter
+                  Identifier: ' x'
+                EqualsGreaterThanToken
+                Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TaggedTemplateExpression
+          Identifier: ' tempFun'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TaggedTemplateExpression
+          Identifier: ' tempFun'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ParenthesizedExpression
+                ParenthesizedExpression
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                    EqualsGreaterThanToken
+                    Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TaggedTemplateExpression
+          Identifier: ' tempFun'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ArrowFunction
+                Parameter
+                  Identifier: ' x'
+                EqualsGreaterThanToken
+                Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              ArrowFunction
+                Parameter
+                  Identifier: ' x'
+                EqualsGreaterThanToken
+                Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TaggedTemplateExpression
+          Identifier: ' tempFun'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ArrowFunction
+                Parameter
+                  Identifier: ' x'
+                EqualsGreaterThanToken
+                Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TaggedTemplateExpression
+          Identifier: ' tempFun'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ArrowFunction
+                Parameter
+                  Identifier: ' x'
+                EqualsGreaterThanToken
+                Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              ParenthesizedExpression
+                ParenthesizedExpression
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                    EqualsGreaterThanToken
+                    Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        TaggedTemplateExpression
+          Identifier: ' tempFun'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              ParenthesizedExpression
+                ParenthesizedExpression
+                  ParenthesizedExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'x'
+                      EqualsGreaterThanToken
+                      Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        TaggedTemplateExpression
+          Identifier: ' tempFun'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              ParenthesizedExpression
+                ParenthesizedExpression
+                  ParenthesizedExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'x'
+                      EqualsGreaterThanToken
+                      Identifier: ' x'
+              TemplateMiddle
+            TemplateSpan
+              Identifier: ' undefined'
+              TemplateTail

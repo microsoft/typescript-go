@@ -1,0 +1,27 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      TypeReference
+        QualifiedName
+          Identifier: ' B'
+          Identifier: 'C'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    TypeReference
+      QualifiedName
+        Identifier: ' B'
+        Identifier: 'C'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' B'
+        Identifier: 'C'

@@ -1,0 +1,19 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          NumericLiteral
+          TemplateTail
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          NumericLiteral
+          TemplateTail
+      NoSubstitutionTemplateLiteral
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          NumericLiteral
+          TemplateTail

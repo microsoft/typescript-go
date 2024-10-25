@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @filename: index.tsx
+//// <const T extends/>
+
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression

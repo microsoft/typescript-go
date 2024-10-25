@@ -1,0 +1,3395 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Parameter
+            Identifier: 'define'
+          Parameter
+            Identifier: ' undefined'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+define'
+                FunctionExpression
+                  Block
+                    ExpressionStatement
+                      StringLiteral
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' impl'
+                          ObjectLiteralExpression
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    impl'
+                          Identifier: 'mobileDetectRules'
+                        EqualsToken
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            StringLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                          PropertyAssignment
+                            StringLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                          PropertyAssignment
+                            StringLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                          PropertyAssignment
+                            StringLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                          PropertyAssignment
+                            StringLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                ArrayLiteralExpression
+                                  StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                          PropertyAssignment
+                            StringLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    // following patterns come from http://detectmobilebrowsers.com/
+    impl'
+                          Identifier: 'detectMobileBrowsers'
+                        EqualsToken
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+        fullPattern'
+                            RegularExpressionLiteral
+                          PropertyAssignment
+                            Identifier: '
+        shortPattern'
+                            RegularExpressionLiteral
+                          PropertyAssignment
+                            Identifier: '
+        tabletPattern'
+                            RegularExpressionLiteral
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' hasOwnProp'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' Object'
+                              Identifier: 'prototype'
+                            Identifier: 'hasOwnProperty'
+                        VariableDeclaration
+                          Identifier: '
+        isArray'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    impl'
+                          Identifier: 'FALLBACK_PHONE'
+                        EqualsToken
+                        StringLiteral
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+    impl'
+                          Identifier: 'FALLBACK_TABLET'
+                        EqualsToken
+                        StringLiteral
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+    impl'
+                          Identifier: 'FALLBACK_MOBILE'
+                        EqualsToken
+                        StringLiteral
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+
+    isArray'
+                        EqualsToken
+                        ConditionalExpression
+                          ParenthesizedExpression
+                            BinaryExpression
+                              StringLiteral
+                              InKeyword
+                              Identifier: ' Array'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: '
+        Array'
+                            Identifier: 'isArray'
+                          ColonToken
+                          FunctionExpression
+                            Parameter
+                              Identifier: 'value'
+                            Block
+                              ReturnStatement
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' Object'
+                                          Identifier: 'prototype'
+                                        Identifier: 'toString'
+                                      Identifier: 'call'
+                                    Identifier: 'value'
+                                  EqualsEqualsEqualsToken
+                                  StringLiteral
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+    isArray'
+                        EqualsToken
+                        ConditionalExpression
+                          BinaryExpression
+                            StringLiteral
+                            InKeyword
+                            Identifier: ' Array'
+                          QuestionToken
+                          FunctionExpression
+                            Parameter
+                              Identifier: 'value'
+                            Block
+                              ReturnStatement
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' Object'
+                                          Identifier: 'prototype'
+                                        Identifier: 'toString'
+                                      Identifier: 'call'
+                                    Identifier: 'value'
+                                  EqualsEqualsEqualsToken
+                                  StringLiteral
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: ' Array'
+                            Identifier: 'isArray'
+                    FunctionDeclaration
+                      Identifier: ' equalIC'
+                      Parameter
+                        Identifier: 'a'
+                      Parameter
+                        Identifier: ' b'
+                      Block
+                        ReturnStatement
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                Identifier: ' a'
+                                ExclamationEqualsToken
+                                NullKeyword
+                              AmpersandAmpersandToken
+                              BinaryExpression
+                                Identifier: ' b'
+                                ExclamationEqualsToken
+                                NullKeyword
+                            AmpersandAmpersandToken
+                            BinaryExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' a'
+                                  Identifier: 'toLowerCase'
+                              EqualsEqualsEqualsToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' b'
+                                  Identifier: 'toLowerCase'
+                    FunctionDeclaration
+                      Identifier: ' containsIC'
+                      Parameter
+                        Identifier: 'array'
+                      Parameter
+                        Identifier: ' value'
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' valueLC'
+                            VariableDeclaration
+                              Identifier: ' i'
+                            VariableDeclaration
+                              Identifier: ' len'
+                              PropertyAccessExpression
+                                Identifier: ' array'
+                                Identifier: 'length'
+                        IfStatement
+                          BinaryExpression
+                            PrefixUnaryExpression
+                              Identifier: 'len'
+                            BarBarToken
+                            PrefixUnaryExpression
+                              Identifier: 'value'
+                          Block
+                            ReturnStatement
+                              FalseKeyword
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+        valueLC'
+                            EqualsToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' value'
+                                Identifier: 'toLowerCase'
+                        ForStatement
+                          BinaryExpression
+                            Identifier: 'i'
+                            EqualsToken
+                            NumericLiteral
+                          BinaryExpression
+                            Identifier: ' i'
+                            LessThanToken
+                            Identifier: ' len'
+                          PrefixUnaryExpression
+                            Identifier: 'i'
+                          Block
+                            IfStatement
+                              BinaryExpression
+                                Identifier: 'valueLC'
+                                EqualsEqualsEqualsToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    ElementAccessExpression
+                                      Identifier: ' array'
+                                      Identifier: 'i'
+                                    Identifier: 'toLowerCase'
+                              Block
+                                ReturnStatement
+                                  TrueKeyword
+                        ReturnStatement
+                          FalseKeyword
+                    FunctionDeclaration
+                      Identifier: ' convertPropsToRegExp'
+                      Parameter
+                        Identifier: 'object'
+                      Block
+                        ForInStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' key'
+                          Identifier: ' object'
+                          Block
+                            IfStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'hasOwnProp'
+                                  Identifier: 'call'
+                                Identifier: 'object'
+                                Identifier: ' key'
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    ElementAccessExpression
+                                      Identifier: '
+                object'
+                                      Identifier: 'key'
+                                    EqualsToken
+                                    NewExpression
+                                      Identifier: ' RegExp'
+                                      ElementAccessExpression
+                                        Identifier: 'object'
+                                        Identifier: 'key'
+                                      StringLiteral
+                    ExpressionStatement
+                      ParenthesizedExpression
+                        CallExpression
+                          FunctionExpression
+                            Identifier: ' init'
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' key'
+                                  VariableDeclaration
+                                    Identifier: ' values'
+                                  VariableDeclaration
+                                    Identifier: ' value'
+                                  VariableDeclaration
+                                    Identifier: ' i'
+                                  VariableDeclaration
+                                    Identifier: ' len'
+                                  VariableDeclaration
+                                    Identifier: ' verPos'
+                                  VariableDeclaration
+                                    Identifier: ' mobileDetectRules'
+                                    PropertyAccessExpression
+                                      Identifier: ' impl'
+                                      Identifier: 'mobileDetectRules'
+                              ForInStatement
+                                Identifier: 'key'
+                                PropertyAccessExpression
+                                  Identifier: ' mobileDetectRules'
+                                  Identifier: 'props'
+                                Block
+                                  IfStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'hasOwnProp'
+                                        Identifier: 'call'
+                                      PropertyAccessExpression
+                                        Identifier: 'mobileDetectRules'
+                                        Identifier: 'props'
+                                      Identifier: ' key'
+                                    Block
+                                      ExpressionStatement
+                                        BinaryExpression
+                                          Identifier: '
+                values'
+                                          EqualsToken
+                                          ElementAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' mobileDetectRules'
+                                              Identifier: 'props'
+                                            Identifier: 'key'
+                                      IfStatement
+                                        PrefixUnaryExpression
+                                          CallExpression
+                                            Identifier: 'isArray'
+                                            Identifier: 'values'
+                                        Block
+                                          ExpressionStatement
+                                            BinaryExpression
+                                              Identifier: '
+                    values'
+                                              EqualsToken
+                                              ArrayLiteralExpression
+                                                Identifier: 'values'
+                                      ExpressionStatement
+                                        BinaryExpression
+                                          Identifier: '
+                len'
+                                          EqualsToken
+                                          PropertyAccessExpression
+                                            Identifier: ' values'
+                                            Identifier: 'length'
+                                      ForStatement
+                                        BinaryExpression
+                                          Identifier: 'i'
+                                          EqualsToken
+                                          NumericLiteral
+                                        BinaryExpression
+                                          Identifier: ' i'
+                                          LessThanToken
+                                          Identifier: ' len'
+                                        PrefixUnaryExpression
+                                          Identifier: 'i'
+                                        Block
+                                          ExpressionStatement
+                                            BinaryExpression
+                                              Identifier: '
+                    value'
+                                              EqualsToken
+                                              ElementAccessExpression
+                                                Identifier: ' values'
+                                                Identifier: 'i'
+                                          ExpressionStatement
+                                            BinaryExpression
+                                              Identifier: '
+                    verPos'
+                                              EqualsToken
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' value'
+                                                  Identifier: 'indexOf'
+                                                StringLiteral
+                                          IfStatement
+                                            BinaryExpression
+                                              Identifier: 'verPos'
+                                              GreaterThanEqualsToken
+                                              NumericLiteral
+                                            Block
+                                              ExpressionStatement
+                                                BinaryExpression
+                                                  Identifier: '
+                        value'
+                                                  EqualsToken
+                                                  BinaryExpression
+                                                    BinaryExpression
+                                                      CallExpression
+                                                        PropertyAccessExpression
+                                                          Identifier: ' value'
+                                                          Identifier: 'substring'
+                                                        NumericLiteral
+                                                        Identifier: ' verPos'
+                                                      PlusToken
+                                                      StringLiteral
+                                                    PlusToken
+                                                    CallExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: ' value'
+                                                        Identifier: 'substring'
+                                                      BinaryExpression
+                                                        Identifier: 'verPos'
+                                                        PlusToken
+                                                        NumericLiteral
+                                          ExpressionStatement
+                                            BinaryExpression
+                                              ElementAccessExpression
+                                                Identifier: '
+                    values'
+                                                Identifier: 'i'
+                                              EqualsToken
+                                              NewExpression
+                                                Identifier: ' RegExp'
+                                                Identifier: 'value'
+                                                StringLiteral
+                                      ExpressionStatement
+                                        BinaryExpression
+                                          ElementAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+                mobileDetectRules'
+                                              Identifier: 'props'
+                                            Identifier: 'key'
+                                          EqualsToken
+                                          Identifier: ' values'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+        convertPropsToRegExp'
+                                  PropertyAccessExpression
+                                    Identifier: 'mobileDetectRules'
+                                    Identifier: 'oss'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+        convertPropsToRegExp'
+                                  PropertyAccessExpression
+                                    Identifier: 'mobileDetectRules'
+                                    Identifier: 'phones'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+        convertPropsToRegExp'
+                                  PropertyAccessExpression
+                                    Identifier: 'mobileDetectRules'
+                                    Identifier: 'tablets'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+        convertPropsToRegExp'
+                                  PropertyAccessExpression
+                                    Identifier: 'mobileDetectRules'
+                                    Identifier: 'uas'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+        convertPropsToRegExp'
+                                  PropertyAccessExpression
+                                    Identifier: 'mobileDetectRules'
+                                    Identifier: 'utils'
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+
+        // copy some patterns to oss0 which are tested first (see issue#15)
+        mobileDetectRules'
+                                    Identifier: 'oss0'
+                                  EqualsToken
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+            WindowsPhoneOS'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' mobileDetectRules'
+                                          Identifier: 'oss'
+                                        Identifier: 'WindowsPhoneOS'
+                                    PropertyAssignment
+                                      Identifier: '
+            WindowsMobileOS'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' mobileDetectRules'
+                                          Identifier: 'oss'
+                                        Identifier: 'WindowsMobileOS'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    /**
+     * Test userAgent string against a set of rules and find the first matched key.
+     * @param {Object} rules (key is String, value is RegExp)
+     * @param {String} userAgent the navigator.userAgent (or HTTP-Header 'User-Agent').
+     * @returns {String|null} the matched key if found, otherwise <tt>null</tt>
+     * @private
+     */
+    impl'
+                          Identifier: 'findMatch'
+                        EqualsToken
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'rules'
+                          Parameter
+                            Identifier: ' userAgent'
+                          Block
+                            ForInStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' key'
+                              Identifier: ' rules'
+                              Block
+                                IfStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'hasOwnProp'
+                                      Identifier: 'call'
+                                    Identifier: 'rules'
+                                    Identifier: ' key'
+                                  Block
+                                    IfStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          ElementAccessExpression
+                                            Identifier: 'rules'
+                                            Identifier: 'key'
+                                          Identifier: 'test'
+                                        Identifier: 'userAgent'
+                                      Block
+                                        ReturnStatement
+                                          Identifier: ' key'
+                            ReturnStatement
+                              NullKeyword
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    /**
+     * Test userAgent string against a set of rules and return an array of matched keys.
+     * @param {Object} rules (key is String, value is RegExp)
+     * @param {String} userAgent the navigator.userAgent (or HTTP-Header 'User-Agent').
+     * @returns {Array} an array of matched keys, may be empty when there is no match, but not <tt>null</tt>
+     * @private
+     */
+    impl'
+                          Identifier: 'findMatches'
+                        EqualsToken
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'rules'
+                          Parameter
+                            Identifier: ' userAgent'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' result'
+                                  ArrayLiteralExpression
+                            ForInStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' key'
+                              Identifier: ' rules'
+                              Block
+                                IfStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'hasOwnProp'
+                                      Identifier: 'call'
+                                    Identifier: 'rules'
+                                    Identifier: ' key'
+                                  Block
+                                    IfStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          ElementAccessExpression
+                                            Identifier: 'rules'
+                                            Identifier: 'key'
+                                          Identifier: 'test'
+                                        Identifier: 'userAgent'
+                                      Block
+                                        ExpressionStatement
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+                    result'
+                                              Identifier: 'push'
+                                            Identifier: 'key'
+                            ReturnStatement
+                              Identifier: ' result'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    /**
+     * Check the version of the given property in the User-Agent.
+     *
+     * @param {String} propertyName
+     * @param {String} userAgent
+     * @return {String} version or <tt>null</tt> if version not found
+     * @private
+     */
+    impl'
+                          Identifier: 'getVersionStr'
+                        EqualsToken
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'propertyName'
+                          Parameter
+                            Identifier: ' userAgent'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' props'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' impl'
+                                      Identifier: 'mobileDetectRules'
+                                    Identifier: 'props'
+                                VariableDeclaration
+                                  Identifier: ' patterns'
+                                VariableDeclaration
+                                  Identifier: ' i'
+                                VariableDeclaration
+                                  Identifier: ' len'
+                                VariableDeclaration
+                                  Identifier: ' match'
+                            IfStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'hasOwnProp'
+                                  Identifier: 'call'
+                                Identifier: 'props'
+                                Identifier: ' propertyName'
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    Identifier: '
+            patterns'
+                                    EqualsToken
+                                    ElementAccessExpression
+                                      Identifier: ' props'
+                                      Identifier: 'propertyName'
+                                ExpressionStatement
+                                  BinaryExpression
+                                    Identifier: '
+            len'
+                                    EqualsToken
+                                    PropertyAccessExpression
+                                      Identifier: ' patterns'
+                                      Identifier: 'length'
+                                ForStatement
+                                  BinaryExpression
+                                    Identifier: 'i'
+                                    EqualsToken
+                                    NumericLiteral
+                                  BinaryExpression
+                                    Identifier: ' i'
+                                    LessThanToken
+                                    Identifier: ' len'
+                                  PrefixUnaryExpression
+                                    Identifier: 'i'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                match'
+                                        EqualsToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            ElementAccessExpression
+                                              Identifier: ' patterns'
+                                              Identifier: 'i'
+                                            Identifier: 'exec'
+                                          Identifier: 'userAgent'
+                                    IfStatement
+                                      BinaryExpression
+                                        Identifier: 'match'
+                                        ExclamationEqualsEqualsToken
+                                        NullKeyword
+                                      Block
+                                        ReturnStatement
+                                          ElementAccessExpression
+                                            Identifier: ' match'
+                                            NumericLiteral
+                            ReturnStatement
+                              NullKeyword
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    /**
+     * Check the version of the given property in the User-Agent.
+     * Will return a float number. (eg. 2_0 will return 2.0, 4.3.1 will return 4.31)
+     *
+     * @param {String} propertyName
+     * @param {String} userAgent
+     * @return {Number} version or <tt>NaN</tt> if version not found
+     * @private
+     */
+    impl'
+                          Identifier: 'getVersion'
+                        EqualsToken
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'propertyName'
+                          Parameter
+                            Identifier: ' userAgent'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' version'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' impl'
+                                      Identifier: 'getVersionStr'
+                                    Identifier: 'propertyName'
+                                    Identifier: ' userAgent'
+                            ReturnStatement
+                              ConditionalExpression
+                                Identifier: ' version'
+                                QuestionToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' impl'
+                                    Identifier: 'prepareVersionNo'
+                                  Identifier: 'version'
+                                ColonToken
+                                Identifier: ' NaN'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    /**
+     * Prepare the version number.
+     *
+     * @param {String} version
+     * @return {Number} the version number as a floating number
+     * @private
+     */
+    impl'
+                          Identifier: 'prepareVersionNo'
+                        EqualsToken
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'version'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' numbers'
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+
+        numbers'
+                                EqualsToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' version'
+                                    Identifier: 'split'
+                                  RegularExpressionLiteral
+                            IfStatement
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'numbers'
+                                  Identifier: 'length'
+                                EqualsEqualsEqualsToken
+                                NumericLiteral
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    Identifier: '
+            version'
+                                    EqualsToken
+                                    ElementAccessExpression
+                                      Identifier: ' numbers'
+                                      NumericLiteral
+                            IfStatement
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'numbers'
+                                  Identifier: 'length'
+                                GreaterThanToken
+                                NumericLiteral
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    Identifier: '
+            version'
+                                    EqualsToken
+                                    BinaryExpression
+                                      ElementAccessExpression
+                                        Identifier: ' numbers'
+                                        NumericLiteral
+                                      PlusToken
+                                      StringLiteral
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+            numbers'
+                                      Identifier: 'shift'
+                                ExpressionStatement
+                                  BinaryExpression
+                                    Identifier: '
+            version'
+                                    PlusEqualsToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' numbers'
+                                        Identifier: 'join'
+                                      StringLiteral
+                            ReturnStatement
+                              CallExpression
+                                Identifier: ' Number'
+                                Identifier: 'version'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    impl'
+                          Identifier: 'isMobileFallback'
+                        EqualsToken
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'userAgent'
+                          Block
+                            ReturnStatement
+                              BinaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' impl'
+                                        Identifier: 'detectMobileBrowsers'
+                                      Identifier: 'fullPattern'
+                                    Identifier: 'test'
+                                  Identifier: 'userAgent'
+                                BarBarToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+            impl'
+                                        Identifier: 'detectMobileBrowsers'
+                                      Identifier: 'shortPattern'
+                                    Identifier: 'test'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'userAgent'
+                                      Identifier: 'substr'
+                                    NumericLiteral
+                                    NumericLiteral
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    impl'
+                          Identifier: 'isTabletFallback'
+                        EqualsToken
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'userAgent'
+                          Block
+                            ReturnStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' impl'
+                                      Identifier: 'detectMobileBrowsers'
+                                    Identifier: 'tabletPattern'
+                                  Identifier: 'test'
+                                Identifier: 'userAgent'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    impl'
+                          Identifier: 'prepareDetectionCache'
+                        EqualsToken
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'cache'
+                          Parameter
+                            Identifier: ' userAgent'
+                          Parameter
+                            Identifier: ' maxPhoneWidth'
+                          Block
+                            IfStatement
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'cache'
+                                  Identifier: 'mobile'
+                                ExclamationEqualsEqualsToken
+                                Identifier: ' undefined'
+                              Block
+                                ReturnStatement
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' phone'
+                                VariableDeclaration
+                                  Identifier: ' tablet'
+                                VariableDeclaration
+                                  Identifier: ' phoneSized'
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+
+        // first check for stronger tablet rules, then phone (see issue#5)
+        tablet'
+                                EqualsToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' impl'
+                                    Identifier: 'findMatch'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'impl'
+                                      Identifier: 'mobileDetectRules'
+                                    Identifier: 'tablets'
+                                  Identifier: ' userAgent'
+                            IfStatement
+                              Identifier: 'tablet'
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+            cache'
+                                      Identifier: 'mobile'
+                                    EqualsToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' cache'
+                                        Identifier: 'tablet'
+                                      EqualsToken
+                                      Identifier: ' tablet'
+                                ExpressionStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+            cache'
+                                      Identifier: 'phone'
+                                    EqualsToken
+                                    NullKeyword
+                                ReturnStatement
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+
+        phone'
+                                EqualsToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' impl'
+                                    Identifier: 'findMatch'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'impl'
+                                      Identifier: 'mobileDetectRules'
+                                    Identifier: 'phones'
+                                  Identifier: ' userAgent'
+                            IfStatement
+                              Identifier: 'phone'
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+            cache'
+                                      Identifier: 'mobile'
+                                    EqualsToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' cache'
+                                        Identifier: 'phone'
+                                      EqualsToken
+                                      Identifier: ' phone'
+                                ExpressionStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+            cache'
+                                      Identifier: 'tablet'
+                                    EqualsToken
+                                    NullKeyword
+                                ReturnStatement
+                            IfStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'impl'
+                                  Identifier: 'isMobileFallback'
+                                Identifier: 'userAgent'
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    Identifier: '
+            phoneSized'
+                                    EqualsToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' MobileDetect'
+                                        Identifier: 'isPhoneSized'
+                                      Identifier: 'maxPhoneWidth'
+                                IfStatement
+                                  BinaryExpression
+                                    Identifier: 'phoneSized'
+                                    EqualsEqualsEqualsToken
+                                    Identifier: ' undefined'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                cache'
+                                          Identifier: 'mobile'
+                                        EqualsToken
+                                        PropertyAccessExpression
+                                          Identifier: ' impl'
+                                          Identifier: 'FALLBACK_MOBILE'
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                cache'
+                                          Identifier: 'tablet'
+                                        EqualsToken
+                                        BinaryExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' cache'
+                                            Identifier: 'phone'
+                                          EqualsToken
+                                          NullKeyword
+                                  IfStatement
+                                    Identifier: 'phoneSized'
+                                    Block
+                                      ExpressionStatement
+                                        BinaryExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                cache'
+                                            Identifier: 'mobile'
+                                          EqualsToken
+                                          BinaryExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' cache'
+                                              Identifier: 'phone'
+                                            EqualsToken
+                                            PropertyAccessExpression
+                                              Identifier: ' impl'
+                                              Identifier: 'FALLBACK_PHONE'
+                                      ExpressionStatement
+                                        BinaryExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                cache'
+                                            Identifier: 'tablet'
+                                          EqualsToken
+                                          NullKeyword
+                                    Block
+                                      ExpressionStatement
+                                        BinaryExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                cache'
+                                            Identifier: 'mobile'
+                                          EqualsToken
+                                          BinaryExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' cache'
+                                              Identifier: 'tablet'
+                                            EqualsToken
+                                            PropertyAccessExpression
+                                              Identifier: ' impl'
+                                              Identifier: 'FALLBACK_TABLET'
+                                      ExpressionStatement
+                                        BinaryExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                cache'
+                                            Identifier: 'phone'
+                                          EqualsToken
+                                          NullKeyword
+                              IfStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'impl'
+                                    Identifier: 'isTabletFallback'
+                                  Identifier: 'userAgent'
+                                Block
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+            cache'
+                                        Identifier: 'mobile'
+                                      EqualsToken
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' cache'
+                                          Identifier: 'tablet'
+                                        EqualsToken
+                                        PropertyAccessExpression
+                                          Identifier: ' impl'
+                                          Identifier: 'FALLBACK_TABLET'
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+            cache'
+                                        Identifier: 'phone'
+                                      EqualsToken
+                                      NullKeyword
+                                Block
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+            // not mobile at all!
+            cache'
+                                        Identifier: 'mobile'
+                                      EqualsToken
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' cache'
+                                          Identifier: 'tablet'
+                                        EqualsToken
+                                        BinaryExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' cache'
+                                            Identifier: 'phone'
+                                          EqualsToken
+                                          NullKeyword
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    // t is a reference to a MobileDetect instance
+    impl'
+                          Identifier: 'mobileGrade'
+                        EqualsToken
+                        FunctionExpression
+                          Parameter
+                            Identifier: 't'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' $isMobile'
+                                  BinaryExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' t'
+                                        Identifier: 'mobile'
+                                    ExclamationEqualsEqualsToken
+                                    NullKeyword
+                            IfStatement
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    BinaryExpression
+                                      BinaryExpression
+                                        BinaryExpression
+                                          BinaryExpression
+                                            BinaryExpression
+                                              BinaryExpression
+                                                BinaryExpression
+                                                  BinaryExpression
+                                                    BinaryExpression
+                                                      BinaryExpression
+                                                        BinaryExpression
+                                                          BinaryExpression
+                                                            BinaryExpression
+                                                              BinaryExpression
+                                                                BinaryExpression
+                                                                  BinaryExpression
+                                                                    BinaryExpression
+                                                                      BinaryExpression
+                                                                        BinaryExpression
+                                                                          BinaryExpression
+                                                                            BinaryExpression
+                                                                              CallExpression
+                                                                                PropertyAccessExpression
+                                                                                  Identifier: '
+            // Apple iOS 3.2-5.1 - Tested on the original iPad (4.3 / 5.0), iPad 2 (4.3), iPad 3 (5.1), original iPhone (3.1), iPhone 3 (3.2), 3GS (4.3), 4 (4.3 / 5.0), and 4S (5.1)
+            t'
+                                                                                  Identifier: 'os'
+                                                                                StringLiteral
+                                                                              AmpersandAmpersandToken
+                                                                              BinaryExpression
+                                                                                CallExpression
+                                                                                  PropertyAccessExpression
+                                                                                    Identifier: ' t'
+                                                                                    Identifier: 'version'
+                                                                                  StringLiteral
+                                                                                GreaterThanEqualsToken
+                                                                                NumericLiteral
+                                                                            BarBarToken
+                                                                            BinaryExpression
+                                                                              CallExpression
+                                                                                PropertyAccessExpression
+                                                                                  Identifier: '
+            t'
+                                                                                  Identifier: 'os'
+                                                                                StringLiteral
+                                                                              AmpersandAmpersandToken
+                                                                              BinaryExpression
+                                                                                CallExpression
+                                                                                  PropertyAccessExpression
+                                                                                    Identifier: ' t'
+                                                                                    Identifier: 'version'
+                                                                                  StringLiteral
+                                                                                GreaterThanEqualsToken
+                                                                                NumericLiteral
+                                                                          BarBarToken
+                                                                          BinaryExpression
+                                                                            CallExpression
+                                                                              PropertyAccessExpression
+                                                                                Identifier: '
+            t'
+                                                                                Identifier: 'os'
+                                                                              StringLiteral
+                                                                            AmpersandAmpersandToken
+                                                                            BinaryExpression
+                                                                              CallExpression
+                                                                                PropertyAccessExpression
+                                                                                  Identifier: ' t'
+                                                                                  Identifier: 'version'
+                                                                                StringLiteral
+                                                                              GreaterThanEqualsToken
+                                                                              NumericLiteral
+                                                                        BarBarToken
+                                                                        ParenthesizedExpression
+                                                                          BinaryExpression
+                                                                            BinaryExpression
+                                                                              CallExpression
+                                                                                PropertyAccessExpression
+                                                                                  Identifier: ' t'
+                                                                                  Identifier: 'version'
+                                                                                StringLiteral
+                                                                              GreaterThanToken
+                                                                              NumericLiteral
+                                                                            AmpersandAmpersandToken
+                                                                            CallExpression
+                                                                              PropertyAccessExpression
+                                                                                Identifier: ' t'
+                                                                                Identifier: 'is'
+                                                                              StringLiteral
+                                                                      BarBarToken
+                                                                      BinaryExpression
+                                                                        CallExpression
+                                                                          PropertyAccessExpression
+                                                                            Identifier: '
+
+            // Windows Phone 7-7.5 - Tested on the HTC Surround (7.0) HTC Trophy (7.5), LG-E900 (7.5), Nokia Lumia 800
+            t'
+                                                                            Identifier: 'version'
+                                                                          StringLiteral
+                                                                        GreaterThanEqualsToken
+                                                                        NumericLiteral
+                                                                    BarBarToken
+                                                                    BinaryExpression
+                                                                      CallExpression
+                                                                        PropertyAccessExpression
+                                                                          Identifier: '
+
+            // Blackberry 7 - Tested on BlackBerry Torch 9810
+            // Blackberry 6.0 - Tested on the Torch 9800 and Style 9670
+            t'
+                                                                          Identifier: 'is'
+                                                                        StringLiteral
+                                                                      AmpersandAmpersandToken
+                                                                      BinaryExpression
+                                                                        CallExpression
+                                                                          PropertyAccessExpression
+                                                                            Identifier: ' t'
+                                                                            Identifier: 'version'
+                                                                          StringLiteral
+                                                                        GreaterThanEqualsToken
+                                                                        NumericLiteral
+                                                                  BarBarToken
+                                                                  CallExpression
+                                                                    PropertyAccessExpression
+                                                                      Identifier: '
+            // Blackberry Playbook (1.0-2.0) - Tested on PlayBook
+            t'
+                                                                      Identifier: 'match'
+                                                                    StringLiteral
+                                                                BarBarToken
+                                                                ParenthesizedExpression
+                                                                  BinaryExpression
+                                                                    BinaryExpression
+                                                                      CallExpression
+                                                                        PropertyAccessExpression
+                                                                          Identifier: ' t'
+                                                                          Identifier: 'version'
+                                                                        StringLiteral
+                                                                      GreaterThanEqualsToken
+                                                                      NumericLiteral
+                                                                    AmpersandAmpersandToken
+                                                                    CallExpression
+                                                                      PropertyAccessExpression
+                                                                        Identifier: ' t'
+                                                                        Identifier: 'match'
+                                                                      StringLiteral
+                                                              BarBarToken
+                                                              CallExpression
+                                                                PropertyAccessExpression
+                                                                  Identifier: '
+            // Palm WebOS 3.0  - Tested on HP TouchPad
+            t'
+                                                                  Identifier: 'match'
+                                                                StringLiteral
+                                                            BarBarToken
+                                                            ParenthesizedExpression
+                                                              BinaryExpression
+                                                                CallExpression
+                                                                  PropertyAccessExpression
+                                                                    Identifier: ' t'
+                                                                    Identifier: 'is'
+                                                                  StringLiteral
+                                                                AmpersandAmpersandToken
+                                                                BinaryExpression
+                                                                  CallExpression
+                                                                    PropertyAccessExpression
+                                                                      Identifier: ' t'
+                                                                      Identifier: 'version'
+                                                                    StringLiteral
+                                                                  GreaterThanEqualsToken
+                                                                  NumericLiteral
+                                                          BarBarToken
+                                                          ParenthesizedExpression
+                                                            BinaryExpression
+                                                              BinaryExpression
+                                                                CallExpression
+                                                                  PropertyAccessExpression
+                                                                    Identifier: ' t'
+                                                                    Identifier: 'is'
+                                                                  StringLiteral
+                                                                AmpersandAmpersandToken
+                                                                CallExpression
+                                                                  PropertyAccessExpression
+                                                                    Identifier: ' t'
+                                                                    Identifier: 'is'
+                                                                  StringLiteral
+                                                              AmpersandAmpersandToken
+                                                              BinaryExpression
+                                                                CallExpression
+                                                                  PropertyAccessExpression
+                                                                    Identifier: ' t'
+                                                                    Identifier: 'version'
+                                                                  StringLiteral
+                                                                GreaterThanEqualsToken
+                                                                NumericLiteral
+                                                        BarBarToken
+                                                        ParenthesizedExpression
+                                                          BinaryExpression
+                                                            BinaryExpression
+                                                              BinaryExpression
+                                                                CallExpression
+                                                                  PropertyAccessExpression
+                                                                    Identifier: ' t'
+                                                                    Identifier: 'is'
+                                                                  StringLiteral
+                                                                AmpersandAmpersandToken
+                                                                BinaryExpression
+                                                                  CallExpression
+                                                                    PropertyAccessExpression
+                                                                      Identifier: ' t'
+                                                                      Identifier: 'version'
+                                                                    StringLiteral
+                                                                  GreaterThanEqualsToken
+                                                                  NumericLiteral
+                                                              AmpersandAmpersandToken
+                                                              CallExpression
+                                                                PropertyAccessExpression
+                                                                  Identifier: ' t'
+                                                                  Identifier: 'is'
+                                                                StringLiteral
+                                                            AmpersandAmpersandToken
+                                                            BinaryExpression
+                                                              CallExpression
+                                                                PropertyAccessExpression
+                                                                  Identifier: ' t'
+                                                                  Identifier: 'version'
+                                                                StringLiteral
+                                                              GreaterThanEqualsToken
+                                                              NumericLiteral
+                                                      BarBarToken
+                                                      ParenthesizedExpression
+                                                        BinaryExpression
+                                                          BinaryExpression
+                                                            CallExpression
+                                                              PropertyAccessExpression
+                                                                Identifier: ' t'
+                                                                Identifier: 'is'
+                                                              StringLiteral
+                                                            AmpersandAmpersandToken
+                                                            BinaryExpression
+                                                              CallExpression
+                                                                PropertyAccessExpression
+                                                                  Identifier: ' t'
+                                                                  Identifier: 'version'
+                                                                StringLiteral
+                                                              GreaterThanToken
+                                                              NumericLiteral
+                                                          AmpersandAmpersandToken
+                                                          CallExpression
+                                                            PropertyAccessExpression
+                                                              Identifier: ' t'
+                                                              Identifier: 'is'
+                                                            StringLiteral
+                                                    BarBarToken
+                                                    CallExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: '
+
+            // Meego 1.2 - Tested on Nokia 950 and N9
+            t'
+                                                        Identifier: 'is'
+                                                      StringLiteral
+                                                  BarBarToken
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: '
+
+            // Tizen (pre-release) - Tested on early hardware
+            t'
+                                                      Identifier: 'is'
+                                                    StringLiteral
+                                                BarBarToken
+                                                BinaryExpression
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: '
+
+            // Samsung Bada 2.0 - Tested on a Samsung Wave 3, Dolphin browser
+            // @todo: more tests here!
+            t'
+                                                      Identifier: 'is'
+                                                    StringLiteral
+                                                  AmpersandAmpersandToken
+                                                  BinaryExpression
+                                                    CallExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: ' t'
+                                                        Identifier: 'version'
+                                                      StringLiteral
+                                                    GreaterThanEqualsToken
+                                                    NumericLiteral
+                                              BarBarToken
+                                              ParenthesizedExpression
+                                                BinaryExpression
+                                                  ParenthesizedExpression
+                                                    BinaryExpression
+                                                      CallExpression
+                                                        PropertyAccessExpression
+                                                          Identifier: 't'
+                                                          Identifier: 'is'
+                                                        StringLiteral
+                                                      BarBarToken
+                                                      CallExpression
+                                                        PropertyAccessExpression
+                                                          Identifier: ' t'
+                                                          Identifier: 'is'
+                                                        StringLiteral
+                                                  AmpersandAmpersandToken
+                                                  BinaryExpression
+                                                    CallExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: ' t'
+                                                        Identifier: 'version'
+                                                      StringLiteral
+                                                    GreaterThanEqualsToken
+                                                    NumericLiteral
+                                            BarBarToken
+                                            ParenthesizedExpression
+                                              BinaryExpression
+                                                CallExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' t'
+                                                    Identifier: 'match'
+                                                  StringLiteral
+                                                BarBarToken
+                                                BinaryExpression
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: '
+                t'
+                                                      Identifier: 'is'
+                                                    StringLiteral
+                                                  AmpersandAmpersandToken
+                                                  BinaryExpression
+                                                    CallExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: ' t'
+                                                        Identifier: 'version'
+                                                      StringLiteral
+                                                    GreaterThanEqualsToken
+                                                    NumericLiteral
+                                          BarBarToken
+                                          BinaryExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+
+            // Nook Color 1.4.1 - Tested on original Nook Color, not Nook Tablet
+            t'
+                                                Identifier: 'is'
+                                              StringLiteral
+                                            AmpersandAmpersandToken
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' t'
+                                                Identifier: 'is'
+                                              StringLiteral
+                                        BarBarToken
+                                        BinaryExpression
+                                          BinaryExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+
+            // Chrome Desktop 11-21 - Tested on OS X 10.7 and Windows 7
+            t'
+                                                Identifier: 'version'
+                                              StringLiteral
+                                            GreaterThanEqualsToken
+                                            NumericLiteral
+                                          AmpersandAmpersandToken
+                                          PrefixUnaryExpression
+                                            Identifier: '$isMobile'
+                                      BarBarToken
+                                      BinaryExpression
+                                        BinaryExpression
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+
+            // Safari Desktop 4-5 - Tested on OS X 10.7 and Windows 7
+            t'
+                                              Identifier: 'version'
+                                            StringLiteral
+                                          GreaterThanEqualsToken
+                                          NumericLiteral
+                                        AmpersandAmpersandToken
+                                        PrefixUnaryExpression
+                                          Identifier: '$isMobile'
+                                    BarBarToken
+                                    BinaryExpression
+                                      BinaryExpression
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+
+            // Firefox Desktop 4-13 - Tested on OS X 10.7 and Windows 7
+            t'
+                                            Identifier: 'version'
+                                          StringLiteral
+                                        GreaterThanEqualsToken
+                                        NumericLiteral
+                                      AmpersandAmpersandToken
+                                      PrefixUnaryExpression
+                                        Identifier: '$isMobile'
+                                  BarBarToken
+                                  BinaryExpression
+                                    BinaryExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+
+            // Internet Explorer 7-9 - Tested on Windows XP, Vista and 7
+            t'
+                                          Identifier: 'version'
+                                        StringLiteral
+                                      GreaterThanEqualsToken
+                                      NumericLiteral
+                                    AmpersandAmpersandToken
+                                    PrefixUnaryExpression
+                                      Identifier: '$isMobile'
+                                BarBarToken
+                                BinaryExpression
+                                  BinaryExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+
+            // Opera Desktop 10-12 - Tested on OS X 10.7 and Windows 7
+            // @reference: http://my.opera.com/community/openweb/idopera/
+            t'
+                                        Identifier: 'version'
+                                      StringLiteral
+                                    GreaterThanEqualsToken
+                                    NumericLiteral
+                                  AmpersandAmpersandToken
+                                  PrefixUnaryExpression
+                                    Identifier: '$isMobile'
+                              Block
+                                ReturnStatement
+                                  StringLiteral
+                            IfStatement
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    BinaryExpression
+                                      BinaryExpression
+                                        BinaryExpression
+                                          BinaryExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+            t'
+                                                Identifier: 'os'
+                                              StringLiteral
+                                            AmpersandAmpersandToken
+                                            BinaryExpression
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' t'
+                                                  Identifier: 'version'
+                                                StringLiteral
+                                              LessThanToken
+                                              NumericLiteral
+                                          BarBarToken
+                                          BinaryExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+            t'
+                                                Identifier: 'os'
+                                              StringLiteral
+                                            AmpersandAmpersandToken
+                                            BinaryExpression
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' t'
+                                                  Identifier: 'version'
+                                                StringLiteral
+                                              LessThanToken
+                                              NumericLiteral
+                                        BarBarToken
+                                        BinaryExpression
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+            t'
+                                              Identifier: 'os'
+                                            StringLiteral
+                                          AmpersandAmpersandToken
+                                          BinaryExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' t'
+                                                Identifier: 'version'
+                                              StringLiteral
+                                            LessThanToken
+                                            NumericLiteral
+                                      BarBarToken
+                                      BinaryExpression
+                                        BinaryExpression
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+
+            // Blackberry 5.0: Tested on the Storm 2 9550, Bold 9770
+            t'
+                                              Identifier: 'is'
+                                            StringLiteral
+                                          AmpersandAmpersandToken
+                                          BinaryExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' t'
+                                                Identifier: 'version'
+                                              StringLiteral
+                                            GreaterThanEqualsToken
+                                            NumericLiteral
+                                        AmpersandAmpersandToken
+                                        BinaryExpression
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' t'
+                                              Identifier: 'version'
+                                            StringLiteral
+                                          LessThanToken
+                                          NumericLiteral
+                                    BarBarToken
+                                    ParenthesizedExpression
+                                      BinaryExpression
+                                        BinaryExpression
+                                          BinaryExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' t'
+                                                Identifier: 'version'
+                                              StringLiteral
+                                            GreaterThanEqualsToken
+                                            NumericLiteral
+                                          AmpersandAmpersandToken
+                                          BinaryExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' t'
+                                                Identifier: 'version'
+                                              StringLiteral
+                                            LessThanEqualsToken
+                                            NumericLiteral
+                                        AmpersandAmpersandToken
+                                        ParenthesizedExpression
+                                          BinaryExpression
+                                            BinaryExpression
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: 't'
+                                                  Identifier: 'version'
+                                                StringLiteral
+                                              GreaterThanEqualsToken
+                                              NumericLiteral
+                                            BarBarToken
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' t'
+                                                Identifier: 'is'
+                                              StringLiteral
+                                  BarBarToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+
+            // Nokia Symbian^3 - Tested on Nokia N8 (Symbian^3), C7 (Symbian^3), also works on N97 (Symbian^1)
+            t'
+                                      Identifier: 'match'
+                                    StringLiteral
+                                BarBarToken
+                                BinaryExpression
+                                  BinaryExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+
+            // @todo: report this (tested on Nokia N71)
+            t'
+                                        Identifier: 'version'
+                                      StringLiteral
+                                    GreaterThanEqualsToken
+                                    NumericLiteral
+                                  AmpersandAmpersandToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' t'
+                                      Identifier: 'is'
+                                    StringLiteral
+                              Block
+                                ReturnStatement
+                                  StringLiteral
+                            IfStatement
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+        // Blackberry 4.x - Tested on the Curve 8330
+            t'
+                                        Identifier: 'version'
+                                      StringLiteral
+                                    LessThanToken
+                                    NumericLiteral
+                                  BarBarToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+            // Windows Mobile - Tested on the HTC Leo (WinMo 5.2)
+            t'
+                                      Identifier: 'match'
+                                    StringLiteral
+                                BarBarToken
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' t'
+                                      Identifier: 'version'
+                                    StringLiteral
+                                  LessThanEqualsToken
+                                  NumericLiteral
+                              Block
+                                ReturnStatement
+                                  StringLiteral
+                            ReturnStatement
+                              StringLiteral
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    impl'
+                          Identifier: 'detectOS'
+                        EqualsToken
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'ua'
+                          Block
+                            ReturnStatement
+                              BinaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' impl'
+                                    Identifier: 'findMatch'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'impl'
+                                      Identifier: 'mobileDetectRules'
+                                    Identifier: 'oss0'
+                                  Identifier: ' ua'
+                                BarBarToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+            impl'
+                                    Identifier: 'findMatch'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'impl'
+                                      Identifier: 'mobileDetectRules'
+                                    Identifier: 'oss'
+                                  Identifier: ' ua'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    impl'
+                          Identifier: 'getDeviceSmallerSide'
+                        EqualsToken
+                        FunctionExpression
+                          Block
+                            ReturnStatement
+                              ConditionalExpression
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' window'
+                                      Identifier: 'screen'
+                                    Identifier: 'width'
+                                  LessThanToken
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' window'
+                                      Identifier: 'screen'
+                                    Identifier: 'height'
+                                QuestionToken
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+            window'
+                                    Identifier: 'screen'
+                                  Identifier: 'width'
+                                ColonToken
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+            window'
+                                    Identifier: 'screen'
+                                  Identifier: 'height'
+                    FunctionDeclaration
+                      Identifier: ' MobileDetect'
+                      Parameter
+                        Identifier: 'userAgent'
+                      Parameter
+                        Identifier: ' maxPhoneWidth'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'ua'
+                            EqualsToken
+                            BinaryExpression
+                              Identifier: ' userAgent'
+                              BarBarToken
+                              StringLiteral
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: '_cache'
+                            EqualsToken
+                            ObjectLiteralExpression
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'maxPhoneWidth'
+                            EqualsToken
+                            BinaryExpression
+                              Identifier: ' maxPhoneWidth'
+                              BarBarToken
+                              NumericLiteral
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    MobileDetect'
+                          Identifier: 'prototype'
+                        EqualsToken
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+        constructor'
+                            Identifier: ' MobileDetect'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Returns the detected phone or tablet type or <tt>null</tt> if it is not a mobile device.
+         * <br>
+         * For a list of possible return values see {@link MobileDetect#phone} and {@link MobileDetect#tablet}.<br>
+         * <br>
+         * If the device is not detected by the regular expressions from Mobile-Detect, a test is made against
+         * the patterns of <a href="http://detectmobilebrowsers.com/">detectmobilebrowsers.com</a>. If this test
+         * is positive, a value of <code>UnknownPhone</code>, <code>UnknownTablet</code> or
+         * <code>UnknownMobile</code> is returned.<br>
+         * When used in browser, the decision whether phone or tablet is made based on <code>screen.width/height</code>.<br>
+         * <br>
+         * When used server-side (node.js), there is no way to tell the difference between <code>UnknownTablet</code>
+         * and <code>UnknownMobile</code>, so you will get <code>UnknownMobile</code> here.<br>
+         * Be aware that since v1.0.0 in this special case you will get <code>UnknownMobile</code> only for:
+         * {@link MobileDetect#mobile}, not for {@link MobileDetect#phone} and {@link MobileDetect#tablet}.
+         * In versions before v1.0.0 all 3 methods returned <code>UnknownMobile</code> which was tedious to use.
+         * <br>
+         * In most cases you will use the return value just as a boolean.
+         *
+         * @returns {String} the key for the phone family or tablet family, e.g. "Nexus".
+         * @function MobileDetect#mobile
+         */
+        mobile'
+                            FunctionExpression
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+            impl'
+                                      Identifier: 'prepareDetectionCache'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: '_cache'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'ua'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'maxPhoneWidth'
+                                ReturnStatement
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: '_cache'
+                                    Identifier: 'mobile'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Returns the detected phone type/family string or <tt>null</tt>.
+         * <br>
+         * The returned tablet (family or producer) is one of following keys:<br>
+         * <br><tt>iPhone, BlackBerry, HTC, Nexus, Dell, Motorola, Samsung, LG, Sony, Asus,
+         * NokiaLumia, Micromax, Palm, Vertu, Pantech, Fly, Wiko, iMobile, SimValley,
+         * Wolfgang, Alcatel, Nintendo, Amoi, INQ, GenericPhone</tt><br>
+         * <br>
+         * If the device is not detected by the regular expressions from Mobile-Detect, a test is made against
+         * the patterns of <a href="http://detectmobilebrowsers.com/">detectmobilebrowsers.com</a>. If this test
+         * is positive, a value of <code>UnknownPhone</code> or <code>UnknownMobile</code> is returned.<br>
+         * When used in browser, the decision whether phone or tablet is made based on <code>screen.width/height</code>.<br>
+         * <br>
+         * When used server-side (node.js), there is no way to tell the difference between <code>UnknownTablet</code>
+         * and <code>UnknownMobile</code>, so you will get <code>null</code> here, while {@link MobileDetect#mobile}
+         * will return <code>UnknownMobile</code>.<br>
+         * Be aware that since v1.0.0 in this special case you will get <code>UnknownMobile</code> only for:
+         * {@link MobileDetect#mobile}, not for {@link MobileDetect#phone} and {@link MobileDetect#tablet}.
+         * In versions before v1.0.0 all 3 methods returned <code>UnknownMobile</code> which was tedious to use.
+         * <br>
+         * In most cases you will use the return value just as a boolean.
+         *
+         * @returns {String} the key of the phone family or producer, e.g. "iPhone"
+         * @function MobileDetect#phone
+         */
+        phone'
+                            FunctionExpression
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+            impl'
+                                      Identifier: 'prepareDetectionCache'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: '_cache'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'ua'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'maxPhoneWidth'
+                                ReturnStatement
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: '_cache'
+                                    Identifier: 'phone'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Returns the detected tablet type/family string or <tt>null</tt>.
+         * <br>
+         * The returned tablet (family or producer) is one of following keys:<br>
+         * <br><tt>iPad, NexusTablet, SamsungTablet, Kindle, SurfaceTablet, HPTablet, AsusTablet,
+         * BlackBerryTablet, HTCtablet, MotorolaTablet, NookTablet, AcerTablet,
+         * ToshibaTablet, LGTablet, FujitsuTablet, PrestigioTablet, LenovoTablet,
+         * DellTablet, YarvikTablet, MedionTablet, ArnovaTablet, IntensoTablet, IRUTablet,
+         * MegafonTablet, EbodaTablet, AllViewTablet, ArchosTablet, AinolTablet,
+         * NokiaLumiaTablet, SonyTablet, PhilipsTablet, CubeTablet, CobyTablet, MIDTablet,
+         * MSITablet, SMiTTablet, RockChipTablet, FlyTablet, bqTablet, HuaweiTablet,
+         * NecTablet, PantechTablet, BronchoTablet, VersusTablet, ZyncTablet,
+         * PositivoTablet, NabiTablet, KoboTablet, DanewTablet, TexetTablet,
+         * PlaystationTablet, TrekstorTablet, PyleAudioTablet, AdvanTablet,
+         * DanyTechTablet, GalapadTablet, MicromaxTablet, KarbonnTablet, AllFineTablet,
+         * PROSCANTablet, YONESTablet, ChangJiaTablet, GUTablet, PointOfViewTablet,
+         * OvermaxTablet, HCLTablet, DPSTablet, VistureTablet, CrestaTablet,
+         * MediatekTablet, ConcordeTablet, GoCleverTablet, ModecomTablet, VoninoTablet,
+         * ECSTablet, StorexTablet, VodafoneTablet, EssentielBTablet, RossMoorTablet,
+         * iMobileTablet, TolinoTablet, AudioSonicTablet, AMPETablet, SkkTablet,
+         * TecnoTablet, JXDTablet, iJoyTablet, FX2Tablet, XoroTablet, ViewsonicTablet,
+         * OdysTablet, CaptivaTablet, IconbitTablet, TeclastTablet, OndaTablet,
+         * JaytechTablet, BlaupunktTablet, DigmaTablet, EvolioTablet, LavaTablet,
+         * AocTablet, MpmanTablet, CelkonTablet, WolderTablet, MiTablet, NibiruTablet,
+         * NexoTablet, LeaderTablet, UbislateTablet, PocketBookTablet, KocasoTablet, Hudl,
+         * TelstraTablet, GenericTablet</tt><br>
+         * <br>
+         * If the device is not detected by the regular expressions from Mobile-Detect, a test is made against
+         * the patterns of <a href="http://detectmobilebrowsers.com/">detectmobilebrowsers.com</a>. If this test
+         * is positive, a value of <code>UnknownTablet</code> or <code>UnknownMobile</code> is returned.<br>
+         * When used in browser, the decision whether phone or tablet is made based on <code>screen.width/height</code>.<br>
+         * <br>
+         * When used server-side (node.js), there is no way to tell the difference between <code>UnknownTablet</code>
+         * and <code>UnknownMobile</code>, so you will get <code>null</code> here, while {@link MobileDetect#mobile}
+         * will return <code>UnknownMobile</code>.<br>
+         * Be aware that since v1.0.0 in this special case you will get <code>UnknownMobile</code> only for:
+         * {@link MobileDetect#mobile}, not for {@link MobileDetect#phone} and {@link MobileDetect#tablet}.
+         * In versions before v1.0.0 all 3 methods returned <code>UnknownMobile</code> which was tedious to use.
+         * <br>
+         * In most cases you will use the return value just as a boolean.
+         *
+         * @returns {String} the key of the tablet family or producer, e.g. "SamsungTablet"
+         * @function MobileDetect#tablet
+         */
+        tablet'
+                            FunctionExpression
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+            impl'
+                                      Identifier: 'prepareDetectionCache'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: '_cache'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'ua'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'maxPhoneWidth'
+                                ReturnStatement
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: '_cache'
+                                    Identifier: 'tablet'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Returns the (first) detected user-agent string or <tt>null</tt>.
+         * <br>
+         * The returned user-agent is one of following keys:<br>
+         * <br><tt>Vivaldi, Chrome, Dolfin, Opera, Skyfire, Edge, IE, Firefox, Bolt, TeaShark,
+         * Blazer, Safari, Tizen, UCBrowser, baiduboxapp, baidubrowser, DiigoBrowser,
+         * Puffin, Mercury, ObigoBrowser, NetFront, GenericBrowser, PaleMoon</tt><br>
+         * <br>
+         * In most cases calling {@link MobileDetect#userAgent} will be sufficient. But there are rare
+         * cases where a mobile device pretends to be more than one particular browser. You can get the
+         * list of all matches with {@link MobileDetect#userAgents} or check for a particular value by
+         * providing one of the defined keys as first argument to {@link MobileDetect#is}.
+         *
+         * @returns {String} the key for the detected user-agent or <tt>null</tt>
+         * @function MobileDetect#userAgent
+         */
+        userAgent'
+                            FunctionExpression
+                              Block
+                                IfStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        ThisKeyword
+                                        Identifier: '_cache'
+                                      Identifier: 'userAgent'
+                                    EqualsEqualsEqualsToken
+                                    Identifier: ' undefined'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            ThisKeyword
+                                            Identifier: '_cache'
+                                          Identifier: 'userAgent'
+                                        EqualsToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' impl'
+                                            Identifier: 'findMatch'
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'impl'
+                                              Identifier: 'mobileDetectRules'
+                                            Identifier: 'uas'
+                                          PropertyAccessExpression
+                                            ThisKeyword
+                                            Identifier: 'ua'
+                                ReturnStatement
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: '_cache'
+                                    Identifier: 'userAgent'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Returns all detected user-agent strings.
+         * <br>
+         * The array is empty or contains one or more of following keys:<br>
+         * <br><tt>Vivaldi, Chrome, Dolfin, Opera, Skyfire, Edge, IE, Firefox, Bolt, TeaShark,
+         * Blazer, Safari, Tizen, UCBrowser, baiduboxapp, baidubrowser, DiigoBrowser,
+         * Puffin, Mercury, ObigoBrowser, NetFront, GenericBrowser, PaleMoon</tt><br>
+         * <br>
+         * In most cases calling {@link MobileDetect#userAgent} will be sufficient. But there are rare
+         * cases where a mobile device pretends to be more than one particular browser. You can get the
+         * list of all matches with {@link MobileDetect#userAgents} or check for a particular value by
+         * providing one of the defined keys as first argument to {@link MobileDetect#is}.
+         *
+         * @returns {Array} the array of detected user-agent keys or <tt>[]</tt>
+         * @function MobileDetect#userAgents
+         */
+        userAgents'
+                            FunctionExpression
+                              Block
+                                IfStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        ThisKeyword
+                                        Identifier: '_cache'
+                                      Identifier: 'userAgents'
+                                    EqualsEqualsEqualsToken
+                                    Identifier: ' undefined'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            ThisKeyword
+                                            Identifier: '_cache'
+                                          Identifier: 'userAgents'
+                                        EqualsToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' impl'
+                                            Identifier: 'findMatches'
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'impl'
+                                              Identifier: 'mobileDetectRules'
+                                            Identifier: 'uas'
+                                          PropertyAccessExpression
+                                            ThisKeyword
+                                            Identifier: 'ua'
+                                ReturnStatement
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: '_cache'
+                                    Identifier: 'userAgents'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Returns the detected operating system string or <tt>null</tt>.
+         * <br>
+         * The operating system is one of following keys:<br>
+         * <br><tt>AndroidOS, BlackBerryOS, PalmOS, SymbianOS, WindowsMobileOS, WindowsPhoneOS,
+         * iOS, MeeGoOS, MaemoOS, JavaOS, webOS, badaOS, BREWOS</tt><br>
+         *
+         * @returns {String} the key for the detected operating system.
+         * @function MobileDetect#os
+         */
+        os'
+                            FunctionExpression
+                              Block
+                                IfStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        ThisKeyword
+                                        Identifier: '_cache'
+                                      Identifier: 'os'
+                                    EqualsEqualsEqualsToken
+                                    Identifier: ' undefined'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            ThisKeyword
+                                            Identifier: '_cache'
+                                          Identifier: 'os'
+                                        EqualsToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' impl'
+                                            Identifier: 'detectOS'
+                                          PropertyAccessExpression
+                                            ThisKeyword
+                                            Identifier: 'ua'
+                                ReturnStatement
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: '_cache'
+                                    Identifier: 'os'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Get the version (as Number) of the given property in the User-Agent.
+         * <br>
+         * Will return a float number. (eg. 2_0 will return 2.0, 4.3.1 will return 4.31)
+         *
+         * @param {String} key a key defining a thing which has a version.<br>
+         *        You can use one of following keys:<br>
+         * <br><tt>Mobile, Build, Version, VendorID, iPad, iPhone, iPod, Kindle, Chrome, Coast,
+         * Dolfin, Firefox, Fennec, Edge, IE, NetFront, NokiaBrowser, Opera, Opera Mini,
+         * Opera Mobi, UC Browser, MQQBrowser, MicroMessenger, baiduboxapp, baidubrowser,
+         * Iron, Safari, Skyfire, Tizen, Webkit, PaleMoon, Gecko, Trident, Presto, Goanna,
+         * iOS, Android, BlackBerry, BREW, Java, Windows Phone OS, Windows Phone, Windows
+         * CE, Windows NT, Symbian, webOS</tt><br>
+         *
+         * @returns {Number} the version as float or <tt>NaN</tt> if User-Agent doesn't contain this version.
+         *          Be careful when comparing this value with '==' operator!
+         * @function MobileDetect#version
+         */
+        version'
+                            FunctionExpression
+                              Parameter
+                                Identifier: 'key'
+                              Block
+                                ReturnStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' impl'
+                                      Identifier: 'getVersion'
+                                    Identifier: 'key'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'ua'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Get the version (as String) of the given property in the User-Agent.
+         * <br>
+         *
+         * @param {String} key a key defining a thing which has a version.<br>
+         *        You can use one of following keys:<br>
+         * <br><tt>Mobile, Build, Version, VendorID, iPad, iPhone, iPod, Kindle, Chrome, Coast,
+         * Dolfin, Firefox, Fennec, Edge, IE, NetFront, NokiaBrowser, Opera, Opera Mini,
+         * Opera Mobi, UC Browser, MQQBrowser, MicroMessenger, baiduboxapp, baidubrowser,
+         * Iron, Safari, Skyfire, Tizen, Webkit, PaleMoon, Gecko, Trident, Presto, Goanna,
+         * iOS, Android, BlackBerry, BREW, Java, Windows Phone OS, Windows Phone, Windows
+         * CE, Windows NT, Symbian, webOS</tt><br>
+         *
+         * @returns {String} the "raw" version as String or <tt>null</tt> if User-Agent doesn't contain this version.
+         *
+         * @function MobileDetect#versionStr
+         */
+        versionStr'
+                            FunctionExpression
+                              Parameter
+                                Identifier: 'key'
+                              Block
+                                ReturnStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' impl'
+                                      Identifier: 'getVersionStr'
+                                    Identifier: 'key'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'ua'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Global test key against userAgent, os, phone, tablet and some other properties of userAgent string.
+         *
+         * @param {String} key the key (case-insensitive) of a userAgent, an operating system, phone or
+         *        tablet family.<br>
+         *        For a complete list of possible values, see {@link MobileDetect#userAgent},
+         *        {@link MobileDetect#os}, {@link MobileDetect#phone}, {@link MobileDetect#tablet}.<br>
+         *        Additionally you have following keys:<br>
+         * <br><tt>Bot, MobileBot, DesktopMode, TV, WebKit, Console, Watch</tt><br>
+         *
+         * @returns {boolean} <tt>true</tt> when the given key is one of the defined keys of userAgent, os, phone,
+         *                    tablet or one of the listed additional keys, otherwise <tt>false</tt>
+         * @function MobileDetect#is
+         */
+        is'
+                            FunctionExpression
+                              Parameter
+                                Identifier: 'key'
+                              Block
+                                ReturnStatement
+                                  BinaryExpression
+                                    BinaryExpression
+                                      BinaryExpression
+                                        BinaryExpression
+                                          CallExpression
+                                            Identifier: ' containsIC'
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                ThisKeyword
+                                                Identifier: 'userAgents'
+                                            Identifier: ' key'
+                                          BarBarToken
+                                          CallExpression
+                                            Identifier: '
+                   equalIC'
+                                            Identifier: 'key'
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                ThisKeyword
+                                                Identifier: 'os'
+                                        BarBarToken
+                                        CallExpression
+                                          Identifier: '
+                   equalIC'
+                                          Identifier: 'key'
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              ThisKeyword
+                                              Identifier: 'phone'
+                                      BarBarToken
+                                      CallExpression
+                                        Identifier: '
+                   equalIC'
+                                        Identifier: 'key'
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            ThisKeyword
+                                            Identifier: 'tablet'
+                                    BarBarToken
+                                    CallExpression
+                                      Identifier: '
+                   containsIC'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'impl'
+                                          Identifier: 'findMatches'
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'impl'
+                                            Identifier: 'mobileDetectRules'
+                                          Identifier: 'utils'
+                                        PropertyAccessExpression
+                                          ThisKeyword
+                                          Identifier: 'ua'
+                                      Identifier: ' key'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Do a quick test against navigator::userAgent.
+         *
+         * @param {String|RegExp} pattern the pattern, either as String or RegExp
+         *                        (a string will be converted to a case-insensitive RegExp).
+         * @returns {boolean} <tt>true</tt> when the pattern matches, otherwise <tt>false</tt>
+         * @function MobileDetect#match
+         */
+        match'
+                            FunctionExpression
+                              Parameter
+                                Identifier: 'pattern'
+                              Block
+                                IfStatement
+                                  PrefixUnaryExpression
+                                    ParenthesizedExpression
+                                      BinaryExpression
+                                        Identifier: 'pattern'
+                                        InstanceOfKeyword
+                                        Identifier: ' RegExp'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                pattern'
+                                        EqualsToken
+                                        NewExpression
+                                          Identifier: ' RegExp'
+                                          Identifier: 'pattern'
+                                          StringLiteral
+                                ReturnStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' pattern'
+                                      Identifier: 'test'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'ua'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Checks whether the mobile device can be considered as phone regarding <code>screen.width</code>.
+         * <br>
+         * Obviously this method makes sense in browser environments only (not for Node.js)!
+         * @param {number} [maxPhoneWidth] the maximum logical pixels (aka. CSS-pixels) to be considered as phone.<br>
+         *        The argument is optional and if not present or falsy, the value of the constructor is taken.
+         * @returns {boolean|undefined} <code>undefined</code> if screen size wasn't detectable, else <code>true</code>
+         *          when screen.width is less or equal to maxPhoneWidth, otherwise <code>false</code>.<br>
+         *          Will always return <code>undefined</code> server-side.
+         */
+        isPhoneSized'
+                            FunctionExpression
+                              Parameter
+                                Identifier: 'maxPhoneWidth'
+                              Block
+                                ReturnStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' MobileDetect'
+                                      Identifier: 'isPhoneSized'
+                                    BinaryExpression
+                                      Identifier: 'maxPhoneWidth'
+                                      BarBarToken
+                                      PropertyAccessExpression
+                                        ThisKeyword
+                                        Identifier: 'maxPhoneWidth'
+                          PropertyAssignment
+                            Identifier: '
+
+        /**
+         * Returns the mobile grade ('A', 'B', 'C').
+         *
+         * @returns {String} one of the mobile grades ('A', 'B', 'C').
+         * @function MobileDetect#mobileGrade
+         */
+        mobileGrade'
+                            FunctionExpression
+                              Block
+                                IfStatement
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        ThisKeyword
+                                        Identifier: '_cache'
+                                      Identifier: 'grade'
+                                    EqualsEqualsEqualsToken
+                                    Identifier: ' undefined'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            ThisKeyword
+                                            Identifier: '_cache'
+                                          Identifier: 'grade'
+                                        EqualsToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' impl'
+                                            Identifier: 'mobileGrade'
+                                          ThisKeyword
+                                ReturnStatement
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: '_cache'
+                                    Identifier: 'grade'
+                    IfStatement
+                      BinaryExpression
+                        BinaryExpression
+                          TypeOfExpression
+                            Identifier: ' window'
+                          ExclamationEqualsEqualsToken
+                          StringLiteral
+                        AmpersandAmpersandToken
+                        PropertyAccessExpression
+                          Identifier: ' window'
+                          Identifier: 'screen'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+        MobileDetect'
+                              Identifier: 'isPhoneSized'
+                            EqualsToken
+                            FunctionExpression
+                              Parameter
+                                Identifier: 'maxPhoneWidth'
+                              Block
+                                ReturnStatement
+                                  ConditionalExpression
+                                    BinaryExpression
+                                      Identifier: ' maxPhoneWidth'
+                                      LessThanToken
+                                      NumericLiteral
+                                    QuestionToken
+                                    Identifier: ' undefined'
+                                    ColonToken
+                                    BinaryExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' impl'
+                                          Identifier: 'getDeviceSmallerSide'
+                                      LessThanEqualsToken
+                                      Identifier: ' maxPhoneWidth'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+        MobileDetect'
+                              Identifier: 'isPhoneSized'
+                            EqualsToken
+                            FunctionExpression
+                              Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    // should not be replaced by a completely new object - just overwrite existing methods
+    MobileDetect'
+                          Identifier: '_impl'
+                        EqualsToken
+                        Identifier: ' impl'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+
+    MobileDetect'
+                          Identifier: 'version'
+                        EqualsToken
+                        StringLiteral
+                    ReturnStatement
+                      Identifier: ' MobileDetect'
+      CallExpression
+        ParenthesizedExpression
+          FunctionExpression
+            Parameter
+              Identifier: 'undefined'
+            Block
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    TypeOfExpression
+                      Identifier: ' module'
+                    ExclamationEqualsEqualsToken
+                    StringLiteral
+                  AmpersandAmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' module'
+                    Identifier: 'exports'
+                Block
+                  ReturnStatement
+                    FunctionExpression
+                      Parameter
+                        Identifier: 'factory'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' module'
+                              Identifier: 'exports'
+                            EqualsToken
+                            CallExpression
+                              Identifier: ' factory'
+                IfStatement
+                  BinaryExpression
+                    BinaryExpression
+                      TypeOfExpression
+                        Identifier: ' define'
+                      EqualsEqualsEqualsToken
+                      StringLiteral
+                    AmpersandAmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' define'
+                      Identifier: 'amd'
+                  Block
+                    ReturnStatement
+                      Identifier: ' define'
+                  IfStatement
+                    BinaryExpression
+                      TypeOfExpression
+                        Identifier: ' window'
+                      ExclamationEqualsEqualsToken
+                      StringLiteral
+                    Block
+                      ReturnStatement
+                        FunctionExpression
+                          Parameter
+                            Identifier: 'factory'
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: ' window'
+                                  Identifier: 'MobileDetect'
+                                EqualsToken
+                                CallExpression
+                                  Identifier: ' factory'
+                    Block
+                      ThrowStatement
+                        NewExpression
+                          Identifier: ' Error'
+                          StringLiteral

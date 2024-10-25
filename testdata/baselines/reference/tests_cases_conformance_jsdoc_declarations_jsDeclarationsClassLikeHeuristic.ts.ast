@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+A'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+A'
+          Identifier: 'prototype'
+        Identifier: 'b'
+      EqualsToken
+      ObjectLiteralExpression

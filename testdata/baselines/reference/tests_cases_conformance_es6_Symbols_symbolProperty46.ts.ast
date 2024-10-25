@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'hasInstance'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'hasInstance'
+      Parameter
+        Identifier: 'x'
+      Block
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        ParenthesizedExpression
+          NewExpression
+            Identifier: ' C'
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'hasInstance'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        ParenthesizedExpression
+          NewExpression
+            Identifier: ' C'
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'hasInstance'
+      EqualsToken
+      StringLiteral

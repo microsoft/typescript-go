@@ -1,0 +1,49 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Foo'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'Foo'
+            Identifier: 'A'
+        LiteralType
+          NumericLiteral
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'Foo'
+            Identifier: 'B'
+        LiteralType
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' valBar'
+        AsExpression
+          AsExpression
+            NullKeyword
+            AnyKeyword
+          TypeLiteral
+            PropertySignature
+              ComputedPropertyName
+                PropertyAccessExpression
+                  Identifier: 'Foo'
+                  Identifier: 'A'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              ComputedPropertyName
+                PropertyAccessExpression
+                  Identifier: 'Foo'
+                  Identifier: 'B'
+              LiteralType
+                NumericLiteral

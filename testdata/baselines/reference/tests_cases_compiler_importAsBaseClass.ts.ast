@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Greeter'
+    MethodDeclaration
+      Identifier: '
+   greet'
+      Block
+        ReturnStatement
+          StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' Greeter'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' Hello'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Greeter'

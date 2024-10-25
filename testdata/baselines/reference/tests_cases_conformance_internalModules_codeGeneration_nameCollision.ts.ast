@@ -1,0 +1,96 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' A'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' _A'
+            StringLiteral
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' A'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' B'
+        PropertyDeclaration
+          Identifier: '
+        name'
+          StringKeyword
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' X'
+            NumericLiteral
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Y'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' Y'
+                NumericLiteral
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' Z'
+            ModuleBlock
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' X'
+                    NumericLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' Y'
+                    NumericLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' Z'
+                    NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Y'
+    ModuleDeclaration
+      Identifier: 'Y'
+      ModuleBlock
+        EnumDeclaration
+          ExportKeyword
+          Identifier: ' Y'
+          EnumMember
+            Identifier: '
+        Red'
+          EnumMember
+            Identifier: ' Blue'
+  ModuleDeclaration
+    Identifier: ' D'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' D'
+        PropertySignature
+          Identifier: '
+        id'
+          NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' E'
+            StringLiteral

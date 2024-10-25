@@ -1,0 +1,62 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' App'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'App'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'App'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        Identifier: ''
+  InterfaceDeclaration
+    Identifier: ' IntrinsicClassAttributesAlias'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    ref'
+      TypeReference
+        Identifier: ' T'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' IntrinsicClassAttributes'
+        TypeParameter
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' IntrinsicClassAttributesAlias'
+          TypeReference
+            Identifier: 'T'
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral

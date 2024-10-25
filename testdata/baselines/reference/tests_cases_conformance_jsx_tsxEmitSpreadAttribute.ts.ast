@@ -1,0 +1,439 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T1'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: ' className'
+      Block
+        ExpressionStatement
+          StringLiteral
+      Block
+        ExpressionStatement
+          Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T1'
+          LessThanToken
+          RegularExpressionLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T2'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: ' className'
+      Block
+        ExpressionStatement
+          StringLiteral
+      Block
+        ExpressionStatement
+          Identifier: 'a'
+      Block
+        ExpressionStatement
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T2'
+          LessThanToken
+          RegularExpressionLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T3'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          ObjectLiteralExpression
+            SpreadAssignment
+              Identifier: 'a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' className'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              Identifier: ''
+      Block
+        ExpressionStatement
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T3'
+          LessThanToken
+          RegularExpressionLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T4'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: ' className'
+      Block
+        ExpressionStatement
+          StringLiteral
+      Block
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: 'a'
+              CommaToken
+              Identifier: ''
+          ExpressionStatement
+            Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T4'
+          LessThanToken
+          RegularExpressionLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T5'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Parameter
+      Identifier: ' c'
+      AnyKeyword
+    Parameter
+      Identifier: ' d'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: ' className'
+      Block
+        ExpressionStatement
+          StringLiteral
+      Block
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: 'a'
+              CommaToken
+              Identifier: ''
+          ExpressionStatement
+            BinaryExpression
+              Identifier: 'b'
+              CommaToken
+              Identifier: ''
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: ' c'
+                CommaToken
+                Identifier: ' d'
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T5'
+          LessThanToken
+          RegularExpressionLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T6'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Parameter
+      Identifier: ' c'
+      AnyKeyword
+    Parameter
+      Identifier: ' d'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: ' className'
+      Block
+        ExpressionStatement
+          StringLiteral
+      Block
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: 'a'
+              CommaToken
+              Identifier: ''
+          ExpressionStatement
+            BinaryExpression
+              Identifier: 'b'
+              CommaToken
+              Identifier: ''
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: 'c'
+                CommaToken
+                Identifier: ''
+            ExpressionStatement
+              Identifier: 'd'
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T6'
+          LessThanToken
+          RegularExpressionLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T7'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Parameter
+      Identifier: ' c'
+      AnyKeyword
+    Parameter
+      Identifier: ' d'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: ' className'
+      Block
+        ExpressionStatement
+          StringLiteral
+      Block
+        Block
+          LabeledStatement
+            Identifier: ' __proto__'
+            ExpressionStatement
+              BinaryExpression
+                NullKeyword
+                CommaToken
+                Identifier: ' dir'
+          ExpressionStatement
+            StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T7'
+          LessThanToken
+          RegularExpressionLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T8'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Parameter
+      Identifier: ' c'
+      AnyKeyword
+    Parameter
+      Identifier: ' d'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: ' className'
+      Block
+        ExpressionStatement
+          StringLiteral
+      Block
+        Block
+          ExpressionStatement
+            StringLiteral
+          ExpressionStatement
+            NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T8'
+          LessThanToken
+          RegularExpressionLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' __proto__'
+        StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T9'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Parameter
+      Identifier: ' c'
+      AnyKeyword
+    Parameter
+      Identifier: ' d'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: ' className'
+      Block
+        ExpressionStatement
+          StringLiteral
+      Block
+        Block
+          ExpressionStatement
+            ArrayLiteralExpression
+              Identifier: '__proto__'
+          ExpressionStatement
+            NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T9'
+          LessThanToken
+          RegularExpressionLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T10'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Parameter
+      Identifier: ' c'
+      AnyKeyword
+    Parameter
+      Identifier: ' d'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: ' className'
+      Block
+        ExpressionStatement
+          StringLiteral
+      Block
+        Block
+          ExpressionStatement
+            ArrayLiteralExpression
+              StringLiteral
+          ExpressionStatement
+            NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T10'
+          LessThanToken
+          RegularExpressionLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' T11'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Parameter
+      Identifier: ' c'
+      AnyKeyword
+    Parameter
+      Identifier: ' d'
+      AnyKeyword
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: ' className'
+      Block
+        ExpressionStatement
+          StringLiteral
+      Block
+        Block
+          ExpressionStatement
+            Identifier: ' __proto__'
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            GreaterThanToken
+            Identifier: 'T11'
+          LessThanToken
+          RegularExpressionLiteral

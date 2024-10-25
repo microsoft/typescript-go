@@ -1,0 +1,9 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' a'
+          StringLiteral
+    Block

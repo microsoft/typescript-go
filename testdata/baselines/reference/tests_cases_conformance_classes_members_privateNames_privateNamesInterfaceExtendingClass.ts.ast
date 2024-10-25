@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+    MethodDeclaration
+      Identifier: '
+    func'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' I'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        x'
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' func'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            PrivateIdentifier
+          EqualsToken
+          NumericLiteral

@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: 'm'
+          Identifier: 'index'
+        PlusToken
+        NumericLiteral
+      PlusToken
+      PropertyAccessExpression
+        ElementAccessExpression
+          Identifier: 'm'
+          NumericLiteral
+        Identifier: 'length'

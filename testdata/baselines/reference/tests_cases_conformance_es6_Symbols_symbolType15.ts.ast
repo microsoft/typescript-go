@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sym'
+        SymbolKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' symObj'
+        TypeReference
+          Identifier: ' Symbol'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+symObj'
+      EqualsToken
+      Identifier: ' sym'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+sym'
+      EqualsToken
+      Identifier: ' symObj'

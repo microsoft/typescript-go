@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        ParenthesizedExpression
+          NumericLiteral
+        SlashToken
+        Identifier: 'notregexp'
+      SlashToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'a'
+          Identifier: 'foo'

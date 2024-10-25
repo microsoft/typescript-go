@@ -1,0 +1,19 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    static'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        TypeReference
+          QualifiedName
+            Identifier: ' E'
+            Identifier: 'static'
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'static'

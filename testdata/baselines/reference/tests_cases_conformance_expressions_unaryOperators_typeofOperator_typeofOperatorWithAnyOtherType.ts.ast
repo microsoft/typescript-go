@@ -1,0 +1,342 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY2'
+        ArrayType
+          AnyKeyword
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        FunctionType
+          TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+  FunctionDeclaration
+    Identifier: ' foo'
+    AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+      ReturnStatement
+        Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      AnyKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+        ReturnStatement
+          Identifier: ' a'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objA'
+        NewExpression
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString1'
+        TypeOfExpression
+          Identifier: ' ANY1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString2'
+        TypeOfExpression
+          Identifier: ' ANY2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString3'
+        TypeOfExpression
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString4'
+        TypeOfExpression
+          Identifier: ' M'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString5'
+        TypeOfExpression
+          Identifier: ' obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString6'
+        TypeOfExpression
+          Identifier: ' obj1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString7'
+        TypeOfExpression
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString8'
+        TypeOfExpression
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString9'
+        TypeOfExpression
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString10'
+        TypeOfExpression
+          ElementAccessExpression
+            Identifier: ' ANY2'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString11'
+        TypeOfExpression
+          PropertyAccessExpression
+            Identifier: ' objA'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString12'
+        TypeOfExpression
+          PropertyAccessExpression
+            Identifier: ' obj1'
+            Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString13'
+        TypeOfExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString14'
+        TypeOfExpression
+          CallExpression
+            Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString15'
+        TypeOfExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' A'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString16'
+        TypeOfExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'ANY'
+              PlusToken
+              Identifier: ' ANY1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString17'
+        TypeOfExpression
+          ParenthesizedExpression
+            BinaryExpression
+              NullKeyword
+              PlusToken
+              Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString18'
+        TypeOfExpression
+          ParenthesizedExpression
+            BinaryExpression
+              NullKeyword
+              PlusToken
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString19'
+        TypeOfExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'undefined'
+              PlusToken
+              Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString20'
+        TypeOfExpression
+          TypeOfExpression
+            Identifier: ' ANY'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsString21'
+        TypeOfExpression
+          TypeOfExpression
+            TypeOfExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'ANY'
+                  PlusToken
+                  Identifier: ' ANY1'
+  ExpressionStatement
+    TypeOfExpression
+      Identifier: ' ANY'
+  ExpressionStatement
+    TypeOfExpression
+      Identifier: ' ANY1'
+  ExpressionStatement
+    TypeOfExpression
+      ElementAccessExpression
+        Identifier: ' ANY2'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' ANY'
+      CommaToken
+      Identifier: ' ANY1'
+  ExpressionStatement
+    TypeOfExpression
+      Identifier: ' obj1'
+  ExpressionStatement
+    TypeOfExpression
+      PropertyAccessExpression
+        Identifier: ' obj1'
+        Identifier: 'x'
+  ExpressionStatement
+    TypeOfExpression
+      PropertyAccessExpression
+        Identifier: ' objA'
+        Identifier: 'a'
+  ExpressionStatement
+    TypeOfExpression
+      PropertyAccessExpression
+        Identifier: ' M'
+        Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayType
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        FunctionType
+          AnyKeyword
+  LabeledStatement
+    Identifier: '
+z'
+    ExpressionStatement
+      TypeOfExpression
+        Identifier: ' ANY'
+  LabeledStatement
+    Identifier: '
+x'
+    ExpressionStatement
+      TypeOfExpression
+        Identifier: ' ANY2'
+  LabeledStatement
+    Identifier: '
+r'
+    ExpressionStatement
+      TypeOfExpression
+        Identifier: ' foo'
+  LabeledStatement
+    Identifier: '
+z'
+    ExpressionStatement
+      TypeOfExpression
+        PropertyAccessExpression
+          Identifier: ' objA'
+          Identifier: 'a'
+  LabeledStatement
+    Identifier: '
+z'
+    ExpressionStatement
+      TypeOfExpression
+        PropertyAccessExpression
+          Identifier: ' A'
+          Identifier: 'foo'
+  LabeledStatement
+    Identifier: '
+z'
+    ExpressionStatement
+      TypeOfExpression
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'n'
+  LabeledStatement
+    Identifier: '
+z'
+    ExpressionStatement
+      TypeOfExpression
+        PropertyAccessExpression
+          Identifier: ' obj1'
+          Identifier: 'x'

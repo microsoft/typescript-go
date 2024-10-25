@@ -1,0 +1,265 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      QuestionToken
+      NumberKeyword
+      NumericLiteral
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            Identifier: 'x'
+            QuestionToken
+            NumberKeyword
+            NumericLiteral
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            QuestionToken
+            NumericLiteral
+          EqualsGreaterThanToken
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      NumericLiteral
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        QuestionToken
+        NumberKeyword
+        NumericLiteral
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'foo'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'foo'
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        QuestionToken
+        NumericLiteral
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        NumberKeyword
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+i'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+i'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i'
+        Identifier: 'foo'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i'
+        Identifier: 'foo'
+      NumericLiteral
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              NumberKeyword
+              NumericLiteral
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+a'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+a'
+        Identifier: 'foo'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+a'
+        Identifier: 'foo'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    foo'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              NumberKeyword
+              NumericLiteral
+            Block
+          PropertyAssignment
+            Identifier: '
+    a'
+            FunctionExpression
+              Identifier: ' foo'
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              Parameter
+                Identifier: ' y'
+                QuestionToken
+                NumberKeyword
+                StringLiteral
+              Block
+          PropertyAssignment
+            Identifier: '
+    b'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                QuestionToken
+                AnyKeyword
+                StringLiteral
+              EqualsGreaterThanToken
+              Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+b'
+        Identifier: 'foo'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'foo'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'a'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'a'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'b'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'b'
+      NumericLiteral

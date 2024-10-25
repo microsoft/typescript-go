@@ -1,0 +1,53 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    next'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'List'
+          TypeReference
+            Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' list1'
+        NewExpression
+          Identifier: ' List'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' list2'
+        NewExpression
+          Identifier: ' List'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' list3'
+        NewExpression
+          Identifier: ' List'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+list1'
+      EqualsToken
+      Identifier: ' list2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+list1'
+      EqualsToken
+      Identifier: ' list3'

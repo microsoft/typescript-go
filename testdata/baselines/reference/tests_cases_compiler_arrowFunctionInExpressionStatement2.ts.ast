@@ -1,0 +1,8 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ExpressionStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          NumericLiteral

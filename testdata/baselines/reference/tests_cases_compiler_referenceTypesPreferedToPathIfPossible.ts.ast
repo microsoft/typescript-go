@@ -1,0 +1,28 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Url'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' parse'
+        TypeReference
+          Identifier: ' Url'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' parse'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thing'
+        ArrowFunction
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' parse'

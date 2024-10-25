@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' T'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' y'
+      Block

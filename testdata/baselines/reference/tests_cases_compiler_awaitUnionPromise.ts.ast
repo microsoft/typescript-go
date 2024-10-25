@@ -1,0 +1,99 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' AsyncEnumeratorDone'
+  EmptyStatement
+  InterfaceDeclaration
+    Identifier: ' IAsyncEnumerator'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    next1'
+      TypeReference
+        Identifier: ' Promise'
+        UnionType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' AsyncEnumeratorDone'
+    MethodSignature
+      Identifier: '
+    next2'
+      UnionType
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'AsyncEnumeratorDone'
+    MethodSignature
+      Identifier: '
+    next3'
+      TypeReference
+        Identifier: ' Promise'
+        UnionType
+          TypeReference
+            Identifier: 'T'
+          TypeLiteral
+    MethodSignature
+      Identifier: '
+    next4'
+      TypeReference
+        Identifier: ' Promise'
+        UnionType
+          TypeReference
+            Identifier: 'T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              StringKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' main'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' IAsyncEnumerator'
+              NumberKeyword
+            NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'next1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'next2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'next3'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'next4'

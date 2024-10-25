@@ -1,0 +1,61 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Number'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Foo'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionType
+          Parameter
+            Identifier: 'foo'
+            TypeReference
+              Identifier: ' Foo'
+          BooleanKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    f'
+            FunctionType
+              Parameter
+                Identifier: 'foo'
+                ImportType
+                  LiteralType
+                    StringLiteral
+                  Identifier: 'Foo'
+              BooleanKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'e'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: 'e'

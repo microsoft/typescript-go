@@ -1,0 +1,26 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Iterator'
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' f1'
+    TypeReference
+      Identifier: ' I1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            YieldExpression
+              NumericLiteral
+      ReturnStatement
+        NumericLiteral

@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+  ForInStatement
+    ObjectLiteralExpression
+      ShorthandPropertyAssignment
+        Identifier: 'a'
+      ShorthandPropertyAssignment
+        Identifier: ' b'
+    ArrayLiteralExpression
+    Block

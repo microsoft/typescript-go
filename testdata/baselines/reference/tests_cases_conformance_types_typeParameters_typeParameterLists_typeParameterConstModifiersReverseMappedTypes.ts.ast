@@ -1,0 +1,200 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test1'
+    TypeParameter
+      ConstKeyword
+      Identifier: ' T'
+    Parameter
+      Identifier: 'obj'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeQuery
+        Identifier: ' obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result1'
+        CallExpression
+          Identifier: ' test1'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  prop'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+  nested'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    nestedProp'
+                  StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test2'
+    TypeParameter
+      ConstKeyword
+      Identifier: ' T'
+    Parameter
+      Identifier: 'obj'
+      MappedType
+        ReadonlyKeyword
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeQuery
+        Identifier: ' obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result2'
+        CallExpression
+          Identifier: ' test2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  prop'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+  nested'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    nestedProp'
+                  StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test3'
+    TypeParameter
+      ConstKeyword
+      Identifier: ' T'
+    Parameter
+      Identifier: 'obj'
+      MappedType
+        MinusToken
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeQuery
+        Identifier: ' obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result3'
+        CallExpression
+          Identifier: ' test3'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  prop'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+  nested'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    nestedProp'
+                  StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test4'
+    TypeParameter
+      ConstKeyword
+      Identifier: ' T'
+      TypeOperator
+        ArrayType
+          UnknownKeyword
+    Parameter
+      Identifier: 'arr'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result4'
+        CallExpression
+          Identifier: ' test4'
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test5'
+    TypeParameter
+      ConstKeyword
+      Identifier: ' T'
+      TypeOperator
+        ArrayType
+          UnknownKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result5'
+        CallExpression
+          Identifier: ' test5'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              StringLiteral

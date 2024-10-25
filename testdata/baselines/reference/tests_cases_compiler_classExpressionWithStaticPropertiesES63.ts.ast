@@ -1,0 +1,70 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          TypeLiteral
+            MethodSignature
+              Identifier: 'y'
+              NumberKeyword
+        ArrayLiteralExpression
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'push'
+          ClassExpression
+            Identifier: ' C'
+            PropertyDeclaration
+              StaticKeyword
+              Identifier: ' x'
+              Identifier: ' i'
+            PropertyDeclaration
+              StaticKeyword
+              Identifier: ' y'
+              ArrowFunction
+                EqualsGreaterThanToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' C'
+                    Identifier: 'x'
+                  AsteriskToken
+                  NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+arr'
+        Identifier: 'forEach'
+      ArrowFunction
+        Parameter
+          Identifier: 'C'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' console'
+            Identifier: 'log'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'C'
+              Identifier: 'y'

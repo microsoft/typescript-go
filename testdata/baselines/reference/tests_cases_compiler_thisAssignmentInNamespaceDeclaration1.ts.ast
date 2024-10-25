@@ -1,0 +1,21 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'bar'
+          EqualsToken
+          NumericLiteral
+  ModuleDeclaration
+    Identifier: ' blah'
+    ModuleBlock
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'prop'
+          EqualsToken
+          NumericLiteral

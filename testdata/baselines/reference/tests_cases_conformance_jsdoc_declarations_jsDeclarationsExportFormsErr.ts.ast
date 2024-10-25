@@ -1,0 +1,33 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+  ImportEqualsDeclaration
+    Identifier: ' ns'
+    ExternalModuleReference
+      StringLiteral
+  ExportAssignment
+    Identifier: ' ns'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ns'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' ns'
+  ExportDeclaration
+    StringLiteral
+  NamespaceExportDeclaration
+    Identifier: ' GLO'
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral

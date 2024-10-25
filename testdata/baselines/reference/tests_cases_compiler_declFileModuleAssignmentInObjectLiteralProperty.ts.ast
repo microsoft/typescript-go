@@ -1,0 +1,28 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    m1'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' m'
+                Identifier: ' m1'
+          PropertyAssignment
+            Identifier: '
+    m2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' c'
+                PropertyAccessExpression
+                  Identifier: ' m1'
+                  Identifier: 'c'

@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @filename: foo.ts
+////const Bar;
+////const Foo = /*def*/Bar = function () {}
+////Foo.prototype.bar = function() {}
+////new [|Foo/*ref*/|]();
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineGoToDefinition'
+      StringLiteral

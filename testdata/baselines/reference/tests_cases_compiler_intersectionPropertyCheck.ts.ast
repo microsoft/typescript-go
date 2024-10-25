@@ -1,0 +1,117 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' c'
+              NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+          PropertyAssignment
+            Identifier: ' c'
+            NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wrong'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' y'
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' weak'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              QuestionToken
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  QuestionToken
+                  NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' c'
+              QuestionToken
+              StringKeyword
+        Identifier: ' wrong'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          QuestionToken
+          StringKeyword
+    Parameter
+      Identifier: ' y'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            BooleanKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+  x'
+          EqualsToken
+          Identifier: ' y'
+  InterfaceDeclaration
+    Identifier: ' Test'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' hi'
+      QuestionToken
+      ArrayType
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Test'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'value'
+          PropertyAssignment
+            Identifier: ' hi'
+            TrueKeyword

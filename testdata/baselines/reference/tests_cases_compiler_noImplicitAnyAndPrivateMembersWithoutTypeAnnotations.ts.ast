@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Something'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' someStaticVar'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' someVar'
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' getter'
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' setter'
+      Parameter
+        Identifier: 'v'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' Something'

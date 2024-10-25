@@ -1,0 +1,8 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Bar'
+        ClassExpression
+          TypeParameter
+            Identifier: 'T'

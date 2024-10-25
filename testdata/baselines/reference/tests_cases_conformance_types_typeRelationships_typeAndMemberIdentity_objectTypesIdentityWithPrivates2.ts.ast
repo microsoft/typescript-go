@@ -1,0 +1,166 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' D'
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' D'
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' D'
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' D'
+        NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    AnyKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' foo4'
+          NewExpression
+            Identifier: ' C'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' foo4'
+          NewExpression
+            Identifier: ' D'
+            NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+        NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' D'
+        NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' D'
+        NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    AnyKeyword
+    Block

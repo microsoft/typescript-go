@@ -1,0 +1,8 @@
+SourceFile
+  Block
+    VariableStatement
+      DeclareKeyword
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+          ThisKeyword

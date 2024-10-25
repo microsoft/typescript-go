@@ -1,0 +1,23 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' test'
+    Parameter
+      Identifier: 'p'
+      AnyKeyword
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    p'
+          EqualsToken
+          BinaryExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' prop'
+                Identifier: ' p'
+            EqualsToken
+            Identifier: ' p'

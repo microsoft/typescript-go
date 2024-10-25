@@ -1,0 +1,3233 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' __String'
+        ImportSpecifier
+          Identifier: ' AccessorDeclaration'
+        ImportSpecifier
+          Identifier: ' ArrayBindingElement'
+        ImportSpecifier
+          Identifier: ' ArrayBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: ' ArrayBindingOrAssignmentPattern'
+        ImportSpecifier
+          Identifier: ' ArrowFunction'
+        ImportSpecifier
+          Identifier: ' AssertionExpression'
+        ImportSpecifier
+          Identifier: ' AssignmentPattern'
+        ImportSpecifier
+          Identifier: ' AutoAccessorPropertyDeclaration'
+        ImportSpecifier
+          Identifier: ' BindingElement'
+        ImportSpecifier
+          Identifier: ' BindingName'
+        ImportSpecifier
+          Identifier: ' BindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: ' BindingOrAssignmentElementTarget'
+        ImportSpecifier
+          Identifier: ' BindingOrAssignmentPattern'
+        ImportSpecifier
+          Identifier: ' BindingPattern'
+        ImportSpecifier
+          Identifier: ' Block'
+        ImportSpecifier
+          Identifier: ' BooleanLiteral'
+        ImportSpecifier
+          Identifier: ' BreakOrContinueStatement'
+        ImportSpecifier
+          Identifier: ' CallChain'
+        ImportSpecifier
+          Identifier: ' CallExpression'
+        ImportSpecifier
+          Identifier: ' CallLikeExpression'
+        ImportSpecifier
+          Identifier: ' CaseOrDefaultClause'
+        ImportSpecifier
+          Identifier: ' ClassElement'
+        ImportSpecifier
+          Identifier: ' ClassLikeDeclaration'
+        ImportSpecifier
+          Identifier: ' ClassStaticBlockDeclaration'
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' ConciseBody'
+        ImportSpecifier
+          Identifier: ' ConstructorDeclaration'
+        ImportSpecifier
+          Identifier: ' ConstructorTypeNode'
+        ImportSpecifier
+          Identifier: ' Declaration'
+        ImportSpecifier
+          Identifier: ' DeclarationName'
+        ImportSpecifier
+          Identifier: ' DeclarationStatement'
+        ImportSpecifier
+          Identifier: ' DeclarationWithTypeParameters'
+        ImportSpecifier
+          Identifier: ' Decorator'
+        ImportSpecifier
+          Identifier: ' Diagnostic'
+        ImportSpecifier
+          Identifier: ' ElementAccessChain'
+        ImportSpecifier
+          Identifier: ' EntityName'
+        ImportSpecifier
+          Identifier: ' EnumDeclaration'
+        ImportSpecifier
+          Identifier: ' ExportSpecifier'
+        ImportSpecifier
+          Identifier: ' Expression'
+        ImportSpecifier
+          Identifier: ' FileReference'
+        ImportSpecifier
+          Identifier: ' ForInitializer'
+        ImportSpecifier
+          Identifier: ' ForInOrOfStatement'
+        ImportSpecifier
+          Identifier: ' FunctionBody'
+        ImportSpecifier
+          Identifier: ' FunctionExpression'
+        ImportSpecifier
+          Identifier: ' FunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: ' FunctionTypeNode'
+        ImportSpecifier
+          Identifier: ' GeneratedIdentifier'
+        ImportSpecifier
+          Identifier: ' GeneratedPrivateIdentifier'
+        ImportSpecifier
+          Identifier: ' GetAccessorDeclaration'
+        ImportSpecifier
+          Identifier: ' HasDecorators'
+        ImportSpecifier
+          Identifier: ' HasExpressionInitializer'
+        ImportSpecifier
+          Identifier: ' HasInitializer'
+        ImportSpecifier
+          Identifier: ' HasJSDoc'
+        ImportSpecifier
+          Identifier: ' HasLocals'
+        ImportSpecifier
+          Identifier: ' HasModifiers'
+        ImportSpecifier
+          Identifier: ' HasType'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' ImportAttributeName'
+        ImportSpecifier
+          Identifier: ' ImportSpecifier'
+        ImportSpecifier
+          Identifier: ' ImportTypeNode'
+        ImportSpecifier
+          Identifier: ' IterationStatement'
+        ImportSpecifier
+          Identifier: ' JSDocAugmentsTag'
+        ImportSpecifier
+          Identifier: ' JSDocClassTag'
+        ImportSpecifier
+          Identifier: ' JSDocComment'
+        ImportSpecifier
+          Identifier: ' JSDocDeprecatedTag'
+        ImportSpecifier
+          Identifier: ' JSDocEnumTag'
+        ImportSpecifier
+          Identifier: ' JSDocImplementsTag'
+        ImportSpecifier
+          Identifier: ' JSDocLink'
+        ImportSpecifier
+          Identifier: ' JSDocLinkCode'
+        ImportSpecifier
+          Identifier: ' JSDocLinkPlain'
+        ImportSpecifier
+          Identifier: ' JSDocNamespaceBody'
+        ImportSpecifier
+          Identifier: ' JSDocOverrideTag'
+        ImportSpecifier
+          Identifier: ' JSDocParameterTag'
+        ImportSpecifier
+          Identifier: ' JSDocPrivateTag'
+        ImportSpecifier
+          Identifier: ' JSDocPropertyLikeTag'
+        ImportSpecifier
+          Identifier: ' JSDocProtectedTag'
+        ImportSpecifier
+          Identifier: ' JSDocPublicTag'
+        ImportSpecifier
+          Identifier: ' JSDocReadonlyTag'
+        ImportSpecifier
+          Identifier: ' JSDocReturnTag'
+        ImportSpecifier
+          Identifier: ' JSDocSatisfiesTag'
+        ImportSpecifier
+          Identifier: ' JSDocSignature'
+        ImportSpecifier
+          Identifier: ' JSDocTag'
+        ImportSpecifier
+          Identifier: ' JSDocTemplateTag'
+        ImportSpecifier
+          Identifier: ' JSDocThisTag'
+        ImportSpecifier
+          Identifier: ' JSDocTypedefTag'
+        ImportSpecifier
+          Identifier: ' JSDocTypeTag'
+        ImportSpecifier
+          Identifier: ' JsxAttributeLike'
+        ImportSpecifier
+          Identifier: ' JsxChild'
+        ImportSpecifier
+          Identifier: ' JsxExpression'
+        ImportSpecifier
+          Identifier: ' JsxOpeningLikeElement'
+        ImportSpecifier
+          Identifier: ' JsxTagNameExpression'
+        ImportSpecifier
+          Identifier: ' KeywordSyntaxKind'
+        ImportSpecifier
+          Identifier: ' LabeledStatement'
+        ImportSpecifier
+          Identifier: ' LeftHandSideExpression'
+        ImportSpecifier
+          Identifier: ' LiteralExpression'
+        ImportSpecifier
+          Identifier: ' LiteralToken'
+        ImportSpecifier
+          Identifier: ' MemberName'
+        ImportSpecifier
+          Identifier: ' MethodDeclaration'
+        ImportSpecifier
+          Identifier: ' Modifier'
+        ImportSpecifier
+          Identifier: ' ModifierFlags'
+        ImportSpecifier
+          Identifier: ' ModifierLike'
+        ImportSpecifier
+          Identifier: ' ModuleBody'
+        ImportSpecifier
+          Identifier: ' ModuleDeclaration'
+        ImportSpecifier
+          Identifier: ' ModuleReference'
+        ImportSpecifier
+          Identifier: ' NamedDeclaration'
+        ImportSpecifier
+          Identifier: ' NamedExportBindings'
+        ImportSpecifier
+          Identifier: ' NamedImportBindings'
+        ImportSpecifier
+          Identifier: ' NamespaceBody'
+        ImportSpecifier
+          Identifier: ' NewExpression'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' NodeArray'
+        ImportSpecifier
+          Identifier: ' NodeFlags'
+        ImportSpecifier
+          Identifier: ' NonNullChain'
+        ImportSpecifier
+          Identifier: ' NullLiteral'
+        ImportSpecifier
+          Identifier: ' ObjectBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: ' ObjectBindingOrAssignmentPattern'
+        ImportSpecifier
+          Identifier: ' ObjectLiteralElement'
+        ImportSpecifier
+          Identifier: ' ObjectLiteralElementLike'
+        ImportSpecifier
+          Identifier: ' OptionalChain'
+        ImportSpecifier
+          Identifier: ' OptionalChainRoot'
+        ImportSpecifier
+          Identifier: ' ParameterDeclaration'
+        ImportSpecifier
+          Identifier: ' PostfixUnaryExpression'
+        ImportSpecifier
+          Identifier: ' PrefixUnaryExpression'
+        ImportSpecifier
+          Identifier: ' PrivateClassElementDeclaration'
+        ImportSpecifier
+          Identifier: ' PrivateIdentifier'
+        ImportSpecifier
+          Identifier: ' PrivateIdentifierPropertyAccessExpression'
+        ImportSpecifier
+          Identifier: ' PropertyAccessChain'
+        ImportSpecifier
+          Identifier: ' PropertyAccessExpression'
+        ImportSpecifier
+          Identifier: ' PropertyName'
+        ImportSpecifier
+          Identifier: ' QualifiedName'
+        ImportSpecifier
+          Identifier: ' ScriptTarget'
+        ImportSpecifier
+          Identifier: ' SetAccessorDeclaration'
+        ImportSpecifier
+          Identifier: ' SignatureDeclaration'
+        ImportSpecifier
+          Identifier: ' SortedReadonlyArray'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' Statement'
+        ImportSpecifier
+          Identifier: ' StringLiteral'
+        ImportSpecifier
+          Identifier: ' StringLiteralLike'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' SyntaxKind'
+        ImportSpecifier
+          Identifier: ' TemplateLiteral'
+        ImportSpecifier
+          Identifier: ' TemplateLiteralToken'
+        ImportSpecifier
+          Identifier: ' TemplateMiddle'
+        ImportSpecifier
+          Identifier: ' TemplateTail'
+        ImportSpecifier
+          Identifier: ' TextChangeRange'
+        ImportSpecifier
+          Identifier: ' TextRange'
+        ImportSpecifier
+          Identifier: ' TextSpan'
+        ImportSpecifier
+          Identifier: ' TypeElement'
+        ImportSpecifier
+          Identifier: ' TypeNode'
+        ImportSpecifier
+          Identifier: ' TypeOnlyAliasDeclaration'
+        ImportSpecifier
+          Identifier: ' TypeOnlyExportDeclaration'
+        ImportSpecifier
+          Identifier: ' TypeOnlyImportDeclaration'
+        ImportSpecifier
+          Identifier: ' TypeParameterDeclaration'
+        ImportSpecifier
+          Identifier: ' TypeReferenceType'
+        ImportSpecifier
+          Identifier: ' UnaryExpression'
+        ImportSpecifier
+          Identifier: ' VariableDeclaration'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isExternalModuleNameRelative'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' sortAndDeduplicateDiagnostics'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Diagnostic'
+    Parameter
+      Identifier: 'diagnostics'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' SortedReadonlyArray'
+      TypeReference
+        Identifier: 'T'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' targetToLibMap'
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'ScriptTarget'
+          StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDefaultLibFileName'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanEnd'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanIsEmpty'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanContainsPosition'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textRangeContainsPositionInclusive'
+    Parameter
+      Identifier: 'range'
+      TypeReference
+        Identifier: ' TextRange'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanContainsTextSpan'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' other'
+      TypeReference
+        Identifier: ' TextSpan'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanContainsTextRange'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' range'
+      TypeReference
+        Identifier: ' TextRange'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textRangeContainsTextSpan'
+    Parameter
+      Identifier: 'range'
+      TypeReference
+        Identifier: ' TextRange'
+    Parameter
+      Identifier: ' span'
+      TypeReference
+        Identifier: ' TextSpan'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanOverlapsWith'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' other'
+      TypeReference
+        Identifier: ' TextSpan'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanOverlap'
+    Parameter
+      Identifier: 'span1'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' span2'
+      TypeReference
+        Identifier: ' TextSpan'
+    UnionType
+      TypeReference
+        Identifier: ' TextSpan'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanIntersectsWithTextSpan'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' other'
+      TypeReference
+        Identifier: ' TextSpan'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanIntersectsWith'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' start'
+      NumberKeyword
+    Parameter
+      Identifier: ' length'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' decodedTextSpanIntersectsWith'
+    Parameter
+      Identifier: 'start1'
+      NumberKeyword
+    Parameter
+      Identifier: ' length1'
+      NumberKeyword
+    Parameter
+      Identifier: ' start2'
+      NumberKeyword
+    Parameter
+      Identifier: ' length2'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanIntersectsWithPosition'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textRangeIntersectsWithTextSpan'
+    Parameter
+      Identifier: 'range'
+      TypeReference
+        Identifier: ' TextRange'
+    Parameter
+      Identifier: ' span'
+      TypeReference
+        Identifier: ' TextSpan'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textSpanIntersection'
+    Parameter
+      Identifier: 'span1'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' span2'
+      TypeReference
+        Identifier: ' TextSpan'
+    UnionType
+      TypeReference
+        Identifier: ' TextSpan'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' normalizeSpans'
+    Parameter
+      Identifier: 'spans'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' TextSpan'
+    ArrayType
+      TypeReference
+        Identifier: ' TextSpan'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createTextSpan'
+    Parameter
+      Identifier: 'start'
+      NumberKeyword
+    Parameter
+      Identifier: ' length'
+      NumberKeyword
+    TypeReference
+      Identifier: ' TextSpan'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createTextSpanFromBounds'
+    Parameter
+      Identifier: 'start'
+      NumberKeyword
+    Parameter
+      Identifier: ' end'
+      NumberKeyword
+    TypeReference
+      Identifier: ' TextSpan'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textChangeRangeNewSpan'
+    Parameter
+      Identifier: 'range'
+      TypeReference
+        Identifier: ' TextChangeRange'
+    TypeReference
+      Identifier: ' TextSpan'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' textChangeRangeIsUnchanged'
+    Parameter
+      Identifier: 'range'
+      TypeReference
+        Identifier: ' TextChangeRange'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createTextChangeRange'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' newLength'
+      NumberKeyword
+    TypeReference
+      Identifier: ' TextChangeRange'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unchangedTextChangeRange'
+        TypeReference
+          Identifier: ' TextChangeRange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' collapseTextChangeRangesAcrossMultipleVersions'
+    Parameter
+      Identifier: 'changes'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' TextChangeRange'
+    TypeReference
+      Identifier: ' TextChangeRange'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getTypeParameterOwner'
+    Parameter
+      Identifier: 'd'
+      TypeReference
+        Identifier: ' Declaration'
+    UnionType
+      TypeReference
+        Identifier: ' Declaration'
+      UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ParameterPropertyDeclaration'
+    IntersectionType
+      TypeReference
+        Identifier: ' ParameterDeclaration'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    parent'
+          TypeReference
+            Identifier: ' ConstructorDeclaration'
+        PropertySignature
+          Identifier: '
+    name'
+          TypeReference
+            Identifier: ' Identifier'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isParameterPropertyDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' parent'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ParameterPropertyDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isEmptyBindingPattern'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' BindingName'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' BindingPattern'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isEmptyBindingElement'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' BindingElement'
+        TypeReference
+          Identifier: ' ArrayBindingElement'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' walkUpBindingElementsAndPatterns'
+    Parameter
+      Identifier: 'binding'
+      TypeReference
+        Identifier: ' BindingElement'
+    UnionType
+      TypeReference
+        Identifier: ' VariableDeclaration'
+      TypeReference
+        Identifier: ' ParameterDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getCombinedModifierFlags'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Declaration'
+    TypeReference
+      Identifier: ' ModifierFlags'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getCombinedNodeFlagsAlwaysIncludeJSDoc'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Declaration'
+    TypeReference
+      Identifier: ' ModifierFlags'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getCombinedNodeFlags'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' NodeFlags'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' supportedLocaleDirectories'
+        TypeOperator
+          TupleType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' validateLocaleAndSetLanguage'
+    Parameter
+      Identifier: 'locale'
+      StringKeyword
+    Parameter
+      Identifier: ' sys'
+      TypeLiteral
+        MethodSignature
+          Identifier: '
+    getExecutingFilePath'
+          StringKeyword
+        MethodSignature
+          Identifier: '
+    resolvePath'
+          Parameter
+            Identifier: 'path'
+            StringKeyword
+          StringKeyword
+        MethodSignature
+          Identifier: '
+    fileExists'
+          Parameter
+            Identifier: 'fileName'
+            StringKeyword
+          BooleanKeyword
+        MethodSignature
+          Identifier: '
+    readFile'
+          Parameter
+            Identifier: 'fileName'
+            StringKeyword
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+    Parameter
+      Identifier: ' errors'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' Diagnostic'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getOriginalNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' Node'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getOriginalNode'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' nodeTest'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypePredicate
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getOriginalNode'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Node'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getOriginalNode'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' nodeTest'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypePredicate
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' findAncestor'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' callback'
+      FunctionType
+        Parameter
+          Identifier: 'element'
+          TypeReference
+            Identifier: ' Node'
+        TypePredicate
+          Identifier: ' element'
+          TypeReference
+            Identifier: ' T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' findAncestor'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' callback'
+      FunctionType
+        Parameter
+          Identifier: 'element'
+          TypeReference
+            Identifier: ' Node'
+        UnionType
+          BooleanKeyword
+          LiteralType
+            StringLiteral
+    UnionType
+      TypeReference
+        Identifier: ' Node'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isParseTreeNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getParseTreeNode'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Node'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getParseTreeNode'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' nodeTest'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypePredicate
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' escapeLeadingUnderscores'
+    Parameter
+      Identifier: 'identifier'
+      StringKeyword
+    TypeReference
+      Identifier: ' __String'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' unescapeLeadingUnderscores'
+    Parameter
+      Identifier: 'identifier'
+      TypeReference
+        Identifier: ' __String'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' idText'
+    Parameter
+      Identifier: 'identifierOrPrivateName'
+      UnionType
+        TypeReference
+          Identifier: ' Identifier'
+        TypeReference
+          Identifier: ' PrivateIdentifier'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' identifierToKeywordKind'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Identifier'
+    UnionType
+      TypeReference
+        Identifier: ' KeywordSyntaxKind'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' symbolName'
+    Parameter
+      Identifier: 'symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' nodeHasName'
+    Parameter
+      Identifier: 'statement'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' name'
+      TypeReference
+        Identifier: ' Identifier'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNameOfJSDocTypedef'
+    Parameter
+      Identifier: 'declaration'
+      TypeReference
+        Identifier: ' JSDocTypedefTag'
+    UnionType
+      TypeReference
+        Identifier: ' Identifier'
+      TypeReference
+        Identifier: ' PrivateIdentifier'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isNamedDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' NamedDeclaration'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    name'
+            TypeReference
+              Identifier: ' DeclarationName'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNonAssignedNameOfDeclaration'
+    Parameter
+      Identifier: 'declaration'
+      UnionType
+        TypeReference
+          Identifier: ' Declaration'
+        TypeReference
+          Identifier: ' Expression'
+    UnionType
+      TypeReference
+        Identifier: ' DeclarationName'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNameOfDeclaration'
+    Parameter
+      Identifier: 'declaration'
+      UnionType
+        TypeReference
+          Identifier: ' Declaration'
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' DeclarationName'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getAssignedName'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' DeclarationName'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDecorators'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' HasDecorators'
+    UnionType
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Decorator'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getModifiers'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' HasModifiers'
+    UnionType
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Modifier'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocParameterTags'
+    Parameter
+      Identifier: 'param'
+      TypeReference
+        Identifier: ' ParameterDeclaration'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocParameterTag'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocParameterTagsNoCache'
+    Parameter
+      Identifier: 'param'
+      TypeReference
+        Identifier: ' ParameterDeclaration'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocParameterTag'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocTypeParameterTags'
+    Parameter
+      Identifier: 'param'
+      TypeReference
+        Identifier: ' TypeParameterDeclaration'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocTemplateTag'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocTypeParameterTagsNoCache'
+    Parameter
+      Identifier: 'param'
+      TypeReference
+        Identifier: ' TypeParameterDeclaration'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocTemplateTag'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasJSDocParameterTags'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' FunctionLikeDeclaration'
+        TypeReference
+          Identifier: ' SignatureDeclaration'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocAugmentsTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocAugmentsTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocImplementsTags'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocImplementsTag'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocClassTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocClassTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocPublicTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocPublicTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocPublicTagNoCache'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocPublicTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocPrivateTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocPrivateTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocPrivateTagNoCache'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocPrivateTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocProtectedTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocProtectedTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocProtectedTagNoCache'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocProtectedTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocReadonlyTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocReadonlyTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocReadonlyTagNoCache'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocReadonlyTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocOverrideTagNoCache'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocOverrideTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocDeprecatedTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocDeprecatedTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocDeprecatedTagNoCache'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocDeprecatedTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocEnumTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocEnumTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocThisTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocThisTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocReturnTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocReturnTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocTemplateTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocTemplateTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocSatisfiesTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocSatisfiesTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocTypeTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' JSDocTypeTag'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocType'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' TypeNode'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocReturnType'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' TypeNode'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getJSDocTags'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocTag'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getAllJSDocTags'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' JSDocTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' predicate'
+      FunctionType
+        Parameter
+          Identifier: 'tag'
+          TypeReference
+            Identifier: ' JSDocTag'
+        TypePredicate
+          Identifier: ' tag'
+          TypeReference
+            Identifier: ' T'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getAllJSDocTagsOfKind'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocTag'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getTextOfJSDocComment'
+    Parameter
+      Identifier: 'comment'
+      QuestionToken
+      UnionType
+        StringKeyword
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'JSDocComment'
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getEffectiveTypeParameterDeclarations'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' DeclarationWithTypeParameters'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' TypeParameterDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getEffectiveConstraintOfTypeParameter'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' TypeParameterDeclaration'
+    UnionType
+      TypeReference
+        Identifier: ' TypeNode'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isMemberName'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' MemberName'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isGetOrSetAccessorDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' AccessorDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isPropertyAccessChain'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' PropertyAccessChain'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isElementAccessChain'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ElementAccessChain'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isCallChain'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' CallChain'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isOptionalChain'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' PropertyAccessChain'
+        TypeReference
+          Identifier: ' ElementAccessChain'
+        TypeReference
+          Identifier: ' CallChain'
+        TypeReference
+          Identifier: ' NonNullChain'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isOptionalChainRoot'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' OptionalChainRoot'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isExpressionOfOptionalChainRoot'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' Expression'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    parent'
+            TypeReference
+              Identifier: ' OptionalChainRoot'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isOutermostOptionalChain'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' OptionalChain'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isNullishCoalesce'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isConstTypeReference'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' skipPartiallyEmittedExpressions'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Expression'
+    TypeReference
+      Identifier: ' Expression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' skipPartiallyEmittedExpressions'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' Node'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isNonNullChain'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' NonNullChain'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isBreakOrContinueStatement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' BreakOrContinueStatement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isNamedExportBindings'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' NamedExportBindings'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJSDocPropertyLikeTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' JSDocPropertyLikeTag'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isNodeKind'
+    Parameter
+      Identifier: 'kind'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTokenKind'
+    Parameter
+      Identifier: 'kind'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isToken'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isNodeArray'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'array'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    TypePredicate
+      Identifier: ' array'
+      TypeReference
+        Identifier: ' NodeArray'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isLiteralKind'
+    Parameter
+      Identifier: 'kind'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    TypePredicate
+      Identifier: ' kind'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' LiteralToken'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isLiteralExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' LiteralExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isLiteralExpressionOfObject'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTemplateLiteralKind'
+    Parameter
+      Identifier: 'kind'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    TypePredicate
+      Identifier: ' kind'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' TemplateLiteralToken'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTemplateLiteralToken'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TemplateLiteralToken'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTemplateMiddleOrTemplateTail'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' TemplateMiddle'
+        TypeReference
+          Identifier: ' TemplateTail'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isImportOrExportSpecifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' ImportSpecifier'
+        TypeReference
+          Identifier: ' ExportSpecifier'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTypeOnlyImportDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TypeOnlyImportDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTypeOnlyExportDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TypeOnlyExportDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTypeOnlyImportOrExportDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TypeOnlyAliasDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isStringTextContainingNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' StringLiteral'
+        TypeReference
+          Identifier: ' TemplateLiteralToken'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isImportAttributeName'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ImportAttributeName'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isGeneratedIdentifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' GeneratedIdentifier'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isGeneratedPrivateIdentifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' GeneratedPrivateIdentifier'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isFileLevelReservedGeneratedIdentifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' GeneratedIdentifier'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isPrivateIdentifierClassElementDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' PrivateClassElementDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isPrivateIdentifierPropertyAccessExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' PrivateIdentifierPropertyAccessExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isModifierKind'
+    Parameter
+      Identifier: 'token'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    TypePredicate
+      Identifier: ' token'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Modifier'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isParameterPropertyModifier'
+    Parameter
+      Identifier: 'kind'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isClassMemberModifier'
+    Parameter
+      Identifier: 'idToken'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isModifier'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Modifier'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isEntityName'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' EntityName'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isPropertyName'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' PropertyName'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isBindingName'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' BindingName'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isFunctionLike'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' SignatureDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isFunctionLikeOrClassStaticBlockDeclaration'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' SignatureDeclaration'
+        TypeReference
+          Identifier: ' ClassStaticBlockDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isFunctionLikeDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' FunctionLikeDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isBooleanLiteral'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' BooleanLiteral'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isFunctionLikeKind'
+    Parameter
+      Identifier: 'kind'
+      TypeReference
+        Identifier: ' SyntaxKind'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isFunctionOrModuleBlock'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isClassElement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ClassElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isClassLike'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isAccessor'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' AccessorDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isAutoAccessorPropertyDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' AutoAccessorPropertyDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isClassInstanceProperty'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Declaration'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isMethodOrAccessor'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' MethodDeclaration'
+        TypeReference
+          Identifier: ' AccessorDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isModifierLike'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ModifierLike'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTypeElement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TypeElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isClassOrTypeElement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' ClassElement'
+        TypeReference
+          Identifier: ' TypeElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isObjectLiteralElementLike'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ObjectLiteralElementLike'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTypeNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TypeNode'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isFunctionOrConstructorTypeNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' FunctionTypeNode'
+        TypeReference
+          Identifier: ' ConstructorTypeNode'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isBindingPattern'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' BindingPattern'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isAssignmentPattern'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' AssignmentPattern'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isArrayBindingElement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ArrayBindingElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isDeclarationBindingElement'
+    Parameter
+      Identifier: 'bindingElement'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElement'
+    TypePredicate
+      Identifier: ' bindingElement'
+      UnionType
+        TypeReference
+          Identifier: ' VariableDeclaration'
+        TypeReference
+          Identifier: ' ParameterDeclaration'
+        TypeReference
+          Identifier: ' BindingElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isBindingOrAssignmentElement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isBindingOrAssignmentPattern'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElementTarget'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' BindingOrAssignmentPattern'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isObjectBindingOrAssignmentPattern'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElementTarget'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ObjectBindingOrAssignmentPattern'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isObjectBindingOrAssignmentElement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ObjectBindingOrAssignmentElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isArrayBindingOrAssignmentPattern'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElementTarget'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ArrayBindingOrAssignmentPattern'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isArrayBindingOrAssignmentElement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ArrayBindingOrAssignmentElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isPropertyAccessOrQualifiedNameOrImportTypeNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' PropertyAccessExpression'
+        TypeReference
+          Identifier: ' QualifiedName'
+        TypeReference
+          Identifier: ' ImportTypeNode'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isPropertyAccessOrQualifiedName'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' PropertyAccessExpression'
+        TypeReference
+          Identifier: ' QualifiedName'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isCallLikeOrFunctionLikeExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' CallLikeExpression'
+        TypeReference
+          Identifier: ' FunctionExpression'
+        TypeReference
+          Identifier: ' ArrowFunction'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isCallLikeExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' CallLikeExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isCallOrNewExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' CallExpression'
+        TypeReference
+          Identifier: ' NewExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTemplateLiteral'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TemplateLiteral'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isLeftHandSideExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' LeftHandSideExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isUnaryExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' UnaryExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isUnaryExpressionWithWrite'
+    Parameter
+      Identifier: 'expr'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' expr'
+      UnionType
+        TypeReference
+          Identifier: ' PrefixUnaryExpression'
+        TypeReference
+          Identifier: ' PostfixUnaryExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isLiteralTypeLiteral'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' NullLiteral'
+        TypeReference
+          Identifier: ' BooleanLiteral'
+        TypeReference
+          Identifier: ' LiteralExpression'
+        TypeReference
+          Identifier: ' PrefixUnaryExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Expression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isAssertionExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' AssertionExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isIterationStatement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' lookInLabeledStatements'
+      LiteralType
+        FalseKeyword
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' IterationStatement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isIterationStatement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' lookInLabeledStatements'
+      BooleanKeyword
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' IterationStatement'
+        TypeReference
+          Identifier: ' LabeledStatement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasScopeMarker'
+    Parameter
+      Identifier: 'statements'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Statement'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' needsScopeMarker'
+    Parameter
+      Identifier: 'result'
+      TypeReference
+        Identifier: ' Statement'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isExternalModuleIndicator'
+    Parameter
+      Identifier: 'result'
+      TypeReference
+        Identifier: ' Statement'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isForInOrOfStatement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ForInOrOfStatement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isConciseBody'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ConciseBody'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isFunctionBody'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' FunctionBody'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isForInitializer'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ForInitializer'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isModuleBody'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ModuleBody'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isNamespaceBody'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' NamespaceBody'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJSDocNamespaceBody'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' JSDocNamespaceBody'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isNamedImportBindings'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' NamedImportBindings'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isModuleOrEnumDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' ModuleDeclaration'
+        TypeReference
+          Identifier: ' EnumDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' canHaveSymbol'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Declaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' canHaveLocals'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' HasLocals'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' NamedDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isDeclarationStatement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' DeclarationStatement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isStatementButNotDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Statement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isStatement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Statement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isStatementOrBlock'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' Statement'
+        TypeReference
+          Identifier: ' Block'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isModuleReference'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ModuleReference'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJsxTagNameExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' JsxTagNameExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJsxChild'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' JsxChild'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJsxAttributeLike'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' JsxAttributeLike'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isStringLiteralOrJsxExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' StringLiteral'
+        TypeReference
+          Identifier: ' JsxExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJsxOpeningLikeElement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' JsxOpeningLikeElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isCaseOrDefaultClause'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' CaseOrDefaultClause'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJSDocNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJSDocCommentContainingNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJSDocTag'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' JSDocTag'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isSetAccessor'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' SetAccessorDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isGetAccessor'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' GetAccessorDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasJSDocNodes'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' HasJSDoc'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasType'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' HasType'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasInitializer'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' HasInitializer'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasOnlyExpressionInitializer'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' HasExpressionInitializer'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isObjectLiteralElement'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ObjectLiteralElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTypeReferenceType'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TypeReferenceType'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' guessIndentation'
+    Parameter
+      Identifier: 'lines'
+      ArrayType
+        StringKeyword
+    UnionType
+      NumberKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isStringLiteralLike'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        TypeReference
+          Identifier: ' FileReference'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' StringLiteralLike'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJSDocLinkLike'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' JSDocLink'
+        TypeReference
+          Identifier: ' JSDocLinkCode'
+        TypeReference
+          Identifier: ' JSDocLinkPlain'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' hasRestParameter'
+    Parameter
+      Identifier: 's'
+      UnionType
+        TypeReference
+          Identifier: ' SignatureDeclaration'
+        TypeReference
+          Identifier: ' JSDocSignature'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isRestParameter'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' ParameterDeclaration'
+        TypeReference
+          Identifier: ' JSDocParameterTag'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isInternalDeclaration'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' sourceFile'
+      QuestionToken
+      TypeReference
+        Identifier: ' SourceFile'
+    BooleanKeyword

@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'callee'
+            EqualsToken
+            PropertyAccessExpression
+              Identifier: ' arguments'
+              Identifier: 'callee'

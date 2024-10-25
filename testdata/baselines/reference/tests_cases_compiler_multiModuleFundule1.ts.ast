@@ -1,0 +1,45 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' C'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo'
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' C'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        NewExpression
+          Identifier: ' C'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' C'
+            Identifier: 'foo'

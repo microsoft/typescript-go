@@ -1,0 +1,52 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I2'
+    CallSignature
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'q'
+      BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' I3'
+    CallSignature
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        TypeReference
+          Identifier: ' I2'
+      VariableDeclaration
+        Identifier: ' i3'
+        TypeReference
+          Identifier: ' I3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        UnionType
+          TypeReference
+            Identifier: ' I2'
+          TypeReference
+            Identifier: ' I3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        BinaryExpression
+          Identifier: ' i2'
+          BarBarToken
+          Identifier: ' i3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        CallExpression
+          Identifier: ' e1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' e2'

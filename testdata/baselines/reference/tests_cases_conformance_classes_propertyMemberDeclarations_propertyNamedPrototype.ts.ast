@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    prototype'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' prototype'
+      TypeReference
+        Identifier: ' C'

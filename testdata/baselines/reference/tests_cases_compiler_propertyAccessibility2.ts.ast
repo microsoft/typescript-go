@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' x'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        PropertyAccessExpression
+          Identifier: ' C'
+          Identifier: 'x'

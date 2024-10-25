@@ -1,0 +1,14 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////class A {
+////    protected constructor() {}
+////}
+////var x = new A(/*1*/
+
+verify'
+        Identifier: 'noSignatureHelp'
+      StringLiteral

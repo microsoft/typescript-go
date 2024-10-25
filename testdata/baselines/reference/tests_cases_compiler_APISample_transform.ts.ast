@@ -1,0 +1,56 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        AnyKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' source'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'transpile'
+          Identifier: 'source'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' module'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'ModuleKind'
+                Identifier: 'CommonJS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'JSON'
+          Identifier: 'stringify'
+        Identifier: 'result'

@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'div'
+                Identifier: ''
+              LessThanLessThanToken
+              Identifier: ''
+            LessThanLessThanToken
+            Identifier: ''
+          LessThanLessThanToken
+          TypeAssertionExpression
+            TypeReference
+              Identifier: ' HEAD'
+            Identifier: ''

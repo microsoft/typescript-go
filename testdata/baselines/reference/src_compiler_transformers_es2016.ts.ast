@@ -1,0 +1,470 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    BinaryExpression'
+        ImportSpecifier
+          Identifier: '
+    Bundle'
+        ImportSpecifier
+          Identifier: '
+    chainBundle'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    isElementAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    isExpression'
+        ImportSpecifier
+          Identifier: '
+    isPropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    setTextRange'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    TransformationContext'
+        ImportSpecifier
+          Identifier: '
+    TransformFlags'
+        ImportSpecifier
+          Identifier: '
+    visitEachChild'
+        ImportSpecifier
+          Identifier: '
+    visitNode'
+        ImportSpecifier
+          Identifier: '
+    VisitResult'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' transformES2016'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          TypeReference
+            Identifier: ' Bundle'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' Bundle'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: '
+        factory'
+              BindingElement
+                Identifier: '
+        hoistVariableDeclaration'
+            Identifier: ' context'
+      ReturnStatement
+        CallExpression
+          Identifier: ' chainBundle'
+          Identifier: 'context'
+          Identifier: ' transformSourceFile'
+      FunctionDeclaration
+        Identifier: ' transformSourceFile'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' SourceFile'
+        Block
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'isDeclarationFile'
+            Block
+              ReturnStatement
+                Identifier: ' node'
+          ReturnStatement
+            CallExpression
+              Identifier: ' visitEachChild'
+              Identifier: 'node'
+              Identifier: ' visitor'
+              Identifier: ' context'
+      FunctionDeclaration
+        Identifier: ' visitor'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypeReference
+          Identifier: ' VisitResult'
+          TypeReference
+            Identifier: 'Node'
+        Block
+          IfStatement
+            BinaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'transformFlags'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' TransformFlags'
+                    Identifier: 'ContainsES2016'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ReturnStatement
+                Identifier: ' node'
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'BinaryExpression'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' visitBinaryExpression'
+                    AsExpression
+                      Identifier: 'node'
+                      TypeReference
+                        Identifier: ' BinaryExpression'
+              DefaultClause
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' visitEachChild'
+                    Identifier: 'node'
+                    Identifier: ' visitor'
+                    Identifier: ' context'
+      FunctionDeclaration
+        Identifier: ' visitBinaryExpression'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' BinaryExpression'
+        TypeReference
+          Identifier: ' Expression'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'operatorToken'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'AsteriskAsteriskEqualsToken'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' visitExponentiationAssignmentExpression'
+                    Identifier: 'node'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'AsteriskAsteriskToken'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' visitExponentiationExpression'
+                    Identifier: 'node'
+              DefaultClause
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' visitEachChild'
+                    Identifier: 'node'
+                    Identifier: ' visitor'
+                    Identifier: ' context'
+      FunctionDeclaration
+        Identifier: ' visitExponentiationAssignmentExpression'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' BinaryExpression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' target'
+                TypeReference
+                  Identifier: ' Expression'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' value'
+                TypeReference
+                  Identifier: ' Expression'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' left'
+                CallExpression
+                  Identifier: ' visitNode'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'left'
+                  Identifier: ' visitor'
+                  Identifier: ' isExpression'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' right'
+                CallExpression
+                  Identifier: ' visitNode'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'right'
+                  Identifier: ' visitor'
+                  Identifier: ' isExpression'
+          IfStatement
+            CallExpression
+              Identifier: 'isElementAccessExpression'
+              Identifier: 'left'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' expressionTemp'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createTempVariable'
+                      Identifier: 'hoistVariableDeclaration'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' argumentExpressionTemp'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createTempVariable'
+                      Identifier: 'hoistVariableDeclaration'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            target'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' setTextRange'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                factory'
+                        Identifier: 'createElementAccessExpression'
+                      CallExpression
+                        Identifier: '
+                    setTextRange'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'factory'
+                            Identifier: 'createAssignment'
+                          Identifier: 'expressionTemp'
+                          PropertyAccessExpression
+                            Identifier: ' left'
+                            Identifier: 'expression'
+                        PropertyAccessExpression
+                          Identifier: ' left'
+                          Identifier: 'expression'
+                      CallExpression
+                        Identifier: '
+                    setTextRange'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'factory'
+                            Identifier: 'createAssignment'
+                          Identifier: 'argumentExpressionTemp'
+                          PropertyAccessExpression
+                            Identifier: ' left'
+                            Identifier: 'argumentExpression'
+                        PropertyAccessExpression
+                          Identifier: ' left'
+                          Identifier: 'argumentExpression'
+                    Identifier: '
+                left'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            value'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' setTextRange'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                factory'
+                        Identifier: 'createElementAccessExpression'
+                      Identifier: '
+                    expressionTemp'
+                      Identifier: '
+                    argumentExpressionTemp'
+                    Identifier: '
+                left'
+            IfStatement
+              CallExpression
+                Identifier: 'isPropertyAccessExpression'
+                Identifier: 'left'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' expressionTemp'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createTempVariable'
+                        Identifier: 'hoistVariableDeclaration'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            target'
+                    EqualsToken
+                    CallExpression
+                      Identifier: ' setTextRange'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                factory'
+                          Identifier: 'createPropertyAccessExpression'
+                        CallExpression
+                          Identifier: '
+                    setTextRange'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'factory'
+                              Identifier: 'createAssignment'
+                            Identifier: 'expressionTemp'
+                            PropertyAccessExpression
+                              Identifier: ' left'
+                              Identifier: 'expression'
+                          PropertyAccessExpression
+                            Identifier: ' left'
+                            Identifier: 'expression'
+                        PropertyAccessExpression
+                          Identifier: '
+                    left'
+                          Identifier: 'name'
+                      Identifier: '
+                left'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            value'
+                    EqualsToken
+                    CallExpression
+                      Identifier: ' setTextRange'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                factory'
+                          Identifier: 'createPropertyAccessExpression'
+                        Identifier: '
+                    expressionTemp'
+                        PropertyAccessExpression
+                          Identifier: '
+                    left'
+                          Identifier: 'name'
+                      Identifier: '
+                left'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            // Transforms `a **= b` into `a = Math.pow(a, b)`
+            target'
+                    EqualsToken
+                    Identifier: ' left'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            value'
+                    EqualsToken
+                    Identifier: ' left'
+          ReturnStatement
+            CallExpression
+              Identifier: ' setTextRange'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            factory'
+                  Identifier: 'createAssignment'
+                Identifier: '
+                target'
+                CallExpression
+                  Identifier: '
+                setTextRange'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createGlobalMethodCall'
+                    StringLiteral
+                    StringLiteral
+                    ArrayLiteralExpression
+                      Identifier: 'value'
+                      Identifier: ' right'
+                  Identifier: ' node'
+              Identifier: '
+            node'
+      FunctionDeclaration
+        Identifier: ' visitExponentiationExpression'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' BinaryExpression'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' left'
+                CallExpression
+                  Identifier: ' visitNode'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'left'
+                  Identifier: ' visitor'
+                  Identifier: ' isExpression'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' right'
+                CallExpression
+                  Identifier: ' visitNode'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'right'
+                  Identifier: ' visitor'
+                  Identifier: ' isExpression'
+          ReturnStatement
+            CallExpression
+              Identifier: ' setTextRange'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createGlobalMethodCall'
+                StringLiteral
+                StringLiteral
+                ArrayLiteralExpression
+                  Identifier: 'left'
+                  Identifier: ' right'
+              Identifier: ' node'

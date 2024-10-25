@@ -1,0 +1,92 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' charMap'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' markerName'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' Object'
+        Identifier: 'keys'
+      Identifier: 'charMap'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' triggerCharacter'
+            ElementAccessExpression
+              Identifier: ' charMap'
+              Identifier: 'markerName'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'marker'
+          Identifier: 'markerName'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    edit'
+            Identifier: 'insert'
+          Identifier: 'triggerCharacter'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'noSignatureHelpForTriggerReason'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        kind'
+              StringLiteral
+            ShorthandPropertyAssignment
+              Identifier: '
+        triggerCharacter'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'signatureHelpPresentForTriggerReason'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        kind'
+              StringLiteral
+            ShorthandPropertyAssignment
+              Identifier: '
+        triggerCharacter'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    edit'
+            Identifier: 'backspace'
+          PropertyAccessExpression
+            Identifier: 'triggerCharacter'
+            Identifier: 'length'

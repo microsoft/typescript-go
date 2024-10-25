@@ -1,0 +1,201 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ClassLikeDeclaration'
+        ImportSpecifier
+          Identifier: ' FileTextChanges'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' InterfaceDeclaration'
+        ImportSpecifier
+          Identifier: ' ObjectLiteralExpression'
+        ImportSpecifier
+          Identifier: ' ParameterPropertyDeclaration'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' PropertyAssignment'
+        ImportSpecifier
+          Identifier: ' PropertyDeclaration'
+        ImportSpecifier
+          Identifier: ' refactor'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' StringLiteral'
+        ImportSpecifier
+          Identifier: ' textChanges'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+        ImportSpecifier
+          Identifier: ' TypeNode'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' AcceptedDeclaration'
+    UnionType
+      TypeReference
+        Identifier: ' ParameterPropertyDeclaration'
+      TypeReference
+        Identifier: ' PropertyDeclaration'
+      TypeReference
+        Identifier: ' PropertyAssignment'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' AcceptedNameType'
+    UnionType
+      TypeReference
+        Identifier: ' Identifier'
+      TypeReference
+        Identifier: ' StringLiteral'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ContainerDeclaration'
+    UnionType
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+      TypeReference
+        Identifier: ' ObjectLiteralExpression'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' AccessorOrRefactorErrorInfo'
+    UnionType
+      TypeReference
+        Identifier: ' AccessorInfo'
+      TypeReference
+        QualifiedName
+          Identifier: ' refactor'
+          Identifier: 'RefactorErrorInfo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' AccessorInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' container'
+      TypeReference
+        Identifier: ' ContainerDeclaration'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' isStatic'
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' isReadonly'
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' type'
+      UnionType
+        TypeReference
+          Identifier: ' TypeNode'
+        UndefinedKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' declaration'
+      TypeReference
+        Identifier: ' AcceptedDeclaration'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' fieldName'
+      TypeReference
+        Identifier: ' AcceptedNameType'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' accessorName'
+      TypeReference
+        Identifier: ' AcceptedNameType'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' originalName'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' renameAccessor'
+      BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' generateAccessorFromProperty'
+    Parameter
+      Identifier: 'file'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' start'
+      NumberKeyword
+    Parameter
+      Identifier: ' end'
+      NumberKeyword
+    Parameter
+      Identifier: ' context'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'TextChangesContext'
+    Parameter
+      Identifier: ' _actionName'
+      StringKeyword
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getAccessorConvertiblePropertyAtPosition'
+    Parameter
+      Identifier: 'file'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' start'
+      NumberKeyword
+    Parameter
+      Identifier: ' end'
+      NumberKeyword
+    Parameter
+      Identifier: ' considerEmptySpans'
+      QuestionToken
+      BooleanKeyword
+    UnionType
+      TypeReference
+        Identifier: ' AccessorOrRefactorErrorInfo'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getAllSupers'
+    Parameter
+      Identifier: 'decl'
+      UnionType
+        TypeReference
+          Identifier: ' ClassOrInterface'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' ClassOrInterface'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ClassOrInterface'
+    UnionType
+      TypeReference
+        Identifier: ' ClassLikeDeclaration'
+      TypeReference
+        Identifier: ' InterfaceDeclaration'

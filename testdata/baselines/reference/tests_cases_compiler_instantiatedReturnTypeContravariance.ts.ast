@@ -1,0 +1,43 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+
+name'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+x'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' c'
+    MethodDeclaration
+      Identifier: '
+
+foo'
+      TypeReference
+        Identifier: ' B'
+        VoidKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' d'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' c'
+    MethodDeclaration
+      Identifier: '
+
+foo'
+      TypeReference
+        Identifier: ' B'
+        NumberKeyword
+      Block
+        ReturnStatement
+          NullKeyword

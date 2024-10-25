@@ -1,0 +1,1438 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' privateClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClass'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPrivateTypeParameters'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      TypeReference
+        Identifier: ' privateClass'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      TypeReference
+        Identifier: ' privateClass'
+    MethodSignature
+      Identifier: '  // Error
+    myMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      TypeReference
+        Identifier: ' privateClass'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPublicTypeParameters'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      TypeReference
+        Identifier: ' publicClass'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      TypeReference
+        Identifier: ' publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      TypeReference
+        Identifier: ' publicClass'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPrivateTypeParameters'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      TypeReference
+        Identifier: ' privateClass'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      TypeReference
+        Identifier: ' privateClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      TypeReference
+        Identifier: ' privateClass'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPublicTypeParameters'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      TypeReference
+        Identifier: ' publicClass'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      TypeReference
+        Identifier: ' publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      TypeReference
+        Identifier: ' publicClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithWithPrivateTypeParameters'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      Block
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithWithPublicTypeParameters'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      Block
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      Block
+  ClassDeclaration
+    Identifier: ' privateClassWithWithPrivateTypeParameters'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      Block
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' privateClass'
+      Block
+  ClassDeclaration
+    Identifier: ' privateClassWithWithPublicTypeParameters'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      Block
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' publicClass'
+      Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPrivateTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' privateClass'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPublicTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    Block
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPrivateTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' privateClass'
+    Block
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPublicTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    Block
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPublicTypeParametersWithoutExtends'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeParameter
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPublicTypeParametersWithoutExtends'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeParameter
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' publicClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithWithPublicTypeParametersWithoutExtends'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+      Block
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeParameter
+        Identifier: 'T'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeParameter
+        Identifier: 'T'
+      Block
+  ClassDeclaration
+    Identifier: ' privateClassWithWithPublicTypeParametersWithoutExtends'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+      Block
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeParameter
+        Identifier: 'T'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      TypeParameter
+        Identifier: 'T'
+      Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPublicTypeParametersWithoutExtends'
+    TypeParameter
+      Identifier: 'T'
+    Block
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPublicTypeParametersWithoutExtends'
+    TypeParameter
+      Identifier: 'T'
+    Block
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceWithPrivatModuleTypeParameters'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    MethodSignature
+      Identifier: '  // Error
+    myMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithWithPrivateModuleTypeParameters'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      Block
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPrivateMopduleTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    Block
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceWithPrivatModuleTypeParameters'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    MethodSignature
+      Identifier: '
+    myMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+  ClassDeclaration
+    Identifier: ' privateClassWithWithPrivateModuleTypeParameters'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      Block
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          QualifiedName
+            Identifier: ' privateModule'
+            Identifier: 'publicClass'
+      Block
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPrivateMopduleTypeParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' privateModule'
+          Identifier: 'publicClass'
+    Block
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' publicModule'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' privateClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateTypeParameters'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+        MethodSignature
+          Identifier: '  // Error
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicTypeParameters'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateTypeParameters'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicTypeParameters'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPrivateTypeParameters'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPublicTypeParameters'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPrivateTypeParameters'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPublicTypeParameters'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClass'
+        Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        Block
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClass'
+        Block
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        Block
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicTypeParametersWithoutExtends'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicTypeParametersWithoutExtends'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPublicTypeParametersWithoutExtends'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPublicTypeParametersWithoutExtends'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        Block
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        Block
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivatModuleTypeParameters'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        MethodSignature
+          Identifier: '  // Error
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPrivateModuleTypeParameters'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateMopduleTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        Block
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivatModuleTypeParameters'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        MethodSignature
+          Identifier: '  
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPrivateModuleTypeParameters'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              QualifiedName
+                Identifier: ' privateModule'
+                Identifier: 'publicClass'
+          Block
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateMopduleTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' privateModule'
+              Identifier: 'publicClass'
+        Block
+  ModuleDeclaration
+    Identifier: ' privateModule'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' privateClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPrivateTypeParameters'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicTypeParameters'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPrivateTypeParameters'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          TypeReference
+            Identifier: ' privateClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicTypeParameters'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          TypeReference
+            Identifier: ' publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPrivateTypeParameters'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPublicTypeParameters'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPrivateTypeParameters'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' privateClass'
+          Block
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPublicTypeParameters'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' publicClass'
+          Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClass'
+        Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        Block
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPrivateTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' privateClass'
+        Block
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPublicTypeParameters'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        Block
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceWithPublicTypeParametersWithoutExtends'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceWithPublicTypeParametersWithoutExtends'
+        ConstructSignature
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        CallSignature
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+        MethodSignature
+          Identifier: '
+        myMethod'
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' publicClass'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' publicClassWithWithPublicTypeParametersWithoutExtends'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+      ClassDeclaration
+        Identifier: ' privateClassWithWithPublicTypeParametersWithoutExtends'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' myPublicStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          StaticKeyword
+          Identifier: ' myPrivateStaticMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          Identifier: '
+        myPublicMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' myPrivateMethod'
+          TypeParameter
+            Identifier: 'T'
+          Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' publicFunctionWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        Block
+      FunctionDeclaration
+        Identifier: ' privateFunctionWithPublicTypeParametersWithoutExtends'
+        TypeParameter
+          Identifier: 'T'
+        Block

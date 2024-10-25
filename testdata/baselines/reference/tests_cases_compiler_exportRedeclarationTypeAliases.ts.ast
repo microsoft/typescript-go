@@ -1,0 +1,14 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    AnyKeyword
+    Block

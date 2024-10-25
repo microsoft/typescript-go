@@ -1,0 +1,122 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' ConcreteA'
+  ClassDeclaration
+    Identifier: ' ConcreteB'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AbstractA'
+    PropertyDeclaration
+      Identifier: ' a'
+      StringKeyword
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AbstractB'
+    PropertyDeclaration
+      Identifier: ' b'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Abstracts'
+    UnionType
+      TypeQuery
+        Identifier: ' AbstractA'
+      TypeQuery
+        Identifier: ' AbstractB'
+  TypeAliasDeclaration
+    Identifier: ' Concretes'
+    UnionType
+      TypeQuery
+        Identifier: ' ConcreteA'
+      TypeQuery
+        Identifier: ' ConcreteB'
+  TypeAliasDeclaration
+    Identifier: ' ConcretesOrAbstracts'
+    UnionType
+      TypeReference
+        Identifier: ' Concretes'
+      TypeReference
+        Identifier: ' Abstracts'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cls1'
+        TypeReference
+          Identifier: ' ConcretesOrAbstracts'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cls2'
+        TypeReference
+          Identifier: ' Abstracts'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cls3'
+        TypeReference
+          Identifier: ' Concretes'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' cls1'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' cls2'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' cls3'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          Identifier: 'ConcreteA'
+          Identifier: ' AbstractA'
+          Identifier: ' AbstractB'
+        Identifier: 'map'
+      ArrowFunction
+        Parameter
+          Identifier: 'cls'
+        EqualsGreaterThanToken
+        NewExpression
+          Identifier: ' cls'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          Identifier: 'AbstractA'
+          Identifier: ' AbstractB'
+          Identifier: ' ConcreteA'
+        Identifier: 'map'
+      ArrowFunction
+        Parameter
+          Identifier: 'cls'
+        EqualsGreaterThanToken
+        NewExpression
+          Identifier: ' cls'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          Identifier: 'ConcreteA'
+          Identifier: ' ConcreteB'
+        Identifier: 'map'
+      ArrowFunction
+        Parameter
+          Identifier: 'cls'
+        EqualsGreaterThanToken
+        NewExpression
+          Identifier: ' cls'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ArrayLiteralExpression
+          Identifier: 'AbstractA'
+          Identifier: ' AbstractB'
+        Identifier: 'map'
+      ArrowFunction
+        Parameter
+          Identifier: 'cls'
+        EqualsGreaterThanToken
+        NewExpression
+          Identifier: ' cls'

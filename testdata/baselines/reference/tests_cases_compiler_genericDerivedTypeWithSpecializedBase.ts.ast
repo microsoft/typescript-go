@@ -1,0 +1,43 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' A'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' B'
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' y'

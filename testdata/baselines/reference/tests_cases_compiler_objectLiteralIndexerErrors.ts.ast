@@ -1,0 +1,69 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    y'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            TypeReference
+              Identifier: ' A'
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' B'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            Identifier: ' b'
+          PropertyAssignment
+            NumericLiteral
+            Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // both indexers are A
+o1'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          Identifier: ' c'
+        PropertyAssignment
+          NumericLiteral
+          Identifier: ' a'

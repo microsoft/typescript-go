@@ -1,0 +1,146 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Animal'
+    PropertySignature
+      Identifier: ' animal'
+  InterfaceDeclaration
+    Identifier: ' Dog'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Animal'
+    PropertySignature
+      Identifier: ' dog'
+  InterfaceDeclaration
+    Identifier: ' Cat'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Animal'
+    PropertySignature
+      Identifier: ' cat'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'bar'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+    TypeReference
+      Identifier: ' Dog'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'bar'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+    TypeReference
+      Identifier: ' Animal'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            UnionType
+              NumberKeyword
+              StringKeyword
+    TypeReference
+      Identifier: ' Dog'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'bar'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+    TypeReference
+      Identifier: ' Cat'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'bar'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Cat'
+      TypeReference
+        Identifier: ' Dog'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            UnionType
+              NumberKeyword
+              StringKeyword
+    TypeReference
+      Identifier: ' Cat'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        CallExpression
+          Identifier: ' foo1'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'a'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y1'
+        CallExpression
+          Identifier: ' foo1'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'a'
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        CallExpression
+          Identifier: ' foo2'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'a'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y2'
+        CallExpression
+          Identifier: ' foo2'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'a'
+                NumericLiteral

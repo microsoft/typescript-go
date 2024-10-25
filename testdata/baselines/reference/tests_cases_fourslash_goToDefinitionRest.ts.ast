@@ -1,0 +1,18 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+/// <reference path='fourslash.ts'/>
+////interface Gen {
+////    x: number;
+////    /*1*/parent: Gen;
+////    millenial: string;
+////}
+////let t: Gen;
+////var { x, ...rest } = t;
+////rest.[|/*2*/parent|];
+
+verify'
+        Identifier: 'baselineGoToDefinition'
+      StringLiteral

@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' d'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' d'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeReference
+      Identifier: ' d'

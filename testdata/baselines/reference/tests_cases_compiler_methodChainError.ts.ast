@@ -1,0 +1,46 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Builder'
+    PropertyDeclaration
+      Identifier: '
+    notMethod'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'param'
+        StringKeyword
+      TypeReference
+        Identifier: ' Builder'
+      Block
+        ReturnStatement
+          ThisKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                NewExpression
+                  Identifier: ' Builder'
+                Identifier: 'method'
+              StringLiteral
+            Identifier: 'method'
+        Identifier: 'method'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                NewExpression
+                  Identifier: ' Builder'
+                Identifier: 'method'
+              StringLiteral
+            Identifier: 'notMethod'
+        Identifier: 'method'
+      StringLiteral

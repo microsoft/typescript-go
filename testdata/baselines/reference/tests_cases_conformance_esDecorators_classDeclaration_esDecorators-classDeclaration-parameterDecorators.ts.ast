@@ -1,0 +1,97 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' x'
+        AnyKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' x'
+        AnyKeyword
+      Block
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' x'
+        AnyKeyword
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' method'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' x'
+        AnyKeyword
+      Block
+    SetAccessor
+      StaticKeyword
+      Identifier: ' x'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' x'
+        AnyKeyword
+      Block
+  ExpressionStatement
+    ParenthesizedExpression
+      ClassExpression
+        Identifier: ' C'
+        Constructor
+          Parameter
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' x'
+            AnyKeyword
+          Block
+        MethodDeclaration
+          Identifier: '
+    method'
+          Parameter
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' x'
+            AnyKeyword
+          Block
+        SetAccessor
+          Identifier: ' x'
+          Parameter
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' x'
+            AnyKeyword
+          Block
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' method'
+          Parameter
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' x'
+            AnyKeyword
+          Block
+        SetAccessor
+          StaticKeyword
+          Identifier: ' x'
+          Parameter
+            Decorator
+              Identifier: 'dec'
+            Identifier: ' x'
+            AnyKeyword
+          Block

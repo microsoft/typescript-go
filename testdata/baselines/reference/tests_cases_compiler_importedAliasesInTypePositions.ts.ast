@@ -1,0 +1,49 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' elaborate'
+    ModuleDeclaration
+      Identifier: 'nested'
+      ModuleDeclaration
+        Identifier: 'mod'
+        ModuleDeclaration
+          Identifier: 'name'
+          ModuleBlock
+            ClassDeclaration
+              ExportKeyword
+              Identifier: ' ReferredTo'
+              MethodDeclaration
+                Identifier: '
+        doSomething'
+                VoidKeyword
+                Block
+  ImportEqualsDeclaration
+    Identifier: ' RT_ALIAS'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' ReferredTo'
+    QualifiedName
+      QualifiedName
+        QualifiedName
+          QualifiedName
+            QualifiedName
+              Identifier: ' RT_ALIAS'
+              Identifier: 'elaborate'
+            Identifier: 'nested'
+          Identifier: 'mod'
+        Identifier: 'name'
+      Identifier: 'ReferredTo'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' ImportingModule'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' UsesReferredType'
+        Constructor
+          Parameter
+            PrivateKeyword
+            Identifier: ' referred'
+            TypeReference
+              Identifier: ' ReferredTo'
+          Block

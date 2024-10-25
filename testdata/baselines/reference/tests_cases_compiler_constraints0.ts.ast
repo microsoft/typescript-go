@@ -1,0 +1,49 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+	a'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+	b'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        TypeReference
+          Identifier: ' C'
+          TypeReference
+            Identifier: 'A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        TypeReference
+          Identifier: ' C'
+          TypeReference
+            Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' v1'
+            Identifier: 'x'
+          Identifier: 'a'

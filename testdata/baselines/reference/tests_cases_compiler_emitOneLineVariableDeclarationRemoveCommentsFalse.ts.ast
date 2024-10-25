@@ -1,0 +1,51 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        AnyKeyword
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' hoge'
+            BooleanKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' hoge'
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        AnyKeyword
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        AnyKeyword
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        CallExpression
+          Identifier: ' /* comment1 */ d'
+          Identifier: 'e'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        AnyKeyword
+        CallExpression
+          Identifier: ' /* comment2 */ d'
+          Identifier: 'e'

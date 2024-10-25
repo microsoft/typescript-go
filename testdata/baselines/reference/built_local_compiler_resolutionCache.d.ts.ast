@@ -1,0 +1,969 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CachedDirectoryStructureHost'
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' DirectoryWatcherCallback'
+        ImportSpecifier
+          Identifier: ' FileReference'
+        ImportSpecifier
+          Identifier: ' FileWatcher'
+        ImportSpecifier
+          Identifier: ' FileWatcherCallback'
+        ImportSpecifier
+          Identifier: ' GetCanonicalFileName'
+        ImportSpecifier
+          Identifier: ' HasInvalidatedLibResolutions'
+        ImportSpecifier
+          Identifier: ' HasInvalidatedResolutions'
+        ImportSpecifier
+          Identifier: ' MinimalResolutionCacheHost'
+        ImportSpecifier
+          Identifier: ' ModeAwareCache'
+        ImportSpecifier
+          Identifier: ' ModuleResolutionCache'
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' PathPathComponents'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' ResolutionLoader'
+        ImportSpecifier
+          Identifier: ' ResolutionWithResolvedFileName'
+        ImportSpecifier
+          Identifier: ' ResolvedModuleWithFailedLookupLocations'
+        ImportSpecifier
+          Identifier: ' ResolvedProjectReference'
+        ImportSpecifier
+          Identifier: ' ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' StringLiteralLike'
+        ImportSpecifier
+          Identifier: ' WatchDirectoryFlags'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' HasInvalidatedFromResolutionCache'
+    PropertySignature
+      Identifier: '
+    hasInvalidatedResolutions'
+      TypeReference
+        Identifier: ' HasInvalidatedResolutions'
+    PropertySignature
+      Identifier: '
+    hasInvalidatedLibResolutions'
+      TypeReference
+        Identifier: ' HasInvalidatedLibResolutions'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ResolutionCache'
+    PropertySignature
+      Identifier: '
+    rootDirForResolution'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    resolvedModuleNames'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        TypeReference
+          Identifier: ' ModeAwareCache'
+          TypeReference
+            Identifier: 'CachedResolvedModuleWithFailedLookupLocations'
+    PropertySignature
+      Identifier: '
+    resolvedTypeReferenceDirectives'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        TypeReference
+          Identifier: ' ModeAwareCache'
+          TypeReference
+            Identifier: 'CachedResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+    PropertySignature
+      Identifier: '
+    resolvedLibraries'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' CachedResolvedModuleWithFailedLookupLocations'
+    PropertySignature
+      Identifier: '
+    resolvedFileToResolution'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        TypeReference
+          Identifier: ' Set'
+          TypeReference
+            Identifier: 'ResolutionWithFailedLookupLocations'
+    PropertySignature
+      Identifier: '
+    resolutionsWithFailedLookups'
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'ResolutionWithFailedLookupLocations'
+    PropertySignature
+      Identifier: '
+    resolutionsWithOnlyAffectingLocations'
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'ResolutionWithFailedLookupLocations'
+    PropertySignature
+      Identifier: '
+    directoryWatchesOfFailedLookups'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' DirectoryWatchesOfFailedLookup'
+    PropertySignature
+      Identifier: '
+    fileWatchesOfAffectingLocations'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' FileWatcherOfAffectingLocation'
+    PropertySignature
+      Identifier: '
+    packageDirWatchers'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        TypeReference
+          Identifier: ' PackageDirWatcher'
+    PropertySignature
+      Identifier: '
+    dirPathToSymlinkPackageRefCount'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        NumberKeyword
+    MethodSignature
+      Identifier: '
+    startRecordingFilesWithChangedResolutions'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    finishRecordingFilesWithChangedResolutions'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' Path'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    watchFailedLookupLocationsOfExternalModuleResolutions'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' ResolutionWithFailedLookupLocations'
+      TypeParameter
+        Identifier: ' R'
+        TypeReference
+          Identifier: ' ResolutionWithResolvedFileName'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Parameter
+        Identifier: ' resolution'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' filePath'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' getResolutionWithResolvedFileName'
+        TypeReference
+          Identifier: ' GetResolutionWithResolvedFileName'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' R'
+      Parameter
+        Identifier: ' deferWatchingNonRelativeResolution'
+        BooleanKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    resolveModuleNameLiterals'
+      Parameter
+        Identifier: 'moduleLiterals'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' StringLiteralLike'
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' containingSourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' reusedNames'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' StringLiteralLike'
+          UndefinedKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ResolvedModuleWithFailedLookupLocations'
+    MethodSignature
+      Identifier: '
+    resolveTypeReferenceDirectiveReferences'
+      TypeParameter
+        Identifier: 'T'
+        UnionType
+          TypeReference
+            Identifier: ' FileReference'
+          StringKeyword
+      Parameter
+        Identifier: 'typeDirectiveReferences'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' containingSourceFile'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' reusedNames'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          UndefinedKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+    MethodSignature
+      Identifier: '
+    resolveLibrary'
+      Parameter
+        Identifier: 'libraryName'
+        StringKeyword
+      Parameter
+        Identifier: ' resolveFrom'
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' libFileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' ResolvedModuleWithFailedLookupLocations'
+    MethodSignature
+      Identifier: '
+    resolveSingleModuleNameWithoutWatching'
+      Parameter
+        Identifier: 'moduleName'
+        StringKeyword
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      TypeReference
+        Identifier: ' ResolvedModuleWithFailedLookupLocations'
+    MethodSignature
+      Identifier: '
+    invalidateResolutionsOfFailedLookupLocations'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    invalidateResolutionOfFile'
+      Parameter
+        Identifier: 'filePath'
+        TypeReference
+          Identifier: ' Path'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    removeResolutionsOfFile'
+      Parameter
+        Identifier: 'filePath'
+        TypeReference
+          Identifier: ' Path'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    removeResolutionsFromProjectReferenceRedirects'
+      Parameter
+        Identifier: 'filePath'
+        TypeReference
+          Identifier: ' Path'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    setFilesWithInvalidatedNonRelativeUnresolvedImports'
+      Parameter
+        Identifier: 'filesWithUnresolvedImports'
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Path'
+          TypeOperator
+            ArrayType
+              StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    createHasInvalidatedResolutions'
+      Parameter
+        Identifier: 'customHasInvalidatedResolutions'
+        TypeReference
+          Identifier: ' HasInvalidatedResolutions'
+      Parameter
+        Identifier: ' customHasInvalidatedLibResolutions'
+        TypeReference
+          Identifier: ' HasInvalidatedLibResolutions'
+      TypeReference
+        Identifier: ' HasInvalidatedFromResolutionCache'
+    MethodSignature
+      Identifier: '
+    hasChangedAutomaticTypeDirectiveNames'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    isFileWithInvalidatedNonRelativeUnresolvedImports'
+      Parameter
+        Identifier: 'path'
+        TypeReference
+          Identifier: ' Path'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    startCachingPerDirectoryResolution'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    finishCachingPerDirectoryResolution'
+      Parameter
+        Identifier: 'newProgram'
+        UnionType
+          TypeReference
+            Identifier: ' Program'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' oldProgram'
+        UnionType
+          TypeReference
+            Identifier: ' Program'
+          UndefinedKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    updateTypeRootsWatch'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    closeTypeRootsWatch'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getModuleResolutionCache'
+      TypeReference
+        Identifier: ' ModuleResolutionCache'
+    MethodSignature
+      Identifier: '
+    clear'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    onChangesAffectModuleResolution'
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ResolutionWithFailedLookupLocations'
+    PropertySignature
+      Identifier: '
+    failedLookupLocations'
+      QuestionToken
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    affectingLocations'
+      QuestionToken
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    isInvalidated'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    files'
+      QuestionToken
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'Path'
+    PropertySignature
+      Identifier: '
+    alternateResult'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CachedResolvedModuleWithFailedLookupLocations'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ResolvedModuleWithFailedLookupLocations'
+      ExpressionWithTypeArguments
+        Identifier: ' ResolutionWithFailedLookupLocations'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CachedResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+      ExpressionWithTypeArguments
+        Identifier: ' ResolutionWithFailedLookupLocations'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ResolutionCacheHost'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' MinimalResolutionCacheHost'
+    MethodSignature
+      Identifier: '
+    toPath'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' Path'
+    PropertySignature
+      Identifier: '
+    getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    MethodSignature
+      Identifier: '
+    getCompilationSettings'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    PropertySignature
+      Identifier: '
+    preferNonRecursiveWatch'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    watchDirectoryOfFailedLookupLocation'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      Parameter
+        Identifier: ' cb'
+        TypeReference
+          Identifier: ' DirectoryWatcherCallback'
+      Parameter
+        Identifier: ' flags'
+        TypeReference
+          Identifier: ' WatchDirectoryFlags'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodSignature
+      Identifier: '
+    watchAffectingFileLocation'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      Parameter
+        Identifier: ' cb'
+        TypeReference
+          Identifier: ' FileWatcherCallback'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodSignature
+      Identifier: '
+    onInvalidatedResolution'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    watchTypeRootsDirectory'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      Parameter
+        Identifier: ' cb'
+        TypeReference
+          Identifier: ' DirectoryWatcherCallback'
+      Parameter
+        Identifier: ' flags'
+        TypeReference
+          Identifier: ' WatchDirectoryFlags'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodSignature
+      Identifier: '
+    onChangedAutomaticTypeDirectiveNames'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    scheduleInvalidateResolutionsOfFailedLookupLocations'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getCachedDirectoryStructureHost'
+      UnionType
+        TypeReference
+          Identifier: ' CachedDirectoryStructureHost'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    projectName'
+      QuestionToken
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    globalCacheResolutionModuleName'
+      QuestionToken
+      Parameter
+        Identifier: 'externalModuleName'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    writeLog'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getCurrentProgram'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    fileIsOpen'
+      Parameter
+        Identifier: 'filePath'
+        TypeReference
+          Identifier: ' Path'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    onDiscoveredSymlink'
+      QuestionToken
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    beforeResolveSingleModuleNameWithoutWatching'
+      QuestionToken
+      Parameter
+        Identifier: 'moduleResolutionCache'
+        TypeReference
+          Identifier: ' ModuleResolutionCache'
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    afterResolveSingleModuleNameWithoutWatching'
+      QuestionToken
+      Parameter
+        Identifier: 'moduleResolutionCache'
+        TypeReference
+          Identifier: ' ModuleResolutionCache'
+      Parameter
+        Identifier: ' moduleName'
+        StringKeyword
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      Parameter
+        Identifier: ' result'
+        TypeReference
+          Identifier: ' ResolvedModuleWithFailedLookupLocations'
+      Parameter
+        Identifier: ' data'
+        AnyKeyword
+      AnyKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FileWatcherOfAffectingLocation'
+    PropertySignature
+      Identifier: '
+    /** watcher for the lookup */
+    watcher'
+      TypeReference
+        Identifier: ' FileWatcher'
+    PropertySignature
+      Identifier: '
+    resolutions'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    files'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    symlinks'
+      UnionType
+        TypeReference
+          Identifier: ' Set'
+          StringKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DirectoryWatchesOfFailedLookup'
+    PropertySignature
+      Identifier: '
+    /** watcher for the lookup */
+    watcher'
+      TypeReference
+        Identifier: ' FileWatcher'
+    PropertySignature
+      Identifier: '
+    /** ref count keeping this watch alive */
+    refCount'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    /** is the directory watched being non recursive */
+    nonRecursive'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DirPathToWatcherOfPackageDirWatcher'
+    PropertySignature
+      Identifier: '
+    watcher'
+      TypeReference
+        Identifier: ' DirectoryWatchesOfFailedLookup'
+    PropertySignature
+      Identifier: '
+    refCount'
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PackageDirWatcher'
+    PropertySignature
+      Identifier: '
+    dirPathToWatcher'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        TypeReference
+          Identifier: ' DirPathToWatcherOfPackageDirWatcher'
+    PropertySignature
+      Identifier: '
+    isSymlink'
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DirectoryOfFailedLookupWatch'
+    PropertySignature
+      Identifier: '
+    dir'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    dirPath'
+      TypeReference
+        Identifier: ' Path'
+    PropertySignature
+      Identifier: '
+    nonRecursive'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    packageDir'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    packageDirPath'
+      QuestionToken
+      TypeReference
+        Identifier: ' Path'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' removeIgnoredPath'
+    Parameter
+      Identifier: 'path'
+      TypeReference
+        Identifier: ' Path'
+    UnionType
+      TypeReference
+        Identifier: ' Path'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' canWatchDirectoryOrFile'
+    Parameter
+      Identifier: 'pathComponents'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'PathPathComponents'
+    Parameter
+      Identifier: ' length'
+      QuestionToken
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' canWatchDirectoryOrFilePath'
+    Parameter
+      Identifier: 'path'
+      TypeReference
+        Identifier: ' Path'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' canWatchAtTypes'
+    Parameter
+      Identifier: 'atTypes'
+      TypeReference
+        Identifier: ' Path'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' canWatchAffectingLocation'
+    Parameter
+      Identifier: 'filePath'
+      TypeReference
+        Identifier: ' Path'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDirectoryToWatchFailedLookupLocation'
+    Parameter
+      Identifier: 'failedLookupLocation'
+      StringKeyword
+    Parameter
+      Identifier: ' failedLookupLocationPath'
+      TypeReference
+        Identifier: ' Path'
+    Parameter
+      Identifier: ' rootDir'
+      StringKeyword
+    Parameter
+      Identifier: ' rootPath'
+      TypeReference
+        Identifier: ' Path'
+    Parameter
+      Identifier: ' rootPathComponents'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'PathPathComponents'
+    Parameter
+      Identifier: ' isRootWatchable'
+      BooleanKeyword
+    Parameter
+      Identifier: ' getCurrentDirectory'
+      FunctionType
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+    Parameter
+      Identifier: ' preferNonRecursiveWatch'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' DirectoryOfFailedLookupWatch'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDirectoryToWatchFailedLookupLocationFromTypeRoot'
+    Parameter
+      Identifier: 'typeRoot'
+      StringKeyword
+    Parameter
+      Identifier: ' typeRootPath'
+      TypeReference
+        Identifier: ' Path'
+    Parameter
+      Identifier: ' rootPath'
+      TypeReference
+        Identifier: ' Path'
+    Parameter
+      Identifier: ' rootPathComponents'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'PathPathComponents'
+    Parameter
+      Identifier: ' isRootWatchable'
+      BooleanKeyword
+    Parameter
+      Identifier: ' getCurrentDirectory'
+      FunctionType
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+    Parameter
+      Identifier: ' preferNonRecursiveWatch'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' filterCustomPath'
+      FunctionType
+        Parameter
+          Identifier: 'path'
+          TypeReference
+            Identifier: ' Path'
+        BooleanKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Path'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRootDirectoryOfResolutionCache'
+    Parameter
+      Identifier: 'rootDirForResolution'
+      StringKeyword
+    Parameter
+      Identifier: ' getCurrentDirectory'
+      FunctionType
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createModuleResolutionLoaderUsingGlobalCache'
+    Parameter
+      Identifier: 'containingFile'
+      StringKeyword
+    Parameter
+      Identifier: ' redirectedReference'
+      UnionType
+        TypeReference
+          Identifier: ' ResolvedProjectReference'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' resolutionHost'
+      TypeReference
+        Identifier: ' ResolutionCacheHost'
+    Parameter
+      Identifier: ' moduleResolutionCache'
+      TypeReference
+        Identifier: ' ModuleResolutionCache'
+    TypeReference
+      Identifier: ' ResolutionLoader'
+      TypeReference
+        Identifier: 'StringLiteralLike'
+      TypeReference
+        Identifier: ' ResolvedModuleWithFailedLookupLocations'
+      TypeReference
+        Identifier: ' SourceFile'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' GetResolutionWithResolvedFileName'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ResolutionWithFailedLookupLocations'
+      TypeReference
+        Identifier: ' ResolutionWithFailedLookupLocations'
+    TypeParameter
+      Identifier: ' R'
+      TypeReference
+        Identifier: ' ResolutionWithResolvedFileName'
+      TypeReference
+        Identifier: ' ResolutionWithResolvedFileName'
+    FunctionType
+      Parameter
+        Identifier: 'resolution'
+        TypeReference
+          Identifier: ' T'
+      UnionType
+        TypeReference
+          Identifier: ' R'
+        UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createResolutionCache'
+    Parameter
+      Identifier: 'resolutionHost'
+      TypeReference
+        Identifier: ' ResolutionCacheHost'
+    Parameter
+      Identifier: ' rootDirForResolution'
+      StringKeyword
+    Parameter
+      Identifier: ' logChangesWhenResolvingModule'
+      BooleanKeyword
+    TypeReference
+      Identifier: ' ResolutionCache'

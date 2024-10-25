@@ -1,0 +1,17 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+/////** @type {({ /*1*/data: any }?) => { data: string[] }} */
+////function useQuery({ data }): { data: string[] } {
+////  return {
+////    data,
+////  };
+////}
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

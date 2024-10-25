@@ -1,0 +1,189 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' StrategicState'
+    PropertySignature
+      Identifier: '
+    lastStrategyApplied'
+      QuestionToken
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' strategy'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' StrategicState'
+    Parameter
+      Identifier: 'stratName'
+      StringKeyword
+    Parameter
+      Identifier: ' gen'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' IterableIterator'
+          UnionType
+            TypeReference
+              Identifier: 'T'
+            UndefinedKeyword
+          VoidKeyword
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' IterableIterator'
+        UnionType
+          TypeReference
+            Identifier: 'T'
+          UndefinedKeyword
+        VoidKeyword
+    Block
+      ReturnStatement
+        FunctionExpression
+          AsteriskToken
+          Parameter
+            Identifier: 'state'
+          Block
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' next'
+              CallExpression
+                Identifier: ' gen'
+                Identifier: 'state'
+              Block
+                IfStatement
+                  Identifier: 'next'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                next'
+                          Identifier: 'lastStrategyApplied'
+                        EqualsToken
+                        Identifier: ' stratName'
+                ExpressionStatement
+                  YieldExpression
+                    Identifier: ' next'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Strategy'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' IterableIterator'
+        UnionType
+          TypeReference
+            Identifier: 'T'
+          UndefinedKeyword
+        VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' State'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' StrategicState'
+    PropertySignature
+      Identifier: '
+    foo'
+      NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Nothing'
+        TypeReference
+          Identifier: ' Strategy'
+          TypeReference
+            Identifier: 'State'
+        CallExpression
+          Identifier: ' strategy'
+          StringLiteral
+          FunctionExpression
+            AsteriskToken
+            Parameter
+              Identifier: 'state'
+              TypeReference
+                Identifier: ' State'
+            Block
+              ExpressionStatement
+                YieldExpression
+                  NumericLiteral
+              ReturnStatement
+                Identifier: ' state'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Nothing1'
+        TypeReference
+          Identifier: ' Strategy'
+          TypeReference
+            Identifier: 'State'
+        CallExpression
+          Identifier: ' strategy'
+          StringLiteral
+          FunctionExpression
+            AsteriskToken
+            Parameter
+              Identifier: 'state'
+              TypeReference
+                Identifier: ' State'
+            Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Nothing2'
+        TypeReference
+          Identifier: ' Strategy'
+          TypeReference
+            Identifier: 'State'
+        CallExpression
+          Identifier: ' strategy'
+          StringLiteral
+          FunctionExpression
+            AsteriskToken
+            Parameter
+              Identifier: 'state'
+              TypeReference
+                Identifier: ' State'
+            Block
+              ReturnStatement
+                NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Nothing3'
+        TypeReference
+          Identifier: ' Strategy'
+          TypeReference
+            Identifier: 'State'
+        CallExpression
+          Identifier: ' strategy'
+          StringLiteral
+          FunctionExpression
+            AsteriskToken
+            Parameter
+              Identifier: 'state'
+              TypeReference
+                Identifier: ' State'
+            Block
+              ExpressionStatement
+                YieldExpression
+                  Identifier: ' state'
+              ReturnStatement
+                NumericLiteral

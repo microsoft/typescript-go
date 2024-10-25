@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo2'
+        ArrowFunction
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'foo2'
+            Identifier: ' bar3'
+        ObjectLiteralExpression

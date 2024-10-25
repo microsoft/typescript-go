@@ -1,0 +1,82 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' // error
+    b'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' let'
+        NumericLiteral
+  ExpressionStatement
+    DeleteExpression
+      Identifier: ' a'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        Identifier: 'eval'
+      Block
+  FunctionDeclaration
+    Identifier: ' arguments'
+    Block
+  WithStatement
+    Identifier: 'a'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' c'
+    MethodDeclaration
+      Identifier: '
+    a'
+      Parameter
+        Identifier: 'eval'
+      Block
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' let'
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' let'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' eval'
+        FunctionExpression
+          Block
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral

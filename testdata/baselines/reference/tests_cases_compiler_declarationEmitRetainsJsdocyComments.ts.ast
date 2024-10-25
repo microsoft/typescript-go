@@ -1,0 +1,83 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ArrowFunction
+          Parameter
+            Identifier: 'p'
+            StringKeyword
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        /**
+         * comment2
+         * @param s 
+         */
+        bar'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 's'
+                      NumberKeyword
+                    EqualsGreaterThanToken
+                    Block
+                MethodDeclaration
+                  Identifier: '
+        /**
+         * comment3
+         * @param s 
+         */
+        bar2'
+                  Parameter
+                    Identifier: 's'
+                    NumberKeyword
+                  Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * comment4
+     * @param s  
+     */
+    bar'
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: '
+    /**
+    * comment5
+    */
+    someMethod'
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' ExtFunc'
+        MethodSignature
+          Identifier: '
+        /**
+        * comment6
+        */
+        someMethod'
+          Parameter
+            Identifier: 'collection'
+            ArrayType
+              AnyKeyword
+          BooleanKeyword

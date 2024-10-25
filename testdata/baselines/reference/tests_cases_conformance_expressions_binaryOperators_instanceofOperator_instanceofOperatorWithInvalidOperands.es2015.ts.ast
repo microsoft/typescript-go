@@ -1,0 +1,284 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra1'
+        BinaryExpression
+          Identifier: ' a1'
+          InstanceOfKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra2'
+        BinaryExpression
+          Identifier: ' a2'
+          InstanceOfKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra3'
+        BinaryExpression
+          Identifier: ' a3'
+          InstanceOfKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra4'
+        BinaryExpression
+          Identifier: ' a4'
+          InstanceOfKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra5'
+        BinaryExpression
+          NumericLiteral
+          InstanceOfKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra6'
+        BinaryExpression
+          TrueKeyword
+          InstanceOfKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra7'
+        BinaryExpression
+          StringLiteral
+          InstanceOfKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra8'
+        BinaryExpression
+          NullKeyword
+          InstanceOfKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra9'
+        BinaryExpression
+          Identifier: ' undefined'
+          InstanceOfKeyword
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        TypeReference
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb1'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          Identifier: ' b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb2'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          Identifier: ' b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb3'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          Identifier: ' b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb4'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          Identifier: ' b4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb5'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb6'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb7'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb8'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          Identifier: ' o1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb9'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          Identifier: ' o2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb10'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          Identifier: ' o3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rc1'
+        BinaryExpression
+          StringLiteral
+          InstanceOfKeyword
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o4'
+        TypeLiteral
+          MethodSignature
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'hasInstance'
+            Parameter
+              Identifier: 'value'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  NumberKeyword
+            BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o5'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' y'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra10'
+        BinaryExpression
+          Identifier: ' o5'
+          InstanceOfKeyword
+          Identifier: ' o4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o6'
+        TypeLiteral
+          MethodSignature
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'hasInstance'
+            Parameter
+              Identifier: 'value'
+              UnknownKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rb11'
+        BinaryExpression
+          Identifier: ' x'
+          InstanceOfKeyword
+          Identifier: ' o6'

@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Clazz'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' method'
+      Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+Clazz'
+          Identifier: 'method'
+        Identifier: 'prop'
+      EqualsToken
+      NumericLiteral

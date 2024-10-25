@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' locales'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' options'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' localeMatcher'
+              StringLiteral
+          TypeReference
+            Identifier: ' const'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'Intl'
+                Identifier: 'PluralRules'
+              Identifier: 'supportedLocalesOf'
+            Identifier: 'locales'
+            Identifier: ' options'
+          Identifier: 'join'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: ' part'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'NumberFormat'
+            Identifier: 'formatToParts'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      PropertyAccessExpression
+        Identifier: 'part'
+        Identifier: 'type'
+      PropertyAccessExpression
+        Identifier: ' part'
+        Identifier: 'value'

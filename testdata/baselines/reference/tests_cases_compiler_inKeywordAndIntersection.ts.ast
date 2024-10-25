@@ -1,0 +1,90 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' a'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: ' b'
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f10'
+    Parameter
+      Identifier: 'obj'
+      UnionType
+        IntersectionType
+          TypeReference
+            Identifier: ' A'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              StringKeyword
+        TypeReference
+          Identifier: ' B'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'obj'
+          InstanceOfKeyword
+          Identifier: ' Object'
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+  InterfaceDeclaration
+    Identifier: ' InstanceOne'
+    MethodSignature
+      Identifier: '
+    one'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' InstanceTwo'
+    MethodSignature
+      Identifier: '
+    two'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' instance'
+        AsExpression
+          ObjectLiteralExpression
+          UnionType
+            TypeReference
+              Identifier: ' InstanceOne'
+            TypeReference
+              Identifier: ' InstanceTwo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ClassOne'
+        AsExpression
+          ObjectLiteralExpression
+          IntersectionType
+            TypeLiteral
+              ConstructSignature
+                TypeReference
+                  Identifier: ' InstanceOne'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                LiteralType
+                  TrueKeyword
+  IfStatement
+    BinaryExpression
+      Identifier: 'instance'
+      InstanceOfKeyword
+      Identifier: ' ClassOne'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    instance'
+            Identifier: 'one'

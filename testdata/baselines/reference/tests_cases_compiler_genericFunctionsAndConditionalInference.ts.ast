@@ -1,0 +1,329 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Boxified'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' value'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' unboxify'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Boxified'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'U'
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 'obj'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' u'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              TypeReference
+                Identifier: ' U'
+        PropertySignature
+          Identifier: ' v'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              TypeReference
+                Identifier: ' V'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' unboxify'
+          Identifier: 'obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qq'
+        CallExpression
+          Identifier: ' foo'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' u'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' value'
+                  NumericLiteral
+            PropertyAssignment
+              Identifier: ' v'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' value'
+                  StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Targets'
+    TypeParameter
+      Identifier: 'A'
+    PropertySignature
+      Identifier: '
+    left'
+      TypeReference
+        Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    right'
+      TypeReference
+        Identifier: ' A'
+  TypeAliasDeclaration
+    Identifier: ' Target'
+    TypeOperator
+      TypeReference
+        Identifier: ' Targets'
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' Result'
+    TypeParameter
+      Identifier: 'F'
+      TypeReference
+        Identifier: ' Target'
+    TypeParameter
+      Identifier: ' A'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' Targets'
+        TypeReference
+          Identifier: 'A'
+      TypeReference
+        Identifier: 'F'
+  TypeAliasDeclaration
+    Identifier: ' LR'
+    TypeParameter
+      Identifier: 'F'
+      TypeReference
+        Identifier: ' Target'
+    TypeParameter
+      Identifier: ' L'
+    TypeParameter
+      Identifier: ' R'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'F'
+      TupleType
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' L'
+      TypeReference
+        Identifier: ' R'
+  InterfaceDeclaration
+    Identifier: ' Ops'
+    TypeParameter
+      Identifier: 'F'
+      TypeReference
+        Identifier: ' Target'
+    PropertySignature
+      Identifier: '
+    _f'
+      TypeReference
+        Identifier: ' F'
+    PropertySignature
+      Identifier: '
+    str'
+      TypeReference
+        Identifier: ' Result'
+        TypeReference
+          Identifier: 'F'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    num'
+      TypeReference
+        Identifier: ' Result'
+        TypeReference
+          Identifier: 'F'
+        NumberKeyword
+    MethodSignature
+      Identifier: '
+    lr'
+      TypeParameter
+        Identifier: 'I'
+      TypeParameter
+        Identifier: ' O'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' Result'
+          TypeReference
+            Identifier: 'F'
+          TypeReference
+            Identifier: ' I'
+      Parameter
+        Identifier: ' o'
+        TypeReference
+          Identifier: ' Result'
+          TypeReference
+            Identifier: 'F'
+          TypeReference
+            Identifier: ' O'
+      TypeReference
+        Identifier: ' Result'
+        TypeReference
+          Identifier: 'F'
+        TypeReference
+          Identifier: ' LR'
+          TypeReference
+            Identifier: 'F'
+          TypeReference
+            Identifier: ' I'
+          TypeReference
+            Identifier: ' O'
+    PropertySignature
+      Identifier: '
+    dict'
+      FunctionType
+        TypeParameter
+          Identifier: 'P'
+        Parameter
+          Identifier: 'p'
+          MappedType
+            TypeParameter
+              Identifier: 'k'
+              TypeOperator
+                TypeReference
+                  Identifier: ' P'
+            TypeReference
+              Identifier: ' Result'
+              TypeReference
+                Identifier: 'F'
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' P'
+                TypeReference
+                  Identifier: 'k'
+        TypeReference
+          Identifier: ' Result'
+          TypeReference
+            Identifier: 'F'
+          TypeReference
+            Identifier: ' P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' left'
+        TypeReference
+          Identifier: ' Ops'
+          LiteralType
+            StringLiteral
+        AsExpression
+          ObjectLiteralExpression
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' right'
+        TypeReference
+          Identifier: ' Ops'
+          LiteralType
+            StringLiteral
+        AsExpression
+          ObjectLiteralExpression
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ok'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'F'
+            TypeReference
+              Identifier: ' Target'
+          Parameter
+            Identifier: 'at'
+            TypeReference
+              Identifier: ' Ops'
+              TypeReference
+                Identifier: 'F'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'lr'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' at'
+                    Identifier: 'lr'
+                  PropertyAccessExpression
+                    Identifier: 'at'
+                    Identifier: 'str'
+                  PropertyAccessExpression
+                    Identifier: ' at'
+                    Identifier: 'num'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' orphaned'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'F'
+            TypeReference
+              Identifier: ' Target'
+          Parameter
+            Identifier: 'at'
+            TypeReference
+              Identifier: ' Ops'
+              TypeReference
+                Identifier: 'F'
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' at'
+              Identifier: 'dict'
+            CallExpression
+              Identifier: 'ok'
+              Identifier: 'at'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' leftOk'
+        CallExpression
+          Identifier: ' ok'
+          Identifier: 'left'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' leftOrphaned'
+        CallExpression
+          Identifier: ' orphaned'
+          Identifier: 'left'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rightOk'
+        CallExpression
+          Identifier: ' ok'
+          Identifier: 'right'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rightOrphaned'
+        CallExpression
+          Identifier: ' orphaned'
+          Identifier: 'right'

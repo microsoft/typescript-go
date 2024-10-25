@@ -1,0 +1,56 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' User'
+    MethodDeclaration
+      Identifier: '
+    sayHello'
+      Block
+  ClassDeclaration
+    Identifier: ' RegisteredUser'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' User'
+    MethodDeclaration
+      Identifier: '
+    f'
+      Block
+        ExpressionStatement
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              FunctionDeclaration
+                Identifier: ' inner'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: 'sayHello'
+    MethodDeclaration
+      Identifier: '
+    g'
+      Block
+        FunctionDeclaration
+          Identifier: ' inner'
+          Block
+            ExpressionStatement
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: 'sayHello'
+    MethodDeclaration
+      Identifier: '
+    h'
+      Block
+        FunctionDeclaration
+          Identifier: ' inner'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'sayHello'

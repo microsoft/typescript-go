@@ -1,0 +1,9 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        Identifier: 'eval'
+      Block

@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    if'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    debugger'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    break'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    function'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    if'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    while'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    debugger'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    break'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    function'
+            NumericLiteral

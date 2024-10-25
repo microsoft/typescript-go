@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+  ClassDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      PrivateIdentifier
+    Constructor
+      Block
+        ExpressionStatement
+          VoidExpression
+            NumericLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

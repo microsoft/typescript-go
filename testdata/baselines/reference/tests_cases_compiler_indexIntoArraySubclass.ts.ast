@@ -1,0 +1,30 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo2'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeReference
+          Identifier: ' Foo2'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ElementAccessExpression
+          Identifier: ' x2'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // string
+r'
+      EqualsToken
+      NumericLiteral

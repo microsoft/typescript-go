@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' loop1'
+        Identifier: ' loop2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' loop2'
+        Identifier: ' loop1'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' loop2'

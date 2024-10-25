@@ -1,0 +1,68 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'bar'
+        ExpressionStatement
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'x'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'bar'
+        ExpressionStatement
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'x'
+    GetAccessor
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' y'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'bar'
+        ExpressionStatement
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'x'
+        ReturnStatement
+          NumericLiteral

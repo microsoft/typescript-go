@@ -1,0 +1,55 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Mxs'
+    TypeReference
+      Identifier: ' Mx'
+      LiteralType
+        StringLiteral
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Mxs'
+        LiteralType
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Mx'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+    PropertySignature
+      Identifier: '
+  p1'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+  p2'
+      TypeReference
+        Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' ArrElem'
+    ArrayType
+      TupleType
+        LiteralType
+          StringLiteral
+        IndexedAccessType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' ArrElem'
+            NumberKeyword
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TupleElem'
+    TupleType
+      TupleType
+        LiteralType
+          StringLiteral
+        IndexedAccessType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' TupleElem'
+            LiteralType
+              NumericLiteral
+          LiteralType
+            NumericLiteral

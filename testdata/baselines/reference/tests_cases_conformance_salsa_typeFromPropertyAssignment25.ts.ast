@@ -1,0 +1,79 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Common'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Common'
+        Identifier: 'I'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'i'
+                EqualsToken
+                NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Common'
+        Identifier: 'O'
+      EqualsToken
+      ClassExpression
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' Common'
+              Identifier: 'I'
+        Constructor
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'o'
+                EqualsToken
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Common'
+            Identifier: 'O'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Common'
+            Identifier: 'I'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o'
+      Identifier: 'i'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o'
+      Identifier: 'o'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+i'
+      Identifier: 'i'

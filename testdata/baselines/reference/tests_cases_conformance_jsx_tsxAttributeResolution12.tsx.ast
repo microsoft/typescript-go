@@ -1,0 +1,164 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+      InterfaceDeclaration
+        Identifier: ' ElementAttributesProperty'
+        PropertySignature
+          Identifier: '
+		props'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicAttributes'
+        PropertySignature
+          Identifier: '
+		ref'
+          QuestionToken
+          StringKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Component'
+    TypeParameter
+      Identifier: 'P'
+    TypeParameter
+      Identifier: ' S'
+    Constructor
+      Parameter
+        Identifier: 'props'
+        QuestionToken
+        TypeReference
+          Identifier: ' P'
+      Parameter
+        Identifier: ' context'
+        QuestionToken
+        AnyKeyword
+    MethodDeclaration
+      Identifier: '
+	setState'
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          Parameter
+            Identifier: 'prevState'
+            TypeReference
+              Identifier: ' S'
+          Parameter
+            Identifier: ' props'
+            TypeReference
+              Identifier: ' P'
+          TypeReference
+            Identifier: ' S'
+      Parameter
+        Identifier: ' callback'
+        QuestionToken
+        FunctionType
+          AnyKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+	setState'
+      Parameter
+        Identifier: 'state'
+        TypeReference
+          Identifier: ' S'
+      Parameter
+        Identifier: ' callback'
+        QuestionToken
+        FunctionType
+          AnyKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+	forceUpdate'
+      Parameter
+        Identifier: 'callBack'
+        QuestionToken
+        FunctionType
+          AnyKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+	render'
+      TypeReference
+        QualifiedName
+          Identifier: ' JSX'
+          Identifier: 'Element'
+    PropertyDeclaration
+      Identifier: '
+	props'
+      TypeReference
+        Identifier: ' P'
+    PropertyDeclaration
+      Identifier: '
+	state'
+      TypeReference
+        Identifier: ' S'
+    PropertyDeclaration
+      Identifier: '
+	context'
+      TypeLiteral
+  InterfaceDeclaration
+    Identifier: ' ComponentClass'
+    TypeParameter
+      Identifier: 'P'
+    ConstructSignature
+      Parameter
+        Identifier: 'props'
+        QuestionToken
+        TypeReference
+          Identifier: ' P'
+      Parameter
+        Identifier: ' context'
+        QuestionToken
+        AnyKeyword
+      TypeReference
+        Identifier: ' Component'
+        TypeReference
+          Identifier: 'P'
+        AnyKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' TestMod'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' TestClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' ComponentClass'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'reqd'
+                AnyKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Test'
+            TypeReference
+              Identifier: ' TestClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' T'
+        PropertyAccessExpression
+          Identifier: ' TestMod'
+          Identifier: 'Test'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        JsxSelfClosingElement
+          Identifier: 'T'
+          JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        JsxSelfClosingElement
+          PropertyAccessExpression
+            Identifier: 'TestMod'
+            Identifier: 'Test'
+          JsxAttributes

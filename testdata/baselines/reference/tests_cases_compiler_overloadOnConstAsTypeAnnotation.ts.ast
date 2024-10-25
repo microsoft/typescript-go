@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            LiteralType
+              StringLiteral
+          NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            LiteralType
+              StringLiteral
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NumericLiteral

@@ -1,0 +1,47 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Object'
+  ClassDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Object'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'Object'
+        TypeReference
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Foo'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              NumberKeyword

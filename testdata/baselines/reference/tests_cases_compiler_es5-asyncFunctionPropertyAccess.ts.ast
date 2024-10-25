@@ -1,0 +1,53 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' z'
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+      VariableDeclaration
+        Identifier: ' c'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' propertyAccess0'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          AwaitExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'a'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' propertyAccess1'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          PropertyAccessExpression
+            ParenthesizedExpression
+              AwaitExpression
+                Identifier: ' x'
+            Identifier: 'a'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression0'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          CallExpression
+            Identifier: ' x'
+            Identifier: 'y'
+            Identifier: ' z'

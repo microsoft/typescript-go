@@ -1,0 +1,367 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' C3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Date'
+  ClassDeclaration
+    Identifier: ' C5'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+  ClassDeclaration
+    Identifier: ' C6'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' U'
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+  InterfaceDeclaration
+    Identifier: ' I3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' I4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Date'
+  InterfaceDeclaration
+    Identifier: ' I5'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+  InterfaceDeclaration
+    Identifier: ' I6'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' U'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+    Block
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Block
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Date'
+    Block
+  FunctionDeclaration
+    Identifier: ' f5'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+    Block
+  FunctionDeclaration
+    Identifier: ' f6'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' U'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' U'
+          TypeParameter
+            Identifier: ' U'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e3'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Date'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e4'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' U'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' Date'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e5'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' U'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' V'
+          TypeParameter
+            Identifier: ' V'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e6'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' T'
+          TypeParameter
+            Identifier: ' V'
+            TypeReference
+              Identifier: ' U'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            TypeParameter
+              Identifier: ' U'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' U'
+            TypeParameter
+              Identifier: ' U'
+            VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' Date'
+            TypeParameter
+              Identifier: ' U'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' U'
+            TypeParameter
+              Identifier: ' U'
+              TypeReference
+                Identifier: ' Date'
+            VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' U'
+            TypeParameter
+              Identifier: ' U'
+              TypeReference
+                Identifier: ' V'
+            TypeParameter
+              Identifier: ' V'
+            VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            TypeParameter
+              Identifier: ' U'
+              TypeReference
+                Identifier: ' T'
+            TypeParameter
+              Identifier: ' V'
+              TypeReference
+                Identifier: ' U'
+            VoidKeyword

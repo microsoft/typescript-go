@@ -1,0 +1,55 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' doSthWithParams'
+    Parameter
+      Identifier: 'params'
+      UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' params'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    c'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    p'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    s'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  p'
+            NullKeyword
+          PropertyAssignment
+            Identifier: '
+  s'
+            NullKeyword
+          SpreadAssignment
+            CallExpression
+              Identifier: 'doSthWithParams'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    p'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    s'
+                  StringLiteral

@@ -1,0 +1,59 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @strictNullChecks: true
+
+////const enum E { A = "A", B = "B" }
+////const enum E2 { X = "X", Y = "Y" }
+////const e: E | undefined = /*a*/
+////const e2: E | E2 = /*b*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' isRecommended'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+        isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        // Arbitrarily chooses one to be recommended
+        includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' isRecommended'
+                TrueKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+        PropertyAssignment
+          Identifier: '
+        isNewIdentifierLocation'
+          TrueKeyword

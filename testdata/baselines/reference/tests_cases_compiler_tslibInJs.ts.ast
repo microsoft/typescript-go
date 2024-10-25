@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' foo'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral

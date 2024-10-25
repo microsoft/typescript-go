@@ -1,0 +1,189 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        FunctionExpression
+          Block
+            ReturnStatement
+              StringLiteral
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionExpression
+          Identifier: ' x'
+          Block
+            ReturnStatement
+              StringLiteral
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              StringLiteral
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        FunctionExpression
+          Block
+            IfStatement
+              TrueKeyword
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    StringLiteral
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f5'
+    NumberKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'n'
+      Identifier: ' m'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' m'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f7'
+    Parameter
+      Identifier: 'n'
+      Identifier: ' m'
+    Parameter
+      Identifier: ' m'
+      QuestionToken
+    Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// FunctionExpression with non -void return type annotation with a throw, no return, and other code
+// Should be error but isn't
+undefined'
+      EqualsEqualsEqualsToken
+      FunctionExpression
+        NumberKeyword
+        Block
+          ThrowStatement
+            Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' AnotherClass'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' y'
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' m'
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' n'
+  FunctionDeclaration
+    Identifier: ' f8'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' Derived1'
+      ReturnStatement
+        NewExpression
+          Identifier: ' Derived2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f9'
+        FunctionExpression
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' Derived1'
+            ReturnStatement
+              NewExpression
+                Identifier: ' Derived2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f10'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' Derived1'
+            ReturnStatement
+              NewExpression
+                Identifier: ' Derived2'
+  FunctionDeclaration
+    Identifier: ' f11'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' Base'
+      ReturnStatement
+        NewExpression
+          Identifier: ' AnotherClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f12'
+        FunctionExpression
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' Base'
+            ReturnStatement
+              NewExpression
+                Identifier: ' AnotherClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f13'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' Base'
+            ReturnStatement
+              NewExpression
+                Identifier: ' AnotherClass'

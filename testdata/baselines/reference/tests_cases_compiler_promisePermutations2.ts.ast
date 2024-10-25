@@ -1,0 +1,1913 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Promise'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    done'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          AnyKeyword
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          AnyKeyword
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' IPromise'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' IPromise'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' IPromise'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' IPromise'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' IPromise'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' IPromise'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' IPromise'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' IPromise'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' IPromise'
+        TypeReference
+          Identifier: 'U'
+    MethodSignature
+      Identifier: '
+    done'
+      QuestionToken
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          AnyKeyword
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          AnyKeyword
+      Parameter
+        Identifier: ' progress'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'progress'
+            AnyKeyword
+          VoidKeyword
+      VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction'
+    TypeReference
+      Identifier: ' IPromise'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunctionP'
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction2'
+    TypeReference
+      Identifier: ' IPromise'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction2P'
+    TypeReference
+      Identifier: ' Promise'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction3'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    TypeReference
+      Identifier: ' IPromise'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction3P'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction4'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' y'
+      QuestionToken
+      StringKeyword
+    TypeReference
+      Identifier: ' IPromise'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction4P'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' y'
+      QuestionToken
+      StringKeyword
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction5'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          StringKeyword
+        StringKeyword
+    TypeReference
+      Identifier: ' IPromise'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction5P'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          StringKeyword
+        StringKeyword
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction6'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' IPromise'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction6P'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction7'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' IPromise'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction7P'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction8'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' IPromise'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction8P'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction9'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'U'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' U'
+        TypeReference
+          Identifier: ' U'
+    TypeReference
+      Identifier: ' IPromise'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction9P'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'U'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' U'
+        TypeReference
+          Identifier: ' U'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction10'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'U'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' U'
+        TypeReference
+          Identifier: ' U'
+    TypeReference
+      Identifier: ' IPromise'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction10P'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'U'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' U'
+        TypeReference
+          Identifier: ' U'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction11'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    TypeReference
+      Identifier: ' IPromise'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction11'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    TypeReference
+      Identifier: ' IPromise'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction11P'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction11P'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction12'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' IPromise'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction12'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' IPromise'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction12P'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' IPromise'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testFunction12P'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        TypeReference
+          Identifier: ' IPromise'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r1'
+            Identifier: 'then'
+          Identifier: 'testFunction'
+          Identifier: ' testFunction'
+          Identifier: ' testFunction'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r1'
+                Identifier: 'then'
+              Identifier: 'testFunction'
+              Identifier: ' testFunction'
+              Identifier: ' testFunction'
+            Identifier: 'then'
+          Identifier: 'testFunction'
+          Identifier: ' testFunction'
+          Identifier: ' testFunction'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r1'
+            Identifier: 'then'
+          Identifier: 'testFunctionP'
+          Identifier: ' testFunctionP'
+          Identifier: ' testFunctionP'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s1'
+        TypeReference
+          Identifier: ' Promise'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s1a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s1'
+            Identifier: 'then'
+          Identifier: 'testFunction'
+          Identifier: ' testFunction'
+          Identifier: ' testFunction'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s1b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s1'
+            Identifier: 'then'
+          Identifier: 'testFunctionP'
+          Identifier: ' testFunctionP'
+          Identifier: ' testFunctionP'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s1c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s1'
+            Identifier: 'then'
+          Identifier: 'testFunctionP'
+          Identifier: ' testFunction'
+          Identifier: ' testFunction'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s1d'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' s1'
+                Identifier: 'then'
+              Identifier: 'testFunctionP'
+              Identifier: ' testFunction'
+              Identifier: ' testFunction'
+            Identifier: 'then'
+          Identifier: 'testFunction'
+          Identifier: ' testFunction'
+          Identifier: ' testFunction'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        TypeReference
+          Identifier: ' IPromise'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r2'
+            Identifier: 'then'
+          Identifier: 'testFunction2'
+          Identifier: ' testFunction2'
+          Identifier: ' testFunction2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r2'
+                Identifier: 'then'
+              Identifier: 'testFunction2'
+              Identifier: ' testFunction2'
+              Identifier: ' testFunction2'
+            Identifier: 'then'
+          Identifier: 'testFunction2'
+          Identifier: ' testFunction2'
+          Identifier: ' testFunction2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2'
+        TypeReference
+          Identifier: ' Promise'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s2'
+            Identifier: 'then'
+          Identifier: 'testFunction2'
+          Identifier: ' testFunction2'
+          Identifier: ' testFunction2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s2'
+            Identifier: 'then'
+          Identifier: 'testFunction2P'
+          Identifier: ' testFunction2P'
+          Identifier: ' testFunction2P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s2'
+            Identifier: 'then'
+          Identifier: 'testFunction2P'
+          Identifier: ' testFunction2'
+          Identifier: ' testFunction2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2d'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' s2'
+                Identifier: 'then'
+              Identifier: 'testFunction2P'
+              Identifier: ' testFunction2'
+              Identifier: ' testFunction2'
+            Identifier: 'then'
+          Identifier: 'testFunction2'
+          Identifier: ' testFunction2'
+          Identifier: ' testFunction2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        TypeReference
+          Identifier: ' IPromise'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r3'
+            Identifier: 'then'
+          Identifier: 'testFunction3'
+          Identifier: ' testFunction3'
+          Identifier: ' testFunction3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r3'
+                Identifier: 'then'
+              Identifier: 'testFunction3'
+              Identifier: ' testFunction3'
+              Identifier: ' testFunction3'
+            Identifier: 'then'
+          Identifier: 'testFunction3'
+          Identifier: ' testFunction3'
+          Identifier: ' testFunction3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s3'
+        TypeReference
+          Identifier: ' Promise'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s3a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s3'
+            Identifier: 'then'
+          Identifier: 'testFunction3'
+          Identifier: ' testFunction3'
+          Identifier: ' testFunction3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s3b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s3'
+            Identifier: 'then'
+          Identifier: 'testFunction3P'
+          Identifier: ' testFunction3P'
+          Identifier: ' testFunction3P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s3c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s3'
+            Identifier: 'then'
+          Identifier: 'testFunction3P'
+          Identifier: ' testFunction3'
+          Identifier: ' testFunction3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s3d'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' s3'
+                Identifier: 'then'
+              Identifier: 'testFunction3P'
+              Identifier: ' testFunction3'
+              Identifier: ' testFunction3'
+            Identifier: 'then'
+          Identifier: 'testFunction3'
+          Identifier: ' testFunction3'
+          Identifier: ' testFunction3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        TypeReference
+          Identifier: ' IPromise'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sIPromise'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            AnyKeyword
+          TypeReference
+            Identifier: ' IPromise'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sPromise'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            AnyKeyword
+          TypeReference
+            Identifier: ' Promise'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r4'
+            Identifier: 'then'
+          Identifier: 'testFunction4'
+          Identifier: ' testFunction4'
+          Identifier: ' testFunction4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4b'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r4'
+                Identifier: 'then'
+              Identifier: 'sIPromise'
+              Identifier: ' testFunction4'
+              Identifier: ' testFunction4'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' testFunction4'
+          Identifier: ' testFunction4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s4'
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s4a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s4'
+            Identifier: 'then'
+          Identifier: 'testFunction4'
+          Identifier: ' testFunction4'
+          Identifier: ' testFunction4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s4b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s4'
+            Identifier: 'then'
+          Identifier: 'testFunction4P'
+          Identifier: ' testFunction4P'
+          Identifier: ' testFunction4P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s4c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s4'
+            Identifier: 'then'
+          Identifier: 'testFunction4P'
+          Identifier: ' testFunction4'
+          Identifier: ' testFunction4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s4d'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' s4'
+                Identifier: 'then'
+              Identifier: 'sIPromise'
+              Identifier: ' testFunction4P'
+              Identifier: ' testFunction4'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' testFunction4P'
+          Identifier: ' testFunction4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        TypeReference
+          Identifier: ' IPromise'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r5'
+            Identifier: 'then'
+          Identifier: 'testFunction5'
+          Identifier: ' testFunction5'
+          Identifier: ' testFunction5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5b'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r5'
+                Identifier: 'then'
+              Identifier: 'sIPromise'
+              Identifier: ' sIPromise'
+              Identifier: ' sIPromise'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s5'
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s5a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s5'
+            Identifier: 'then'
+          Identifier: 'testFunction5'
+          Identifier: ' testFunction5'
+          Identifier: ' testFunction5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s5b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s5'
+            Identifier: 'then'
+          Identifier: 'testFunction5P'
+          Identifier: ' testFunction5P'
+          Identifier: ' testFunction5P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s5c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s5'
+            Identifier: 'then'
+          Identifier: 'testFunction5P'
+          Identifier: ' testFunction5'
+          Identifier: ' testFunction5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s5d'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' s5'
+                Identifier: 'then'
+              Identifier: 'sPromise'
+              Identifier: ' sPromise'
+              Identifier: ' sPromise'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        TypeReference
+          Identifier: ' IPromise'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r6'
+            Identifier: 'then'
+          Identifier: 'testFunction6'
+          Identifier: ' testFunction6'
+          Identifier: ' testFunction6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6b'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r6'
+                Identifier: 'then'
+              Identifier: 'sIPromise'
+              Identifier: ' sIPromise'
+              Identifier: ' sIPromise'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s6'
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s6a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s6'
+            Identifier: 'then'
+          Identifier: 'testFunction6'
+          Identifier: ' testFunction6'
+          Identifier: ' testFunction6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s6b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s6'
+            Identifier: 'then'
+          Identifier: 'testFunction6P'
+          Identifier: ' testFunction6P'
+          Identifier: ' testFunction6P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s6c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s6'
+            Identifier: 'then'
+          Identifier: 'testFunction6P'
+          Identifier: ' testFunction6'
+          Identifier: ' testFunction6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s6d'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' s6'
+                Identifier: 'then'
+              Identifier: 'sPromise'
+              Identifier: ' sPromise'
+              Identifier: ' sPromise'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        TypeReference
+          Identifier: ' IPromise'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r7'
+            Identifier: 'then'
+          Identifier: 'testFunction7'
+          Identifier: ' testFunction7'
+          Identifier: ' testFunction7'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7b'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r7'
+                Identifier: 'then'
+              Identifier: 'sIPromise'
+              Identifier: ' sIPromise'
+              Identifier: ' sIPromise'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s7'
+        TypeReference
+          Identifier: ' Promise'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s7a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r7'
+            Identifier: 'then'
+          Identifier: 'testFunction7'
+          Identifier: ' testFunction7'
+          Identifier: ' testFunction7'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s7b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r7'
+            Identifier: 'then'
+          Identifier: 'testFunction7P'
+          Identifier: ' testFunction7P'
+          Identifier: ' testFunction7P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s7c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r7'
+            Identifier: 'then'
+          Identifier: 'testFunction7P'
+          Identifier: ' testFunction7'
+          Identifier: ' testFunction7'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s7d'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r7'
+                Identifier: 'then'
+              Identifier: 'sPromise'
+              Identifier: ' sPromise'
+              Identifier: ' sPromise'
+            Identifier: 'then'
+          Identifier: 'sPromise'
+          Identifier: ' sPromise'
+          Identifier: ' sPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        TypeReference
+          Identifier: ' IPromise'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nIPromise'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            AnyKeyword
+          TypeReference
+            Identifier: ' IPromise'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nPromise'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            AnyKeyword
+          TypeReference
+            Identifier: ' Promise'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r8'
+            Identifier: 'then'
+          Identifier: 'testFunction8'
+          Identifier: ' testFunction8'
+          Identifier: ' testFunction8'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8b'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r8'
+                Identifier: 'then'
+              Identifier: 'nIPromise'
+              Identifier: ' nIPromise'
+              Identifier: ' nIPromise'
+            Identifier: 'then'
+          Identifier: 'nIPromise'
+          Identifier: ' nIPromise'
+          Identifier: ' nIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s8'
+        TypeReference
+          Identifier: ' Promise'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s8a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s8'
+            Identifier: 'then'
+          Identifier: 'testFunction8'
+          Identifier: ' testFunction8'
+          Identifier: ' testFunction8'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s8b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s8'
+            Identifier: 'then'
+          Identifier: 'testFunction8P'
+          Identifier: ' testFunction8P'
+          Identifier: ' testFunction8P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s8c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s8'
+            Identifier: 'then'
+          Identifier: 'testFunction8P'
+          Identifier: ' testFunction8'
+          Identifier: ' testFunction8'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s8d'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' s8'
+                Identifier: 'then'
+              Identifier: 'nIPromise'
+              Identifier: ' nIPromise'
+              Identifier: ' nIPromise'
+            Identifier: 'then'
+          Identifier: 'nIPromise'
+          Identifier: ' nIPromise'
+          Identifier: ' nIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        TypeReference
+          Identifier: ' IPromise'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r9'
+            Identifier: 'then'
+          Identifier: 'testFunction9'
+          Identifier: ' testFunction9'
+          Identifier: ' testFunction9'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r9'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r9'
+            Identifier: 'then'
+          Identifier: 'nIPromise'
+          Identifier: ' nIPromise'
+          Identifier: ' nIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9d'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r9'
+            Identifier: 'then'
+          Identifier: 'testFunction'
+          Identifier: ' sIPromise'
+          Identifier: ' nIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9e'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r9'
+                Identifier: 'then'
+              Identifier: 'testFunction'
+              Identifier: ' nIPromise'
+              Identifier: ' sIPromise'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s9'
+        TypeReference
+          Identifier: ' Promise'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s9a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s9'
+            Identifier: 'then'
+          Identifier: 'testFunction9'
+          Identifier: ' testFunction9'
+          Identifier: ' testFunction9'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s9b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s9'
+            Identifier: 'then'
+          Identifier: 'testFunction9P'
+          Identifier: ' testFunction9P'
+          Identifier: ' testFunction9P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s9c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s9'
+            Identifier: 'then'
+          Identifier: 'testFunction9P'
+          Identifier: ' testFunction9'
+          Identifier: ' testFunction9'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s9d'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s9'
+            Identifier: 'then'
+          Identifier: 'sPromise'
+          Identifier: ' sPromise'
+          Identifier: ' sPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s9e'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s9'
+            Identifier: 'then'
+          Identifier: 'nPromise'
+          Identifier: ' nPromise'
+          Identifier: ' nPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s9f'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s9'
+            Identifier: 'then'
+          Identifier: 'testFunction'
+          Identifier: ' sIPromise'
+          Identifier: ' nIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s9g'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' s9'
+                Identifier: 'then'
+              Identifier: 'testFunction'
+              Identifier: ' nIPromise'
+              Identifier: ' sIPromise'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        CallExpression
+          Identifier: ' testFunction10'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r10'
+            Identifier: 'then'
+          Identifier: 'testFunction10'
+          Identifier: ' testFunction10'
+          Identifier: ' testFunction10'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r10'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r10'
+            Identifier: 'then'
+          Identifier: 'nIPromise'
+          Identifier: ' nIPromise'
+          Identifier: ' nIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10d'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r10'
+            Identifier: 'then'
+          Identifier: 'testFunction'
+          Identifier: ' sIPromise'
+          Identifier: ' nIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10e'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' r10'
+                Identifier: 'then'
+              Identifier: 'testFunction'
+              Identifier: ' nIPromise'
+              Identifier: ' sIPromise'
+            Identifier: 'then'
+          Identifier: 'sIPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s10'
+        CallExpression
+          Identifier: ' testFunction10P'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s10a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s10'
+            Identifier: 'then'
+          Identifier: 'testFunction10'
+          Identifier: ' testFunction10'
+          Identifier: ' testFunction10'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s10b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s10'
+            Identifier: 'then'
+          Identifier: 'testFunction10P'
+          Identifier: ' testFunction10P'
+          Identifier: ' testFunction10P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s10c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s10'
+            Identifier: 'then'
+          Identifier: 'testFunction10P'
+          Identifier: ' testFunction10'
+          Identifier: ' testFunction10'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s10d'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s10'
+            Identifier: 'then'
+          Identifier: 'sPromise'
+          Identifier: ' sPromise'
+          Identifier: ' sPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s10e'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s10'
+            Identifier: 'then'
+          Identifier: 'nIPromise'
+          Identifier: ' nPromise'
+          Identifier: ' nIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s10f'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s10'
+            Identifier: 'then'
+          Identifier: 'testFunctionP'
+          Identifier: ' sIPromise'
+          Identifier: ' nIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s10g'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' s10'
+                Identifier: 'then'
+              Identifier: 'testFunctionP'
+              Identifier: ' nIPromise'
+              Identifier: ' sIPromise'
+            Identifier: 'then'
+          Identifier: 'sPromise'
+          Identifier: ' sIPromise'
+          Identifier: ' sIPromise'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        TypeReference
+          Identifier: ' IPromise'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r11'
+            Identifier: 'then'
+          Identifier: 'testFunction11'
+          Identifier: ' testFunction11'
+          Identifier: ' testFunction11'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s11'
+        TypeReference
+          Identifier: ' Promise'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s11a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s11'
+            Identifier: 'then'
+          Identifier: 'testFunction11'
+          Identifier: ' testFunction11'
+          Identifier: ' testFunction11'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s11b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s11'
+            Identifier: 'then'
+          Identifier: 'testFunction11P'
+          Identifier: ' testFunction11P'
+          Identifier: ' testFunction11P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s11c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s11'
+            Identifier: 'then'
+          Identifier: 'testFunction11P'
+          Identifier: ' testFunction11'
+          Identifier: ' testFunction11'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12'
+        CallExpression
+          Identifier: ' testFunction12'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' r12'
+            Identifier: 'then'
+          Identifier: 'testFunction12'
+          Identifier: ' testFunction12'
+          Identifier: ' testFunction12'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s12'
+        CallExpression
+          Identifier: ' testFunction12'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s12a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s12'
+            Identifier: 'then'
+          Identifier: 'testFunction12'
+          Identifier: ' testFunction12'
+          Identifier: ' testFunction12'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s12b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s12'
+            Identifier: 'then'
+          Identifier: 'testFunction12P'
+          Identifier: ' testFunction12P'
+          Identifier: ' testFunction12P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s12c'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' s12'
+            Identifier: 'then'
+          Identifier: 'testFunction12P'
+          Identifier: ' testFunction12'
+          Identifier: ' testFunction12'

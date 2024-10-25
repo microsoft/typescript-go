@@ -1,0 +1,18 @@
+SourceFile
+  ExpressionStatement
+    ArrowFunction
+      AsyncKeyword
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' foo'
+          BindingElement
+            Identifier: ' bar'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest'
+      EqualsGreaterThanToken
+      CallExpression
+        Identifier: ' bar'
+        AwaitExpression
+          Identifier: ' foo'

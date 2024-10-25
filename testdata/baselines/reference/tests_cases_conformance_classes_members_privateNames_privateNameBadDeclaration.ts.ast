@@ -1,0 +1,55 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' A'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+A'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          PrivateIdentifier
+          NumericLiteral
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+  ClassDeclaration
+    Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+B'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          PrivateIdentifier
+          NumericLiteral
+        MethodDeclaration
+          PrivateIdentifier
+          Block
+        GetAccessor
+          PrivateIdentifier
+          Block
+            ReturnStatement
+              StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral

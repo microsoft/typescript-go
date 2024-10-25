@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ConditionalExpression
+          Identifier: ' a'
+          QuestionToken
+          ConditionalExpression
+            Identifier: ' b'
+            QuestionToken
+            Identifier: ' d'
+            ColonToken
+            Identifier: ' e'
+          ColonToken
+          ConditionalExpression
+            Identifier: ' c'
+            QuestionToken
+            Identifier: ' f'
+            ColonToken
+            Identifier: ' g'

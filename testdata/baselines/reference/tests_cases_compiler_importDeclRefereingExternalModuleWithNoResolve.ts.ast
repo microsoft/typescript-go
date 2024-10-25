@@ -1,0 +1,13 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' b'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' im2'
+        ExternalModuleReference
+          StringLiteral

@@ -1,0 +1,62 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Model'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' someData'
+      StringKeyword
+  ImportEqualsDeclaration
+    Identifier: ' Backbone'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' VisualizationModel'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' Backbone'
+          Identifier: 'Model'
+  ImportEqualsDeclaration
+    Identifier: ' Backbone'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' moduleA'
+    ExternalModuleReference
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' IHasVisualizationModel'
+    PropertySignature
+      Identifier: '
+    VisualizationModel'
+      TypeQuery
+        QualifiedName
+          Identifier: ' Backbone'
+          Identifier: 'Model'
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' IHasVisualizationModel'
+    GetAccessor
+      Identifier: ' A'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    SetAccessor
+      Identifier: ' A'
+      Parameter
+        Identifier: 'x'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        x'
+            EqualsToken
+            Identifier: ' moduleA'

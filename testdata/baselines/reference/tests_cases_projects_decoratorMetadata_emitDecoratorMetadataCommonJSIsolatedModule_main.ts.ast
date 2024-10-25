@@ -1,0 +1,28 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ng'
+    StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'foo'
+    ExportKeyword
+    Identifier: ' MyClass1'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' _elementRef'
+        TypeReference
+          QualifiedName
+            Identifier: ' ng'
+            Identifier: 'ElementRef'
+      Block

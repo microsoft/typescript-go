@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            NeverKeyword
+          VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'

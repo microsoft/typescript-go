@@ -1,0 +1,45 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Symbol'
+            Identifier: 'for'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      AmpersandAmpersandToken
+      Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      AmpersandAmpersandToken
+      ArrayLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AmpersandAmpersandToken
+      Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      BarBarToken
+      Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      BarBarToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ObjectLiteralExpression
+      BarBarToken
+      Identifier: ' s'

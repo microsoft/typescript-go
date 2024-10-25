@@ -1,0 +1,30 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            FalseKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            NumberKeyword
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            NumericLiteral
+          VariableDeclaration
+            Identifier: ' c4'
+            StringKeyword
+            StringLiteral
+          VariableDeclaration
+            Identifier: ' c5'
+            NullKeyword

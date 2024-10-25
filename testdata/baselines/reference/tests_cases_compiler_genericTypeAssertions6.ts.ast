@@ -1,0 +1,156 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: 'U'
+    Constructor
+      Parameter
+        Identifier: 'x'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'T'
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' z'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'U'
+                Identifier: 'x'
+    MethodDeclaration
+      Identifier: '
+
+    f'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        x'
+            EqualsToken
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'T'
+              Identifier: 'y'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        y'
+            EqualsToken
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'U'
+              Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Date'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Date'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+    MethodDeclaration
+      Identifier: '
+    g'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' Date'
+              Identifier: ' x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'Date'
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'T'
+                NewExpression
+                  Identifier: ' Date'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'U'
+                NewExpression
+                  Identifier: ' Date'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' e'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'T'
+                TypeAssertionExpression
+                  TypeReference
+                    Identifier: 'U'
+                  NewExpression
+                    Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'Date'
+          TypeReference
+            Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'Date'
+          TypeReference
+            Identifier: ' Date'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'A'
+            TypeReference
+              Identifier: 'Date'
+            TypeReference
+              Identifier: ' Date'
+          Identifier: 'b'

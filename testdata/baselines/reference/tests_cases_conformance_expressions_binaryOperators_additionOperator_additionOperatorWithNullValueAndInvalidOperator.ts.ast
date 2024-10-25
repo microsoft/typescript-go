@@ -1,0 +1,124 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    VoidKeyword
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' Number'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        BinaryExpression
+          Identifier: ' b'
+          PlusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          Identifier: ' d'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          CallExpression
+            Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block

@@ -1,0 +1,89 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IPoint'
+    MethodSignature
+      Identifier: '
+    getDist'
+      NumberKeyword
+  ModuleDeclaration
+    Identifier: ' Shapes'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' IPoint'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' con'
+          TypeReference
+            Identifier: 'C'
+        PropertyDeclaration
+          StringLiteral
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' x'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' y'
+            NumberKeyword
+          Block
+        MethodDeclaration
+          Identifier: '
+
+        // Instance member
+        getDist'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Math'
+                  Identifier: 'sqrt'
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'x'
+                    AsteriskToken
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'x'
+                  PlusToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'y'
+                    AsteriskToken
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'y'
+        PropertyDeclaration
+          StaticKeyword
+          Identifier: ' origin'
+          NewExpression
+            Identifier: ' Point'
+            NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' IPoint'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Shapes'
+            Identifier: 'Point'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dist'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' p'
+            Identifier: 'getDist'

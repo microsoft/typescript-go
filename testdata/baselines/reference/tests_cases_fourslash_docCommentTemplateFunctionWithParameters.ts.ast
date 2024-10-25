@@ -1,0 +1,50 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noIndentScaffolding'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oneIndentScaffolding'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noIndentOffset'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oneIndentOffset'
+        BinaryExpression
+          Identifier: ' noIndentOffset'
+          PlusToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      Identifier: ' noIndentOffset'
+      Identifier: ' noIndentScaffolding'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      Identifier: ' oneIndentOffset'
+      Identifier: ' oneIndentScaffolding'

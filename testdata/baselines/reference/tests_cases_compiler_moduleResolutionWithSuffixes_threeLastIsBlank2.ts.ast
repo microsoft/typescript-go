@@ -1,0 +1,36 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' native'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' native'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' base'
+    Block

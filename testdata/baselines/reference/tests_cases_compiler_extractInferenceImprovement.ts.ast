@@ -1,0 +1,137 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' getProperty2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' Extract'
+        TypeReference
+          Identifier: 'K'
+        StringKeyword
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: 'K'
+    Block
+      ReturnStatement
+        ElementAccessExpression
+          Identifier: ' obj'
+          Identifier: 'key'
+  FunctionDeclaration
+    Identifier: ' getProperty3'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeReference
+        Identifier: ' Extract'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' K'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: 'K'
+    Block
+      ReturnStatement
+        ElementAccessExpression
+          Identifier: ' obj'
+          Identifier: 'key'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        CallExpression
+          Identifier: ' Symbol'
+  InterfaceDeclaration
+    Identifier: ' StrNum'
+    PropertySignature
+      Identifier: '
+    first'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    second'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 's'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeReference
+          Identifier: ' StrNum'
+        AsExpression
+          ObjectLiteralExpression
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' prop'
+        StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// should work
+prop'
+      EqualsToken
+      CallExpression
+        Identifier: ' getProperty2'
+        Identifier: 'obj'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+prop'
+      EqualsToken
+      CallExpression
+        Identifier: ' getProperty3'
+        Identifier: 'obj'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Should fail
+prop'
+      EqualsToken
+      CallExpression
+        Identifier: ' getProperty2'
+        Identifier: 'obj'
+        Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+prop'
+      EqualsToken
+      CallExpression
+        Identifier: ' getProperty3'
+        Identifier: 'obj'
+        Identifier: ' s'

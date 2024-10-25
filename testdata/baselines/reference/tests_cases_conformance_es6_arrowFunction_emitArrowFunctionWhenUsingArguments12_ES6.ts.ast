@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 'arguments'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' arguments'

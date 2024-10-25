@@ -1,0 +1,51 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    print'
+      Block
+        ReturnStatement
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Promise'
+        AnyKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' b'
+                    NewExpression
+                      PropertyAccessExpression
+                        Identifier: ' value'
+                        Identifier: 'B'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        b'
+                    Identifier: 'print'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      CallExpression
+        ImportKeyword
+        StringLiteral

@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' y'
+          StringKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' z'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral

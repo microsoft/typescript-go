@@ -1,0 +1,76 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          Parameter
+            Identifier: ' y'
+            StringKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          Parameter
+            Identifier: ' y'
+            NumberKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'rest'
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          Parameter
+            Identifier: ' y'
+            NumberKeyword
+          Parameter
+            Identifier: ' z'
+            NumericLiteral
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'func'
+      FunctionType
+        BooleanKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ArrowFunction
+        EqualsGreaterThanToken
+        TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            FalseKeyword

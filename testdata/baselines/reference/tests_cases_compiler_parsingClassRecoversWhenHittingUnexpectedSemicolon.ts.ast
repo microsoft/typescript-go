@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f'
+      Block
+    SemicolonClassElement
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' m'

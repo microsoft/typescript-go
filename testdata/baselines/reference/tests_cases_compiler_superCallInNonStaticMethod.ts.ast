@@ -1,0 +1,109 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Doing'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' instanceMethod'
+      Block
+  ClassDeclaration
+    Identifier: ' Other'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Doing'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' instanceMethod'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'instanceMethod'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' lambdaInsideAnInstanceMethod'
+      Block
+        ExpressionStatement
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'instanceMethod'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' objectLiteralInsideAnInstanceMethod'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            a'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: 'instanceMethod'
+            PropertyAssignment
+              Identifier: '
+            b'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'instanceMethod'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' accessor'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'instanceMethod'
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' accessor'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'instanceMethod'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'instanceMethod'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' propertyInitializer'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'instanceMethod'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' functionProperty'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'instanceMethod'

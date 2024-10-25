@@ -1,0 +1,163 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' TableClass'
+    TypeParameter
+      Identifier: 'S'
+      AnyKeyword
+    PropertyDeclaration
+      Identifier: '
+    _field'
+      TypeReference
+        Identifier: ' S'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Table'
+    TypeReference
+      Identifier: ' TableClass'
+  InterfaceDeclaration
+    Identifier: ' Something'
+    PropertySignature
+      Identifier: '
+    prop'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' SomethingElse'
+    PropertySignature
+      Identifier: '
+    prop2'
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aBoolean'
+        BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aStringOrNumber'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aStringOrSomething'
+        UnionType
+          StringKeyword
+          TypeReference
+            Identifier: ' Something'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someUnion'
+        UnionType
+          TypeReference
+            Identifier: ' Something'
+          TypeReference
+            Identifier: ' SomethingElse'
+  FunctionDeclaration
+    Identifier: ' fn'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Table'
+    Parameter
+      Identifier: 'o'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    aBoolean'
+          EqualsToken
+          Identifier: ' o'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    aStringOrNumber'
+          EqualsToken
+          Identifier: ' o'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    aStringOrSomething'
+          EqualsToken
+          Identifier: ' o'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someUnion'
+          EqualsToken
+          Identifier: ' o'
+  FunctionDeclaration
+    Identifier: ' fn2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' TableClass'
+    Parameter
+      Identifier: 'o'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    aBoolean'
+          EqualsToken
+          Identifier: ' o'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    aStringOrNumber'
+          EqualsToken
+          Identifier: ' o'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    aStringOrSomething'
+          EqualsToken
+          Identifier: ' o'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someUnion'
+          EqualsToken
+          Identifier: ' o'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeReference
+          Identifier: ' Table'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+aBoolean'
+      EqualsToken
+      Identifier: ' o'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+aStringOrNumber'
+      EqualsToken
+      Identifier: ' o'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+aStringOrSomething'
+      EqualsToken
+      Identifier: ' o'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+someUnion'
+      EqualsToken
+      Identifier: ' o'

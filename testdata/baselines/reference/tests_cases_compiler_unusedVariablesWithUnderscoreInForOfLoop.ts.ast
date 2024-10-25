@@ -1,0 +1,159 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' t1'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: '_a'
+              BindingElement
+                Identifier: ' b'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'b'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'a'
+              BindingElement
+                Identifier: ' _b'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'a'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: '_a'
+              BindingElement
+                Identifier: ' _b'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+        Block
+  FunctionDeclaration
+    Identifier: ' t2'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: '_a'
+              BindingElement
+                Identifier: ' b'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+        Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'a'
+              BindingElement
+                Identifier: ' _b'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+        Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'a'
+              BindingElement
+                Identifier: ' b'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+        Block
+  FunctionDeclaration
+    Identifier: ' t3'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    ArrayBindingPattern
+                      BindingElement
+                        Identifier: '_a'
+                      BindingElement
+                        Identifier: ' b'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              ArrayLiteralExpression
+                StringLiteral
+                NumericLiteral
+        Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    ArrayBindingPattern
+                      BindingElement
+                        Identifier: 'a'
+                      BindingElement
+                        Identifier: ' _b'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              ArrayLiteralExpression
+                StringLiteral
+                NumericLiteral
+        Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    ArrayBindingPattern
+                      BindingElement
+                        Identifier: 'a'
+                      BindingElement
+                        Identifier: ' b'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              ArrayLiteralExpression
+                StringLiteral
+                NumericLiteral
+        Block

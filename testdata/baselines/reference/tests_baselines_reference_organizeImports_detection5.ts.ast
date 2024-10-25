@@ -1,0 +1,165 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Type9'
+        ImportSpecifier
+          Identifier: '
+    Type2'
+        ImportSpecifier
+          Identifier: '
+    Type8'
+        ImportSpecifier
+          Identifier: '
+    Type7'
+        ImportSpecifier
+          Identifier: '
+    Type5'
+        ImportSpecifier
+          Identifier: '
+    Type4'
+        ImportSpecifier
+          Identifier: '
+    Type3'
+        ImportSpecifier
+          Identifier: '
+    Type1'
+        ImportSpecifier
+          Identifier: '
+    func9'
+        ImportSpecifier
+          Identifier: '
+    Type6'
+        ImportSpecifier
+          Identifier: '
+    func5'
+        ImportSpecifier
+          Identifier: '
+    func6'
+        ImportSpecifier
+          Identifier: '
+    func8'
+        ImportSpecifier
+          Identifier: '
+    func4'
+        ImportSpecifier
+          Identifier: '
+    func7'
+        ImportSpecifier
+          Identifier: '
+    func3'
+        ImportSpecifier
+          Identifier: '
+    func2'
+        ImportSpecifier
+          Identifier: '
+    func1'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'Type1'
+      Identifier: ' Type2'
+      Identifier: ' Type3'
+      Identifier: ' Type4'
+      Identifier: ' Type5'
+      Identifier: ' Type6'
+      Identifier: ' Type7'
+      Identifier: ' Type8'
+      Identifier: ' Type9'
+      Identifier: ' func1'
+      Identifier: ' func2'
+      Identifier: ' func3'
+      Identifier: ' func4'
+      Identifier: ' func5'
+      Identifier: ' func6'
+      Identifier: ' func7'
+      Identifier: ' func8'
+      Identifier: ' func9'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Type1'
+        ImportSpecifier
+          Identifier: '
+    Type2'
+        ImportSpecifier
+          Identifier: '
+    Type3'
+        ImportSpecifier
+          Identifier: '
+    Type4'
+        ImportSpecifier
+          Identifier: '
+    Type5'
+        ImportSpecifier
+          Identifier: '
+    Type6'
+        ImportSpecifier
+          Identifier: '
+    Type7'
+        ImportSpecifier
+          Identifier: '
+    Type8'
+        ImportSpecifier
+          Identifier: '
+    Type9'
+        ImportSpecifier
+          Identifier: '
+    func1'
+        ImportSpecifier
+          Identifier: '
+    func2'
+        ImportSpecifier
+          Identifier: '
+    func3'
+        ImportSpecifier
+          Identifier: '
+    func4'
+        ImportSpecifier
+          Identifier: '
+    func5'
+        ImportSpecifier
+          Identifier: '
+    func6'
+        ImportSpecifier
+          Identifier: '
+    func7'
+        ImportSpecifier
+          Identifier: '
+    func8'
+        ImportSpecifier
+          Identifier: '
+    func9'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'Type1'
+      Identifier: ' Type2'
+      Identifier: ' Type3'
+      Identifier: ' Type4'
+      Identifier: ' Type5'
+      Identifier: ' Type6'
+      Identifier: ' Type7'
+      Identifier: ' Type8'
+      Identifier: ' Type9'
+      Identifier: ' func1'
+      Identifier: ' func2'
+      Identifier: ' func3'
+      Identifier: ' func4'
+      Identifier: ' func5'
+      Identifier: ' func6'
+      Identifier: ' func7'
+      Identifier: ' func8'
+      Identifier: ' func9'

@@ -1,0 +1,91 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 's'
+      QuestionToken
+      StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      DotDotDotToken
+      Identifier: 's'
+      ArrayType
+        StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' s2'
+      QuestionToken
+      StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 's'
+      QuestionToken
+      StringKeyword
+    Parameter
+      Identifier: ' n'
+      QuestionToken
+      NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 's'
+      QuestionToken
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'n'
+      ArrayType
+        NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f7'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'sRest'
+      ArrayType
+        StringKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fUnion'
+        UnionType
+          TypeQuery
+            Identifier: ' f1'
+          TypeQuery
+            Identifier: ' f2'
+          TypeQuery
+            Identifier: ' f3'
+          TypeQuery
+            Identifier: ' f4'
+          TypeQuery
+            Identifier: ' f5'
+          TypeQuery
+            Identifier: ' f6'
+          TypeQuery
+            Identifier: ' f7'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+fUnion'
+      StringLiteral

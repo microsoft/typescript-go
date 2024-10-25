@@ -1,0 +1,113 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /a.ts
+////[|type /*0*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 0 |}T|] = number;|]
+////[|namespace /*1*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 2 |}T|] {
+////    export type U = string;
+////}|]
+////[|/*export*/[|{| "contextRangeIndex": 4 |}export|] = /*2*/[|{| "contextRangeIndex": 4 |}T|];|]
+
+// @Filename: /b.ts
+////[|const x: import("/*3*/[|{| "contextRangeIndex": 7 |}./[|a|]|]") = 0;|]
+////[|const y: import("/*4*/[|{| "contextRangeIndex": 10 |}./[|a|]|]").U = "";|]
+
+verify'
+        Identifier: 'noErrors'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0Def'
+          BindingElement
+            Identifier: ' r0'
+          BindingElement
+            Identifier: ' r1Def'
+          BindingElement
+            Identifier: ' r1'
+          BindingElement
+            Identifier: ' r2Def'
+          BindingElement
+            Identifier: ' rExport'
+          BindingElement
+            Identifier: ' r2'
+          BindingElement
+            Identifier: ' r3Def'
+          BindingElement
+            Identifier: ' r3'
+          BindingElement
+            Identifier: ' r3b'
+          BindingElement
+            Identifier: ' r4Def'
+          BindingElement
+            Identifier: ' r4'
+          BindingElement
+            Identifier: ' r4b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      ArrayLiteralExpression
+        Identifier: 'r0'
+        Identifier: ' r1'
+        Identifier: ' r2'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' range'
+    ArrayLiteralExpression
+      Identifier: 'r3b'
+      Identifier: ' r4b'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'rangeStart'
+          Identifier: 'range'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'renameInfoSucceeded'
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          Identifier: ' range'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'renameInfoFailed'
+          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' allowRenameOfImportPath'
+              FalseKeyword

@@ -1,0 +1,3450 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' ts'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' caseInsensitiveBasePath'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' caseInsensitiveHost'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Utils'
+                Identifier: 'MockParseConfigHost'
+              Identifier: 'caseInsensitiveBasePath'
+              FalseKeyword
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' caseSensitiveBasePath'
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' caseSensitiveHost'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Utils'
+                Identifier: 'MockParseConfigHost'
+              Identifier: 'caseSensitiveBasePath'
+              TrueKeyword
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' caseInsensitiveMixedExtensionHost'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Utils'
+                Identifier: 'MockParseConfigHost'
+              Identifier: 'caseInsensitiveBasePath'
+              FalseKeyword
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' caseInsensitiveCommonFoldersHost'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Utils'
+                Identifier: 'MockParseConfigHost'
+              Identifier: 'caseInsensitiveBasePath'
+              FalseKeyword
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+      FunctionDeclaration
+        Identifier: ' assertParsed'
+        Parameter
+          Identifier: 'actual'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'ParsedCommandLine'
+        Parameter
+          Identifier: ' expected'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'ParsedCommandLine'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        assert'
+                Identifier: 'deepEqual'
+              PropertyAccessExpression
+                Identifier: 'actual'
+                Identifier: 'fileNames'
+              PropertyAccessExpression
+                Identifier: ' expected'
+                Identifier: 'fileNames'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        assert'
+                Identifier: 'deepEqual'
+              PropertyAccessExpression
+                Identifier: 'actual'
+                Identifier: 'wildcardDirectories'
+              PropertyAccessExpression
+                Identifier: ' expected'
+                Identifier: 'wildcardDirectories'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        assert'
+                Identifier: 'deepEqual'
+              PropertyAccessExpression
+                Identifier: 'actual'
+                Identifier: 'errors'
+              PropertyAccessExpression
+                Identifier: ' expected'
+                Identifier: 'errors'
+      FunctionDeclaration
+        Identifier: ' validateMatches'
+        Parameter
+          Identifier: 'expected'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'ParsedCommandLine'
+        Parameter
+          Identifier: ' json'
+          AnyKeyword
+        Parameter
+          Identifier: ' host'
+          TypeReference
+            Identifier: ' ParseConfigHost'
+        Parameter
+          Identifier: ' basePath'
+          StringKeyword
+        Parameter
+          Identifier: ' existingOptions'
+          QuestionToken
+          TypeReference
+            Identifier: ' CompilerOptions'
+        Parameter
+          Identifier: ' configFileName'
+          QuestionToken
+          StringKeyword
+        Parameter
+          Identifier: ' resolutionStack'
+          QuestionToken
+          ArrayType
+            TypeReference
+              Identifier: ' Path'
+        Block
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' jsonText'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' JSON'
+                      Identifier: 'stringify'
+                    Identifier: 'json'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' result'
+                  CallExpression
+                    Identifier: ' parseJsonText'
+                    StringLiteral
+                    Identifier: ' jsonText'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' actual'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'parseJsonSourceFileConfigFileContent'
+                    Identifier: 'result'
+                    Identifier: ' host'
+                    Identifier: ' basePath'
+                    Identifier: ' existingOptions'
+                    Identifier: ' configFileName'
+                    Identifier: ' resolutionStack'
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' error'
+              PropertyAccessExpression
+                Identifier: ' expected'
+                Identifier: 'errors'
+              Block
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'error'
+                    Identifier: 'file'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    error'
+                          Identifier: 'file'
+                        EqualsToken
+                        Identifier: ' result'
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assertParsed'
+                Identifier: 'actual'
+                Identifier: ' expected'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' actual'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'parseJsonConfigFileContent'
+                    Identifier: 'json'
+                    Identifier: ' host'
+                    Identifier: ' basePath'
+                    Identifier: ' existingOptions'
+                    Identifier: ' configFileName'
+                    Identifier: ' resolutionStack'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            expected'
+                  Identifier: 'errors'
+                EqualsToken
+                CallExpression
+                  Identifier: ' map'
+                  PropertyAccessExpression
+                    Identifier: 'expected'
+                    Identifier: 'errors'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' error'
+                    EqualsGreaterThanToken
+                    Block
+                      ReturnStatement
+                        TypeAssertionExpression
+                          TypeReference
+                            Identifier: 'Diagnostic'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    category'
+                              PropertyAccessExpression
+                                Identifier: ' error'
+                                Identifier: 'category'
+                            PropertyAssignment
+                              Identifier: '
+                    code'
+                              PropertyAccessExpression
+                                Identifier: ' error'
+                                Identifier: 'code'
+                            PropertyAssignment
+                              Identifier: '
+                    file'
+                              Identifier: ' undefined'
+                            PropertyAssignment
+                              Identifier: '
+                    length'
+                              Identifier: ' undefined'
+                            PropertyAssignment
+                              Identifier: '
+                    messageText'
+                              PropertyAccessExpression
+                                Identifier: ' error'
+                                Identifier: 'messageText'
+                            PropertyAssignment
+                              Identifier: '
+                    start'
+                              Identifier: ' undefined'
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assertParsed'
+                Identifier: 'actual'
+                Identifier: ' expected'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    describe'
+          StringLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        describe'
+                  StringLiteral
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    files'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    files'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    files'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+        describe'
+                  StringLiteral
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseSensitiveHost'
+                                  Identifier: ' caseSensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveCommonFoldersHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveCommonFoldersHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        TypeAssertionExpression
+                                          ArrayType
+                                            StringKeyword
+                                          ArrayLiteralExpression
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveCommonFoldersHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+        describe'
+                  StringLiteral
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'None'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'None'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'None'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseSensitiveHost'
+                                  Identifier: ' caseSensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    files'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveCommonFoldersHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveCommonFoldersHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        TypeAssertionExpression
+                                          ArrayType
+                                            StringKeyword
+                                          ArrayLiteralExpression
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveCommonFoldersHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    compilerOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            FalseKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            FalseKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'None'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    compilerOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'None'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'None'
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'None'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'None'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    include'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    exclude'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    compilerOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            FalseKeyword
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            FalseKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveMixedExtensionHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    compilerOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        jsx'
+                                            StringLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            FalseKeyword
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        jsx'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'JsxEmit'
+                                              Identifier: 'Preserve'
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            FalseKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveMixedExtensionHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    compilerOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        jsx'
+                                            StringLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            FalseKeyword
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        jsx'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'JsxEmit'
+                                              Identifier: 'ReactNative'
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            FalseKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' actual'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'parseJsonConfigFileContent'
+                                      Identifier: 'json'
+                                      Identifier: ' caseInsensitiveMixedExtensionHost'
+                                      Identifier: ' caseInsensitiveBasePath'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'deepEqual'
+                                  PropertyAccessExpression
+                                    Identifier: 'actual'
+                                    Identifier: 'fileNames'
+                                  PropertyAccessExpression
+                                    Identifier: ' expected'
+                                    Identifier: 'fileNames'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'deepEqual'
+                                  PropertyAccessExpression
+                                    Identifier: 'actual'
+                                    Identifier: 'wildcardDirectories'
+                                  PropertyAccessExpression
+                                    Identifier: ' expected'
+                                    Identifier: 'wildcardDirectories'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'deepEqual'
+                                  PropertyAccessExpression
+                                    Identifier: 'actual'
+                                    Identifier: 'errors'
+                                  PropertyAccessExpression
+                                    Identifier: ' expected'
+                                    Identifier: 'errors'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    compilerOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            TrueKeyword
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveMixedExtensionHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    compilerOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        jsx'
+                                            StringLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            TrueKeyword
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        jsx'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'JsxEmit'
+                                              Identifier: 'Preserve'
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                validateMatches'
+                                  Identifier: 'expected'
+                                  Identifier: ' json'
+                                  Identifier: ' caseInsensitiveMixedExtensionHost'
+                                  Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' json'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    compilerOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        jsx'
+                                            StringLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            TrueKeyword
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' expected'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParsedCommandLine'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    options'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        jsx'
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'JsxEmit'
+                                              Identifier: 'ReactNative'
+                                          PropertyAssignment
+                                            Identifier: '
+                        allowJs'
+                                            TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    errors'
+                                        ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileNames'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                          StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    wildcardDirectories'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' ts'
+                                                Identifier: 'WatchDirectoryFlags'
+                                              Identifier: 'Recursive'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' actual'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'parseJsonConfigFileContent'
+                                      Identifier: 'json'
+                                      Identifier: ' caseInsensitiveMixedExtensionHost'
+                                      Identifier: ' caseInsensitiveBasePath'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'deepEqual'
+                                  PropertyAccessExpression
+                                    Identifier: 'actual'
+                                    Identifier: 'fileNames'
+                                  PropertyAccessExpression
+                                    Identifier: ' expected'
+                                    Identifier: 'fileNames'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'deepEqual'
+                                  PropertyAccessExpression
+                                    Identifier: 'actual'
+                                    Identifier: 'wildcardDirectories'
+                                  PropertyAccessExpression
+                                    Identifier: ' expected'
+                                    Identifier: 'wildcardDirectories'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'deepEqual'
+                                  PropertyAccessExpression
+                                    Identifier: 'actual'
+                                    Identifier: 'errors'
+                                  PropertyAccessExpression
+                                    Identifier: ' expected'
+                                    Identifier: 'errors'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            describe'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                it'
+                                  StringLiteral
+                                  ArrowFunction
+                                    EqualsGreaterThanToken
+                                    Block
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' json'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        include'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' expected'
+                                            TypeReference
+                                              QualifiedName
+                                                Identifier: ' ts'
+                                                Identifier: 'ParsedCommandLine'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        options'
+                                                ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        errors'
+                                                ArrayLiteralExpression
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: '
+                            ts'
+                                                      Identifier: 'createCompilerDiagnostic'
+                                                    PropertyAccessExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: 'ts'
+                                                        Identifier: 'Diagnostics'
+                                                      Identifier: 'File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0'
+                                                    StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        fileNames'
+                                                ArrayLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        wildcardDirectories'
+                                                ObjectLiteralExpression
+                                      ExpressionStatement
+                                        CallExpression
+                                          Identifier: '
+                    validateMatches'
+                                          Identifier: 'expected'
+                                          Identifier: ' json'
+                                          Identifier: ' caseInsensitiveHost'
+                                          Identifier: ' caseInsensitiveBasePath'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                it'
+                                  StringLiteral
+                                  ArrowFunction
+                                    EqualsGreaterThanToken
+                                    Block
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' json'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        include'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        exclude'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' expected'
+                                            TypeReference
+                                              QualifiedName
+                                                Identifier: ' ts'
+                                                Identifier: 'ParsedCommandLine'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        options'
+                                                ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        errors'
+                                                ArrayLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        fileNames'
+                                                ArrayLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        wildcardDirectories'
+                                                ObjectLiteralExpression
+                                      ExpressionStatement
+                                        CallExpression
+                                          Identifier: '
+                    validateMatches'
+                                          Identifier: 'expected'
+                                          Identifier: ' json'
+                                          Identifier: ' caseInsensitiveHost'
+                                          Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            describe'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                it'
+                                  StringLiteral
+                                  ArrowFunction
+                                    EqualsGreaterThanToken
+                                    Block
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' json'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        include'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' expected'
+                                            TypeReference
+                                              QualifiedName
+                                                Identifier: ' ts'
+                                                Identifier: 'ParsedCommandLine'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        options'
+                                                ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        errors'
+                                                ArrayLiteralExpression
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: '
+                            ts'
+                                                      Identifier: 'createCompilerDiagnostic'
+                                                    PropertyAccessExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: 'ts'
+                                                        Identifier: 'Diagnostics'
+                                                      Identifier: 'File_specification_cannot_contain_multiple_recursive_directory_wildcards_Asterisk_Asterisk_Colon_0'
+                                                    StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        fileNames'
+                                                ArrayLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        wildcardDirectories'
+                                                ObjectLiteralExpression
+                                      ExpressionStatement
+                                        CallExpression
+                                          Identifier: '
+                    validateMatches'
+                                          Identifier: 'expected'
+                                          Identifier: ' json'
+                                          Identifier: ' caseInsensitiveHost'
+                                          Identifier: ' caseInsensitiveBasePath'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                it'
+                                  StringLiteral
+                                  ArrowFunction
+                                    EqualsGreaterThanToken
+                                    Block
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' json'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        include'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        exclude'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' expected'
+                                            TypeReference
+                                              QualifiedName
+                                                Identifier: ' ts'
+                                                Identifier: 'ParsedCommandLine'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        options'
+                                                ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        errors'
+                                                ArrayLiteralExpression
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: '
+                            ts'
+                                                      Identifier: 'createCompilerDiagnostic'
+                                                    PropertyAccessExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: 'ts'
+                                                        Identifier: 'Diagnostics'
+                                                      Identifier: 'File_specification_cannot_contain_multiple_recursive_directory_wildcards_Asterisk_Asterisk_Colon_0'
+                                                    StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        fileNames'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                                  StringLiteral
+                                                  StringLiteral
+                                                  StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        wildcardDirectories'
+                                                ObjectLiteralExpression
+                                                  PropertyAssignment
+                                                    StringLiteral
+                                                    PropertyAccessExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: ' ts'
+                                                        Identifier: 'WatchDirectoryFlags'
+                                                      Identifier: 'Recursive'
+                                      ExpressionStatement
+                                        CallExpression
+                                          Identifier: '
+                    validateMatches'
+                                          Identifier: 'expected'
+                                          Identifier: ' json'
+                                          Identifier: ' caseInsensitiveHost'
+                                          Identifier: ' caseInsensitiveBasePath'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+
+            describe'
+                          StringLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                it'
+                                  StringLiteral
+                                  ArrowFunction
+                                    EqualsGreaterThanToken
+                                    Block
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' json'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        include'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' expected'
+                                            TypeReference
+                                              QualifiedName
+                                                Identifier: ' ts'
+                                                Identifier: 'ParsedCommandLine'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        options'
+                                                ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        errors'
+                                                ArrayLiteralExpression
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: '
+                            ts'
+                                                      Identifier: 'createCompilerDiagnostic'
+                                                    PropertyAccessExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: 'ts'
+                                                        Identifier: 'Diagnostics'
+                                                      Identifier: 'File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0'
+                                                    StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        fileNames'
+                                                ArrayLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        wildcardDirectories'
+                                                ObjectLiteralExpression
+                                      ExpressionStatement
+                                        CallExpression
+                                          Identifier: '
+                    validateMatches'
+                                          Identifier: 'expected'
+                                          Identifier: ' json'
+                                          Identifier: ' caseInsensitiveHost'
+                                          Identifier: ' caseInsensitiveBasePath'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+
+                it'
+                                  StringLiteral
+                                  ArrowFunction
+                                    EqualsGreaterThanToken
+                                    Block
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' json'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        include'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' expected'
+                                            TypeReference
+                                              QualifiedName
+                                                Identifier: ' ts'
+                                                Identifier: 'ParsedCommandLine'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        options'
+                                                ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        errors'
+                                                ArrayLiteralExpression
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: '
+                            ts'
+                                                      Identifier: 'createCompilerDiagnostic'
+                                                    PropertyAccessExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: 'ts'
+                                                        Identifier: 'Diagnostics'
+                                                      Identifier: 'File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0'
+                                                    StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        fileNames'
+                                                ArrayLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        wildcardDirectories'
+                                                ObjectLiteralExpression
+                                      ExpressionStatement
+                                        CallExpression
+                                          Identifier: '
+                    validateMatches'
+                                          Identifier: 'expected'
+                                          Identifier: ' json'
+                                          Identifier: ' caseInsensitiveHost'
+                                          Identifier: ' caseInsensitiveBasePath'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+
+                it'
+                                  StringLiteral
+                                  ArrowFunction
+                                    EqualsGreaterThanToken
+                                    Block
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' json'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        include'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        exclude'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' expected'
+                                            TypeReference
+                                              QualifiedName
+                                                Identifier: ' ts'
+                                                Identifier: 'ParsedCommandLine'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        options'
+                                                ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        errors'
+                                                ArrayLiteralExpression
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: '
+                            ts'
+                                                      Identifier: 'createCompilerDiagnostic'
+                                                    PropertyAccessExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: 'ts'
+                                                        Identifier: 'Diagnostics'
+                                                      Identifier: 'File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0'
+                                                    StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        fileNames'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                                  StringLiteral
+                                                  StringLiteral
+                                                  StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        wildcardDirectories'
+                                                ObjectLiteralExpression
+                                                  PropertyAssignment
+                                                    StringLiteral
+                                                    PropertyAccessExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: ' ts'
+                                                        Identifier: 'WatchDirectoryFlags'
+                                                      Identifier: 'Recursive'
+                                      ExpressionStatement
+                                        CallExpression
+                                          Identifier: '
+                    validateMatches'
+                                          Identifier: 'expected'
+                                          Identifier: ' json'
+                                          Identifier: ' caseInsensitiveHost'
+                                          Identifier: ' caseInsensitiveBasePath'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+
+                it'
+                                  StringLiteral
+                                  ArrowFunction
+                                    EqualsGreaterThanToken
+                                    Block
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' json'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        include'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        exclude'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                      VariableStatement
+                                        VariableDeclarationList
+                                          VariableDeclaration
+                                            Identifier: ' expected'
+                                            TypeReference
+                                              QualifiedName
+                                                Identifier: ' ts'
+                                                Identifier: 'ParsedCommandLine'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        options'
+                                                ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                        errors'
+                                                ArrayLiteralExpression
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: '
+                            ts'
+                                                      Identifier: 'createCompilerDiagnostic'
+                                                    PropertyAccessExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: 'ts'
+                                                        Identifier: 'Diagnostics'
+                                                      Identifier: 'File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0'
+                                                    StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        fileNames'
+                                                ArrayLiteralExpression
+                                                  StringLiteral
+                                                  StringLiteral
+                                                  StringLiteral
+                                                  StringLiteral
+                                              PropertyAssignment
+                                                Identifier: '
+                        wildcardDirectories'
+                                                ObjectLiteralExpression
+                                                  PropertyAssignment
+                                                    StringLiteral
+                                                    PropertyAccessExpression
+                                                      PropertyAccessExpression
+                                                        Identifier: ' ts'
+                                                        Identifier: 'WatchDirectoryFlags'
+                                                      Identifier: 'Recursive'
+                                      ExpressionStatement
+                                        CallExpression
+                                          Identifier: '
+                    validateMatches'
+                                          Identifier: 'expected'
+                                          Identifier: ' json'
+                                          Identifier: ' caseInsensitiveHost'
+                                          Identifier: ' caseInsensitiveBasePath'

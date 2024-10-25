@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' kind'
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' kind'
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    NumberKeyword
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'value'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              NumericLiteral
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              NumericLiteral

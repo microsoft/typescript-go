@@ -1,0 +1,10 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        ClassExpression
+          PropertyDeclaration
+            ConstKeyword
+            Identifier: ' a'
+            NumericLiteral

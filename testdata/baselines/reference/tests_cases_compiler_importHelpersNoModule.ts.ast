@@ -1,0 +1,55 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' x'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Decorator
+          Identifier: 'dec'
+        Identifier: ' x'
+        NumberKeyword
+      Block

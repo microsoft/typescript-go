@@ -1,0 +1,85 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumberKeyword
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: ' fetch'
+                      StringLiteral
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'i'
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      Identifier: ' i'
+                      Identifier: 'ok'
+                Identifier: 'then'
+              ArrowFunction
+                Parameter
+                  Identifier: 'res'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  Identifier: ' i'
+                  PlusToken
+                  NumericLiteral
+            Identifier: 'catch'
+          ArrowFunction
+            Parameter
+              Identifier: 'err'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' i'
+              MinusToken
+              NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumberKeyword
+      TryStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i_1'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' fetch'
+                    StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' res'
+                PropertyAccessExpression
+                  Identifier: ' i_1'
+                  Identifier: 'ok'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' i'
+              PlusToken
+              NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'err'
+          Block
+            ReturnStatement
+              BinaryExpression
+                Identifier: ' i'
+                MinusToken
+                NumericLiteral

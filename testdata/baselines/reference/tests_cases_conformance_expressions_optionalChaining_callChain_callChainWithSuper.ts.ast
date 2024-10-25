@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' method'
+      QuestionToken
+      Block
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    method1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'method'
+            QuestionDotToken
+    MethodDeclaration
+      Identifier: '
+    method2'
+      Block
+        ReturnStatement
+          CallExpression
+            ElementAccessExpression
+              SuperKeyword
+              StringLiteral
+            QuestionDotToken

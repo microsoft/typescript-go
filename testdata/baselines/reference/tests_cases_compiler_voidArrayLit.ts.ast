@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' va'
+        ArrayLiteralExpression
+          CallExpression
+            ParenthesizedExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      CallExpression
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block

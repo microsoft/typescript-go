@@ -1,0 +1,156 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooShort'
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        a'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        b'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        c'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        d'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        e'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooLong'
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        a'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        b'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        c'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        d'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        e'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        f'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        g'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        h'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        i'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+        j'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                      NumericLiteral

@@ -1,0 +1,17 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '/// <reference path='fourslash.ts' />
+
+// @noUnusedLocals: true
+// @noUnusedParameters: true
+
+////function g(a, b) { b; }
+////g(1, 2);
+
+verify'
+          Identifier: 'not'
+        Identifier: 'codeFixAvailable'
+      StringLiteral

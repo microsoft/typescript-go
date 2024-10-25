@@ -1,0 +1,62 @@
+SourceFile
+  ExpressionStatement
+    Identifier: '// @noImplicitReferences: true
+// @currentDirectory: /
+// This tests that importing from a JS file globally works in an untyped way.
+// (Assuming we don't have `--noImplicitAny` or `--allowJs`.)
+
+// @filename: /node_modules/foo/index.js
+This'
+  ExpressionStatement
+    Identifier: ' file'
+  ExpressionStatement
+    Identifier: ' is'
+  ExpressionStatement
+    Identifier: ' not'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' processed'
+        Identifier: '
+
+// @filename: /a.ts
+import'
+      AsteriskToken
+      Identifier: ' as'
+  ExpressionStatement
+    Identifier: ' foo'
+  ExpressionStatement
+    Identifier: ' from'
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'bar'
+  ImportEqualsDeclaration
+    Identifier: ' foo'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' foo'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' bar'
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      CallExpression
+        Identifier: 'bar'

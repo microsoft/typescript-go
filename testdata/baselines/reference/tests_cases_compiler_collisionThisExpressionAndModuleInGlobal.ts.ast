@@ -1,0 +1,13 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' _this'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ThisKeyword

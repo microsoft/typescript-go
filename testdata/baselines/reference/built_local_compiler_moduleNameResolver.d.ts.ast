@@ -1,0 +1,1700 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CommandLineOption'
+        ImportSpecifier
+          Identifier: ' Comparison'
+        ImportSpecifier
+          Identifier: ' CompilerHost'
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' DiagnosticMessage'
+        ImportSpecifier
+          Identifier: ' DiagnosticReporter'
+        ImportSpecifier
+          Identifier: ' GetEffectiveTypeRootsHost'
+        ImportSpecifier
+          Identifier: ' MapLike'
+        ImportSpecifier
+          Identifier: ' ModuleResolutionHost'
+        ImportSpecifier
+          Identifier: ' ModuleSpecifierResolutionHost'
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' ResolutionMode'
+        ImportSpecifier
+          Identifier: ' ResolvedModuleWithFailedLookupLocations'
+        ImportSpecifier
+          Identifier: ' ResolvedProjectReference'
+        ImportSpecifier
+          Identifier: ' ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' trace'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' message'
+      TypeReference
+        Identifier: ' DiagnosticMessage'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isTraceEnabled'
+    Parameter
+      Identifier: 'compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' updateResolutionField'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'to'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' value'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+        UndefinedKeyword
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+      UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ModuleResolutionState'
+    PropertySignature
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    PropertySignature
+      Identifier: '
+    compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    PropertySignature
+      Identifier: '
+    traceEnabled'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    failedLookupLocations'
+      UnionType
+        ArrayType
+          StringKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    affectingLocations'
+      UnionType
+        ArrayType
+          StringKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    resultFromCache'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolvedModuleWithFailedLookupLocations'
+    PropertySignature
+      Identifier: '
+    packageJsonInfoCache'
+      UnionType
+        TypeReference
+          Identifier: ' PackageJsonInfoCache'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    features'
+      TypeReference
+        Identifier: ' NodeResolutionFeatures'
+    PropertySignature
+      Identifier: '
+    conditions'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    requestContainingDirectory'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    reportDiagnostic'
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    PropertySignature
+      Identifier: '
+    isConfigLookup'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    candidateIsFromPackageJsonField'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    resolvedPackageDirectory'
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PackageJsonPathFields'
+    PropertySignature
+      Identifier: '
+    typings'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    types'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    typesVersions'
+      QuestionToken
+      TypeReference
+        Identifier: ' MapLike'
+        TypeReference
+          Identifier: 'MapLike'
+          ArrayType
+            StringKeyword
+    PropertySignature
+      Identifier: '
+    main'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    tsconfig'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    type'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    imports'
+      QuestionToken
+      ObjectKeyword
+    PropertySignature
+      Identifier: '
+    exports'
+      QuestionToken
+      ObjectKeyword
+    PropertySignature
+      Identifier: '
+    name'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    dependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' MapLike'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    peerDependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' MapLike'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    optionalDependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' MapLike'
+        StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' VersionPaths'
+    PropertySignature
+      Identifier: '
+    version'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    paths'
+      TypeReference
+        Identifier: ' MapLike'
+        ArrayType
+          StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getPackageJsonTypesVersionsPaths'
+    Parameter
+      Identifier: 'typesVersions'
+      TypeReference
+        Identifier: ' MapLike'
+        TypeReference
+          Identifier: 'MapLike'
+          ArrayType
+            StringKeyword
+    UnionType
+      TypeReference
+        Identifier: ' VersionPaths'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getEffectiveTypeRoots'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' GetEffectiveTypeRootsHost'
+    UnionType
+      ArrayType
+        StringKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' resolveTypeReferenceDirective'
+    Parameter
+      Identifier: 'typeReferenceDirectiveName'
+      StringKeyword
+    Parameter
+      Identifier: ' containingFile'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' redirectedReference'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolvedProjectReference'
+    Parameter
+      Identifier: ' cache'
+      QuestionToken
+      TypeReference
+        Identifier: ' TypeReferenceDirectiveResolutionCache'
+    Parameter
+      Identifier: ' resolutionMode'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolutionMode'
+    TypeReference
+      Identifier: ' ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getConditions'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' resolutionMode'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolutionMode'
+    ArrayType
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' resolvePackageNameToPackageJson'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    Parameter
+      Identifier: ' containingDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' cache'
+      UnionType
+        TypeReference
+          Identifier: ' ModuleResolutionCache'
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' PackageJsonInfo'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getAutomaticTypeDirectiveNames'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    ArrayType
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TypeReferenceDirectiveResolutionCache'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' PerDirectoryResolutionCache'
+        TypeReference
+          Identifier: 'ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+      ExpressionWithTypeArguments
+        Identifier: ' NonRelativeNameResolutionCache'
+        TypeReference
+          Identifier: 'ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+      ExpressionWithTypeArguments
+        Identifier: ' PackageJsonInfoCache'
+    MethodSignature
+      Identifier: '
+    /** @internal */ clearAllExceptPackageJsonInfoCache'
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ModeAwareCache'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    get'
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      Parameter
+        Identifier: ' mode'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    set'
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      Parameter
+        Identifier: ' mode'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' T'
+      ThisType
+    MethodSignature
+      Identifier: '
+    delete'
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      Parameter
+        Identifier: ' mode'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      ThisType
+    MethodSignature
+      Identifier: '
+    has'
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      Parameter
+        Identifier: ' mode'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    forEach'
+      Parameter
+        Identifier: 'cb'
+        FunctionType
+          Parameter
+            Identifier: 'elem'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' key'
+            StringKeyword
+          Parameter
+            Identifier: ' mode'
+            TypeReference
+              Identifier: ' ResolutionMode'
+          VoidKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    size'
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PerDirectoryResolutionCache'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    getFromDirectoryCache'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Parameter
+        Identifier: ' mode'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      Parameter
+        Identifier: ' directoryName'
+        StringKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getOrCreateCacheForDirectory'
+      Parameter
+        Identifier: 'directoryName'
+        StringKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        QuestionToken
+        TypeReference
+          Identifier: ' ResolvedProjectReference'
+      TypeReference
+        Identifier: ' ModeAwareCache'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    clear'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     *  Updates with the current compilerOptions the cache will operate with.
+     *  This updates the redirects map as well if needed so module resolutions are cached if they can across the projects
+     */
+    update'
+      Parameter
+        Identifier: 'options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ directoryToModuleNameMap'
+      TypeReference
+        Identifier: ' CacheWithRedirects'
+        TypeReference
+          Identifier: 'Path'
+        TypeReference
+          Identifier: ' ModeAwareCache'
+          TypeReference
+            Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    /** @internal */ isReadonly'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' NonRelativeNameResolutionCache'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    getFromNonRelativeNameCache'
+      Parameter
+        Identifier: 'nonRelativeName'
+        StringKeyword
+      Parameter
+        Identifier: ' mode'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      Parameter
+        Identifier: ' directoryName'
+        StringKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getOrCreateCacheForNonRelativeName'
+      Parameter
+        Identifier: 'nonRelativeName'
+        StringKeyword
+      Parameter
+        Identifier: ' mode'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      Parameter
+        Identifier: ' redirectedReference'
+        QuestionToken
+        TypeReference
+          Identifier: ' ResolvedProjectReference'
+      TypeReference
+        Identifier: ' PerNonRelativeNameCache'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    clear'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     *  Updates with the current compilerOptions the cache will operate with.
+     *  This updates the redirects map as well if needed so module resolutions are cached if they can across the projects
+     */
+    update'
+      Parameter
+        Identifier: 'options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ isReadonly'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PerNonRelativeNameCache'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    get'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    set'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      Parameter
+        Identifier: ' result'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ isReadonly'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ModuleResolutionCache'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' PerDirectoryResolutionCache'
+        TypeReference
+          Identifier: 'ResolvedModuleWithFailedLookupLocations'
+      ExpressionWithTypeArguments
+        Identifier: ' NonRelativeModuleNameResolutionCache'
+      ExpressionWithTypeArguments
+        Identifier: ' PackageJsonInfoCache'
+    MethodSignature
+      Identifier: '
+    getPackageJsonInfoCache'
+      TypeReference
+        Identifier: ' PackageJsonInfoCache'
+    MethodSignature
+      Identifier: '
+    /** @internal */ clearAllExceptPackageJsonInfoCache'
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ optionsToRedirectsKey'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'CompilerOptions'
+        TypeReference
+          Identifier: ' RedirectsCacheKey'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' NonRelativeModuleNameResolutionCache'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' NonRelativeNameResolutionCache'
+        TypeReference
+          Identifier: 'ResolvedModuleWithFailedLookupLocations'
+      ExpressionWithTypeArguments
+        Identifier: ' PackageJsonInfoCache'
+    MethodSignature
+      Identifier: '
+    /** @deprecated Use getOrCreateCacheForNonRelativeName */
+    getOrCreateCacheForModuleName'
+      Parameter
+        Identifier: 'nonRelativeModuleName'
+        StringKeyword
+      Parameter
+        Identifier: ' mode'
+        TypeReference
+          Identifier: ' ResolutionMode'
+      Parameter
+        Identifier: ' redirectedReference'
+        QuestionToken
+        TypeReference
+          Identifier: ' ResolvedProjectReference'
+      TypeReference
+        Identifier: ' PerModuleNameCache'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' MissingPackageJsonInfo'
+    PropertySignature
+      Identifier: '
+    packageDirectory'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    directoryExists'
+      BooleanKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PackageJsonInfoCacheEntry'
+    UnionType
+      TypeReference
+        Identifier: ' PackageJsonInfo'
+      TypeReference
+        Identifier: ' MissingPackageJsonInfo'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isPackageJsonInfo'
+    Parameter
+      Identifier: 'entry'
+      UnionType
+        TypeReference
+          Identifier: ' PackageJsonInfoCacheEntry'
+        UndefinedKeyword
+    TypePredicate
+      Identifier: ' entry'
+      TypeReference
+        Identifier: ' PackageJsonInfo'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isMissingPackageJsonInfo'
+    Parameter
+      Identifier: 'entry'
+      UnionType
+        TypeReference
+          Identifier: ' PackageJsonInfoCacheEntry'
+        UndefinedKeyword
+    TypePredicate
+      Identifier: ' entry'
+      TypeReference
+        Identifier: ' MissingPackageJsonInfo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PackageJsonInfoCache'
+    MethodSignature
+      Identifier: '
+    /** @internal */ getPackageJsonInfo'
+      Parameter
+        Identifier: 'packageJsonPath'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' PackageJsonInfoCacheEntry'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ setPackageJsonInfo'
+      Parameter
+        Identifier: 'packageJsonPath'
+        StringKeyword
+      Parameter
+        Identifier: ' info'
+        TypeReference
+          Identifier: ' PackageJsonInfoCacheEntry'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getInternalMap'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Path'
+          TypeReference
+            Identifier: ' PackageJsonInfoCacheEntry'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    clear'
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ isReadonly'
+      QuestionToken
+      BooleanKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PerModuleNameCache'
+    TypeReference
+      Identifier: ' PerNonRelativeNameCache'
+      TypeReference
+        Identifier: 'ResolvedModuleWithFailedLookupLocations'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getKeyForCompilerOptions'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' affectingOptionDeclarations'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' CommandLineOption'
+    StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CacheWithRedirects'
+    TypeParameter
+      Identifier: 'K'
+    TypeParameter
+      Identifier: ' V'
+    MethodSignature
+      Identifier: '
+    getMapOfCacheRedirects'
+      Parameter
+        Identifier: 'redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'K'
+          TypeReference
+            Identifier: ' V'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getOrCreateMapOfCacheRedirects'
+      Parameter
+        Identifier: 'redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'K'
+        TypeReference
+          Identifier: ' V'
+    MethodSignature
+      Identifier: '
+    update'
+      Parameter
+        Identifier: 'newOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    clear'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getOwnMap'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'K'
+        TypeReference
+          Identifier: ' V'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RedirectsCacheKey'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    __compilerOptionsKey'
+          AnyKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ModeAwareCacheKey'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    __modeAwareCacheKey'
+          AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createModeAwareCacheKey'
+    Parameter
+      Identifier: 'specifier'
+      StringKeyword
+    Parameter
+      Identifier: ' mode'
+      TypeReference
+        Identifier: ' ResolutionMode'
+    TypeReference
+      Identifier: ' ModeAwareCacheKey'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createModeAwareCache'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' ModeAwareCache'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createModuleResolutionCache'
+    Parameter
+      Identifier: 'currentDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        StringKeyword
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' packageJsonInfoCache'
+      QuestionToken
+      TypeReference
+        Identifier: ' PackageJsonInfoCache'
+    TypeReference
+      Identifier: ' ModuleResolutionCache'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createModuleResolutionCache'
+    Parameter
+      Identifier: 'currentDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        StringKeyword
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' packageJsonInfoCache'
+      QuestionToken
+      TypeReference
+        Identifier: ' PackageJsonInfoCache'
+    Parameter
+      Identifier: ' optionsToRedirectsKey'
+      QuestionToken
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'CompilerOptions'
+        TypeReference
+          Identifier: ' RedirectsCacheKey'
+    TypeReference
+      Identifier: ' ModuleResolutionCache'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createTypeReferenceDirectiveResolutionCache'
+    Parameter
+      Identifier: 'currentDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        StringKeyword
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' packageJsonInfoCache'
+      QuestionToken
+      TypeReference
+        Identifier: ' PackageJsonInfoCache'
+    TypeReference
+      Identifier: ' TypeReferenceDirectiveResolutionCache'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createTypeReferenceDirectiveResolutionCache'
+    Parameter
+      Identifier: 'currentDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        StringKeyword
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' packageJsonInfoCache'
+      QuestionToken
+      TypeReference
+        Identifier: ' PackageJsonInfoCache'
+    Parameter
+      Identifier: ' optionsToRedirectsKey'
+      QuestionToken
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'CompilerOptions'
+        TypeReference
+          Identifier: ' RedirectsCacheKey'
+    TypeReference
+      Identifier: ' TypeReferenceDirectiveResolutionCache'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getOptionsForLibraryResolution'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    TypeReference
+      Identifier: ' CompilerOptions'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' resolveLibrary'
+    Parameter
+      Identifier: 'libraryName'
+      StringKeyword
+    Parameter
+      Identifier: ' resolveFrom'
+      StringKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' cache'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleResolutionCache'
+    TypeReference
+      Identifier: ' ResolvedModuleWithFailedLookupLocations'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' resolveModuleNameFromCache'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    Parameter
+      Identifier: ' containingFile'
+      StringKeyword
+    Parameter
+      Identifier: ' cache'
+      TypeReference
+        Identifier: ' ModuleResolutionCache'
+    Parameter
+      Identifier: ' mode'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolutionMode'
+    UnionType
+      TypeReference
+        Identifier: ' ResolvedModuleWithFailedLookupLocations'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' resolveModuleName'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    Parameter
+      Identifier: ' containingFile'
+      StringKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' cache'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleResolutionCache'
+    Parameter
+      Identifier: ' redirectedReference'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolvedProjectReference'
+    Parameter
+      Identifier: ' resolutionMode'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolutionMode'
+    TypeReference
+      Identifier: ' ResolvedModuleWithFailedLookupLocations'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' resolveJSModule'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    Parameter
+      Identifier: ' initialDir'
+      StringKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    StringKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' NodeResolutionFeatures'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Imports'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    SelfName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Exports'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ExportsPatternTrailers'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    AllFeatures'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Node16Default'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NodeNextDefault'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BundlerDefault'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    EsmMode'
+      NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' bundlerModuleNameResolver'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    Parameter
+      Identifier: ' containingFile'
+      StringKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' cache'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleResolutionCache'
+    Parameter
+      Identifier: ' redirectedReference'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolvedProjectReference'
+    TypeReference
+      Identifier: ' ResolvedModuleWithFailedLookupLocations'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' bundlerModuleNameResolver'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    Parameter
+      Identifier: ' containingFile'
+      StringKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' cache'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleResolutionCache'
+    Parameter
+      Identifier: ' redirectedReference'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolvedProjectReference'
+    Parameter
+      Identifier: ' conditions'
+      QuestionToken
+      ArrayType
+        StringKeyword
+    TypeReference
+      Identifier: ' ResolvedModuleWithFailedLookupLocations'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' nodeModuleNameResolver'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    Parameter
+      Identifier: ' containingFile'
+      StringKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' cache'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleResolutionCache'
+    Parameter
+      Identifier: ' redirectedReference'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolvedProjectReference'
+    TypeReference
+      Identifier: ' ResolvedModuleWithFailedLookupLocations'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' nodeModuleNameResolver'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    Parameter
+      Identifier: ' containingFile'
+      StringKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' cache'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleResolutionCache'
+    Parameter
+      Identifier: ' redirectedReference'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolvedProjectReference'
+    Parameter
+      Identifier: ' conditions'
+      QuestionToken
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' lookupConfig'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' ResolvedModuleWithFailedLookupLocations'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' nodeNextJsonConfigResolver'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    Parameter
+      Identifier: ' containingFile'
+      StringKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    TypeReference
+      Identifier: ' ResolvedModuleWithFailedLookupLocations'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nodeModulesPathPart'
+        StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' pathContainsNodeModules'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' parseNodeModuleFromPath'
+    Parameter
+      Identifier: 'resolved'
+      StringKeyword
+    Parameter
+      Identifier: ' isFolder'
+      QuestionToken
+      BooleanKeyword
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' GetPackageJsonEntrypointsHost'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ModuleResolutionHost'
+    PropertySignature
+      Identifier: '
+    readDirectory'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' CompilerHost'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getEntrypointsFromPackageJsonInfo'
+    Parameter
+      Identifier: 'packageJsonInfo'
+      TypeReference
+        Identifier: ' PackageJsonInfo'
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' GetPackageJsonEntrypointsHost'
+    Parameter
+      Identifier: ' cache'
+      UnionType
+        TypeReference
+          Identifier: ' ModuleResolutionCache'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' resolveJs'
+      QuestionToken
+      BooleanKeyword
+    UnionType
+      ArrayType
+        StringKeyword
+      LiteralType
+        FalseKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getTemporaryModuleResolutionState'
+    Parameter
+      Identifier: 'packageJsonInfoCache'
+      UnionType
+        TypeReference
+          Identifier: ' PackageJsonInfoCache'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    TypeReference
+      Identifier: ' ModuleResolutionState'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PackageJsonInfo'
+    PropertySignature
+      Identifier: '
+    packageDirectory'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    contents'
+      TypeReference
+        Identifier: ' PackageJsonInfoContents'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PackageJsonInfoContents'
+    PropertySignature
+      Identifier: '
+    packageJsonContent'
+      TypeReference
+        Identifier: ' PackageJsonPathFields'
+    PropertySignature
+      Identifier: '
+    /** false: versionPaths are not present. undefined: not yet resolved */
+    versionPaths'
+      UnionType
+        TypeReference
+          Identifier: ' VersionPaths'
+        LiteralType
+          FalseKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    /** false: resolved to nothing. undefined: not yet resolved */
+    resolvedEntrypoints'
+      UnionType
+        ArrayType
+          StringKeyword
+        LiteralType
+          FalseKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    /** false: peerDependencies are not present. undefined: not yet resolved */
+    peerDependencies'
+      UnionType
+        StringKeyword
+        LiteralType
+          FalseKeyword
+        UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getPackageScopeForPath'
+    Parameter
+      Identifier: 'directory'
+      StringKeyword
+    Parameter
+      Identifier: ' state'
+      TypeReference
+        Identifier: ' ModuleResolutionState'
+    UnionType
+      TypeReference
+        Identifier: ' PackageJsonInfo'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' parsePackageName'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    packageName'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    rest'
+        StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' allKeysStartWithDot'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' MapLike'
+        UnknownKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' comparePatternKeys'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    TypeReference
+      Identifier: ' Comparison'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isApplicableVersionedTypesKey'
+    Parameter
+      Identifier: 'conditions'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: ' key'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachAncestorDirectoryStoppingAtGlobalCache'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' P'
+      StringKeyword
+    Parameter
+      Identifier: 'host'
+      UnionType
+        TypeReference
+          Identifier: ' ModuleResolutionHost'
+        TypeReference
+          Identifier: ' ModuleSpecifierResolutionHost'
+    Parameter
+      Identifier: ' directory'
+      TypeReference
+        Identifier: ' P'
+    Parameter
+      Identifier: ' callback'
+      FunctionType
+        Parameter
+          Identifier: 'directory'
+          TypeReference
+            Identifier: ' P'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getTypesPackageName'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' mangleScopedPackageName'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getPackageNameFromTypesPackageName'
+    Parameter
+      Identifier: 'mangledName'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' unmangleScopedPackageName'
+    Parameter
+      Identifier: 'typesPackageName'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' classicNameResolver'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    Parameter
+      Identifier: ' containingFile'
+      StringKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' cache'
+      QuestionToken
+      TypeReference
+        Identifier: ' NonRelativeModuleNameResolutionCache'
+    Parameter
+      Identifier: ' redirectedReference'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolvedProjectReference'
+    TypeReference
+      Identifier: ' ResolvedModuleWithFailedLookupLocations'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' shouldAllowImportingTsExtension'
+    Parameter
+      Identifier: 'compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' fromFileName'
+      QuestionToken
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' loadModuleFromGlobalCache'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    Parameter
+      Identifier: ' projectName'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' ModuleResolutionHost'
+    Parameter
+      Identifier: ' globalCache'
+      StringKeyword
+    Parameter
+      Identifier: ' packageJsonInfoCache'
+      TypeReference
+        Identifier: ' PackageJsonInfoCache'
+    TypeReference
+      Identifier: ' ResolvedModuleWithFailedLookupLocations'

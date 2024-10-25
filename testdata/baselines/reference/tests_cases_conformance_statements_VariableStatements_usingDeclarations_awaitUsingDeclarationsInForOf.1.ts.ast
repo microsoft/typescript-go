@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' main'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d1'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            MethodDeclaration
+              AsyncKeyword
+              ComputedPropertyName
+                PropertyAccessExpression
+                  Identifier: 'Symbol'
+                  Identifier: 'asyncDispose'
+              Block
+          ObjectLiteralExpression
+            MethodDeclaration
+              ComputedPropertyName
+                PropertyAccessExpression
+                  Identifier: 'Symbol'
+                  Identifier: 'dispose'
+              Block
+          NullKeyword
+          Identifier: ' undefined'
+        Block

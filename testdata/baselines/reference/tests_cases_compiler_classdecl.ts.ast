@@ -1,0 +1,243 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' a'
+    Constructor
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 's'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'ns'
+        AnyKeyword
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' pgF'
+      Block
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' pv'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' d'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' d'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    GetAccessor
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' p2'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' d2'
+      Block
+    GetAccessor
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' p3'
+      Block
+        ReturnStatement
+          StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' pv3'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'ns'
+        AnyKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' ns'
+              Identifier: 'toString'
+  ClassDeclaration
+    Identifier: ' b'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' b'
+      ClassDeclaration
+        Identifier: ' d'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ib'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m3'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' c'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' b'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' ib2'
+            HeritageClause
+              ExpressionWithTypeArguments
+                PropertyAccessExpression
+                  Identifier: ' m1'
+                  Identifier: 'ib'
+  ClassDeclaration
+    Identifier: ' c'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' m1'
+          Identifier: 'b'
+  ClassDeclaration
+    Identifier: ' ib2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' m1'
+          Identifier: 'ib'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' aAmbient'
+    Constructor
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 's'
+        StringKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' pgF'
+      VoidKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' pv'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' d'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' p2'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' d2'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' p3'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' pv3'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 's'
+  ClassDeclaration
+    Identifier: ' d'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'ns'
+        AnyKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' ns'
+              Identifier: 'toString'
+  ClassDeclaration
+    Identifier: ' e'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'ns'
+        AnyKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' ns'
+              Identifier: 'toString'

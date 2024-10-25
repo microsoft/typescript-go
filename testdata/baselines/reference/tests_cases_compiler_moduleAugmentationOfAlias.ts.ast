@@ -1,0 +1,34 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+  ExportAssignment
+    Identifier: ' I'
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        DefaultKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+  ImportDeclaration
+    ImportClause
+      Identifier: ' I'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'i'
+      TypeReference
+        Identifier: ' I'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    i'
+          Identifier: 'x'

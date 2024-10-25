@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    SetAccessor
+      Identifier: ' X'
+      Parameter
+        DotDotDotToken
+        Identifier: 'v'
+      Block
+    SetAccessor
+      StaticKeyword
+      Identifier: ' X'
+      Parameter
+        DotDotDotToken
+        Identifier: 'v2'
+      Block

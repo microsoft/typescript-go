@@ -1,0 +1,85 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' narrowToLiterals'
+        ArrowFunction
+          Parameter
+            Identifier: 'str'
+            StringKeyword
+          EqualsGreaterThanToken
+          Block
+            SwitchStatement
+              Identifier: 'str'
+              CaseBlock
+                CaseClause
+                  StringLiteral
+                  Block
+                    ReturnStatement
+                      Identifier: ' str'
+                DefaultClause
+                  ReturnStatement
+                    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' narrowToString'
+        ArrowFunction
+          Parameter
+            Identifier: 'str'
+            StringKeyword
+          Parameter
+            Identifier: ' someOtherStr'
+            StringKeyword
+          EqualsGreaterThanToken
+          Block
+            SwitchStatement
+              Identifier: 'str'
+              CaseBlock
+                CaseClause
+                  StringLiteral
+                  Block
+                    ReturnStatement
+                      Identifier: ' str'
+                CaseClause
+                  Identifier: ' someOtherStr'
+                  Block
+                    ReturnStatement
+                      Identifier: ' str'
+                DefaultClause
+                  ReturnStatement
+                    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' narrowToStringOrNumber'
+        ArrowFunction
+          Parameter
+            Identifier: 'str'
+            UnionType
+              StringKeyword
+              NumberKeyword
+          Parameter
+            Identifier: ' someNumber'
+            NumberKeyword
+          EqualsGreaterThanToken
+          Block
+            SwitchStatement
+              Identifier: 'str'
+              CaseBlock
+                CaseClause
+                  StringLiteral
+                  Block
+                    ReturnStatement
+                      Identifier: ' str'
+                CaseClause
+                  Identifier: ' someNumber'
+                  Block
+                    ReturnStatement
+                      Identifier: ' str'
+                DefaultClause
+                  ReturnStatement
+                    StringLiteral

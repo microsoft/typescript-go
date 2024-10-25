@@ -1,0 +1,173 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    otherObject'
+      NewExpression
+        Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    testObject'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    testArray'
+      Block
+        ReturnStatement
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              NumberKeyword
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' x'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+                ShorthandPropertyAssignment
+                  Identifier: ' y'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'testObject'
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+                Identifier: ' y'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'testArray'
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' a'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+                PropertyAssignment
+                  Identifier: ' b'
+                  ArrayLiteralExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      PrivateIdentifier
+              EqualsToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' a'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' b'
+                  ArrayLiteralExpression
+                    NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+            EqualsToken
+            ArrayLiteralExpression
+              NumericLiteral
+              ArrayLiteralExpression
+                NumericLiteral
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' a'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      PrivateIdentifier
+                    EqualsToken
+                    NumericLiteral
+                PropertyAssignment
+                  Identifier: ' b'
+                  ArrayLiteralExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        PrivateIdentifier
+                      EqualsToken
+                      NumericLiteral
+              EqualsToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' b'
+                  ArrayLiteralExpression
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  PrivateIdentifier
+                EqualsToken
+                NumericLiteral
+            EqualsToken
+            ArrayLiteralExpression
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'otherObject'
+                  PrivateIdentifier
+                EqualsToken
+                NumericLiteral
+            EqualsToken
+            ArrayLiteralExpression
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' test'
+      Parameter
+        Identifier: '_a'
+        TypeReference
+          Identifier: ' A'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              PropertyAccessExpression
+                Identifier: '_a'
+                PrivateIdentifier
+            EqualsToken
+            ArrayLiteralExpression
+              NumericLiteral

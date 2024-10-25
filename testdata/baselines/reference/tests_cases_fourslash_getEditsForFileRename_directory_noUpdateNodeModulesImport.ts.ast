@@ -1,0 +1,27 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /a/b/file1.ts
+////import { foo } from "foo";
+
+// @Filename: /a/b/node_modules/foo/index.d.ts
+////export const foo = 0;
+
+verify'
+        Identifier: 'getEditsForFileRename'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    oldPath'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newPath'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression

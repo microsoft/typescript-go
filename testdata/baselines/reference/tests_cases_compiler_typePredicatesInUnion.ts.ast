@@ -1,0 +1,50 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    MethodSignature
+      Identifier: '
+    pred'
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+      TypePredicate
+        Identifier: ' x'
+        BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    MethodSignature
+      Identifier: '
+    pred'
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+      TypePredicate
+        Identifier: ' x'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Or'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'o'
+      TypeReference
+        Identifier: ' Or'
+    Parameter
+      Identifier: ' x'
+      TypeLiteral
+    Block
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            Identifier: 'pred'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'

@@ -1,0 +1,169 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TypeLambda'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' A'
+      UnknownKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TypeClass'
+    TypeParameter
+      Identifier: 'F'
+      TypeReference
+        Identifier: ' TypeLambda'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' _F'
+      TypeReference
+        Identifier: ' F'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Apply'
+    TypeParameter
+      Identifier: 'F'
+      TypeReference
+        Identifier: ' TypeLambda'
+    TypeParameter
+      Identifier: ' A'
+    ConditionalType
+      TypeReference
+        Identifier: ' F'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' type'
+          UnknownKeyword
+      IndexedAccessType
+        ParenthesizedType
+          IntersectionType
+            TypeReference
+              Identifier: 'F'
+            TypeLiteral
+              PropertySignature
+                ReadonlyKeyword
+                Identifier: ' A'
+                TypeReference
+                  Identifier: ' A'
+        LiteralType
+          StringLiteral
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' F'
+          TypeReference
+            Identifier: ' F'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' A'
+          TypeReference
+            Identifier: ' A'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' T'
+    TypeParameter
+      Identifier: 'A'
+    PropertySignature
+      Identifier: '
+    value'
+      TypeReference
+        Identifier: ' A'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TTypeLambda'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' TypeLambda'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' type'
+      TypeReference
+        Identifier: ' T'
+        IndexedAccessType
+          ThisType
+          LiteralType
+            StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' map'
+        FunctionType
+          TypeParameter
+            Identifier: 'F'
+            TypeReference
+              Identifier: ' TypeLambda'
+          Parameter
+            Identifier: 'F'
+            TypeReference
+              Identifier: ' TypeClass'
+              TypeReference
+                Identifier: 'F'
+          FunctionType
+            TypeParameter
+              Identifier: 'A'
+            TypeParameter
+              Identifier: ' B'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' Apply'
+                TypeReference
+                  Identifier: 'F'
+                TypeReference
+                  Identifier: ' A'
+            Parameter
+              Identifier: ' f'
+              FunctionType
+                Parameter
+                  Identifier: 'a'
+                  TypeReference
+                    Identifier: ' A'
+                TypeReference
+                  Identifier: ' B'
+            TypeReference
+              Identifier: ' Apply'
+              TypeReference
+                Identifier: 'F'
+              TypeReference
+                Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typeClass'
+        TypeReference
+          Identifier: ' TypeClass'
+          TypeReference
+            Identifier: 'TTypeLambda'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' T'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        CallExpression
+          Identifier: ' map'
+          Identifier: 'typeClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        CallExpression
+          CallExpression
+            Identifier: ' map'
+            Identifier: 'typeClass'
+          Identifier: 'a'
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            EqualsGreaterThanToken
+            Identifier: ' _'

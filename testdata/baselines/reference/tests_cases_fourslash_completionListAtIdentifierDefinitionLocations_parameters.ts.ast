@@ -1,0 +1,113 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////var aa = 1;
+
+////function testFunction(/*parameterName1*/
+
+////function testFunction(a/*parameterName2*/
+
+////function testFunction(a, /*parameterName3*/
+
+////function testFunction(a, b/*parameterName4*/
+
+////class bar5{ constructor(public /*constructorParameter1*/
+
+////class bar6{ constructor(public a/*constructorParameter2*/
+
+////class bar7{ constructor(protected a/*constructorParameter3*/
+
+////class bar8{ constructor(private a/*constructorParameter4*/
+
+////class bar9{ constructor(.../*constructorParameter5*/
+
+////class bar10{ constructor(...a/*constructorParameter6*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'i'
+              EqualsGreaterThanToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'i'
+                  TemplateTail
+        PropertyAssignment
+          Identifier: '
+        exact'
+          Identifier: ' undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'i'
+              EqualsGreaterThanToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'i'
+                  TemplateTail
+        PropertyAssignment
+          Identifier: '
+        exact'
+          PropertyAccessExpression
+            Identifier: ' completion'
+            Identifier: 'constructorParameterKeywords'
+        PropertyAssignment
+          Identifier: '
+        isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'i'
+              EqualsGreaterThanToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'i'
+                  TemplateTail
+        PropertyAssignment
+          Identifier: '
+        exact'
+          Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: '
+        isNewIdentifierLocation'
+          TrueKeyword

@@ -1,0 +1,37 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='../fourslash.ts' />
+
+// @Filename: /home/src/workspaces/project/source.ts
+////[|export const a = 1;|]
+////const b = 2;
+////console.log(a, b);
+
+// @Filename: /home/src/workspaces/project/target.ts
+/////** empty */
+
+// @Filename: /home/src/workspaces/project/tsconfig.json
+///// { "compilerOptions": { "newLine": "lf" } }
+
+verify'
+        Identifier: 'moveToFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    interactiveRefactorArguments'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' targetFile'
+              StringLiteral

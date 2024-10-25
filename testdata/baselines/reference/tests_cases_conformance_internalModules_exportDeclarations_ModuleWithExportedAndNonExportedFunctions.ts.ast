@@ -1,0 +1,104 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fn'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        Block
+          ReturnStatement
+            TrueKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fng'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        Parameter
+          Identifier: 's'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' fn2'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        Block
+          ReturnStatement
+            FalseKeyword
+      FunctionDeclaration
+        Identifier: ' fng2'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        Parameter
+          Identifier: 's'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+        Block
+          ReturnStatement
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        PropertyAccessExpression
+          Identifier: ' A'
+          Identifier: 'fn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fng'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 's'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fng'
+        PropertyAccessExpression
+          Identifier: ' A'
+          Identifier: 'fng'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn2'
+        PropertyAccessExpression
+          Identifier: ' A'
+          Identifier: 'fn2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fng2'
+        PropertyAccessExpression
+          Identifier: ' A'
+          Identifier: 'fng2'

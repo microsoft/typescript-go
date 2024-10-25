@@ -1,0 +1,7 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'yield'
+      Identifier: ' yield'
+    Block

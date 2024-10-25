@@ -1,0 +1,256 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Point'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        TypeQuery
+          Identifier: ' M'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        Identifier: ' M'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        PropertyAccessExpression
+          Identifier: ' m'
+          Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        TypeReference
+          QualifiedName
+            Identifier: ' M'
+            Identifier: 'Point'
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertyDeclaration
+          Identifier: '
+        y'
+          NumberKeyword
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' Origin'
+          TypeReference
+            Identifier: ' Point'
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' x'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' y'
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m2'
+        TypeQuery
+          Identifier: ' M2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m2'
+        Identifier: ' M2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TypeQuery
+          QualifiedName
+            Identifier: ' M2'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        PropertyAccessExpression
+          Identifier: ' m2'
+          Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        PropertyAccessExpression
+          Identifier: ' M2'
+          Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeReference
+          QualifiedName
+            Identifier: ' M2'
+            Identifier: 'Point'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a2'
+            Identifier: 'Origin'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        TypeReference
+          QualifiedName
+            Identifier: ' M2'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' m2'
+            Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' M2'
+            Identifier: 'Point'
+  ModuleDeclaration
+    Identifier: ' M3'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' Color'
+        EnumMember
+          Identifier: ' Blue'
+        EnumMember
+          Identifier: ' Red'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m3'
+        TypeQuery
+          Identifier: ' M3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m3'
+        Identifier: ' M3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        TypeQuery
+          QualifiedName
+            Identifier: ' M3'
+            Identifier: 'Color'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        PropertyAccessExpression
+          Identifier: ' m3'
+          Identifier: 'Color'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        PropertyAccessExpression
+          Identifier: ' M3'
+          Identifier: 'Color'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' blue'
+        TypeReference
+          QualifiedName
+            Identifier: ' M3'
+            Identifier: 'Color'
+        PropertyAccessExpression
+          Identifier: ' a3'
+          Identifier: 'Blue'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p3'
+        TypeReference
+          QualifiedName
+            Identifier: ' M3'
+            Identifier: 'Color'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p3'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' M3'
+            Identifier: 'Color'
+          Identifier: 'Red'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p3'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' m3'
+            Identifier: 'Color'
+          Identifier: 'Blue'

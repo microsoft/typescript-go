@@ -1,0 +1,39 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array'
+        ArrayType
+          TupleType
+            NumberKeyword
+            UnionType
+              StringKeyword
+              BooleanKeyword
+              SymbolKeyword
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+          ArrayLiteralExpression
+            NumericLiteral
+            TrueKeyword
+          ArrayLiteralExpression
+            NumericLiteral
+            CallExpression
+              Identifier: ' Symbol'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'num'
+          BindingElement
+            Identifier: ' strBoolSym'
+    Identifier: ' array'
+    Block
+      ExpressionStatement
+        Identifier: '
+    num'
+      ExpressionStatement
+        Identifier: '
+    strBoolSym'

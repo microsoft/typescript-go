@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' then'
+    Parameter
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' match'
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'index'
+                  NumberKeyword
+                StringKeyword

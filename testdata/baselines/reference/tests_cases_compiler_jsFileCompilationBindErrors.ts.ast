@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ReturnStatement
+      ReturnStatement
+  FunctionDeclaration
+    Identifier: ' b'
+    Block
+      ExpressionStatement
+        StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arguments'
+            NumericLiteral

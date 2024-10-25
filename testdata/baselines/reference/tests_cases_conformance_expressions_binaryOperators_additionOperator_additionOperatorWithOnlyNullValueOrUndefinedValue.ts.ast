@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        BinaryExpression
+          NullKeyword
+          PlusToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        BinaryExpression
+          Identifier: ' undefined'
+          PlusToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        BinaryExpression
+          Identifier: ' undefined'
+          PlusToken
+          Identifier: ' undefined'

@@ -1,0 +1,46 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'x'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'foo'
+    StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' use'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' x'
+          ShorthandPropertyAssignment
+            Identifier: ' foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+use'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+use'
+      Identifier: 'foo'

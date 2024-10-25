@@ -1,0 +1,9 @@
+SourceFile
+  ExpressionStatement
+    ElementAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'href'
+          Identifier: 'match'
+        RegularExpressionLiteral
+      NumericLiteral

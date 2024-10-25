@@ -1,0 +1,52 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Synthetic'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+      TypeReference
+        Identifier: ' A'
+  TypeAliasDeclaration
+    Identifier: ' SyntheticDestination'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    ConditionalType
+      TypeReference
+        Identifier: ' U'
+      TypeReference
+        Identifier: ' Synthetic'
+        TypeReference
+          Identifier: 'T'
+        InferType
+          TypeParameter
+            Identifier: ' V'
+      TypeReference
+        Identifier: ' V'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' TestSynthetic'
+    TypeReference
+      Identifier: ' // Resolved to T, should be `number` or an inference failure (`unknown`)
+    SyntheticDestination'
+      NumberKeyword
+      TypeReference
+        Identifier: ' Synthetic'
+        NumberKeyword
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' TestSynthetic'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' TestSynthetic'
+        StringLiteral

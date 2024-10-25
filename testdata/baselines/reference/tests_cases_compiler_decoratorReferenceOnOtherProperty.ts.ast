@@ -1,0 +1,62 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Yoha'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Yoha'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    Block
+  ClassDeclaration
+    Identifier: ' Bar'
+    MethodDeclaration
+      Identifier: '
+  yoha'
+      Parameter
+        Decorator
+          Identifier: 'foo'
+        Identifier: ' yoha'
+      Parameter
+        Identifier: ' bar'
+        TypeReference
+          Identifier: ' Yoha'
+      Block
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Yoha'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    Block
+  ClassDeclaration
+    Identifier: ' Bar'
+    MethodDeclaration
+      Identifier: '
+  yoha'
+      Parameter
+        Decorator
+          Identifier: 'foo'
+        Identifier: ' yoha'
+      Parameter
+        DotDotDotToken
+        Identifier: 'bar'
+        ArrayType
+          TypeReference
+            Identifier: ' Yoha'
+      Block

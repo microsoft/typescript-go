@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    ClassStaticBlockDeclaration
+      AsyncKeyword
+      Block
+    ClassStaticBlockDeclaration
+      PublicKeyword
+      Block
+    ClassStaticBlockDeclaration
+      ReadonlyKeyword
+      PrivateKeyword
+      Block

@@ -1,0 +1,7 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Validation'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' function1'
+        Block

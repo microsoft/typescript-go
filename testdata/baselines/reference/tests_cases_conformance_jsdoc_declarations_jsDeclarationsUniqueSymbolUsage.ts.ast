@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' kSymbol'
+        CallExpression
+          Identifier: ' Symbol'
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' b'
+    Parameter
+      Identifier: 'value'
+    Block
+      ReturnStatement
+        Identifier: ' value'

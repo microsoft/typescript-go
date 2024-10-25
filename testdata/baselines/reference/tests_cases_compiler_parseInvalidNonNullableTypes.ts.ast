@@ -1,0 +1,113 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    TypePredicate
+      Identifier: ' a'
+      JSDocNonNullableType
+        StringKeyword
+    Block
+      ReturnStatement
+        TrueKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    TypePredicate
+      Identifier: ' a'
+      JSDocNonNullableType
+        TypeReference
+          Identifier: ''
+    Block
+  ExpressionStatement
+    Identifier: 'string'
+  Block
+    ReturnStatement
+      TrueKeyword
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'a'
+      JSDocNonNullableType
+        StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'a'
+      JSDocNonNullableType
+        NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'a'
+      JSDocNonNullableType
+        TypeReference
+          Identifier: ''
+    Parameter
+      Identifier: 'string'
+    Block
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'a'
+      JSDocNonNullableType
+        TypeReference
+          Identifier: ''
+    Parameter
+      Identifier: 'number'
+    Block
+  FunctionDeclaration
+    Identifier: ' f7'
+    JSDocNonNullableType
+      StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f8'
+    JSDocNonNullableType
+      TypeReference
+        Identifier: ''
+    Block
+  ExpressionStatement
+    Identifier: 'string'
+  Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AsExpression
+          NumericLiteral
+          JSDocNonNullableType
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        JSDocNonNullableType
+          NumberKeyword
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        AsExpression
+          NumericLiteral
+          JSDocNonNullableType
+            TypeReference
+              Identifier: ''
+      VariableDeclaration
+        Identifier: 'any'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        JSDocNonNullableType
+          TypeReference
+            Identifier: ''
+      VariableDeclaration
+        Identifier: 'number'
+        NumericLiteral

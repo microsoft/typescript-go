@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test'
+    PropertyDeclaration
+      PrivateIdentifier
+      ArrowFunction
+        EqualsGreaterThanToken
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          JsxSelfClosingElement
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: ''
+            JsxAttributes

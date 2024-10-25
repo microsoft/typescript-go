@@ -1,0 +1,105 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Multimap4'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: '_map'
+          EqualsToken
+          ObjectLiteralExpression
+  EmptyStatement
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+Multimap4'
+        StringLiteral
+      EqualsToken
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+  /**
+   * @param {string} key
+   * @returns {number} the value ok
+   */
+  get'
+          Parameter
+            Identifier: 'key'
+          Block
+            ReturnStatement
+              ElementAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_map'
+                BinaryExpression
+                  Identifier: 'key'
+                  PlusToken
+                  StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        ElementAccessExpression
+          Identifier: '
+
+Multimap4'
+          StringLiteral
+        StringLiteral
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        ElementAccessExpression
+          Identifier: '
+Multimap4'
+          StringLiteral
+        StringLiteral
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        ElementAccessExpression
+          Identifier: '
+Multimap4'
+          StringLiteral
+        StringLiteral
+      EqualsToken
+      FunctionExpression
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' map4'
+        NewExpression
+          Identifier: ' Multimap4'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+map4'
+        Identifier: 'get'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      ElementAccessExpression
+        Identifier: '
+map4'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+map4'
+        Identifier: 'addon'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+map4'
+        Identifier: '__underscores__'

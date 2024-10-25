@@ -1,0 +1,77 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  TryStatement
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' x'
+            PlusToken
+            NumericLiteral
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+    x'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' x'
+              MinusToken
+              NumericLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' x'
+            AsteriskToken
+            NumericLiteral
+  TryStatement
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' x'
+            PlusToken
+            NumericLiteral
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+    x'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' x'
+              MinusToken
+              NumericLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' x'
+            AsteriskToken
+            NumericLiteral

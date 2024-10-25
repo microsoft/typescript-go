@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+ bar'
+          Identifier: ''

@@ -1,0 +1,61 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              LiteralType
+                NullKeyword
+            TypeAssertionExpression
+              AnyKeyword
+              ObjectLiteralExpression
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              MethodDeclaration
+                Identifier: '
+            bar'
+                Block
+                  ReturnStatement
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              LiteralType
+                NullKeyword
+            TypeAssertionExpression
+              AnyKeyword
+              ObjectLiteralExpression
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+          ReturnStatement
+            ClassExpression
+              MethodDeclaration
+                Identifier: '
+            bar'
+                Block
+                  ReturnStatement
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'length'

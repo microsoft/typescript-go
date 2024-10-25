@@ -1,0 +1,120 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          ArrayLiteralExpression
+            StringLiteral
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'x'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'y'
+    StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' use'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+use'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'x'
+          Identifier: 'toFixed'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+use'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'y'
+          Identifier: 'toFixed'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'a'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'b'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'x'
+          Identifier: ' c'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            Identifier: ' b'
+          PlusToken
+          Identifier: ' c'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumberKeyword

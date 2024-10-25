@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowNonTsExtensions: true
+// @Filename: test123.js
+////var foo = function() { };
+////foo.prototype.instanceMethod1 = function() { return "this is name"; };
+////foo.prototype.instanceMethod2 = () => { return "this is name"; };
+////foo.instanceProp1 = "hello";
+////foo.instanceProp2 = undefined;
+////foo.staticProp = "world";
+////foo.staticMethod1 = function() { return "this is static name"; };
+////foo.staticMethod2 = () => "this is static name";
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

@@ -1,0 +1,58 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' G'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: ' foo'
+          Block
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' X'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g1'
+            NewExpression
+              Identifier: ' G'
+              TypeReference
+                Identifier: 'C'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    g1'
+                Identifier: 'bar'
+              NullKeyword
+            Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g2'
+        NewExpression
+          Identifier: ' G'
+          TypeReference
+            QualifiedName
+              Identifier: 'M'
+              Identifier: 'C'

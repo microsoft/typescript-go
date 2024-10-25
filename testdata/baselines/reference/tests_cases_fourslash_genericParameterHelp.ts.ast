@@ -1,0 +1,82 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////interface IFoo { }
+////
+////function testFunction<T extends IFoo, U, M extends IFoo>(a: T, b: U, c: M): M {
+////    return null;
+////}
+////
+////// Function calls
+////testFunction</*1*/
+////testFunction<any, /*2*/
+////testFunction<any, any, any>(/*3*/
+////testFunction<any, any,/*4*/ any>(null, null, null);
+////testFunction<, ,/*5*/>(null, null, null);
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' parameterSpan'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' parameterSpan'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' parameterSpan'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' parameterSpan'
+          StringLiteral

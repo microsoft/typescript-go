@@ -1,0 +1,7 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'self'
+        Identifier: 'cancelAnimationFrame'
+      NumericLiteral

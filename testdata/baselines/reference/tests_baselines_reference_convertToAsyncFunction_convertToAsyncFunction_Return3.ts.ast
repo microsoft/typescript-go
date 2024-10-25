@@ -1,0 +1,51 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' Promise'
+        UnknownKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' p'
+            Identifier: 'catch'
+          FunctionExpression
+            Parameter
+              Identifier: 'error'
+              TypeReference
+                Identifier: ' Error'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'reject'
+                  Identifier: 'error'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' Promise'
+        UnknownKeyword
+    Block
+      TryStatement
+        Block
+          ReturnStatement
+            AwaitExpression
+              Identifier: ' p'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'error'
+          Block
+            ReturnStatement
+              AwaitExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'reject'
+                  Identifier: 'error'

@@ -1,0 +1,29 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  ImportEqualsDeclaration
+    Identifier: ' f1'
+    Identifier: ' NonExistent'
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            NumericLiteral
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' T'
+        AnyKeyword
+  ImportEqualsDeclaration
+    Identifier: ' f2'
+    QualifiedName
+      Identifier: ' Foo'
+      Identifier: 'foo'
+  ImportEqualsDeclaration
+    Identifier: ' f3'
+    QualifiedName
+      Identifier: ' Foo'
+      Identifier: 'T'

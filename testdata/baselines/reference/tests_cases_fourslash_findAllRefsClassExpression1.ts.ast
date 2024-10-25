@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowJs: true
+
+// @Filename: /a.js
+////module.exports = class /*0*/A {};
+
+// @Filename: /b.js
+////import /*1*/A = require("./a");
+/////*2*/A;
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+      StringLiteral

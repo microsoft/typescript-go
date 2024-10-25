@@ -1,0 +1,13 @@
+SourceFile
+  IfStatement
+    TrueKeyword
+    Block
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+  ExportAssignment
+    Identifier: ' foo'

@@ -1,0 +1,87 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// These options resemble the defaults for inferred projects with JS,
+// except notably lacking --allowSyntheticDefaultImports. Probably nobody
+// ever wants a configuration like this, but we maintain that this is
+// correct and consistent behavior for these settings.
+
+// @allowJs: true
+// @target: es2020
+// @checkJs: true
+// @module: commonjs
+// @noEmit: true
+
+// @Filename: /node_modules/react/index.d.ts
+//// declare namespace React {
+////    export class Component {}
+//// }
+//// export = React;
+
+// @Filename: /test.js
+//// [|import R/**/|]
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  isNewIdentifierLocation'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+  exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    insertText'
+                NoSubstitutionTemplateLiteral
+              PropertyAssignment
+                Identifier: '
+    isSnippet'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+    replacementSpan'
+                ElementAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'ranges'
+                  NumericLiteral
+              PropertyAssignment
+                Identifier: '
+    sourceDisplay'
+                StringLiteral
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForImportStatements'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    includeInsertTextCompletions'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsWithSnippetText'
+              TrueKeyword

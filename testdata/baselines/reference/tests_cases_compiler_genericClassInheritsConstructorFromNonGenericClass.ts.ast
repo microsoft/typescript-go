@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+        StringKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'p'
+        StringKeyword
+      Block

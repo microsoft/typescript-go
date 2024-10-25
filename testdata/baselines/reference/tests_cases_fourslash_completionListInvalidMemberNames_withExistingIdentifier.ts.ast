@@ -1,0 +1,71 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0'
+          BindingElement
+            Identifier: ' r1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                Identifier: ' r0'
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' includeInsertTextCompletions'
+              TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' replacementSpan'
+                Identifier: ' r1'
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' includeInsertTextCompletions'
+              TrueKeyword

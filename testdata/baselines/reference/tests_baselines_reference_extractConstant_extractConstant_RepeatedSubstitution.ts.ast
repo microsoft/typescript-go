@@ -1,0 +1,69 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            BinaryExpression
+              Identifier: ' /*[#|*/j'
+              AsteriskToken
+              Identifier: ' j'
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newLocal'
+            BinaryExpression
+              Identifier: ' j'
+              AsteriskToken
+              Identifier: ' j'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            Identifier: ' /*RENAME*/newLocal'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newLocal'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' X'
+            Identifier: 'j'
+          AsteriskToken
+          PropertyAccessExpression
+            Identifier: ' X'
+            Identifier: 'j'
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            Identifier: ' /*RENAME*/newLocal'

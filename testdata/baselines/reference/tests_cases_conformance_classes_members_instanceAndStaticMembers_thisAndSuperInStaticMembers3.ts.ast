@@ -1,0 +1,102 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' a'
+      AnyKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' f'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    f'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      AnyKeyword
+      NonNullExpression
+        Identifier: ' undefined'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y1'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'x'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y2'
+      CallExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'x'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y3'
+      CallExpression
+        PropertyAccessExpression
+          ThisKeyword
+          QuestionDotToken
+          Identifier: 'x'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y4'
+      CallExpression
+        ElementAccessExpression
+          ThisKeyword
+          ParenthesizedExpression
+            StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y5'
+      CallExpression
+        ElementAccessExpression
+          ThisKeyword
+          QuestionDotToken
+          ParenthesizedExpression
+            StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' z3'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'f'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' z4'
+      CallExpression
+        ElementAccessExpression
+          SuperKeyword
+          StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    
+    // these should be unaffected
+    x'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    y'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'x'
+    PropertyDeclaration
+      Identifier: '
+    z'
+      CallExpression
+        PropertyAccessExpression
+          SuperKeyword
+          Identifier: 'f'

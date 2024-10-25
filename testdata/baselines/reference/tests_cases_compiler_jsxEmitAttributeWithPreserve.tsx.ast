@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'foo'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' data'

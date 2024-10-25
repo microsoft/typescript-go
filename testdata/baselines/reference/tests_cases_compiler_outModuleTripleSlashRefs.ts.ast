@@ -1,0 +1,50 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+	member'
+      TypeQuery
+        Identifier: ' GlobalFoo'
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+	member'
+      TypeReference
+        Identifier: ' Bar'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' GlobalFoo'
+        TypeReference
+          Identifier: ' Foo'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Bar'
+    PropertyDeclaration
+      Identifier: '
+	member'
+      TypeReference
+        Identifier: ' Baz'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Baz'
+    PropertyDeclaration
+      Identifier: '
+	member'
+      NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'A'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'

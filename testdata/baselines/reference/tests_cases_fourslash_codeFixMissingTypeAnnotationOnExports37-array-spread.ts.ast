@@ -1,0 +1,47 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @isolatedDeclarations: true
+// @declaration: true
+
+// @Filename: /code.ts
+////const Start = [
+////  'A',
+////  'B',
+////] as const;
+////
+////const End = [
+////  "Y",
+////  "Z"
+////] as const;
+////export const All_Part1 = {};
+////function getPart() {
+////  return ["Z"]
+////}
+////
+////export const All = [
+////  1,
+////  ...Start,
+////  1,
+////  ...getPart(),
+////  ...End,
+////  1,
+////] as const;
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

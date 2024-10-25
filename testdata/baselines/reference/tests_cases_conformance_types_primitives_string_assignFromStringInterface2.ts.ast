@@ -1,0 +1,309 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' String'
+    MethodSignature
+      Identifier: '
+    doStuff'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' NotString'
+    MethodSignature
+      Identifier: '
+    doStuff'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    toString'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    charAt'
+      Parameter
+        Identifier: 'pos'
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    charCodeAt'
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    concat'
+      Parameter
+        DotDotDotToken
+        Identifier: 'strings'
+        ArrayType
+          StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    indexOf'
+      Parameter
+        Identifier: 'searchString'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    lastIndexOf'
+      Parameter
+        Identifier: 'searchString'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    localeCompare'
+      Parameter
+        Identifier: 'that'
+        StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    match'
+      Parameter
+        Identifier: 'regexp'
+        StringKeyword
+      TypeReference
+        Identifier: ' RegExpMatchArray'
+    MethodSignature
+      Identifier: '
+    match'
+      Parameter
+        Identifier: 'regexp'
+        TypeReference
+          Identifier: ' RegExp'
+      TypeReference
+        Identifier: ' RegExpMatchArray'
+    MethodSignature
+      Identifier: '
+    replace'
+      Parameter
+        Identifier: 'searchValue'
+        StringKeyword
+      Parameter
+        Identifier: ' replaceValue'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    replace'
+      Parameter
+        Identifier: 'searchValue'
+        StringKeyword
+      Parameter
+        Identifier: ' replaceValue'
+        FunctionType
+          Parameter
+            Identifier: 'substring'
+            StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    replace'
+      Parameter
+        Identifier: 'searchValue'
+        TypeReference
+          Identifier: ' RegExp'
+      Parameter
+        Identifier: ' replaceValue'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    replace'
+      Parameter
+        Identifier: 'searchValue'
+        TypeReference
+          Identifier: ' RegExp'
+      Parameter
+        Identifier: ' replaceValue'
+        FunctionType
+          Parameter
+            Identifier: 'substring'
+            StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    search'
+      Parameter
+        Identifier: 'regexp'
+        StringKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    search'
+      Parameter
+        Identifier: 'regexp'
+        TypeReference
+          Identifier: ' RegExp'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    slice'
+      Parameter
+        Identifier: 'start'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    split'
+      Parameter
+        Identifier: 'separator'
+        StringKeyword
+      Parameter
+        Identifier: ' limit'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    split'
+      Parameter
+        Identifier: 'separator'
+        TypeReference
+          Identifier: ' RegExp'
+      Parameter
+        Identifier: ' limit'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    substring'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    toLowerCase'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    toLocaleLowerCase'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    toUpperCase'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    toLocaleUpperCase'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    trim'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    length'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    substr'
+      Parameter
+        Identifier: 'from'
+        NumberKeyword
+      Parameter
+        Identifier: ' length'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    valueOf'
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' String'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' NotString'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+b'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // expected error
+x'
+      EqualsToken
+      Identifier: ' b'

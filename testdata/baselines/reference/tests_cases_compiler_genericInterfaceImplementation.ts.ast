@@ -1,0 +1,53 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IOption'
+    TypeParameter
+      Identifier: 'A'
+    MethodSignature
+      Identifier: '
+    get'
+      TypeReference
+        Identifier: ' A'
+    MethodSignature
+      Identifier: '
+
+    flatten'
+      TypeParameter
+        Identifier: 'B'
+      TypeReference
+        Identifier: ' IOption'
+        TypeReference
+          Identifier: 'B'
+  ClassDeclaration
+    Identifier: ' None'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IOption'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    get'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ThrowStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+
+    flatten'
+      TypeParameter
+        Identifier: 'U'
+      TypeReference
+        Identifier: ' IOption'
+        TypeReference
+          Identifier: 'U'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' None'
+            TypeReference
+              Identifier: 'U'

@@ -1,0 +1,34 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////interface Foo {
+////    a: number;
+////    b: number;
+////}
+////function f(a: number, b: number, c: Foo) {}
+////[|f(1, 2, {})|];
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_missing_properties'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    newRangeContent'
+          NoSubstitutionTemplateLiteral

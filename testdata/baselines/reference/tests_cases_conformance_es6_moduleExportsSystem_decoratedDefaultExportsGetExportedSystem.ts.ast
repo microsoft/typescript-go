@@ -1,0 +1,24 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator'
+        TypeReference
+          Identifier: ' ClassDecorator'
+  ClassDeclaration
+    Decorator
+      Identifier: 'decorator'
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator'
+        TypeReference
+          Identifier: ' ClassDecorator'
+  ClassDeclaration
+    Decorator
+      Identifier: 'decorator'
+    ExportKeyword
+    DefaultKeyword

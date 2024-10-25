@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateMiddle
+          TemplateSpan
+            NumericLiteral
+            TemplateTail

@@ -1,0 +1,31 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'p'
+        AnyKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' test'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'someMethod'
+    MethodDeclaration
+      Identifier: ' 
+    someMethod'
+      Block

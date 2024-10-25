@@ -1,0 +1,22 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dateMap'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            TypeReference
+              Identifier: ' Date'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        TypeReference
+          Identifier: ' Date'
+        ElementAccessExpression
+          Identifier: ' dateMap'
+          StringLiteral

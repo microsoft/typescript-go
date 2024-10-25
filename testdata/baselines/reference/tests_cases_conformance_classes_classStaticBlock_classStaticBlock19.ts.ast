@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    ClassStaticBlockDeclaration
+      Decorator
+        Identifier: 'decorator'
+      Block

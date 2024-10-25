@@ -1,0 +1,128 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' X'
+  InterfaceDeclaration
+    Identifier: ' Y'
+    PropertySignature
+      Identifier: '
+    n'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Z'
+    PropertySignature
+      Identifier: '
+    s'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' Y'
+    PropertySignature
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' X'
+    PropertySignature
+      NumericLiteral
+      TypeReference
+        Identifier: ' Z'
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    c'
+      BooleanKeyword
+    PropertySignature
+      NumericLiteral
+      BooleanKeyword
+    MethodSignature
+      NumericLiteral
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      NumericLiteral
+      BooleanKeyword
+    PropertySignature
+      NumericLiteral
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    c'
+      BooleanKeyword
+    PropertySignature
+      NumericLiteral
+      BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertySignature
+      NumericLiteral
+      TypeReference
+        Identifier: ' Z'
+    PropertySignature
+      Identifier: '
+    Infinity'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    zoo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' P'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        StringKeyword
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Q'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' P'
+    PropertyDeclaration
+      Identifier: '
+    t'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    c'
+            BooleanKeyword
+          PropertySignature
+            NumericLiteral
+            BooleanKeyword

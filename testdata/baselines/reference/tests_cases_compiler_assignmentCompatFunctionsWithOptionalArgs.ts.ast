@@ -1,0 +1,52 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' id'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' name'
+          QuestionToken
+          StringKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' id'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '                 // Ok
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' id'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Ok
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' id'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' name'
+          FalseKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '    // Error, name of wrong type
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral

@@ -1,0 +1,369 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeParameter
+      Identifier: 'B'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' B'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' Extract'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'B'
+              TypeReference
+                Identifier: 'Exclude'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' B'
+                TypeReference
+                  Identifier: ' K'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' val'
+                StringKeyword
+          LiteralType
+            StringLiteral
+    TypeReference
+      Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeParameter
+      Identifier: 'B'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' B'
+        IndexedAccessType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' B'
+            TypeReference
+              Identifier: 'Exclude'
+              TypeOperator
+                TypeReference
+                  Identifier: ' B'
+              TypeReference
+                Identifier: ' K'
+          LiteralType
+            StringLiteral
+    TypeReference
+      Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' AProp'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' myBug'
+    TypeParameter
+      Identifier: '
+  T'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        ConditionalType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'K'
+          TypeReference
+            Identifier: ' AProp'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' U'
+          NeverKeyword
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' out'
+        CallExpression
+          Identifier: ' myBug'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'obj1'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'a'
+                  StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Value'
+    TypeParameter
+      Identifier: 'V'
+      StringKeyword
+      StringKeyword
+    TypeReference
+      Identifier: ' Record'
+      LiteralType
+        StringLiteral
+      TypeReference
+        Identifier: ' V'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' value'
+    TypeParameter
+      Identifier: 'V'
+      StringKeyword
+    Parameter
+      Identifier: 'val'
+      TypeReference
+        Identifier: ' V'
+    TypeReference
+      Identifier: ' Value'
+      TypeReference
+        Identifier: 'V'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' ensureNoDuplicates'
+    TypeParameter
+      Identifier: '
+  T'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        ConditionalType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' Extract'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: 'K'
+              TypeReference
+                Identifier: ' Value'
+            LiteralType
+              StringLiteral
+          IndexedAccessType
+            TypeReference
+              Identifier: ' Extract'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: 'Exclude'
+                  TypeOperator
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' K'
+              TypeReference
+                Identifier: ' Value'
+            LiteralType
+              StringLiteral
+          NeverKeyword
+          AnyKeyword
+    Parameter
+      Identifier: 'vals'
+      TypeReference
+        Identifier: ' T'
+    VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noError'
+        CallExpression
+          Identifier: ' ensureNoDuplicates'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'main'
+              CallExpression
+                Identifier: ' value'
+                StringLiteral
+            PropertyAssignment
+              Identifier: ' alternate'
+              CallExpression
+                Identifier: ' value'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shouldBeNoError'
+        CallExpression
+          Identifier: ' ensureNoDuplicates'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'main'
+              CallExpression
+                Identifier: ' value'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shouldBeError'
+        CallExpression
+          Identifier: ' ensureNoDuplicates'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'main'
+              CallExpression
+                Identifier: ' value'
+                StringLiteral
+            PropertyAssignment
+              Identifier: ' alternate'
+              CallExpression
+                Identifier: ' value'
+                StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Cond'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      NumberKeyword
+      NumberKeyword
+      NeverKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' function1'
+    TypeParameter
+      Identifier: 'T'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        TypeReference
+          Identifier: ' Cond'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: 'K'
+    IndexedAccessType
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Prepend'
+    TypeParameter
+      Identifier: 'Elm'
+    TypeParameter
+      Identifier: ' T'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+  T'
+      UnknownKeyword
+      ConditionalType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              TypeReference
+                Identifier: ' Elm'
+            Parameter
+              DotDotDotToken
+              Identifier: 'rest'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+        ParenthesizedType
+          FunctionType
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              InferType
+                TypeParameter
+                  Identifier: ' T2'
+            VoidKeyword
+        TypeReference
+          Identifier: ' T2'
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ExactExtract'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: ' U'
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' Conv'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    IndexedAccessType
+      TypeLiteral
+        PropertySignature
+          NumericLiteral
+          TupleType
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          NumericLiteral
+          TypeReference
+            Identifier: ' Prepend'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' Conv'
+              TypeReference
+                Identifier: 'ExactExtract'
+                TypeReference
+                  Identifier: 'U'
+                TypeReference
+                  Identifier: ' T'
+      ConditionalType
+        TypeReference
+          Identifier: 'U'
+        TypeReference
+          Identifier: ' T'
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral

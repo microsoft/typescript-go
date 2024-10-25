@@ -1,0 +1,387 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' Base'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d1'
+              TypeReference
+                Identifier: ' Derived1'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d2'
+              TypeReference
+                Identifier: ' Derived2'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d3'
+              TypeReference
+                Identifier: ' Derived3'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d4'
+              TypeReference
+                Identifier: ' Derived4'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        b'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '            // OK, accessed within their declaring class
+        d1'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // OK, accessed within their declaring class
+        d2'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // OK, accessed within their declaring class
+        d3'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // Error, redefined in a subclass, can only be accessed in the declaring class or one of its subclasses
+        d4'
+            Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    method1'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' Base'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d1'
+              TypeReference
+                Identifier: ' Derived1'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d2'
+              TypeReference
+                Identifier: ' Derived2'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d3'
+              TypeReference
+                Identifier: ' Derived3'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d4'
+              TypeReference
+                Identifier: ' Derived4'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        b'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '            // Error, isn't accessed through an instance of the enclosing class
+        d1'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // OK, accessed within a class derived from their declaring class, and through an instance of the enclosing class
+        d2'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // Error, isn't accessed through an instance of the enclosing class
+        d3'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // Error, redefined in a subclass, can only be accessed in the declaring class or one of its subclasses
+        d4'
+            Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    method2'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' Base'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d1'
+              TypeReference
+                Identifier: ' Derived1'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d2'
+              TypeReference
+                Identifier: ' Derived2'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d3'
+              TypeReference
+                Identifier: ' Derived3'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d4'
+              TypeReference
+                Identifier: ' Derived4'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        b'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '            // Error, isn't accessed through an instance of the enclosing class
+        d1'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // Error, isn't accessed through an instance of the enclosing class
+        d2'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // OK, accessed within a class derived from their declaring class, and through an instance of the enclosing class
+        d3'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // Error, redefined in a subclass, can only be accessed in the declaring class or one of its subclasses
+        d4'
+            Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' Derived3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived1'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    method3'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' Base'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d1'
+              TypeReference
+                Identifier: ' Derived1'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d2'
+              TypeReference
+                Identifier: ' Derived2'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d3'
+              TypeReference
+                Identifier: ' Derived3'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d4'
+              TypeReference
+                Identifier: ' Derived4'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        b'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '            // Error, isn't accessed through an instance of the enclosing class
+        d1'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // Error, isn't accessed through an instance of the enclosing class
+        d2'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // Error, isn't accessed through an instance of the enclosing class
+        d3'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // OK, accessed within their declaring class
+        d4'
+            Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' Derived4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived2'
+    MethodDeclaration
+      Identifier: '
+    method4'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' Base'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d1'
+              TypeReference
+                Identifier: ' Derived1'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d2'
+              TypeReference
+                Identifier: ' Derived2'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d3'
+              TypeReference
+                Identifier: ' Derived3'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d4'
+              TypeReference
+                Identifier: ' Derived4'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+
+        b'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '            // Error, isn't accessed through an instance of the enclosing class
+        d1'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // Error, isn't accessed through an instance of the enclosing class
+        d2'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // Error, isn't accessed through an instance of the enclosing class
+        d3'
+            Identifier: 'x'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '           // Error, redefined in a subclass, can only be accessed in the declaring class or one of its subclasses
+        d4'
+            Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        TypeReference
+          Identifier: ' Derived1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        TypeReference
+          Identifier: ' Derived2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d3'
+        TypeReference
+          Identifier: ' Derived3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d4'
+        TypeReference
+          Identifier: ' Derived4'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+b'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '                    // Error, neither within their declaring class nor classes derived from their declaring class
+d1'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '                   // Error, neither within their declaring class nor classes derived from their declaring class
+d2'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '                   // Error, neither within their declaring class nor classes derived from their declaring class
+d3'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '                   // Error, neither within their declaring class nor classes derived from their declaring class
+d4'
+      Identifier: 'x'

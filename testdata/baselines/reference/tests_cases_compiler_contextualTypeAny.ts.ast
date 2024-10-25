@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' p'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' q'
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+          StringLiteral
+          Identifier: ' x'

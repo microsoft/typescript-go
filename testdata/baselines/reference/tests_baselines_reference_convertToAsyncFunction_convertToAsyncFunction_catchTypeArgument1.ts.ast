@@ -1,0 +1,126 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' APIResponse'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' success'
+          LiteralType
+            TrueKeyword
+        PropertySignature
+          Identifier: ' data'
+          TypeReference
+            Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' success'
+          LiteralType
+            FalseKeyword
+  FunctionDeclaration
+    Identifier: ' /*[#|*/get'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+              TypeReference
+                Identifier: 'APIResponse'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' email'
+                    StringKeyword
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' success'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: ' data'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' email'
+                      StringLiteral
+            Identifier: 'catch'
+          TypeReference
+            Identifier: 'APIResponse'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' email'
+                StringKeyword
+          ArrowFunction
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' success'
+                  FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' APIResponse'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' success'
+          LiteralType
+            TrueKeyword
+        PropertySignature
+          Identifier: ' data'
+          TypeReference
+            Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' success'
+          LiteralType
+            FalseKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' get'
+    Block
+      TryStatement
+        Block
+          ReturnStatement
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+                TypeReference
+                  Identifier: 'APIResponse'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' email'
+                      StringKeyword
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' success'
+                    TrueKeyword
+                  PropertyAssignment
+                    Identifier: ' data'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' email'
+                        StringLiteral
+        CatchClause
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' result'
+                  TypeReference
+                    Identifier: ' APIResponse'
+                    TypeLiteral
+                      PropertySignature
+                        Identifier: ' email'
+                        StringKeyword
+                  ParenthesizedExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' success'
+                        FalseKeyword
+            ReturnStatement
+              Identifier: ' result'

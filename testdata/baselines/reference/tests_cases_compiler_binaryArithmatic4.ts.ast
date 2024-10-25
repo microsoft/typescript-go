@@ -1,0 +1,9 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        BinaryExpression
+          NullKeyword
+          BarToken
+          NullKeyword

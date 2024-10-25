@@ -1,0 +1,71 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            AnyKeyword
+      ExportAssignment
+        Identifier: ' x'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' ReactRouter'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Route'
+            AnyKeyword
+      InterfaceDeclaration
+        Identifier: ' Thing'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ExportAssignment
+        Identifier: ' ReactRouter'
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' ReactRouter'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' Route'
+    QualifiedName
+      Identifier: ' ReactRouter'
+      Identifier: 'Route'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' routes1'
+        JsxSelfClosingElement
+          Identifier: 'Route'
+          JsxAttributes
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' X'
+            AnyKeyword
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            JsxElement
+              JsxOpeningElement
+                Identifier: 'X'
+                JsxAttributes
+              JsxClosingElement
+                Identifier: 'X'

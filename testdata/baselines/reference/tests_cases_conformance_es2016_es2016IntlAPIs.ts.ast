@@ -1,0 +1,53 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '// @target: es2016
+
+// Sample from
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/getCanonicalLocales
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'Intl'
+          Identifier: 'getCanonicalLocales'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+// Expected output: Array ["en-US"]
+
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'Intl'
+          Identifier: 'getCanonicalLocales'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  TryStatement
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  Intl'
+            Identifier: 'getCanonicalLocales'
+          StringLiteral
+    CatchClause
+      VariableDeclaration
+        Identifier: 'err'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+  console'
+              Identifier: 'log'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'err'
+                Identifier: 'toString'

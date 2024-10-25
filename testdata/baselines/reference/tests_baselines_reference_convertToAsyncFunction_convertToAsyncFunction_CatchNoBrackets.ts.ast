@@ -1,0 +1,68 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    TypeReference
+      Identifier: 'Promise'
+      VoidKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              ArrowFunction
+                Parameter
+                  Identifier: 'result'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' console'
+                    Identifier: 'log'
+                  Identifier: 'result'
+            Identifier: 'catch'
+          ArrowFunction
+            Parameter
+              Identifier: 'err'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              Identifier: 'err'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    TypeReference
+      Identifier: 'Promise'
+      VoidKeyword
+    Block
+      TryStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' fetch'
+                    StringLiteral
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              Identifier: 'result'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'err'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                Identifier: 'err'

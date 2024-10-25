@@ -1,0 +1,67 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayType
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      NewExpression
+        Identifier: ' Array'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      NewExpression
+        Identifier: ' Array'
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+x'
+      EqualsToken
+      NewExpression
+        Identifier: ' Array'
+        StringKeyword
+        StringLiteral
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ArrayType
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      NewExpression
+        Identifier: ' Array'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      NewExpression
+        Identifier: ' Array'
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      NewExpression
+        Identifier: ' Array'
+        NumberKeyword
+        NumericLiteral
+        NumericLiteral

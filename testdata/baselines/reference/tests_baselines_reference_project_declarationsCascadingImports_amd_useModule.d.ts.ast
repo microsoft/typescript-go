@@ -1,0 +1,34 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' m4'
+        ExternalModuleReference
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' v'
+        PropertyDeclaration
+          Identifier: '
+        c'
+          TypeReference
+            QualifiedName
+              Identifier: ' m4'
+              Identifier: 'd'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' m1'
+        ExternalModuleReference
+          StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            TypeReference
+              QualifiedName
+                Identifier: ' m1'
+                Identifier: 'v'

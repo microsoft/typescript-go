@@ -1,0 +1,451 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' T'
+          MethodSignature
+            Identifier: ' g'
+            TypeParameter
+              Identifier: 'U'
+            TypeReference
+              Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        ExpressionWithTypeArguments
+          PropertyAccessExpression
+            Identifier: ' f'
+            Identifier: 'g'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        PropertyAccessExpression
+          ExpressionWithTypeArguments
+            Identifier: ' f'
+            NumberKeyword
+          Identifier: 'g'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        ExpressionWithTypeArguments
+          PropertyAccessExpression
+            ExpressionWithTypeArguments
+              Identifier: ' f'
+              NumberKeyword
+            Identifier: 'g'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        ExpressionWithTypeArguments
+          ElementAccessExpression
+            Identifier: ' f'
+            StringLiteral
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' f'
+            LessThanToken
+            Identifier: 'number'
+          GreaterThanToken
+          ArrayLiteralExpression
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a7'
+        ElementAccessExpression
+          ParenthesizedExpression
+            ExpressionWithTypeArguments
+              Identifier: 'f'
+              NumberKeyword
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a8'
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' f'
+            LessThanToken
+            Identifier: 'number'
+          GreaterThanToken
+          TypeAssertionExpression
+            NumberKeyword
+            Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9'
+        ExpressionWithTypeArguments
+          ParenthesizedExpression
+            ExpressionWithTypeArguments
+              Identifier: 'f'
+              NumberKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        CallExpression
+          Identifier: ' f'
+          QuestionDotToken
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        CallExpression
+          Identifier: ' f'
+          QuestionDotToken
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        CallExpression
+          ExpressionWithTypeArguments
+            Identifier: ' f'
+            NumberKeyword
+          QuestionDotToken
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        CallExpression
+          ExpressionWithTypeArguments
+            Identifier: ' f'
+            NumberKeyword
+          QuestionDotToken
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+          UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        BinaryExpression
+          ExpressionWithTypeArguments
+            Identifier: ' g'
+            StringKeyword
+          BarBarToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              EqualsGreaterThanToken
+              Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        BinaryExpression
+          ExpressionWithTypeArguments
+            Identifier: ' g'
+            StringKeyword
+          QuestionQuestionToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              EqualsGreaterThanToken
+              Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        BinaryExpression
+          ExpressionWithTypeArguments
+            Identifier: ' g'
+            StringKeyword
+          AmpersandAmpersandToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              EqualsGreaterThanToken
+              Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        CallExpression
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' f'
+            LessThanToken
+            TrueKeyword
+          GreaterThanToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' f'
+            LessThanToken
+            TrueKeyword
+          GreaterThanToken
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' f'
+            LessThanToken
+            TrueKeyword
+          GreaterThanToken
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+  ExpressionStatement
+    TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+  ExpressionStatement
+    TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+  IfStatement
+    TrueKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' yy'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x10'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+  FunctionDeclaration
+    Identifier: ' bar'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x12'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+  ClassDeclaration
+    Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x13'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x14'
+        ExpressionWithTypeArguments
+          Identifier: ' f'
+          LiteralType
+            TrueKeyword
+  ExpressionStatement
+    VoidExpression
+      CallExpression
+        Identifier: ' bar'
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' specialFoo'
+      ExpressionWithTypeArguments
+        Identifier: ' f'
+        StringKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' bar'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' specialFoo'
+      ExpressionWithTypeArguments
+        Identifier: ' f'
+        StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' specialFoo'
+      ExpressionWithTypeArguments
+        Identifier: ' f'
+        StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' bar'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C4'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' specialFoo'
+      ExpressionWithTypeArguments
+        Identifier: ' f'
+        StringKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' bar'
+      NumericLiteral
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' MyVer'
+    EnumMember
+      Identifier: ' v1'
+      NumericLiteral
+    EnumMember
+      Identifier: ' v2'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ver'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BinaryExpression
+          Identifier: ' ver'
+          LessThanToken
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'MyVer'
+                  Identifier: 'v1'
+                GreaterThanEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' MyVer'
+                  Identifier: 'v2'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' MyVer'
+                Identifier: 'v1'
+              ColonToken
+              PropertyAccessExpression
+                Identifier: ' MyVer'
+                Identifier: 'v2'

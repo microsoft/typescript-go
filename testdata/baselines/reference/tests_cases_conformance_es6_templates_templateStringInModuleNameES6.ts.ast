@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    Identifier: '// @target: ES6
+declare'
+  ExpressionStatement
+    TaggedTemplateExpression
+      Identifier: ' module'
+      NoSubstitutionTemplateLiteral
+  Block
+  ExpressionStatement
+    Identifier: '
+
+declare'
+  ExpressionStatement
+    TaggedTemplateExpression
+      Identifier: ' module'
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          NumericLiteral
+          TemplateTail
+  Block

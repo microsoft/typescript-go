@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' foo'
+      Block
+  InterfaceDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' foo'
+      Block

@@ -1,0 +1,8 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    NumberKeyword
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' Bar'
+    StringKeyword

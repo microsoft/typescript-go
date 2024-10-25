@@ -1,0 +1,130 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' m1_i_public'
+      InterfaceDeclaration
+        Identifier: ' m1_i_private'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m1_c_public'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f1'
+          Block
+      ClassDeclaration
+        Identifier: ' m1_c_private'
+      ClassDeclaration
+        Identifier: ' m1_C1_private'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_c_public'
+      ClassDeclaration
+        Identifier: ' m1_C2_private'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_c_private'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m1_C3_public'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_c_public'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m1_C4_public'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_c_private'
+      ClassDeclaration
+        Identifier: ' m1_C5_private'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_i_public'
+      ClassDeclaration
+        Identifier: ' m1_C6_private'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_i_private'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m1_C7_public'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_i_public'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m1_C8_public'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_i_private'
+      ClassDeclaration
+        Identifier: ' m1_C9_private'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_c_public'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_i_private'
+          ExpressionWithTypeArguments
+            Identifier: ' m1_i_public'
+      ClassDeclaration
+        Identifier: ' m1_C10_private'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_c_private'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: '  m1_i_private'
+          ExpressionWithTypeArguments
+            Identifier: ' m1_i_public'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m1_C11_public'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_c_public'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: '  m1_i_private'
+          ExpressionWithTypeArguments
+            Identifier: ' m1_i_public'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m1_C12_public'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' m1_c_private'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: '  m1_i_private'
+          ExpressionWithTypeArguments
+            Identifier: ' m1_i_public'
+  InterfaceDeclaration
+    Identifier: ' glo_i_public'
+  ClassDeclaration
+    Identifier: ' glo_c_public'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' f1'
+      Block
+  ClassDeclaration
+    Identifier: ' glo_C3_public'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' glo_c_public'
+  ClassDeclaration
+    Identifier: ' glo_C7_public'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' glo_i_public'
+  ClassDeclaration
+    Identifier: ' glo_C11_public'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' glo_c_public'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' glo_i_public'

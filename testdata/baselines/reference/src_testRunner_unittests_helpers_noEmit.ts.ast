@@ -1,0 +1,1956 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CompilerOptions'
+        ImportSpecifier
+          Identifier: '
+    hasProperty'
+        ImportSpecifier
+          Identifier: '
+    ModuleKind'
+        ImportSpecifier
+          Identifier: '
+    noop'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' compilerOptionsToConfigJson'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    noChangeRun'
+        ImportSpecifier
+          Identifier: '
+    TestTscEdit'
+        ImportSpecifier
+          Identifier: '
+    verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTscWatch'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' forEachNoEmitChangesWorker'
+    Parameter
+      Identifier: 'commandType'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' compilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' discrepancyExplanation'
+            ArrowFunction
+              EqualsGreaterThanToken
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' noChangeRunWithNoEmit'
+            TypeReference
+              Identifier: ' TestTscEdit'
+            ObjectLiteralExpression
+              SpreadAssignment
+                Identifier: 'noChangeRun'
+              PropertyAssignment
+                Identifier: '
+        caption'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        commandLineArgs'
+                ArrayLiteralExpression
+                  SpreadElement
+                    Identifier: 'commandType'
+                  StringLiteral
+                  StringLiteral
+              PropertyAssignment
+                Identifier: '
+        discrepancyExplanation'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' compilerOptions'
+                    Identifier: 'composite'
+                  QuestionToken
+                  Identifier: '
+            discrepancyExplanation'
+                  ColonToken
+                  Identifier: '
+            undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' noChangeRunWithEmit'
+            TypeReference
+              Identifier: ' TestTscEdit'
+            ObjectLiteralExpression
+              SpreadAssignment
+                Identifier: 'noChangeRun'
+              PropertyAssignment
+                Identifier: '
+        caption'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        commandLineArgs'
+                ArrayLiteralExpression
+                  SpreadElement
+                    Identifier: 'commandType'
+                  StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' optionsString'
+            StringLiteral
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' key'
+        Identifier: ' compilerOptions'
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: 'hasProperty'
+                  Identifier: 'compilerOptions'
+                  Identifier: ' key'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  Identifier: ' key'
+                  ExclamationEqualsEqualsToken
+                  StringLiteral
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' key'
+                ExclamationEqualsEqualsToken
+                StringLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            optionsString'
+                  PlusEqualsToken
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'key'
+                      TemplateTail
+      FunctionDeclaration
+        Identifier: ' scenarioName'
+        Parameter
+          Identifier: 'text'
+          StringKeyword
+        Block
+          ReturnStatement
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: 'compilerOptions'
+                    Identifier: 'outFile'
+                  QuestionToken
+                  StringLiteral
+                  ColonToken
+                  StringLiteral
+                TemplateMiddle
+              TemplateSpan
+                Identifier: 'text'
+                TemplateMiddle
+              TemplateSpan
+                Identifier: 'optionsString'
+                TemplateTail
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    verifyTsc'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        scenario'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        subScenario'
+              CallExpression
+                Identifier: ' scenarioName'
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        commandLineArgs'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'commandType'
+                StringLiteral
+            ShorthandPropertyAssignment
+              Identifier: '
+        sys'
+            PropertyAssignment
+              Identifier: '
+        edits'
+              ArrayLiteralExpression
+                Identifier: '
+            noChangeRunWithNoEmit'
+                Identifier: '
+            noChangeRunWithNoEmit'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                caption'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                commandLineArgs'
+                    ArrayLiteralExpression
+                      SpreadElement
+                        Identifier: 'commandType'
+                      StringLiteral
+                      StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                edit'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' sys'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' sys'
+                          Identifier: 'replaceFileText'
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                discrepancyExplanation'
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' compilerOptions'
+                        Identifier: 'composite'
+                      QuestionToken
+                      Identifier: '
+                    discrepancyExplanation'
+                      ColonToken
+                      Identifier: '
+                    undefined'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                caption'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                edit'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' sys'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' sys'
+                          Identifier: 'replaceFileText'
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                Identifier: '
+            noChangeRunWithEmit'
+                Identifier: '
+            noChangeRunWithNoEmit'
+                Identifier: '
+            noChangeRunWithNoEmit'
+                Identifier: '
+            noChangeRunWithEmit'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                caption'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                edit'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' sys'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' sys'
+                          Identifier: 'replaceFileText'
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                Identifier: '
+            noChangeRunWithEmit'
+                Identifier: '
+            noChangeRunWithNoEmit'
+                Identifier: '
+            noChangeRunWithNoEmit'
+                Identifier: '
+            noChangeRunWithEmit'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                caption'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                commandLineArgs'
+                    ArrayLiteralExpression
+                      SpreadElement
+                        Identifier: 'commandType'
+                      StringLiteral
+                      StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                edit'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' sys'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' sys'
+                          Identifier: 'replaceFileText'
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                discrepancyExplanation'
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' compilerOptions'
+                        Identifier: 'composite'
+                      QuestionToken
+                      Identifier: '
+                    discrepancyExplanation'
+                      ColonToken
+                      Identifier: '
+                    undefined'
+                Identifier: '
+            noChangeRunWithEmit'
+                Identifier: '
+            noChangeRunWithNoEmit'
+                Identifier: '
+            noChangeRunWithNoEmit'
+                Identifier: '
+            noChangeRunWithEmit'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    verifyTsc'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        scenario'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        subScenario'
+              CallExpression
+                Identifier: ' scenarioName'
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        commandLineArgs'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'commandType'
+                StringLiteral
+                StringLiteral
+            ShorthandPropertyAssignment
+              Identifier: '
+        sys'
+            PropertyAssignment
+              Identifier: '
+        edits'
+              ArrayLiteralExpression
+                Identifier: '
+            noChangeRunWithEmit'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                caption'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                commandLineArgs'
+                    ArrayLiteralExpression
+                      SpreadElement
+                        Identifier: 'commandType'
+                      StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                edit'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' sys'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' sys'
+                          Identifier: 'replaceFileText'
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                caption'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                edit'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' sys'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' sys'
+                          Identifier: 'replaceFileText'
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+                discrepancyExplanation'
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: ' compilerOptions'
+                        Identifier: 'composite'
+                      QuestionToken
+                      Identifier: '
+                    discrepancyExplanation'
+                      ColonToken
+                      Identifier: '
+                    undefined'
+                Identifier: '
+            noChangeRunWithEmit'
+      FunctionDeclaration
+        Identifier: ' sys'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' TestServerHost'
+                Identifier: 'createWatchedSystem'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  TaggedTemplateExpression
+                    Identifier: ' dedent'
+                    NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  StringLiteral
+                  TaggedTemplateExpression
+                    Identifier: ' dedent'
+                    NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  StringLiteral
+                  TaggedTemplateExpression
+                    Identifier: ' dedent'
+                    NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  StringLiteral
+                  TaggedTemplateExpression
+                    Identifier: ' dedent'
+                    NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  StringLiteral
+                  TaggedTemplateExpression
+                    Identifier: ' dedent'
+                    NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  StringLiteral
+                  TaggedTemplateExpression
+                    Identifier: ' dedent'
+                    NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  StringLiteral
+                  CallExpression
+                    Identifier: ' jsonToReadableText'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                compilerOptions'
+                        CallExpression
+                          Identifier: ' compilerOptionsToConfigJson'
+                          Identifier: 'compilerOptions'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachNoEmitChanges'
+    Parameter
+      Identifier: 'commandType'
+      ArrayType
+        StringKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    describe'
+          StringLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        forEachNoEmitChangesWorker'
+                  Identifier: 'commandType'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' incremental'
+                      TrueKeyword
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        forEachNoEmitChangesWorker'
+                  Identifier: 'commandType'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' incremental'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' declaration'
+                      TrueKeyword
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        forEachNoEmitChangesWorker'
+                  Identifier: 'commandType'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' composite'
+                      TrueKeyword
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        forEachNoEmitChangesWorker'
+                  Identifier: 'commandType'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' incremental'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' outFile'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' module'
+                      PropertyAccessExpression
+                        Identifier: ' ModuleKind'
+                        Identifier: 'AMD'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        forEachNoEmitChangesWorker'
+                  Identifier: 'commandType'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' incremental'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' declaration'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' outFile'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' module'
+                      PropertyAccessExpression
+                        Identifier: ' ModuleKind'
+                        Identifier: 'AMD'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        forEachNoEmitChangesWorker'
+                  Identifier: 'commandType'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' composite'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' outFile'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' module'
+                      PropertyAccessExpression
+                        Identifier: ' ModuleKind'
+                        Identifier: 'AMD'
+  FunctionDeclaration
+    Identifier: ' editsForDtsChanges'
+    Parameter
+      Identifier: '
+    commandType'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: '
+    aContent'
+      StringKeyword
+    Parameter
+      Identifier: '
+    incremental'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    multiFile'
+      BooleanKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' TestTscEdit'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: '
+        noChangeRun'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            caption'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            edit'
+              Identifier: ' noop'
+            PropertyAssignment
+              Identifier: '
+            commandLineArgs'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'commandType'
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            caption'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            edit'
+              Identifier: ' noop'
+            PropertyAssignment
+              Identifier: '
+            commandLineArgs'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'commandType'
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ConditionalExpression
+            Identifier: '
+        incremental'
+            QuestionToken
+            ObjectLiteralExpression
+              SpreadAssignment
+                Identifier: 'noChangeRun'
+              PropertyAssignment
+                Identifier: '
+            discrepancyExplanation'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+            ColonToken
+            Identifier: ' noChangeRun'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            caption'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            edit'
+              Identifier: ' noop'
+            PropertyAssignment
+              Identifier: '
+            commandLineArgs'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'commandType'
+                StringLiteral
+                StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            caption'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            edit'
+              ArrowFunction
+                Parameter
+                  Identifier: ' sys'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' sys'
+                    Identifier: 'writeFile'
+                  StringLiteral
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' aContent'
+                      Identifier: 'replace'
+                    StringLiteral
+                    StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            caption'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            edit'
+              Identifier: ' noop'
+            PropertyAssignment
+              Identifier: '
+            commandLineArgs'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'commandType'
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            caption'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            edit'
+              Identifier: ' noop'
+            PropertyAssignment
+              Identifier: '
+            commandLineArgs'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'commandType'
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+            // Multi file still needs to report error so will emit build info (for pending dtsMap)
+            discrepancyExplanation'
+              ConditionalExpression
+                BinaryExpression
+                  Identifier: ' incremental'
+                  AmpersandAmpersandToken
+                  PrefixUnaryExpression
+                    Identifier: 'multiFile'
+                QuestionToken
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                ColonToken
+                Identifier: ' undefined'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachNoEmitDtsChanges'
+    Parameter
+      Identifier: 'commandType'
+      ArrayType
+        StringKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    describe'
+          StringLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: 'commandType'
+                    NumericLiteral
+                  ExclamationEqualsEqualsToken
+                  StringLiteral
+                ReturnStatement
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ArrayLiteralExpression
+                      FalseKeyword
+                      TrueKeyword
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'asModules'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        ArrayLiteralExpression
+                          Identifier: 'undefined'
+                          TrueKeyword
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'incremental'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            ArrayLiteralExpression
+                              ObjectLiteralExpression
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' outFile'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: ' module'
+                                  ConditionalExpression
+                                    Identifier: ' asModules'
+                                    QuestionToken
+                                    StringLiteral
+                                    ColonToken
+                                    Identifier: ' undefined'
+                            Identifier: 'forEach'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'options'
+                            EqualsGreaterThanToken
+                            Block
+                              IfStatement
+                                BinaryExpression
+                                  PrefixUnaryExpression
+                                    Identifier: 'incremental'
+                                  AmpersandAmpersandToken
+                                  Identifier: ' asModules'
+                                ReturnStatement
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' aContent'
+                                    ConditionalExpression
+                                      Identifier: ' asModules'
+                                      QuestionToken
+                                      NoSubstitutionTemplateLiteral
+                                      ColonToken
+                                      NoSubstitutionTemplateLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                    verifyTsc'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                        scenario'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                        subScenario'
+                                      TemplateExpression
+                                        TemplateHead
+                                        TemplateSpan
+                                          ConditionalExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'options'
+                                              Identifier: 'outFile'
+                                            QuestionToken
+                                            StringLiteral
+                                            ColonToken
+                                            StringLiteral
+                                          TemplateMiddle
+                                        TemplateSpan
+                                          ConditionalExpression
+                                            Identifier: 'incremental'
+                                            QuestionToken
+                                            StringLiteral
+                                            ColonToken
+                                            StringLiteral
+                                          TemplateMiddle
+                                        TemplateSpan
+                                          ConditionalExpression
+                                            Identifier: 'asModules'
+                                            QuestionToken
+                                            StringLiteral
+                                            ColonToken
+                                            StringLiteral
+                                          TemplateTail
+                                    PropertyAssignment
+                                      Identifier: '
+                        commandLineArgs'
+                                      ArrayLiteralExpression
+                                        SpreadElement
+                                          Identifier: 'commandType'
+                                        StringLiteral
+                                        StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                        sys'
+                                      ArrowFunction
+                                        EqualsGreaterThanToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                            TestServerHost'
+                                            Identifier: 'createWatchedSystem'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              StringLiteral
+                                              Identifier: ' aContent'
+                                            PropertyAssignment
+                                              StringLiteral
+                                              CallExpression
+                                                Identifier: ' jsonToReadableText'
+                                                ObjectLiteralExpression
+                                                  PropertyAssignment
+                                                    Identifier: '
+                                    compilerOptions'
+                                                    ObjectLiteralExpression
+                                                      SpreadAssignment
+                                                        Identifier: 'options'
+                                                      ShorthandPropertyAssignment
+                                                        Identifier: ' incremental'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' currentDirectory'
+                                              StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                        modifySystem'
+                                      ConditionalExpression
+                                        Identifier: ' asModules'
+                                        QuestionToken
+                                        ArrowFunction
+                                          Parameter
+                                            Identifier: '
+                            sys'
+                                          EqualsGreaterThanToken
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' sys'
+                                              Identifier: 'writeFile'
+                                            StringLiteral
+                                            NoSubstitutionTemplateLiteral
+                                        ColonToken
+                                        Identifier: '
+                            undefined'
+                                    PropertyAssignment
+                                      Identifier: '
+                        edits'
+                                      CallExpression
+                                        Identifier: ' editsForDtsChanges'
+                                        Identifier: 'commandType'
+                                        Identifier: ' aContent'
+                                        Identifier: ' incremental'
+                                        FalseKeyword
+                                    PropertyAssignment
+                                      Identifier: '
+                        baselinePrograms'
+                                      TrueKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    describe'
+          StringLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ArrayLiteralExpression
+                      ObjectLiteralExpression
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' outFile'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: ' module'
+                          StringLiteral
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'options'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' aContent'
+                            NoSubstitutionTemplateLiteral
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifyTsc'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                scenario'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                subScenario'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  ConditionalExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'options'
+                                      Identifier: 'outFile'
+                                    QuestionToken
+                                    StringLiteral
+                                    ColonToken
+                                    StringLiteral
+                                  TemplateTail
+                            PropertyAssignment
+                              Identifier: '
+                commandLineArgs'
+                              ArrayLiteralExpression
+                                SpreadElement
+                                  Identifier: 'commandType'
+                                StringLiteral
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                sys'
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    TestServerHost'
+                                    Identifier: 'createWatchedSystem'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      StringLiteral
+                                      Identifier: ' aContent'
+                                    PropertyAssignment
+                                      StringLiteral
+                                      NoSubstitutionTemplateLiteral
+                                    PropertyAssignment
+                                      StringLiteral
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' aContent'
+                                          Identifier: 'replace'
+                                        StringLiteral
+                                        StringLiteral
+                                    PropertyAssignment
+                                      StringLiteral
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' aContent'
+                                          Identifier: 'replace'
+                                        StringLiteral
+                                        StringLiteral
+                                    PropertyAssignment
+                                      StringLiteral
+                                      CallExpression
+                                        Identifier: ' jsonToReadableText'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                            compilerOptions'
+                                            ObjectLiteralExpression
+                                              SpreadAssignment
+                                                Identifier: 'options'
+                                              PropertyAssignment
+                                                Identifier: ' incremental'
+                                                TrueKeyword
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' currentDirectory'
+                                      StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                edits'
+                              ArrayLiteralExpression
+                                SpreadElement
+                                  CallExpression
+                                    Identifier: 'editsForDtsChanges'
+                                    Identifier: 'commandType'
+                                    Identifier: ' aContent'
+                                    TrueKeyword
+                                    TrueKeyword
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        caption'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        edit'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sys'
+                                          Identifier: 'writeFile'
+                                        StringLiteral
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: ' aContent'
+                                                Identifier: 'replace'
+                                              StringLiteral
+                                              StringLiteral
+                                            Identifier: 'replace'
+                                          StringLiteral
+                                          StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        commandLineArgs'
+                                    ArrayLiteralExpression
+                                      SpreadElement
+                                        Identifier: 'commandType'
+                                      StringLiteral
+                                      StringLiteral
+                                      StringLiteral
+                                      StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                baselinePrograms'
+                              TrueKeyword
+  FunctionDeclaration
+    Identifier: ' forEachNoEmitAndErrorsWorker'
+    Parameter
+      Identifier: '
+    subScenario'
+      StringKeyword
+    Parameter
+      Identifier: '
+    aTsContent'
+      StringKeyword
+    Parameter
+      Identifier: '
+    additionalOptions'
+      UnionType
+        TypeReference
+          Identifier: ' CompilerOptions'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    action'
+      FunctionType
+        Parameter
+          Identifier: '
+        subScenario'
+          StringKeyword
+        Parameter
+          Identifier: '
+        sys'
+          FunctionType
+            TypeReference
+              Identifier: ' TestServerHost'
+        Parameter
+          Identifier: '
+        aTsContent'
+          StringKeyword
+        Parameter
+          Identifier: '
+        fixedATsContent'
+          StringKeyword
+        Parameter
+          Identifier: '
+        compilerOptions'
+          TypeReference
+            Identifier: ' CompilerOptions'
+        VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              FalseKeyword
+              TrueKeyword
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'asModules'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                ArrayLiteralExpression
+                  Identifier: 'undefined'
+                  TrueKeyword
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'incremental'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    ArrayLiteralExpression
+                      ObjectLiteralExpression
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' outFile'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: ' module'
+                          ConditionalExpression
+                            Identifier: ' asModules'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: ' ModuleKind'
+                              Identifier: 'AMD'
+                            ColonToken
+                            Identifier: ' undefined'
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'options'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        BinaryExpression
+                          PrefixUnaryExpression
+                            Identifier: 'incremental'
+                          AmpersandAmpersandToken
+                          Identifier: ' asModules'
+                        ReturnStatement
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' aContent'
+                            ConditionalExpression
+                              Identifier: ' asModules'
+                              QuestionToken
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'aTsContent'
+                                  TemplateTail
+                              ColonToken
+                              Identifier: ' aTsContent'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' compilerOptions'
+                            ObjectLiteralExpression
+                              SpreadAssignment
+                                Identifier: 'options'
+                              ShorthandPropertyAssignment
+                                Identifier: '
+                    incremental'
+                              SpreadAssignment
+                                Identifier: 'additionalOptions'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                action'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              ConditionalExpression
+                                PropertyAccessExpression
+                                  Identifier: 'options'
+                                  Identifier: 'outFile'
+                                QuestionToken
+                                StringLiteral
+                                ColonToken
+                                StringLiteral
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'subScenario'
+                              TemplateMiddle
+                            TemplateSpan
+                              ConditionalExpression
+                                Identifier: 'incremental'
+                                QuestionToken
+                                StringLiteral
+                                ColonToken
+                                StringLiteral
+                              TemplateMiddle
+                            TemplateSpan
+                              ConditionalExpression
+                                Identifier: 'asModules'
+                                QuestionToken
+                                StringLiteral
+                                ColonToken
+                                StringLiteral
+                              TemplateTail
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' sys'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHost'
+                                        Identifier: 'createWatchedSystem'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          StringLiteral
+                                          Identifier: ' aContent'
+                                        PropertyAssignment
+                                          StringLiteral
+                                          CallExpression
+                                            Identifier: ' jsonToReadableText'
+                                            ObjectLiteralExpression
+                                              PropertyAssignment
+                                                Identifier: '
+                                compilerOptions'
+                                                CallExpression
+                                                  Identifier: ' compilerOptionsToConfigJson'
+                                                  Identifier: 'compilerOptions'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' currentDirectory'
+                                          StringLiteral
+                              IfStatement
+                                Identifier: 'asModules'
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'writeFile'
+                                    StringLiteral
+                                    NoSubstitutionTemplateLiteral
+                              ReturnStatement
+                                Identifier: ' sys'
+                          Identifier: '
+                    aContent'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              ConditionalExpression
+                                Identifier: 'asModules'
+                                QuestionToken
+                                StringLiteral
+                                ColonToken
+                                StringLiteral
+                              TemplateTail
+                          Identifier: '
+                    compilerOptions'
+  FunctionDeclaration
+    Identifier: ' forEachNoEmitAndErrors'
+    Parameter
+      Identifier: '
+    action'
+      FunctionType
+        Parameter
+          Identifier: '
+        subScenario'
+          StringKeyword
+        Parameter
+          Identifier: '
+        sys'
+          FunctionType
+            TypeReference
+              Identifier: ' TestServerHost'
+        Parameter
+          Identifier: '
+        aTsContent'
+          StringKeyword
+        Parameter
+          Identifier: '
+        fixedATsContent'
+          StringKeyword
+        Parameter
+          Identifier: '
+        compilerOptions'
+          TypeReference
+            Identifier: ' CompilerOptions'
+        VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachNoEmitAndErrorsWorker'
+          StringLiteral
+          NoSubstitutionTemplateLiteral
+          Identifier: '
+        /*additionalOptions*/ undefined'
+          Identifier: '
+        action'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachNoEmitAndErrorsWorker'
+          StringLiteral
+          NoSubstitutionTemplateLiteral
+          Identifier: '
+        /*additionalOptions*/ undefined'
+          Identifier: '
+        action'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' declaration'
+                  TrueKeyword
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'options'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        forEachNoEmitAndErrorsWorker'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      ConditionalExpression
+                        PrefixUnaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'options'
+                            Identifier: 'declaration'
+                        QuestionToken
+                        StringLiteral
+                        ColonToken
+                        StringLiteral
+                      TemplateTail
+                  NoSubstitutionTemplateLiteral
+                  Identifier: '
+            options'
+                  Identifier: '
+            action'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachNoEmitTsc'
+    Parameter
+      Identifier: 'commandType'
+      ArrayType
+        StringKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachNoEmitAndErrors'
+          ArrowFunction
+            Parameter
+              Identifier: 'subScenario'
+            Parameter
+              Identifier: ' sys'
+            Parameter
+              Identifier: ' aTsContent'
+            Parameter
+              Identifier: ' fixedATsContent'
+            Parameter
+              Identifier: ' compilerOptions'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            scenario'
+                  StringLiteral
+                ShorthandPropertyAssignment
+                  Identifier: '
+            subScenario'
+                PropertyAssignment
+                  Identifier: '
+            commandLineArgs'
+                  ArrayLiteralExpression
+                    SpreadElement
+                      Identifier: 'commandType'
+                    StringLiteral
+                    StringLiteral
+                ShorthandPropertyAssignment
+                  Identifier: '
+            sys'
+                PropertyAssignment
+                  Identifier: '
+            edits'
+                  ArrayLiteralExpression
+                    Identifier: '
+                noChangeRun'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                    caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                    edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            Identifier: ' fixedATsContent'
+                    Identifier: '
+                noChangeRun'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                    caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                    edit'
+                        Identifier: ' noop'
+                      PropertyAssignment
+                        Identifier: '
+                    commandLineArgs'
+                        ArrayLiteralExpression
+                          SpreadElement
+                            Identifier: 'commandType'
+                          StringLiteral
+                    Identifier: '
+                noChangeRun'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                    caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                    edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            Identifier: ' aTsContent'
+                      PropertyAssignment
+                        Identifier: '
+                    discrepancyExplanation'
+                        ConditionalExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' compilerOptions'
+                              Identifier: 'incremental'
+                            AmpersandAmpersandToken
+                            BinaryExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' subScenario'
+                                  Identifier: 'indexOf'
+                                StringLiteral
+                              ExclamationEqualsEqualsToken
+                              PrefixUnaryExpression
+                                NumericLiteral
+                          QuestionToken
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            ArrayLiteralExpression
+                              StringLiteral
+                          ColonToken
+                          Identifier: ' undefined'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                    caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                    edit'
+                        Identifier: ' noop'
+                      PropertyAssignment
+                        Identifier: '
+                    commandLineArgs'
+                        ArrayLiteralExpression
+                          SpreadElement
+                            Identifier: 'commandType'
+                          StringLiteral
+                    ConditionalExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                compilerOptions'
+                          Identifier: 'incremental'
+                        AmpersandAmpersandToken
+                        BinaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' subScenario'
+                              Identifier: 'indexOf'
+                            StringLiteral
+                          ExclamationEqualsEqualsToken
+                          PrefixUnaryExpression
+                            NumericLiteral
+                      QuestionToken
+                      ObjectLiteralExpression
+                        SpreadAssignment
+                          Identifier: 'noChangeRun'
+                        PropertyAssignment
+                          Identifier: '
+                    discrepancyExplanation'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            ArrayLiteralExpression
+                              StringLiteral
+                      ColonToken
+                      Identifier: ' noChangeRun'
+                PropertyAssignment
+                  Identifier: '
+            baselinePrograms'
+                  TrueKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forEachNoEmitTscWatch'
+    Parameter
+      Identifier: 'commandType'
+      ArrayType
+        StringKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachNoEmitAndErrors'
+          ArrowFunction
+            Parameter
+              Identifier: 'subScenario'
+            Parameter
+              Identifier: ' sys'
+            Parameter
+              Identifier: ' aTsContent'
+            Parameter
+              Identifier: ' fixedATsContent'
+            Parameter
+              Identifier: ' compilerOptions'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        verifyTscWatch'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            scenario'
+                  StringLiteral
+                ShorthandPropertyAssignment
+                  Identifier: '
+            subScenario'
+                PropertyAssignment
+                  Identifier: '
+            commandLineArgs'
+                  ArrayLiteralExpression
+                    SpreadElement
+                      Identifier: 'commandType'
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' result'
+                            CallExpression
+                              Identifier: ' sys'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                result'
+                            Identifier: 'writeFile'
+                          StringLiteral
+                          CallExpression
+                            Identifier: '
+                    jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        compilerOptions'
+                                CallExpression
+                                  Identifier: ' compilerOptionsToConfigJson'
+                                  ObjectLiteralExpression
+                                    SpreadAssignment
+                                      Identifier: 'compilerOptions'
+                                    PropertyAssignment
+                                      Identifier: '
+                            noEmit'
+                                      TrueKeyword
+                      ReturnStatement
+                        Identifier: ' result'
+                PropertyAssignment
+                  Identifier: '
+            edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                    caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                    edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            Identifier: ' fixedATsContent'
+                      PropertyAssignment
+                        Identifier: '
+                    timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                    caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                    edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            CallExpression
+                              Identifier: '
+                            jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                                compilerOptions'
+                                  CallExpression
+                                    Identifier: ' compilerOptionsToConfigJson'
+                                    Identifier: 'compilerOptions'
+                      PropertyAssignment
+                        Identifier: '
+                    timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                    caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                    edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            CallExpression
+                              Identifier: '
+                            jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                                compilerOptions'
+                                  CallExpression
+                                    Identifier: ' compilerOptionsToConfigJson'
+                                    ObjectLiteralExpression
+                                      SpreadAssignment
+                                        Identifier: 'compilerOptions'
+                                      PropertyAssignment
+                                        Identifier: '
+                                    noEmit'
+                                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                    timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                    caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                    edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            Identifier: ' aTsContent'
+                      PropertyAssignment
+                        Identifier: '
+                    timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                    caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                    edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            CallExpression
+                              Identifier: '
+                            jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                                compilerOptions'
+                                  CallExpression
+                                    Identifier: ' compilerOptionsToConfigJson'
+                                    Identifier: 'compilerOptions'
+                      PropertyAssignment
+                        Identifier: '
+                    timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                    caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                    edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            CallExpression
+                              Identifier: '
+                            jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                                compilerOptions'
+                                  CallExpression
+                                    Identifier: ' compilerOptionsToConfigJson'
+                                    ObjectLiteralExpression
+                                      SpreadAssignment
+                                        Identifier: 'compilerOptions'
+                                      PropertyAssignment
+                                        Identifier: '
+                                    noEmit'
+                                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                    timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'

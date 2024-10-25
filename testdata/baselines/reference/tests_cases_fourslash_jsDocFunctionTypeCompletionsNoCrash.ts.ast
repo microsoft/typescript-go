@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+//// /**
+////  * @returns {function/**/(): string}
+////  */
+//// function updateCalendarEvent() {
+////   return "";
+//// }
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          PropertyAccessExpression
+            Identifier: ' completion'
+            Identifier: 'globalTypes'

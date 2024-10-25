@@ -1,0 +1,101 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Suit'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Rank'
+    UnionType
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' Suit'
+      ExportSpecifier
+        Identifier: ' Rank'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Suit'
+        ImportSpecifier
+          Identifier: ' Rank'
+    StringLiteral
+  ExportAssignment
+    ArrowFunction
+      Parameter
+        Identifier: 'suit'
+        TypeReference
+          Identifier: ' Suit'
+      Parameter
+        Identifier: ' rank'
+        TypeReference
+          Identifier: ' Rank'
+      EqualsGreaterThanToken
+      ParenthesizedExpression
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: 'suit'
+          ShorthandPropertyAssignment
+            Identifier: ' rank'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lazyCard'
+        ArrowFunction
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                ImportKeyword
+                StringLiteral
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'default'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' Suit'
+      ExportSpecifier
+        Identifier: ' Rank'
+    StringLiteral

@@ -1,0 +1,8 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        PropertyAccessExpression
+          Identifier: ' window'
+          Identifier: ''

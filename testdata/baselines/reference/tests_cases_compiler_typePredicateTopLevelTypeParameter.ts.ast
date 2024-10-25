@@ -1,0 +1,62 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' getPermissions'
+    Parameter
+      Identifier: 'user'
+      StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'user'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        ReturnStatement
+          StringLiteral
+      ReturnStatement
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' admins'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'e'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' getPermissions'
+              Identifier: 'e'
+  FunctionDeclaration
+    Identifier: ' isDefined'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    TypePredicate
+      Identifier: ' a'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foundAdmins'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' admins'
+            Identifier: 'filter'
+          Identifier: 'isDefined'

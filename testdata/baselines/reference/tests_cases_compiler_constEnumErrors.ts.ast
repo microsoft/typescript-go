@@ -1,0 +1,153 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+  ModuleDeclaration
+    Identifier: ' E'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E1'
+    EnumMember
+      Identifier: '
+    // illegal case
+    // forward reference to the element of the same enum
+    X'
+      Identifier: ' Y'
+    EnumMember
+      Identifier: '
+    // forward reference to the element of the same enum
+    Y'
+      PropertyAccessExpression
+        Identifier: ' E1'
+        Identifier: 'Z'
+    EnumMember
+      Identifier: '
+    Y1'
+      ElementAccessExpression
+        Identifier: ' E1'
+        StringLiteral
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E2'
+    EnumMember
+      Identifier: '
+    A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y0'
+        ElementAccessExpression
+          Identifier: ' E2'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' name'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y1'
+        ElementAccessExpression
+          Identifier: ' E2'
+          Identifier: 'name'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y2'
+        ElementAccessExpression
+          Identifier: ' E2'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'name'
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        Identifier: ' E2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ArrayLiteralExpression
+          Identifier: 'E2'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 't'
+      AnyKeyword
+    VoidKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      Identifier: 'E2'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' NaNOrInfinity'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+      BinaryExpression
+        Identifier: ' A'
+        AsteriskToken
+        Identifier: ' A'
+    EnumMember
+      Identifier: '
+    C'
+      BinaryExpression
+        Identifier: ' B'
+        AsteriskToken
+        Identifier: ' B'
+    EnumMember
+      Identifier: '
+    D'
+      BinaryExpression
+        Identifier: ' C'
+        AsteriskToken
+        Identifier: ' C'
+    EnumMember
+      Identifier: '
+    E'
+      BinaryExpression
+        Identifier: ' D'
+        AsteriskToken
+        Identifier: ' D'
+    EnumMember
+      Identifier: '
+    F'
+      BinaryExpression
+        Identifier: ' E'
+        AsteriskToken
+        Identifier: ' E'
+    EnumMember
+      Identifier: ' // overflow
+    G'
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral
+    EnumMember
+      Identifier: ' // overflow
+    H'
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral

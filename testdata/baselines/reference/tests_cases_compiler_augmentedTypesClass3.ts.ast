@@ -1,0 +1,45 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c5'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  ModuleDeclaration
+    Identifier: ' c5'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' c5a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  ModuleDeclaration
+    Identifier: ' c5a'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' c5b'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  ModuleDeclaration
+    Identifier: ' c5b'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' c5c'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block

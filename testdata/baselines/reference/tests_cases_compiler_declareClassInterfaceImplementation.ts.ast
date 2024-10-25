@@ -1,0 +1,14 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IBuffer'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        NumberKeyword
+      NumberKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Buffer'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IBuffer'

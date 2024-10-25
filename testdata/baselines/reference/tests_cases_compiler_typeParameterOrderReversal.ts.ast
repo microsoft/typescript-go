@@ -1,0 +1,60 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    n'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' uFirst'
+    TypeParameter
+      Identifier: 'U'
+      TypeReference
+        Identifier: ' X'
+        TypeReference
+          Identifier: 'T'
+    TypeParameter
+      Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' U'
+    Block
+  FunctionDeclaration
+    Identifier: ' tFirst'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' X'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' U'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' X'
+          NumberKeyword
+        NullKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Both of these should be allowed
+uFirst'
+      Identifier: 'z'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+tFirst'
+      Identifier: 'z'

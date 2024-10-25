@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '// @strict: true
+
+// Repro from #17711
+
+Object'
+        Identifier: 'freeze'
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    foo'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Object'
+                  Identifier: 'freeze'
+                StringLiteral

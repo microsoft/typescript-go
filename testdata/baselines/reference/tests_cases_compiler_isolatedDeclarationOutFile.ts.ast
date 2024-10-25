@@ -1,0 +1,52 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    toUpper'
+      Parameter
+        Identifier: 'msg'
+        StringKeyword
+      StringKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' msg'
+              Identifier: 'toUpperCase'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    toFixed'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      StringKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' n'
+              Identifier: 'toFixed'
+            NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' makeB'
+    TypeReference
+      Identifier: ' A'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' B'

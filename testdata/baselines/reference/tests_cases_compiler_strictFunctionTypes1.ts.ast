@@ -1,0 +1,372 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'f1'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    Parameter
+      Identifier: ' f2'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' f1'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    Parameter
+      Identifier: ' f2'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' f1'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    Parameter
+      Identifier: ' f2'
+      FunctionType
+        Parameter
+          Identifier: 'f'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            VoidKeyword
+        VoidKeyword
+    TypeReference
+      Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Func'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'f1'
+      TypeReference
+        Identifier: ' Func'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' f2'
+      TypeReference
+        Identifier: ' Func'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' Func'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fo'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Object'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fs'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fx'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            StringLiteral
+        VoidKeyword
+    VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        CallExpression
+          Identifier: ' f1'
+          Identifier: 'fo'
+          Identifier: ' fs'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        CallExpression
+          Identifier: ' f2'
+          StringLiteral
+          Identifier: ' fo'
+          Identifier: ' fs'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        CallExpression
+          Identifier: ' f3'
+          StringLiteral
+          Identifier: ' fo'
+          Identifier: ' fx'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        CallExpression
+          Identifier: ' f4'
+          Identifier: 'fo'
+          Identifier: ' fs'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' never'
+        NeverKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x10'
+        CallExpression
+          Identifier: ' f2'
+          Identifier: 'never'
+          Identifier: ' fo'
+          Identifier: ' fs'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+        CallExpression
+          Identifier: ' f3'
+          Identifier: 'never'
+          Identifier: ' fo'
+          Identifier: ' fx'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' foo'
+          ArrayLiteralExpression
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: ' a'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertySignature
+      Identifier: ' b'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' acceptUnion'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' acceptA'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+    VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' coAndContra'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' func'
+      FunctionType
+        Parameter
+          Identifier: 't'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        TypeReference
+          Identifier: ' A'
+        CallExpression
+          Identifier: ' coAndContra'
+          Identifier: 'a'
+          Identifier: ' acceptUnion'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TypeReference
+          Identifier: ' B'
+        CallExpression
+          Identifier: ' coAndContra'
+          Identifier: 'b'
+          Identifier: ' acceptA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        TypeReference
+          Identifier: ' A'
+        CallExpression
+          Identifier: ' coAndContra'
+          Identifier: 'never'
+          Identifier: ' acceptA'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' coAndContraArray'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' func'
+      FunctionType
+        Parameter
+          Identifier: 't'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        ArrayType
+          TypeReference
+            Identifier: ' A'
+        CallExpression
+          Identifier: ' coAndContraArray'
+          ArrayLiteralExpression
+            Identifier: 'a'
+          Identifier: ' acceptUnion'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t5'
+        ArrayType
+          TypeReference
+            Identifier: ' B'
+        CallExpression
+          Identifier: ' coAndContraArray'
+          ArrayLiteralExpression
+            Identifier: 'b'
+          Identifier: ' acceptA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t6'
+        ArrayType
+          TypeReference
+            Identifier: ' A'
+        CallExpression
+          Identifier: ' coAndContraArray'
+          ArrayLiteralExpression
+          Identifier: ' acceptA'

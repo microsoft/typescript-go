@@ -1,0 +1,90 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    next'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    owner'
+      TypeReference
+        Identifier: ' OwnerList'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' OwnerList'
+    TypeParameter
+      Identifier: 'U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'List'
+          TypeReference
+            Identifier: 'U'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' list'
+        TypeReference
+          Identifier: ' List'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ownerList'
+        TypeReference
+          Identifier: ' OwnerList'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+list'
+      EqualsToken
+      Identifier: ' ownerList'
+  FunctionDeclaration
+    Identifier: ' other'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' list'
+            TypeReference
+              Identifier: ' List'
+              TypeReference
+                Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ownerList'
+            TypeReference
+              Identifier: ' OwnerList'
+              TypeReference
+                Identifier: 'T'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    list'
+          EqualsToken
+          Identifier: ' ownerList'

@@ -1,0 +1,28 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' JQueryEventObjectTest'
+    PropertySignature
+      Identifier: '
+    data'
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    which'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    metaKey'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' SecondEvent'
+    PropertySignature
+      Identifier: '
+    data'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Third'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' JQueryEventObjectTest'
+      ExpressionWithTypeArguments
+        Identifier: ' SecondEvent'

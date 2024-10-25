@@ -1,0 +1,24 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+      ExpressionWithTypeArguments
+        Identifier: ' C2'
+    PropertySignature
+      Identifier: ' // error
+    y'
+      StringKeyword

@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'p1'
+    Parameter
+      Identifier: ' p2'
+    Parameter
+      Identifier: ' p3'
+    Block

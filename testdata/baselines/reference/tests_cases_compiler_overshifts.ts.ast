@@ -1,0 +1,482 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      LessThanLessThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      LessThanLessThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      LessThanLessThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      LessThanLessThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      LessThanLessThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      LessThanLessThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      LessThanLessThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      LessThanLessThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanGreaterThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanGreaterThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanGreaterThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanGreaterThanToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanGreaterThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanGreaterThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanGreaterThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      GreaterThanGreaterThanGreaterThanToken
+      PrefixUnaryExpression
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      LessThanLessThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+x'
+      LessThanLessThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // overshift
+x'
+      LessThanLessThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      LessThanLessThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      LessThanLessThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK-ish
+x'
+      LessThanLessThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // backwards overshift
+x'
+      LessThanLessThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      LessThanLessThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      GreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+x'
+      GreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // overshift
+x'
+      GreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanGreaterThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK-ish
+x'
+      GreaterThanGreaterThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // backwards overshift
+x'
+      GreaterThanGreaterThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanGreaterThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+x'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // overshift
+x'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK-ish
+x'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // backwards overshift
+x'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      PrefixUnaryExpression
+        NumericLiteral
+  EnumDeclaration
+    Identifier: ' One'
+    EnumMember
+      Identifier: '
+    A'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: ' // ok
+    B'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: ' // overshift
+    C'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    D'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    E'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+    EnumMember
+      Identifier: ' // OK-ish
+    F'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+    EnumMember
+      Identifier: ' // backwards overshift
+    G'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+    EnumMember
+      Identifier: '
+    H'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+  EnumDeclaration
+    Identifier: ' Two'
+    EnumMember
+      Identifier: '
+    A'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: ' // ok
+    B'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: ' // overshift
+    C'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    D'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    E'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+    EnumMember
+      Identifier: ' // OK-ish
+    F'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+    EnumMember
+      Identifier: ' // backwards overshift
+    G'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+    EnumMember
+      Identifier: '
+    H'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+  EnumDeclaration
+    Identifier: ' Three'
+    EnumMember
+      Identifier: '
+    A'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanGreaterThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: ' // ok
+    B'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanGreaterThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: ' // overshift
+    C'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanGreaterThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    D'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanGreaterThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    E'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanGreaterThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+    EnumMember
+      Identifier: ' // OK-ish
+    F'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanGreaterThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+    EnumMember
+      Identifier: ' // backwards overshift
+    G'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanGreaterThanToken
+        PrefixUnaryExpression
+          NumericLiteral
+    EnumMember
+      Identifier: '
+    H'
+      BinaryExpression
+        NumericLiteral
+        GreaterThanGreaterThanGreaterThanToken
+        PrefixUnaryExpression
+          NumericLiteral

@@ -1,0 +1,290 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RootConfig'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    prop'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ErrorFormatterShape'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    PropertySignature
+      Identifier: '
+    prop'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PickFirstDefined'
+    TypeParameter
+      Identifier: 'TType'
+    TypeParameter
+      Identifier: ' TPick'
+    ConditionalType
+      UndefinedKeyword
+      TypeReference
+        Identifier: ' TType'
+      ConditionalType
+        UndefinedKeyword
+        TypeReference
+          Identifier: ' TPick'
+        NeverKeyword
+        TypeReference
+          Identifier: ' TPick'
+      TypeReference
+        Identifier: ' TType'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ErrorFormatter'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    TypeParameter
+      Identifier: 'U'
+      TypeLiteral
+    PropertySignature
+      Identifier: '
+    prop'
+      TupleType
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DefaultErrorShape'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    PropertySignature
+      Identifier: '
+    prop'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' MiddlewareFunction'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    TypeParameter
+      Identifier: 'U'
+      TypeLiteral
+    PropertySignature
+      Identifier: '
+    prop'
+      TupleType
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' MiddlewareBuilder'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    TypeParameter
+      Identifier: 'U'
+      TypeLiteral
+    PropertySignature
+      Identifier: '
+    prop'
+      TupleType
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' RootConfig'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ErrorFormatterShape'
+        ImportSpecifier
+          Identifier: ' PickFirstDefined'
+        ImportSpecifier
+          Identifier: ' ErrorFormatter'
+        ImportSpecifier
+          Identifier: ' DefaultErrorShape'
+    StringLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' TRPCBuilder'
+    TypeParameter
+      Identifier: 'TParams'
+    MethodDeclaration
+      Identifier: '
+    create'
+      TypeParameter
+        Identifier: 'TOptions'
+        TypeReference
+          Identifier: ' Record'
+          StringKeyword
+          AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        procedure'
+          TypeLiteral
+        PropertySignature
+          Identifier: '
+        middleware'
+          FunctionType
+            TypeParameter
+              Identifier: 'TNewParams'
+              TypeReference
+                Identifier: ' Record'
+                StringKeyword
+                AnyKeyword
+            Parameter
+              Identifier: 'fn'
+              ImportType
+                LiteralType
+                  StringLiteral
+                Identifier: 'MiddlewareFunction'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: '
+            _config'
+                    TypeReference
+                      Identifier: ' RootConfig'
+                      TypeLiteral
+                        PropertySignature
+                          Identifier: '
+                errorShape'
+                          TypeReference
+                            Identifier: ' ErrorFormatterShape'
+                            TypeReference
+                              Identifier: 'PickFirstDefined'
+                              IndexedAccessType
+                                TypeReference
+                                  Identifier: 'TOptions'
+                                LiteralType
+                                  StringLiteral
+                              TypeReference
+                                Identifier: ' ErrorFormatter'
+                                ConditionalType
+                                  IndexedAccessType
+                                    TypeReference
+                                      Identifier: 'TParams'
+                                    LiteralType
+                                      StringLiteral
+                                  ObjectKeyword
+                                  IndexedAccessType
+                                    TypeReference
+                                      Identifier: ' TParams'
+                                    LiteralType
+                                      StringLiteral
+                                  ObjectKeyword
+                                TypeReference
+                                  Identifier: ' DefaultErrorShape'
+                TypeReference
+                  Identifier: ' TNewParams'
+            ImportType
+              LiteralType
+                StringLiteral
+              Identifier: 'MiddlewareBuilder'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+            _config'
+                  TypeReference
+                    Identifier: ' RootConfig'
+                    TypeLiteral
+                      PropertySignature
+                        Identifier: '
+                errorShape'
+                        TypeReference
+                          Identifier: ' ErrorFormatterShape'
+                          TypeReference
+                            Identifier: 'PickFirstDefined'
+                            IndexedAccessType
+                              TypeReference
+                                Identifier: 'TOptions'
+                              LiteralType
+                                StringLiteral
+                            TypeReference
+                              Identifier: ' ErrorFormatter'
+                              ConditionalType
+                                IndexedAccessType
+                                  TypeReference
+                                    Identifier: 'TParams'
+                                  LiteralType
+                                    StringLiteral
+                                ObjectKeyword
+                                IndexedAccessType
+                                  TypeReference
+                                    Identifier: ' TParams'
+                                  LiteralType
+                                    StringLiteral
+                                ObjectKeyword
+                              TypeReference
+                                Identifier: ' DefaultErrorShape'
+              TypeReference
+                Identifier: ' TNewParams'
+        PropertySignature
+          Identifier: '
+        router'
+          TypeLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' initTRPC'
+        TypeReference
+          Identifier: ' TRPCBuilder'
+          ObjectKeyword
+  ExportDeclaration
+    NamedExports
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' initTRPC'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' trpc'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' initTRPC'
+            Identifier: 'create'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' middleware'
+        PropertyAccessExpression
+          Identifier: ' trpc'
+          Identifier: 'middleware'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' router'
+        PropertyAccessExpression
+          Identifier: ' trpc'
+          Identifier: 'router'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' publicProcedure'
+        PropertyAccessExpression
+          Identifier: ' trpc'
+          Identifier: 'procedure'

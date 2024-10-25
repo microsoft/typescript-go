@@ -1,0 +1,132 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' FormattingContext'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' SyntaxKind'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Rule'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' debugName'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' context'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ContextPredicate'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' action'
+      TypeReference
+        Identifier: ' RuleAction'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' flags'
+      TypeReference
+        Identifier: ' RuleFlags'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ContextPredicate'
+    FunctionType
+      Parameter
+        Identifier: 'context'
+        TypeReference
+          Identifier: ' FormattingContext'
+      BooleanKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyContext'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' ContextPredicate'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' RuleAction'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StopProcessingSpaceActions'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StopProcessingTokenActions'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    InsertSpace'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    InsertNewLine'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    DeleteSpace'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    DeleteToken'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    InsertTrailingSemicolon'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StopAction'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ModifySpaceAction'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ModifyTokenAction'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' RuleFlags'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    CanDeleteNewLines'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TokenRange'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' tokens'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SyntaxKind'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' isSpecific'
+      BooleanKeyword

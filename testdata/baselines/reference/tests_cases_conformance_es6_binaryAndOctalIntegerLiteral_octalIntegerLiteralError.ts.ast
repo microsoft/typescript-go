@@ -1,0 +1,29 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oct1'
+        NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oct2'
+        NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral

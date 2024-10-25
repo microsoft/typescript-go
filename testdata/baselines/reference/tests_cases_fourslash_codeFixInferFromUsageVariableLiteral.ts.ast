@@ -1,0 +1,18 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noImplicitAny: true
+//// let [|text! |];
+//// text.length;
+//// text.indexOf("z");
+//// text.charAt(0);
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      StringLiteral
+      Identifier: ' /*includeWhiteSpace*/ undefined'
+      Identifier: ' /*errorCode*/ undefined'
+      NumericLiteral

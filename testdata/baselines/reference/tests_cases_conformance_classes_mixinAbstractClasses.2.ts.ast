@@ -1,0 +1,71 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Mixin'
+    MethodSignature
+      Identifier: '
+    mixinMethod'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' Mixin'
+    TypeParameter
+      Identifier: 'TBaseClass'
+      ConstructorType
+        AbstractKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          AnyKeyword
+        AnyKeyword
+    Parameter
+      Identifier: 'baseClass'
+      TypeReference
+        Identifier: ' TBaseClass'
+    IntersectionType
+      TypeReference
+        Identifier: ' TBaseClass'
+      ParenthesizedType
+        ConstructorType
+          AbstractKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            AnyKeyword
+          TypeReference
+            Identifier: ' Mixin'
+    Block
+      ClassDeclaration
+        Identifier: ' MixinClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' baseClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Mixin'
+        MethodDeclaration
+          Identifier: '
+        mixinMethod'
+          Block
+      ReturnStatement
+        Identifier: ' MixinClass'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AbstractBase'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' abstractBaseMethod'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MixedBase'
+        CallExpression
+          Identifier: ' Mixin'
+          Identifier: 'AbstractBase'
+  ClassDeclaration
+    Identifier: ' DerivedFromAbstract'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' MixedBase'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' MixedBase'

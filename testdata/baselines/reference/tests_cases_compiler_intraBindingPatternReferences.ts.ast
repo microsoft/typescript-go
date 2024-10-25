@@ -1,0 +1,126 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a'
+          BindingElement
+            Identifier: ' b'
+            BinaryExpression
+              Identifier: ' a'
+              PlusToken
+              NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'c1'
+          BindingElement
+            Identifier: ' c2'
+            Identifier: ' c1'
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'd1'
+          BindingElement
+            Identifier: ' d2'
+            Identifier: ' d1'
+          BindingElement
+            Identifier: ' d3'
+            Identifier: ' d2'
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' e1'
+          BindingElement
+            Identifier: ' e2'
+            Identifier: ' e1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' e1'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' f1'
+          BindingElement
+            Identifier: ' f2'
+            Identifier: ' f1'
+          BindingElement
+            Identifier: ' f3'
+            Identifier: ' f2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' f1'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mockCallback'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' event'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' params'
+                    ObjectLiteralExpression
+                ObjectLiteralExpression
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' fn1'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              EqualsGreaterThanToken
+              NumericLiteral
+          BindingElement
+            Identifier: ' fn2'
+            Identifier: ' fn1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' fn1'
+            ArrowFunction
+              Parameter
+                Identifier: ' x'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' x'
+                PlusToken
+                NumericLiteral
+          PropertyAssignment
+            Identifier: ' fn2'
+            ArrowFunction
+              Parameter
+                Identifier: ' x'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' x'
+                PlusToken
+                NumericLiteral

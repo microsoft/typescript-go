@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        PrefixUnaryExpression
+          TypeAssertionExpression
+            NumberKeyword
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        PrefixUnaryExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: ''
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        PrefixUnaryExpression
+          TypeAssertionExpression
+            LiteralType
+              NumericLiteral
+            Identifier: ' x'

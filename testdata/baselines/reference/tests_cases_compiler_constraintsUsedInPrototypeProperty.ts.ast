@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' V'
+      StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+Foo'
+      Identifier: 'prototype'

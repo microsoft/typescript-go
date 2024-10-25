@@ -1,0 +1,105 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+/// Doesn't duplicate comments - #31629
+
+//// type a = /*a*/{ x: string } /* foo */ | string /* bar *//*b*/;
+//// type b = /*c*//* leading */{ x: string } /* trailing *//*d*/;
+//// type c = /*e*/{ x: string } /* inner */ | string// trailing/*f*/
+////
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Extract to interface
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Trailing comment using '//'
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newContent'
+          NoSubstitutionTemplateLiteral

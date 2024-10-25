@@ -1,0 +1,53 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' options'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' format'
+            Identifier: 'copyFormatOptions'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+options'
+        Identifier: 'IndentSize'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+options'
+        Identifier: 'TabSize'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+options'
+        Identifier: 'ConvertTabsToSpaces'
+      EqualsToken
+      FalseKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+format'
+        Identifier: 'setFormatOptions'
+      Identifier: 'options'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+format'
+        Identifier: 'document'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'currentFileContentIs'
+      NoSubstitutionTemplateLiteral

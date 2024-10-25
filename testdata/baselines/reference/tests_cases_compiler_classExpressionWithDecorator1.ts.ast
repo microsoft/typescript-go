@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ClassExpression
+          Decorator
+            Identifier: 'decorate'
+          Identifier: ' C'
+          PropertyDeclaration
+            StaticKeyword
+            Identifier: ' p'
+            NumericLiteral

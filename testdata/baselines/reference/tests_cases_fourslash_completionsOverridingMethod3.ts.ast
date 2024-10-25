@@ -1,0 +1,70 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @newline: LF
+// @Filename: boo.d.ts
+// Case: Declaration files
+////interface Ghost {
+////    boo(): string;
+////}
+////
+////declare class Poltergeist implements Ghost {
+////    /*b*/
+////}
+
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    isNewIdentifierLocation'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithInsertText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithSnippetText'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithClassMemberSnippets'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'LocationPriority'
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            filterText'
+                StringLiteral

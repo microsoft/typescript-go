@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Parameter
+      Identifier: ' c'
+    Block

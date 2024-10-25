@@ -1,0 +1,80 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ExportAssignment
+    Identifier: ' D'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ExportAssignment
+    Identifier: ' C'
+  ImportEqualsDeclaration
+    Identifier: ' ext'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' C'
+            ConstructorType
+              TypeReference
+                QualifiedName
+                  Identifier: ' ext'
+                  Identifier: 'C'
+        Identifier: ' ext'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y1'
+      EqualsToken
+      Identifier: ' ext'
+  ImportEqualsDeclaration
+    Identifier: ' ext2'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y2'
+        ConstructorType
+          TypeReference
+            Identifier: ' ext2'
+        Identifier: ' ext2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y2'
+      EqualsToken
+      Identifier: ' ext2'
+  ImportEqualsDeclaration
+    Identifier: ' ext3'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y3'
+        ConstructorType
+          TypeReference
+            Identifier: ' ext3'
+        Identifier: ' ext3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y3'
+      EqualsToken
+      Identifier: ' ext3'

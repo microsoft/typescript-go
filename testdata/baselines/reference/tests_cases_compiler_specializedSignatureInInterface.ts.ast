@@ -1,0 +1,25 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    CallSignature
+      Parameter
+        Identifier: 'key'
+        LiteralType
+          StringLiteral
+      StringKeyword
+    CallSignature
+      Parameter
+        Identifier: 'key'
+        LiteralType
+          StringLiteral
+      StringKeyword

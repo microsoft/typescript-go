@@ -1,0 +1,59 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+          TypeReference
+            Identifier: 'U'
+          TypeReference
+            Identifier: ' U'
+          Identifier: 'y'
+          Identifier: ' y'
+      ReturnStatement
+        NewExpression
+          Identifier: ' C'
+          TypeReference
+            Identifier: 'U'
+          TypeReference
+            Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' C'
+        TypeReference
+          Identifier: 'U'
+        TypeReference
+          Identifier: ' T'

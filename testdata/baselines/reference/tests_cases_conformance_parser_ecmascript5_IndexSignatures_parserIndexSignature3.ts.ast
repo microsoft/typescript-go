@@ -1,0 +1,7 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        QuestionToken

@@ -1,0 +1,176 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C1_public'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' f1'
+          Block
+      ClassDeclaration
+        Identifier: ' C2_private'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C3_public'
+        GetAccessor
+          PrivateKeyword
+          Identifier: ' p1_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        SetAccessor
+          PrivateKeyword
+          Identifier: ' p1_private'
+          Parameter
+            Identifier: 'm1_c3_p1_arg'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+        GetAccessor
+          PrivateKeyword
+          Identifier: ' p2_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        SetAccessor
+          PrivateKeyword
+          Identifier: ' p2_private'
+          Parameter
+            Identifier: 'm1_c3_p2_arg'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+        GetAccessor
+          PrivateKeyword
+          Identifier: ' p3_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        SetAccessor
+          PrivateKeyword
+          Identifier: ' p3_private'
+          Parameter
+            Identifier: 'm1_c3_p3_arg'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+        GetAccessor
+          PublicKeyword
+          Identifier: ' p4_public'
+          TypeReference
+            Identifier: ' C2_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        SetAccessor
+          PublicKeyword
+          Identifier: ' p4_public'
+          Parameter
+            Identifier: 'm1_c3_p4_arg'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+      ClassDeclaration
+        Identifier: ' C4_private'
+        GetAccessor
+          PrivateKeyword
+          Identifier: ' p1_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        SetAccessor
+          PrivateKeyword
+          Identifier: ' p1_private'
+          Parameter
+            Identifier: 'm1_c3_p1_arg'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+        GetAccessor
+          PrivateKeyword
+          Identifier: ' p2_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C1_public'
+        SetAccessor
+          PrivateKeyword
+          Identifier: ' p2_private'
+          Parameter
+            Identifier: 'm1_c3_p2_arg'
+            TypeReference
+              Identifier: ' C1_public'
+          Block
+        GetAccessor
+          PrivateKeyword
+          Identifier: ' p3_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        SetAccessor
+          PrivateKeyword
+          Identifier: ' p3_private'
+          Parameter
+            Identifier: 'm1_c3_p3_arg'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+        GetAccessor
+          PublicKeyword
+          Identifier: ' p4_public'
+          TypeReference
+            Identifier: ' C2_private'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' C2_private'
+        SetAccessor
+          PublicKeyword
+          Identifier: ' p4_public'
+          Parameter
+            Identifier: 'm1_c3_p4_arg'
+            TypeReference
+              Identifier: ' C2_private'
+          Block
+  ClassDeclaration
+    Identifier: ' C6_public'
+  ClassDeclaration
+    Identifier: ' C7_public'
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' p1_private'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' C6_public'
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' p1_private'
+      Parameter
+        Identifier: 'm1_c3_p1_arg'
+        TypeReference
+          Identifier: ' C6_public'
+      Block
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' p2_private'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' C6_public'
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' p2_private'
+      Parameter
+        Identifier: 'm1_c3_p2_arg'
+        TypeReference
+          Identifier: ' C6_public'
+      Block

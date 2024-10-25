@@ -1,0 +1,12 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' decorator'
+    Parameter
+      Identifier: 'constructor'
+      AnyKeyword
+    AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'decorator'
+    DefaultKeyword

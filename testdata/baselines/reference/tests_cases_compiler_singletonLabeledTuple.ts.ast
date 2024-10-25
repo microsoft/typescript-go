@@ -1,0 +1,106 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' AliasOptional'
+    TupleType
+      NamedTupleMember
+        Identifier: 'p'
+        QuestionToken
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' Literal'
+    ConditionalType
+      TupleType
+        NamedTupleMember
+          Identifier: 'p'
+          QuestionToken
+          NumberKeyword
+      TupleType
+        UnknownKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' Alias'
+    ConditionalType
+      TypeReference
+        Identifier: ' AliasOptional'
+      TupleType
+        UnknownKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' Labeled'
+    ConditionalType
+      TupleType
+        NamedTupleMember
+          Identifier: 'p'
+          QuestionToken
+          NumberKeyword
+      TupleType
+        UnknownKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' Normal'
+    ConditionalType
+      TupleType
+        OptionalType
+          NumberKeyword
+      TupleType
+        UnknownKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' AliasRest'
+    TupleType
+      NamedTupleMember
+        DotDotDotToken
+        Identifier: 'p'
+        ArrayType
+          NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' LiteralRest'
+    ConditionalType
+      TupleType
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'p'
+          ArrayType
+            NumberKeyword
+      TupleType
+        UnknownKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' AliasedRest'
+    ConditionalType
+      TypeReference
+        Identifier: ' AliasRest'
+      TupleType
+        UnknownKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' NormalRest'
+    ConditionalType
+      TupleType
+        RestType
+          ArrayType
+            NumberKeyword
+      TupleType
+        UnknownKeyword
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword

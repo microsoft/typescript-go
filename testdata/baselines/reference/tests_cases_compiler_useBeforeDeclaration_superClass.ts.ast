@@ -1,0 +1,70 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    // Not an error -- this will access the parent's initialized value for `x`, not the one on the child.
+    old_x'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'x'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' X'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' Y'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' X'
+  ClassDeclaration
+    Identifier: ' Z'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Y'
+    PropertyDeclaration
+      Identifier: '
+    old_x'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'x'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' J'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    PropertyDeclaration
+      Identifier: '
+    old_x'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'x'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral

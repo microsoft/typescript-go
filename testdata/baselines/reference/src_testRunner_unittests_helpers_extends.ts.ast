@@ -1,0 +1,342 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TscWatchCompileChange'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getSymlinkedExtendsSys'
+    Parameter
+      Identifier: 'forTsserver'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    TypeReference
+      Identifier: ' TestServerHost'
+    Block
+      ReturnStatement
+        CallExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' TestServerHost'
+              Identifier: 'getCreateWatchedSystem'
+            Identifier: 'forTsserver'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            extends'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                removeComments'
+                        TrueKeyword
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' composite'
+                        TrueKeyword
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            extends'
+                    StringLiteral
+            PropertyAssignment
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            symLink'
+                  StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' currentDirectory'
+              StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getConfigDirExtendsSys'
+    Parameter
+      Identifier: 'forTsserver'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' TestServerHost'
+    Block
+      ReturnStatement
+        CallExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' TestServerHost'
+              Identifier: 'getCreateWatchedSystem'
+            Identifier: 'forTsserver'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            extends'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            include'
+                    ArrayLiteralExpression
+                      StringLiteral
+                  PropertyAssignment
+                    Identifier: ' // eslint-disable-line no-template-curly-in-string
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                typeRoots'
+                        ArrayLiteralExpression
+                          StringLiteral
+                          StringLiteral
+                          StringLiteral
+                      PropertyAssignment
+                        Identifier: ' // eslint-disable-line no-template-curly-in-string
+                types'
+                        ArrayLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            files'
+                    ArrayLiteralExpression
+                      StringLiteral
+                  PropertyAssignment
+                    Identifier: ' // eslint-disable-line no-template-curly-in-string,
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                declarationDir'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: ' // eslint-disable-line no-template-curly-in-string
+                paths'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            StringLiteral
+                            ArrayLiteralExpression
+                              StringLiteral
+                          PropertyAssignment
+                            StringLiteral
+                            ArrayLiteralExpression
+                              StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                baseUrl'
+                        StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            watchOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                excludeFiles'
+                        ArrayLiteralExpression
+                          StringLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            extends'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                declaration'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                outDir'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                traceResolution'
+                        TrueKeyword
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' currentDirectory'
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' modifyFirstExtendedConfigOfConfigDirExtendsSys'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        Identifier: ' TestServerHost'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'modifyFile'
+          StringLiteral
+          CallExpression
+            Identifier: '
+        jsonToReadableText'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            extends'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            include'
+                ArrayLiteralExpression
+                  StringLiteral
+              PropertyAssignment
+                Identifier: ' // eslint-disable-line no-template-curly-in-string
+            compilerOptions'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                typeRoots'
+                    ArrayLiteralExpression
+                      StringLiteral
+                  PropertyAssignment
+                    Identifier: ' // eslint-disable-line no-template-curly-in-string
+                types'
+                    ArrayLiteralExpression
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' forConfigDirExtendsSysScenario'
+    Parameter
+      Identifier: '
+    forTsserver'
+      BooleanKeyword
+    Parameter
+      Identifier: '
+    action'
+      FunctionType
+        Parameter
+          Identifier: '
+        scenario'
+          StringKeyword
+        Parameter
+          Identifier: '
+        sys'
+          FunctionType
+            TypeReference
+              Identifier: ' TestServerHost'
+        Parameter
+          Identifier: '
+        edits'
+          FunctionType
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' TscWatchCompileChange'
+        VoidKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          StringLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' getConfigDirExtendsSys'
+              Identifier: 'forTsserver'
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            caption'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            edit'
+                  Identifier: ' modifyFirstExtendedConfigOfConfigDirExtendsSys'
+                PropertyAssignment
+                  Identifier: '
+            timeouts'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' sys'
+                        Identifier: 'runQueuedTimeoutCallbacks'

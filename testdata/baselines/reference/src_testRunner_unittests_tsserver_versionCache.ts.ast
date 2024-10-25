@@ -1,0 +1,2070 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' IO'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' editFlat'
+    Parameter
+      Identifier: 'position'
+      NumberKeyword
+    Parameter
+      Identifier: ' deletedLength'
+      NumberKeyword
+    Parameter
+      Identifier: ' newText'
+      StringKeyword
+    Parameter
+      Identifier: ' source'
+      StringKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' source'
+                Identifier: 'substring'
+              NumericLiteral
+              Identifier: ' position'
+            PlusToken
+            Identifier: ' newText'
+          PlusToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' source'
+              Identifier: 'substring'
+            BinaryExpression
+              Identifier: 'position'
+              PlusToken
+              Identifier: ' deletedLength'
+            PropertyAccessExpression
+              Identifier: ' source'
+              Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' lineColToPosition'
+    Parameter
+      Identifier: 'lineIndex'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'LineIndex'
+    Parameter
+      Identifier: ' line'
+      NumberKeyword
+    Parameter
+      Identifier: ' col'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' lineIndex'
+              Identifier: 'absolutePositionOfStartOfLine'
+            Identifier: 'line'
+          PlusToken
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'col'
+              MinusToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' validateEdit'
+    Parameter
+      Identifier: 'lineIndex'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'LineIndex'
+    Parameter
+      Identifier: ' sourceText'
+      StringKeyword
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' deleteLength'
+      NumberKeyword
+    Parameter
+      Identifier: ' insertString'
+      StringKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' checkText'
+            CallExpression
+              Identifier: ' editFlat'
+              Identifier: 'position'
+              Identifier: ' deleteLength'
+              Identifier: ' insertString'
+              Identifier: ' sourceText'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' snapshot'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' lineIndex'
+                Identifier: 'edit'
+              Identifier: 'position'
+              Identifier: ' deleteLength'
+              Identifier: ' insertString'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' editedText'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' snapshot'
+                Identifier: 'getText'
+              NumericLiteral
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' snapshot'
+                  Identifier: 'getLength'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    assert'
+            Identifier: 'equal'
+          Identifier: 'editedText'
+          Identifier: ' checkText'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      NoSubstitutionTemplateLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' validateEditAtLineCharIndex'
+                FunctionType
+                  Parameter
+                    Identifier: 'line'
+                    NumberKeyword
+                  Parameter
+                    Identifier: ' char'
+                    NumberKeyword
+                  Parameter
+                    Identifier: ' deleteLength'
+                    NumberKeyword
+                  Parameter
+                    Identifier: ' insertString'
+                    StringKeyword
+                  VoidKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    before'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' testContent'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' lines'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'server'
+                              Identifier: 'LineIndex'
+                            Identifier: 'linesFromText'
+                          Identifier: 'testContent'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'lines'
+                          Identifier: 'length'
+                        GreaterThanToken
+                        NumericLiteral
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' lineIndex'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'LineIndex'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        lineIndex'
+                        Identifier: 'load'
+                      Identifier: 'lines'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+        validateEditAtLineCharIndex'
+                      EqualsToken
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'line'
+                          NumberKeyword
+                        Parameter
+                          Identifier: ' char'
+                          NumberKeyword
+                        Parameter
+                          Identifier: ' deleteLength'
+                          NumberKeyword
+                        Parameter
+                          Identifier: ' insertString'
+                          StringKeyword
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' position'
+                                CallExpression
+                                  Identifier: ' lineColToPosition'
+                                  Identifier: 'lineIndex'
+                                  Identifier: ' line'
+                                  Identifier: ' char'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            validateEdit'
+                              Identifier: 'lineIndex'
+                              Identifier: ' testContent'
+                              Identifier: ' position'
+                              Identifier: ' deleteLength'
+                              Identifier: ' insertString'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    after'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        validateEditAtLineCharIndex'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' lineIndex'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'LineIndex'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        lineIndex'
+                        Identifier: 'load'
+                      ArrayLiteralExpression
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'deepEqual'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'lineIndex'
+                          Identifier: 'positionToLineOffset'
+                        NumericLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' line'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' offset'
+                          NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' lines'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'server'
+                              Identifier: 'LineIndex'
+                            Identifier: 'linesFromText'
+                          StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' lineIndex'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'LineIndex'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        lineIndex'
+                        Identifier: 'load'
+                      Identifier: 'lines'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' snapshot'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' lineIndex'
+                            Identifier: 'edit'
+                          NumericLiteral
+                          NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'snapshot'
+                          Identifier: 'getText'
+                        NumericLiteral
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' snapshot'
+                            Identifier: 'getLength'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        // line must always be >=1, otherwise the failIfInvalidLocation(location) assertion in ScriptInfo.positionToLineOffset will fail
+        assert'
+                        Identifier: 'deepEqual'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'snapshot'
+                          Identifier: 'positionToLineOffset'
+                        NumericLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' line'
+                          NumericLiteral
+                        PropertyAssignment
+                          Identifier: ' offset'
+                          NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtLineCharIndex'
+                      NumericLiteral
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtLineCharIndex'
+                      NumericLiteral
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtLineCharIndex'
+                      NumericLiteral
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtLineCharIndex'
+                      NumericLiteral
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtLineCharIndex'
+                      NumericLiteral
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtLineCharIndex'
+                      NumericLiteral
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      NoSubstitutionTemplateLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' validateEditAtPosition'
+                FunctionType
+                  Parameter
+                    Identifier: 'position'
+                    NumberKeyword
+                  Parameter
+                    Identifier: ' deleteLength'
+                    NumberKeyword
+                  Parameter
+                    Identifier: ' insertString'
+                    StringKeyword
+                  VoidKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' testContent'
+                StringKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lines'
+                ArrayType
+                  StringKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineMap'
+                ArrayType
+                  NumberKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    before'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        testContent'
+                      EqualsToken
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    ParenthesizedExpression
+                      BinaryExpression
+                        ObjectLiteralExpression
+                          ShorthandPropertyAssignment
+                            Identifier: ' lines'
+                          ShorthandPropertyAssignment
+                            Identifier: ' lineMap'
+                        EqualsToken
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'server'
+                              Identifier: 'LineIndex'
+                            Identifier: 'linesFromText'
+                          Identifier: 'testContent'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'lines'
+                          Identifier: 'length'
+                        GreaterThanToken
+                        NumericLiteral
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' lineIndex'
+                        NewExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'LineIndex'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        lineIndex'
+                        Identifier: 'load'
+                      Identifier: 'lines'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+        validateEditAtPosition'
+                      EqualsToken
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'position'
+                          NumberKeyword
+                        Parameter
+                          Identifier: ' deleteLength'
+                          NumberKeyword
+                        Parameter
+                          Identifier: ' insertString'
+                          StringKeyword
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            validateEdit'
+                              Identifier: 'lineIndex'
+                              Identifier: ' testContent'
+                              Identifier: ' position'
+                              Identifier: ' deleteLength'
+                              Identifier: ' insertString'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    after'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        testContent'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        lines'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        lineMap'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      PropertyAccessExpression
+                        Identifier: 'testContent'
+                        Identifier: 'length'
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: 'lines'
+                            NumericLiteral
+                          Identifier: 'length'
+                        MinusToken
+                        NumericLiteral
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: ' lines'
+                          NumericLiteral
+                        Identifier: 'length'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      ElementAccessExpression
+                        Identifier: 'lineMap'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'lineMap'
+                            Identifier: 'length'
+                          MinusToken
+                          NumericLiteral
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: ' lines'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'lines'
+                              Identifier: 'length'
+                            MinusToken
+                            NumericLiteral
+                        Identifier: 'length'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: ' lines'
+                          NumericLiteral
+                        Identifier: 'length'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: ' lines'
+                          NumericLiteral
+                        Identifier: 'length'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: ' lines'
+                          NumericLiteral
+                        Identifier: 'length'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: ' lines'
+                            NumericLiteral
+                          Identifier: 'length'
+                        PlusToken
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: ' lines'
+                            NumericLiteral
+                          Identifier: 'length'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: 'lines'
+                          NumericLiteral
+                        Identifier: 'length'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: ' lines'
+                            NumericLiteral
+                          Identifier: 'length'
+                        PlusToken
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: ' lines'
+                            NumericLiteral
+                          Identifier: 'length'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              NoSubstitutionTemplateLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        validateEditAtPosition'
+                      NumericLiteral
+                      NumericLiteral
+                      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      NoSubstitutionTemplateLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' rsa'
+                ArrayType
+                  NumberKeyword
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' la'
+                ArrayType
+                  NumberKeyword
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' las'
+                ArrayType
+                  NumberKeyword
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' elas'
+                ArrayType
+                  NumberKeyword
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' ersa'
+                ArrayType
+                  NumberKeyword
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' ela'
+                ArrayType
+                  NumberKeyword
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' iterationCount'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lines'
+                ArrayType
+                  StringKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineMap'
+                ArrayType
+                  NumberKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineIndex'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'server'
+                    Identifier: 'LineIndex'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' testContent'
+                StringKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    before'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' testFileName'
+                        StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        testContent'
+                      EqualsToken
+                      NonNullExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' IO'
+                            Identifier: 'readFile'
+                          Identifier: 'testFileName'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' totalChars'
+                        PropertyAccessExpression
+                          Identifier: ' testContent'
+                          Identifier: 'length'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      BinaryExpression
+                        Identifier: 'totalChars'
+                        GreaterThanToken
+                        NumericLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    ParenthesizedExpression
+                      BinaryExpression
+                        ObjectLiteralExpression
+                          ShorthandPropertyAssignment
+                            Identifier: ' lines'
+                          ShorthandPropertyAssignment
+                            Identifier: ' lineMap'
+                        EqualsToken
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'server'
+                              Identifier: 'LineIndex'
+                            Identifier: 'linesFromText'
+                          Identifier: 'testContent'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'lines'
+                          Identifier: 'length'
+                        GreaterThanToken
+                        NumericLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+        lineIndex'
+                      EqualsToken
+                      NewExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'server'
+                          Identifier: 'LineIndex'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        lineIndex'
+                        Identifier: 'load'
+                      Identifier: 'lines'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' etotalChars'
+                        Identifier: ' totalChars'
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' j'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' j'
+                      LessThanToken
+                      NumericLiteral
+                    PostfixUnaryExpression
+                      Identifier: ' j'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          ElementAccessExpression
+                            Identifier: '
+            rsa'
+                            Identifier: 'j'
+                          EqualsToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' Math'
+                              Identifier: 'floor'
+                            BinaryExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'Math'
+                                  Identifier: 'random'
+                              AsteriskToken
+                              Identifier: ' totalChars'
+                      ExpressionStatement
+                        BinaryExpression
+                          ElementAccessExpression
+                            Identifier: '
+            la'
+                            Identifier: 'j'
+                          EqualsToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' Math'
+                              Identifier: 'floor'
+                            BinaryExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'Math'
+                                  Identifier: 'random'
+                              AsteriskToken
+                              ParenthesizedExpression
+                                BinaryExpression
+                                  Identifier: 'totalChars'
+                                  MinusToken
+                                  ElementAccessExpression
+                                    Identifier: ' rsa'
+                                    Identifier: 'j'
+                      IfStatement
+                        BinaryExpression
+                          ElementAccessExpression
+                            Identifier: 'la'
+                            Identifier: 'j'
+                          GreaterThanToken
+                          NumericLiteral
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              ElementAccessExpression
+                                Identifier: '
+                las'
+                                Identifier: 'j'
+                              EqualsToken
+                              NumericLiteral
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              ElementAccessExpression
+                                Identifier: '
+                las'
+                                Identifier: 'j'
+                              EqualsToken
+                              ElementAccessExpression
+                                Identifier: ' la'
+                                Identifier: 'j'
+                      IfStatement
+                        BinaryExpression
+                          Identifier: 'j'
+                          LessThanToken
+                          NumericLiteral
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              ElementAccessExpression
+                                Identifier: '
+                ersa'
+                                Identifier: 'j'
+                              EqualsToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' Math'
+                                  Identifier: 'floor'
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'Math'
+                                      Identifier: 'random'
+                                  AsteriskToken
+                                  Identifier: ' etotalChars'
+                          ExpressionStatement
+                            BinaryExpression
+                              ElementAccessExpression
+                                Identifier: '
+                ela'
+                                Identifier: 'j'
+                              EqualsToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' Math'
+                                  Identifier: 'floor'
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'Math'
+                                      Identifier: 'random'
+                                  AsteriskToken
+                                  ParenthesizedExpression
+                                    BinaryExpression
+                                      Identifier: 'etotalChars'
+                                      MinusToken
+                                      ElementAccessExpression
+                                        Identifier: ' ersa'
+                                        Identifier: 'j'
+                          IfStatement
+                            BinaryExpression
+                              ElementAccessExpression
+                                Identifier: 'ela'
+                                Identifier: 'j'
+                              GreaterThanToken
+                              NumericLiteral
+                            Block
+                              ExpressionStatement
+                                BinaryExpression
+                                  ElementAccessExpression
+                                    Identifier: '
+                    elas'
+                                    Identifier: 'j'
+                                  EqualsToken
+                                  NumericLiteral
+                            Block
+                              ExpressionStatement
+                                BinaryExpression
+                                  ElementAccessExpression
+                                    Identifier: '
+                    elas'
+                                    Identifier: 'j'
+                                  EqualsToken
+                                  ElementAccessExpression
+                                    Identifier: ' ela'
+                                    Identifier: 'j'
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                etotalChars'
+                              PlusEqualsToken
+                              BinaryExpression
+                                ElementAccessExpression
+                                  Identifier: ' las'
+                                  Identifier: 'j'
+                                MinusToken
+                                ElementAccessExpression
+                                  Identifier: ' elas'
+                                  Identifier: 'j'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    after'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        rsa'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        la'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        las'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        elas'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        ersa'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        ela'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        lines'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        lineMap'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        lineIndex'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        testContent'
+                      EqualsToken
+                      NonNullExpression
+                        Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' i'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' i'
+                      LessThanToken
+                      Identifier: ' iterationCount'
+                    PostfixUnaryExpression
+                      Identifier: ' i'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' s2'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' lineIndex'
+                                Identifier: 'getText'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                Identifier: 'i'
+                              ElementAccessExpression
+                                Identifier: ' la'
+                                Identifier: 'i'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' s1'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' testContent'
+                                Identifier: 'substring'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                Identifier: 'i'
+                              BinaryExpression
+                                ElementAccessExpression
+                                  Identifier: ' rsa'
+                                  Identifier: 'i'
+                                PlusToken
+                                ElementAccessExpression
+                                  Identifier: ' la'
+                                  Identifier: 'i'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'equal'
+                          Identifier: 's1'
+                          Identifier: ' s2'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' j'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' j'
+                      LessThanToken
+                      Identifier: ' iterationCount'
+                    PostfixUnaryExpression
+                      Identifier: ' j'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' s2'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' lineIndex'
+                                Identifier: 'getText'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                Identifier: 'j'
+                              ElementAccessExpression
+                                Identifier: ' las'
+                                Identifier: 'j'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' s1'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' testContent'
+                                Identifier: 'substring'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                Identifier: 'j'
+                              BinaryExpression
+                                ElementAccessExpression
+                                  Identifier: ' rsa'
+                                  Identifier: 'j'
+                                PlusToken
+                                ElementAccessExpression
+                                  Identifier: ' las'
+                                  Identifier: 'j'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'equal'
+                          Identifier: 's1'
+                          Identifier: ' s2'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' i'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' i'
+                      LessThanToken
+                      Identifier: ' iterationCount'
+                    PostfixUnaryExpression
+                      Identifier: ' i'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' insertString'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' testContent'
+                                Identifier: 'substring'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                BinaryExpression
+                                  NumericLiteral
+                                  MinusToken
+                                  Identifier: ' i'
+                              BinaryExpression
+                                ElementAccessExpression
+                                  Identifier: ' rsa'
+                                  BinaryExpression
+                                    NumericLiteral
+                                    MinusToken
+                                    Identifier: ' i'
+                                PlusToken
+                                ElementAccessExpression
+                                  Identifier: ' las'
+                                  BinaryExpression
+                                    NumericLiteral
+                                    MinusToken
+                                    Identifier: ' i'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' snapshot'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' lineIndex'
+                                Identifier: 'edit'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                Identifier: 'i'
+                              ElementAccessExpression
+                                Identifier: ' las'
+                                Identifier: 'i'
+                              Identifier: ' insertString'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' checkText'
+                            CallExpression
+                              Identifier: ' editFlat'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                Identifier: 'i'
+                              ElementAccessExpression
+                                Identifier: ' las'
+                                Identifier: 'i'
+                              Identifier: ' insertString'
+                              Identifier: ' testContent'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' snapText'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' snapshot'
+                                Identifier: 'getText'
+                              NumericLiteral
+                              PropertyAccessExpression
+                                Identifier: ' checkText'
+                                Identifier: 'length'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'equal'
+                          Identifier: 'checkText'
+                          Identifier: ' snapText'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' svc'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'server'
+                              Identifier: 'ScriptVersionCache'
+                            Identifier: 'fromString'
+                          Identifier: 'testContent'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' checkText'
+                        Identifier: ' testContent'
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' i'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' i'
+                      LessThanToken
+                      Identifier: ' iterationCount'
+                    PostfixUnaryExpression
+                      Identifier: ' i'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' insertString'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' testContent'
+                                Identifier: 'substring'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                Identifier: 'i'
+                              BinaryExpression
+                                ElementAccessExpression
+                                  Identifier: ' rsa'
+                                  Identifier: 'i'
+                                PlusToken
+                                ElementAccessExpression
+                                  Identifier: ' las'
+                                  Identifier: 'i'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            svc'
+                            Identifier: 'edit'
+                          ElementAccessExpression
+                            Identifier: 'ersa'
+                            Identifier: 'i'
+                          ElementAccessExpression
+                            Identifier: ' elas'
+                            Identifier: 'i'
+                          Identifier: ' insertString'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+            checkText'
+                          EqualsToken
+                          CallExpression
+                            Identifier: ' editFlat'
+                            ElementAccessExpression
+                              Identifier: 'ersa'
+                              Identifier: 'i'
+                            ElementAccessExpression
+                              Identifier: ' elas'
+                              Identifier: 'i'
+                            Identifier: ' insertString'
+                            Identifier: ' checkText'
+                      IfStatement
+                        BinaryExpression
+                          NumericLiteral
+                          EqualsEqualsEqualsToken
+                          ParenthesizedExpression
+                            BinaryExpression
+                              Identifier: 'i'
+                              PercentToken
+                              NumericLiteral
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                assert'
+                                Identifier: 'equal'
+                              Identifier: 'checkText'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'getSnapshotText'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'svc'
+                                    Identifier: 'getSnapshot'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' i'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' i'
+                      LessThanToken
+                      Identifier: ' iterationCount'
+                    PostfixUnaryExpression
+                      Identifier: ' i'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' insertString'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' testContent'
+                                Identifier: 'substring'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                BinaryExpression
+                                  NumericLiteral
+                                  MinusToken
+                                  Identifier: ' i'
+                              BinaryExpression
+                                ElementAccessExpression
+                                  Identifier: ' rsa'
+                                  BinaryExpression
+                                    NumericLiteral
+                                    MinusToken
+                                    Identifier: ' i'
+                                PlusToken
+                                ElementAccessExpression
+                                  Identifier: ' la'
+                                  BinaryExpression
+                                    NumericLiteral
+                                    MinusToken
+                                    Identifier: ' i'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' snapshot'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' lineIndex'
+                                Identifier: 'edit'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                Identifier: 'i'
+                              ElementAccessExpression
+                                Identifier: ' la'
+                                Identifier: 'i'
+                              Identifier: ' insertString'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' checkText'
+                            CallExpression
+                              Identifier: ' editFlat'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                Identifier: 'i'
+                              ElementAccessExpression
+                                Identifier: ' la'
+                                Identifier: 'i'
+                              Identifier: ' insertString'
+                              Identifier: ' testContent'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' snapText'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' snapshot'
+                                Identifier: 'getText'
+                              NumericLiteral
+                              PropertyAccessExpression
+                                Identifier: ' checkText'
+                                Identifier: 'length'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'equal'
+                          Identifier: 'checkText'
+                          Identifier: ' snapText'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' i'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' i'
+                      LessThanToken
+                      Identifier: ' iterationCount'
+                    PostfixUnaryExpression
+                      Identifier: ' i'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' lp'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' lineIndex'
+                                Identifier: 'positionToLineOffset'
+                              ElementAccessExpression
+                                Identifier: 'rsa'
+                                Identifier: 'i'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' lac'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'computeLineAndCharacterOfPosition'
+                              Identifier: 'lineMap'
+                              ElementAccessExpression
+                                Identifier: ' rsa'
+                                Identifier: 'i'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'equal'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'lac'
+                              Identifier: 'line'
+                            PlusToken
+                            NumericLiteral
+                          PropertyAccessExpression
+                            Identifier: ' lp'
+                            Identifier: 'line'
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    StringLiteral
+                                    PlusToken
+                                    ParenthesizedExpression
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'lac'
+                                          Identifier: 'line'
+                                        PlusToken
+                                        NumericLiteral
+                                  PlusToken
+                                  StringLiteral
+                                PlusToken
+                                PropertyAccessExpression
+                                  Identifier: ' lp'
+                                  Identifier: 'line'
+                              PlusToken
+                              StringLiteral
+                            PlusToken
+                            Identifier: ' i'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            assert'
+                            Identifier: 'equal'
+                          PropertyAccessExpression
+                            Identifier: 'lac'
+                            Identifier: 'character'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' lp'
+                              Identifier: 'offset'
+                            MinusToken
+                            NumericLiteral
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    StringLiteral
+                                    PlusToken
+                                    PropertyAccessExpression
+                                      Identifier: ' lac'
+                                      Identifier: 'character'
+                                  PlusToken
+                                  StringLiteral
+                                PlusToken
+                                ParenthesizedExpression
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'lp'
+                                      Identifier: 'offset'
+                                    MinusToken
+                                    NumericLiteral
+                              PlusToken
+                              StringLiteral
+                            PlusToken
+                            Identifier: ' i'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' i'
+                        NumericLiteral
+                    BinaryExpression
+                      Identifier: ' i'
+                      LessThanToken
+                      Identifier: ' iterationCount'
+                    PostfixUnaryExpression
+                      Identifier: ' i'
+                    Block
+                      ForStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' j'
+                            NumericLiteral
+                        BinaryExpression
+                          Identifier: ' j'
+                          LessThanToken
+                          PropertyAccessExpression
+                            Identifier: ' lines'
+                            Identifier: 'length'
+                        PostfixUnaryExpression
+                          Identifier: ' j'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                assert'
+                                Identifier: 'equal'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'lineIndex'
+                                  Identifier: 'absolutePositionOfStartOfLine'
+                                BinaryExpression
+                                  Identifier: 'j'
+                                  PlusToken
+                                  NumericLiteral
+                              ElementAccessExpression
+                                Identifier: ' lineMap'
+                                Identifier: 'j'

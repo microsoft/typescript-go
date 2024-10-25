@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' let'
+        NumericLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' of'
+      VariableDeclaration
+        ArrayBindingPattern
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        CommaToken
+        NumericLiteral
+      CommaToken
+      NumericLiteral
+    Identifier: ''
+    ExpressionStatement
+      Identifier: ''
+  Block
+  ForInStatement
+    VariableDeclarationList
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block

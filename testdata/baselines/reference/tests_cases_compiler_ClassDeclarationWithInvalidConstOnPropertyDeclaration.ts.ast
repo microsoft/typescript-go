@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' AtomicNumbers'
+    PropertyDeclaration
+      StaticKeyword
+      ConstKeyword
+      Identifier: ' H'
+      NumericLiteral

@@ -1,0 +1,123 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' C'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' C'
+            TypeReference
+              Identifier: ' C'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' C'
+            TypeReference
+              Identifier: ' C'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' C'
+    TypeReference
+      Identifier: ' C'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          Identifier: ' foo'
+          TypeReference
+            Identifier: ' T'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' D2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'C'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' D3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' M'
+          Identifier: 'E'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' h'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' i'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' M'
+          Identifier: 'E'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'

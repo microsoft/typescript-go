@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+  public'
+      Block
+    MethodDeclaration
+      Identifier: '
+  static'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' public'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' static'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' public'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' static'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' public'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' static'
+      Block

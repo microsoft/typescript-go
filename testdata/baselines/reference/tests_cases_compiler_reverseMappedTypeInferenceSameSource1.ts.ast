@@ -1,0 +1,171 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Action'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  type'
+        TypeReference
+          Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' UnknownAction'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Action'
+    IndexSignature
+      Parameter
+        Identifier: 'extraProps'
+        StringKeyword
+      UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' Reducer'
+    TypeParameter
+      Identifier: 'S'
+      AnyKeyword
+    TypeParameter
+      Identifier: ' A'
+      TypeReference
+        Identifier: ' Action'
+      TypeReference
+        Identifier: ' UnknownAction'
+    FunctionType
+      Parameter
+        Identifier: '
+  state'
+        UnionType
+          TypeReference
+            Identifier: ' S'
+          UndefinedKeyword
+      Parameter
+        Identifier: '
+  action'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' S'
+  TypeAliasDeclaration
+    Identifier: ' ReducersMapObject'
+    TypeParameter
+      Identifier: 'S'
+      AnyKeyword
+    TypeParameter
+      Identifier: ' A'
+      TypeReference
+        Identifier: ' Action'
+      TypeReference
+        Identifier: ' UnknownAction'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' S'
+      TypeReference
+        Identifier: ' Reducer'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'S'
+          TypeReference
+            Identifier: 'K'
+        TypeReference
+          Identifier: ' A'
+  InterfaceDeclaration
+    Identifier: ' ConfigureStoreOptions'
+    TypeParameter
+      Identifier: 'S'
+      AnyKeyword
+    TypeParameter
+      Identifier: ' A'
+      TypeReference
+        Identifier: ' Action'
+      TypeReference
+        Identifier: ' UnknownAction'
+    PropertySignature
+      Identifier: '
+  reducer'
+      UnionType
+        TypeReference
+          Identifier: ' Reducer'
+          TypeReference
+            Identifier: 'S'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' ReducersMapObject'
+          TypeReference
+            Identifier: 'S'
+          TypeReference
+            Identifier: ' A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' configureStore'
+    TypeParameter
+      Identifier: 'S'
+      AnyKeyword
+    TypeParameter
+      Identifier: ' A'
+      TypeReference
+        Identifier: ' Action'
+      TypeReference
+        Identifier: ' UnknownAction'
+    Parameter
+      Identifier: '
+  options'
+      TypeReference
+        Identifier: ' ConfigureStoreOptions'
+        TypeReference
+          Identifier: 'S'
+        TypeReference
+          Identifier: ' A'
+    VoidKeyword
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' reducer'
+          TypeReference
+            Identifier: ' Reducer'
+            NumberKeyword
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' store1'
+          CallExpression
+            Identifier: ' configureStore'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' reducer'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' counterReducer1'
+        TypeReference
+          Identifier: ' Reducer'
+          NumberKeyword
+        ArrowFunction
+          EqualsGreaterThanToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' store2'
+        CallExpression
+          Identifier: ' configureStore'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  reducer'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    counter1'
+                  Identifier: ' counterReducer1'
+  ExportDeclaration
+    NamedExports

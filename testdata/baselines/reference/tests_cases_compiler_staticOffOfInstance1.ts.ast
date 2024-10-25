@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' List'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' Blah'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'Foo'
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' Foo'
+      Block

@@ -1,0 +1,640 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Obj'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+	ref'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Func'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' UnionToIntersection'
+    TypeParameter
+      Identifier: 'U'
+    ConditionalType
+      ParenthesizedType
+        ConditionalType
+          TypeReference
+            Identifier: 'U'
+          AnyKeyword
+          FunctionType
+            Parameter
+              Identifier: 'k'
+              TypeReference
+                Identifier: ' U'
+            VoidKeyword
+          NeverKeyword
+      ParenthesizedType
+        FunctionType
+          Parameter
+            Identifier: 'k'
+            InferType
+              TypeParameter
+                Identifier: ' I'
+          VoidKeyword
+      TypeReference
+        Identifier: ' I'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' CtorOf'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'arg'
+        TypeReference
+          Identifier: ' UnionToIntersection'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Big'
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+    PropertySignature
+      StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' common'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' ref'
+          QuestionToken
+          UnionType
+            TypeReference
+              Identifier: ' Obj'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+            TypeReference
+              Identifier: ' Func'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'Big'
+                LiteralType
+                  StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getCtor'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        TypeReference
+          Identifier: ' Big'
+    Parameter
+      Identifier: 'comp'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' CtorOf'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'Big'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' all'
+        TypeOperator
+          TypeReference
+            Identifier: ' Big'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctor'
+        CallExpression
+          Identifier: ' getCtor'
+          Identifier: 'all'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' comp'
+        CallExpression
+          Identifier: ' ctor'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' common'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' ref'
+              ArrowFunction
+                Parameter
+                  Identifier: ' x'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' console'
+                    Identifier: 'log'
+                  Identifier: 'x'

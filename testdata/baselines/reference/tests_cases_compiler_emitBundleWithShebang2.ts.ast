@@ -1,0 +1,29 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      RegularExpressionLiteral
+      SlashToken
+      Identifier: 'env'
+  ExpressionStatement
+    Identifier: ' gjs'
+  ClassDeclaration
+    Identifier: ' Doo'
+  ClassDeclaration
+    Identifier: ' Scooby'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Doo'
+  ExpressionStatement
+    BinaryExpression
+      RegularExpressionLiteral
+      SlashToken
+      Identifier: 'env'
+  ExpressionStatement
+    Identifier: ' js'
+  ClassDeclaration
+    Identifier: ' Dood'
+  ClassDeclaration
+    Identifier: ' Scoobyd'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Dood'

@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      ArrayLiteralExpression
+        NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'a'
+      ArrayLiteralExpression
+        NumericLiteral
+    Block

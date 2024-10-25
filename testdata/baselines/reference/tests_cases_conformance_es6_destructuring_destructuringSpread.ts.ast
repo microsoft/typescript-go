@@ -1,0 +1,87 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x'
+        ObjectLiteralExpression
+          SpreadAssignment
+            ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  x'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' y'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  y'
+            NumericLiteral
+          SpreadAssignment
+            ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' z'
+          BindingElement
+            Identifier: ' a'
+          BindingElement
+            Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  z'
+            NumericLiteral
+          SpreadAssignment
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' c'
+          BindingElement
+            Identifier: ' d'
+          BindingElement
+            Identifier: ' e'
+          BindingElement
+            Identifier: ' f'
+          BindingElement
+            Identifier: ' g'
+        ObjectLiteralExpression
+          SpreadAssignment
+            ObjectLiteralExpression
+              SpreadAssignment
+                ObjectLiteralExpression
+                  SpreadAssignment
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+        c'
+                        NumericLiteral
+                  PropertyAssignment
+                    Identifier: '
+      d'
+                    NumericLiteral
+              PropertyAssignment
+                Identifier: '
+    e'
+                NumericLiteral
+          PropertyAssignment
+            Identifier: '
+  f'
+            NumericLiteral

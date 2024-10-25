@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'arguments'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrowFunction
+              Parameter
+                Identifier: 'arguments'
+              EqualsGreaterThanToken
+              ArrowFunction
+                EqualsGreaterThanToken
+                Identifier: ' arguments'

@@ -1,0 +1,8 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block

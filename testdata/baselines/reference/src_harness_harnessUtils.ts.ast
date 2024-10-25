@@ -1,0 +1,2041 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' vm'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' encodeString'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Buffer'
+                Identifier: 'from'
+              Identifier: 's'
+            Identifier: 'toString'
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' evalFile'
+    Parameter
+      Identifier: 'fileContents'
+      StringKeyword
+    Parameter
+      Identifier: ' fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' nodeContext'
+      QuestionToken
+      AnyKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        Identifier: 'nodeContext'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        vm'
+                Identifier: 'runInNewContext'
+              Identifier: 'fileContents'
+              Identifier: ' nodeContext'
+              Identifier: ' fileName'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        vm'
+                Identifier: 'runInThisContext'
+              Identifier: 'fileContents'
+              Identifier: ' fileName'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' splitContentByNewlines'
+    Parameter
+      Identifier: 'content'
+      StringKeyword
+    ArrayType
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lines'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' content'
+                Identifier: 'split'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'lines'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lines'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' content'
+                  Identifier: 'split'
+                StringLiteral
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'lines'
+                Identifier: 'length'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            lines'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' content'
+                      Identifier: 'split'
+                    StringLiteral
+      ReturnStatement
+        Identifier: ' lines'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' readTestFile'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'path'
+              Identifier: 'includes'
+            StringLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        path'
+              EqualsToken
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                Identifier: ' path'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' content'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      TryStatement
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        content'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' Harness'
+                    Identifier: 'IO'
+                  Identifier: 'readFile'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'Harness'
+                    Identifier: 'userSpecifiedRoot'
+                  PlusToken
+                  Identifier: ' path'
+        CatchClause
+          Block
+            ReturnStatement
+              Identifier: ' undefined'
+      ReturnStatement
+        Identifier: ' content'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' memoize'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'AnyFunction'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' memoKey'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'anything'
+          ArrayType
+            AnyKeyword
+        StringKeyword
+    TypeReference
+      Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cache'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              AnyKeyword
+      ReturnStatement
+        ParenthesizedExpression
+          AsExpression
+            FunctionExpression
+              Parameter
+                Identifier: 'this'
+                AnyKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                ArrayType
+                  AnyKeyword
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' key'
+                      CallExpression
+                        Identifier: ' memoKey'
+                        SpreadElement
+                          Identifier: 'args'
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'cache'
+                      Identifier: 'has'
+                    Identifier: 'key'
+                  Block
+                    ReturnStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' cache'
+                          Identifier: 'get'
+                        Identifier: 'key'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' value'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' f'
+                              Identifier: 'apply'
+                            ThisKeyword
+                            Identifier: ' args'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            cache'
+                          Identifier: 'set'
+                        Identifier: 'key'
+                        Identifier: ' value'
+                    ReturnStatement
+                      Identifier: ' value'
+            AnyKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' canonicalizeForHarness'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'GetCanonicalFileName'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'createGetCanonicalFileName'
+          FalseKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' assertInvariants'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'Node'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' parent'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'Node'
+        UndefinedKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' queue'
+            ArrayType
+              TupleType
+                UnionType
+                  TypeReference
+                    QualifiedName
+                      Identifier: 'ts'
+                      Identifier: 'Node'
+                  UndefinedKeyword
+                UnionType
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'Node'
+                  UndefinedKeyword
+            ArrayLiteralExpression
+              ArrayLiteralExpression
+                Identifier: 'node'
+                Identifier: ' parent'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'node'
+              BindingElement
+                Identifier: ' parent'
+        Identifier: ' queue'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        assertInvariantsWorker'
+              Identifier: 'node'
+              Identifier: ' parent'
+      FunctionDeclaration
+        Identifier: ' assertInvariantsWorker'
+        Parameter
+          Identifier: 'node'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'Node'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' parent'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'Node'
+            UndefinedKeyword
+        VoidKeyword
+        Block
+          IfStatement
+            Identifier: 'node'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            assert'
+                    Identifier: 'isFalse'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'pos'
+                    LessThanToken
+                    NumericLiteral
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            assert'
+                    Identifier: 'isFalse'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'end'
+                    LessThanToken
+                    NumericLiteral
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            assert'
+                    Identifier: 'isFalse'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'end'
+                    LessThanToken
+                    PropertyAccessExpression
+                      Identifier: ' node'
+                      Identifier: 'pos'
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            assert'
+                    Identifier: 'equal'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'parent'
+                  Identifier: ' parent'
+                  StringLiteral
+              IfStatement
+                Identifier: 'parent'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                // Make sure each child is contained within the parent.
+                assert'
+                        Identifier: 'isFalse'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'pos'
+                        LessThanToken
+                        PropertyAccessExpression
+                          Identifier: ' parent'
+                          Identifier: 'pos'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                assert'
+                        Identifier: 'isFalse'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'end'
+                        GreaterThanToken
+                        PropertyAccessExpression
+                          Identifier: ' parent'
+                          Identifier: 'end'
+                      StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            ts'
+                    Identifier: 'forEachChild'
+                  Identifier: 'node'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' child'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                queue'
+                            Identifier: 'push'
+                          ArrayLiteralExpression
+                            Identifier: 'child'
+                            Identifier: ' node'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' currentPos'
+                    NumericLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            ts'
+                    Identifier: 'forEachChild'
+                  Identifier: 'node'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' child'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                assert'
+                            Identifier: 'isFalse'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'child'
+                              Identifier: 'pos'
+                            LessThanToken
+                            Identifier: ' currentPos'
+                          StringLiteral
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                currentPos'
+                          EqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' child'
+                            Identifier: 'end'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' array'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                assert'
+                            Identifier: 'isFalse'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'array'
+                              Identifier: 'pos'
+                            LessThanToken
+                            PropertyAccessExpression
+                              Identifier: ' node'
+                              Identifier: 'pos'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                assert'
+                            Identifier: 'isFalse'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'array'
+                              Identifier: 'end'
+                            GreaterThanToken
+                            PropertyAccessExpression
+                              Identifier: ' node'
+                              Identifier: 'end'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                assert'
+                            Identifier: 'isFalse'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'array'
+                              Identifier: 'pos'
+                            LessThanToken
+                            Identifier: ' currentPos'
+                          StringLiteral
+                      ForOfStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' item'
+                        Identifier: ' array'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    assert'
+                                Identifier: 'isFalse'
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'item'
+                                  Identifier: 'pos'
+                                LessThanToken
+                                Identifier: ' currentPos'
+                              StringLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    currentPos'
+                              EqualsToken
+                              PropertyAccessExpression
+                                Identifier: ' item'
+                                Identifier: 'end'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+
+                currentPos'
+                          EqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' array'
+                            Identifier: 'end'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' childNodesAndArrays'
+                    ArrayType
+                      AnyKeyword
+                    ArrayLiteralExpression
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            ts'
+                    Identifier: 'forEachChild'
+                  Identifier: 'node'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' child'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                childNodesAndArrays'
+                            Identifier: 'push'
+                          Identifier: 'child'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' array'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                childNodesAndArrays'
+                            Identifier: 'push'
+                          Identifier: 'array'
+              ForInStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' childName'
+                Identifier: ' node'
+                Block
+                  IfStatement
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    BinaryExpression
+                                      BinaryExpression
+                                        BinaryExpression
+                                          BinaryExpression
+                                            BinaryExpression
+                                              BinaryExpression
+                                                BinaryExpression
+                                                  Identifier: '
+                    childName'
+                                                  EqualsEqualsEqualsToken
+                                                  StringLiteral
+                                                BarBarToken
+                                                BinaryExpression
+                                                  Identifier: '
+                    childName'
+                                                  EqualsEqualsEqualsToken
+                                                  StringLiteral
+                                              BarBarToken
+                                              BinaryExpression
+                                                Identifier: '
+                    childName'
+                                                EqualsEqualsEqualsToken
+                                                StringLiteral
+                                            BarBarToken
+                                            BinaryExpression
+                                              Identifier: '
+                    childName'
+                                              EqualsEqualsEqualsToken
+                                              StringLiteral
+                                          BarBarToken
+                                          BinaryExpression
+                                            Identifier: '
+                    childName'
+                                            EqualsEqualsEqualsToken
+                                            StringLiteral
+                                        BarBarToken
+                                        BinaryExpression
+                                          Identifier: '
+                    // for now ignore jsdoc comments
+                    childName'
+                                          EqualsEqualsEqualsToken
+                                          StringLiteral
+                                      BarBarToken
+                                      BinaryExpression
+                                        Identifier: '
+                    childName'
+                                        EqualsEqualsEqualsToken
+                                        StringLiteral
+                                    BarBarToken
+                                    BinaryExpression
+                                      Identifier: '
+                    childName'
+                                      EqualsEqualsEqualsToken
+                                      StringLiteral
+                                  BarBarToken
+                                  BinaryExpression
+                                    Identifier: '
+                    // ignore nodes added only to report grammar errors
+                    childName'
+                                    EqualsEqualsEqualsToken
+                                    StringLiteral
+                                BarBarToken
+                                BinaryExpression
+                                  Identifier: '
+                    childName'
+                                  EqualsEqualsEqualsToken
+                                  StringLiteral
+                              BarBarToken
+                              BinaryExpression
+                                Identifier: '
+                    childName'
+                                EqualsEqualsEqualsToken
+                                StringLiteral
+                            BarBarToken
+                            BinaryExpression
+                              Identifier: '
+                    childName'
+                              EqualsEqualsEqualsToken
+                              StringLiteral
+                          BarBarToken
+                          BinaryExpression
+                            Identifier: '
+                    childName'
+                            EqualsEqualsEqualsToken
+                            StringLiteral
+                        BarBarToken
+                        BinaryExpression
+                          Identifier: '
+                    childName'
+                          EqualsEqualsEqualsToken
+                          StringLiteral
+                      BarBarToken
+                      BinaryExpression
+                        Identifier: '
+                    childName'
+                        EqualsEqualsEqualsToken
+                        StringLiteral
+                    Block
+                      ContinueStatement
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' child'
+                        ElementAccessExpression
+                          ParenthesizedExpression
+                            AsExpression
+                              Identifier: 'node'
+                              AnyKeyword
+                          Identifier: 'childName'
+                  IfStatement
+                    CallExpression
+                      Identifier: 'isNodeOrArray'
+                      Identifier: 'child'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    assert'
+                            Identifier: 'isFalse'
+                          PrefixUnaryExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'childNodesAndArrays'
+                                Identifier: 'includes'
+                              Identifier: 'child'
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                StringLiteral
+                                PlusToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'Debug'
+                                    Identifier: 'formatSyntaxKind'
+                                  PropertyAccessExpression
+                                    Identifier: 'node'
+                                    Identifier: 'kind'
+                              PlusToken
+                              StringLiteral
+                            PlusToken
+                            Identifier: ' childName'
+  FunctionDeclaration
+    Identifier: ' isNodeOrArray'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    BooleanKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' a'
+            ExclamationEqualsEqualsToken
+            Identifier: ' undefined'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'pos'
+            EqualsEqualsEqualsToken
+            StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' convertDiagnostics'
+    Parameter
+      Identifier: 'diagnostics'
+      TypeOperator
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Diagnostic'
+    ArrayType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    start'
+          UnionType
+            NumberKeyword
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+    length'
+          UnionType
+            NumberKeyword
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+    messageText'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+    category'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+    code'
+          NumberKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' diagnostics'
+            Identifier: 'map'
+          Identifier: 'convertDiagnostic'
+  FunctionDeclaration
+    Identifier: ' convertDiagnostic'
+    Parameter
+      Identifier: 'diagnostic'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Diagnostic'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        start'
+            PropertyAccessExpression
+              Identifier: ' diagnostic'
+              Identifier: 'start'
+          PropertyAssignment
+            Identifier: '
+        length'
+            PropertyAccessExpression
+              Identifier: ' diagnostic'
+              Identifier: 'length'
+          PropertyAssignment
+            Identifier: '
+        messageText'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'flattenDiagnosticMessageText'
+              PropertyAccessExpression
+                Identifier: 'diagnostic'
+                Identifier: 'messageText'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' Harness'
+                    Identifier: 'IO'
+                  Identifier: 'newLine'
+          PropertyAssignment
+            Identifier: '
+        category'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'diagnosticCategoryName'
+              Identifier: 'diagnostic'
+              FalseKeyword
+          PropertyAssignment
+            Identifier: '
+        code'
+            PropertyAccessExpression
+              Identifier: ' diagnostic'
+              Identifier: 'code'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' sourceFileToJSON'
+    Parameter
+      Identifier: 'file'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Node'
+    StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' JSON'
+            Identifier: 'stringify'
+          Identifier: 'file'
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            Parameter
+              Identifier: ' v'
+            EqualsGreaterThanToken
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isNodeOrArray'
+                Identifier: 'v'
+              QuestionToken
+              CallExpression
+                Identifier: ' serializeNode'
+                Identifier: 'v'
+              ColonToken
+              Identifier: ' v'
+          StringLiteral
+      FunctionDeclaration
+        Identifier: ' getKindName'
+        Parameter
+          Identifier: 'k'
+          UnionType
+            NumberKeyword
+            StringKeyword
+            UndefinedKeyword
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'k'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              BarBarToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'isString'
+                Identifier: 'k'
+            Block
+              ReturnStatement
+                Identifier: ' k'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Debug'
+                Identifier: 'formatSyntaxKind'
+              Identifier: 'k'
+      FunctionDeclaration
+        Identifier: ' getNodeFlagName'
+        Parameter
+          Identifier: 'f'
+          NumberKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Debug'
+                Identifier: 'formatNodeFlags'
+              Identifier: 'f'
+      FunctionDeclaration
+        Identifier: ' serializeNode'
+        Parameter
+          Identifier: 'n'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Node'
+        AnyKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' o'
+                AnyKeyword
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    CallExpression
+                      Identifier: ' getKindName'
+                      PropertyAccessExpression
+                        Identifier: 'n'
+                        Identifier: 'kind'
+          IfStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'containsParseError'
+              Identifier: 'n'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            o'
+                    Identifier: 'containsParseError'
+                  EqualsToken
+                  TrueKeyword
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' propertyName'
+            AsExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Object'
+                  Identifier: 'getOwnPropertyNames'
+                Identifier: 'n'
+              TypeOperator
+                ArrayType
+                  ParenthesizedType
+                    UnionType
+                      TypeOperator
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'SourceFile'
+                      TypeOperator
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'Identifier'
+                      TypeOperator
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'StringLiteral'
+            Block
+              SwitchStatement
+                Identifier: 'propertyName'
+                CaseBlock
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                  CaseClause
+                    StringLiteral
+                    BreakStatement
+                  CaseClause
+                    StringLiteral
+                    IfStatement
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'n'
+                            AnyKeyword
+                        Identifier: 'hasExtendedUnicodeEscape'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        o'
+                              Identifier: 'hasExtendedUnicodeEscape'
+                            EqualsToken
+                            TrueKeyword
+                    BreakStatement
+                  CaseClause
+                    StringLiteral
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' flags'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' n'
+                              Identifier: 'flags'
+                            AmpersandToken
+                            PrefixUnaryExpression
+                              ParenthesizedExpression
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'NodeFlags'
+                                    Identifier: 'JavaScriptFile'
+                                  BarToken
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'NodeFlags'
+                                    Identifier: 'HasAggregatedChildData'
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'ts'
+                          Identifier: 'isIdentifier'
+                        Identifier: 'n'
+                      Block
+                        IfStatement
+                          BinaryExpression
+                            Identifier: 'flags'
+                            AmpersandToken
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'NodeFlags'
+                              Identifier: 'IdentifierHasExtendedUnicodeEscape'
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                            o'
+                                  Identifier: 'hasExtendedUnicodeEscape'
+                                EqualsToken
+                                TrueKeyword
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                            flags'
+                                AmpersandEqualsToken
+                                PrefixUnaryExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'NodeFlags'
+                                    Identifier: 'IdentifierHasExtendedUnicodeEscape'
+                    IfStatement
+                      Identifier: 'flags'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            ElementAccessExpression
+                              Identifier: '
+                        o'
+                              Identifier: 'propertyName'
+                            EqualsToken
+                            CallExpression
+                              Identifier: ' getNodeFlagName'
+                              Identifier: 'flags'
+                    BreakStatement
+                  CaseClause
+                    StringLiteral
+                    ExpressionStatement
+                      BinaryExpression
+                        ElementAccessExpression
+                          Identifier: '
+                    o'
+                          Identifier: 'propertyName'
+                        EqualsToken
+                        CallExpression
+                          Identifier: ' convertDiagnostics'
+                          ElementAccessExpression
+                            ParenthesizedExpression
+                              AsExpression
+                                Identifier: 'n'
+                                AnyKeyword
+                            Identifier: 'propertyName'
+                    BreakStatement
+                  CaseClause
+                    StringLiteral
+                    IfStatement
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'n'
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' ts'
+                                Identifier: 'HasLocals'
+                        Identifier: 'nextContainer'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            ElementAccessExpression
+                              Identifier: '
+                        o'
+                              Identifier: 'propertyName'
+                            EqualsToken
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' kind'
+                                PropertyAccessExpression
+                                  NonNullExpression
+                                    PropertyAccessExpression
+                                      ParenthesizedExpression
+                                        AsExpression
+                                          Identifier: 'n'
+                                          TypeReference
+                                            QualifiedName
+                                              Identifier: ' ts'
+                                              Identifier: 'HasLocals'
+                                      Identifier: 'nextContainer'
+                                  Identifier: 'kind'
+                              PropertyAssignment
+                                Identifier: ' pos'
+                                PropertyAccessExpression
+                                  NonNullExpression
+                                    PropertyAccessExpression
+                                      ParenthesizedExpression
+                                        AsExpression
+                                          Identifier: 'n'
+                                          TypeReference
+                                            QualifiedName
+                                              Identifier: ' ts'
+                                              Identifier: 'HasLocals'
+                                      Identifier: 'nextContainer'
+                                  Identifier: 'pos'
+                              PropertyAssignment
+                                Identifier: ' end'
+                                PropertyAccessExpression
+                                  NonNullExpression
+                                    PropertyAccessExpression
+                                      ParenthesizedExpression
+                                        AsExpression
+                                          Identifier: 'n'
+                                          TypeReference
+                                            QualifiedName
+                                              Identifier: ' ts'
+                                              Identifier: 'HasLocals'
+                                      Identifier: 'nextContainer'
+                                  Identifier: 'end'
+                    BreakStatement
+                  CaseClause
+                    StringLiteral
+                    IfStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'n'
+                          Identifier: 'kind'
+                        ExclamationEqualsEqualsToken
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'SyntaxKind'
+                          Identifier: 'SourceFile'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            ElementAccessExpression
+                              Identifier: '
+                        o'
+                              Identifier: 'propertyName'
+                            EqualsToken
+                            ElementAccessExpression
+                              ParenthesizedExpression
+                                AsExpression
+                                  Identifier: 'n'
+                                  AnyKeyword
+                              Identifier: 'propertyName'
+                    BreakStatement
+                  DefaultClause
+                    ExpressionStatement
+                      BinaryExpression
+                        ElementAccessExpression
+                          Identifier: '
+                    o'
+                          Identifier: 'propertyName'
+                        EqualsToken
+                        ElementAccessExpression
+                          ParenthesizedExpression
+                            AsExpression
+                              Identifier: 'n'
+                              AnyKeyword
+                          Identifier: 'propertyName'
+          ReturnStatement
+            Identifier: ' o'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' assertDiagnosticsEquals'
+    Parameter
+      Identifier: 'array1'
+      TypeOperator
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Diagnostic'
+    Parameter
+      Identifier: ' array2'
+      TypeOperator
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Diagnostic'
+    VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'array1'
+          EqualsEqualsEqualsToken
+          Identifier: ' array2'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    assert'
+          Identifier: 'array1'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    assert'
+          Identifier: 'array2'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    assert'
+            Identifier: 'equal'
+          PropertyAccessExpression
+            Identifier: 'array1'
+            Identifier: 'length'
+          PropertyAccessExpression
+            Identifier: ' array2'
+            Identifier: 'length'
+          StringLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' array1'
+            Identifier: 'length'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' d1'
+                ElementAccessExpression
+                  Identifier: ' array1'
+                  Identifier: 'i'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' d2'
+                ElementAccessExpression
+                  Identifier: ' array2'
+                  Identifier: 'i'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        assert'
+                Identifier: 'equal'
+              PropertyAccessExpression
+                Identifier: 'd1'
+                Identifier: 'start'
+              PropertyAccessExpression
+                Identifier: ' d2'
+                Identifier: 'start'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        assert'
+                Identifier: 'equal'
+              PropertyAccessExpression
+                Identifier: 'd1'
+                Identifier: 'length'
+              PropertyAccessExpression
+                Identifier: ' d2'
+                Identifier: 'length'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        assert'
+                Identifier: 'equal'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            ts'
+                  Identifier: 'flattenDiagnosticMessageText'
+                PropertyAccessExpression
+                  Identifier: 'd1'
+                  Identifier: 'messageText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' Harness'
+                      Identifier: 'IO'
+                    Identifier: 'newLine'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            ts'
+                  Identifier: 'flattenDiagnosticMessageText'
+                PropertyAccessExpression
+                  Identifier: 'd2'
+                  Identifier: 'messageText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' Harness'
+                      Identifier: 'IO'
+                    Identifier: 'newLine'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        assert'
+                Identifier: 'equal'
+              PropertyAccessExpression
+                Identifier: 'd1'
+                Identifier: 'category'
+              PropertyAccessExpression
+                Identifier: ' d2'
+                Identifier: 'category'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        assert'
+                Identifier: 'equal'
+              PropertyAccessExpression
+                Identifier: 'd1'
+                Identifier: 'code'
+              PropertyAccessExpression
+                Identifier: ' d2'
+                Identifier: 'code'
+              StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' assertStructuralEquals'
+    Parameter
+      Identifier: 'node1'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Node'
+    Parameter
+      Identifier: ' node2'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Node'
+    VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'node1'
+          EqualsEqualsEqualsToken
+          Identifier: ' node2'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    assert'
+          Identifier: 'node1'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    assert'
+          Identifier: 'node2'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    assert'
+            Identifier: 'equal'
+          PropertyAccessExpression
+            Identifier: 'node1'
+            Identifier: 'pos'
+          PropertyAccessExpression
+            Identifier: ' node2'
+            Identifier: 'pos'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    assert'
+            Identifier: 'equal'
+          PropertyAccessExpression
+            Identifier: 'node1'
+            Identifier: 'end'
+          PropertyAccessExpression
+            Identifier: ' node2'
+            Identifier: 'end'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    assert'
+            Identifier: 'equal'
+          PropertyAccessExpression
+            Identifier: 'node1'
+            Identifier: 'kind'
+          PropertyAccessExpression
+            Identifier: ' node2'
+            Identifier: 'kind'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // call this on both nodes to ensure all propagated flags have been set (and thus can be
+    // compared).
+    assert'
+            Identifier: 'equal'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ts'
+              Identifier: 'containsParseError'
+            Identifier: 'node1'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'containsParseError'
+            Identifier: 'node2'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    assert'
+            Identifier: 'equal'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'node1'
+              Identifier: 'flags'
+            AmpersandToken
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'NodeFlags'
+                Identifier: 'ReachabilityAndEmitFlags'
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' node2'
+              Identifier: 'flags'
+            AmpersandToken
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'NodeFlags'
+                Identifier: 'ReachabilityAndEmitFlags'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    ts'
+            Identifier: 'forEachChild'
+          Identifier: 'node1'
+          ArrowFunction
+            Parameter
+              Identifier: ' child1'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' childName'
+                    CallExpression
+                      Identifier: ' findChildName'
+                      Identifier: 'node1'
+                      Identifier: ' child1'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' child2'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'Node'
+                    ElementAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node2'
+                          AnyKeyword
+                      Identifier: 'childName'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+        assertStructuralEquals'
+                  Identifier: 'child1'
+                  Identifier: ' child2'
+          ArrowFunction
+            Parameter
+              Identifier: ' array1'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' childName'
+                    CallExpression
+                      Identifier: ' findChildName'
+                      Identifier: 'node1'
+                      Identifier: ' array1'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' array2'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'NodeArray'
+                      TypeReference
+                        QualifiedName
+                          Identifier: 'ts'
+                          Identifier: 'Node'
+                    ElementAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node2'
+                          AnyKeyword
+                      Identifier: 'childName'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+        assertArrayStructuralEquals'
+                  Identifier: 'array1'
+                  Identifier: ' array2'
+  FunctionDeclaration
+    Identifier: ' assertArrayStructuralEquals'
+    Parameter
+      Identifier: 'array1'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'NodeArray'
+        TypeReference
+          QualifiedName
+            Identifier: 'ts'
+            Identifier: 'Node'
+    Parameter
+      Identifier: ' array2'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'NodeArray'
+        TypeReference
+          QualifiedName
+            Identifier: 'ts'
+            Identifier: 'Node'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'array1'
+          EqualsEqualsEqualsToken
+          Identifier: ' array2'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    assert'
+          Identifier: 'array1'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    assert'
+          Identifier: 'array2'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    assert'
+            Identifier: 'equal'
+          PropertyAccessExpression
+            Identifier: 'array1'
+            Identifier: 'pos'
+          PropertyAccessExpression
+            Identifier: ' array2'
+            Identifier: 'pos'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    assert'
+            Identifier: 'equal'
+          PropertyAccessExpression
+            Identifier: 'array1'
+            Identifier: 'end'
+          PropertyAccessExpression
+            Identifier: ' array2'
+            Identifier: 'end'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    assert'
+            Identifier: 'equal'
+          PropertyAccessExpression
+            Identifier: 'array1'
+            Identifier: 'length'
+          PropertyAccessExpression
+            Identifier: ' array2'
+            Identifier: 'length'
+          StringLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' array1'
+            Identifier: 'length'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        assertStructuralEquals'
+              ElementAccessExpression
+                Identifier: 'array1'
+                Identifier: 'i'
+              ElementAccessExpression
+                Identifier: ' array2'
+                Identifier: 'i'
+  FunctionDeclaration
+    Identifier: ' findChildName'
+    Parameter
+      Identifier: 'parent'
+      AnyKeyword
+    Parameter
+      Identifier: ' child'
+      AnyKeyword
+    Block
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' name'
+        Identifier: ' parent'
+        Block
+          IfStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'hasProperty'
+                Identifier: 'parent'
+                Identifier: ' name'
+              AmpersandAmpersandToken
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: ' parent'
+                  Identifier: 'name'
+                EqualsEqualsEqualsToken
+                Identifier: ' child'
+            Block
+              ReturnStatement
+                Identifier: ' name'
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' maxHarnessFrames'
+        NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' filterStack'
+    Parameter
+      Identifier: 'error'
+      TypeReference
+        Identifier: ' Error'
+    Parameter
+      Identifier: ' stackTraceLimit'
+      NumberKeyword
+      Identifier: ' Infinity'
+    TypeReference
+      Identifier: ' Error'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' stack'
+            AsExpression
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  AsExpression
+                    Identifier: 'error'
+                    AnyKeyword
+                Identifier: 'stack'
+              StringKeyword
+      IfStatement
+        Identifier: 'stack'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lines'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' stack'
+                    Identifier: 'split'
+                  RegularExpressionLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' filtered'
+                ArrayType
+                  StringKeyword
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' frameCount'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' harnessFrameCount'
+                NumericLiteral
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' line'
+            Identifier: ' lines'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'isStackFrame'
+                  Identifier: 'line'
+                Block
+                  IfStatement
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          Identifier: '
+                    frameCount'
+                          GreaterThanEqualsToken
+                          Identifier: ' stackTraceLimit'
+                        BarBarToken
+                        CallExpression
+                          Identifier: ' isMocha'
+                          Identifier: 'line'
+                      BarBarToken
+                      CallExpression
+                        Identifier: ' isNode'
+                        Identifier: 'line'
+                    Block
+                      ContinueStatement
+                  IfStatement
+                    CallExpression
+                      Identifier: 'isHarness'
+                      Identifier: 'line'
+                    Block
+                      IfStatement
+                        BinaryExpression
+                          Identifier: 'harnessFrameCount'
+                          GreaterThanEqualsToken
+                          Identifier: ' maxHarnessFrames'
+                        Block
+                          ContinueStatement
+                      ExpressionStatement
+                        PostfixUnaryExpression
+                          Identifier: '
+
+                    harnessFrameCount'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+                line'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' line'
+                          Identifier: 'replace'
+                        RegularExpressionLiteral
+                        ArrowFunction
+                          Parameter
+                            Identifier: '_'
+                          Parameter
+                            Identifier: ' path'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'sys'
+                              Identifier: 'resolvePath'
+                            Identifier: 'path'
+                  ExpressionStatement
+                    PostfixUnaryExpression
+                      Identifier: '
+                frameCount'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            filtered'
+                    Identifier: 'push'
+                  Identifier: 'line'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  AsExpression
+                    Identifier: 'error'
+                    AnyKeyword
+                Identifier: 'stack'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' filtered'
+                  Identifier: 'join'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'Harness'
+                      Identifier: 'IO'
+                    Identifier: 'newLine'
+      ReturnStatement
+        Identifier: ' error'
+  FunctionDeclaration
+    Identifier: ' isStackFrame'
+    Parameter
+      Identifier: 'line'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            RegularExpressionLiteral
+            Identifier: 'test'
+          Identifier: 'line'
+  FunctionDeclaration
+    Identifier: ' isMocha'
+    Parameter
+      Identifier: 'line'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            RegularExpressionLiteral
+            Identifier: 'test'
+          Identifier: 'line'
+  FunctionDeclaration
+    Identifier: ' isNode'
+    Parameter
+      Identifier: 'line'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            RegularExpressionLiteral
+            Identifier: 'test'
+          Identifier: 'line'
+  FunctionDeclaration
+    Identifier: ' isHarness'
+    Parameter
+      Identifier: 'line'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            RegularExpressionLiteral
+            Identifier: 'test'
+          Identifier: 'line'

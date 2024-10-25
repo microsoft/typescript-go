@@ -1,0 +1,414 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' compilerOptionsToConfigJson'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' sys'
+            Parameter
+              Identifier: 'childOptions'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'CompilerOptions'
+            Parameter
+              Identifier: ' mainOptions'
+              QuestionToken
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'CompilerOptions'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' TestServerHost'
+                    Identifier: 'createWatchedSystem'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                compilerOptions'
+                            CallExpression
+                              Identifier: ' compilerOptionsToConfigJson'
+                              Identifier: 'childOptions'
+                    SpreadAssignment
+                      ParenthesizedExpression
+                        ConditionalExpression
+                          Identifier: 'mainOptions'
+                          QuestionToken
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              StringLiteral
+                              TaggedTemplateExpression
+                                Identifier: ' dedent'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    ConditionalExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'childOptions'
+                                        Identifier: 'outFile'
+                                      QuestionToken
+                                      StringLiteral
+                                      ColonToken
+                                      StringLiteral
+                                    TemplateTail
+                            PropertyAssignment
+                              StringLiteral
+                              CallExpression
+                                Identifier: ' jsonToReadableText'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    compilerOptions'
+                                    CallExpression
+                                      Identifier: ' compilerOptionsToConfigJson'
+                                      Identifier: 'mainOptions'
+                                  PropertyAssignment
+                                    Identifier: '
+                    references'
+                                    ArrayLiteralExpression
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' path'
+                                          StringLiteral
+                          ColonToken
+                          ObjectLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' currentDirectory'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' sys'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' composite'
+                          TrueKeyword
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' composite'
+                          TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' sys'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' composite'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: ' outFile'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'AMD'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' composite'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: ' outFile'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'AMD'
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'rimrafSync'
+                            StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' sys'
+                      ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' sys'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' outFile'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: ' module'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'ModuleKind'
+                            Identifier: 'AMD'
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'rimrafSync'
+                            StringLiteral

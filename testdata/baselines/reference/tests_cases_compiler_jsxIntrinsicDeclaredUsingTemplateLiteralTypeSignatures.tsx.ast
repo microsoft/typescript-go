@@ -1,0 +1,61 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 'k'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              StringKeyword
+        IndexSignature
+          Parameter
+            Identifier: 'k'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              LiteralType
+                StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'foobaz'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' prop'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'foobaz'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' prop'
+          JsxExpression
+            NumericLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'foobarbaz'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' prop'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'foobarbaz'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' prop'
+          StringLiteral

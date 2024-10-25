@@ -1,0 +1,364 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' value'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' name'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' C'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' cond'
+        BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' D'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' value'
+        BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' E'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' x'
+        NumberKeyword
+      PropertySignature
+        Identifier: ' y'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' All'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        Identifier: ' D'
+      TypeReference
+        Identifier: ' E'
+  FunctionDeclaration
+    Identifier: ' fn1switch'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' All'
+    Block
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'input'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              Block
+                ReturnStatement
+            ExpressionStatement
+              Identifier: '
+
+            input'
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              Identifier: '
+            input'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              Identifier: '
+            input'
+      ExpressionStatement
+        Identifier: '
+
+    input'
+  FunctionDeclaration
+    Identifier: ' fn1ifelse'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' All'
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'input'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' input'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ReturnStatement
+          ExpressionStatement
+            Identifier: '
+
+        input'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'input'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' input'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        input'
+        Block
+          ExpressionStatement
+            Identifier: '
+        input'
+      ExpressionStatement
+        Identifier: '
+
+    input'
+  FunctionDeclaration
+    Identifier: ' fn2switch'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' All'
+    Block
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'input'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              Block
+                ReturnStatement
+            ExpressionStatement
+              Identifier: '
+
+            input'
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              Identifier: '
+            input'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              Identifier: '
+            input'
+            ReturnStatement
+      ExpressionStatement
+        Identifier: '
+
+    input'
+  FunctionDeclaration
+    Identifier: ' fn2ifelse'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' All'
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'input'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' input'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ReturnStatement
+          ExpressionStatement
+            Identifier: '
+
+        input'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'input'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' input'
+              Identifier: 'kind'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        input'
+        Block
+          ExpressionStatement
+            Identifier: '
+        input'
+          ReturnStatement
+      ExpressionStatement
+        Identifier: '
+
+    input'
+  FunctionDeclaration
+    Identifier: ' fn3switch'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' All'
+    Block
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'input'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              Block
+                ReturnStatement
+            ExpressionStatement
+              Identifier: '
+
+            input'
+          DefaultClause
+            ExpressionStatement
+              Identifier: '
+            input'
+            BreakStatement
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' input'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              Identifier: '
+            input'
+            BreakStatement
+      ExpressionStatement
+        Identifier: '
+
+    input'

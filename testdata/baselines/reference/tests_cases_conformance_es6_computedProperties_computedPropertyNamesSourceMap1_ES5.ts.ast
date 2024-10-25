@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        StringLiteral
+      Block
+        DebuggerStatement
+    GetAccessor
+      ComputedPropertyName
+        StringLiteral
+      Block
+        ReturnStatement
+          NumericLiteral

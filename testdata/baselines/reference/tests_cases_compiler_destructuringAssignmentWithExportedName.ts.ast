@@ -1,0 +1,123 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exportedFoo'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nonexportedFoo'
+        AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// sanity checks
+exportedFoo'
+      EqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+nonexportedFoo'
+      EqualsToken
+      NullKeyword
+  IfStatement
+    AsExpression
+      NullKeyword
+      AnyKeyword
+    Block
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' exportedFoo'
+              ShorthandPropertyAssignment
+                Identifier: ' nonexportedFoo'
+            EqualsToken
+            AsExpression
+              NullKeyword
+              AnyKeyword
+    IfStatement
+      AsExpression
+        NullKeyword
+        AnyKeyword
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' foo'
+                  Identifier: ' exportedFoo'
+                PropertyAssignment
+                  Identifier: ' bar'
+                  Identifier: ' nonexportedFoo'
+              EqualsToken
+              AsExpression
+                NullKeyword
+                AnyKeyword
+      IfStatement
+        AsExpression
+          NullKeyword
+          AnyKeyword
+        Block
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' foo'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' bar'
+                        Identifier: ' exportedFoo'
+                      PropertyAssignment
+                        Identifier: ' baz'
+                        Identifier: ' nonexportedFoo'
+                EqualsToken
+                AsExpression
+                  NullKeyword
+                  AnyKeyword
+        IfStatement
+          AsExpression
+            NullKeyword
+            AnyKeyword
+          Block
+            ExpressionStatement
+              ParenthesizedExpression
+                BinaryExpression
+                  ArrayLiteralExpression
+                    Identifier: 'exportedFoo'
+                    Identifier: ' nonexportedFoo'
+                  EqualsToken
+                  AsExpression
+                    NullKeyword
+                    AnyKeyword
+          Block
+            ExpressionStatement
+              ParenthesizedExpression
+                BinaryExpression
+                  ArrayLiteralExpression
+                    ArrayLiteralExpression
+                      Identifier: 'exportedFoo'
+                      Identifier: ' nonexportedFoo'
+                  EqualsToken
+                  AsExpression
+                    NullKeyword
+                    AnyKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' nonexportedFoo'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' exportedFoo'
+        Identifier: ' foo'
+      ExportSpecifier
+        Identifier: ' nonexportedFoo'
+        Identifier: ' nfoo'

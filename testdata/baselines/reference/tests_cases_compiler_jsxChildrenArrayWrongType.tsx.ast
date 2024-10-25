@@ -1,0 +1,45 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' PropsType'
+    PropertySignature
+      Identifier: '
+    children'
+      UnionType
+        TupleType
+          StringKeyword
+          NumberKeyword
+        ArrayType
+          BooleanKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'PropsType'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ParenthesizedExpression
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'Foo'
+              JsxAttributes
+            JsxText
+            JsxExpression
+              AsExpression
+                JsxSelfClosingElement
+                  Identifier: 'div'
+                  JsxAttributes
+                UnknownKeyword
+            JsxText
+            JsxExpression
+              StringLiteral
+            JsxText
+            JsxClosingElement
+              Identifier: 'Foo'

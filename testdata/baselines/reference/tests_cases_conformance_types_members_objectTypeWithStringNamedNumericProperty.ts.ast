@@ -1,0 +1,631 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StringLiteral
+      VoidKeyword
+    PropertyDeclaration
+      StringLiteral
+      TypeReference
+        Identifier: ' Object'
+    PropertyDeclaration
+      StringLiteral
+      NumberKeyword
+    PropertyDeclaration
+      StringLiteral
+      StringKeyword
+    PropertyDeclaration
+      StringLiteral
+      BooleanKeyword
+    PropertyDeclaration
+      StringLiteral
+      TypeReference
+        Identifier: ' Date'
+    PropertyDeclaration
+      StringLiteral
+      TypeReference
+        Identifier: ' RegExp'
+    PropertyDeclaration
+      StringLiteral
+      TypeReference
+        Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        ElementAccessExpression
+          Identifier: ' i'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12'
+        ElementAccessExpression
+          Identifier: ' i'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      StringLiteral
+      VoidKeyword
+    PropertySignature
+      StringLiteral
+      TypeReference
+        Identifier: ' Object'
+    PropertySignature
+      StringLiteral
+      NumberKeyword
+    PropertySignature
+      StringLiteral
+      StringKeyword
+    PropertySignature
+      StringLiteral
+      BooleanKeyword
+    PropertySignature
+      StringLiteral
+      TypeReference
+        Identifier: ' Date'
+    PropertySignature
+      StringLiteral
+      TypeReference
+        Identifier: ' RegExp'
+    PropertySignature
+      StringLiteral
+      TypeReference
+        Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        ElementAccessExpression
+          Identifier: ' i'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12'
+        ElementAccessExpression
+          Identifier: ' i'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            StringLiteral
+            VoidKeyword
+          PropertySignature
+            StringLiteral
+            TypeReference
+              Identifier: ' Object'
+          PropertySignature
+            StringLiteral
+            NumberKeyword
+          PropertySignature
+            StringLiteral
+            StringKeyword
+          PropertySignature
+            StringLiteral
+            BooleanKeyword
+          PropertySignature
+            StringLiteral
+            TypeReference
+              Identifier: ' Date'
+          PropertySignature
+            StringLiteral
+            TypeReference
+              Identifier: ' RegExp'
+          PropertySignature
+            StringLiteral
+            TypeReference
+              Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        ElementAccessExpression
+          Identifier: ' i'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12'
+        ElementAccessExpression
+          Identifier: ' i'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            TypeAssertionExpression
+              VoidKeyword
+              NullKeyword
+          PropertyAssignment
+            StringLiteral
+            NewExpression
+              Identifier: ' Object'
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword
+          PropertyAssignment
+            StringLiteral
+            NewExpression
+              Identifier: ' Date'
+          PropertyAssignment
+            StringLiteral
+            RegularExpressionLiteral
+          PropertyAssignment
+            StringLiteral
+            Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        ElementAccessExpression
+          Identifier: ' b'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        ElementAccessExpression
+          Identifier: ' b'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' b'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        ElementAccessExpression
+          Identifier: ' b'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        ElementAccessExpression
+          Identifier: ' b'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        ElementAccessExpression
+          Identifier: ' b'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        ElementAccessExpression
+          Identifier: ' i'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12'
+        ElementAccessExpression
+          Identifier: ' i'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13'
+        ElementAccessExpression
+          Identifier: ' i'
+          PrefixUnaryExpression
+            NumericLiteral

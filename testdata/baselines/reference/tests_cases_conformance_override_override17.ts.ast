@@ -1,0 +1,45 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' m1'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' m2'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' m3'
+      VoidKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' m1'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' m2'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' m3'
+      VoidKeyword
+      Block

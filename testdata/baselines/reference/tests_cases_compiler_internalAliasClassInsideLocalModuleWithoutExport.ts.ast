@@ -1,0 +1,46 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' x'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c'
+        MethodDeclaration
+          Identifier: '
+        foo'
+          Parameter
+            Identifier: 'a'
+            NumberKeyword
+          Block
+            ReturnStatement
+              Identifier: ' a'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m3'
+        ModuleBlock
+          ImportEqualsDeclaration
+            Identifier: ' c'
+            QualifiedName
+              Identifier: ' x'
+              Identifier: 'c'
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' cProp'
+                NewExpression
+                  Identifier: ' c'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' cReturnVal'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' cProp'
+                    Identifier: 'foo'
+                  NumericLiteral

@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: ' x'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: ' y'
+      StringKeyword
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    TypeReference
+      Identifier: ' IterableIterator'
+      TypeReference
+        Identifier: 'Foo'
+    Block
+      ExpressionStatement
+        YieldExpression
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          NewExpression
+            Identifier: ' Bar'

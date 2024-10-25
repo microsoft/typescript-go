@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+        EqualsToken
+        Identifier: ' a'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ArrayLiteralExpression
+        EqualsToken
+        Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral

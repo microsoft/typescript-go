@@ -1,0 +1,303 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' SomeBaseClass'
+    MethodDeclaration
+      Identifier: '
+    set'
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          ThisType
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      Parameter
+        Identifier: ' value'
+        IndexedAccessType
+          ThisType
+          TypeReference
+            Identifier: 'K'
+      IndexedAccessType
+        ThisType
+        TypeReference
+          Identifier: 'K'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' SomeAbstractClass'
+    TypeParameter
+      Identifier: 'C'
+    TypeParameter
+      Identifier: ' M'
+    TypeParameter
+      Identifier: ' R'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SomeBaseClass'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      ExclamationToken
+      FunctionType
+        Parameter
+          Identifier: 'r'
+          QuestionToken
+          TypeReference
+            Identifier: ' R'
+        VoidKeyword
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      ExclamationToken
+      FunctionType
+        Parameter
+          Identifier: 'r'
+          QuestionToken
+          AnyKeyword
+        VoidKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'c'
+        TypeReference
+          Identifier: ' C'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'M'
+  ClassDeclaration
+    Identifier: ' SomeClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SomeAbstractClass'
+        NumberKeyword
+        StringKeyword
+        BooleanKeyword
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'context'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Promise'
+        StringKeyword
+      Block
+        ReturnStatement
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'context'
+              TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' CType'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' SomeAbstractClass'
+        InferType
+          TypeParameter
+            Identifier: ' C'
+        AnyKeyword
+        AnyKeyword
+      TypeReference
+        Identifier: ' C'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' MType'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' SomeAbstractClass'
+        AnyKeyword
+        InferType
+          TypeParameter
+            Identifier: ' M'
+        AnyKeyword
+      TypeReference
+        Identifier: ' M'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' RType'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' SomeAbstractClass'
+        AnyKeyword
+        AnyKeyword
+        InferType
+          TypeParameter
+            Identifier: ' R'
+      TypeReference
+        Identifier: ' R'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' SomeClassC'
+    TypeReference
+      Identifier: ' CType'
+      TypeReference
+        Identifier: 'SomeClass'
+  TypeAliasDeclaration
+    Identifier: ' SomeClassM'
+    TypeReference
+      Identifier: ' MType'
+      TypeReference
+        Identifier: 'SomeClass'
+  TypeAliasDeclaration
+    Identifier: ' SomeClassR'
+    TypeReference
+      Identifier: ' RType'
+      TypeReference
+        Identifier: 'SomeClass'
+  InterfaceDeclaration
+    Identifier: ' BaseType'
+    TypeParameter
+      Identifier: 'T1'
+    TypeParameter
+      Identifier: ' T2'
+    MethodSignature
+      Identifier: '
+    set'
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          ThisType
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      Parameter
+        Identifier: ' value'
+        IndexedAccessType
+          ThisType
+          TypeReference
+            Identifier: 'K'
+      IndexedAccessType
+        ThisType
+        TypeReference
+          Identifier: 'K'
+    MethodSignature
+      Identifier: '
+    useT1'
+      Parameter
+        Identifier: 'c'
+        TypeReference
+          Identifier: ' T1'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    useT2'
+      Parameter
+        Identifier: 'r'
+        QuestionToken
+        TypeReference
+          Identifier: ' T2'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    unrelatedButSomehowRelevant'
+      Parameter
+        Identifier: 'r'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' InheritedType'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BaseType'
+        NumberKeyword
+        BooleanKeyword
+    MethodSignature
+      Identifier: '
+    // This declaration shouldn't do anything...
+    useT1'
+      Parameter
+        Identifier: '_'
+        NumberKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' StructuralVersion'
+    MethodSignature
+      Identifier: '
+    set'
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          ThisType
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      Parameter
+        Identifier: ' value'
+        IndexedAccessType
+          ThisType
+          TypeReference
+            Identifier: 'K'
+      IndexedAccessType
+        ThisType
+        TypeReference
+          Identifier: 'K'
+    MethodSignature
+      Identifier: '
+    useT1'
+      Parameter
+        Identifier: 'c'
+        NumberKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    useT2'
+      Parameter
+        Identifier: 'r'
+        QuestionToken
+        BooleanKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    unrelatedButSomehowRelevant'
+      Parameter
+        Identifier: 'r'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' GetT1'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' BaseType'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+        AnyKeyword
+      TypeReference
+        Identifier: ' U'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeReference
+      Identifier: ' GetT1'
+      TypeReference
+        Identifier: 'InheritedType'
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeReference
+      Identifier: ' GetT1'
+      TypeReference
+        Identifier: 'StructuralVersion'

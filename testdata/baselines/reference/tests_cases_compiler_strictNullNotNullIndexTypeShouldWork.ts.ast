@@ -1,0 +1,103 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    params'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' name'
+          StringKeyword
+  ClassDeclaration
+    Identifier: ' Test'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    attrs'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+
+    m'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            NonNullExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'attrs'
+                Identifier: 'params'
+            Identifier: 'name'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    foo'
+      QuestionToken
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' FooClass'
+    TypeParameter
+      Identifier: 'P'
+      TypeReference
+        Identifier: ' Foo'
+      TypeReference
+        Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    properties'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'P'
+    MethodDeclaration
+      Identifier: '
+
+    foo'
+      NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' foo'
+                  NumericLiteral
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'properties'
+        ReturnStatement
+          Identifier: ' foo'
+  ClassDeclaration
+    Identifier: ' Test2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    attrs'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+
+    m'
+      Block
+        ReturnStatement
+          NonNullExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'attrs'
+              Identifier: 'params'

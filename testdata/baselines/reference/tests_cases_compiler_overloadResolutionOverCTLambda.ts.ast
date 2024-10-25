@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'b'
+      FunctionType
+        Parameter
+          Identifier: 'item'
+          NumberKeyword
+        BooleanKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        EqualsGreaterThanToken
+        Identifier: ' a'

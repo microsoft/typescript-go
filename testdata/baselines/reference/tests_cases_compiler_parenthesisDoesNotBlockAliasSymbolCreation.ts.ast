@@ -1,0 +1,120 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' InvalidKeys'
+    TypeParameter
+      Identifier: 'K'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        SymbolKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      QuestionToken
+      NeverKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' InvalidKeys2'
+    TypeParameter
+      Identifier: 'K'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        SymbolKeyword
+    ParenthesizedType
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeReference
+            Identifier: ' K'
+        QuestionToken
+        NeverKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    ParenthesizedType
+      IntersectionType
+        TypeReference
+          Identifier: '
+    T'
+        TypeReference
+          Identifier: ' InvalidKeys'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A2'
+    TypeParameter
+      Identifier: 'T'
+    ParenthesizedType
+      IntersectionType
+        TypeReference
+          Identifier: '
+    T'
+        TypeReference
+          Identifier: ' InvalidKeys2'
+          LiteralType
+            StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AsExpression
+          NullKeyword
+          TypeReference
+            Identifier: ' A'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        AsExpression
+          NullKeyword
+          TypeReference
+            Identifier: ' A2'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        AsExpression
+          NullKeyword
+          IntersectionType
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+            TypeReference
+              Identifier: ' InvalidKeys'
+              LiteralType
+                StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        AsExpression
+          NullKeyword
+          IntersectionType
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+            TypeReference
+              Identifier: ' InvalidKeys2'
+              LiteralType
+                StringLiteral

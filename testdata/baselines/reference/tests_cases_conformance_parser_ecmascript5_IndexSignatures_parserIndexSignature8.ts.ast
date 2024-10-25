@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'index'
+              AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo2'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'index'
+              TypeReference
+                Identifier: ' RegExp'

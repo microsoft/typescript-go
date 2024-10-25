@@ -1,0 +1,98 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          StringLiteral
+  ExportDeclaration
+    StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          StringLiteral
+      ExpressionStatement
+        StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' LitElement'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      TrueKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' LitElement'
+        ImportSpecifier
+          Identifier: ' LitElement'
+          Identifier: ' LitElement2'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ElementB'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' LitElement'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ElementC'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' LitElement2'

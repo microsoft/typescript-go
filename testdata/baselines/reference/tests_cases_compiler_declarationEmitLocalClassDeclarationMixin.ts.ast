@@ -1,0 +1,100 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'C'
+    ConstructSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' mixin'
+    TypeParameter
+      Identifier: 'B'
+      TypeReference
+        Identifier: ' Constructor'
+        TypeLiteral
+    Parameter
+      Identifier: 'Base'
+      TypeReference
+        Identifier: ' B'
+    Block
+      ClassDeclaration
+        Identifier: ' PrivateMixed'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+        PropertyDeclaration
+          Identifier: '
+        bar'
+          NumericLiteral
+      ReturnStatement
+        Identifier: ' PrivateMixed'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Unmixed'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Mixed'
+        CallExpression
+          Identifier: ' mixin'
+          Identifier: 'Unmixed'
+  FunctionDeclaration
+    Identifier: ' Filter'
+    TypeParameter
+      Identifier: 'C'
+      TypeReference
+        Identifier: ' Constructor'
+        TypeLiteral
+    Parameter
+      Identifier: 'ctor'
+      TypeReference
+        Identifier: ' C'
+    Block
+      ClassDeclaration
+        AbstractKeyword
+        Identifier: ' FilterMixin'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' ctor'
+        MethodDeclaration
+          AbstractKeyword
+          Identifier: ' match'
+          Parameter
+            Identifier: 'path'
+            StringKeyword
+          BooleanKeyword
+        PropertyDeclaration
+          Identifier: '
+        // other concrete methods, fields, constructor
+        thing'
+          NumericLiteral
+      ReturnStatement
+        Identifier: ' FilterMixin'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' FilteredThing'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' Filter'
+          Identifier: 'Unmixed'
+    MethodDeclaration
+      Identifier: '
+    match'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Block
+        ReturnStatement
+          FalseKeyword

@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test1'
+    Parameter
+      Identifier: 'foo'
+      StringKeyword
+    Parameter
+      Identifier: ' bar'
+      TypeQuery
+        Identifier: ' foo'
+    TypeQuery
+      Identifier: ' foo'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'foo'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'foo'
+          StringKeyword
+    Parameter
+      Identifier: ' bar'
+      TypeQuery
+        Identifier: ' foo'
+    TypeQuery
+      Identifier: ' foo'

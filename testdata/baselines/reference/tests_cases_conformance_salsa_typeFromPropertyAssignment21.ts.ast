@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '// @allowJs: true
+// @checkJs: true
+// @noEmit: true
+// @lib: dom, es5
+// @Filename: chrome-devtools-DOMExtension.js
+
+// Extend that DOM! (doesn't work, but shouldn't crash)
+Event'
+          Identifier: 'prototype'
+        Identifier: 'removeChildren'
+      EqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'textContent'
+              EqualsToken
+              StringLiteral

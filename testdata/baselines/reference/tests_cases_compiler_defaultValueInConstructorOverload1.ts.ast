@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        StringLiteral
+      Block

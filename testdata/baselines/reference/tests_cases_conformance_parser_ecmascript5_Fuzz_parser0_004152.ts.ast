@@ -1,0 +1,48 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Game'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' position'
+      NewExpression
+        Identifier: ' DisplayPosition'
+        ArrayLiteralExpression
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: ' NoMove'
+    PropertyDeclaration
+      NumericLiteral
+    SemicolonClassElement
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' prevConfig'
+      ArrayType
+        ArrayType
+          TypeReference
+            Identifier: ' SeedCoords'

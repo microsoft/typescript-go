@@ -1,0 +1,12 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' d'
+            TypeLiteral
+          Block

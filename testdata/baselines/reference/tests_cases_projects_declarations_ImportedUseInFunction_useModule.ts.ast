@@ -1,0 +1,14 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' fncOnly_m4'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' useFncOnly_m4_f4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' fncOnly_m4'
+            Identifier: 'foo'

@@ -1,0 +1,101 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' ConditionalType'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      StringKeyword
+      StringKeyword
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' ConditionalOrUndefined'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' ConditionalType'
+        TypeReference
+          Identifier: 'T'
+      UndefinedKeyword
+    Block
+      ReturnStatement
+        AsExpression
+          NumericLiteral
+          AnyKeyword
+  FunctionDeclaration
+    Identifier: ' JustConditional'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' ConditionalType'
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        NonNullExpression
+          CallExpression
+            Identifier: ' ConditionalOrUndefined'
+            TypeReference
+              Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' genericOrUndefined'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+    Block
+      ReturnStatement
+        AsExpression
+          NumericLiteral
+          AnyKeyword
+  FunctionDeclaration
+    Identifier: ' JustGeneric'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        NonNullExpression
+          CallExpression
+            Identifier: ' genericOrUndefined'
+            TypeReference
+              Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' One'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          StringKeyword
+          StringKeyword
+          StringKeyword
+      TypeAliasDeclaration
+        Identifier: ' A'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          NumberKeyword
+          TypeReference
+            Identifier: ' One'
+          NeverKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' One'
+            AsExpression
+              AsExpression
+                NullKeyword
+                AnyKeyword
+              TypeReference
+                Identifier: ' A'

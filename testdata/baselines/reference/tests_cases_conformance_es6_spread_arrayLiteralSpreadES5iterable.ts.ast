@@ -1,0 +1,150 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f0'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a1'
+            ArrayLiteralExpression
+              SpreadElement
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a2'
+            ArrayLiteralExpression
+              NumericLiteral
+              SpreadElement
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a3'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              SpreadElement
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a4'
+            ArrayLiteralExpression
+              SpreadElement
+                Identifier: 'a'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a5'
+            ArrayLiteralExpression
+              SpreadElement
+                Identifier: 'a'
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a6'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              SpreadElement
+                Identifier: 'a'
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a7'
+            ArrayLiteralExpression
+              NumericLiteral
+              SpreadElement
+                Identifier: 'a'
+              NumericLiteral
+              SpreadElement
+                Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a8'
+            ArrayLiteralExpression
+              SpreadElement
+                Identifier: 'a'
+              SpreadElement
+                Identifier: 'a'
+              SpreadElement
+                Identifier: 'a'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrayLiteralExpression
+              StringLiteral
+              SpreadElement
+                Identifier: 'a'
+              TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrayType
+              ParenthesizedType
+                UnionType
+                  StringKeyword
+                  NumberKeyword
+                  BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayLiteralExpression
+              SpreadElement
+                ArrayLiteralExpression
+                  SpreadElement
+                    ArrayLiteralExpression
+                      SpreadElement
+                        ArrayLiteralExpression
+                          SpreadElement
+                            ArrayLiteralExpression
+                              SpreadElement
+                                ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ArrayLiteralExpression
+              SpreadElement
+                ArrayLiteralExpression
+                  SpreadElement
+                    ArrayLiteralExpression
+                      SpreadElement
+                        ArrayLiteralExpression
+                          SpreadElement
+                            ArrayLiteralExpression
+                              SpreadElement
+                                ArrayLiteralExpression
+                                  NumericLiteral

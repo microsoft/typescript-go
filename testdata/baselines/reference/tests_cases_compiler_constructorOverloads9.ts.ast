@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    a'
+    Constructor
+    Constructor
+      Parameter
+        Identifier: 'x'
+        StringLiteral
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+            EqualsToken
+            Identifier: ' x'

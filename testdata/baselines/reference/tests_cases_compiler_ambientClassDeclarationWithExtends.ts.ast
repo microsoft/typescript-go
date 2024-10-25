@@ -1,0 +1,64 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' A'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+  ModuleDeclaration
+    Identifier: ' D'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' C'
+        NewExpression
+          Identifier: ' D'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' E'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+  ModuleDeclaration
+    Identifier: ' F'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' F'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' E'
+        NewExpression
+          Identifier: ' F'

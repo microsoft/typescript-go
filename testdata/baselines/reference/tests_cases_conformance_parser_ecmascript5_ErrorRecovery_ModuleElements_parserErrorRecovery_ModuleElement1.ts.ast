@@ -1,0 +1,5 @@
+SourceFile
+  ReturnStatement
+    Identifier: ' foo'
+  ReturnStatement
+    Identifier: ' bar'

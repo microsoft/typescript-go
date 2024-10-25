@@ -1,0 +1,32 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: nodenext
+// @allowImportingTsExtensions: true
+
+// @Filename: /package.json
+//// {
+////   "type": "module",
+////   "imports": {
+////     "#src/*": "./SRC/*"
+////   }
+//// }
+
+// @Filename: /src/add.ts
+//// export function add(a: number, b: number) {}
+
+// @Filename: /src/index.ts
+//// add/*imports*/;
+
+verify'
+        Identifier: 'importFixModuleSpecifiers'
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' importModuleSpecifierPreference'
+          StringLiteral

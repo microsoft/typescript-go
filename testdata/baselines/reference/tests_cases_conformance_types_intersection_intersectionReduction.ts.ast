@@ -1,0 +1,936 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sym1'
+        TypeOperator
+          SymbolKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sym2'
+        TypeOperator
+          SymbolKeyword
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    IntersectionType
+      StringKeyword
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    IntersectionType
+      LiteralType
+        StringLiteral
+      StringKeyword
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T3'
+    IntersectionType
+      NumberKeyword
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T4'
+    IntersectionType
+      LiteralType
+        NumericLiteral
+      NumberKeyword
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T5'
+    IntersectionType
+      SymbolKeyword
+      TypeQuery
+        Identifier: ' sym1'
+  TypeAliasDeclaration
+    Identifier: ' T6'
+    IntersectionType
+      TypeQuery
+        Identifier: ' sym1'
+      SymbolKeyword
+      TypeQuery
+        Identifier: ' sym2'
+  TypeAliasDeclaration
+    Identifier: ' T7'
+    IntersectionType
+      StringKeyword
+      LiteralType
+        StringLiteral
+      NumberKeyword
+      LiteralType
+        NumericLiteral
+      SymbolKeyword
+      TypeQuery
+        Identifier: ' sym1'
+  TypeAliasDeclaration
+    Identifier: ' T10'
+    IntersectionType
+      StringKeyword
+      ParenthesizedType
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T11'
+    IntersectionType
+      ParenthesizedType
+        UnionType
+          StringKeyword
+          NumberKeyword
+      ParenthesizedType
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' N1'
+    IntersectionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' N2'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+      LiteralType
+        NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' N3'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+      UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' N4'
+    IntersectionType
+      StringKeyword
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' N5'
+    IntersectionType
+      NumberKeyword
+      ObjectKeyword
+  TypeAliasDeclaration
+    Identifier: ' N6'
+    IntersectionType
+      SymbolKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' N7'
+    IntersectionType
+      VoidKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' X'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' X1'
+    UnionType
+      TypeReference
+        Identifier: ' X'
+      IntersectionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X2'
+    UnionType
+      TypeReference
+        Identifier: ' X'
+      IntersectionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+        LiteralType
+          NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' X3'
+    UnionType
+      TypeReference
+        Identifier: ' X'
+      IntersectionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+        UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' X4'
+    UnionType
+      TypeReference
+        Identifier: ' X'
+      IntersectionType
+        StringKeyword
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' X5'
+    UnionType
+      TypeReference
+        Identifier: ' X'
+      IntersectionType
+        NumberKeyword
+        ObjectKeyword
+  TypeAliasDeclaration
+    Identifier: ' X6'
+    UnionType
+      TypeReference
+        Identifier: ' X'
+      IntersectionType
+        SymbolKeyword
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' X7'
+    UnionType
+      TypeReference
+        Identifier: ' X'
+      IntersectionType
+        VoidKeyword
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' foo'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' foo'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' C'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' foo'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab'
+        IntersectionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+ab'
+      Identifier: 'kind'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          ParenthesizedType
+            IntersectionType
+              TypeReference
+                Identifier: 'B'
+              TypeReference
+                Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+        Identifier: ' x'
+  TypeAliasDeclaration
+    Identifier: ' AB'
+    IntersectionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' BC'
+    IntersectionType
+      TypeReference
+        Identifier: ' B'
+      TypeReference
+        Identifier: ' C'
+  TypeAliasDeclaration
+    Identifier: ' U1'
+    TypeReference
+      Identifier: ' Partial'
+      IntersectionType
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' U2'
+    TypeReference
+      Identifier: ' Readonly'
+      IntersectionType
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' U3'
+    IndexedAccessType
+      ParenthesizedType
+        IntersectionType
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' B'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' U4'
+    UnionType
+      IntersectionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+      IntersectionType
+        TypeReference
+          Identifier: ' B'
+        TypeReference
+          Identifier: ' C'
+  TypeAliasDeclaration
+    Identifier: ' U5'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      IntersectionType
+        TypeReference
+          Identifier: ' B'
+        TypeReference
+          Identifier: ' C'
+  TypeAliasDeclaration
+    Identifier: ' K1'
+    TypeOperator
+      ParenthesizedType
+        IntersectionType
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' K2'
+    UnionType
+      TypeOperator
+        TypeReference
+          Identifier: ' A'
+      TypeOperator
+        TypeReference
+          Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' Merge1'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          ParenthesizedType
+            IntersectionType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: ' P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' U'
+          IntersectionType
+            TypeReference
+              Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' U'
+  TypeAliasDeclaration
+    Identifier: ' Merge2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        UnionType
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+          TypeOperator
+            TypeReference
+              Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: ' P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' U'
+          IntersectionType
+            TypeReference
+              Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' U'
+  TypeAliasDeclaration
+    Identifier: ' M1'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' M2'
+    TypeReference
+      Identifier: ' Merge1'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' M3'
+    TypeReference
+      Identifier: ' Merge2'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' D'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' foo'
+        UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' E'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' foo'
+        UnknownKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f10'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' D'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          IntersectionType
+            TypeReference
+              Identifier: ' D'
+            TypeReference
+              Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        CallExpression
+          Identifier: ' f10'
+          Identifier: 'a1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' f10'
+          Identifier: 'a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            TrueKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+x1'
+        Identifier: 'k'
+      EqualsToken
+      AsExpression
+        StringLiteral
+        AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '  // Error
+x2'
+        Identifier: 'k'
+      EqualsToken
+      AsExpression
+        StringLiteral
+        AnyKeyword
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' Tag1'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' Tag2'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s1'
+        IntersectionType
+          StringKeyword
+          TypeReference
+            Identifier: ' Tag1'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2'
+        IntersectionType
+          StringKeyword
+          TypeReference
+            Identifier: ' Tag2'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        UnionType
+          IntersectionType
+            StringKeyword
+            TypeReference
+              Identifier: ' Tag1'
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        UnionType
+          IntersectionType
+            StringKeyword
+            TypeReference
+              Identifier: ' Tag2'
+          UndefinedKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+s1'
+      EqualsToken
+      Identifier: ' s2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s2'
+      EqualsToken
+      Identifier: ' s1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+t1'
+      EqualsToken
+      Identifier: ' t2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t2'
+      EqualsToken
+      Identifier: ' t1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        ArrowFunction
+          Parameter
+            Identifier: 't'
+            UnionType
+              LiteralType
+                StringLiteral
+              ParenthesizedType
+                IntersectionType
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+          LiteralType
+            StringLiteral
+          EqualsGreaterThanToken
+          Identifier: ' t'
+  TypeAliasDeclaration
+    Identifier: ' Container'
+    TypeParameter
+      Identifier: 'Type'
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    type'
+        TypeReference
+          Identifier: ' Type'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        ArrowFunction
+          Parameter
+            Identifier: 't'
+            UnionType
+              TypeReference
+                Identifier: ' Container'
+                LiteralType
+                  StringLiteral
+              ParenthesizedType
+                IntersectionType
+                  TypeReference
+                    Identifier: 'Container'
+                    LiteralType
+                      StringLiteral
+                  TypeReference
+                    Identifier: ' Container'
+                    LiteralType
+                      StringLiteral
+          TypeReference
+            Identifier: ' Container'
+            LiteralType
+              StringLiteral
+          EqualsGreaterThanToken
+          Identifier: ' t'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        ArrowFunction
+          Parameter
+            Identifier: 't'
+            UnionType
+              TypeReference
+                Identifier: ' Container'
+                LiteralType
+                  StringLiteral
+              ParenthesizedType
+                IntersectionType
+                  TypeReference
+                    Identifier: 'Container'
+                    LiteralType
+                      StringLiteral
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' dataB'
+                      BooleanKeyword
+                  TypeReference
+                    Identifier: ' Container'
+                    LiteralType
+                      StringLiteral
+          TypeReference
+            Identifier: ' Container'
+            LiteralType
+              StringLiteral
+          EqualsGreaterThanToken
+          Identifier: ' t'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        ArrowFunction
+          Parameter
+            Identifier: 't'
+            UnionType
+              NumberKeyword
+              ParenthesizedType
+                IntersectionType
+                  TypeReference
+                    Identifier: 'Container'
+                    LiteralType
+                      StringLiteral
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' dataB'
+                      BooleanKeyword
+                  TypeReference
+                    Identifier: ' Container'
+                    LiteralType
+                      StringLiteral
+          NumberKeyword
+          EqualsGreaterThanToken
+          Identifier: ' t'
+  InterfaceDeclaration
+    Identifier: ' A2'
+    PropertySignature
+      Identifier: '
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' B2'
+    PropertySignature
+      Identifier: '
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    b'
+      NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shouldBeB'
+        IntersectionType
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'A2'
+              TypeReference
+                Identifier: ' B2'
+          TypeReference
+            Identifier: ' B2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B2'
+        Identifier: ' shouldBeB'
+  FunctionDeclaration
+    Identifier: ' inGeneric'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' A2'
+        TypeReference
+          Identifier: ' B2'
+    Parameter
+      Identifier: 'alsoShouldBeB'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' B2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            TypeReference
+              Identifier: ' B2'
+            Identifier: ' alsoShouldBeB'
+  InterfaceDeclaration
+    Identifier: ' ABI'
+    PropertySignature
+      Identifier: '
+    kind'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' CA'
+    PropertyDeclaration
+      Identifier: ' kind'
+      LiteralType
+        StringLiteral
+    PropertyDeclaration
+      Identifier: ' a'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: ' x'
+      NumberKeyword
+  EmptyStatement
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' CB'
+    PropertyDeclaration
+      Identifier: ' kind'
+      LiteralType
+        StringLiteral
+    PropertyDeclaration
+      Identifier: ' b'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: ' y'
+      NumberKeyword
+  EmptyStatement
+  FunctionDeclaration
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' CA'
+        TypeReference
+          Identifier: ' CB'
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' CA'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ab'
+            TypeReference
+              Identifier: ' ABI'
+            Identifier: ' x'

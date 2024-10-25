@@ -1,0 +1,37 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' v'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' map'
+        NewExpression
+          Identifier: ' Map'
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              StringLiteral
+              TrueKeyword
+  ForOfStatement
+    ArrayLiteralExpression
+      BinaryExpression
+        Identifier: 'k'
+        EqualsToken
+        StringLiteral
+      BinaryExpression
+        Identifier: ' v'
+        EqualsToken
+        FalseKeyword
+    Identifier: ' map'
+    Block
+      ExpressionStatement
+        Identifier: '
+    k'
+      ExpressionStatement
+        Identifier: '
+    v'

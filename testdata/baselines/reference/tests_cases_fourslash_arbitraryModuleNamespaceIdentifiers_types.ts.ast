@@ -1,0 +1,53 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /foo.ts
+////type foo = "foo";
+////export { type foo as "[|__<alias>|]" };
+////import { type "[|__<alias>|]" as bar } from "./foo";
+////const testBar: bar = "foo";
+
+// @Filename: /bar.ts
+////import { type "[|__<alias>|]" as first } from "./foo";
+////export { type "[|__<alias>|]" as "<other>" } from "./foo";
+////import { type "<other>" as second } from "./bar";
+////const testFirst: first = "foo";
+////const testSecond: second = "foo";
+
+verify'
+        Identifier: 'noErrors'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'test'
+          Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineGoToDefinition'
+      SpreadElement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineFindAllReferences'
+      SpreadElement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'test'
+            Identifier: 'ranges'

@@ -1,0 +1,235 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c1'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'i'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'arguments'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arguments'
+              ArrayType
+                AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo1'
+      Parameter
+        Identifier: 'arguments'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arguments'
+              NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooNoError'
+      Parameter
+        Identifier: 'arguments'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arguments'
+              NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f4'
+      Parameter
+        Identifier: 'i'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'arguments'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f4'
+      Parameter
+        Identifier: 'i'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'arguments'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f4'
+      Parameter
+        Identifier: 'i'
+        AnyKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'arguments'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arguments'
+              ArrayType
+                AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f41'
+      Parameter
+        Identifier: 'arguments'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f41'
+      Parameter
+        Identifier: 'arguments'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f41'
+      Parameter
+        Identifier: 'arguments'
+        AnyKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arguments'
+              AnyKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f4NoError'
+      Parameter
+        Identifier: 'arguments'
+        NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f4NoError'
+      Parameter
+        Identifier: 'arguments'
+        StringKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f4NoError'
+      Parameter
+        Identifier: 'arguments'
+        AnyKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arguments'
+              AnyKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' c2'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'i'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'arguments'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo1'
+      Parameter
+        Identifier: 'arguments'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooNoError'
+      Parameter
+        Identifier: 'arguments'
+        NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f4'
+      Parameter
+        Identifier: 'i'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'arguments'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f4'
+      Parameter
+        Identifier: 'i'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'arguments'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f41'
+      Parameter
+        Identifier: 'arguments'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f41'
+      Parameter
+        Identifier: 'arguments'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f4NoError'
+      Parameter
+        Identifier: 'arguments'
+        NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f4NoError'
+      Parameter
+        Identifier: 'arguments'
+        StringKeyword
+  ClassDeclaration
+    Identifier: ' c3'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'restParameters'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arguments'
+              NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' fooNoError'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' arguments'
+              NumericLiteral

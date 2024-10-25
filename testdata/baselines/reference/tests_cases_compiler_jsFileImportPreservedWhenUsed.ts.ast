@@ -1,0 +1,132 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' ObjectIterator'
+    TypeParameter
+      Identifier: 'TObject'
+    TypeParameter
+      Identifier: ' TResult'
+    FunctionType
+      Parameter
+        Identifier: 'value'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' TObject'
+          TypeOperator
+            TypeReference
+              Identifier: ' TObject'
+      Parameter
+        Identifier: ' key'
+        StringKeyword
+      Parameter
+        Identifier: ' collection'
+        TypeReference
+          Identifier: ' TObject'
+      TypeReference
+        Identifier: ' TResult'
+  InterfaceDeclaration
+    Identifier: ' LoDashStatic'
+    MethodSignature
+      Identifier: '
+    mapValues'
+      TypeParameter
+        Identifier: 'T'
+        ObjectKeyword
+      TypeParameter
+        Identifier: ' TResult'
+      Parameter
+        Identifier: 'obj'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            NullKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' callback'
+        TypeReference
+          Identifier: ' ObjectIterator'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' TResult'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        TypeReference
+          Identifier: ' TResult'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _'
+        TypeReference
+          Identifier: ' LoDashStatic'
+  ExportAssignment
+    Identifier: ' _'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' INDEX_FIELD'
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' _'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' INDEX_FIELD'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Test'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * @param {object} obj
+     * @param {object} vm
+     */
+    test'
+      Parameter
+        Identifier: 'obj'
+      Parameter
+        Identifier: ' vm'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' index'
+              NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        vm'
+              Identifier: 'objects'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' _'
+                Identifier: 'mapValues'
+              Identifier: '
+            obj'
+              ArrowFunction
+                Parameter
+                  Identifier: '
+            object'
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+                    SpreadAssignment
+                      Identifier: 'object'
+                    PropertyAssignment
+                      ComputedPropertyName
+                        Identifier: 'INDEX_FIELD'
+                      PostfixUnaryExpression
+                        Identifier: ' index'

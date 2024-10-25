@@ -1,0 +1,98 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      FunctionType
+        Parameter
+          Identifier: 'p'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' z'
+      FunctionType
+        Parameter
+          Identifier: 'p'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: ' x'
+        EqualsGreaterThanToken
+        NullKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' x'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'toLowerCase'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      FunctionType
+        Parameter
+          Identifier: 'p'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' z'
+      FunctionType
+        Parameter
+          Identifier: 'p'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g'
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: ' x'
+        EqualsGreaterThanToken
+        NullKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' x'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'toLowerCase'

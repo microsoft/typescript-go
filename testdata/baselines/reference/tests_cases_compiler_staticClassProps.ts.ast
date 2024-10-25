@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' z'
+      NumericLiteral

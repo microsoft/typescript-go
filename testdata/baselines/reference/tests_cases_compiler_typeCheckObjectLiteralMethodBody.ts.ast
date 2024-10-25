@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' bar'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'

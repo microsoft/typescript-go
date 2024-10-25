@@ -1,0 +1,42 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    always'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'result'
+      UnknownKeyword
+    Block
+      IfStatement
+        PropertyAccessExpression
+          ParenthesizedExpression
+            AsExpression
+              Identifier: 'result'
+              TypeReference
+                Identifier: ' I'
+          Identifier: 'always'
+        Block
+          ReturnStatement
+            Identifier: ' result'
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 'result'
+      UnknownKeyword
+    Block
+      IfStatement
+        PropertyAccessExpression
+          ParenthesizedExpression
+            ParenthesizedExpression
+              AsExpression
+                Identifier: 'result'
+                TypeReference
+                  Identifier: ' I'
+          Identifier: 'always'
+        Block
+          ReturnStatement
+            Identifier: ' result'

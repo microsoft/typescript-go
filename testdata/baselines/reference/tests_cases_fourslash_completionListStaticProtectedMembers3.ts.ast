@@ -1,0 +1,79 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////class Base {
+////    private static privateMethod() { }
+////    private static privateProperty;
+////
+////    protected static protectedMethod() { }
+////    protected static protectedProperty;
+////
+////    public static publicMethod() { }
+////    public static publicProperty;
+////
+////    protected static protectedOverriddenMethod() { }
+////    protected static protectedOverriddenProperty;
+////}
+////
+////class C3 extends Base {
+////    protected static protectedOverriddenMethod() { }
+////    protected static protectedOverriddenProperty;
+////}
+////
+////Base./*1*/;
+////C3./*2*/;
+
+// Only public properties are visible outside the class
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'functionMembersPlus'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocalDeclarationPriority'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocalDeclarationPriority'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocationPriority'

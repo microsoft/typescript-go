@@ -1,0 +1,97 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Window'
+    MethodSignature
+      Identifier: '
+    someMethod'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' W'
+        UnionType
+          TypeReference
+            Identifier: ' Window'
+          StringKeyword
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' N'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' Window'
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' p'
+                TypeReference
+                  Identifier: ' W'
+  ModuleDeclaration
+    Identifier: ' M1'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' W'
+        UnionType
+          TypeReference
+            Identifier: ' Window'
+          StringKeyword
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' N'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' Window'
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' p'
+                TypeReference
+                  Identifier: ' W'
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' private1'
+      ClassDeclaration
+        Identifier: ' public1'
+      ModuleDeclaration
+        Identifier: ' m3'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' public1'
+      TypeAliasDeclaration
+        Identifier: ' t1'
+        TypeReference
+          Identifier: ' private1'
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' t2'
+        TypeReference
+          Identifier: ' private1'
+      TypeAliasDeclaration
+        Identifier: ' t11'
+        TypeReference
+          Identifier: ' public1'
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' t12'
+        TypeReference
+          Identifier: ' public1'
+      TypeAliasDeclaration
+        Identifier: ' t111'
+        TypeReference
+          QualifiedName
+            Identifier: ' m3'
+            Identifier: 'public1'
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' t112'
+        TypeReference
+          QualifiedName
+            Identifier: ' m3'
+            Identifier: 'public1'

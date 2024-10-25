@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  ExportAssignment
+    ClassExpression
+      Identifier: ' B'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' B'
+    ExternalModuleReference
+      StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+      ExportSpecifier
+        Identifier: ' B'

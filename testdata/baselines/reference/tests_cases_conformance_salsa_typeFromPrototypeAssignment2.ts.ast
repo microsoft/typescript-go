@@ -1,0 +1,139 @@
+SourceFile
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Identifier: ' container'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' Multimap'
+                FunctionExpression
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: '_map'
+                        EqualsToken
+                        ObjectLiteralExpression
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: '_map'
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'set'
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'get'
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'addon'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+
+    Multimap'
+                Identifier: 'prototype'
+              EqualsToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        set'
+                  FunctionExpression
+                    Block
+                      ExpressionStatement
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: '_map'
+                      ExpressionStatement
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'set'
+                      ExpressionStatement
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'get'
+                      ExpressionStatement
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'addon'
+                MethodDeclaration
+                  Identifier: '
+        get'
+                  Block
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: '_map'
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'set'
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'get'
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'addon'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+
+    Multimap'
+                  Identifier: 'prototype'
+                Identifier: 'addon'
+              EqualsToken
+              FunctionExpression
+                Block
+                  ExpressionStatement
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: '_map'
+                  ExpressionStatement
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'set'
+                  ExpressionStatement
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'get'
+                  ExpressionStatement
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'addon'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' mm'
+                NewExpression
+                  Identifier: ' Multimap'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+    mm'
+              Identifier: '_map'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+    mm'
+              Identifier: 'set'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+    mm'
+              Identifier: 'get'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+    mm'
+              Identifier: 'addon'

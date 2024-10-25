@@ -1,0 +1,35 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' require'
+    Parameter
+      Identifier: 'moduleName'
+      StringKeyword
+    AnyKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' readFileSync'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fs'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' text'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' fs'
+            Identifier: 'readFileSync'
+          StringLiteral

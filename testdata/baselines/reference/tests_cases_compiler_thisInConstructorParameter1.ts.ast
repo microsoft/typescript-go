@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' y'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'y'
+      Block

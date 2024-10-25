@@ -1,0 +1,37 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /a.ts
+////// header comment
+////
+////import './foo';
+////import { a, b, alreadyUnused } from './other';
+////const p = 0;
+////[|const y: Date = p + b;|]
+////a; y;
+
+verify'
+        Identifier: 'moveToNewFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        quotePreference'
+              StringLiteral

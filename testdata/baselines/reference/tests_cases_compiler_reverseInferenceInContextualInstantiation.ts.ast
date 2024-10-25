@@ -1,0 +1,30 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' compare'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' T'
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayType
+          NumberKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+x'
+        Identifier: 'sort'
+      Identifier: 'compare'

@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeLiteral
+  ExportAssignment
+    Identifier: ' Bar'

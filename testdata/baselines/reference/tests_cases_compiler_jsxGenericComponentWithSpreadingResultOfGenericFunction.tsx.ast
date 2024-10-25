@@ -1,0 +1,83 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' omit'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    Parameter
+      Identifier: 'names'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' K'
+    Parameter
+      Identifier: ' obj'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Omit'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' K'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' omit'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'names'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' K'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'obj'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' K'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' otherProps'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' bar'
+            StringKeyword
+          PropertySignature
+            Identifier: ' qwe'
+            BooleanKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' GenericComponent'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' T'
+    LiteralType
+      NullKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'GenericComponent'
+      JsxAttributes
+        JsxAttribute
+          CallExpression
+            Identifier: 'omit'
+            ArrayLiteralExpression
+              StringLiteral
+            Identifier: ' otherProps'

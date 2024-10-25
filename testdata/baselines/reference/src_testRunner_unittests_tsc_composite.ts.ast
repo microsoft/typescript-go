@@ -1,0 +1,519 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' emptyArray'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        target'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        module'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    include'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        target'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        module'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    include'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        target'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        module'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        tsBuildInfoFile'
+                                    StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    include'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        target'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        module'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        tsBuildInfoFile'
+                                    StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    include'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        module'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'replaceFileText'
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        module'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        jsx'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        jsxImportSource'
+                                    StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    name'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    type'
+                                StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' currentDirectory'
+                          StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  Identifier: ' emptyArray'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        module'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        jsx'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        jsxImportSource'
+                                    StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    name'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    type'
+                                StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' currentDirectory'
+                          StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  Identifier: ' emptyArray'

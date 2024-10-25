@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' M'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' M'
+        StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        NewExpression
+          Identifier: ' M'
+      Identifier: 'blah'

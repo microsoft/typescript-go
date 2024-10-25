@@ -1,0 +1,498 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' evaluator'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2015'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ArrayBindingPattern
+                          BindingElement
+                            Identifier: 'Base'
+                          BindingElement
+                            Identifier: ' Derived'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Base'
+                        Identifier: 'x'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Derived'
+                        Identifier: 'y'
+                      NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2015'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ArrayBindingPattern
+                          BindingElement
+                            Identifier: 'Base'
+                          BindingElement
+                            Identifier: ' Derived'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Base'
+                        Identifier: 'x'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Derived'
+                        Identifier: 'x'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Derived'
+                        Identifier: 'y'
+                      NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2015'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ArrayBindingPattern
+                          BindingElement
+                            Identifier: 'Base'
+                          BindingElement
+                            Identifier: ' Derived'
+                          BindingElement
+                            Identifier: ' thisInBase'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Base'
+                        Identifier: '_x'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Derived'
+                        Identifier: 'y'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'thisInBase'
+                      Identifier: ' Derived'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2015'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ArrayBindingPattern
+                          BindingElement
+                            Identifier: 'Base'
+                          BindingElement
+                            Identifier: ' Derived'
+                          BindingElement
+                            Identifier: ' thisInBaseGet'
+                          BindingElement
+                            Identifier: ' thisInBaseSet'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Base'
+                        Identifier: '_x'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Derived'
+                        Identifier: '_x'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Derived'
+                        Identifier: 'y'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'thisInBaseGet'
+                      Identifier: ' Derived'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'thisInBaseSet'
+                      Identifier: ' Derived'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2015'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ArrayBindingPattern
+                          BindingElement
+                            Identifier: 'Derived'
+                          BindingElement
+                            Identifier: ' thisInBase'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Derived'
+                        Identifier: 'y'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'thisInBase'
+                      Identifier: ' Derived'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES5'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ArrayBindingPattern
+                          BindingElement
+                            Identifier: 'Derived'
+                          BindingElement
+                            Identifier: ' thisInBase'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Derived'
+                        Identifier: 'y'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'thisInBase'
+                      Identifier: ' Derived'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2015'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ArrayBindingPattern
+                          BindingElement
+                            Identifier: 'Derived'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Derived'
+                        Identifier: 'y'
+                      NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2015'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ArrayBindingPattern
+                          BindingElement
+                            Identifier: 'Derived'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        Identifier: 'Derived'
+                        Identifier: 'y'
+                      NumericLiteral

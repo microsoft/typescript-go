@@ -1,0 +1,137 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' BaseNodeFactory'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' NodeFactory'
+        ImportSpecifier
+          Identifier: ' SourceMapSource'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' NodeFactoryFlags'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NoParenthesizerRules'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NoNodeConverters'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NoIndentationOnFreshPropertyAccess'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NoOriginalNode'
+      NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' addNodeFactoryPatcher'
+    Parameter
+      Identifier: 'fn'
+      FunctionType
+        Parameter
+          Identifier: 'factory'
+          TypeReference
+            Identifier: ' NodeFactory'
+        VoidKeyword
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createNodeFactory'
+    Parameter
+      Identifier: 'flags'
+      TypeReference
+        Identifier: ' NodeFactoryFlags'
+    Parameter
+      Identifier: ' baseFactory'
+      TypeReference
+        Identifier: ' BaseNodeFactory'
+    TypeReference
+      Identifier: ' NodeFactory'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' factory'
+        TypeReference
+          Identifier: ' NodeFactory'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SourceMapSource'
+        ConstructorType
+          Parameter
+            Identifier: 'fileName'
+            StringKeyword
+          Parameter
+            Identifier: ' text'
+            StringKeyword
+          Parameter
+            Identifier: ' skipTrivia'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'pos'
+                NumberKeyword
+              NumberKeyword
+          TypeReference
+            Identifier: ' SourceMapSource'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createSourceMapSource'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' text'
+      StringKeyword
+    Parameter
+      Identifier: ' skipTrivia'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'pos'
+          NumberKeyword
+        NumberKeyword
+    TypeReference
+      Identifier: ' SourceMapSource'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setOriginalNode'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' original'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  ExportDeclaration
+    NamedExports

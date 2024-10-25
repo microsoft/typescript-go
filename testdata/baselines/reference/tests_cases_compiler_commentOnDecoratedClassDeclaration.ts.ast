@@ -1,0 +1,22 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' decorator'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    AnyKeyword
+  ClassDeclaration
+    Decorator
+      CallExpression
+        Identifier: 'decorator'
+        StringLiteral
+    Identifier: ' Remote'
+  ClassDeclaration
+    Decorator
+      CallExpression
+        Identifier: 'decorator'
+        StringLiteral
+    Identifier: ' AnotherRomote'
+    Constructor
+      Block

@@ -1,0 +1,233 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Settings'
+    PropertySignature
+      Identifier: '
+    timeout'
+      QuestionToken
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    onError'
+      QuestionToken
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' getDefaultSettings'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' timeout'
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' CtorOnly'
+    ConstructSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' timeout'
+          LiteralType
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' doSomething'
+    Parameter
+      Identifier: 'settings'
+      TypeReference
+        Identifier: ' Settings'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// forgot to call `getDefaultSettings`
+doSomething'
+      Identifier: 'getDefaultSettings'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+doSomething'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' timeout'
+              NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+doSomething'
+      AsExpression
+        NullKeyword
+        TypeReference
+          Identifier: ' CtorOnly'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+doSomething'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+doSomething'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+doSomething'
+      FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' ConfigurableStart'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' useStart'
+        QuestionToken
+        BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' ConfigurableEnd'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' useEnd'
+        QuestionToken
+        BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' ConfigurableStartEnd'
+    IntersectionType
+      TypeReference
+        Identifier: ' ConfigurableStart'
+      TypeReference
+        Identifier: ' ConfigurableEnd'
+  InterfaceDeclaration
+    Identifier: ' InsertOptions'
+    PropertySignature
+      Identifier: '
+    prefix'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    suffix'
+      QuestionToken
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' ChangeOptions'
+    IntersectionType
+      TypeReference
+        Identifier: ' ConfigurableStartEnd'
+      TypeReference
+        Identifier: ' InsertOptions'
+  FunctionDeclaration
+    Identifier: ' del'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' ConfigurableStartEnd'
+      ObjectLiteralExpression
+    Parameter
+      Identifier: '
+             error'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' error'
+          QuestionToken
+          NumberKeyword
+      ObjectLiteralExpression
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' changes'
+            ArrayType
+              TypeReference
+                Identifier: ' ChangeOptions'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'push'
+          Identifier: 'options'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'push'
+          Identifier: 'error'
+  ClassDeclaration
+    Identifier: ' K'
+    Constructor
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      Block
+  InterfaceDeclaration
+    Identifier: ' Ctor'
+    ConstructSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      TypeReference
+        Identifier: ' K'
+    PropertySignature
+      Identifier: '
+    n'
+      QuestionToken
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctor'
+        TypeReference
+          Identifier: ' Ctor'
+        Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' Spoiler'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' nope'
+        QuestionToken
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Weak'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    a'
+        QuestionToken
+        NumberKeyword
+      PropertySignature
+        Identifier: '
+    properties'
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        b'
+            QuestionToken
+            NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' propertiesWrong'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    properties'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+        wrong'
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' weak'
+        IntersectionType
+          TypeReference
+            Identifier: ' Weak'
+          TypeReference
+            Identifier: ' Spoiler'
+        Identifier: ' propertiesWrong'

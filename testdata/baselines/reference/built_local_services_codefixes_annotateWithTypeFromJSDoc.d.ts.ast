@@ -1,0 +1,39 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' FunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' PropertyDeclaration'
+        ImportSpecifier
+          Identifier: ' PropertySignature'
+        ImportSpecifier
+          Identifier: ' VariableDeclaration'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' DeclarationWithType'
+    UnionType
+      TypeReference
+        Identifier: ' FunctionLikeDeclaration'
+      TypeReference
+        Identifier: ' VariableDeclaration'
+      TypeReference
+        Identifier: ' PropertySignature'
+      TypeReference
+        Identifier: ' PropertyDeclaration'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' parameterShouldGetTypeFromJSDoc'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' DeclarationWithType'

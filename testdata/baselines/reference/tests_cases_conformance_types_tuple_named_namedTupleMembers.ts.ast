@@ -1,0 +1,411 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Segment'
+    TupleType
+      NamedTupleMember
+        Identifier: 'length'
+        NumberKeyword
+      NamedTupleMember
+        Identifier: ' count'
+        NumberKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SegmentAnnotated'
+    TupleType
+      NamedTupleMember
+        Identifier: '
+    /** 
+     * Size of message buffer segment handles
+     */
+    length'
+        NumberKeyword
+      NamedTupleMember
+        Identifier: '
+    /**
+     * Number of segments handled at once
+     */
+    count'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' Segment'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' SegmentAnnotated'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TupleType
+          NamedTupleMember
+            Identifier: 'a'
+            NumberKeyword
+          NamedTupleMember
+            Identifier: ' b'
+            NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+b'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+c'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+d'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+d'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+d'
+      EqualsToken
+      Identifier: ' c'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' WithOptAndRest'
+    TupleType
+      NamedTupleMember
+        Identifier: 'first'
+        NumberKeyword
+      NamedTupleMember
+        Identifier: ' second'
+        QuestionToken
+        NumberKeyword
+      NamedTupleMember
+        DotDotDotToken
+        Identifier: 'rest'
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Func'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' func'
+        AsExpression
+          AsExpression
+            NullKeyword
+            AnyKeyword
+          TypeReference
+            Identifier: ' Func'
+            TypeReference
+              Identifier: 'SegmentAnnotated'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' useState'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'initial'
+      TypeReference
+        Identifier: ' T'
+    TupleType
+      NamedTupleMember
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' T'
+      NamedTupleMember
+        Identifier: ' setter'
+        FunctionType
+          Parameter
+            Identifier: 'T'
+          VoidKeyword
+    Block
+      ReturnStatement
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Iter'
+    TypeReference
+      Identifier: ' Func'
+      TupleType
+        NamedTupleMember
+          Identifier: 'step'
+          NumberKeyword
+        NamedTupleMember
+          Identifier: ' iterations'
+          NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' readSegment'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'length'
+        BindingElement
+          Identifier: ' count'
+      TupleType
+        NumberKeyword
+        NumberKeyword
+    Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' val'
+        AsExpression
+          AsExpression
+            NullKeyword
+            AnyKeyword
+          IndexedAccessType
+            TypeReference
+              Identifier: ' Parameters'
+              TypeQuery
+                Identifier: ' readSegment'
+            LiteralType
+              NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RecursiveTupleA'
+    TupleType
+      NamedTupleMember
+        Identifier: 'initial'
+        StringKeyword
+      NamedTupleMember
+        Identifier: ' next'
+        TypeReference
+          Identifier: ' RecursiveTupleA'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RecursiveTupleB'
+    TupleType
+      NamedTupleMember
+        Identifier: 'first'
+        StringKeyword
+      NamedTupleMember
+        Identifier: ' ptr'
+        TypeReference
+          Identifier: ' RecursiveTupleB'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q'
+        TypeReference
+          Identifier: ' RecursiveTupleA'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        TypeReference
+          Identifier: ' RecursiveTupleB'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+q'
+      EqualsToken
+      Identifier: ' r'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+r'
+      EqualsToken
+      Identifier: ' q'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RecusiveRest'
+    TupleType
+      NamedTupleMember
+        Identifier: 'first'
+        StringKeyword
+      NamedTupleMember
+        DotDotDotToken
+        Identifier: 'rest'
+        ArrayType
+          TypeReference
+            Identifier: ' RecusiveRest'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RecusiveRest2'
+    TupleType
+      StringKeyword
+      RestType
+        ArrayType
+          TypeReference
+            Identifier: 'RecusiveRest2'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' RecusiveRest'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' RecusiveRest2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      Identifier: ' x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g'
+    Parameter
+      Identifier: 'elem'
+      ObjectKeyword
+    Parameter
+      Identifier: ' index'
+      NumberKeyword
+    ObjectKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getArgsForInjection'
+    TypeParameter
+      Identifier: 'T'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        AnyKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Parameters'
+      TypeReference
+        Identifier: 'T'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' argumentsOfGAsFirstArgument'
+        CallExpression
+          Identifier: ' f'
+          CallExpression
+            Identifier: 'getArgsForInjection'
+            Identifier: 'g'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' argumentsOfG'
+        CallExpression
+          Identifier: ' f'
+          SpreadElement
+            CallExpression
+              Identifier: 'getArgsForInjection'
+              Identifier: 'g'

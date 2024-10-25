@@ -1,0 +1,22 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' x'
+    CallSignature
+      TypeReference
+        Identifier: ' Date'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  ExportAssignment
+    Identifier: ' x'
+  ImportEqualsDeclaration
+    Identifier: ' test'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TypeReference
+          Identifier: ' test'

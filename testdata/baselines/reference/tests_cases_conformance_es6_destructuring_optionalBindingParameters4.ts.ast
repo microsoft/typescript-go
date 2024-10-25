@@ -1,0 +1,11 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' cause'
+      ObjectLiteralExpression
+    Block
+      ReturnStatement
+        Identifier: ' cause'

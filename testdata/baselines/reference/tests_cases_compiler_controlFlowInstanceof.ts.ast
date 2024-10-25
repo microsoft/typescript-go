@@ -1,0 +1,351 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 's'
+      UnionType
+        TypeReference
+          Identifier: ' Set'
+          StringKeyword
+        TypeReference
+          Identifier: ' Set'
+          NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsToken
+          NewExpression
+            Identifier: ' Set'
+            NumberKeyword
+      ExpressionStatement
+        Identifier: '
+    s'
+      IfStatement
+        BinaryExpression
+          Identifier: 's'
+          InstanceOfKeyword
+          Identifier: ' Set'
+        Block
+          ExpressionStatement
+            Identifier: '
+        s'
+      ExpressionStatement
+        Identifier: '
+    s'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '  // Set<number>
+    s'
+            Identifier: 'add'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 's'
+      UnionType
+        TypeReference
+          Identifier: ' Set'
+          StringKeyword
+        TypeReference
+          Identifier: ' Set'
+          NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsToken
+          NewExpression
+            Identifier: ' Set'
+            NumberKeyword
+      ExpressionStatement
+        Identifier: '
+    s'
+      IfStatement
+        BinaryExpression
+          Identifier: 's'
+          InstanceOfKeyword
+          Identifier: ' Promise'
+        Block
+          ExpressionStatement
+            Identifier: '
+        s'
+      ExpressionStatement
+        Identifier: '
+    s'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '  // Set<number>
+    s'
+            Identifier: 'add'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 's'
+      UnionType
+        TypeReference
+          Identifier: ' Set'
+          StringKeyword
+        TypeReference
+          Identifier: ' Set'
+          NumberKeyword
+    Block
+      ExpressionStatement
+        Identifier: '
+    s'
+      IfStatement
+        BinaryExpression
+          Identifier: 's'
+          InstanceOfKeyword
+          Identifier: ' Set'
+        Block
+          ExpressionStatement
+            Identifier: '
+        s'
+        Block
+          ExpressionStatement
+            Identifier: '
+        s'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 's'
+      UnionType
+        TypeReference
+          Identifier: ' Set'
+          StringKeyword
+        TypeReference
+          Identifier: ' Set'
+          NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsToken
+          NewExpression
+            Identifier: ' Set'
+            NumberKeyword
+      ExpressionStatement
+        Identifier: '
+    s'
+      IfStatement
+        BinaryExpression
+          Identifier: 's'
+          InstanceOfKeyword
+          Identifier: ' Set'
+        Block
+          ExpressionStatement
+            Identifier: '
+        s'
+        Block
+          ExpressionStatement
+            Identifier: '
+        s'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' a'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' b'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' c'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        UndefinedKeyword
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'x'
+            InstanceOfKeyword
+            Identifier: ' B'
+          BarBarToken
+          BinaryExpression
+            Identifier: ' x'
+            InstanceOfKeyword
+            Identifier: ' C'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'x'
+            InstanceOfKeyword
+            Identifier: ' B'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' x'
+            InstanceOfKeyword
+            Identifier: ' C'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'x'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          InstanceOfKeyword
+          Identifier: ' B'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          IfStatement
+            BinaryExpression
+              Identifier: 'x'
+              InstanceOfKeyword
+              Identifier: ' C'
+            Block
+              ExpressionStatement
+                Identifier: '
+            x'
+            Block
+              ExpressionStatement
+                Identifier: '
+            x'
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  InterfaceDeclaration
+    Identifier: ' X'
+    PropertySignature
+      Identifier: '
+    x'
+      QuestionToken
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Y'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' goo'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' X'
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          InstanceOfKeyword
+          Identifier: ' Y'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        x'
+              Identifier: 'y'
+      ExpressionStatement
+        Identifier: '
+    x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              VoidKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctor'
+        TypeReference
+          Identifier: ' Function'
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      InstanceOfKeyword
+      Identifier: ' ctor'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' AtTop'
+    Parameter
+      Identifier: 'val'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'val'
+          EqualsToken
+          Identifier: ' val'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'v'
+      InstanceOfKeyword
+      Identifier: ' AtTop'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    v'
+          Identifier: 'val'

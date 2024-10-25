@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '// @allowJs: true
+// @noEmit: true
+
+// @filename: a.js
+/** @typedef {{ endTime: number, screenshots: number}} A.<b>*/
+Animation'
+          Identifier: 'AnimationModel'
+        Identifier: 'ScreenshotCapture'
+      Identifier: 'Request'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+/** @typedef {{ endTime: number, screenshots: !B.<string>}} */
+Animation'
+          Identifier: 'AnimationModel'
+        Identifier: 'ScreenshotCapture'
+      Identifier: 'Request'

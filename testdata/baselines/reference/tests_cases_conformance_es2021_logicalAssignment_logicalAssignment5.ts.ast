@@ -1,0 +1,184 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'f'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f'
+          QuestionQuestionEqualsToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+              EqualsGreaterThanToken
+              Identifier: ' a'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'f'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f'
+          BarBarEqualsToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+              EqualsGreaterThanToken
+              Identifier: ' a'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'f'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f'
+          AmpersandAmpersandEqualsToken
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+              EqualsGreaterThanToken
+              Identifier: ' a'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' bar1'
+    Parameter
+      Identifier: 'f'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f'
+          QuestionQuestionEqualsToken
+          ParenthesizedExpression
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'f'
+                  Identifier: 'toString'
+              CommaToken
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'a'
+                  EqualsGreaterThanToken
+                  Identifier: ' a'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' bar2'
+    Parameter
+      Identifier: 'f'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f'
+          BarBarEqualsToken
+          ParenthesizedExpression
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'f'
+                  Identifier: 'toString'
+              CommaToken
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'a'
+                  EqualsGreaterThanToken
+                  Identifier: ' a'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' bar3'
+    Parameter
+      Identifier: 'f'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f'
+          AmpersandAmpersandEqualsToken
+          ParenthesizedExpression
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'f'
+                  Identifier: 'toString'
+              CommaToken
+              ParenthesizedExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'a'
+                  EqualsGreaterThanToken
+                  Identifier: ' a'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+          NumericLiteral

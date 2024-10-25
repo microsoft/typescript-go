@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        ArrowFunction
+          Parameter
+            Identifier: 'param'
+            StringKeyword
+          EqualsGreaterThanToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'bar'
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      ArrowFunction
+        Parameter
+          ObjectBindingPattern
+            BindingElement
+              ComputedPropertyName
+                PropertyAccessExpression
+                  Identifier: 'foo'
+                  Identifier: 'bar'
+              Identifier: ' c'
+        EqualsGreaterThanToken
+        Identifier: ' undefined'

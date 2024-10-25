@@ -1,0 +1,78 @@
+SourceFile
+  DoStatement
+    Block
+      BreakStatement
+    TrueKeyword
+  LabeledStatement
+    Identifier: '
+
+ONE'
+    DoStatement
+      Block
+        BreakStatement
+          Identifier: ' ONE'
+      TrueKeyword
+  LabeledStatement
+    Identifier: '
+
+TWO'
+    LabeledStatement
+      Identifier: '
+THREE'
+      DoStatement
+        Block
+          BreakStatement
+            Identifier: ' THREE'
+        TrueKeyword
+  LabeledStatement
+    Identifier: '
+
+FOUR'
+    DoStatement
+      Block
+        LabeledStatement
+          Identifier: '
+    FIVE'
+          DoStatement
+            Block
+              BreakStatement
+                Identifier: ' FOUR'
+            TrueKeyword
+      TrueKeyword
+  DoStatement
+    Block
+      LabeledStatement
+        Identifier: '
+    SIX'
+        DoStatement
+          BreakStatement
+            Identifier: ' SIX'
+          TrueKeyword
+    TrueKeyword
+  LabeledStatement
+    Identifier: '
+
+SEVEN'
+    DoStatement
+      DoStatement
+        DoStatement
+          BreakStatement
+            Identifier: ' SEVEN'
+          TrueKeyword
+        TrueKeyword
+      TrueKeyword
+  LabeledStatement
+    Identifier: '
+
+EIGHT'
+    DoStatement
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fn'
+              FunctionExpression
+                Block
+        BreakStatement
+          Identifier: ' EIGHT'
+      TrueKeyword

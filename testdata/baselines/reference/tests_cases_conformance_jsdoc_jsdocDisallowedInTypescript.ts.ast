@@ -1,0 +1,205 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ara'
+        TypeReference
+          Identifier: ' Array'
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ''
+    Parameter
+      Identifier: ''
+      QuestionToken
+    Parameter
+      Identifier: 'number'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Array'
+        NumberKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' x'
+          QuestionToken
+          BinaryExpression
+            Identifier: ' x'
+            PlusToken
+            ElementAccessExpression
+              Identifier: ' y'
+              NumericLiteral
+          ColonToken
+          ElementAccessExpression
+            Identifier: ' y'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' hof'
+    Parameter
+      Identifier: 'ctor'
+      TypeReference
+        Identifier: ' function'
+    Block
+  ExpressionStatement
+    ParenthesizedExpression
+      NewExpression
+        Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      CommaToken
+      Identifier: ' string'
+  Block
+    ReturnStatement
+      NewExpression
+        Identifier: ' ctor'
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' hof2'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' function'
+    Block
+  ExpressionStatement
+    ArrowFunction
+      Parameter
+        Identifier: 'this'
+        NumberKeyword
+      Parameter
+        Identifier: ' string'
+      StringKeyword
+      EqualsGreaterThanToken
+      Identifier: ''
+  Block
+    ReturnStatement
+      CallExpression
+        Identifier: ' f'
+        NumericLiteral
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' whatevs'
+        TypeReference
+          Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ''
+      AsteriskToken
+      Identifier: ''
+  ExpressionStatement
+    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ques'
+        JSDocNullableType
+          TypeReference
+            Identifier: ''
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        TypeReference
+          Identifier: ' function'
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: 'number'
+        CommaToken
+        Identifier: ' number'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        Parameter
+          Identifier: 'm'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' n'
+          PlusToken
+          Identifier: ' m'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' most'
+        JSDocNonNullableType
+          TypeReference
+            Identifier: ''
+      VariableDeclaration
+        Identifier: 'string'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' postfixdef'
+        JSDocNonNullableType
+          NumberKeyword
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' postfixopt'
+        JSDocNullableType
+          NumberKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nns'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: ''
+      VariableDeclaration
+        Identifier: 'number'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ''
+      GreaterThanToken
+      Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dns'
+        TypeReference
+          Identifier: ' Array'
+          JSDocNonNullableType
+            TypeReference
+              Identifier: ''
+      VariableDeclaration
+        Identifier: 'number'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ''
+      GreaterThanToken
+      Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anys'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: ''
+        AsteriskToken
+        Identifier: ''
+      GreaterThanToken
+      Identifier: ''

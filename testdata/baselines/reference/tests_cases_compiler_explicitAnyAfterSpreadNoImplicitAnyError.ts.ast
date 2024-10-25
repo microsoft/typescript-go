@@ -1,0 +1,17 @@
+SourceFile
+  ExpressionStatement
+    ParenthesizedExpression
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          ArrayLiteralExpression
+        SpreadAssignment
+          ParenthesizedExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword

@@ -1,0 +1,179 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' publicModule'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceInPublicModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceInPublicModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceImplementingPublicInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicInterfaceInPublicModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceImplementingPrivateInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateInterfaceInPublicModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceImplementingPublicInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicInterfaceInPublicModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceImplementingPrivateInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateInterfaceInPublicModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceImplementingFromPrivateModuleInterface'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicInterfaceInPrivateModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceImplementingFromPrivateModuleInterface'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicInterfaceInPrivateModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceImplementingPrivateAndPublicInterface'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateInterfaceInPublicModule'
+          ExpressionWithTypeArguments
+            Identifier: ' publicInterfaceInPublicModule'
+  ModuleDeclaration
+    Identifier: ' privateModule'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceInPrivateModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceInPrivateModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceImplementingPublicInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicInterfaceInPrivateModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceImplementingPrivateInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateInterfaceInPrivateModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceImplementingPublicInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicInterfaceInPrivateModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceImplementingPrivateInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateInterfaceInPrivateModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceImplementingFromPrivateModuleInterface'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicInterfaceInPrivateModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceImplementingFromPrivateModuleInterface'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' privateModule'
+              Identifier: 'publicInterfaceInPrivateModule'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterface'
+  InterfaceDeclaration
+    Identifier: ' privateInterface'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceImplementingPublicInterface'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' publicInterface'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceImplementingPrivateInterfaceInModule'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' privateInterface'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceImplementingPublicInterface'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' publicInterface'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceImplementingPrivateInterface'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' privateInterface'
+  InterfaceDeclaration
+    Identifier: ' privateInterfaceImplementingFromPrivateModuleInterface'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' privateModule'
+          Identifier: 'publicInterfaceInPrivateModule'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' publicInterfaceImplementingFromPrivateModuleInterface'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' privateModule'
+          Identifier: 'publicInterfaceInPrivateModule'
+  ModuleDeclaration
+    Identifier: ' publicModuleInGlobal'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceInPublicModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceInPublicModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceImplementingPublicInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicInterfaceInPublicModule'
+      InterfaceDeclaration
+        Identifier: ' privateInterfaceImplementingPrivateInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateInterfaceInPublicModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceImplementingPublicInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' publicInterfaceInPublicModule'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' publicInterfaceImplementingPrivateInterfaceInModule'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' privateInterfaceInPublicModule'
+  InterfaceDeclaration
+    Identifier: ' publicInterfaceInGlobal'
+  InterfaceDeclaration
+    Identifier: ' publicInterfaceImplementingPublicInterfaceInGlobal'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' publicInterfaceInGlobal'

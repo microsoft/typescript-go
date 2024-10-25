@@ -1,0 +1,105 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' makeArrayG'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      DotDotDotToken
+      Identifier: 'items'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' items'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1Ga'
+        CallExpression
+          Identifier: ' makeArrayG'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1Gb'
+        CallExpression
+          Identifier: ' makeArrayG'
+          AnyKeyword
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1Gc'
+        CallExpression
+          Identifier: ' makeArrayG'
+          TypeReference
+            Identifier: 'Object'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1Gd'
+        CallExpression
+          Identifier: ' makeArrayG'
+          NumberKeyword
+          NumericLiteral
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' makeArrayGOpt'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'item1'
+      QuestionToken
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' item2'
+      QuestionToken
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' item3'
+      QuestionToken
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'item1'
+          Identifier: ' item2'
+          Identifier: ' item3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2Ga'
+        CallExpression
+          Identifier: ' makeArrayGOpt'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2Gb'
+        CallExpression
+          Identifier: ' makeArrayG'
+          AnyKeyword
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2Gc'
+        CallExpression
+          Identifier: ' makeArrayG'
+          ArrayType
+            AnyKeyword
+          NumericLiteral
+          StringLiteral

@@ -1,0 +1,564 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    PropertySignature
+      Identifier: ' 
+    a'
+      FunctionType
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    a2'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    a3'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    a4'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          NumberKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    a5'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          NumberKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    a6'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          NumberKeyword
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        FunctionType
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+    a'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error, too many required params
+    a'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+    a'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+    a'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a5'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            QuestionToken
+            NumberKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+    a2'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of params
+    a2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of params
+    a2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, excess params are optional in b.a3
+    a2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a5'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' 
+    a3'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // error, too many required params
+    a3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a5'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            QuestionToken
+            NumberKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+    a4'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a4'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a4'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of required params
+    a4'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of params
+    a4'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a4'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a4'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a4'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a4'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a5'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a4'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            QuestionToken
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            QuestionToken
+            NumberKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+    a5'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a5'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          QuestionToken
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer required params
+    a5'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer params in lambda
+    a5'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Parameter
+          Identifier: ' y'
+          NumberKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // ok, same number of params
+    a5'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a5'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a5'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, fewer params in b.a3
+    a5'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a4'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, same number of params
+    a5'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a5'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+    a5'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a6'

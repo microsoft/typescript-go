@@ -1,0 +1,64 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /a.ts
+////export interface A {
+////    x: number;
+////}
+
+// @Filename: /b.ts
+////import { A } from "./a";
+////export interface B<T> {
+////    payload: T;
+////}
+////export const b: B<A> = {
+////    payload: { x: 1 }
+////}
+
+// @Filename: /c.ts
+////import { b } from "./b";
+////
+////class Foo {
+////    foo() {
+////        const arg = b;
+////        /*a*/console.log(arg);/*b*/
+////    }
+////}
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newContent'
+          NoSubstitutionTemplateLiteral

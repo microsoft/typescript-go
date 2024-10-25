@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' a'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      FunctionType
+        StringKeyword
+  ClassDeclaration
+    Identifier: ' b'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+    MethodDeclaration
+      Identifier: '
+    x'
+      Block
+        ReturnStatement
+          StringLiteral

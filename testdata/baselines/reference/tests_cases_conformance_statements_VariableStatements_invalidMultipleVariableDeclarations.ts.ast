@@ -1,0 +1,209 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    id'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    PropertyDeclaration
+      Identifier: '
+    id'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    valid'
+      BooleanKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    source'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    recurse'
+      TypeReference
+        Identifier: ' D'
+        TypeReference
+          Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    wrapped'
+      TypeReference
+        Identifier: ' D'
+        TypeReference
+          Identifier: 'D'
+          TypeReference
+            Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' F'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        PropertyDeclaration
+          Identifier: '
+        name'
+          StringKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' F2'
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        StringKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' D'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        Identifier: ' M'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' C2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        Identifier: ' F'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          EqualsGreaterThanToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayLiteralExpression
+          NewExpression
+            Identifier: ' C'
+          NewExpression
+            Identifier: ' C2'
+          NewExpression
+            Identifier: ' D'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr2'
+        ArrayLiteralExpression
+          NewExpression
+            Identifier: ' D'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr2'
+        NewExpression
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'D'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        TypeQuery
+          Identifier: ' M'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'A'

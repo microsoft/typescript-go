@@ -1,0 +1,121 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Locale'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    weekdays'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        shorthand'
+            TupleType
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+          PropertySignature
+            Identifier: '
+        longhand'
+            TupleType
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' CustomLocale'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    weekdays'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        shorthand'
+            TupleType
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+          PropertySignature
+            Identifier: '
+        longhand'
+            TupleType
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+              StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' key'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Locale'
+        ImportSpecifier
+          Identifier: ' CustomLocale'
+        ImportSpecifier
+          Identifier: ' key'
+          Identifier: ' LocaleKey'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FlatpickrFn'
+    PropertySignature
+      Identifier: '
+    l10ns'
+      IntersectionType
+        MappedType
+          TypeParameter
+            Identifier: 'k'
+            TypeReference
+              Identifier: ' LocaleKey'
+          QuestionToken
+          TypeReference
+            Identifier: ' CustomLocale'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' default'
+            TypeReference
+              Identifier: ' Locale'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' FlatpickrFn'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fp'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' l10ns'
+              ObjectLiteralExpression
+          TypeReference
+            Identifier: ' FlatpickrFn'
+  ExportAssignment
+    PropertyAccessExpression
+      Identifier: ' fp'
+      Identifier: 'l10ns'

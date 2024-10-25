@@ -1,0 +1,38 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+  FunctionDeclaration
+    Identifier: ' f1'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+  FunctionDeclaration
+    Identifier: ' f3'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+	m1'
+      Block
+    MethodDeclaration
+      Identifier: ' m1'
+    MethodDeclaration
+      Identifier: '
+	m2'
+      Block
+    MethodDeclaration
+      Identifier: ' m2'
+      Block
+    MethodDeclaration
+      Identifier: '
+	m3'
+      Block
+    MethodDeclaration
+      Identifier: ' m3'

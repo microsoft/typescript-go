@@ -1,0 +1,65 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' tests'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                          ForOfStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' test'
+                            Identifier: ' tests'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'equal'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'base64decode'
+                                    ObjectLiteralExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'convertToBase64'
+                                      Identifier: 'test'
+                                  Identifier: ' test'

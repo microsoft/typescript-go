@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' functions'
+        ArrayLiteralExpression
+          FunctionExpression
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' k'
+                    StringKeyword
+                    NumericLiteral
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+    k'
+                  EqualsToken
+                  NewExpression
+                    Identifier: ' Object'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ArrayLiteralExpression
+                      NumericLiteral
+                      NumericLiteral
+                      NumericLiteral
+                    Identifier: 'NonexistantMethod'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+    derp'

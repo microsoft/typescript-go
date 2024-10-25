@@ -1,0 +1,53 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    w'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        z'
+          TypeReference
+            Identifier: ' I'
+        CallSignature
+          BooleanKeyword
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              AnyKeyword
+            PropertySignature
+              Identifier: ' y'
+              AnyKeyword
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              AnyKeyword
+            PropertySignature
+              Identifier: ' y'
+              AnyKeyword
+    PropertySignature
+      Identifier: '
+    x'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    y'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        BooleanKeyword
+    PropertySignature
+      Identifier: '
+    z'
+      TypeReference
+        Identifier: ' I'

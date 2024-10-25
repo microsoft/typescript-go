@@ -1,0 +1,175 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C1'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+C1'
+        Identifier: 'staticProp'
+      EqualsToken
+      NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' F1'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+F1'
+        Identifier: 'staticProp'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C2'
+        ClassExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+C2'
+        Identifier: 'staticProp'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' F2'
+        FunctionExpression
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+F2'
+        Identifier: 'staticProp'
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C3'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+C3'
+        Identifier: 'staticProp'
+      EqualsToken
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' F3'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+F3'
+        Identifier: 'staticProp'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C4'
+        ClassExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+C4'
+        Identifier: 'staticProp'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' F4'
+        FunctionExpression
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+F4'
+        Identifier: 'staticProp'
+      EqualsToken
+      NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'C1'
+          Identifier: 'staticProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'C2'
+          Identifier: 'staticProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'F1'
+          Identifier: 'staticProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'F2'
+          Identifier: 'staticProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        PropertyAccessExpression
+          Identifier: ' C3'
+          Identifier: 'staticProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        PropertyAccessExpression
+          Identifier: ' C4'
+          Identifier: 'staticProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        PropertyAccessExpression
+          Identifier: ' F3'
+          Identifier: 'staticProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        PropertyAccessExpression
+          Identifier: ' F4'
+          Identifier: 'staticProp'

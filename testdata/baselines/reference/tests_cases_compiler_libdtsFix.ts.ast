@@ -1,0 +1,7 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' HTMLElement'
+    PropertySignature
+      Identifier: '
+    type'
+      StringKeyword

@@ -1,0 +1,58 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+/////**
+//// * @param /*0*/
+//// */
+////function f(foo, bar) {}
+
+/////**
+//// * @param foo
+//// * @param /*1*/
+//// */
+////function g(foo, bar) {}
+
+/////**
+//// * @param can/*2*/
+//// * @param cantaloupe
+//// */
+////function h(cat, canary, canoodle, cantaloupe, zebra) {}
+
+/////**
+//// * @param /*3*/ {string} /*4*/
+//// */
+////function i(foo, bar) {}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral

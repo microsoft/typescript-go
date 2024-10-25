@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+  ClassDeclaration
+    Identifier: ' a'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' y'
+        NumberKeyword
+      Parameter
+        Identifier: ' z'
+        ArrayType
+          TypeReference
+            Identifier: ' B'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xx'
+        NewExpression
+          Identifier: ' a'
+          NullKeyword
+          NumericLiteral
+          NewExpression
+            Identifier: ' B'

@@ -1,0 +1,30 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'A'
+      StringKeyword
+    Parameter
+      Identifier: 'p0'
+      MappedType
+        TypeParameter
+          Identifier: 'key'
+          TypeReference
+            Identifier: ' A'
+        UnionType
+          TypeLiteral
+          UndefinedKeyword
+    Parameter
+      Identifier: ' p1'
+      TypeReference
+        Identifier: ' A'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            TypeLiteral
+            NonNullExpression
+              ElementAccessExpression
+                Identifier: ' p0'
+                Identifier: 'p1'

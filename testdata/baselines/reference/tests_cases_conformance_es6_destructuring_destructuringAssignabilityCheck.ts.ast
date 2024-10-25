@@ -1,0 +1,57 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+        Identifier: ' undefined'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            ArrayBindingPattern
+          EqualsGreaterThanToken
+          NumericLiteral
+      ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+          EqualsGreaterThanToken
+          NumericLiteral
+      Identifier: 'undefined'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ObjectBindingPattern
+      UndefinedKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      ArrayBindingPattern
+      TypeLiteral
+    Block
+      ReturnStatement
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+        UndefinedKeyword
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+        TypeLiteral
+        ObjectLiteralExpression

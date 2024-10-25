@@ -1,0 +1,41 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' one'
+    Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          TypeQuery
+            Identifier: ' x'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' two'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            StringLiteral
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          TypeQuery
+            Identifier: ' y'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' three'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' Z'
+        StringKeyword
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          TypeReference
+            Identifier: ' Z'

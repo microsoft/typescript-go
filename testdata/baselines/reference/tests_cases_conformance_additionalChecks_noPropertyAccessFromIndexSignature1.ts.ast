@@ -1,0 +1,131 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    IndexSignature
+      Parameter
+        Identifier: 'k'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'k'
+        StringKeyword
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        UnionType
+          TypeReference
+            Identifier: ' C'
+          UndefinedKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// access property
+a'
+      Identifier: 'foo'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+a'
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// access index signature
+b'
+      Identifier: 'foo'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+b'
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// access property
+c'
+      Identifier: 'foo'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+c'
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// access index signature
+c'
+      Identifier: 'bar'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+c'
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// optional access property
+d'
+      QuestionDotToken
+      Identifier: 'foo'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+d'
+      QuestionDotToken
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// optional access index signature
+d'
+      QuestionDotToken
+      Identifier: 'bar'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+d'
+      QuestionDotToken
+      StringLiteral

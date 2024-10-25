@@ -1,0 +1,165 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A_Primitive'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  disabled'
+        QuestionToken
+        BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' B_Primitive'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  disabled'
+        QuestionToken
+        UnionType
+          BooleanKeyword
+          UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' C_Primitive'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  disabled'
+        QuestionToken
+        BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab_primitive'
+        IntersectionType
+          TypeReference
+            Identifier: ' A_Primitive'
+          TypeReference
+            Identifier: ' B_Primitive'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ac_primitive'
+        IntersectionType
+          TypeReference
+            Identifier: ' A_Primitive'
+          TypeReference
+            Identifier: ' C_Primitive'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab_disabled_read'
+        PropertyAccessExpression
+          Identifier: ' ab_primitive'
+          Identifier: 'disabled'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ac_disabled_read'
+        PropertyAccessExpression
+          Identifier: ' ac_primitive'
+          Identifier: 'disabled'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+ab_primitive'
+        Identifier: 'disabled'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ac_primitive'
+        Identifier: 'disabled'
+      EqualsToken
+      Identifier: ' undefined'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  prop'
+        BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' A_Obj'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  prop'
+        QuestionToken
+        TypeReference
+          Identifier: ' Foo'
+  TypeAliasDeclaration
+    Identifier: ' B_Obj'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  prop'
+        QuestionToken
+        UnionType
+          TypeReference
+            Identifier: ' Foo'
+          UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' C_Obj'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  prop'
+        QuestionToken
+        TypeReference
+          Identifier: ' Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab_obj'
+        IntersectionType
+          TypeReference
+            Identifier: ' A_Obj'
+          TypeReference
+            Identifier: ' B_Obj'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ac_obj'
+        IntersectionType
+          TypeReference
+            Identifier: ' A_Obj'
+          TypeReference
+            Identifier: ' C_Obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab_prop_read'
+        PropertyAccessExpression
+          Identifier: ' ab_obj'
+          Identifier: 'prop'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ac_prop_read'
+        PropertyAccessExpression
+          Identifier: ' ac_obj'
+          Identifier: 'prop'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+ab_obj'
+        Identifier: 'prop'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+ac_obj'
+        Identifier: 'prop'
+      EqualsToken
+      Identifier: ' undefined'

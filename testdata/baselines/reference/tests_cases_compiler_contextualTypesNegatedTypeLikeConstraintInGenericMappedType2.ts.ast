@@ -1,0 +1,166 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Tags'
+    TypeParameter
+      Identifier: 'D'
+      StringKeyword
+    TypeParameter
+      Identifier: ' P'
+    ConditionalType
+      TypeReference
+        Identifier: ' P'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'D'
+        InferType
+          TypeParameter
+            Identifier: ' X'
+      TypeReference
+        Identifier: ' X'
+      NeverKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typeTags'
+        FunctionType
+          TypeParameter
+            Identifier: 'I'
+          FunctionType
+            TypeParameter
+              Identifier: '
+  P'
+              IntersectionType
+                MappedType
+                  ReadonlyKeyword
+                  TypeParameter
+                    Identifier: 'Tag'
+                    IntersectionType
+                      TypeReference
+                        Identifier: ' Tags'
+                        LiteralType
+                          StringLiteral
+                        TypeReference
+                          Identifier: ' I'
+                      StringKeyword
+                  FunctionType
+                    Parameter
+                      Identifier: '
+      _'
+                      TypeReference
+                        Identifier: ' Extract'
+                        TypeReference
+                          Identifier: 'I'
+                        TypeLiteral
+                          PropertySignature
+                            ReadonlyKeyword
+                            Identifier: ' _tag'
+                            TypeReference
+                              Identifier: ' Tag'
+                    AnyKeyword
+                MappedType
+                  ReadonlyKeyword
+                  TypeParameter
+                    Identifier: 'Tag'
+                    TypeReference
+                      Identifier: ' Exclude'
+                      TypeOperator
+                        TypeReference
+                          Identifier: ' P'
+                      TypeReference
+                        Identifier: ' Tags'
+                        LiteralType
+                          StringLiteral
+                        TypeReference
+                          Identifier: ' I'
+                  NeverKeyword
+            Parameter
+              Identifier: '
+  fields'
+              TypeReference
+                Identifier: ' P'
+            UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' Value'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' _tag'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' _tag'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' matcher'
+        CallExpression
+          Identifier: ' typeTags'
+          TypeReference
+            Identifier: 'Value'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+matcher'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  A'
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' _'
+              Identifier: 'a'
+        PropertyAssignment
+          Identifier: '
+  B'
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            EqualsGreaterThanToken
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+matcher'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  A'
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' _'
+              Identifier: 'a'
+        PropertyAssignment
+          Identifier: '
+  B'
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            EqualsGreaterThanToken
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+  C'
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            EqualsGreaterThanToken
+            StringLiteral

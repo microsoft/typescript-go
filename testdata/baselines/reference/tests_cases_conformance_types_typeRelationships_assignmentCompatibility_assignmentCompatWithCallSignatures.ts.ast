@@ -1,0 +1,247 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' T'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+t'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' t'
+  InterfaceDeclaration
+    Identifier: ' S'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        TypeReference
+          Identifier: ' S'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t'
+      EqualsToken
+      Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t'
+      EqualsToken
+      Identifier: ' a2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' a2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+t'
+      EqualsToken
+      ArrowFunction
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Block
+          ReturnStatement
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      ArrowFunction
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Block
+          ReturnStatement
+            StringLiteral
+  InterfaceDeclaration
+    Identifier: ' S2'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2'
+        TypeReference
+          Identifier: ' S2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+// these are errors
+t'
+      EqualsToken
+      Identifier: ' s2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t'
+      EqualsToken
+      Identifier: ' a3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        Block
+          ReturnStatement
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' s2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' a3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        Block
+          ReturnStatement
+            StringLiteral

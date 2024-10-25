@@ -1,0 +1,49 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        PrefixUnaryExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              AnyKeyword
+              StringLiteral
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' some'
+    EnumMember
+      Identifier: ' thing'
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'E'
+            Identifier: 'some'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PrefixUnaryExpression
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        PrefixUnaryExpression
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        PrefixUnaryExpression
+          StringLiteral

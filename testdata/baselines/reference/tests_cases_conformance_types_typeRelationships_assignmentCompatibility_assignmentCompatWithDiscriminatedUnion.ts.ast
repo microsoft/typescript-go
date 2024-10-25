@@ -1,0 +1,1000 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Example1'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' S'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' done'
+            BooleanKeyword
+          PropertySignature
+            Identifier: ' value'
+            NumberKeyword
+      TypeAliasDeclaration
+        Identifier: ' T'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' done'
+              LiteralType
+                TrueKeyword
+            PropertySignature
+              Identifier: ' value'
+              NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' done'
+              LiteralType
+                FalseKeyword
+            PropertySignature
+              Identifier: ' value'
+              NumberKeyword
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            TypeReference
+              Identifier: ' S'
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    // S is assignable to T0 when S["done"] is true
+    // S is assignable to T1 when S["done"] is false
+    t'
+          EqualsToken
+          Identifier: ' s'
+  ModuleDeclaration
+    Identifier: ' Example2'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' S'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+          PropertySignature
+            Identifier: ' b'
+            LiteralType
+              NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' T'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: '     b'
+              UnionType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: '     b'
+              LiteralType
+                NumericLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: '     b'
+              UnionType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            TypeReference
+              Identifier: ' S'
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    // S is assignable to T0 when S["a"] is 0
+    // S is assignable to T2 when S["a"] is 2
+    t'
+          EqualsToken
+          Identifier: ' s'
+  ModuleDeclaration
+    Identifier: ' Example3'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' S'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+          PropertySignature
+            Identifier: ' b'
+            LiteralType
+              NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' T'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: '     b'
+              UnionType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: '     b'
+              UnionType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: '     b'
+              LiteralType
+                NumericLiteral
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            TypeReference
+              Identifier: ' S'
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    // S is assignable to T0 when S["a"] is 0
+    // S is *not* assignable to T1 when S["b"] is 4
+    // S is *not* assignable to T2 when S["a"] is 2
+    t'
+          EqualsToken
+          Identifier: ' s'
+  ModuleDeclaration
+    Identifier: ' Example4'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' S'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+          PropertySignature
+            Identifier: ' b'
+            LiteralType
+              NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' T'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: '     b'
+              UnionType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: '     b'
+              LiteralType
+                NumericLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: '     b'
+              UnionType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+            PropertySignature
+              Identifier: ' c'
+              StringKeyword
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            TypeReference
+              Identifier: ' S'
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    // S is assignable to T0 when S["a"] is 0
+    // S is *not* assignable to T2 when S["a"] is 2 as S is missing "c"
+    t'
+          EqualsToken
+          Identifier: ' s'
+  ModuleDeclaration
+    Identifier: ' Example5'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' N'
+        UnionType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' S'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' N'
+          PropertySignature
+            Identifier: ' b'
+            TypeReference
+              Identifier: ' N'
+          PropertySignature
+            Identifier: ' c'
+            TypeReference
+              Identifier: ' N'
+      TypeAliasDeclaration
+        Identifier: ' T'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' c'
+              TypeReference
+                Identifier: ' N'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' c'
+              TypeReference
+                Identifier: ' N'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' c'
+              TypeReference
+                Identifier: ' N'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' b'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: ' c'
+              TypeReference
+                Identifier: ' N'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' b'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: ' c'
+              TypeReference
+                Identifier: ' N'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' b'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: ' c'
+              TypeReference
+                Identifier: ' N'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' c'
+              LiteralType
+                NumericLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' c'
+              LiteralType
+                NumericLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' N'
+            PropertySignature
+              Identifier: ' c'
+              LiteralType
+                NumericLiteral
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            TypeReference
+              Identifier: ' S'
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' T'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    // S *should* be assignable but the number of
+    // combinations is too complex.
+    t'
+          EqualsToken
+          Identifier: ' s'
+  ModuleDeclaration
+    Identifier: ' GH14865'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' Style1'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+        type'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: '
+        data'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+        type'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: '
+        data'
+              StringKeyword
+      TypeAliasDeclaration
+        Identifier: ' Style2'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        type'
+            UnionType
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+          PropertySignature
+            Identifier: '
+        data'
+            StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' Style2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' type'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' data'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            TypeReference
+              Identifier: ' Style1'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    a'
+          Identifier: 'type'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' // "A" | "B"
+    b'
+          Identifier: 'type'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // "A" | "B"
+    b'
+          EqualsToken
+          Identifier: ' a'
+  ModuleDeclaration
+    Identifier: ' GH30170'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Blue'
+        PropertySignature
+          Identifier: '
+        color'
+          LiteralType
+            StringLiteral
+      InterfaceDeclaration
+        Identifier: ' Yellow'
+        PropertySignature
+          Identifier: '
+        color'
+          QuestionToken
+          LiteralType
+            StringLiteral
+      FunctionDeclaration
+        Identifier: ' draw'
+        Parameter
+          Identifier: 'val'
+          UnionType
+            TypeReference
+              Identifier: ' Blue'
+            TypeReference
+              Identifier: ' Yellow'
+        Block
+      FunctionDeclaration
+        Identifier: ' drawWithColor'
+        Parameter
+          Identifier: 'currentColor'
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            UndefinedKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' draw'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' color'
+                  Identifier: ' currentColor'
+  ModuleDeclaration
+    Identifier: ' GH12052'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' ILinearAxis'
+        PropertySignature
+          Identifier: ' type'
+          LiteralType
+            StringLiteral
+      InterfaceDeclaration
+        Identifier: ' ICategoricalAxis'
+        PropertySignature
+          Identifier: ' type'
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' IAxis'
+        UnionType
+          TypeReference
+            Identifier: ' ILinearAxis'
+          TypeReference
+            Identifier: ' ICategoricalAxis'
+      TypeAliasDeclaration
+        Identifier: ' IAxisType'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      FunctionDeclaration
+        Identifier: ' getAxisType'
+        TypeReference
+          Identifier: ' IAxisType'
+        Block
+          IfStatement
+            BinaryExpression
+              NumericLiteral
+              EqualsEqualsToken
+              NumericLiteral
+            Block
+              ReturnStatement
+                StringLiteral
+            Block
+              ReturnStatement
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bad'
+            TypeReference
+              Identifier: ' IAxis'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' type'
+                CallExpression
+                  Identifier: ' getAxisType'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' good'
+            TypeReference
+              Identifier: ' IAxis'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' type'
+                Identifier: ' undefined'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    good'
+            Identifier: 'type'
+          EqualsToken
+          CallExpression
+            Identifier: ' getAxisType'
+  ModuleDeclaration
+    Identifier: ' GH18421'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' ThingTypeOne'
+        PropertySignature
+          Identifier: '
+        type'
+          LiteralType
+            StringLiteral
+      InterfaceDeclaration
+        Identifier: ' ThingTypeTwo'
+        PropertySignature
+          Identifier: '
+        type'
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' ThingType'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' Thing'
+        UnionType
+          TypeReference
+            Identifier: ' ThingTypeOne'
+          TypeReference
+            Identifier: ' ThingTypeTwo'
+      FunctionDeclaration
+        Identifier: ' makeNewThing'
+        Parameter
+          Identifier: 'thingType'
+          TypeReference
+            Identifier: ' ThingType'
+        TypeReference
+          Identifier: ' Thing'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            type'
+                Identifier: ' thingType'
+  ModuleDeclaration
+    Identifier: ' GH15907'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' Action'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' type'
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' type'
+              LiteralType
+                StringLiteral
+      FunctionDeclaration
+        Identifier: ' dispatchAction'
+        Parameter
+          Identifier: 'action'
+          TypeReference
+            Identifier: ' Action'
+        VoidKeyword
+        Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' active'
+            TrueKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    dispatchAction'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' type'
+              ParenthesizedExpression
+                ConditionalExpression
+                  Identifier: 'active'
+                  QuestionToken
+                  StringLiteral
+                  ColonToken
+                  StringLiteral
+  ModuleDeclaration
+    Identifier: ' GH20889'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A1'
+        PropertySignature
+          Identifier: '
+        type'
+          LiteralType
+            StringLiteral
+      InterfaceDeclaration
+        Identifier: ' A2'
+        PropertySignature
+          Identifier: '
+        type'
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' AU'
+        UnionType
+          TypeReference
+            Identifier: ' A1'
+          TypeReference
+            Identifier: ' A2'
+      FunctionDeclaration
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'obj1'
+          TypeReference
+            Identifier: ' AU'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' obj2'
+                TypeReference
+                  Identifier: ' AU'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            type'
+                    PropertyAccessExpression
+                      Identifier: ' obj1'
+                      Identifier: 'type'
+  ModuleDeclaration
+    Identifier: ' GH39357'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' A'
+        UnionType
+          TupleType
+            LiteralType
+              StringLiteral
+            NumberKeyword
+          TupleType
+            LiteralType
+              StringLiteral
+            NumberKeyword
+          TupleType
+            LiteralType
+              StringLiteral
+            StringKeyword
+      TypeAliasDeclaration
+        Identifier: ' B'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            TypeReference
+              Identifier: ' B'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' A'
+            ConditionalExpression
+              BinaryExpression
+                BinaryExpression
+                  Identifier: ' b'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                BarBarToken
+                BinaryExpression
+                  Identifier: ' b'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+              QuestionToken
+              ArrayLiteralExpression
+                Identifier: 'b'
+                NumericLiteral
+              ColonToken
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+  ModuleDeclaration
+    Identifier: ' GH58603'
+    ModuleBlock
+      EnumDeclaration
+        Identifier: ' MyEnum'
+        EnumMember
+          Identifier: ' A'
+          NumericLiteral
+        EnumMember
+          Identifier: ' B'
+          NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' TypeA'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' kind'
+            TypeReference
+              QualifiedName
+                Identifier: ' MyEnum'
+                Identifier: 'A'
+          PropertySignature
+            Identifier: ' id'
+            QuestionToken
+            NumberKeyword
+      TypeAliasDeclaration
+        Identifier: ' TypeB'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              TypeReference
+                QualifiedName
+                  Identifier: ' MyEnum'
+                  Identifier: 'B'
+          ParenthesizedType
+            UnionType
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' id'
+                  QuestionToken
+                  UndefinedKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' id'
+                  NumberKeyword
+      TypeAliasDeclaration
+        Identifier: ' MyType'
+        UnionType
+          TypeReference
+            Identifier: ' TypeA'
+          TypeReference
+            Identifier: ' TypeB'
+      FunctionDeclaration
+        Identifier: ' something'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' MyType'
+        VoidKeyword
+        Block
+      FunctionDeclaration
+        Identifier: ' indirect'
+        Parameter
+          Identifier: 'kind'
+          TypeReference
+            Identifier: ' MyEnum'
+        Parameter
+          Identifier: ' id'
+          QuestionToken
+          NumberKeyword
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        something'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' kind'
+                ShorthandPropertyAssignment
+                  Identifier: ' id'
+      TypeAliasDeclaration
+        Identifier: ' Foo'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              UnionType
+                LiteralType
+                  StringLiteral
+                LiteralType
+                  StringLiteral
+            PropertySignature
+              Identifier: ' value'
+              NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' value'
+              UndefinedKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              LiteralType
+                StringLiteral
+            PropertySignature
+              Identifier: ' value'
+              UndefinedKeyword
+      FunctionDeclaration
+        Identifier: ' test'
+        Parameter
+          Identifier: 'obj'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              UnionType
+                LiteralType
+                  StringLiteral
+                LiteralType
+                  StringLiteral
+            PropertySignature
+              Identifier: ' value'
+              UnionType
+                NumberKeyword
+                UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x1'
+                TypeReference
+                  Identifier: ' Foo'
+                Identifier: ' obj'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x2'
+                TypeReference
+                  Identifier: ' Foo'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    PropertyAccessExpression
+                      Identifier: ' obj'
+                      Identifier: 'kind'
+                  PropertyAssignment
+                    Identifier: ' value'
+                    PropertyAccessExpression
+                      Identifier: ' obj'
+                      Identifier: 'value'

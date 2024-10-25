@@ -1,0 +1,153 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' P'
+    IntersectionType
+      TypeLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' name'
+          StringKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vLet'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          TypeReference
+            Identifier: ' P'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vConst'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          TypeReference
+            Identifier: ' P'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'p'
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        TypeReference
+          Identifier: ' P'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnWithRequiredDefaultParam'
+    Parameter
+      Identifier: 'p'
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        TypeReference
+          Identifier: ' P'
+    Parameter
+      Identifier: ' req'
+      NumberKeyword
+    Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    field'
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        TypeReference
+          Identifier: ' P'
+    PropertyDeclaration
+      Identifier: '
+    optField'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        TypeReference
+          Identifier: ' P'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' roFiled'
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        TypeReference
+          Identifier: ' P'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'p'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          TypeReference
+            Identifier: ' P'
+      Block
+    MethodDeclaration
+      Identifier: '
+    methodWithRequiredDefault'
+      Parameter
+        Identifier: 'p'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          TypeReference
+            Identifier: ' P'
+      Parameter
+        Identifier: ' req'
+        NumberKeyword
+      Block
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' ctorField'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          TypeReference
+            Identifier: ' P'
+      Block
+    GetAccessor
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          AsExpression
+            NonNullExpression
+              NullKeyword
+            TypeReference
+              Identifier: ' P'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'v'
+      Block
+  ExportAssignment
+    AsExpression
+      NonNullExpression
+        NullKeyword
+      TypeReference
+        Identifier: ' P'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fnWithPartialAnnotationOnDefaultparam'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' P'
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        TypeReference
+          Identifier: ' P'
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    Block

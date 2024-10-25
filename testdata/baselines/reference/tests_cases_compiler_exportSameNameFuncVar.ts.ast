@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' a'
+    Block

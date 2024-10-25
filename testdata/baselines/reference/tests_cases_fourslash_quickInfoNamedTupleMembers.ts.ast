@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////export type /*1*/Segment = [length: number, count: number];
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

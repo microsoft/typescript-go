@@ -1,0 +1,1163 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' emitsCorrectly'
+            Parameter
+              Identifier: 'name'
+              StringKeyword
+            Parameter
+              Identifier: ' sources'
+              ArrayType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' file'
+                    StringKeyword
+                  PropertySignature
+                    Identifier: ' text'
+                    StringKeyword
+            Parameter
+              Identifier: ' customTransformers'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'CustomTransformers'
+            Parameter
+              Identifier: ' options'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'CompilerOptions'
+              ObjectLiteralExpression
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        it'
+                  Identifier: 'name'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' roots'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' sources'
+                                Identifier: 'map'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: 'source'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  PropertyAccessExpression
+                                    Identifier: 'source'
+                                    Identifier: 'file'
+                                  PropertyAccessExpression
+                                    Identifier: ' source'
+                                    Identifier: 'text'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ES2015'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' fileMap'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'arrayToMap'
+                              Identifier: 'roots'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: ' file'
+                                EqualsGreaterThanToken
+                                PropertyAccessExpression
+                                  Identifier: ' file'
+                                  Identifier: 'fileName'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' outputs'
+                            NewExpression
+                              Identifier: ' Map'
+                              StringKeyword
+                              StringKeyword
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' host'
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' ts'
+                                Identifier: 'CompilerHost'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                getSourceFile'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' fileName'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' fileMap'
+                                      Identifier: 'get'
+                                    Identifier: 'fileName'
+                              PropertyAssignment
+                                Identifier: '
+                getDefaultLibFileName'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                getCurrentDirectory'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                getDirectories'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  ArrayLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                getCanonicalFileName'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' fileName'
+                                  EqualsGreaterThanToken
+                                  Identifier: ' fileName'
+                              PropertyAssignment
+                                Identifier: '
+                useCaseSensitiveFileNames'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                getNewLine'
+                                ArrowFunction
+                                  EqualsGreaterThanToken
+                                  StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                fileExists'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' fileName'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' fileMap'
+                                      Identifier: 'has'
+                                    Identifier: 'fileName'
+                              PropertyAssignment
+                                Identifier: '
+                readFile'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' fileName'
+                                  EqualsGreaterThanToken
+                                  ConditionalExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' fileMap'
+                                        Identifier: 'has'
+                                      Identifier: 'fileName'
+                                    QuestionToken
+                                    PropertyAccessExpression
+                                      NonNullExpression
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' fileMap'
+                                            Identifier: 'get'
+                                          Identifier: 'fileName'
+                                      Identifier: 'text'
+                                    ColonToken
+                                    Identifier: ' undefined'
+                              PropertyAssignment
+                                Identifier: '
+                writeFile'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: 'fileName'
+                                  Parameter
+                                    Identifier: ' text'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' outputs'
+                                      Identifier: 'set'
+                                    Identifier: 'fileName'
+                                    Identifier: ' text'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' program'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'createProgram'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'arrayFrom'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'fileMap'
+                                    Identifier: 'keys'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' newLine'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'NewLineKind'
+                                    Identifier: 'LineFeed'
+                                SpreadAssignment
+                                  Identifier: 'options'
+                              Identifier: ' host'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            program'
+                            Identifier: 'emit'
+                          Identifier: '/*targetSourceFile*/ undefined'
+                          PropertyAccessExpression
+                            Identifier: ' host'
+                            Identifier: 'writeFile'
+                          Identifier: ' /*cancellationToken*/ undefined'
+                          FalseKeyword
+                          Identifier: ' customTransformers'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' content'
+                            StringLiteral
+                      ForOfStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ArrayBindingPattern
+                              BindingElement
+                                Identifier: 'file'
+                              BindingElement
+                                Identifier: ' text'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' outputs'
+                            Identifier: 'entries'
+                        Block
+                          IfStatement
+                            Identifier: 'content'
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: ' content'
+                                PlusEqualsToken
+                                StringLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                content'
+                              PlusEqualsToken
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'file'
+                                  TemplateTail
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                content'
+                              PlusEqualsToken
+                              Identifier: ' text'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            Harness'
+                              Identifier: 'Baseline'
+                            Identifier: 'runBaseline'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'name'
+                              TemplateTail
+                          Identifier: ' content'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sources'
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+        file'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+        text'
+                      NoSubstitutionTemplateLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' before'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'TransformerFactory'
+                  TypeReference
+                    QualifiedName
+                      Identifier: 'ts'
+                      Identifier: 'SourceFile'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' context'
+                  EqualsGreaterThanToken
+                  Block
+                    ReturnStatement
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' file'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'visitEachChild'
+                          Identifier: 'file'
+                          Identifier: ' visit'
+                          Identifier: ' context'
+                    FunctionDeclaration
+                      Identifier: ' visit'
+                      Parameter
+                        Identifier: 'node'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'Node'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' ts'
+                          Identifier: 'VisitResult'
+                        TypeReference
+                          QualifiedName
+                            Identifier: 'ts'
+                            Identifier: 'Node'
+                      Block
+                        SwitchStatement
+                          PropertyAccessExpression
+                            Identifier: 'node'
+                            Identifier: 'kind'
+                          CaseBlock
+                            CaseClause
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'FunctionDeclaration'
+                              ReturnStatement
+                                CallExpression
+                                  Identifier: ' visitFunction'
+                                  AsExpression
+                                    Identifier: 'node'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'FunctionDeclaration'
+                            DefaultClause
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'visitEachChild'
+                                  Identifier: 'node'
+                                  Identifier: ' visit'
+                                  Identifier: ' context'
+                    FunctionDeclaration
+                      Identifier: ' visitFunction'
+                      Parameter
+                        Identifier: 'node'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'FunctionDeclaration'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            ts'
+                              Identifier: 'addSyntheticLeadingComment'
+                            Identifier: 'node'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'SyntaxKind'
+                              Identifier: 'MultiLineCommentTrivia'
+                            StringLiteral
+                            TrueKeyword
+                        ReturnStatement
+                          Identifier: ' node'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' after'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'TransformerFactory'
+                  TypeReference
+                    QualifiedName
+                      Identifier: 'ts'
+                      Identifier: 'SourceFile'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' context'
+                  EqualsGreaterThanToken
+                  Block
+                    ReturnStatement
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' file'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'visitEachChild'
+                          Identifier: 'file'
+                          Identifier: ' visit'
+                          Identifier: ' context'
+                    FunctionDeclaration
+                      Identifier: ' visit'
+                      Parameter
+                        Identifier: 'node'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'Node'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' ts'
+                          Identifier: 'VisitResult'
+                        TypeReference
+                          QualifiedName
+                            Identifier: 'ts'
+                            Identifier: 'Node'
+                      Block
+                        SwitchStatement
+                          PropertyAccessExpression
+                            Identifier: 'node'
+                            Identifier: 'kind'
+                          CaseBlock
+                            CaseClause
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'VariableStatement'
+                              ReturnStatement
+                                CallExpression
+                                  Identifier: ' visitVariableStatement'
+                                  AsExpression
+                                    Identifier: 'node'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'VariableStatement'
+                            DefaultClause
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'visitEachChild'
+                                  Identifier: 'node'
+                                  Identifier: ' visit'
+                                  Identifier: ' context'
+                    FunctionDeclaration
+                      Identifier: ' visitVariableStatement'
+                      Parameter
+                        Identifier: 'node'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'VariableStatement'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            ts'
+                              Identifier: 'addSyntheticLeadingComment'
+                            Identifier: 'node'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'SyntaxKind'
+                              Identifier: 'SingleLineCommentTrivia'
+                            StringLiteral
+                        ReturnStatement
+                          Identifier: ' node'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    emitsCorrectly'
+              StringLiteral
+              Identifier: ' sources'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' before'
+                  ArrayLiteralExpression
+                    Identifier: 'before'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    emitsCorrectly'
+              StringLiteral
+              Identifier: ' sources'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' after'
+                  ArrayLiteralExpression
+                    Identifier: 'after'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    emitsCorrectly'
+              StringLiteral
+              Identifier: ' sources'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' before'
+                  ArrayLiteralExpression
+                    Identifier: 'before'
+                PropertyAssignment
+                  Identifier: ' after'
+                  ArrayLiteralExpression
+                    Identifier: 'after'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    emitsCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        file'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        text'
+                    NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        before'
+                  ArrayLiteralExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: '
+            context'
+                      EqualsGreaterThanToken
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' node'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                ts'
+                            Identifier: 'visitNode'
+                          Identifier: 'node'
+                          FunctionExpression
+                            Identifier: ' visitor'
+                            Parameter
+                              Identifier: 'node'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'Node'
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' ts'
+                                Identifier: 'Node'
+                            Block
+                              IfStatement
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'isStringLiteral'
+                                    Identifier: 'node'
+                                  AmpersandAmpersandToken
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' node'
+                                      Identifier: 'text'
+                                    EqualsEqualsEqualsToken
+                                    StringLiteral
+                                ReturnStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createStringLiteral'
+                                    StringLiteral
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'visitEachChild'
+                                  Identifier: 'node'
+                                  Identifier: ' visitor'
+                                  Identifier: ' context'
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'isSourceFile'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        target'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'ScriptTarget'
+                    Identifier: 'ES5'
+                PropertyAssignment
+                  Identifier: '
+        module'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'ModuleKind'
+                    Identifier: 'ES2015'
+                PropertyAssignment
+                  Identifier: '
+        emitDecoratorMetadata'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        experimentalDecorators'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    emitsCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            file'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            // The text of length 'changed' is made to be on two lines so we know the line map change
+            text'
+                    NoSubstitutionTemplateLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        before'
+                  ArrayLiteralExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: '
+            context'
+                      EqualsGreaterThanToken
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' node'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                ts'
+                            Identifier: 'visitNode'
+                          Identifier: 'node'
+                          FunctionExpression
+                            Identifier: ' visitor'
+                            Parameter
+                              Identifier: 'node'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'Node'
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' ts'
+                                Identifier: 'Node'
+                            Block
+                              IfStatement
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'isStringLiteral'
+                                    Identifier: 'node'
+                                  AmpersandAmpersandToken
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' node'
+                                      Identifier: 'text'
+                                    EqualsEqualsEqualsToken
+                                    StringLiteral
+                                Block
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' text'
+                                        StringLiteral
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' lineMap'
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'computeLineStarts'
+                                          Identifier: 'text'
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                        ts'
+                                        Identifier: 'setSourceMapRange'
+                                      Identifier: 'node'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                            pos'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                            end'
+                                          PropertyAccessExpression
+                                            Identifier: ' text'
+                                            Identifier: 'length'
+                                        PropertyAssignment
+                                          Identifier: '
+                            source'
+                                          ObjectLiteralExpression
+                                            ShorthandPropertyAssignment
+                                              Identifier: '
+                                text'
+                                            PropertyAssignment
+                                              Identifier: '
+                                fileName'
+                                              StringLiteral
+                                            ShorthandPropertyAssignment
+                                              Identifier: '
+                                lineMap'
+                                            PropertyAssignment
+                                              Identifier: '
+                                getLineAndCharacterOfPosition'
+                                              ArrowFunction
+                                                Parameter
+                                                  Identifier: ' pos'
+                                                EqualsGreaterThanToken
+                                                CallExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: ' ts'
+                                                    Identifier: 'computeLineAndCharacterOfPosition'
+                                                  Identifier: 'lineMap'
+                                                  Identifier: ' pos'
+                                  ReturnStatement
+                                    Identifier: ' node'
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'visitEachChild'
+                                  Identifier: 'node'
+                                  Identifier: ' visitor'
+                                  Identifier: ' context'
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'isSourceFile'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' sourceMap'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    emitsCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            file'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            // The source file contains preceding trivia (e.g. whitespace) to try to confuse the `skipSourceTrivia` function.
+            text'
+                    StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        before'
+                  ArrayLiteralExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: '
+            context'
+                      EqualsGreaterThanToken
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' transformSourceFile'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'Transformer'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: 'ts'
+                                    Identifier: 'SourceFile'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: ' node'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    ts'
+                                    Identifier: 'visitNode'
+                                  Identifier: 'node'
+                                  FunctionExpression
+                                    Identifier: ' visitor'
+                                    Parameter
+                                      Identifier: 'node'
+                                      TypeReference
+                                        QualifiedName
+                                          Identifier: ' ts'
+                                          Identifier: 'Node'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'Node'
+                                    Block
+                                      IfStatement
+                                        BinaryExpression
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'ts'
+                                              Identifier: 'isIdentifier'
+                                            Identifier: 'node'
+                                          AmpersandAmpersandToken
+                                          BinaryExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' node'
+                                              Identifier: 'text'
+                                            EqualsEqualsEqualsToken
+                                            StringLiteral
+                                        Block
+                                          VariableStatement
+                                            VariableDeclarationList
+                                              VariableDeclaration
+                                                Identifier: ' newNode'
+                                                CallExpression
+                                                  PropertyAccessExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: ' ts'
+                                                      Identifier: 'factory'
+                                                    Identifier: 'createIdentifier'
+                                                  StringLiteral
+                                          ExpressionStatement
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+                            ts'
+                                                Identifier: 'setSourceMapRange'
+                                              Identifier: 'newNode'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  Identifier: '
+                                pos'
+                                                  NumericLiteral
+                                                PropertyAssignment
+                                                  Identifier: '
+                                end'
+                                                  NumericLiteral
+                                                PropertyAssignment
+                                                  Identifier: '
+                                // Do not provide a custom skipTrivia function for `source`.
+                                source'
+                                                  CallExpression
+                                                    PropertyAccessExpression
+                                                      Identifier: ' ts'
+                                                      Identifier: 'createSourceMapSource'
+                                                    StringLiteral
+                                                    StringLiteral
+                                          ReturnStatement
+                                            Identifier: ' newNode'
+                                      ReturnStatement
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'visitEachChild'
+                                          Identifier: 'node'
+                                          Identifier: ' visitor'
+                                          Identifier: ' context'
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'isSourceFile'
+                        ReturnStatement
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                    transformSourceFile'
+                            PropertyAssignment
+                              Identifier: '
+                    transformBundle'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: ' node'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createBundle'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'map'
+                                    PropertyAccessExpression
+                                      Identifier: 'node'
+                                      Identifier: 'sourceFiles'
+                                    Identifier: ' transformSourceFile'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' sourceMap'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: ' outFile'
+                  StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    emitsCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            file'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            text'
+                    StringLiteral
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            file'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            text'
+                    StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        before'
+                  ArrayLiteralExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: '
+            context'
+                      EqualsGreaterThanToken
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              ObjectBindingPattern
+                                BindingElement
+                                  Identifier: ' factory'
+                              Identifier: ' context'
+                        ReturnStatement
+                          ArrowFunction
+                            Parameter
+                              Identifier: 's'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'SourceFile'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'visitEachChild'
+                              Identifier: 's'
+                              Identifier: ' visitor'
+                              Identifier: ' context'
+                        FunctionDeclaration
+                          Identifier: ' visitor'
+                          Parameter
+                            Identifier: 'node'
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' ts'
+                                Identifier: 'Node'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'Node'
+                          Block
+                            IfStatement
+                              BinaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'isImportDeclaration'
+                                  Identifier: 'node'
+                                AmpersandAmpersandToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'isStringLiteral'
+                                  PropertyAccessExpression
+                                    Identifier: 'node'
+                                    Identifier: 'moduleSpecifier'
+                              Block
+                                ReturnStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' factory'
+                                      Identifier: 'updateImportDeclaration'
+                                    Identifier: '
+                            node'
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            node'
+                                      Identifier: 'modifiers'
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            node'
+                                      Identifier: 'importClause'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            factory'
+                                        Identifier: 'createStringLiteral'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'node'
+                                          Identifier: 'moduleSpecifier'
+                                        Identifier: 'text'
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            node'
+                                      Identifier: 'attributes'
+                            IfStatement
+                              BinaryExpression
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'isExportDeclaration'
+                                    Identifier: 'node'
+                                  AmpersandAmpersandToken
+                                  PropertyAccessExpression
+                                    Identifier: ' node'
+                                    Identifier: 'moduleSpecifier'
+                                AmpersandAmpersandToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'isStringLiteral'
+                                  PropertyAccessExpression
+                                    Identifier: 'node'
+                                    Identifier: 'moduleSpecifier'
+                              Block
+                                ReturnStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' factory'
+                                      Identifier: 'updateExportDeclaration'
+                                    Identifier: '
+                            node'
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            node'
+                                      Identifier: 'modifiers'
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            node'
+                                      Identifier: 'isTypeOnly'
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            node'
+                                      Identifier: 'exportClause'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            factory'
+                                        Identifier: 'createStringLiteral'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'node'
+                                          Identifier: 'moduleSpecifier'
+                                        Identifier: 'text'
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            node'
+                                      Identifier: 'attributes'
+                            ReturnStatement
+                              Identifier: ' node'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        target'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'ScriptTarget'
+                    Identifier: 'ESNext'
+                PropertyAssignment
+                  Identifier: '
+        module'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'ModuleKind'
+                    Identifier: 'ESNext'

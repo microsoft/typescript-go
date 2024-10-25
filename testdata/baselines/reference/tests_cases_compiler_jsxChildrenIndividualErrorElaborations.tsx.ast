@@ -1,0 +1,250 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Props'
+    PropertySignature
+      Identifier: '
+  children'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Blah'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' Props'
+    Block
+      ReturnStatement
+        JsxFragment
+          JsxOpeningFragment
+          JsxClosingFragment
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Blah'
+            JsxAttributes
+          JsxText
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+          JsxText
+          JsxClosingElement
+            Identifier: 'Blah'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Blah'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'Blah'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Blah'
+            JsxAttributes
+          JsxText
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                Identifier: ' x'
+          JsxText
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                Identifier: ' x'
+          JsxText
+          JsxClosingElement
+            Identifier: 'Blah'
+  InterfaceDeclaration
+    Identifier: ' PropsArr'
+    PropertySignature
+      Identifier: '
+  children'
+      ArrayType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Blah2'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' PropsArr'
+    Block
+      ReturnStatement
+        JsxFragment
+          JsxOpeningFragment
+          JsxClosingFragment
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Blah2'
+            JsxAttributes
+          JsxText
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+          JsxText
+          JsxClosingElement
+            Identifier: 'Blah2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Blah2'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'Blah2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Blah2'
+            JsxAttributes
+          JsxText
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+          JsxText
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+          JsxText
+          JsxClosingElement
+            Identifier: 'Blah2'
+  TypeAliasDeclaration
+    Identifier: ' Cb'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' PropsMixed'
+    PropertySignature
+      Identifier: '
+  children'
+      UnionType
+        TypeReference
+          Identifier: ' Cb'
+        ArrayType
+          TypeReference
+            Identifier: ' Cb'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Blah3'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' PropsMixed'
+    Block
+      ReturnStatement
+        JsxFragment
+          JsxOpeningFragment
+          JsxClosingFragment
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Blah3'
+            JsxAttributes
+          JsxText
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+          JsxText
+          JsxClosingElement
+            Identifier: 'Blah3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Blah3'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'Blah3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Blah3'
+            JsxAttributes
+          JsxText
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+          JsxText
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+          JsxText
+          JsxClosingElement
+            Identifier: 'Blah3'

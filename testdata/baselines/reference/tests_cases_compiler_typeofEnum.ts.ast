@@ -1,0 +1,20 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    e1'
+    EnumMember
+      Identifier: '
+    e2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        TypeQuery
+          Identifier: ' E'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+e1'
+      Identifier: 'e1'

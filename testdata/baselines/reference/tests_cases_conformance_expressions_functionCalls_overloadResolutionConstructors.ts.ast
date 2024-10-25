@@ -1,0 +1,413 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' SomeBase'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' n'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' s'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' SomeDerived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SomeBase'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' m'
+  ClassDeclaration
+    Identifier: ' SomeDerived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SomeBase'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' m'
+  ClassDeclaration
+    Identifier: ' SomeDerived3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SomeBase'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' m'
+  InterfaceDeclaration
+    Identifier: ' fn1'
+    ConstructSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      StringKeyword
+    ConstructSignature
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn1'
+        TypeReference
+          Identifier: ' fn1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        NewExpression
+          Identifier: ' fn1'
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn1'
+      ObjectLiteralExpression
+  InterfaceDeclaration
+    Identifier: ' fn2'
+    ConstructSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      Parameter
+        Identifier: ' n'
+        NumberKeyword
+      NumberKeyword
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      Parameter
+        Identifier: ' t'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn2'
+        TypeReference
+          Identifier: ' fn2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' fn2'
+          TypeReference
+            Identifier: 'Date'
+          NumericLiteral
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        NewExpression
+          Identifier: ' fn2'
+          NumericLiteral
+          StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn2'
+      TypeReference
+        Identifier: 'Date'
+      StringLiteral
+      NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn2'
+      StringLiteral
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' fn3'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'n'
+        TypeReference
+          Identifier: ' T'
+      StringKeyword
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      Parameter
+        Identifier: ' t'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      TypeParameter
+        Identifier: ' V'
+      Parameter
+        Identifier: 'v'
+        TypeReference
+          Identifier: ' V'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Parameter
+        Identifier: ' t'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn3'
+        TypeReference
+          Identifier: ' fn3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        NewExpression
+          Identifier: ' fn3'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        NewExpression
+          Identifier: ' fn3'
+          StringLiteral
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NewExpression
+          Identifier: ' fn3'
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        NewExpression
+          Identifier: ' fn3'
+          NumberKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        NewExpression
+          Identifier: ' fn3'
+          StringKeyword
+          StringKeyword
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NewExpression
+          Identifier: ' fn3'
+          NumberKeyword
+          StringKeyword
+          StringKeyword
+          StringLiteral
+          StringLiteral
+          NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn3'
+      NumberKeyword
+      NumberKeyword
+      NumberKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' fn4'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+        StringKeyword
+      TypeParameter
+        Identifier: ' U'
+        NumberKeyword
+      Parameter
+        Identifier: 'n'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' m'
+        TypeReference
+          Identifier: ' U'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+        NumberKeyword
+      TypeParameter
+        Identifier: ' U'
+        StringKeyword
+      Parameter
+        Identifier: 'n'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' m'
+        TypeReference
+          Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn4'
+        TypeReference
+          Identifier: ' fn4'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      StringKeyword
+      NumberKeyword
+      StringLiteral
+      NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      StringKeyword
+      NumberKeyword
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      NumberKeyword
+      StringKeyword
+      StringLiteral
+      NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      NumberKeyword
+      StringKeyword
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      StringLiteral
+      NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      NumericLiteral
+      Identifier: ' undefined'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      StringLiteral
+      NullKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      BooleanKeyword
+      TypeReference
+        Identifier: ' Date'
+      NullKeyword
+      NullKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      TrueKeyword
+      NullKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' fn4'
+      NullKeyword
+      TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' fn5'
+    ConstructSignature
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            StringKeyword
+          VoidKeyword
+      StringKeyword
+    ConstructSignature
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          VoidKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn5'
+        TypeReference
+          Identifier: ' fn5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NewExpression
+          Identifier: ' fn5'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' n'
+                Identifier: 'toFixed'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        NewExpression
+          Identifier: ' fn5'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' n'
+                Identifier: 'substr'
+              NumericLiteral

@@ -1,0 +1,124 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isObject1'
+    Parameter
+      Identifier: 'value'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        TypeLiteral
+  IfStatement
+    CallExpression
+      Identifier: 'isObject1'
+      Identifier: 'obj1'
+    Block
+      ExpressionStatement
+        Identifier: '
+    obj1'
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    obj1'
+          StringLiteral
+  ExpressionStatement
+    Identifier: '
+// check type after conditional block
+obj1'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        UnionType
+          TypeLiteral
+          UndefinedKeyword
+  IfStatement
+    CallExpression
+      Identifier: 'isObject1'
+      Identifier: 'obj2'
+    Block
+      ExpressionStatement
+        Identifier: '
+    obj2'
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    obj2'
+          StringLiteral
+  ExpressionStatement
+    Identifier: '
+// check type after conditional block
+obj2'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isObject2'
+    Parameter
+      Identifier: 'value'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' value'
+      TypeLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj3'
+        TypeReference
+          Identifier: ' Record'
+          StringKeyword
+          UnknownKeyword
+  IfStatement
+    CallExpression
+      Identifier: 'isObject2'
+      Identifier: 'obj3'
+    Block
+      ExpressionStatement
+        Identifier: '
+    obj3'
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    obj3'
+          StringLiteral
+  ExpressionStatement
+    Identifier: '
+// check type after conditional block
+obj3'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj4'
+        UnionType
+          TypeReference
+            Identifier: ' Record'
+            StringKeyword
+            UnknownKeyword
+          UndefinedKeyword
+  IfStatement
+    CallExpression
+      Identifier: 'isObject2'
+      Identifier: 'obj4'
+    Block
+      ExpressionStatement
+        Identifier: '
+    obj4'
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    obj4'
+          StringLiteral
+  ExpressionStatement
+    Identifier: '
+// check type after conditional block
+obj4'

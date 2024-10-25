@@ -1,0 +1,34 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+i'
+      EqualsToken
+      NewExpression
+        Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+        Identifier: ' i'

@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Block
+        ClassDeclaration
+          Identifier: ' D'
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' C'
+          Constructor
+            Block
+              ExpressionStatement
+                CallExpression
+                  SuperKeyword

@@ -1,0 +1,535 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' onlyT'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'a'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        Parameter
+          Identifier: ' b'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r'
+                FunctionType
+                  Parameter
+                    Identifier: 'x'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+          ReturnStatement
+            Identifier: ' r'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                TypeLiteral
+              TypeLiteral
+            CallExpression
+              Identifier: ' foo'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                  NumberKeyword
+                EqualsGreaterThanToken
+                NumericLiteral
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                  StringKeyword
+                EqualsGreaterThanToken
+                StringLiteral
+      FunctionDeclaration
+        Identifier: ' other2'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Date'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r7'
+                CallExpression
+                  Identifier: ' foo'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'a'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    Identifier: ' a'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'b'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    Identifier: ' b'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r9'
+                CallExpression
+                  Identifier: ' r7'
+                  NewExpression
+                    Identifier: ' Date'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r10'
+                CallExpression
+                  Identifier: ' r7'
+                  NumericLiteral
+      FunctionDeclaration
+        Identifier: ' foo2'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Date'
+        Parameter
+          Identifier: 'a'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        Parameter
+          Identifier: ' b'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r'
+                FunctionType
+                  Parameter
+                    Identifier: 'x'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+          ReturnStatement
+            Identifier: ' r'
+      FunctionDeclaration
+        Identifier: ' other3'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' RegExp'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r7'
+                CallExpression
+                  Identifier: ' foo2'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'a'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    Identifier: ' a'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'b'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    Identifier: ' b'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r7b'
+                CallExpression
+                  Identifier: ' foo2'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'a'
+                    EqualsGreaterThanToken
+                    Identifier: ' a'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'b'
+                    EqualsGreaterThanToken
+                    Identifier: ' b'
+      EnumDeclaration
+        Identifier: ' E'
+        EnumMember
+          Identifier: ' A'
+      EnumDeclaration
+        Identifier: ' F'
+        EnumMember
+          Identifier: ' A'
+      FunctionDeclaration
+        Identifier: ' foo3'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' a'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        Parameter
+          Identifier: ' b'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r'
+                FunctionType
+                  Parameter
+                    Identifier: 'x'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+          ReturnStatement
+            Identifier: ' r'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r7'
+            CallExpression
+              Identifier: ' foo3'
+              PropertyAccessExpression
+                Identifier: 'E'
+                Identifier: 'A'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' E'
+                  Identifier: 'A'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' F'
+                  Identifier: 'A'
+  ModuleDeclaration
+    Identifier: ' TU'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        Parameter
+          Identifier: 'a'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        Parameter
+          Identifier: ' b'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' U'
+            TypeReference
+              Identifier: ' U'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r'
+                FunctionType
+                  Parameter
+                    Identifier: 'x'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+          ReturnStatement
+            Identifier: ' r'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                TypeLiteral
+              TypeLiteral
+            CallExpression
+              Identifier: ' foo'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                  NumberKeyword
+                EqualsGreaterThanToken
+                NumericLiteral
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                  StringKeyword
+                EqualsGreaterThanToken
+                StringLiteral
+      FunctionDeclaration
+        Identifier: ' other2'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Date'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r7'
+                CallExpression
+                  Identifier: ' foo'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'a'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    Identifier: ' a'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'b'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    Identifier: ' b'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r9'
+                CallExpression
+                  Identifier: ' r7'
+                  NewExpression
+                    Identifier: ' Date'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r10'
+                CallExpression
+                  Identifier: ' r7'
+                  NumericLiteral
+      FunctionDeclaration
+        Identifier: ' foo2'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Date'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Date'
+        Parameter
+          Identifier: 'a'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        Parameter
+          Identifier: ' b'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' U'
+            TypeReference
+              Identifier: ' U'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r'
+                FunctionType
+                  Parameter
+                    Identifier: 'x'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+          ReturnStatement
+            Identifier: ' r'
+      FunctionDeclaration
+        Identifier: ' other3'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' RegExp'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r7'
+                CallExpression
+                  Identifier: ' foo2'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'a'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    Identifier: ' a'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'b'
+                      TypeReference
+                        Identifier: ' T'
+                    EqualsGreaterThanToken
+                    Identifier: ' b'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r7b'
+                CallExpression
+                  Identifier: ' foo2'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'a'
+                    EqualsGreaterThanToken
+                    Identifier: ' a'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'b'
+                    EqualsGreaterThanToken
+                    Identifier: ' b'
+      EnumDeclaration
+        Identifier: ' E'
+        EnumMember
+          Identifier: ' A'
+      EnumDeclaration
+        Identifier: ' F'
+        EnumMember
+          Identifier: ' A'
+      FunctionDeclaration
+        Identifier: ' foo3'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' a'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+        Parameter
+          Identifier: ' b'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' U'
+            TypeReference
+              Identifier: ' U'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r'
+                FunctionType
+                  Parameter
+                    Identifier: 'x'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+          ReturnStatement
+            Identifier: ' r'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r7'
+            CallExpression
+              Identifier: ' foo3'
+              PropertyAccessExpression
+                Identifier: 'E'
+                Identifier: 'A'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' E'
+                  Identifier: 'A'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' F'
+                  Identifier: 'A'

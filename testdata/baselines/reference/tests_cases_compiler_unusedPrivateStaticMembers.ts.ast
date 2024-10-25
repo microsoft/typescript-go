@@ -1,0 +1,147 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test1'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' m1'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' test'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        Test1'
+              Identifier: 'm1'
+  ClassDeclaration
+    Identifier: ' Test2'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' test'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        Test2'
+            Identifier: 'p1'
+  ClassDeclaration
+    Identifier: ' Test3'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' m1'
+      Block
+  ClassDeclaration
+    Identifier: ' Test4'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' m1'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          ConditionalExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'n'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+            QuestionToken
+            NumericLiteral
+            ColonToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'n'
+                AsteriskToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Test4'
+                    Identifier: 'm1'
+                  BinaryExpression
+                    Identifier: 'n'
+                    MinusToken
+                    NumericLiteral
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' m2'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          ConditionalExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'n'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+            QuestionToken
+            NumericLiteral
+            ColonToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'n'
+                AsteriskToken
+                CallExpression
+                  ElementAccessExpression
+                    Identifier: ' Test4'
+                    StringLiteral
+                  BinaryExpression
+                    Identifier: 'n'
+                    MinusToken
+                    NumericLiteral
+  ClassDeclaration
+    Identifier: ' Test5'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' m1'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' test'
+      Block
+        ExpressionStatement
+          CallExpression
+            ElementAccessExpression
+              Identifier: '
+        Test5'
+              StringLiteral
+  ClassDeclaration
+    Identifier: ' Test6'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' p1'
+      NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' test'
+      Block
+        ExpressionStatement
+          ElementAccessExpression
+            Identifier: '
+        Test6'
+            StringLiteral

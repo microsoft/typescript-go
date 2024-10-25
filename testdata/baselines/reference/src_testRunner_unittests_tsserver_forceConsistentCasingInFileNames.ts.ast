@@ -1,0 +1,1823 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' getSysForMultipleErrorsForceConsistentCasingInFileNames'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    closeFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    protocolFileLocationFromSubstring'
+        ImportSpecifier
+          Identifier: '
+    protocolTextSpanFromSubstring'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+        ImportSpecifier
+          Identifier: '
+    verifyGetErrRequest'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    SymLink'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' rootPath'
+                        StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file1'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'rootPath'
+                                TemplateTail
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file2'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'rootPath'
+                                TemplateTail
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file2Dts'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'rootPath'
+                                TemplateTail
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' tsconfigAll'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'rootPath'
+                                TemplateTail
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            CallExpression
+                              Identifier: ' jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                compilerOptions'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    baseUrl'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    paths'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' file2'
+                                          ArrayLiteralExpression
+                                            StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    typeRoots'
+                                      ArrayLiteralExpression
+                                        StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    forceConsistentCasingInFileNames'
+                                      TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' tsconfig'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'rootPath'
+                                TemplateTail
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            CallExpression
+                              Identifier: ' jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' extends'
+                                  StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'file1'
+                            Identifier: ' file2'
+                            Identifier: ' file2Dts'
+                            Identifier: ' tsconfig'
+                            Identifier: ' tsconfigAll'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' useCaseSensitiveFileNames'
+                              FalseKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'file1'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'CompilerOptionsDiagnosticsRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'CompilerOptionsDiagnosticsFull'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                projectFileName'
+                              PropertyAccessExpression
+                                Identifier: ' tsconfig'
+                                Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' loggerFile'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' anotherFile'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' tsconfig'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            CallExpression
+                              Identifier: ' jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                compilerOptions'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' forceConsistentCasingInFileNames'
+                                      TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'loggerFile'
+                            Identifier: ' anotherFile'
+                            Identifier: ' tsconfig'
+                            Identifier: ' tsconfig'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' file'
+                            Identifier: ' loggerFile'
+                          PropertyAssignment
+                            Identifier: ' projectRootPath'
+                            StringLiteral
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: ' session'
+                        PropertyAssignment
+                          Identifier: ' files'
+                          ArrayLiteralExpression
+                            Identifier: 'loggerFile'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' newLoggerPath'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' loggerFile'
+                              Identifier: 'path'
+                            Identifier: 'toLowerCase'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'renameFile'
+                      PropertyAccessExpression
+                        Identifier: 'loggerFile'
+                        Identifier: 'path'
+                      Identifier: ' newLoggerPath'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        closeFilesForSession'
+                      ArrayLiteralExpression
+                        Identifier: 'loggerFile'
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' file'
+                            Identifier: ' newLoggerPath'
+                          PropertyAssignment
+                            Identifier: ' content'
+                            PropertyAccessExpression
+                              Identifier: ' loggerFile'
+                              Identifier: 'content'
+                          PropertyAssignment
+                            Identifier: ' projectRootPath'
+                            StringLiteral
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Apply edits for rename
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' file'
+                            Identifier: ' anotherFile'
+                          PropertyAssignment
+                            Identifier: ' projectRootPath'
+                            StringLiteral
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'UpdateOpenRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'UpdateOpen'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                changedFiles'
+                              ArrayLiteralExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    fileName'
+                                    PropertyAccessExpression
+                                      Identifier: ' anotherFile'
+                                      Identifier: 'path'
+                                  PropertyAssignment
+                                    Identifier: '
+                    textChanges'
+                                    ArrayLiteralExpression
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                        newText'
+                                          StringLiteral
+                                        SpreadAssignment
+                                          CallExpression
+                                            Identifier: 'protocolTextSpanFromSubstring'
+                                            PropertyAccessExpression
+                                              Identifier: '
+                            anotherFile'
+                                              Identifier: 'content'
+                                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Check errors in both files
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: ' session'
+                        PropertyAssignment
+                          Identifier: ' files'
+                          ArrayLiteralExpression
+                            Identifier: 'newLoggerPath'
+                            Identifier: ' anotherFile'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' loggerFile'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' anotherFile'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' tsconfig'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            CallExpression
+                              Identifier: ' jsonToReadableText'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                compilerOptions'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' forceConsistentCasingInFileNames'
+                                      TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createServerHost'
+                          ArrayLiteralExpression
+                            Identifier: 'loggerFile'
+                            Identifier: ' anotherFile'
+                            Identifier: ' tsconfig'
+                            Identifier: ' tsconfig'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' file'
+                            Identifier: ' anotherFile'
+                          PropertyAssignment
+                            Identifier: ' projectRootPath'
+                            StringLiteral
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: ' session'
+                        PropertyAssignment
+                          Identifier: ' files'
+                          ArrayLiteralExpression
+                            Identifier: 'anotherFile'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        session'
+                        Identifier: 'executeCommandSeq'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: 'ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'UpdateOpenRequest'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            command'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CommandTypes'
+                            Identifier: 'UpdateOpen'
+                        PropertyAssignment
+                          Identifier: '
+            arguments'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                changedFiles'
+                              ArrayLiteralExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    fileName'
+                                    PropertyAccessExpression
+                                      Identifier: ' anotherFile'
+                                      Identifier: 'path'
+                                  PropertyAssignment
+                                    Identifier: '
+                    textChanges'
+                                    ArrayLiteralExpression
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                        newText'
+                                          StringLiteral
+                                        SpreadAssignment
+                                          CallExpression
+                                            Identifier: 'protocolTextSpanFromSubstring'
+                                            PropertyAccessExpression
+                                              Identifier: '
+                            anotherFile'
+                                              Identifier: 'content'
+                                            StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Check errors in both files
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: ' session'
+                        PropertyAssignment
+                          Identifier: ' files'
+                          ArrayLiteralExpression
+                            Identifier: 'anotherFile'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  FunctionDeclaration
+                    Identifier: ' verifySymlink'
+                    Parameter
+                      Identifier: '
+            subScenario'
+                      StringKeyword
+                    Parameter
+                      Identifier: '
+            linkPath'
+                      StringKeyword
+                    Parameter
+                      Identifier: '
+            getFiles'
+                      FunctionType
+                        TypeLiteral
+                          PropertySignature
+                            Identifier: ' moduleA'
+                            TypeReference
+                              Identifier: ' File'
+                          PropertySignature
+                            Identifier: ' symlinkA'
+                            TypeReference
+                              Identifier: ' SymLink'
+                          PropertySignature
+                            Identifier: ' moduleB'
+                            TypeReference
+                              Identifier: ' File'
+                          PropertySignature
+                            Identifier: ' tsconfig'
+                            TypeReference
+                              Identifier: ' File'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          Identifier: 'subScenario'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    ObjectBindingPattern
+                                      BindingElement
+                                        Identifier: ' moduleA'
+                                      BindingElement
+                                        Identifier: ' symlinkA'
+                                      BindingElement
+                                        Identifier: ' moduleB'
+                                      BindingElement
+                                        Identifier: ' tsconfig'
+                                    CallExpression
+                                      Identifier: ' getFiles'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' host'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHost'
+                                        Identifier: 'createServerHost'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleA'
+                                        Identifier: ' symlinkA'
+                                        Identifier: ' moduleB'
+                                        Identifier: ' tsconfig'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' session'
+                                    NewExpression
+                                      Identifier: ' TestSession'
+                                      Identifier: 'host'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                openFilesForSession'
+                                  ArrayLiteralExpression
+                                    Identifier: 'moduleB'
+                                  Identifier: ' session'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                verifyGetErrRequest'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    session'
+                                    PropertyAssignment
+                                      Identifier: '
+                    files'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleB'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                host'
+                                    Identifier: 'prependFile'
+                                  PropertyAccessExpression
+                                    Identifier: 'moduleA'
+                                    Identifier: 'path'
+                                  NoSubstitutionTemplateLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                verifyGetErrRequest'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    session'
+                                    PropertyAssignment
+                                      Identifier: '
+                    files'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleB'
+                                    PropertyAssignment
+                                      Identifier: '
+                    existingTimeouts'
+                                      TrueKeyword
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                baselineTsserverLogs'
+                                  StringLiteral
+                                  Identifier: ' subScenario'
+                                  Identifier: ' session'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+
+            it'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'subScenario'
+                              TemplateTail
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    ObjectBindingPattern
+                                      BindingElement
+                                        Identifier: ' moduleA'
+                                      BindingElement
+                                        Identifier: ' symlinkA'
+                                      BindingElement
+                                        Identifier: ' moduleB'
+                                      BindingElement
+                                        Identifier: ' tsconfig'
+                                    CallExpression
+                                      Identifier: ' getFiles'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' host'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHost'
+                                        Identifier: 'createServerHost'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleA'
+                                        Identifier: ' symlinkA'
+                                        Identifier: ' moduleB'
+                                        Identifier: ' tsconfig'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' session'
+                                    NewExpression
+                                      Identifier: ' TestSession'
+                                      Identifier: 'host'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                openFilesForSession'
+                                  ArrayLiteralExpression
+                                    Identifier: 'moduleB'
+                                    Identifier: ' moduleA'
+                                  Identifier: ' session'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                verifyGetErrRequest'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    session'
+                                    PropertyAssignment
+                                      Identifier: '
+                    files'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleB'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                session'
+                                    Identifier: 'executeCommandSeq'
+                                  TypeReference
+                                    QualifiedName
+                                      QualifiedName
+                                        QualifiedName
+                                          Identifier: 'ts'
+                                          Identifier: 'server'
+                                        Identifier: 'protocol'
+                                      Identifier: 'ChangeRequest'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    command'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' ts'
+                                              Identifier: 'server'
+                                            Identifier: 'protocol'
+                                          Identifier: 'CommandTypes'
+                                        Identifier: 'Change'
+                                    PropertyAssignment
+                                      Identifier: '
+                    arguments'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                        file'
+                                          PropertyAccessExpression
+                                            Identifier: ' moduleA'
+                                            Identifier: 'path'
+                                        PropertyAssignment
+                                          Identifier: '
+                        line'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        offset'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        endLine'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        endOffset'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        insertString'
+                                          NoSubstitutionTemplateLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                verifyGetErrRequest'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    session'
+                                    PropertyAssignment
+                                      Identifier: '
+                    files'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleB'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                baselineTsserverLogs'
+                                  StringLiteral
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'subScenario'
+                                      TemplateTail
+                                  Identifier: ' session'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+
+            it'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'subScenario'
+                              TemplateTail
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    ObjectBindingPattern
+                                      BindingElement
+                                        Identifier: ' moduleA'
+                                      BindingElement
+                                        Identifier: ' symlinkA'
+                                      BindingElement
+                                        Identifier: ' moduleB'
+                                      BindingElement
+                                        Identifier: ' tsconfig'
+                                    CallExpression
+                                      Identifier: ' getFiles'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' host'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHost'
+                                        Identifier: 'createServerHost'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleA'
+                                        Identifier: ' symlinkA'
+                                        Identifier: ' moduleB'
+                                        Identifier: ' tsconfig'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' session'
+                                    NewExpression
+                                      Identifier: ' TestSession'
+                                      Identifier: 'host'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                openFilesForSession'
+                                  ArrayLiteralExpression
+                                    Identifier: 'moduleB'
+                                    Identifier: ' linkPath'
+                                  Identifier: ' session'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                verifyGetErrRequest'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    session'
+                                    PropertyAssignment
+                                      Identifier: '
+                    files'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleB'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                host'
+                                    Identifier: 'prependFile'
+                                  PropertyAccessExpression
+                                    Identifier: 'moduleA'
+                                    Identifier: 'path'
+                                  NoSubstitutionTemplateLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                verifyGetErrRequest'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    session'
+                                    PropertyAssignment
+                                      Identifier: '
+                    files'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleB'
+                                    PropertyAssignment
+                                      Identifier: '
+                    existingTimeouts'
+                                      TrueKeyword
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                baselineTsserverLogs'
+                                  StringLiteral
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'subScenario'
+                                      TemplateTail
+                                  Identifier: ' session'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+
+            it'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'subScenario'
+                              TemplateTail
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    ObjectBindingPattern
+                                      BindingElement
+                                        Identifier: ' moduleA'
+                                      BindingElement
+                                        Identifier: ' symlinkA'
+                                      BindingElement
+                                        Identifier: ' moduleB'
+                                      BindingElement
+                                        Identifier: ' tsconfig'
+                                    CallExpression
+                                      Identifier: ' getFiles'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' host'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHost'
+                                        Identifier: 'createServerHost'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleA'
+                                        Identifier: ' symlinkA'
+                                        Identifier: ' moduleB'
+                                        Identifier: ' tsconfig'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' session'
+                                    NewExpression
+                                      Identifier: ' TestSession'
+                                      Identifier: 'host'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                openFilesForSession'
+                                  ArrayLiteralExpression
+                                    Identifier: 'moduleB'
+                                    Identifier: ' moduleA'
+                                    Identifier: ' linkPath'
+                                  Identifier: ' session'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                verifyGetErrRequest'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    session'
+                                    PropertyAssignment
+                                      Identifier: '
+                    files'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleB'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                session'
+                                    Identifier: 'executeCommandSeq'
+                                  TypeReference
+                                    QualifiedName
+                                      QualifiedName
+                                        QualifiedName
+                                          Identifier: 'ts'
+                                          Identifier: 'server'
+                                        Identifier: 'protocol'
+                                      Identifier: 'ChangeRequest'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    command'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' ts'
+                                              Identifier: 'server'
+                                            Identifier: 'protocol'
+                                          Identifier: 'CommandTypes'
+                                        Identifier: 'Change'
+                                    PropertyAssignment
+                                      Identifier: '
+                    arguments'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                        file'
+                                          PropertyAccessExpression
+                                            Identifier: ' moduleA'
+                                            Identifier: 'path'
+                                        PropertyAssignment
+                                          Identifier: '
+                        line'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        offset'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        endLine'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        endOffset'
+                                          NumericLiteral
+                                        PropertyAssignment
+                                          Identifier: '
+                        insertString'
+                                          NoSubstitutionTemplateLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                verifyGetErrRequest'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    session'
+                                    PropertyAssignment
+                                      Identifier: '
+                    files'
+                                      ArrayLiteralExpression
+                                        Identifier: 'moduleB'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                baselineTsserverLogs'
+                                  StringLiteral
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'subScenario'
+                                      TemplateTail
+                                  Identifier: ' session'
+                  FunctionDeclaration
+                    Identifier: ' verifyFileSymlink'
+                    Parameter
+                      Identifier: 'subScenario'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' diskPath'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' targetPath'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' importedPath'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifySymlink'
+                          Identifier: 'subScenario'
+                          NoSubstitutionTemplateLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' moduleA'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        Identifier: ' diskPath'
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        TaggedTemplateExpression
+                                          Identifier: ' dedent'
+                                          NoSubstitutionTemplateLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' symlinkA'
+                                    TypeReference
+                                      Identifier: ' SymLink'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    symLink'
+                                        Identifier: ' targetPath'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' moduleB'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        TaggedTemplateExpression
+                                          Identifier: ' dedent'
+                                          TemplateExpression
+                                            TemplateHead
+                                            TemplateSpan
+                                              Identifier: 'importedPath'
+                                              TemplateTail
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' tsconfig'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        CallExpression
+                                          Identifier: ' jsonToReadableText'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' compilerOptions'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  Identifier: ' forceConsistentCasingInFileNames'
+                                                  TrueKeyword
+                              ReturnStatement
+                                ObjectLiteralExpression
+                                  ShorthandPropertyAssignment
+                                    Identifier: ' moduleA'
+                                  ShorthandPropertyAssignment
+                                    Identifier: ' symlinkA'
+                                  ShorthandPropertyAssignment
+                                    Identifier: ' moduleB'
+                                  ShorthandPropertyAssignment
+                                    Identifier: ' tsconfig'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyFileSymlink'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyFileSymlink'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyFileSymlink'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyFileSymlink'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyFileSymlink'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                  FunctionDeclaration
+                    Identifier: ' verifyDirSymlink'
+                    Parameter
+                      Identifier: 'subScenario'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' diskPath'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' targetPath'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' importedPath'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifySymlink'
+                          Identifier: 'subScenario'
+                          NoSubstitutionTemplateLiteral
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' moduleA'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            Identifier: 'diskPath'
+                                            TemplateTail
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        TaggedTemplateExpression
+                                          Identifier: ' dedent'
+                                          NoSubstitutionTemplateLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' symlinkA'
+                                    TypeReference
+                                      Identifier: ' SymLink'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    symLink'
+                                        Identifier: ' targetPath'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' moduleB'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        TaggedTemplateExpression
+                                          Identifier: ' dedent'
+                                          TemplateExpression
+                                            TemplateHead
+                                            TemplateSpan
+                                              Identifier: 'importedPath'
+                                              TemplateTail
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' tsconfig'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    // Use outFile because otherwise the real and linked files will have the same output path
+                    content'
+                                        CallExpression
+                                          Identifier: ' jsonToReadableText'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' compilerOptions'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  Identifier: ' forceConsistentCasingInFileNames'
+                                                  TrueKeyword
+                                                PropertyAssignment
+                                                  Identifier: ' outFile'
+                                                  StringLiteral
+                                                PropertyAssignment
+                                                  Identifier: ' module'
+                                                  StringLiteral
+                              ReturnStatement
+                                ObjectLiteralExpression
+                                  ShorthandPropertyAssignment
+                                    Identifier: ' moduleA'
+                                  ShorthandPropertyAssignment
+                                    Identifier: ' symlinkA'
+                                  ShorthandPropertyAssignment
+                                    Identifier: ' moduleB'
+                                  ShorthandPropertyAssignment
+                                    Identifier: ' tsconfig'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyDirSymlink'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyDirSymlink'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyDirSymlink'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyDirSymlink'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyDirSymlink'
+                      StringLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+                      NoSubstitutionTemplateLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          Identifier: ' getSysForMultipleErrorsForceConsistentCasingInFileNames'
+                          TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' session'
+                        NewExpression
+                          Identifier: ' TestSession'
+                          Identifier: 'host'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' file'
+                        StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' fileText'
+                        NonNullExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' host'
+                              Identifier: 'readFile'
+                            Identifier: 'file'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        openFilesForSession'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          ShorthandPropertyAssignment
+                            Identifier: ' file'
+                          PropertyAssignment
+                            Identifier: ' projectRootPath'
+                            StringLiteral
+                      Identifier: ' session'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: ' session'
+                        PropertyAssignment
+                          Identifier: ' files'
+                          ArrayLiteralExpression
+                            Identifier: 'file'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Update file without import but dont get errors:
+        updateFile'
+                      BinaryExpression
+                        Identifier: 'fileText'
+                        PlusToken
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        goToDef'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Update file without import and get errors:
+        updateFile'
+                      BinaryExpression
+                        Identifier: 'fileText'
+                        PlusToken
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: ' session'
+                        PropertyAssignment
+                          Identifier: ' files'
+                          ArrayLiteralExpression
+                            Identifier: 'file'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Remove one import, dont get errors
+        updateFile'
+                      TaggedTemplateExpression
+                        Identifier: 'dedent'
+                        NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        goToDef'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // Remove import, get errors
+        updateFile'
+                      TaggedTemplateExpression
+                        Identifier: 'dedent'
+                        NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyGetErrRequest'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: ' session'
+                        PropertyAssignment
+                          Identifier: ' files'
+                          ArrayLiteralExpression
+                            Identifier: 'file'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+                  FunctionDeclaration
+                    Identifier: ' updateFile'
+                    Parameter
+                      Identifier: 'newText'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'UpdateOpenRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'CommandTypes'
+                                Identifier: 'UpdateOpen'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    changedFiles'
+                                  ArrayLiteralExpression
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                        fileName'
+                                        Identifier: ' file'
+                                      PropertyAssignment
+                                        Identifier: '
+                        textChanges'
+                                        ArrayLiteralExpression
+                                          ObjectLiteralExpression
+                                            ShorthandPropertyAssignment
+                                              Identifier: '
+                            newText'
+                                            SpreadAssignment
+                                              CallExpression
+                                                Identifier: 'protocolTextSpanFromSubstring'
+                                                Identifier: '
+                                fileText'
+                                                Identifier: '
+                                fileText'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+            fileText'
+                          EqualsToken
+                          Identifier: ' newText'
+                  FunctionDeclaration
+                    Identifier: ' goToDef'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'DefinitionRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'CommandTypes'
+                                Identifier: 'Definition'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              CallExpression
+                                Identifier: ' protocolFileLocationFromSubstring'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' path'
+                                    Identifier: ' file'
+                                  PropertyAssignment
+                                    Identifier: ' content'
+                                    Identifier: ' fileText'
+                                NoSubstitutionTemplateLiteral

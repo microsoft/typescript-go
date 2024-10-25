@@ -1,0 +1,835 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    NamedSourceText'
+        ImportSpecifier
+          Identifier: '
+    newProgram'
+        ImportSpecifier
+          Identifier: '
+    ProgramWithSourceTexts'
+        ImportSpecifier
+          Identifier: '
+    SourceText'
+        ImportSpecifier
+          Identifier: '
+    updateProgram'
+        ImportSpecifier
+          Identifier: '
+    updateProgramText'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' files'
+                        ArrayType
+                          TypeReference
+                            Identifier: ' NamedSourceText'
+                        ArrayLiteralExpression
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' text'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' SourceText'
+                                  Identifier: 'New'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' text'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' SourceText'
+                                  Identifier: 'New'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' text'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' SourceText'
+                                  Identifier: 'New'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' program'
+                        CallExpression
+                          Identifier: ' newProgram'
+                          Identifier: 'files'
+                          ArrayLiteralExpression
+                            StringLiteral
+                          ObjectLiteralExpression
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' assertChanges'
+                        CallExpression
+                          Identifier: ' makeAssertChanges'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Identifier: ' program'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+        program'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' updateProgramFile'
+                        Identifier: 'program'
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+        program'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' updateProgramFile'
+                        Identifier: 'program'
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+        program'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' updateProgramFile'
+                        Identifier: 'program'
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' files'
+                        ArrayType
+                          TypeReference
+                            Identifier: ' NamedSourceText'
+                        ArrayLiteralExpression
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' text'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' SourceText'
+                                  Identifier: 'New'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' text'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' SourceText'
+                                  Identifier: 'New'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' program'
+                        CallExpression
+                          Identifier: ' newProgram'
+                          Identifier: 'files'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                          ObjectLiteralExpression
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' assertChanges'
+                        CallExpression
+                          Identifier: ' makeAssertChanges'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Identifier: ' program'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+        program'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' updateProgramFile'
+                        Identifier: 'program'
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+        program'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' updateProgramFile'
+                        Identifier: 'program'
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' files'
+                        ArrayType
+                          TypeReference
+                            Identifier: ' NamedSourceText'
+                        ArrayLiteralExpression
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' text'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' SourceText'
+                                  Identifier: 'New'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' text'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' SourceText'
+                                  Identifier: 'New'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' text'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' SourceText'
+                                  Identifier: 'New'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' text'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' SourceText'
+                                  Identifier: 'New'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' name'
+                              StringLiteral
+                            PropertyAssignment
+                              Identifier: ' text'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' SourceText'
+                                  Identifier: 'New'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' program'
+                        CallExpression
+                          Identifier: ' newProgram'
+                          Identifier: 'files'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                          ObjectLiteralExpression
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' assertChanges'
+                        CallExpression
+                          Identifier: ' makeAssertChangesWithCancellationToken'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Identifier: ' program'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        // No cancellation
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+        // cancel when emitting a.ts
+        program'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' updateProgramFile'
+                        Identifier: 'program'
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                      NumericLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        // Change d.ts and verify previously pending a.ts is emitted as well
+        program'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' updateProgramFile'
+                        Identifier: 'program'
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+        // Cancel when emitting b.js
+        program'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' updateProgramFile'
+                        Identifier: 'program'
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        program'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' updateProgramFile'
+                        Identifier: 'program'
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                      NumericLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        // Change e.ts and verify previously b.js as well as a.js get emitted again since previous change was consumed completely but not d.ts
+        program'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' updateProgramFile'
+                        Identifier: 'program'
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        assertChanges'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+  FunctionDeclaration
+    Identifier: ' makeAssertChanges'
+    Parameter
+      Identifier: 'getProgram'
+      FunctionType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'Program'
+    FunctionType
+      Parameter
+        Identifier: 'fileNames'
+        TypeOperator
+          ArrayType
+            StringKeyword
+      VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'BuilderProgramHost'
+            ObjectLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' builderProgram'
+            UnionType
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+              UndefinedKeyword
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' fileNames'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' program'
+                  CallExpression
+                    Identifier: ' getProgram'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        builderProgram'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'createEmitAndSemanticDiagnosticsBuilderProgram'
+                  Identifier: 'program'
+                  Identifier: ' host'
+                  Identifier: ' builderProgram'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' outputFileNames'
+                  ArrayType
+                    StringKeyword
+                  ArrayLiteralExpression
+            WhileStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'builderProgram'
+                  Identifier: 'emitNextAffectedFile'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'fileName'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' outputFileNames'
+                      Identifier: 'push'
+                    Identifier: 'fileName'
+              Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        assert'
+                  Identifier: 'deepEqual'
+                Identifier: 'outputFileNames'
+                Identifier: ' fileNames'
+  FunctionDeclaration
+    Identifier: ' makeAssertChangesWithCancellationToken'
+    Parameter
+      Identifier: 'getProgram'
+      FunctionType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'Program'
+    FunctionType
+      Parameter
+        Identifier: 'fileNames'
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' cancelAfterEmitLength'
+        QuestionToken
+        NumberKeyword
+      VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'BuilderProgramHost'
+            ObjectLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' builderProgram'
+            UnionType
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cancel'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cancellationToken'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'CancellationToken'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        isCancellationRequested'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' cancel'
+              PropertyAssignment
+                Identifier: '
+        throwIfCancellationRequested'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    IfStatement
+                      Identifier: 'cancel'
+                      Block
+                        ThrowStatement
+                          NewExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'OperationCanceledException'
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'fileNames'
+          Parameter
+            Identifier: ' cancelAfterEmitLength'
+            QuestionToken
+            NumberKeyword
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        cancel'
+                EqualsToken
+                FalseKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' operationWasCancelled'
+                  FalseKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' program'
+                  CallExpression
+                    Identifier: ' getProgram'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        builderProgram'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'createEmitAndSemanticDiagnosticsBuilderProgram'
+                  Identifier: 'program'
+                  Identifier: ' host'
+                  Identifier: ' builderProgram'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' outputFileNames'
+                  ArrayType
+                    StringKeyword
+                  ArrayLiteralExpression
+            TryStatement
+              Block
+                DoStatement
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                assert'
+                          Identifier: 'isFalse'
+                        Identifier: 'cancel'
+                    IfStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'outputFileNames'
+                          Identifier: 'length'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' cancelAfterEmitLength'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                    cancel'
+                            EqualsToken
+                            TrueKeyword
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'builderProgram'
+                      Identifier: 'emitNextAffectedFile'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'fileName'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' outputFileNames'
+                          Identifier: 'push'
+                        Identifier: 'fileName'
+                    Identifier: ' cancellationToken'
+              CatchClause
+                VariableDeclaration
+                  Identifier: 'e'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            assert'
+                        Identifier: 'isFalse'
+                      Identifier: 'operationWasCancelled'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            assert'
+                      BinaryExpression
+                        Identifier: 'e'
+                        InstanceOfKeyword
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'OperationCanceledException'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' e'
+                          Identifier: 'toString'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            operationWasCancelled'
+                      EqualsToken
+                      TrueKeyword
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        assert'
+                  Identifier: 'equal'
+                Identifier: 'cancel'
+                Identifier: ' operationWasCancelled'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        assert'
+                  Identifier: 'equal'
+                Identifier: 'operationWasCancelled'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' fileNames'
+                    Identifier: 'length'
+                  GreaterThanToken
+                  NonNullExpression
+                    Identifier: ' cancelAfterEmitLength'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        assert'
+                  Identifier: 'deepEqual'
+                Identifier: 'outputFileNames'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' fileNames'
+                    Identifier: 'slice'
+                  NumericLiteral
+                  Identifier: ' cancelAfterEmitLength'
+  FunctionDeclaration
+    Identifier: ' updateProgramFile'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' ProgramWithSourceTexts'
+    Parameter
+      Identifier: ' fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' fileContent'
+      StringKeyword
+    TypeReference
+      Identifier: ' ProgramWithSourceTexts'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' updateProgram'
+          Identifier: 'program'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' program'
+              Identifier: 'getRootFileNames'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' program'
+              Identifier: 'getCompilerOptions'
+          ArrowFunction
+            Parameter
+              Identifier: ' files'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        updateProgramText'
+                  Identifier: 'files'
+                  Identifier: ' fileName'
+                  Identifier: ' fileContent'

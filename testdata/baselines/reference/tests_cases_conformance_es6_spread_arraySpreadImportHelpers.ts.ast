@@ -1,0 +1,36 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        ArrayLiteralExpression
+          NumericLiteral
+          OmittedExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ArrayLiteralExpression
+          NumericLiteral
+          SpreadElement
+            Identifier: 'k'
+          NumericLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' __spreadArray'
+        Parameter
+          Identifier: 'to'
+          ArrayType
+            AnyKeyword
+        Parameter
+          Identifier: ' from'
+          ArrayType
+            AnyKeyword
+        ArrayType
+          AnyKeyword

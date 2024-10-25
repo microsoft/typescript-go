@@ -1,0 +1,32 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Module'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Interface'
+        ConstructSignature
+      ClassDeclaration
+        Identifier: ' Class'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' f'
+          Parameter
+            Identifier: 'x'
+          AnyKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' g'
+          Parameter
+            Identifier: 'x'
+            AnyKeyword
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' h'
+          Parameter
+            Identifier: 'x'
+      FunctionDeclaration
+        Identifier: ' f'
+        Parameter
+          Identifier: 'x'
+          NumberKeyword

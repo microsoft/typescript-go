@@ -1,0 +1,30 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Validation'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lettersRegexp'
+            RegularExpressionLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' numberRegexp'
+            RegularExpressionLiteral
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' LettersOnlyValidator'
+        MethodDeclaration
+          Identifier: '
+        isAcceptable'
+          Parameter
+            Identifier: 's2'
+            StringKeyword
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' lettersRegexp'
+                  Identifier: 'test'
+                Identifier: 's2'

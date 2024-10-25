@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' a'
+      Identifier: ' x'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' a'
+      Identifier: ' x'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              StringLiteral

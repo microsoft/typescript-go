@@ -1,0 +1,30 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' Task'
+  FunctionDeclaration
+    Identifier: ' task'
+    TypeReference
+      Identifier: ' Task'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' Task'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' build'
+        CallExpression
+          Identifier: ' task'
+  ExportAssignment
+    Identifier: ' build'

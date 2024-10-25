@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// class A<T> {
+////     a: number;
+////     b: string;
+////     constructor(public x: T) {}
+//// }
+//// [|class B {
+////     constructor() {
+////         this.x = new A(3);
+////     }
+//// }|]
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      NoSubstitutionTemplateLiteral
+      FalseKeyword
+      Identifier: ' /*errorCode*/ undefined'
+      NumericLiteral

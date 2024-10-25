@@ -1,0 +1,76 @@
+SourceFile
+  Block
+    ModuleDeclaration
+      Identifier: ' M'
+      ModuleBlock
+    ModuleDeclaration
+      ExportKeyword
+      Identifier: ' N'
+      ModuleBlock
+        InterfaceDeclaration
+          ExportKeyword
+          Identifier: ' I'
+    ModuleDeclaration
+      Identifier: ' Q'
+      ModuleDeclaration
+        Identifier: 'K'
+        ModuleBlock
+    ModuleDeclaration
+      DeclareKeyword
+      StringLiteral
+      ModuleBlock
+    ExportAssignment
+      Identifier: ' M'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' v'
+    FunctionDeclaration
+      Identifier: ' foo'
+      Block
+    ExportDeclaration
+      StringLiteral
+    ExportDeclaration
+      NamedExports
+        ExportSpecifier
+          Identifier: ' foo'
+    ExportDeclaration
+      NamedExports
+        ExportSpecifier
+          Identifier: ' baz'
+          Identifier: ' b'
+      StringLiteral
+    ExportAssignment
+      Identifier: ' v'
+    ClassDeclaration
+      ExportKeyword
+      DefaultKeyword
+      Identifier: ' C'
+    FunctionDeclaration
+      ExportKeyword
+      Identifier: ' bee'
+      Block
+    ImportEqualsDeclaration
+      Identifier: ' I'
+      Identifier: ' M'
+    ImportEqualsDeclaration
+      Identifier: ' I2'
+      ExternalModuleReference
+        StringLiteral
+    ImportDeclaration
+      ImportClause
+        NamespaceImport
+          Identifier: ' Foo'
+      StringLiteral
+    ImportDeclaration
+      ImportClause
+        Identifier: ' bar'
+      StringLiteral
+    ImportDeclaration
+      ImportClause
+        NamedImports
+          ImportSpecifier
+            Identifier: ' baz'
+      StringLiteral
+    ImportDeclaration
+      StringLiteral

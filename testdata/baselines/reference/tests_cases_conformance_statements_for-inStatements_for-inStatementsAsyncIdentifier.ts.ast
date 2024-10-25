@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' async'
+  ForInStatement
+    Identifier: 'async'
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' a'
+        NumericLiteral
+      PropertyAssignment
+        Identifier: ' b'
+        NumericLiteral
+    Block

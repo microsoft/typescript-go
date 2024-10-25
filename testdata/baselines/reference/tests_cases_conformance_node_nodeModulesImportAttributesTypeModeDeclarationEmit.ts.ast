@@ -1,0 +1,86 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ImportInterface'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RequireInterface'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' LocalInterface'
+    IntersectionType
+      ImportType
+        LiteralType
+          StringLiteral
+        ImportAttributes
+          ImportAttribute
+            StringLiteral
+            StringLiteral
+        Identifier: 'RequireInterface'
+      ImportType
+        LiteralType
+          StringLiteral
+        ImportAttributes
+          ImportAttribute
+            StringLiteral
+            StringLiteral
+        Identifier: 'ImportInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+                ImportAttribute
+                  StringLiteral
+                  StringLiteral
+              Identifier: 'RequireInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+                ImportAttribute
+                  StringLiteral
+                  StringLiteral
+              Identifier: 'ImportInterface'

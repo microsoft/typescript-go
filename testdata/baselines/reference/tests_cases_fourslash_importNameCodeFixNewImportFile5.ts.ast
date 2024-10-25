@@ -1,0 +1,9 @@
+SourceFile
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'verify'
+          Identifier: 'importFixAtPosition'
+        ArrayLiteralExpression
+          NoSubstitutionTemplateLiteral

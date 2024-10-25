@@ -1,0 +1,78 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _sym'
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _str'
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' F'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+F'
+        Identifier: '_sym'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+F'
+        Identifier: '_str'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'F'
+      EqualsToken
+      Identifier: ' F'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'S'
+      EqualsToken
+      Identifier: ' _sym'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ElementAccessExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'F'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        ElementAccessExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'F'
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'S'

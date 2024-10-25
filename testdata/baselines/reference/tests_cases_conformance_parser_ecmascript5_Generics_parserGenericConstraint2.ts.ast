@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'T'

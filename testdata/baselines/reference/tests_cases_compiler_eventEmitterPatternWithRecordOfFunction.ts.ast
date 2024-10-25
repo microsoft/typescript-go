@@ -1,0 +1,72 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    MethodSignature
+      Identifier: '
+    emit'
+      Parameter
+        Identifier: 'event'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' Args'
+    TypeParameter
+      Identifier: 'F'
+    ConditionalType
+      TypeReference
+        Identifier: ' F'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          InferType
+            TypeParameter
+              Identifier: ' A'
+        VoidKeyword
+      TypeReference
+        Identifier: ' A'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' EventMap'
+    TypeReference
+      Identifier: ' Record'
+      StringKeyword
+      TypeReference
+        Identifier: ' Function'
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'M'
+      TypeReference
+        Identifier: ' EventMap'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodSignature
+      Identifier: '
+    emit'
+      TypeParameter
+        Identifier: 'Event'
+        TypeOperator
+          TypeReference
+            Identifier: ' M'
+      Parameter
+        Identifier: 'event'
+        TypeReference
+          Identifier: ' Event'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' Args'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'M'
+            TypeReference
+              Identifier: 'Event'
+      BooleanKeyword

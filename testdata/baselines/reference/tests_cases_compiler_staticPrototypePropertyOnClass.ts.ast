@@ -1,0 +1,46 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c1'
+  ClassDeclaration
+    Identifier: ' c2'
+    TypeParameter
+      Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' c3'
+    Constructor
+      Block
+  ClassDeclaration
+    Identifier: ' c4'
+    Constructor
+      Parameter
+        Identifier: 'param'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'param'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'param'
+        AnyKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        Identifier: ' c1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        Identifier: ' c2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        Identifier: ' c3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        Identifier: ' c4'

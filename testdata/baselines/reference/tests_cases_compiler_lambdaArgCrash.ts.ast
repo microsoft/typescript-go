@@ -1,0 +1,60 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Event'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _listeners'
+      ArrayType
+        AnyKeyword
+      ArrayLiteralExpression
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_listeners'
+            EqualsToken
+            ArrayLiteralExpression
+    MethodDeclaration
+      Identifier: '
+
+	 add'
+      Parameter
+        Identifier: 'listener'
+        FunctionType
+          AnyKeyword
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: '_listeners'
+              Identifier: 'push'
+            Identifier: 'listener'
+  ClassDeclaration
+    Identifier: ' ItemSetEvent'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Event'
+    MethodDeclaration
+      Identifier: '
+
+	 add'
+      Parameter
+        Identifier: 'listener'
+        FunctionType
+          Parameter
+            Identifier: 'items'
+            TypeReference
+              Identifier: ' ItemSet'
+          VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'add'
+            Identifier: 'listener'

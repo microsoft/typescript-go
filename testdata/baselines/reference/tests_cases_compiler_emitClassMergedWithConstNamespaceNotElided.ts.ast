@@ -1,0 +1,48 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Clone'
+    ModuleBlock
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' LOCAL'
+        EnumMember
+          Identifier: '
+        AUTO'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        LOCAL'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        NO_LOCAL'
+          NumericLiteral
+        EnumMember
+          Identifier: '
+        NO_LINKS'
+          NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Clone'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' clone'
+      Parameter
+        Identifier: 'url'
+        StringKeyword
+      VoidKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Clone'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Clone'
+        Identifier: 'clone'
+      StringLiteral

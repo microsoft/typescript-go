@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '/// <reference path="fourslash.ts" />
+
+////"" as /**/const;
+
+verify'
+          Identifier: 'not'
+        Identifier: 'quickInfoExists'

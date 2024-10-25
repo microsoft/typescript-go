@@ -1,0 +1,29 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' BB'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' Elephant'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+            PropertyDeclaration
+              Identifier: '
+            x'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' BB'
+                  Identifier: 'Elephant'
+                Identifier: 'X'

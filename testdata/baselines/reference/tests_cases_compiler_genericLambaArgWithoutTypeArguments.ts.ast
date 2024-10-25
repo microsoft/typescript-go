@@ -1,0 +1,32 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+   x'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+    Block
+      ReturnStatement
+        NullKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      ArrowFunction
+        Parameter
+          Identifier: 'arg'
+          TypeReference
+            Identifier: ' Foo'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' arg'
+              Identifier: 'x'

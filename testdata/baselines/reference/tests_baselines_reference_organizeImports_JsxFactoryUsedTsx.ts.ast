@@ -1,0 +1,25 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' React'
+        ImportSpecifier
+          Identifier: ' Other'
+    StringLiteral
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: 'div'
+      RegularExpressionLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' React'
+    StringLiteral
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: 'div'
+      RegularExpressionLiteral

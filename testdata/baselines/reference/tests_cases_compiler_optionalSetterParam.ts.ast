@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'param'
+        QuestionToken
+        AnyKeyword
+      Block

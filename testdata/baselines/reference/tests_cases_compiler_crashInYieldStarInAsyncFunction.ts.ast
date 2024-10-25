@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'asyncIterator'
+            Block
+              ReturnStatement
+                ObjectLiteralExpression
+                  MethodDeclaration
+                    Identifier: '
+            next'
+                    Block
+                      ReturnStatement
+                        ObjectLiteralExpression
+                          MethodDeclaration
+                            Identifier: ' then'
+                            Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' g'
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          Identifier: ' obj'

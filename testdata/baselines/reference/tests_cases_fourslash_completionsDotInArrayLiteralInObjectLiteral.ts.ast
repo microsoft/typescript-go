@@ -1,0 +1,54 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0'
+          BindingElement
+            Identifier: ' r1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSyntacticDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' code'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' message'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' range'
+            Identifier: ' r0'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' code'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' message'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' range'
+            Identifier: ' r1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'

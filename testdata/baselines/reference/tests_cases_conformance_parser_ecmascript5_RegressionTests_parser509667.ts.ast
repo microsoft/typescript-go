@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+   f1'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: ''
+          ExpressionStatement
+            Identifier: ''
+    MethodDeclaration
+      Identifier: '
+
+   f2'
+      Block
+    MethodDeclaration
+      Identifier: '
+
+   f3'
+      Block

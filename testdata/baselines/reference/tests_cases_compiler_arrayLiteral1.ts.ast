@@ -1,0 +1,8 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v30'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral

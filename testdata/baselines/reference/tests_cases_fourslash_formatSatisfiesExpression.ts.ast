@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////type Foo = "a" | "b" | "c";
+////const foo1 = ["a"] satisfies Foo[];
+////const foo2 = ["a"]satisfies Foo[];
+////const foo3 = ["a"]  satisfies Foo[];
+
+format'
+        Identifier: 'document'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'currentFileContentIs'
+      NoSubstitutionTemplateLiteral

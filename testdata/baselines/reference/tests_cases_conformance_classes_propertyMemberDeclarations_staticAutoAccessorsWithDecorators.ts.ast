@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Decorator
+        ParenthesizedExpression
+          ArrowFunction
+            Parameter
+              Identifier: 't'
+            Parameter
+              Identifier: ' c'
+            EqualsGreaterThanToken
+            Block
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' x'
+      NumericLiteral
+    PropertyDeclaration
+      Decorator
+        ParenthesizedExpression
+          ArrowFunction
+            Parameter
+              Identifier: 't'
+            Parameter
+              Identifier: ' c'
+            EqualsGreaterThanToken
+            Block
+      AccessorKeyword
+      Identifier: ' y'
+      NumericLiteral

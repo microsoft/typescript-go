@@ -1,0 +1,93 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' x2'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' x4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4a'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' x4a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        NumericLiteral
+  EnumDeclaration
+    Identifier: ' x5'
+    EnumMember
+      Identifier: ' One'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' x6'
+    ModuleBlock
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6a'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' x6a'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6b'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' x6b'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral

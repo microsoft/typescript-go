@@ -1,0 +1,49 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Parser'
+    MethodDeclaration
+      Identifier: '
+    /*[#|*/f'
+      TypeReference
+        Identifier: 'Promise'
+        VoidKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                Identifier: ' fetch'
+                StringLiteral
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'result'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                Identifier: 'result'
+  ClassDeclaration
+    Identifier: ' Parser'
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' f'
+      TypeReference
+        Identifier: 'Promise'
+        VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' result'
+              AwaitExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            Identifier: 'result'

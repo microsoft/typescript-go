@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyClass1'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' obj'
+      TypeReference
+        Identifier: ' MyClass1'
+        StringKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          ArrowFunction
+            EqualsGreaterThanToken
+            ThisKeyword

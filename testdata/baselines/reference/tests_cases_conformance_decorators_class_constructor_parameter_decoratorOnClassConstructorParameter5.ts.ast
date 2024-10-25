@@ -1,0 +1,35 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IFoo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' IFoo'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' BulkEditPreviewProvider'
+    PropertyDeclaration
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' Schema'
+      StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' emptyPreview'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' scheme'
+          PropertyAccessExpression
+            Identifier: ' BulkEditPreviewProvider'
+            Identifier: 'Schema'
+    Constructor
+      Parameter
+        Decorator
+          Identifier: 'IFoo'
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' _modeService'
+        TypeReference
+          Identifier: ' IFoo'
+      Block

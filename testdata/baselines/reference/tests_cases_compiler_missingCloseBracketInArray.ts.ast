@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' alphas'
+        ArrayType
+          StringKeyword
+        BinaryExpression
+          Identifier: ' alphas'
+          EqualsToken
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral

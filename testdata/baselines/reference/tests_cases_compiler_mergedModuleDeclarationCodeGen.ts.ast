@@ -1,0 +1,30 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' X'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Y'
+        ModuleBlock
+          ClassDeclaration
+            Identifier: ' A'
+            Constructor
+              Parameter
+                Identifier: 'Y'
+                AnyKeyword
+              Block
+                ExpressionStatement
+                  NewExpression
+                    Identifier: ' B'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' X'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Y'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' B'

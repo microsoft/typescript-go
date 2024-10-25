@@ -1,0 +1,317 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    UndefinedKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    AnyKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    UnionType
+      StringKeyword
+      VoidKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    UnknownKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f10'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+  FunctionDeclaration
+    Identifier: ' f11'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f12'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            AnyKeyword
+  FunctionDeclaration
+    Identifier: ' f13'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          AsExpression
+            Identifier: ' undefined'
+            UnknownKeyword
+  FunctionDeclaration
+    Identifier: ' f14'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f15'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          NumericLiteral
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f16'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    Block
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+          NumericLiteral
+      IfStatement
+        Identifier: 'b'
+        ReturnStatement
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' HistoryItem'
+    PropertyDeclaration
+      Identifier: '
+  input'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    location'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+      uri'
+              StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Thenable'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+  then'
+      TypeParameter
+        Identifier: 'TResult'
+      Parameter
+        Identifier: '
+    onfulfilled'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          UnionType
+            TypeReference
+              Identifier: ' TResult'
+            TypeReference
+              Identifier: ' Thenable'
+              TypeReference
+                Identifier: 'TResult'
+      Parameter
+        Identifier: '
+    onrejected'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'reason'
+            AnyKeyword
+          UnionType
+            TypeReference
+              Identifier: ' TResult'
+            TypeReference
+              Identifier: ' Thenable'
+              TypeReference
+                Identifier: 'TResult'
+      TypeReference
+        Identifier: ' Thenable'
+        TypeReference
+          Identifier: 'TResult'
+    MethodSignature
+      Identifier: '
+  then'
+      TypeParameter
+        Identifier: 'TResult'
+      Parameter
+        Identifier: '
+    onfulfilled'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          UnionType
+            TypeReference
+              Identifier: ' TResult'
+            TypeReference
+              Identifier: ' Thenable'
+              TypeReference
+                Identifier: 'TResult'
+      Parameter
+        Identifier: '
+    onrejected'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'reason'
+            AnyKeyword
+          VoidKeyword
+      TypeReference
+        Identifier: ' Thenable'
+        TypeReference
+          Identifier: 'TResult'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' executeCommand'
+    TypeParameter
+      Identifier: 'T'
+      UnknownKeyword
+    Parameter
+      Identifier: '
+  command'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+      ArrayType
+        AnyKeyword
+    TypeReference
+      Identifier: ' Thenable'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' registerCommand'
+    Parameter
+      Identifier: '
+  command'
+      StringKeyword
+    Parameter
+      Identifier: '
+  callback'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        AnyKeyword
+    Parameter
+      Identifier: '
+  thisArg'
+      QuestionToken
+      AnyKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCommand'
+      StringLiteral
+      ArrowFunction
+        AsyncKeyword
+        Parameter
+          Identifier: 'item'
+        EqualsGreaterThanToken
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'item'
+              InstanceOfKeyword
+              Identifier: ' HistoryItem'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' executeCommand'
+                  StringLiteral
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' item'
+                        Identifier: 'input'
+                      Identifier: 'location'
+                    Identifier: 'uri'

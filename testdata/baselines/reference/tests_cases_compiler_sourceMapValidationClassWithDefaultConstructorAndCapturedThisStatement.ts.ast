@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Greeter'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      NumericLiteral
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' returnA'
+      ArrowFunction
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'a'

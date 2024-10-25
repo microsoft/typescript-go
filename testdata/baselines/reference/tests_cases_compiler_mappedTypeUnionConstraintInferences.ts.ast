@@ -1,0 +1,160 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Omit'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' Exclude'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' K'
+  TypeAliasDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' PartialProperties'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    IntersectionType
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'Pick'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' K'
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' K'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' doSomething_Actual'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    prop'
+          StringKeyword
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            MappedType
+              TypeParameter
+                Identifier: 'P'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' PartialProperties'
+                    TypeReference
+                      Identifier: 'T'
+                    LiteralType
+                      StringLiteral
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' PartialProperties'
+                  TypeReference
+                    Identifier: 'T'
+                  LiteralType
+                    StringLiteral
+                TypeReference
+                  Identifier: 'P'
+            AsExpression
+              NullKeyword
+              AnyKeyword
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' doSomething_Expected'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    prop'
+          StringKeyword
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' PartialProperties'
+            TypeReference
+              Identifier: 'T'
+            LiteralType
+              StringLiteral
+      IndexedAccessType
+        TypeReference
+          Identifier: ' PartialProperties'
+          TypeReference
+            Identifier: 'T'
+          LiteralType
+            StringLiteral
+        TypeReference
+          Identifier: 'P'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' doSomething_Actual'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' prop'
+              StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      ObjectLiteralExpression
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' doSomething_Expected'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' prop'
+              StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      ObjectLiteralExpression

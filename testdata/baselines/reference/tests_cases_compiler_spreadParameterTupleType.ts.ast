@@ -1,0 +1,85 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' A'
+        TupleType
+          NamedTupleMember
+            Identifier: 's'
+            StringKeyword
+      TypeAliasDeclaration
+        Identifier: ' C'
+        TupleType
+          RestType
+            TypeReference
+              Identifier: 'A'
+          RestType
+            TypeReference
+              Identifier: 'A'
+      ReturnStatement
+        FunctionExpression
+          Identifier: ' fn'
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TypeReference
+              Identifier: ' C'
+          Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' A'
+        TupleType
+          NamedTupleMember
+            Identifier: 'a'
+            StringKeyword
+      TypeAliasDeclaration
+        Identifier: ' B'
+        TupleType
+          NamedTupleMember
+            Identifier: 'b'
+            StringKeyword
+      TypeAliasDeclaration
+        Identifier: ' C'
+        TupleType
+          NamedTupleMember
+            Identifier: 'c'
+            StringKeyword
+      TypeAliasDeclaration
+        Identifier: ' D'
+        TupleType
+          RestType
+            TypeReference
+              Identifier: 'A'
+          RestType
+            TypeReference
+              Identifier: 'A'
+          RestType
+            TypeReference
+              Identifier: 'B'
+          RestType
+            TypeReference
+              Identifier: 'A'
+          RestType
+            TypeReference
+              Identifier: 'B'
+          RestType
+            TypeReference
+              Identifier: 'B'
+          RestType
+            TypeReference
+              Identifier: 'A'
+          RestType
+            TypeReference
+              Identifier: 'C'
+      ReturnStatement
+        FunctionExpression
+          Identifier: ' fn'
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TypeReference
+              Identifier: ' D'
+          Block

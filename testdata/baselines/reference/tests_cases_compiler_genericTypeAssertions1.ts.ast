@@ -1,0 +1,46 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NewExpression
+          Identifier: ' A'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        TypeReference
+          Identifier: ' A'
+          StringKeyword
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'A'
+            NumberKeyword
+          NewExpression
+            Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        TypeReference
+          Identifier: ' A'
+          NumberKeyword
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'A'
+            TypeReference
+              Identifier: 'A'
+              NumberKeyword
+          Identifier: 'foo'

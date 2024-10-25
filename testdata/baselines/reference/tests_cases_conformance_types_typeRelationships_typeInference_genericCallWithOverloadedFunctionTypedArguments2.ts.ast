@@ -1,0 +1,215 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' NonGenericParameter'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeLiteral
+              CallSignature
+                Parameter
+                  Identifier: 'x'
+                  BooleanKeyword
+                BooleanKeyword
+              CallSignature
+                Parameter
+                  Identifier: 'x'
+                  StringKeyword
+                StringKeyword
+      FunctionDeclaration
+        Identifier: ' foo4'
+        Parameter
+          Identifier: 'cb'
+          TypeQuery
+            Identifier: ' a'
+        Block
+          ReturnStatement
+            Identifier: ' cb'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            CallExpression
+              Identifier: ' foo4'
+              ArrowFunction
+                TypeParameter
+                  Identifier: 'T'
+                TypeParameter
+                  Identifier: ' U'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' r'
+                        TypeReference
+                          Identifier: ' U'
+                  ReturnStatement
+                    Identifier: ' r'
+  ModuleDeclaration
+    Identifier: ' GenericParameter'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo5'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'cb'
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              StringKeyword
+            CallSignature
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              TypeReference
+                Identifier: ' T'
+        Block
+          ReturnStatement
+            Identifier: ' cb'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r6'
+            CallExpression
+              Identifier: ' foo5'
+              ArrowFunction
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                EqualsGreaterThanToken
+                Identifier: ' x'
+      FunctionDeclaration
+        Identifier: ' foo6'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'cb'
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              StringKeyword
+            CallSignature
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' y'
+                QuestionToken
+                TypeReference
+                  Identifier: ' T'
+              StringKeyword
+        Block
+          ReturnStatement
+            Identifier: ' cb'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r10'
+            CallExpression
+              Identifier: ' foo6'
+              ArrowFunction
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                Parameter
+                  Identifier: ' y'
+                  TypeReference
+                    Identifier: ' T'
+                EqualsGreaterThanToken
+                StringLiteral
+      FunctionDeclaration
+        Identifier: ' foo7'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: 'T'
+        Parameter
+          Identifier: ' cb'
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              StringKeyword
+            CallSignature
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' y'
+                QuestionToken
+                TypeReference
+                  Identifier: ' T'
+              StringKeyword
+        Block
+          ReturnStatement
+            Identifier: ' cb'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r13'
+            CallExpression
+              Identifier: ' foo7'
+              NumericLiteral
+              ArrowFunction
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                EqualsGreaterThanToken
+                Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeLiteral
+              CallSignature
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                NumberKeyword
+              CallSignature
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  NumberKeyword
+                TypeReference
+                  Identifier: ' T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r14'
+            CallExpression
+              Identifier: ' foo7'
+              NumericLiteral
+              Identifier: ' a'

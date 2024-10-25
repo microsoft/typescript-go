@@ -1,0 +1,715 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    append'
+        ImportSpecifier
+          Identifier: '
+    AsExpression'
+        ImportSpecifier
+          Identifier: '
+    CallSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    CodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    ConstructSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticMessage'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    FunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    GetAccessorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    IndexSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isJSDocNullableType'
+        ImportSpecifier
+          Identifier: '
+    MappedTypeNode'
+        ImportSpecifier
+          Identifier: '
+    MethodDeclaration'
+        ImportSpecifier
+          Identifier: '
+    MethodSignature'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    ParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    PropertyDeclaration'
+        ImportSpecifier
+          Identifier: '
+    PropertySignature'
+        ImportSpecifier
+          Identifier: '
+    SetAccessorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    Type'
+        ImportSpecifier
+          Identifier: '
+    TypeAliasDeclaration'
+        ImportSpecifier
+          Identifier: '
+    TypeAssertion'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+        ImportSpecifier
+          Identifier: '
+    TypeFlags'
+        ImportSpecifier
+          Identifier: '
+    TypeNode'
+        ImportSpecifier
+          Identifier: '
+    VariableDeclaration'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixIdPlain'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixIdNullable'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'JSDoc_types_can_only_be_used_inside_documentation_comments'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: '_0_at_the_end_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: '_0_at_the_start_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' checker'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'program'
+                      Identifier: 'getTypeChecker'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' info'
+                  CallExpression
+                    Identifier: ' getInfo'
+                    Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'span'
+                      Identifier: 'start'
+                    Identifier: ' checker'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'info'
+              ReturnStatement
+                Identifier: ' undefined'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' typeNode'
+                    BindingElement
+                      Identifier: ' type'
+                  Identifier: ' info'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' original'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' typeNode'
+                      Identifier: 'getText'
+                    Identifier: 'sourceFile'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' actions'
+                  ArrayLiteralExpression
+                    CallExpression
+                      Identifier: 'fix'
+                      Identifier: 'type'
+                      Identifier: ' fixIdPlain'
+                      PropertyAccessExpression
+                        Identifier: ' Diagnostics'
+                        Identifier: 'Change_all_jsdoc_style_types_to_TypeScript'
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'typeNode'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'JSDocNullableType'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            // for nullable types, suggest the flow-compatible `T | null | undefined`
+            // in addition to the jsdoc/closure-compatible `T | null`
+            actions'
+                      Identifier: 'push'
+                    CallExpression
+                      Identifier: 'fix'
+                      Identifier: 'type'
+                      Identifier: ' fixIdNullable'
+                      PropertyAccessExpression
+                        Identifier: ' Diagnostics'
+                        Identifier: 'Change_all_jsdoc_style_types_to_TypeScript_and_add_undefined_to_nullable_types'
+            ReturnStatement
+              Identifier: ' actions'
+            FunctionDeclaration
+              Identifier: ' fix'
+              Parameter
+                Identifier: 'type'
+                TypeReference
+                  Identifier: ' Type'
+              Parameter
+                Identifier: ' fixId'
+                StringKeyword
+              Parameter
+                Identifier: ' fixAllDescription'
+                TypeReference
+                  Identifier: ' DiagnosticMessage'
+              TypeReference
+                Identifier: ' CodeFixAction'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' changes'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' textChanges'
+                            Identifier: 'ChangeTracker'
+                          Identifier: 'with'
+                        Identifier: 'context'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' t'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            Identifier: ' doChange'
+                            Identifier: 't'
+                            Identifier: ' sourceFile'
+                            Identifier: ' typeNode'
+                            Identifier: ' type'
+                            Identifier: ' checker'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' createCodeFixAction'
+                    StringLiteral
+                    Identifier: ' changes'
+                    ArrayLiteralExpression
+                      PropertyAccessExpression
+                        Identifier: 'Diagnostics'
+                        Identifier: 'Change_0_to_1'
+                      Identifier: ' original'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' checker'
+                          Identifier: 'typeToString'
+                        Identifier: 'type'
+                    Identifier: ' fixId'
+                    Identifier: ' fixAllDescription'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixIdPlain'
+            Identifier: ' fixIdNullable'
+        MethodDeclaration
+          Identifier: '
+    getAllCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' fixId'
+                    BindingElement
+                      Identifier: ' program'
+                    BindingElement
+                      Identifier: ' sourceFile'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' checker'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' program'
+                      Identifier: 'getTypeChecker'
+            ReturnStatement
+              CallExpression
+                Identifier: ' codeFixAll'
+                Identifier: 'context'
+                Identifier: ' errorCodes'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'changes'
+                  Parameter
+                    Identifier: ' err'
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' info'
+                          CallExpression
+                            Identifier: ' getInfo'
+                            PropertyAccessExpression
+                              Identifier: 'err'
+                              Identifier: 'file'
+                            PropertyAccessExpression
+                              Identifier: ' err'
+                              Identifier: 'start'
+                            Identifier: ' checker'
+                    IfStatement
+                      PrefixUnaryExpression
+                        Identifier: 'info'
+                      ReturnStatement
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          ObjectBindingPattern
+                            BindingElement
+                              Identifier: ' typeNode'
+                            BindingElement
+                              Identifier: ' type'
+                          Identifier: ' info'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' fixedType'
+                          ConditionalExpression
+                            BinaryExpression
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: ' typeNode'
+                                  Identifier: 'kind'
+                                EqualsEqualsEqualsToken
+                                PropertyAccessExpression
+                                  Identifier: ' SyntaxKind'
+                                  Identifier: 'JSDocNullableType'
+                              AmpersandAmpersandToken
+                              BinaryExpression
+                                Identifier: ' fixId'
+                                EqualsEqualsEqualsToken
+                                Identifier: ' fixIdNullable'
+                            QuestionToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' checker'
+                                Identifier: 'getNullableType'
+                              Identifier: 'type'
+                              PropertyAccessExpression
+                                Identifier: ' TypeFlags'
+                                Identifier: 'Undefined'
+                            ColonToken
+                            Identifier: ' type'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+            doChange'
+                        Identifier: 'changes'
+                        Identifier: ' sourceFile'
+                        Identifier: ' typeNode'
+                        Identifier: ' fixedType'
+                        Identifier: ' checker'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' oldTypeNode'
+      TypeReference
+        Identifier: ' TypeNode'
+    Parameter
+      Identifier: ' newType'
+      TypeReference
+        Identifier: ' Type'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          Identifier: 'sourceFile'
+          Identifier: ' oldTypeNode'
+          NonNullExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'typeToTypeNode'
+              Identifier: 'newType'
+              Identifier: ' /*enclosingDeclaration*/ oldTypeNode'
+              Identifier: ' /*flags*/ undefined'
+  FunctionDeclaration
+    Identifier: ' getInfo'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' typeNode'
+          TypeReference
+            Identifier: ' TypeNode'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' type'
+          TypeReference
+            Identifier: ' Type'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' decl'
+            CallExpression
+              Identifier: ' findAncestor'
+              CallExpression
+                Identifier: 'getTokenAtPosition'
+                Identifier: 'sourceFile'
+                Identifier: ' pos'
+              Identifier: ' isTypeContainer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeNode'
+            BinaryExpression
+              Identifier: ' decl'
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                Identifier: ' decl'
+                Identifier: 'type'
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' typeNode'
+          AmpersandAmpersandToken
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' typeNode'
+            PropertyAssignment
+              Identifier: ' type'
+              CallExpression
+                Identifier: ' getType'
+                Identifier: 'checker'
+                Identifier: ' typeNode'
+  TypeAliasDeclaration
+    Identifier: ' TypeContainer'
+    UnionType
+      TypeReference
+        Identifier: ' AsExpression'
+      TypeReference
+        Identifier: ' CallSignatureDeclaration'
+      TypeReference
+        Identifier: ' ConstructSignatureDeclaration'
+      TypeReference
+        Identifier: ' FunctionDeclaration'
+      TypeReference
+        Identifier: ' GetAccessorDeclaration'
+      TypeReference
+        Identifier: ' IndexSignatureDeclaration'
+      TypeReference
+        Identifier: ' MappedTypeNode'
+      TypeReference
+        Identifier: ' MethodDeclaration'
+      TypeReference
+        Identifier: ' MethodSignature'
+      TypeReference
+        Identifier: ' ParameterDeclaration'
+      TypeReference
+        Identifier: ' PropertyDeclaration'
+      TypeReference
+        Identifier: ' PropertySignature'
+      TypeReference
+        Identifier: ' SetAccessorDeclaration'
+      TypeReference
+        Identifier: ' TypeAliasDeclaration'
+      TypeReference
+        Identifier: ' TypeAssertion'
+      TypeReference
+        Identifier: ' VariableDeclaration'
+  FunctionDeclaration
+    Identifier: ' isTypeContainer'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TypeContainer'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'node'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'AsExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CallSignature'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ConstructSignature'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'FunctionDeclaration'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'GetAccessor'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'IndexSignature'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'MappedType'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'MethodDeclaration'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'MethodSignature'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Parameter'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'PropertyDeclaration'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'PropertySignature'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'SetAccessor'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'TypeAliasDeclaration'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'TypeAssertionExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'VariableDeclaration'
+            ReturnStatement
+              TrueKeyword
+          DefaultClause
+            ReturnStatement
+              FalseKeyword
+  FunctionDeclaration
+    Identifier: ' getType'
+    Parameter
+      Identifier: 'checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' TypeNode'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isJSDocNullableType'
+          Identifier: 'node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' type'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' checker'
+                    Identifier: 'getTypeFromTypeNode'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'type'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'type'
+                EqualsEqualsEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' checker'
+                    Identifier: 'getNeverType'
+              BarBarToken
+              BinaryExpression
+                Identifier: ' type'
+                EqualsEqualsEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' checker'
+                    Identifier: 'getVoidType'
+            Block
+              ReturnStatement
+                Identifier: ' type'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getUnionType'
+              CallExpression
+                Identifier: '
+            append'
+                ArrayLiteralExpression
+                  Identifier: 'type'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' checker'
+                      Identifier: 'getUndefinedType'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'postfix'
+                  QuestionToken
+                  Identifier: ' undefined'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' checker'
+                      Identifier: 'getNullType'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' checker'
+            Identifier: 'getTypeFromTypeNode'
+          Identifier: 'node'

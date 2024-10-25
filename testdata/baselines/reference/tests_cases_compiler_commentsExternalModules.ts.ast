@@ -1,0 +1,151 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NumberKeyword
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            Identifier: ' b'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m2'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' c'
+          EmptyStatement
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                NewExpression
+                  Identifier: ' c'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fooExport'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' foo'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+m1'
+        Identifier: 'fooExport'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myvar'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' m1'
+              Identifier: 'm2'
+            Identifier: 'c'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m4'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NumberKeyword
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            Identifier: ' b'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m2'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' c'
+          EmptyStatement
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                NewExpression
+                  Identifier: ' c'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fooExport'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' foo'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+m4'
+        Identifier: 'fooExport'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myvar2'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' m4'
+              Identifier: 'm2'
+            Identifier: 'c'
+  ImportEqualsDeclaration
+    Identifier: ' extMod'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' // trailing comment1
+extMod'
+          Identifier: 'm1'
+        Identifier: 'fooExport'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newVar'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' extMod'
+                Identifier: 'm1'
+              Identifier: 'm2'
+            Identifier: 'c'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+extMod'
+          Identifier: 'm4'
+        Identifier: 'fooExport'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newVar2'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' extMod'
+                Identifier: 'm4'
+              Identifier: 'm2'
+            Identifier: 'c'

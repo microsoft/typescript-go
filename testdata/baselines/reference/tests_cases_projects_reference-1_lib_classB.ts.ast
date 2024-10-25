@@ -1,0 +1,10 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' test'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' ClassB'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' ClassA'

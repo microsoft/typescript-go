@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+        Block
+          ReturnStatement
+            StringLiteral
+  EmptyStatement

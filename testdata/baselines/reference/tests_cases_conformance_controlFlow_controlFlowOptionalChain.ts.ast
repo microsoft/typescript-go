@@ -1,0 +1,2573 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        UnionType
+          UndefinedKeyword
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'key'
+                StringKeyword
+              AnyKeyword
+            IndexSignature
+              Parameter
+                Identifier: 'key'
+                NumberKeyword
+              AnyKeyword
+            CallSignature
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                ArrayType
+                  AnyKeyword
+              AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+o'
+      QuestionDotToken
+      BinaryExpression
+        Identifier: 'a'
+        EqualsToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+a'
+        Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumberKeyword
+  ExpressionStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+o'
+        QuestionDotToken
+        Identifier: 'x'
+      BinaryExpression
+        Identifier: 'b'
+        EqualsToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+o'
+      QuestionDotToken
+      BinaryExpression
+        Identifier: 'c'
+        EqualsToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NumberKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o'
+        QuestionDotToken
+        Identifier: 'x'
+      BinaryExpression
+        Identifier: 'd'
+        EqualsToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+d'
+        Identifier: 'toString'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        UnionType
+          UndefinedKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                AnyKeyword
+              TypePredicate
+                Identifier: ' x'
+                NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  IfStatement
+    CallExpression
+      Identifier: 'f'
+      QuestionDotToken
+      Identifier: 'x'
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      ExpressionStatement
+        Identifier: ' // number
+    f'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // (x: any) => x is number
+    f'
+          Identifier: 'x'
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      ExpressionStatement
+        Identifier: '
+    f'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+          Identifier: 'x'
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    Identifier: '
+f'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      Identifier: 'x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        UnionType
+          TypeLiteral
+            MethodSignature
+              Identifier: ' f'
+              Parameter
+                Identifier: 'x'
+                AnyKeyword
+              TypePredicate
+                Identifier: ' x'
+                NumberKeyword
+          UndefinedKeyword
+  IfStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'o2'
+        QuestionDotToken
+        Identifier: 'f'
+      Identifier: 'x'
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' // number
+    o2'
+          Identifier: 'f'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' // (x: any) => x is number
+    o2'
+          QuestionDotToken
+          Identifier: 'f'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    o2'
+            QuestionDotToken
+            Identifier: 'f'
+          Identifier: 'x'
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      ExpressionStatement
+        Identifier: '
+    o2'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o2'
+          QuestionDotToken
+          Identifier: 'f'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o2'
+          Identifier: 'f'
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    Identifier: '
+o2'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o2'
+      QuestionDotToken
+      Identifier: 'f'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o2'
+      Identifier: 'f'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: ' y'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: ' y'
+              NumberKeyword
+          UndefinedKeyword
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'o3'
+        QuestionDotToken
+        Identifier: 'x'
+      EqualsEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        Identifier: '
+    o3'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o3'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o3'
+          QuestionDotToken
+          Identifier: 'x'
+    Block
+      ExpressionStatement
+        Identifier: '
+    o3'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o3'
+          QuestionDotToken
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o3'
+          Identifier: 'x'
+  ExpressionStatement
+    Identifier: '
+o3'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o3'
+      QuestionDotToken
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o3'
+      Identifier: 'x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o4'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            QuestionToken
+            TypeLiteral
+              PropertySignature
+                Identifier: ' y'
+                BooleanKeyword
+  IfStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: 'o4'
+        Identifier: 'x'
+      QuestionDotToken
+      Identifier: 'y'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o4'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' // { y: boolean }
+    o4'
+            Identifier: 'x'
+          Identifier: 'y'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' // true
+    o4'
+            Identifier: 'x'
+          QuestionDotToken
+          Identifier: 'y'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o4'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+    o4'
+            Identifier: 'x'
+          QuestionDotToken
+          Identifier: 'y'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+    o4'
+            Identifier: 'x'
+          Identifier: 'y'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o4'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+o4'
+        Identifier: 'x'
+      QuestionDotToken
+      Identifier: 'y'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+o4'
+        Identifier: 'x'
+      Identifier: 'y'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o5'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            QuestionToken
+            TypeLiteral
+              PropertySignature
+                Identifier: ' y'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' z'
+                    QuestionToken
+                    TypeLiteral
+                      PropertySignature
+                        Identifier: ' w'
+                        BooleanKeyword
+  IfStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'o5'
+            Identifier: 'x'
+          QuestionDotToken
+          Identifier: 'y'
+        Identifier: 'z'
+      QuestionDotToken
+      Identifier: 'w'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o5'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+    o5'
+            Identifier: 'x'
+          Identifier: 'y'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    o5'
+              Identifier: 'x'
+            Identifier: 'y'
+          Identifier: 'z'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+    o5'
+                Identifier: 'x'
+              Identifier: 'y'
+            Identifier: 'z'
+          Identifier: 'w'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' // true
+    o5'
+                Identifier: 'x'
+              Identifier: 'y'
+            Identifier: 'z'
+          QuestionDotToken
+          Identifier: 'w'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' // true
+    o5'
+                Identifier: 'x'
+              QuestionDotToken
+              Identifier: 'y'
+            Identifier: 'z'
+          Identifier: 'w'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' // true
+    o5'
+                Identifier: 'x'
+              QuestionDotToken
+              Identifier: 'y'
+            Identifier: 'z'
+          QuestionDotToken
+          Identifier: 'w'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o5'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+    o5'
+            Identifier: 'x'
+          QuestionDotToken
+          Identifier: 'y'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    o5'
+              Identifier: 'x'
+            QuestionDotToken
+            Identifier: 'y'
+          Identifier: 'z'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+    o5'
+                Identifier: 'x'
+              QuestionDotToken
+              Identifier: 'y'
+            Identifier: 'z'
+          QuestionDotToken
+          Identifier: 'w'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+    o5'
+            Identifier: 'x'
+          Identifier: 'y'
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+    o5'
+                Identifier: 'x'
+              Identifier: 'y'
+            Identifier: 'z'
+          Identifier: 'w'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o5'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+o5'
+        Identifier: 'x'
+      QuestionDotToken
+      Identifier: 'y'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+o5'
+          Identifier: 'x'
+        QuestionDotToken
+        Identifier: 'y'
+      Identifier: 'z'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+o5'
+            Identifier: 'x'
+          QuestionDotToken
+          Identifier: 'y'
+        Identifier: 'z'
+      QuestionDotToken
+      Identifier: 'w'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+o5'
+        Identifier: 'x'
+      Identifier: 'y'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+o5'
+            Identifier: 'x'
+          Identifier: 'y'
+        Identifier: 'z'
+      Identifier: 'w'
+  InterfaceDeclaration
+    Identifier: ' Base'
+    MethodSignature
+      Identifier: '
+    f'
+      TypePredicate
+        ThisType
+        TypeReference
+          Identifier: ' Derived'
+  InterfaceDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o6'
+        UnionType
+          TypeReference
+            Identifier: ' Base'
+          UndefinedKeyword
+  IfStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'o6'
+        QuestionDotToken
+        Identifier: 'f'
+    Block
+      ExpressionStatement
+        Identifier: '
+    o6'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' // Derived
+    o6'
+          Identifier: 'f'
+    Block
+      ExpressionStatement
+        Identifier: '
+    o6'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o6'
+          QuestionDotToken
+          Identifier: 'f'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    o6'
+          Identifier: 'f'
+  ExpressionStatement
+    Identifier: '
+o6'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o6'
+      QuestionDotToken
+      Identifier: 'f'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o6'
+      Identifier: 'f'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' isDefined'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypePredicate
+            AssertsKeyword
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' NonNullable'
+              TypeReference
+                Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' isString'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            UnknownKeyword
+          TypePredicate
+            AssertsKeyword
+            Identifier: ' value'
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' maybeIsString'
+        UnionType
+          UndefinedKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                UnknownKeyword
+              TypePredicate
+                AssertsKeyword
+                Identifier: ' value'
+                StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' maybeNever'
+        UnionType
+          UndefinedKeyword
+          ParenthesizedType
+            FunctionType
+              NeverKeyword
+  FunctionDeclaration
+    Identifier: ' f01'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            TrueKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        isString'
+              QuestionDotToken
+              Identifier: 'x'
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            TrueKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        maybeIsString'
+              QuestionDotToken
+              Identifier: 'x'
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            TrueKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        isDefined'
+              Identifier: 'maybeIsString'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        maybeIsString'
+              QuestionDotToken
+              Identifier: 'x'
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            TrueKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        maybeNever'
+              QuestionDotToken
+          ExpressionStatement
+            Identifier: '
+        x'
+  TypeAliasDeclaration
+    Identifier: ' Thing'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' foo'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      MethodSignature
+        Identifier: ' bar'
+        NumberKeyword
+      PropertySignature
+        Identifier: ' baz'
+        ObjectKeyword
+  FunctionDeclaration
+    Identifier: ' f10'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' value'
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+  FunctionDeclaration
+    Identifier: ' f11'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        LiteralType
+          NullKeyword
+    Parameter
+      Identifier: ' value'
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+  FunctionDeclaration
+    Identifier: ' f12'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' value'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+  FunctionDeclaration
+    Identifier: ' f12a'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' value'
+      UnionType
+        NumberKeyword
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+  FunctionDeclaration
+    Identifier: ' f13'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          ExclamationEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          ExclamationEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+  FunctionDeclaration
+    Identifier: ' f13a'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          ExclamationEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          ExclamationEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+  FunctionDeclaration
+    Identifier: ' f14'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            StringLiteral
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              QuestionDotToken
+              Identifier: 'bar'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+  FunctionDeclaration
+    Identifier: ' f15'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' value'
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+  FunctionDeclaration
+    Identifier: ' f15a'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' value'
+      UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsToken
+          Identifier: ' value'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+  FunctionDeclaration
+    Identifier: ' f16'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          EqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'foo'
+          ExclamationEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+  FunctionDeclaration
+    Identifier: ' f20'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            ElementAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              StringLiteral
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' o'
+                QuestionDotToken
+                Identifier: 'bar'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'baz'
+          InstanceOfKeyword
+          Identifier: ' Error'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'baz'
+  FunctionDeclaration
+    Identifier: ' f21'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            ElementAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              StringLiteral
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            ElementAccessExpression
+              Identifier: '
+        o'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' o'
+                QuestionDotToken
+                Identifier: 'bar'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'bar'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'o'
+            QuestionDotToken
+            Identifier: 'baz'
+          InstanceOfKeyword
+          Identifier: ' Error'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'baz'
+  FunctionDeclaration
+    Identifier: ' f22'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              Identifier: 'foo'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              Identifier: 'foo'
+          EqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              Identifier: 'foo'
+          ExclamationEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+  FunctionDeclaration
+    Identifier: ' f23'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              Identifier: 'foo'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              Identifier: 'foo'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              Identifier: 'foo'
+          EqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' o'
+              QuestionDotToken
+              Identifier: 'foo'
+          ExclamationEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' assert'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    TypePredicate
+      AssertsKeyword
+      Identifier: ' x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' assertNonNull'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypePredicate
+      AssertsKeyword
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' NonNullable'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' f30'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            TrueKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        assert'
+              PropertyAccessExpression
+                Identifier: 'o'
+                QuestionDotToken
+                Identifier: 'foo'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            TrueKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        assert'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'o'
+                  QuestionDotToken
+                  Identifier: 'foo'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            TrueKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        assert'
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    Identifier: ' o'
+                    QuestionDotToken
+                    Identifier: 'foo'
+                EqualsEqualsEqualsToken
+                StringLiteral
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+      IfStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            TrueKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        assertNonNull'
+              PropertyAccessExpression
+                Identifier: 'o'
+                QuestionDotToken
+                Identifier: 'foo'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        o'
+              Identifier: 'foo'
+  FunctionDeclaration
+    Identifier: ' f40'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'o'
+          QuestionDotToken
+          Identifier: 'foo'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            o'
+                Identifier: 'foo'
+            BreakStatement
+          CaseClause
+            NumericLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            o'
+                Identifier: 'foo'
+            BreakStatement
+          CaseClause
+            Identifier: ' undefined'
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            o'
+                Identifier: 'foo'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            o'
+                Identifier: 'foo'
+            BreakStatement
+  FunctionDeclaration
+    Identifier: ' f41'
+    Parameter
+      Identifier: 'o'
+      UnionType
+        TypeReference
+          Identifier: ' Thing'
+        UndefinedKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          PropertyAccessExpression
+            Identifier: ' o'
+            QuestionDotToken
+            Identifier: 'foo'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            o'
+                Identifier: 'foo'
+            BreakStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            o'
+                Identifier: 'foo'
+            BreakStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            o'
+                Identifier: 'foo'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            o'
+                Identifier: 'foo'
+            BreakStatement
+  TypeAliasDeclaration
+    Identifier: ' Shape'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' type'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' width'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' height'
+          NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' type'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' radius'
+          NumberKeyword
+  FunctionDeclaration
+    Identifier: ' getArea'
+    Parameter
+      Identifier: 'shape'
+      QuestionToken
+      TypeReference
+        Identifier: ' Shape'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'shape'
+          QuestionDotToken
+          Identifier: 'type'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' Math'
+                  Identifier: 'PI'
+                AsteriskToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' shape'
+                    Identifier: 'radius'
+                  AsteriskAsteriskToken
+                  NumericLiteral
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' shape'
+                  Identifier: 'width'
+                AsteriskToken
+                PropertyAccessExpression
+                  Identifier: ' shape'
+                  Identifier: 'height'
+          DefaultClause
+            ReturnStatement
+              NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Feature'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  id'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+  geometry'
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    type'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+    coordinates'
+            ArrayType
+              NumberKeyword
+  FunctionDeclaration
+    Identifier: ' extractCoordinates'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' Feature'
+    ArrayType
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'f'
+              Identifier: 'geometry'
+            QuestionDotToken
+            Identifier: 'type'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+      ReturnStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' f'
+            Identifier: 'geometry'
+          Identifier: 'coordinates'
+  InterfaceDeclaration
+    Identifier: ' SomeObject'
+    PropertySignature
+      Identifier: '
+    someProperty'
+      UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lastSomeProperty'
+        UnionType
+          UnknownKeyword
+          UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' someFunction'
+    Parameter
+      Identifier: 'someOptionalObject'
+      UnionType
+        TypeReference
+          Identifier: ' SomeObject'
+        UndefinedKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'someOptionalObject'
+            QuestionDotToken
+            Identifier: 'someProperty'
+          ExclamationEqualsEqualsToken
+          Identifier: ' lastSomeProperty'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'someOptionalObject'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'someOptionalObject'
+                Identifier: 'someProperty'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '  // Error
+        lastSomeProperty'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' someOptionalObject'
+                QuestionDotToken
+                Identifier: 'someProperty'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someObject'
+        TypeReference
+          Identifier: ' SomeObject'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    someProperty'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+someFunction'
+      Identifier: 'someObject'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+someFunction'
+      Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' tag'
+              ParenthesizedType
+                UnionType
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+  WhileStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ElementAccessExpression
+          Identifier: 'arr'
+          Identifier: 'i'
+        QuestionDotToken
+        Identifier: 'tag'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          PlusEqualsToken
+          NumericLiteral
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ElementAccessExpression
+              Identifier: 'arr'
+              Identifier: 'i'
+            QuestionDotToken
+            Identifier: 'tag'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Test5'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  main'
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    childs'
+            TypeReference
+              Identifier: ' Record'
+              StringKeyword
+              TypeReference
+                Identifier: ' Test5'
+  FunctionDeclaration
+    Identifier: ' f50'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Test5'
+    Block
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' key'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' obj'
+            Identifier: 'main'
+          QuestionDotToken
+          Identifier: 'childs'
+        Block
+          IfStatement
+            BinaryExpression
+              ElementAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'obj'
+                    Identifier: 'main'
+                  Identifier: 'childs'
+                Identifier: 'key'
+              EqualsEqualsEqualsToken
+              Identifier: ' obj'
+            Block
+              ReturnStatement
+                Identifier: ' obj'
+      ReturnStatement
+        NullKeyword

@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    Constructor
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' banana'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' public'
+      Block
+  ClassDeclaration
+    Identifier: ' Bar'
+    Constructor
+      Parameter
+        Identifier: 'c'
+        TypeReference
+          Identifier: ' Bar'
+      Block

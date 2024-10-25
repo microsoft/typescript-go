@@ -1,0 +1,167 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' process'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' os'
+        AnyKeyword
+  ImportEqualsDeclaration
+    Identifier: ' ts'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' printError'
+    Parameter
+      Identifier: 'error'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Diagnostic'
+    VoidKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'error'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'error'
+                  Identifier: 'file'
+                AmpersandAmpersandToken
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' error'
+                    Identifier: 'file'
+                  Identifier: 'fileName'
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'error'
+                Identifier: 'messageText'
+              TemplateTail
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createProgram'
+    Parameter
+      Identifier: 'rootFiles'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' compilerOptionsJson'
+      StringKeyword
+    UnionType
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Program'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' config'
+              BindingElement
+                Identifier: ' error'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'parseConfigFileTextToJson'
+              StringLiteral
+              Identifier: ' compilerOptionsJson'
+      IfStatement
+        Identifier: 'error'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        printError'
+              Identifier: 'error'
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' basePath'
+            StringKeyword
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' process'
+                Identifier: 'cwd'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' settings'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'convertCompilerOptionsFromJson'
+              ElementAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'config'
+                StringLiteral
+              Identifier: ' basePath'
+      IfStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'settings'
+            Identifier: 'options'
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' err'
+            PropertyAccessExpression
+              Identifier: ' settings'
+              Identifier: 'errors'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            printError'
+                  Identifier: 'err'
+          ReturnStatement
+            Identifier: ' undefined'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'createProgram'
+          Identifier: 'rootFiles'
+          PropertyAccessExpression
+            Identifier: ' settings'
+            Identifier: 'options'

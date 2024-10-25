@@ -1,0 +1,29 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// let a = 1, b = 2, c = 3, d = 4;
+//// namespace NS {
+////     class Q {
+////         foo() {
+////             a = /*1*/b = c/*2*/ = d;
+////         }
+////     }
+//// }
+
+// Should rewrite to a = newFunc(); function() { return b = c = d; }
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'refactorAvailable'
+      StringLiteral

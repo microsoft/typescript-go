@@ -1,0 +1,18 @@
+SourceFile
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      InstanceOfKeyword
+      Identifier: ' String'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        AnyKeyword
+  IfStatement
+    BinaryExpression
+      Identifier: 'y'
+      InstanceOfKeyword
+      Identifier: ' UnknownType'
+    Block

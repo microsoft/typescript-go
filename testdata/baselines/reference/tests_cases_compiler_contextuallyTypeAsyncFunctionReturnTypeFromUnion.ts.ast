@@ -1,0 +1,163 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' StateMachine'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+  onDone'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' createMachine'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'implementations'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  services'
+          TypeReference
+            Identifier: ' Record'
+            StringKeyword
+            FunctionType
+              UnionType
+                TypeReference
+                  Identifier: ' Promise'
+                  TypeReference
+                    Identifier: 'T'
+                TypeReference
+                  Identifier: ' StateMachine'
+                  TypeReference
+                    Identifier: 'T'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+createMachine'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' count'
+          NumberKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  services'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    test'
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'reject'
+                  StringLiteral
+            MethodDeclaration
+              AsyncKeyword
+              Identifier: ' test2'
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Promise'
+                      Identifier: 'reject'
+                    StringLiteral
+  FunctionDeclaration
+    Identifier: ' fn1'
+    FunctionType
+      UnionType
+        TypeReference
+          Identifier: ' Promise'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' count'
+              NumberKeyword
+        TypeReference
+          Identifier: ' StateMachine'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' count'
+              NumberKeyword
+    Block
+      ReturnStatement
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'reject'
+            StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' load'
+    TypeReference
+      Identifier: ' Promise'
+      BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' LoadCallback'
+    FunctionType
+      UnionType
+        TypeReference
+          Identifier: ' Promise'
+          BooleanKeyword
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cb1'
+        TypeReference
+          Identifier: ' LoadCallback'
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                Identifier: ' load'
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'm'
+              EqualsGreaterThanToken
+              Identifier: ' m'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cb2'
+        TypeReference
+          Identifier: ' LoadCallback'
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' load'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cb3'
+        TypeReference
+          Identifier: ' LoadCallback'
+        ArrowFunction
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                Identifier: ' load'
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'm'
+              EqualsGreaterThanToken
+              Identifier: ' m'

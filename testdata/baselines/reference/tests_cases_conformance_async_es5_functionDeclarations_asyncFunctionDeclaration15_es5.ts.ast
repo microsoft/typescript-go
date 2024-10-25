@@ -1,0 +1,144 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Thenable'
+    MethodDeclaration
+      Identifier: ' then'
+      VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' then'
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thenable'
+        TypeReference
+          Identifier: ' Thenable'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn1'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn2'
+    TypeLiteral
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn3'
+    AnyKeyword
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn4'
+    NumberKeyword
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn5'
+    TypeReference
+      Identifier: ' PromiseLike'
+      VoidKeyword
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn6'
+    TypeReference
+      Identifier: ' Thenable'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn7'
+    Block
+      ReturnStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn8'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn9'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn10'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn11'
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn12'
+    Block
+      ReturnStatement
+        Identifier: ' obj'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn13'
+    Block
+      ReturnStatement
+        Identifier: ' thenable'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn14'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn15'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          NullKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn16'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          Identifier: ' undefined'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn17'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          Identifier: ' a'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn18'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          Identifier: ' obj'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' fn19'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          Identifier: ' thenable'

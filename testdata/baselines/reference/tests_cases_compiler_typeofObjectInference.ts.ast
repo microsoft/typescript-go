@@ -1,0 +1,169 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' val'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' decorateA'
+    TypeParameter
+      Identifier: 'O'
+      AnyKeyword
+    Parameter
+      Identifier: 'fn'
+      FunctionType
+        Parameter
+          Identifier: 'first'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'value'
+              TypeQuery
+                Identifier: ' val'
+        TypeReference
+          Identifier: ' O'
+    Block
+      ReturnStatement
+        ArrowFunction
+          TypeReference
+            Identifier: ' O'
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' fn'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'value'
+                Identifier: ' val'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' decorateA'
+          ArrowFunction
+            Parameter
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: 'value'
+            EqualsGreaterThanToken
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' decorateB'
+    TypeParameter
+      Identifier: 'O'
+      AnyKeyword
+    Parameter
+      Identifier: 'fn'
+      FunctionType
+        Parameter
+          Identifier: 'first'
+          TypeQuery
+            Identifier: ' val'
+        TypeReference
+          Identifier: ' O'
+    Block
+      ReturnStatement
+        ArrowFunction
+          TypeReference
+            Identifier: ' O'
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' fn'
+            Identifier: 'val'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' decorateB'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            EqualsGreaterThanToken
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' decorateC'
+    TypeParameter
+      Identifier: 'O'
+      AnyKeyword
+    Parameter
+      Identifier: 'fn'
+      FunctionType
+        Parameter
+          Identifier: 'first'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'value'
+              NumberKeyword
+        TypeReference
+          Identifier: ' O'
+    Block
+      ReturnStatement
+        ArrowFunction
+          TypeReference
+            Identifier: ' O'
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' fn'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'value'
+                Identifier: ' val'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' decorateC'
+          ArrowFunction
+            Parameter
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: 'value'
+            EqualsGreaterThanToken
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' First'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'value'
+        TypeQuery
+          Identifier: ' val'
+  FunctionDeclaration
+    Identifier: ' decorateD'
+    TypeParameter
+      Identifier: 'O'
+      AnyKeyword
+    Parameter
+      Identifier: 'fn'
+      FunctionType
+        Parameter
+          Identifier: 'first'
+          TypeReference
+            Identifier: ' First'
+        TypeReference
+          Identifier: ' O'
+    Block
+      ReturnStatement
+        ArrowFunction
+          TypeReference
+            Identifier: ' O'
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' fn'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'value'
+                Identifier: ' val'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        CallExpression
+          Identifier: ' decorateD'
+          ArrowFunction
+            Parameter
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: 'value'
+            EqualsGreaterThanToken
+            NumericLiteral

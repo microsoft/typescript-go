@@ -1,0 +1,213 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' initTSConfigCorrectly'
+            Parameter
+              Identifier: 'name'
+              StringKeyword
+            Parameter
+              Identifier: ' commandLinesArgs'
+              ArrayType
+                StringKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        describe'
+                  Identifier: 'name'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' commandLine'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'parseCommandLine'
+                              Identifier: 'commandLinesArgs'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' initResult'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'generateTSConfig'
+                              PropertyAccessExpression
+                                Identifier: 'commandLine'
+                                Identifier: 'options'
+                              PropertyAccessExpression
+                                Identifier: ' commandLine'
+                                Identifier: 'fileNames'
+                              StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' outputFileName'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'name'
+                                    Identifier: 'replace'
+                                  RegularExpressionLiteral
+                                  StringLiteral
+                                TemplateTail
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+
+            it'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'outputFileName'
+                              TemplateTail
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                Harness'
+                                      Identifier: 'Baseline'
+                                    Identifier: 'runBaseline'
+                                  Identifier: 'outputFileName'
+                                  Identifier: ' initResult'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' PrintDiff'
+                                      TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    initTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral

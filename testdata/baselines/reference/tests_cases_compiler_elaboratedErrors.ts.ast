@@ -1,0 +1,90 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' FileSystem'
+    PropertySignature
+      Identifier: '
+  read'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' fn'
+    Parameter
+      Identifier: 's'
+      TypeReference
+        Identifier: ' WorkerFS'
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' fn'
+    Parameter
+      Identifier: 's'
+      TypeReference
+        Identifier: ' FileSystem'
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' fn'
+    Parameter
+      Identifier: 's'
+      UnionType
+        TypeReference
+          Identifier: ' FileSystem'
+        TypeReference
+          Identifier: 'WorkerFS'
+    Block
+  ClassDeclaration
+    Identifier: ' WorkerFS'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' FileSystem'
+    PropertyDeclaration
+      Identifier: '
+  read'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Alpha'
+    PropertySignature
+      Identifier: ' x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Beta'
+    PropertySignature
+      Identifier: ' y'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Alpha'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Beta'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Only one of these errors should be large
+x'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Only one of these errors should be large
+y'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      Identifier: ' x'

@@ -1,0 +1,136 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' One'
+    GetAccessor
+      Identifier: ' prop1'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      Block
+    PropertyDeclaration
+      Identifier: '
+
+  prop2'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Two'
+    GetAccessor
+      Identifier: ' prop1'
+      LiteralType
+        StringLiteral
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          LiteralType
+            StringLiteral
+          NumberKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop2'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          LiteralType
+            NumericLiteral
+      Block
+  ClassDeclaration
+    Identifier: ' Three'
+    GetAccessor
+      Identifier: ' prop1'
+      LiteralType
+        StringLiteral
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          LiteralType
+            StringLiteral
+          BooleanKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop2'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+      Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        IntersectionType
+          TypeReference
+            Identifier: ' One'
+          TypeReference
+            Identifier: ' Two'
+          TypeReference
+            Identifier: ' Three'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// "hello"
+i'
+        Identifier: 'prop1'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // error
+i'
+        Identifier: 'prop1'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// 42
+i'
+        Identifier: 'prop2'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+i'
+        Identifier: 'prop2'
+      EqualsToken
+      StringLiteral

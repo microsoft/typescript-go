@@ -1,0 +1,10 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' foo'
+    Identifier: ' m1'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m1'
+    ModuleBlock
+  ClassDeclaration
+    Identifier: ' foo'

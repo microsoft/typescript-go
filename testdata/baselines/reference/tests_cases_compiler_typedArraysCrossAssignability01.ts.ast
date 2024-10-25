@@ -1,0 +1,507 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' CheckAssignability'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr_Int8Array'
+            NewExpression
+              Identifier: ' Int8Array'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr_Uint8Array'
+            NewExpression
+              Identifier: ' Uint8Array'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr_Int16Array'
+            NewExpression
+              Identifier: ' Int16Array'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr_Uint16Array'
+            NewExpression
+              Identifier: ' Uint16Array'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr_Int32Array'
+            NewExpression
+              Identifier: ' Int32Array'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr_Uint32Array'
+            NewExpression
+              Identifier: ' Uint32Array'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr_Float32Array'
+            NewExpression
+              Identifier: ' Float32Array'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr_Float64Array'
+            NewExpression
+              Identifier: ' Float64Array'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arr_Uint8ClampedArray'
+            NewExpression
+              Identifier: ' Uint8ClampedArray'
+              NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    arr_Int8Array'
+          EqualsToken
+          Identifier: ' arr_Int8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int8Array'
+          EqualsToken
+          Identifier: ' arr_Uint8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int8Array'
+          EqualsToken
+          Identifier: ' arr_Int16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int8Array'
+          EqualsToken
+          Identifier: ' arr_Uint16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int8Array'
+          EqualsToken
+          Identifier: ' arr_Int32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int8Array'
+          EqualsToken
+          Identifier: ' arr_Uint32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int8Array'
+          EqualsToken
+          Identifier: ' arr_Float32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int8Array'
+          EqualsToken
+          Identifier: ' arr_Float64Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int8Array'
+          EqualsToken
+          Identifier: ' arr_Uint8ClampedArray'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    arr_Uint8Array'
+          EqualsToken
+          Identifier: ' arr_Int8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8Array'
+          EqualsToken
+          Identifier: ' arr_Uint8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8Array'
+          EqualsToken
+          Identifier: ' arr_Int16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8Array'
+          EqualsToken
+          Identifier: ' arr_Uint16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8Array'
+          EqualsToken
+          Identifier: ' arr_Int32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8Array'
+          EqualsToken
+          Identifier: ' arr_Uint32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8Array'
+          EqualsToken
+          Identifier: ' arr_Float32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8Array'
+          EqualsToken
+          Identifier: ' arr_Float64Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8Array'
+          EqualsToken
+          Identifier: ' arr_Uint8ClampedArray'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    arr_Int16Array'
+          EqualsToken
+          Identifier: ' arr_Int8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int16Array'
+          EqualsToken
+          Identifier: ' arr_Uint8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int16Array'
+          EqualsToken
+          Identifier: ' arr_Int16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int16Array'
+          EqualsToken
+          Identifier: ' arr_Uint16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int16Array'
+          EqualsToken
+          Identifier: ' arr_Int32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int16Array'
+          EqualsToken
+          Identifier: ' arr_Uint32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int16Array'
+          EqualsToken
+          Identifier: ' arr_Float32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int16Array'
+          EqualsToken
+          Identifier: ' arr_Float64Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int16Array'
+          EqualsToken
+          Identifier: ' arr_Uint8ClampedArray'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    arr_Uint16Array'
+          EqualsToken
+          Identifier: ' arr_Int8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint16Array'
+          EqualsToken
+          Identifier: ' arr_Uint8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint16Array'
+          EqualsToken
+          Identifier: ' arr_Int16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint16Array'
+          EqualsToken
+          Identifier: ' arr_Uint16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint16Array'
+          EqualsToken
+          Identifier: ' arr_Int32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint16Array'
+          EqualsToken
+          Identifier: ' arr_Uint32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint16Array'
+          EqualsToken
+          Identifier: ' arr_Float32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint16Array'
+          EqualsToken
+          Identifier: ' arr_Float64Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint16Array'
+          EqualsToken
+          Identifier: ' arr_Uint8ClampedArray'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    arr_Int32Array'
+          EqualsToken
+          Identifier: ' arr_Int8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int32Array'
+          EqualsToken
+          Identifier: ' arr_Uint8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int32Array'
+          EqualsToken
+          Identifier: ' arr_Int16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int32Array'
+          EqualsToken
+          Identifier: ' arr_Uint16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int32Array'
+          EqualsToken
+          Identifier: ' arr_Int32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int32Array'
+          EqualsToken
+          Identifier: ' arr_Uint32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int32Array'
+          EqualsToken
+          Identifier: ' arr_Float32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int32Array'
+          EqualsToken
+          Identifier: ' arr_Float64Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Int32Array'
+          EqualsToken
+          Identifier: ' arr_Uint8ClampedArray'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    arr_Float32Array'
+          EqualsToken
+          Identifier: ' arr_Int8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float32Array'
+          EqualsToken
+          Identifier: ' arr_Uint8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float32Array'
+          EqualsToken
+          Identifier: ' arr_Int16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float32Array'
+          EqualsToken
+          Identifier: ' arr_Uint16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float32Array'
+          EqualsToken
+          Identifier: ' arr_Int32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float32Array'
+          EqualsToken
+          Identifier: ' arr_Uint32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float32Array'
+          EqualsToken
+          Identifier: ' arr_Float32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float32Array'
+          EqualsToken
+          Identifier: ' arr_Float64Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float32Array'
+          EqualsToken
+          Identifier: ' arr_Uint8ClampedArray'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    arr_Float64Array'
+          EqualsToken
+          Identifier: ' arr_Int8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float64Array'
+          EqualsToken
+          Identifier: ' arr_Uint8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float64Array'
+          EqualsToken
+          Identifier: ' arr_Int16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float64Array'
+          EqualsToken
+          Identifier: ' arr_Uint16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float64Array'
+          EqualsToken
+          Identifier: ' arr_Int32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float64Array'
+          EqualsToken
+          Identifier: ' arr_Uint32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float64Array'
+          EqualsToken
+          Identifier: ' arr_Float32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float64Array'
+          EqualsToken
+          Identifier: ' arr_Float64Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Float64Array'
+          EqualsToken
+          Identifier: ' arr_Uint8ClampedArray'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    arr_Uint8ClampedArray'
+          EqualsToken
+          Identifier: ' arr_Int8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8ClampedArray'
+          EqualsToken
+          Identifier: ' arr_Uint8Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8ClampedArray'
+          EqualsToken
+          Identifier: ' arr_Int16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8ClampedArray'
+          EqualsToken
+          Identifier: ' arr_Uint16Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8ClampedArray'
+          EqualsToken
+          Identifier: ' arr_Int32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8ClampedArray'
+          EqualsToken
+          Identifier: ' arr_Uint32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8ClampedArray'
+          EqualsToken
+          Identifier: ' arr_Float32Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8ClampedArray'
+          EqualsToken
+          Identifier: ' arr_Float64Array'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    arr_Uint8ClampedArray'
+          EqualsToken
+          Identifier: ' arr_Uint8ClampedArray'

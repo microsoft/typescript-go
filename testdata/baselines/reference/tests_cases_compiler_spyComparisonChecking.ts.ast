@@ -1,0 +1,116 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Spy'
+    CallSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'params'
+        ArrayType
+          AnyKeyword
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+
+    identity'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    and'
+      TypeReference
+        Identifier: ' Function'
+    PropertySignature
+      Identifier: '
+    mostRecentCall'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' args'
+          ArrayType
+            AnyKeyword
+    PropertySignature
+      Identifier: '
+    argsForCall'
+      ArrayType
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' SpyObj'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      TypeReference
+        Identifier: ' T'
+      MappedType
+        TypeParameter
+          Identifier: 'k'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        TypeReference
+          Identifier: ' Spy'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' createSpyObj'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: '
+    name'
+      StringKeyword
+    Parameter
+      Identifier: ' names'
+      TypeReference
+        Identifier: ' Array'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' SpyObj'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' mock'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'spyName'
+      StringKeyword
+    Parameter
+      Identifier: ' methodNames'
+      TypeReference
+        Identifier: ' Array'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' SpyObj'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' spyObj'
+            CallExpression
+              Identifier: ' createSpyObj'
+              TypeReference
+                Identifier: 'T'
+              Identifier: 'spyName'
+              Identifier: ' methodNames'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' methodName'
+        Identifier: ' methodNames'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ElementAccessExpression
+                    Identifier: '
+        spyObj'
+                    Identifier: 'methodName'
+                  Identifier: 'and'
+                Identifier: 'returnValue'
+              NumericLiteral
+      ReturnStatement
+        Identifier: ' spyObj'

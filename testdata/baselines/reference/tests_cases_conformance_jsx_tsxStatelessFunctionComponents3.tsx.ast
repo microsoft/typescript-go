@@ -1,0 +1,82 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        ArrowFunction
+          Parameter
+            Identifier: 'props'
+            AnyKeyword
+          EqualsGreaterThanToken
+          JsxSelfClosingElement
+            Identifier: 'div'
+            JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        JsxSelfClosingElement
+          Identifier: 'Foo'
+          JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MainMenu'
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'StatelessComponent'
+          TypeLiteral
+        ArrowFunction
+          Parameter
+            Identifier: 'props'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            JsxElement
+              JsxOpeningElement
+                Identifier: 'div'
+                JsxAttributes
+              JsxText
+              JsxElement
+                JsxOpeningElement
+                  Identifier: 'h3'
+                  JsxAttributes
+                JsxText
+                JsxClosingElement
+                  Identifier: 'h3'
+              JsxText
+              JsxClosingElement
+                Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' App'
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'StatelessComponent'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' children'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: 'children'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            JsxElement
+              JsxOpeningElement
+                Identifier: 'div'
+                JsxAttributes
+              JsxText
+              JsxSelfClosingElement
+                Identifier: 'MainMenu'
+                JsxAttributes
+              JsxText
+              JsxClosingElement
+                Identifier: 'div'

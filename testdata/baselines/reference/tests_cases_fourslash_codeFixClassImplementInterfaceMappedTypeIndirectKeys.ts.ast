@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////type Base = { ax: number; ay: string };
+////type BaseKeys = keyof Base;
+////type MappedIndirect = { [K in BaseKeys]: boolean };
+////class MappedImpl implements MappedIndirect { }
+
+// https://github.com/microsoft/TypeScript/issues/49811
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

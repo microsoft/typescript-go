@@ -1,0 +1,67 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            ThisKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            ThisKeyword
+  ClassDeclaration
+    Identifier: ' E'
+    MethodDeclaration
+      ComputedPropertyName
+        StringLiteral
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            ThisKeyword
+  ExpressionStatement
+    NewExpression
+      ClassExpression
+        Constructor
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        console'
+                  Identifier: 'log'
+                ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          MethodDeclaration
+            StringLiteral
+            Block
+  ClassDeclaration
+    Identifier: ' F'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            ThisKeyword

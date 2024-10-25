@@ -1,0 +1,16 @@
+SourceFile
+  IfStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        VoidExpression
+          NumericLiteral
+      ExclamationEqualsEqualsToken
+      TrueKeyword
+    Block
+  IfStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        NullKeyword
+      ExclamationEqualsEqualsToken
+      TrueKeyword
+    Block

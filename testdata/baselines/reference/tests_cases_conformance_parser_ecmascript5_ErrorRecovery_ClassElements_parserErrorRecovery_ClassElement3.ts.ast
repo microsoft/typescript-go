@@ -1,0 +1,10 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+      EnumDeclaration
+        Decorator
+          Identifier: ''
+        Identifier: ' E'

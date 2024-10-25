@@ -1,0 +1,91 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' names'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' HTMLElement'
+    PropertySignature
+      Identifier: '
+    clientWidth'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    isDisabled'
+      BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' document'
+        TypeReference
+          Identifier: ' Document'
+  InterfaceDeclaration
+    Identifier: ' Document'
+    MethodSignature
+      Identifier: '
+    getElementById'
+      Parameter
+        Identifier: 'elementId'
+        StringKeyword
+      TypeReference
+        Identifier: ' HTMLElement'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elements'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' names'
+            Identifier: 'map'
+          FunctionExpression
+            Parameter
+              Identifier: 'name'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' document'
+                    Identifier: 'getElementById'
+                  Identifier: 'name'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xxx'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' elements'
+            Identifier: 'filter'
+          FunctionExpression
+            Parameter
+              Identifier: 'e'
+            Block
+              ReturnStatement
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'e'
+                    Identifier: 'isDisabled'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' widths'
+        ArrayType
+          NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' elements'
+            Identifier: 'map'
+          FunctionExpression
+            Parameter
+              Identifier: 'e'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' e'
+                  Identifier: 'clientWidth'

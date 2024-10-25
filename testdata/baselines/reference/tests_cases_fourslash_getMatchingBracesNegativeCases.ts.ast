@@ -1,0 +1,46 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '/// <reference path="fourslash.ts"/>
+
+////// less than and greater than tests
+////    public bar(a, b) {
+////        return a [|< b || a >|] b;
+////    }
+////
+////// in comments
+//// // [|{    }|]
+//// // [|(    )|]
+//// // [|[    ]|]
+//// // [|<    >|]
+
+
+test'
+            Identifier: 'ranges'
+        Identifier: 'forEach'
+      ArrowFunction
+        Parameter
+          Identifier: 'range'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        verify'
+                Identifier: 'noMatchingBracePositionInCurrentFile'
+              PropertyAccessExpression
+                Identifier: 'range'
+                Identifier: 'start'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        verify'
+                Identifier: 'noMatchingBracePositionInCurrentFile'
+              PropertyAccessExpression
+                Identifier: 'range'
+                Identifier: 'end'

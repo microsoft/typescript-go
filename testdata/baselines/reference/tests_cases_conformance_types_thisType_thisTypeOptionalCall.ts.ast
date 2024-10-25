@@ -1,0 +1,51 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' maybeBind'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' A'
+      ArrayType
+        AnyKeyword
+    TypeParameter
+      Identifier: ' R'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' fn'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'this'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              TypeReference
+                Identifier: ' A'
+            TypeReference
+              Identifier: ' R'
+        UndefinedKeyword
+    UnionType
+      ParenthesizedType
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TypeReference
+              Identifier: ' A'
+          TypeReference
+            Identifier: ' R'
+      UndefinedKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' fn'
+            QuestionDotToken
+            Identifier: 'bind'
+          Identifier: 'obj'

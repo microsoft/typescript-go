@@ -1,0 +1,26 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Parent'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+  ClassDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Parent'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'foo'

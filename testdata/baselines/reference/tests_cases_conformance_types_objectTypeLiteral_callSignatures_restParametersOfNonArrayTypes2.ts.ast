@@ -1,0 +1,288 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' MyThing'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' MyThing2'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      DotDotDotToken
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' MyThing'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' MyThing'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' MyThing'
+          Parameter
+            DotDotDotToken
+            Identifier: 'y'
+            TypeReference
+              Identifier: ' MyThing'
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' MyThing'
+      Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' MyThing'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' MyThing'
+      Parameter
+        DotDotDotToken
+        Identifier: 'y'
+        TypeReference
+          Identifier: ' MyThing'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' MyThing'
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' MyThing'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    foo'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' MyThing'
+            Block
+          PropertyAssignment
+            Identifier: '
+    a'
+            FunctionExpression
+              Identifier: ' foo'
+              Parameter
+                DotDotDotToken
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' MyThing'
+              Parameter
+                DotDotDotToken
+                Identifier: 'y'
+                TypeReference
+                  Identifier: ' MyThing'
+              Block
+          PropertyAssignment
+            Identifier: '
+    b'
+            ArrowFunction
+              Parameter
+                DotDotDotToken
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' MyThing'
+              EqualsGreaterThanToken
+              Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      DotDotDotToken
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' MyThing2'
+        StringKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' MyThing2'
+              StringKeyword
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' MyThing2'
+              StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'y'
+            TypeReference
+              Identifier: ' MyThing2'
+              StringKeyword
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Identifier: ' C2'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' MyThing2'
+          StringKeyword
+      Block
+  InterfaceDeclaration
+    Identifier: ' I2'
+    CallSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' MyThing2'
+          StringKeyword
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' MyThing2'
+          StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'y'
+        TypeReference
+          Identifier: ' MyThing2'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TypeLiteral
+          CallSignature
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' MyThing2'
+                StringKeyword
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' MyThing2'
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    foo'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' MyThing2'
+                StringKeyword
+            Block
+          PropertyAssignment
+            Identifier: '
+    a'
+            FunctionExpression
+              Identifier: ' foo'
+              Parameter
+                DotDotDotToken
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' MyThing2'
+                  StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'y'
+                TypeReference
+                  Identifier: ' MyThing2'
+                  StringKeyword
+              Block
+          PropertyAssignment
+            Identifier: '
+    b'
+            ArrowFunction
+              Parameter
+                DotDotDotToken
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' MyThing2'
+                  StringKeyword
+              EqualsGreaterThanToken
+              Block

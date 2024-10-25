@@ -1,0 +1,20 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T'
+    TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' promise'
+          BindingElement
+            Identifier: ' resolve'
+          BindingElement
+            Identifier: ' reject'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'withResolvers'
+          TypeReference
+            Identifier: 'T'

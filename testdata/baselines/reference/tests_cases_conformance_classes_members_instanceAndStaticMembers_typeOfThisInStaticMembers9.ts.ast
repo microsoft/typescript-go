@@ -1,0 +1,87 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' f'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' arrowFunctionBoundary'
+      ArrowFunction
+        EqualsGreaterThanToken
+        BinaryExpression
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'f'
+          PlusToken
+          NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' functionExprBoundary'
+      FunctionExpression
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'f'
+              PlusToken
+              NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' classExprBoundary'
+      ClassExpression
+        PropertyDeclaration
+          Identifier: ' a'
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'f'
+            PlusToken
+            NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' functionAndClassDeclBoundary'
+      CallExpression
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              FunctionDeclaration
+                Identifier: ' foo'
+                Block
+                  ReturnStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: 'f'
+                      PlusToken
+                      NumericLiteral
+              ClassDeclaration
+                Identifier: ' C'
+                PropertyDeclaration
+                  Identifier: '
+            a'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'f'
+                    PlusToken
+                    NumericLiteral
+                MethodDeclaration
+                  Identifier: '
+            method'
+                  Block
+                    ReturnStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          SuperKeyword
+                          Identifier: 'f'
+                        PlusToken
+                        NumericLiteral

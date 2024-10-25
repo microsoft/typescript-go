@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            TypeParameter
+              Identifier: ' U'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' U'
+            TypeReference
+              Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+f2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+        Parameter
+          Identifier: ' y'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            Identifier: ' x'

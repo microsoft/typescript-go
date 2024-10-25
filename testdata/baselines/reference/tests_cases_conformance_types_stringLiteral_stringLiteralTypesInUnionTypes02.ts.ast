@@ -1,0 +1,95 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T'
+    UnionType
+      StringKeyword
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          StringKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' T'
+        Identifier: ' undefined'
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            Identifier: ' x'
+    IfStatement
+      BinaryExpression
+        Identifier: 'x'
+        ExclamationEqualsEqualsToken
+        StringLiteral
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              BinaryExpression
+                Identifier: ' x'
+                BarBarToken
+                Identifier: ' y'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c'
+              Identifier: ' x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              Identifier: ' y'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' e'
+              UnionType
+                ParenthesizedType
+                  TypeQuery
+                    Identifier: ' x'
+                ParenthesizedType
+                  TypeQuery
+                    Identifier: ' y'
+              BinaryExpression
+                Identifier: ' c'
+                BarBarToken
+                Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      Identifier: ' x'

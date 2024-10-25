@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'ex'
+          Block

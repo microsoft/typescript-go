@@ -1,0 +1,6 @@
+SourceFile
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: 'module'
+      Identifier: 'module'
+  Block

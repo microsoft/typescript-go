@@ -1,0 +1,48 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      StringLiteral
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      NumericLiteral
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+
+    x'
+      ElementAccessExpression
+        Identifier: ' C'
+        StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    x2'
+      ElementAccessExpression
+        Identifier: ' C'
+        StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    x3'
+      ElementAccessExpression
+        Identifier: ' C'
+        NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s'
+      ElementAccessExpression
+        Identifier: ' C'
+        StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s2'
+      ElementAccessExpression
+        Identifier: ' C'
+        StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s3'
+      ElementAccessExpression
+        Identifier: ' C'
+        NumericLiteral

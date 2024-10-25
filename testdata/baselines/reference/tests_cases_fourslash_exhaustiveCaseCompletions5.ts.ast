@@ -1,0 +1,68 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// Filter existing values.
+
+// @newline: LF
+//// enum P {
+////     " Space",
+////     Bar,
+//// }
+//// 
+//// declare const p: P;
+//// 
+//// switch (p) {
+////     /*1*/
+//// }
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        isNewIdentifierLocation'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+                name'
+                NoSubstitutionTemplateLiteral
+              PropertyAssignment
+                Identifier: '
+                source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'SwitchCases'
+              PropertyAssignment
+                Identifier: '
+                sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'GlobalsOrKeywords'
+              PropertyAssignment
+                Identifier: '
+                insertText'
+                NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword

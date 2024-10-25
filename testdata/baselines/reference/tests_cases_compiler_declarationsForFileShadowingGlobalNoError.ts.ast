@@ -1,0 +1,56 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' DOMNode'
+    TypeReference
+      Identifier: ' Node'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Node'
+    TypeLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Node'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' DOMNode'
+    StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Constructor'
+    ConstructorType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      AnyKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mixin'
+        ArrowFunction
+          Parameter
+            Identifier: 'Base'
+            TypeReference
+              Identifier: ' Constructor'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ClassExpression
+                HeritageClause
+                  ExpressionWithTypeArguments
+                    Identifier: ' Base'
+                MethodDeclaration
+                  Identifier: '
+    get'
+                  Parameter
+                    Identifier: 'domNode'
+                    TypeReference
+                      Identifier: ' DOMNode'
+                  Block

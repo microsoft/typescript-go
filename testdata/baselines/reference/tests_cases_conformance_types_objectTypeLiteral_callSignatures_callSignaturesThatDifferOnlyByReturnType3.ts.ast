@@ -1,0 +1,33 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      NumberKeyword

@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' default'
+        Identifier: ' a'
+    StringLiteral

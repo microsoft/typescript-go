@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts"/>
+
+// @Filename: /index.ts
+//// class MyClass {[||]
+//// }
+////
+
+verify'
+        Identifier: 'baselineMapCode'
+      ArrayLiteralExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'test'
+            Identifier: 'ranges'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral

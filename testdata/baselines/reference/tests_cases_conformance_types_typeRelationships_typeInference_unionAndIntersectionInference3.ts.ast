@@ -1,0 +1,576 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Maybe'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' concatMaybe'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            TypeReference
+              Identifier: 'Maybe'
+              TypeReference
+                Identifier: 'T'
+            ArrayType
+              TypeReference
+                Identifier: ' Maybe'
+                TypeReference
+                  Identifier: 'T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+concatMaybe'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionType
+          TypeParameter
+            Identifier: 'U'
+          TypeParameter
+            Identifier: ' R'
+          TypeParameter
+            Identifier: ' S'
+          Parameter
+            Identifier: 'com'
+            FunctionType
+              UnionType
+                TypeReference
+                  Identifier: ' Iterator'
+                  TypeReference
+                    Identifier: 'S'
+                  TypeReference
+                    Identifier: ' U'
+                  TypeReference
+                    Identifier: ' R'
+                TypeReference
+                  Identifier: ' AsyncIterator'
+                  TypeReference
+                    Identifier: 'S'
+                  TypeReference
+                    Identifier: ' U'
+                  TypeReference
+                    Identifier: ' R'
+          TypeReference
+            Identifier: ' Promise'
+            TypeReference
+              Identifier: 'U'
+        ArrowFunction
+          AsyncKeyword
+          TypeParameter
+            Identifier: 'U'
+          TypeParameter
+            Identifier: ' R'
+          TypeParameter
+            Identifier: ' S'
+          Parameter
+            Identifier: 'com'
+            FunctionType
+              UnionType
+                TypeReference
+                  Identifier: ' Iterator'
+                  TypeReference
+                    Identifier: 'S'
+                  TypeReference
+                    Identifier: ' U'
+                  TypeReference
+                    Identifier: ' R'
+                TypeReference
+                  Identifier: ' AsyncIterator'
+                  TypeReference
+                    Identifier: 'S'
+                  TypeReference
+                    Identifier: ' U'
+                  TypeReference
+                    Identifier: ' R'
+          TypeReference
+            Identifier: ' Promise'
+            TypeReference
+              Identifier: 'U'
+          EqualsGreaterThanToken
+          Block
+            ThrowStatement
+              Identifier: ' com'
+  InterfaceDeclaration
+    Identifier: ' Foo1'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    test'
+      Parameter
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Bar1'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    test'
+      Parameter
+        Identifier: 'value'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' PromiseLike'
+            TypeReference
+              Identifier: 'T'
+      VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            UnionType
+              TypeReference
+                Identifier: ' Foo1'
+                TypeReference
+                  Identifier: 'T'
+              TypeReference
+                Identifier: ' Bar1'
+                TypeReference
+                  Identifier: 'T'
+          TypeReference
+            Identifier: ' Promise'
+            TypeReference
+              Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionType
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'x'
+            UnionType
+              TypeReference
+                Identifier: ' Foo1'
+                TypeReference
+                  Identifier: 'U'
+              TypeReference
+                Identifier: ' Bar1'
+                TypeReference
+                  Identifier: 'U'
+          TypeReference
+            Identifier: ' Promise'
+            TypeReference
+              Identifier: 'U'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+f1'
+      EqualsToken
+      Identifier: ' f2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+f2'
+      EqualsToken
+      Identifier: ' f1'
+  TypeAliasDeclaration
+    Identifier: ' Foo2'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+    test'
+        Parameter
+          Identifier: 'value'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Bar2'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+    test'
+        Parameter
+          Identifier: 'value'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: ' PromiseLike'
+              TypeReference
+                Identifier: 'T'
+        VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g1'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            UnionType
+              TypeReference
+                Identifier: ' Foo2'
+                TypeReference
+                  Identifier: 'T'
+              TypeReference
+                Identifier: ' Bar2'
+                TypeReference
+                  Identifier: 'T'
+          TypeReference
+            Identifier: ' Promise'
+            TypeReference
+              Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g2'
+        FunctionType
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'x'
+            UnionType
+              TypeReference
+                Identifier: ' Foo2'
+                TypeReference
+                  Identifier: 'U'
+              TypeReference
+                Identifier: ' Bar2'
+                TypeReference
+                  Identifier: 'U'
+          TypeReference
+            Identifier: ' Promise'
+            TypeReference
+              Identifier: 'U'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+g1'
+      EqualsToken
+      Identifier: ' g2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+g2'
+      EqualsToken
+      Identifier: ' g1'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      IntersectionType
+        ArrayType
+          StringKeyword
+        TypeReference
+          Identifier: ' Iterable'
+          TypeReference
+            Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      IntersectionType
+        ArrayType
+          StringKeyword
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sa'
+        ArrayType
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sx'
+        IntersectionType
+          ArrayType
+            StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' extra'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        CallExpression
+          Identifier: ' foo1'
+          Identifier: 'sa'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y1'
+        CallExpression
+          Identifier: ' foo1'
+          Identifier: 'sx'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        CallExpression
+          Identifier: ' foo2'
+          Identifier: 'sa'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y2'
+        CallExpression
+          Identifier: ' foo2'
+          Identifier: 'sx'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Component'
+    TypeParameter
+      Identifier: 'P'
+    PropertyDeclaration
+      Identifier: ' props'
+      TypeReference
+        Identifier: ' P'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ComponentClass'
+    TypeParameter
+      Identifier: 'P'
+    ConstructorType
+      Parameter
+        Identifier: 'props'
+        TypeReference
+          Identifier: ' P'
+      TypeReference
+        Identifier: ' Component'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' FunctionComponent'
+    TypeParameter
+      Identifier: 'P'
+    FunctionType
+      Parameter
+        Identifier: 'props'
+        TypeReference
+          Identifier: ' P'
+      LiteralType
+        NullKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ComponentType'
+    TypeParameter
+      Identifier: 'P'
+    UnionType
+      TypeReference
+        Identifier: ' FunctionComponent'
+        TypeReference
+          Identifier: 'P'
+      TypeReference
+        Identifier: ' ComponentClass'
+        TypeReference
+          Identifier: 'P'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RouteComponentProps'
+    PropertySignature
+      Identifier: ' route'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' withRouter'
+    TypeParameter
+      Identifier: '
+  P'
+      TypeReference
+        Identifier: ' RouteComponentProps'
+    TypeParameter
+      Identifier: '
+  C'
+      TypeReference
+        Identifier: ' ComponentType'
+        TypeReference
+          Identifier: 'P'
+    Parameter
+      Identifier: '
+  component'
+      IntersectionType
+        TypeReference
+          Identifier: ' C'
+        TypeReference
+          Identifier: ' ComponentType'
+          TypeReference
+            Identifier: 'P'
+    TypeReference
+      Identifier: ' ComponentClass'
+      TypeReference
+        Identifier: 'Omit'
+        TypeReference
+          Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' RouteComponentProps'
+  InterfaceDeclaration
+    Identifier: ' Props'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' RouteComponentProps'
+    PropertySignature
+      Identifier: ' username'
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MyComponent'
+        TypeReference
+          Identifier: ' ComponentType'
+          TypeReference
+            Identifier: 'Props'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+withRouter'
+      Identifier: 'MyComponent'
+  TypeAliasDeclaration
+    Identifier: ' AB'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          TypeReference
+            Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          TypeReference
+            Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'obj'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' AB'
+          TypeReference
+            Identifier: 'U'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab'
+        TypeReference
+          Identifier: ' AB'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'ab'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          IntersectionType
+            ParenthesizedType
+              ConditionalType
+                TypeReference
+                  Identifier: 'T'
+                LiteralType
+                  TrueKeyword
+                LiteralType
+                  TrueKeyword
+                LiteralType
+                  FalseKeyword
+            BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          IntersectionType
+            ParenthesizedType
+              ConditionalType
+                TypeReference
+                  Identifier: 'T'
+                LiteralType
+                  TrueKeyword
+                LiteralType
+                  TrueKeyword
+                LiteralType
+                  FalseKeyword
+            BooleanKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' b'

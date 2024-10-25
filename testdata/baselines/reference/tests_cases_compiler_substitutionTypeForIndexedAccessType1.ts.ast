@@ -1,0 +1,32 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' AddPropToObject'
+    TypeParameter
+      Identifier: 'Obj'
+      ObjectKeyword
+    TypeParameter
+      Identifier: ' Prop'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' Prop'
+      TypeOperator
+        TypeReference
+          Identifier: ' Obj'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' Obj'
+          TypeReference
+            Identifier: 'Prop'
+        ArrayType
+          UnknownKeyword
+        TupleType
+          RestType
+            IndexedAccessType
+              TypeReference
+                Identifier: 'Obj'
+              TypeReference
+                Identifier: 'Prop'
+        NeverKeyword
+      NeverKeyword

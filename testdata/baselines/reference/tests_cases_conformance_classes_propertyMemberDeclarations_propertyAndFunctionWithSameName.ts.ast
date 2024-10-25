@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    x'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    x'
+      Parameter
+        Identifier: 'v'
+      Block

@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      DeclareKeyword
+      Identifier: ' foo'
+      NumericLiteral
+    PropertyDeclaration
+      ExportKeyword
+      Identifier: ' bar'
+      NumericLiteral

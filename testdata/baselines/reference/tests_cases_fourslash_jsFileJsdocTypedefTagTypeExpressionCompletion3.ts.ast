@@ -1,0 +1,304 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' warnings'
+        ArrowFunction
+          Parameter
+            Identifier: 'names'
+            TypeReference
+              Identifier: ' ReadonlyArray'
+              StringKeyword
+          TypeReference
+            Identifier: ' ReadonlyArray'
+            TypeReference
+              QualifiedName
+                Identifier: 'FourSlashInterface'
+                Identifier: 'ExpectedCompletionEntry'
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+    names'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' name'
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' sortText'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' completion'
+                        Identifier: 'SortText'
+                      Identifier: 'JavascriptIdentifiers'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        unsorted'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' kindModifiers'
+                StringLiteral
+            SpreadElement
+              PropertyAccessExpression
+                Identifier: 'completion'
+                Identifier: 'functionMembers'
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral
+                  StringLiteral

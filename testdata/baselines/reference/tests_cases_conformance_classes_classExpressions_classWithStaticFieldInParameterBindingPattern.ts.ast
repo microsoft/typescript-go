@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    ClassExpression
+                      PropertyDeclaration
+                        StaticKeyword
+                        Identifier: ' x'
+                        NumericLiteral
+                    Identifier: 'x'
+                Identifier: ' b'
+                StringLiteral
+          EqualsGreaterThanToken
+          Block

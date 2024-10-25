@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Object'
+    PropertyDeclaration
+      Identifier: '
+      list'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' A'

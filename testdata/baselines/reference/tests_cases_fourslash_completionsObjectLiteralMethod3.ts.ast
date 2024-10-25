@@ -1,0 +1,499 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @newline: LF
+// @strictNullChecks: true
+// @Filename: a.ts
+////interface I1 {
+////    M(x: number): void;
+////}
+////interface I2 {
+////    M(x: number): void;
+////}
+////const u: I1 | I2 = {
+////    /*a*/
+////}
+////const i: I1 & I2 = {
+////    /*b*/
+////}
+////interface U1 {
+////    M(x: number): string;
+////}
+////interface U2 {
+////    M(x: string): number;
+////}
+////const o: U1 | U2 = {
+////    /*c*/
+////}
+////interface Op {
+////    M?(x: number): void;
+////    N: ((x: string) => void) | null | undefined;
+////    O?: () => void;
+////}
+////const op: Op = {
+////    /*d*/
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithInsertText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithSnippetText'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithObjectLiteralMethodSnippets'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        useLabelDetailsInCompletionEntries'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'ObjectLiteralProperty'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocationPriority'
+                  StringLiteral
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                Identifier: ' undefined'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'SortBelow'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                completion'
+                        Identifier: 'SortText'
+                      Identifier: 'ObjectLiteralProperty'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'completion'
+                        Identifier: 'SortText'
+                      Identifier: 'LocationPriority'
+                    StringLiteral
+              PropertyAssignment
+                Identifier: '
+            source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'ObjectLiteralMethodSnippet'
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            labelDetails'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                detail'
+                    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithInsertText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithSnippetText'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithObjectLiteralMethodSnippets'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'ObjectLiteralProperty'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocationPriority'
+                  StringLiteral
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                Identifier: ' undefined'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithInsertText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithSnippetText'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithObjectLiteralMethodSnippets'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'ObjectLiteralProperty'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocationPriority'
+                  StringLiteral
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                Identifier: ' undefined'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithInsertText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithSnippetText'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithObjectLiteralMethodSnippets'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        useLabelDetailsInCompletionEntries'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'ObjectLiteralProperty'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'completion'
+                      Identifier: 'SortText'
+                    Identifier: 'OptionalMember'
+                  StringLiteral
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                Identifier: ' undefined'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'SortBelow'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                completion'
+                        Identifier: 'SortText'
+                      Identifier: 'ObjectLiteralProperty'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'completion'
+                        Identifier: 'SortText'
+                      Identifier: 'OptionalMember'
+                    StringLiteral
+              PropertyAssignment
+                Identifier: '
+            source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'ObjectLiteralMethodSnippet'
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            labelDetails'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                detail'
+                    StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'ObjectLiteralProperty'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocationPriority'
+                  StringLiteral
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                Identifier: ' undefined'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'SortBelow'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                completion'
+                        Identifier: 'SortText'
+                      Identifier: 'ObjectLiteralProperty'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'completion'
+                        Identifier: 'SortText'
+                      Identifier: 'LocationPriority'
+                    StringLiteral
+              PropertyAssignment
+                Identifier: '
+            source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'ObjectLiteralMethodSnippet'
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            labelDetails'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                detail'
+                    StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'ObjectLiteralProperty'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'completion'
+                      Identifier: 'SortText'
+                    Identifier: 'OptionalMember'
+                  StringLiteral
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                Identifier: ' undefined'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'SortBelow'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                completion'
+                        Identifier: 'SortText'
+                      Identifier: 'ObjectLiteralProperty'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'completion'
+                        Identifier: 'SortText'
+                      Identifier: 'OptionalMember'
+                    StringLiteral
+              PropertyAssignment
+                Identifier: '
+            source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'ObjectLiteralMethodSnippet'
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            labelDetails'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                detail'
+                    StringLiteral

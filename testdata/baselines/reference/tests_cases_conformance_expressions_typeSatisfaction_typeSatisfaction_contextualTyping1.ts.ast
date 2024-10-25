@@ -1,0 +1,49 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Predicates'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    isEven'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' n'
+                    PercentToken
+                    NumericLiteral
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+            PropertyAssignment
+              Identifier: '
+    isOdd'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' n'
+                    PercentToken
+                    NumericLiteral
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+          TypeReference
+            Identifier: ' Predicates'

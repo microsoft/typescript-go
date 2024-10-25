@@ -1,0 +1,73 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'f'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              UnknownKeyword
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+            UnknownKeyword
+          Parameter
+            Identifier: 'x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' foo'
+                TypeReference
+                  Identifier: ' T'
+          UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        CallExpression
+          Identifier: ' f'
+          Identifier: 'g'
+  TypeAliasDeclaration
+    Identifier: ' FirstParameter'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          InferType
+            TypeParameter
+              Identifier: ' P'
+        UnknownKeyword
+      TypeReference
+        Identifier: ' P'
+      UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' X'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' FirstParameter'
+        TypeQuery
+          Identifier: ' h'
+      LiteralType
+        StringLiteral

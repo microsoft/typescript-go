@@ -1,0 +1,518 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ru1'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra1'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1a'
+        ArrayLiteralExpression
+          Identifier: 'ru1'
+          Identifier: ' ra1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1b'
+        ArrayLiteralExpression
+          Identifier: 'ra1'
+          Identifier: ' ru1'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ra2'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ru2'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2a'
+        ArrayLiteralExpression
+          Identifier: 'ru2'
+          Identifier: ' ra2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2b'
+        ArrayLiteralExpression
+          Identifier: 'ra2'
+          Identifier: ' ru2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        ObjectLiteralExpression
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3a'
+        ArrayLiteralExpression
+          Identifier: 'c3'
+          Identifier: ' r3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3b'
+        ArrayLiteralExpression
+          Identifier: 'r3'
+          Identifier: ' c3'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4a'
+        ArrayLiteralExpression
+          Identifier: 'c4'
+          Identifier: ' r4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4b'
+        ArrayLiteralExpression
+          Identifier: 'r4'
+          Identifier: ' c4'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isObject1'
+    Parameter
+      Identifier: 'value'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        UnknownKeyword
+  FunctionDeclaration
+    Identifier: ' gg1'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isObject1'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isObject2'
+    Parameter
+      Identifier: 'value'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' value'
+      TypeLiteral
+  FunctionDeclaration
+    Identifier: ' gg2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        UnknownKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isObject2'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isObject3'
+    Parameter
+      Identifier: 'value'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+  FunctionDeclaration
+    Identifier: ' gg3'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isObject3'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isObject4'
+    Parameter
+      Identifier: 'value'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' value'
+      TypeLiteral
+  FunctionDeclaration
+    Identifier: ' gg4'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isObject4'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  TypeAliasDeclaration
+    Identifier: ' Identity'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' Self'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      UnknownKeyword
+      TypeReference
+        Identifier: ' Identity'
+        TypeReference
+          Identifier: 'T'
+      NeverKeyword
+  FunctionDeclaration
+    Identifier: ' is'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' T'
+    TypePredicate
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Self'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ReturnStatement
+        TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' Union'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b'
+          NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: 'c'
+          NumberKeyword
+  FunctionDeclaration
+    Identifier: ' example'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Union'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'is'
+          Identifier: 'x'
+        Block
+      IfStatement
+        CallExpression
+          Identifier: 'is'
+          Identifier: 'x'
+        Block
+      IfStatement
+        CallExpression
+          Identifier: 'is'
+          Identifier: 'x'
+        Block
+      IfStatement
+        CallExpression
+          Identifier: 'is'
+          Identifier: 'x'
+        Block
+      IfStatement
+        CallExpression
+          Identifier: 'is'
+          Identifier: 'x'
+        Block
+      IfStatement
+        CallExpression
+          Identifier: 'is'
+          Identifier: 'x'
+        Block
+      IfStatement
+        CallExpression
+          Identifier: 'is'
+          Identifier: 'x'
+        Block
+      IfStatement
+        CallExpression
+          Identifier: 'is'
+          Identifier: 'x'
+        Block
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' checksArrayOrObject1'
+    Parameter
+      Identifier: 'obj'
+      UnionType
+        TypeReference
+          Identifier: ' Record'
+          StringKeyword
+          AnyKeyword
+        ArrayType
+          TypeReference
+            Identifier: ' Record'
+            StringKeyword
+            AnyKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Array'
+              Identifier: 'isArray'
+            Identifier: 'obj'
+          AmpersandAmpersandToken
+          PropertyAccessExpression
+            Identifier: ' obj'
+            Identifier: 'length'
+        Block
+          ForInStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' key'
+            Identifier: ' obj'
+            Block
+              IfStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: 'obj'
+                    Identifier: 'key'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                console'
+                        Identifier: 'log'
+                      ElementAccessExpression
+                        Identifier: 'obj'
+                        Identifier: 'key'
+        Block
+          ForInStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' key'
+            Identifier: ' obj'
+            Block
+              IfStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: 'obj'
+                    Identifier: 'key'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                console'
+                        Identifier: 'log'
+                      ElementAccessExpression
+                        Identifier: 'obj'
+                        Identifier: 'key'
+  FunctionDeclaration
+    Identifier: ' checksArrayOrObject2'
+    Parameter
+      Identifier: 'obj'
+      UnionType
+        TypeReference
+          Identifier: ' Record'
+          StringKeyword
+          AnyKeyword
+        ArrayType
+          TypeReference
+            Identifier: ' Record'
+            StringKeyword
+            AnyKeyword
+    Block
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'Array'
+            Identifier: 'isArray'
+          Identifier: 'obj'
+        Block
+          ForInStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' key'
+            Identifier: ' obj'
+            Block
+              IfStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: 'obj'
+                    Identifier: 'key'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                console'
+                        Identifier: 'log'
+                      ElementAccessExpression
+                        Identifier: 'obj'
+                        Identifier: 'key'
+        Block
+          ForInStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' key'
+            Identifier: ' obj'
+            Block
+              IfStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: 'obj'
+                    Identifier: 'key'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                console'
+                        Identifier: 'log'
+                      ElementAccessExpression
+                        Identifier: 'obj'
+                        Identifier: 'key'

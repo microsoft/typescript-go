@@ -1,0 +1,289 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' s'
+          StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'x'
+      FunctionType
+        StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f10'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        ParenthesizedType
+          FunctionType
+            StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f11'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' s'
+            StringKeyword
+        ParenthesizedType
+          FunctionType
+            StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f12'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' s'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f100'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' keys'
+      ArrayType
+        TypeReference
+          Identifier: ' K'
+    VoidKeyword
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k'
+        Identifier: ' keys'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' item'
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  Identifier: 'k'
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' item'
+              EqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            item'
+                  Identifier: 'call'
+                Identifier: 'obj'
+  FunctionDeclaration
+    Identifier: ' configureStore'
+    TypeParameter
+      Identifier: 'S'
+      ObjectKeyword
+    Parameter
+      Identifier: 'reducer'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            VoidKeyword
+        TypeReference
+          Identifier: ' Record'
+          TypeOperator
+            TypeReference
+              Identifier: ' S'
+          FunctionType
+            VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rootReducer'
+            FunctionType
+              VoidKeyword
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' reducer'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        rootReducer'
+              EqualsToken
+              Identifier: ' reducer'
+  FunctionDeclaration
+    Identifier: ' f101'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        TypeReference
+          Identifier: ' Record'
+          StringKeyword
+          AnyKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          AmpersandAmpersandToken
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'anything'

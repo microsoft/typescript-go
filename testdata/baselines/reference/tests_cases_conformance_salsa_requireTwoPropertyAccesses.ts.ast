@@ -1,0 +1,39 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @declaration
+// @outdir: out
+// @checkjs: true
+// @allowjs: true
+// @filename: mod.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    x'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        y'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' require'
+              StringLiteral
+            Identifier: 'x'
+          Identifier: 'y'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      Identifier: 'value'

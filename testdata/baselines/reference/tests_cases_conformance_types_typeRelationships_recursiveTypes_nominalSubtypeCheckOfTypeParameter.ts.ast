@@ -1,0 +1,81 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' BinaryTuple'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' S'
+    PropertySignature
+      Identifier: '
+    first'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    second'
+      TypeReference
+        Identifier: ' S'
+  InterfaceDeclaration
+    Identifier: ' Sequence'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    hasNext'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    pop'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    zip'
+      TypeParameter
+        Identifier: 'S'
+      Parameter
+        Identifier: 'seq'
+        TypeReference
+          Identifier: ' Sequence'
+          TypeReference
+            Identifier: 'S'
+      TypeReference
+        Identifier: ' Sequence'
+        TypeReference
+          Identifier: 'BinaryTuple'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' S'
+  InterfaceDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Sequence'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    getLength'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    zip'
+      TypeParameter
+        Identifier: 'S'
+      Parameter
+        Identifier: 'seq'
+        TypeReference
+          Identifier: ' Sequence'
+          TypeReference
+            Identifier: 'S'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'BinaryTuple'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' S'

@@ -1,0 +1,7 @@
+SourceFile
+  ExpressionStatement
+    NewExpression
+      Identifier: ' DataView'
+      NewExpression
+        Identifier: ' Uint8Array'
+        NumericLiteral

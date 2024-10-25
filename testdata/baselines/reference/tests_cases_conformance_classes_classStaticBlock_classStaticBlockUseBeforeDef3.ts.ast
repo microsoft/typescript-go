@@ -1,0 +1,90 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        A'
+              Identifier: 'doSomething'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' doSomething'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+       console'
+              Identifier: 'log'
+            StringLiteral
+  ClassDeclaration
+    Identifier: ' Baz'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            Identifier: 'FOO'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' FOO'
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' Bar'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            Identifier: 'FOO'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u'
+        AsExpression
+          StringLiteral
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+  ClassDeclaration
+    Identifier: ' CFA'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        u'
+            EqualsToken
+            StringLiteral
+        ExpressionStatement
+          Identifier: '
+        u'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' t'
+      NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' doSomething'
+      Block
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          Identifier: '
+        u'
+  ExpressionStatement
+    Identifier: '
+
+u'

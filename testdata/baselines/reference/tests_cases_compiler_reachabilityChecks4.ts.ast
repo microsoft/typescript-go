@@ -1,0 +1,155 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      Identifier: ' y'
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            NumericLiteral
+          CaseClause
+            NumericLiteral
+            ReturnStatement
+              NumericLiteral
+          CaseClause
+            NumericLiteral
+            IfStatement
+              Identifier: 'y'
+              Block
+                ReturnStatement
+                  NumericLiteral
+          CaseClause
+            NumericLiteral
+            ReturnStatement
+              NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' noop'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fail'
+    NeverKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            NumericLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            fail'
+          CaseClause
+            NumericLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            noop'
+          CaseClause
+            NumericLiteral
+            ReturnStatement
+  TypeAliasDeclaration
+    Identifier: ' Behavior'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Direction'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Transition'
+    PropertySignature
+      Identifier: '
+  behavior'
+      TypeReference
+        Identifier: ' Behavior'
+    PropertySignature
+      Identifier: '
+  direction'
+      TypeReference
+        Identifier: ' Direction'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'transition'
+      TypeReference
+        Identifier: ' Transition'
+    AnyKeyword
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'transition'
+          Identifier: 'behavior'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            SwitchStatement
+              PropertyAccessExpression
+                Identifier: 'transition'
+                Identifier: 'direction'
+              CaseBlock
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    ArrayLiteralExpression
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    ArrayLiteralExpression
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    ArrayLiteralExpression
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    ArrayLiteralExpression
+          CaseClause
+            StringLiteral
+            SwitchStatement
+              PropertyAccessExpression
+                Identifier: 'transition'
+                Identifier: 'direction'
+              CaseBlock
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    ArrayLiteralExpression
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    ArrayLiteralExpression
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    ArrayLiteralExpression
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    ArrayLiteralExpression

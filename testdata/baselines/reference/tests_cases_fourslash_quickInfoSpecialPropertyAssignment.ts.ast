@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @Filename: /a.js
+////class C {
+////    constructor() {
+////      /** Doc */
+////      this./*write*/x = 0;
+////      this./*read*/x;
+////    }
+////}
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral
+      StringLiteral

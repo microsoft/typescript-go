@@ -1,0 +1,68 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    property'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' staticProperty'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' SubFoo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    property'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    staticProperty'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' StaticSubFoo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' property'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' staticProperty'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' Intermediate'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Intermediate'
+    PropertyDeclaration
+      Identifier: '
+    property'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    staticProperty'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' StaticDerived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Intermediate'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' property'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' staticProperty'
+      NumericLiteral

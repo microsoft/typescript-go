@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      Identifier: ' bar'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral

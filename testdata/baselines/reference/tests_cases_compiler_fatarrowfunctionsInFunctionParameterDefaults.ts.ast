@@ -1,0 +1,23 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'x'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ThisKeyword
+    Parameter
+      Identifier: ' y'
+      CallExpression
+        Identifier: ' x'
+    Block
+      ReturnStatement
+        Identifier: ' y'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+fn'
+        Identifier: 'call'
+      NumericLiteral

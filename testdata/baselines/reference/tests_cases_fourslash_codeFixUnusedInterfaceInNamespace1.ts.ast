@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noUnusedLocals: true
+//// [| namespace greeter {
+////    interface interface1 {
+////    }
+////} |]
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      NoSubstitutionTemplateLiteral

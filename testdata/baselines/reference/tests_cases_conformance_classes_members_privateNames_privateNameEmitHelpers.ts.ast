@@ -1,0 +1,70 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      PrivateIdentifier
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'v'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            PlusEqualsToken
+            Identifier: ' v'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' __classPrivateFieldGet'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 'receiver'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' state'
+      AnyKeyword
+    TypeReference
+      Identifier: ' V'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' __classPrivateFieldSet'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 'receiver'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' state'
+      AnyKeyword
+    Parameter
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' V'
+    TypeReference
+      Identifier: ' V'

@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cache'
+        NewExpression
+          Identifier: ' Map'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' getStringGetter'
+        ArrowFunction
+          Parameter
+            Identifier: 'key'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ParenthesizedExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'cache'
+                          Identifier: 'get'
+                        Identifier: 'key'

@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  ModuleDeclaration
+    Identifier: ' myMod'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' myFn'
+      FunctionDeclaration
+        Identifier: ' myFn'
+        Block

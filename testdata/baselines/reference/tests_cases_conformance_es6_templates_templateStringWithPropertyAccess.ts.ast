@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateTail
+        Identifier: 'indexOf'
+      NoSubstitutionTemplateLiteral

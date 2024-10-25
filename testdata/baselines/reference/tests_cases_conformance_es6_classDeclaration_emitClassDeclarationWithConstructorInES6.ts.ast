@@ -1,0 +1,77 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    x'
+      StringKeyword
+      StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    _bar'
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' z'
+        StringLiteral
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    baz'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    baz'
+      Parameter
+        Identifier: 'z'
+        StringKeyword
+      Parameter
+        Identifier: ' v'
+        NumberKeyword
+      StringKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: '_bar'

@@ -1,0 +1,96 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'A'
+    PropertySignature
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' A'
+  InterfaceDeclaration
+    Identifier: ' Y'
+    TypeParameter
+      Identifier: 'B'
+    PropertySignature
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' Z'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    UnionType
+      TypeReference
+        Identifier: ' X'
+        TypeReference
+          Identifier: 'A'
+      TypeReference
+        Identifier: ' Y'
+        TypeReference
+          Identifier: 'B'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'A'
+    TypeReference
+      Identifier: ' Z'
+      TypeReference
+        Identifier: 'A'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    TypeParameter
+      Identifier: ' D'
+    TypeParameter
+      Identifier: ' E'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    Parameter
+      Identifier: ' c'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: ' d'
+      TypeReference
+        Identifier: ' D'
+    TypeReference
+      Identifier: ' Z'
+      TypeReference
+        Identifier: 'A'
+      ArrayType
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        CallExpression
+          Identifier: ' f1'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        CallExpression
+          Identifier: ' f2'
+          ObjectLiteralExpression
+          ObjectLiteralExpression
+          ObjectLiteralExpression
+          ObjectLiteralExpression

@@ -1,0 +1,14 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' ns_class'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        DefaultKeyword
+  ModuleDeclaration
+    Identifier: ' ns_abstract_class'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        DefaultKeyword
+        AbstractKeyword

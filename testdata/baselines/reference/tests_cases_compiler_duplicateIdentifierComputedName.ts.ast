@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      StringKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      StringKeyword

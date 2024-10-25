@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+  DoStatement
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    i'
+    BinaryExpression
+      Identifier: 'i'
+      LessThanToken
+      NumericLiteral
+  DoStatement
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    i'
+    BinaryExpression
+      Identifier: 'i'
+      LessThanToken
+      NumericLiteral

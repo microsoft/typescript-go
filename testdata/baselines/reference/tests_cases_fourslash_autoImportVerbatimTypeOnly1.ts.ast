@@ -1,0 +1,102 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: nodenext
+// @verbatimModuleSyntax: true
+
+// @Filename: /mod.ts
+//// export const value = 0;
+//// export class C { constructor(v: any) {} }
+//// export interface I {}
+
+// @Filename: /a.mts
+//// const x: /**/
+
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    data'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        exportName'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        fileName'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        moduleSpecifier'
+              StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      Identifier: '/*markerName*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    data'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        exportName'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        fileName'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        moduleSpecifier'
+              StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

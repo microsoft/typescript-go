@@ -1,0 +1,65 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' first'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: ' A'
+          NumericLiteral
+  ModuleDeclaration
+    Identifier: ' second'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: ' A'
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'param'
+        TypeReference
+          QualifiedName
+            Identifier: ' first'
+            Identifier: 'E'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' method'
+      Parameter
+        Identifier: 'param'
+        TypeReference
+          QualifiedName
+            Identifier: ' second'
+            Identifier: 'E'
+      Block
+  FunctionDeclaration
+    Identifier: ' overloadingFunction'
+    TypeReference
+      QualifiedName
+        Identifier: ' first'
+        Identifier: 'E'
+  FunctionDeclaration
+    Identifier: ' overloadingFunction'
+    TypeReference
+      QualifiedName
+        Identifier: ' second'
+        Identifier: 'E'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' second'
+            Identifier: 'E'
+          Identifier: 'B'

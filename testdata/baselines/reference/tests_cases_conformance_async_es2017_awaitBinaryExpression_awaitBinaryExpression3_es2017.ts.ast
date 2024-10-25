@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Promise'
+          NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' before'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' after'
+    VoidKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' func'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    before'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            BinaryExpression
+              AwaitExpression
+                Identifier: ' p'
+              PlusToken
+              Identifier: ' a'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    after'

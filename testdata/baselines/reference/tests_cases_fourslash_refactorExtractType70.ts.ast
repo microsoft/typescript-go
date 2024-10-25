@@ -1,0 +1,46 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////type Foo<T1, T2, T3> = {
+////    fn: /*a*/(a: T1, b: T2, c: T3, a1: T1, a2: T2, a3: T3) => void;/*b*/
+////}
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newContent'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+              Identifier: 'join'
+            StringLiteral

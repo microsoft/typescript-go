@@ -1,0 +1,62 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' TableClass'
+    TypeParameter
+      Identifier: 'S'
+      AnyKeyword
+    PropertyDeclaration
+      Identifier: '
+    _field'
+      TypeReference
+        Identifier: ' S'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Table'
+    TypeReference
+      Identifier: ' TableClass'
+  FunctionDeclaration
+    Identifier: ' fn'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Table'
+    Parameter
+      Identifier: 'o'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' o'
+          InstanceOfKeyword
+          Identifier: ' TableClass'
+  FunctionDeclaration
+    Identifier: ' fn2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' TableClass'
+    Parameter
+      Identifier: 'o'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' o'
+          InstanceOfKeyword
+          Identifier: ' TableClass'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeReference
+          Identifier: ' Table'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+o'
+      InstanceOfKeyword
+      Identifier: ' TableClass'

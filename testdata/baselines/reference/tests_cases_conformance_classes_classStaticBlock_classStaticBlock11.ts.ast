@@ -1,0 +1,39 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' getX'
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            Identifier: ' x'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+    // getX has privileged access to #x
+    getX'
+            EqualsToken
+            ArrowFunction
+              Parameter
+                Identifier: 'obj'
+                TypeReference
+                  Identifier: ' C'
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' obj'
+                PrivateIdentifier

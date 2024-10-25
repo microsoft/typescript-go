@@ -1,0 +1,82 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+    bar'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' isFoo1'
+    Parameter
+      Identifier: 'object'
+      TypeLiteral
+    TypePredicate
+      Identifier: ' object'
+      TypeReference
+        Identifier: ' Foo'
+    Block
+      ReturnStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' object'
+  FunctionDeclaration
+    Identifier: ' isFoo2'
+    Parameter
+      Identifier: 'this'
+      VoidKeyword
+    Parameter
+      Identifier: ' object'
+      TypeLiteral
+    TypePredicate
+      Identifier: ' object'
+      TypeReference
+        Identifier: ' Foo'
+    Block
+      ReturnStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' object'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        UnionType
+          TypeReference
+            Identifier: ' Foo'
+          TypeReference
+            Identifier: ' Bar'
+  IfStatement
+    CallExpression
+      Identifier: 'isFoo1'
+      Identifier: 'test'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    test'
+            Identifier: 'foo'
+          EqualsToken
+          StringLiteral
+  IfStatement
+    CallExpression
+      Identifier: 'isFoo2'
+      Identifier: 'test'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    test'
+            Identifier: 'foo'
+          EqualsToken
+          StringLiteral

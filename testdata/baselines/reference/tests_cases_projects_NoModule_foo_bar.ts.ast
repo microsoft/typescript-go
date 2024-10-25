@@ -1,0 +1,7 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' call'
+    Block
+      ReturnStatement
+        StringLiteral

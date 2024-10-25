@@ -1,0 +1,80 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' __test1__'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' interfaceWithPublicAndOptional'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: 'U'
+        PropertySignature
+          Identifier: ' one'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: ' two'
+          QuestionToken
+          TypeReference
+            Identifier: ' U'
+      EmptyStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj4'
+            TypeReference
+              Identifier: ' interfaceWithPublicAndOptional'
+              NumberKeyword
+              StringKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' one'
+                NumericLiteral
+      EmptyStatement
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' __val__obj4'
+            Identifier: ' obj4'
+  ModuleDeclaration
+    Identifier: ' __test2__'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' classWithOptional'
+        TypeParameter
+          Identifier: 'T'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' one'
+            QuestionToken
+            TypeReference
+              Identifier: ' T'
+          Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            NewExpression
+              Identifier: ' classWithOptional'
+              NumberKeyword
+      EmptyStatement
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' __val__x3'
+            Identifier: ' x3'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+__test2__'
+        Identifier: '__val__x3'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' __test1__'
+        Identifier: '__val__obj4'

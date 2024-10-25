@@ -1,0 +1,24 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+              Identifier: 'map'
+            AnyKeyword
+            AnyKeyword
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  ThisKeyword

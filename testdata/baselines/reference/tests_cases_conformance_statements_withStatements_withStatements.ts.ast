@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  WithStatement
+    Identifier: 'x'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    name'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    id'
+          EqualsToken
+          NumericLiteral

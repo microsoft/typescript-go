@@ -1,0 +1,58 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooOrBar'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AsExpression
+          StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        AsExpression
+          StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        AsExpression
+          Identifier: ' fooOrBar'
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        AsExpression
+          Identifier: ' fooOrBar'
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        AsExpression
+          Identifier: ' fooOrBar'
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        AsExpression
+          StringLiteral
+          TypeQuery
+            Identifier: ' fooOrBar'

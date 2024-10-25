@@ -1,0 +1,14 @@
+SourceFile
+  WhileStatement
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        NumericLiteral
+        TemplateTail
+    Block
+      ExpressionStatement
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            NumericLiteral
+            TemplateTail

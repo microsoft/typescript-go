@@ -1,0 +1,27 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' a'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            AnyKeyword
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' x'
+              SpreadAssignment
+                Identifier: 'y'
+            EqualsToken
+            ParenthesizedExpression
+              AsExpression
+                ObjectLiteralExpression
+                AnyKeyword

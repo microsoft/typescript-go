@@ -1,0 +1,83 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: ' fetch'
+                      StringLiteral
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'res'
+                    EqualsGreaterThanToken
+                    NumericLiteral
+                Identifier: 'catch'
+              ArrowFunction
+                Parameter
+                  Identifier: 'rej'
+                EqualsGreaterThanToken
+                NumericLiteral
+            Identifier: 'then'
+          Identifier: 'res'
+  FunctionDeclaration
+    Identifier: ' res'
+    Parameter
+      Identifier: 'result'
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            NumberKeyword
+      TryStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' res'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' fetch'
+                    StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        result'
+              EqualsToken
+              NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'rej'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        result'
+                EqualsToken
+                NumericLiteral
+      ReturnStatement
+        CallExpression
+          Identifier: ' res'
+          Identifier: 'result'
+  FunctionDeclaration
+    Identifier: ' res'
+    Parameter
+      Identifier: 'result'
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral

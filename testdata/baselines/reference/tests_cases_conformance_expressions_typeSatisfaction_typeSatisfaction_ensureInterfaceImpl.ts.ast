@@ -1,0 +1,38 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Movable'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+    move'
+        Parameter
+          Identifier: 'distance'
+          NumberKeyword
+        VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' car'
+        SatisfiesExpression
+          ObjectLiteralExpression
+            MethodDeclaration
+              Identifier: '
+    start'
+              Block
+            MethodDeclaration
+              Identifier: '
+    move'
+              Parameter
+                Identifier: 'd'
+              Block
+            MethodDeclaration
+              Identifier: '
+    stop'
+              Block
+          IntersectionType
+            TypeReference
+              Identifier: ' Movable'
+            TypeReference
+              Identifier: ' Record'
+              StringKeyword
+              UnknownKeyword

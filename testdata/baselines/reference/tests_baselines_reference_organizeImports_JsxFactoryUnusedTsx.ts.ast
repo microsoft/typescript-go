@@ -1,0 +1,9 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' React'
+        ImportSpecifier
+          Identifier: ' Other'
+    StringLiteral

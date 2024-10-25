@@ -1,0 +1,69 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' React'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' ComponentClass'
+        TypeParameter
+          Identifier: 'P'
+        ConstructSignature
+          TypeReference
+            Identifier: ' Component'
+            TypeReference
+              Identifier: 'P'
+            TypeLiteral
+      ClassDeclaration
+        Identifier: ' Component'
+        TypeParameter
+          Identifier: 'A'
+        TypeParameter
+          Identifier: ' B'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' createComponentClass'
+    TypeParameter
+      Identifier: 'P'
+    Parameter
+      Identifier: 'factory'
+      FunctionType
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ComponentClass'
+          TypeReference
+            Identifier: 'P'
+    TypeReference
+      QualifiedName
+        Identifier: ' React'
+        Identifier: 'ComponentClass'
+      TypeReference
+        Identifier: 'P'
+  ClassDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' createComponentClass'
+          ArrowFunction
+            EqualsGreaterThanToken
+            ClassExpression
+              HeritageClause
+                ExpressionWithTypeArguments
+                  PropertyAccessExpression
+                    Identifier: ' React'
+                    Identifier: 'Component'
+                  TypeLiteral
+                  TypeLiteral
+              MethodDeclaration
+                Identifier: '
+  render'
+                Block
+                  ReturnStatement
+                    JsxElement
+                      JsxOpeningElement
+                        Identifier: 'span'
+                        JsxAttributes
+                      JsxText
+                      JsxClosingElement
+                        Identifier: 'span'

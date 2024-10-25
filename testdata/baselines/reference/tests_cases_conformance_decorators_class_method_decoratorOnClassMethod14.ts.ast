@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' prop'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            NumericLiteral
+    MethodDeclaration
+      Decorator
+        Identifier: 'decorator'
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          NumericLiteral

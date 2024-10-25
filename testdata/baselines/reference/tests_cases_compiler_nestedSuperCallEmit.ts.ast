@@ -1,0 +1,65 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' Foo'
+    Constructor
+      Parameter
+        Identifier: 'shouldThrow'
+        BooleanKeyword
+      Block
+        IfStatement
+          Identifier: 'shouldThrow'
+          Block
+            ThrowStatement
+              NewExpression
+                Identifier: ' Error'
+                StringLiteral
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            console'
+                  Identifier: 'log'
+                StringLiteral
+  ClassDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    Constructor
+      Block
+        TryStatement
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                TrueKeyword
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+              UnknownKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            console'
+                    Identifier: 'log'
+                  BinaryExpression
+                    StringLiteral
+                    PlusToken
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'e'
+                          TypeReference
+                            Identifier: ' Error'
+                      Identifier: 'message'
+              ExpressionStatement
+                CallExpression
+                  SuperKeyword
+                  FalseKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Bar'

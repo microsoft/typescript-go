@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn'
+    NumberKeyword
+    Block
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+          StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'

@@ -1,0 +1,20 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' X'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' bar'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' X'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeReference
+      QualifiedName
+        Identifier: ' X'
+        Identifier: 'bar'

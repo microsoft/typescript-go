@@ -1,0 +1,182 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StringLiteral
+      NumberKeyword
+    PropertyDeclaration
+      StringLiteral
+      StringKeyword
+    PropertyDeclaration
+      StringLiteral
+      NumberKeyword
+    PropertyDeclaration
+      StringLiteral
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      StringLiteral
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        ElementAccessExpression
+          Identifier: ' c'
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      StringLiteral
+      NumberKeyword
+    PropertySignature
+      StringLiteral
+      StringKeyword
+    PropertySignature
+      StringLiteral
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        ElementAccessExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            StringLiteral
+            NumberKeyword
+          PropertySignature
+            StringLiteral
+            StringKeyword
+          PropertySignature
+            StringLiteral
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+          PropertyAssignment
+            StringLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ElementAccessExpression
+          Identifier: ' b'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        ElementAccessExpression
+          Identifier: ' b'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' b'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        ElementAccessExpression
+          Identifier: ' b'
+          StringLiteral

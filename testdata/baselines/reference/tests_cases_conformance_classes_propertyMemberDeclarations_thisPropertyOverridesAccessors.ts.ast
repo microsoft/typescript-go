@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    GetAccessor
+      Identifier: ' p'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' p'
+      Parameter
+        Identifier: 'value'
+      Block
+  ClassDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'p'
+            EqualsToken
+            NumericLiteral

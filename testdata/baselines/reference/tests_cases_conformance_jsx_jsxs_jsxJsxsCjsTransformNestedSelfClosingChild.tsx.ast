@@ -1,0 +1,84 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'div'
+          JsxAttributes
+        JsxText
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+        JsxText
+        JsxClosingElement
+          Identifier: 'div'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'div'
+          JsxAttributes
+        JsxText
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+        JsxText
+        JsxSelfClosingElement
+          Identifier: 'div'
+          JsxAttributes
+        JsxText
+        JsxClosingElement
+          Identifier: 'div'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'div'
+          JsxAttributes
+        JsxText
+        JsxExpression
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'i'
+              EqualsGreaterThanToken
+              JsxElement
+                JsxOpeningElement
+                  Identifier: 'div'
+                  JsxAttributes
+                    JsxAttribute
+                      Identifier: ' key'
+                      JsxExpression
+                        Identifier: 'i'
+                JsxExpression
+                  Identifier: 'i'
+                JsxClosingElement
+                  Identifier: 'div'
+        JsxText
+        JsxClosingElement
+          Identifier: 'div'

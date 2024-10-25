@@ -1,0 +1,31 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: ' prop'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          SymbolKeyword
+          TypeReference
+            Identifier: ' Foo'
+  ExpressionStatement
+    Identifier: '
+
+x'
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' x'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'

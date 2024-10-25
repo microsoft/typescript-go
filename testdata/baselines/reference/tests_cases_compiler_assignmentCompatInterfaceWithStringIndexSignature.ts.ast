@@ -1,0 +1,36 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IHandler'
+    CallSignature
+      Parameter
+        Identifier: 'e'
+      BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' IHandlerMap'
+    IndexSignature
+      Parameter
+        Identifier: 'type'
+        StringKeyword
+      TypeReference
+        Identifier: ' IHandler'
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' Boz'
+      VoidKeyword
+      Block
+  FunctionDeclaration
+    Identifier: ' Biz'
+    Parameter
+      Identifier: 'map'
+      TypeReference
+        Identifier: ' IHandlerMap'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+Biz'
+      NewExpression
+        Identifier: ' Foo'

@@ -1,0 +1,41 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' use'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' TopLevelConstEnum'
+    EnumMember
+      Identifier: ' X'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    use'
+          PropertyAccessExpression
+            Identifier: 'TopLevelConstEnum'
+            Identifier: 'X'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    use'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'M'
+              Identifier: 'NonTopLevelConstEnum'
+            Identifier: 'X'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        ConstKeyword
+        Identifier: ' NonTopLevelConstEnum'
+        EnumMember
+          Identifier: ' X'

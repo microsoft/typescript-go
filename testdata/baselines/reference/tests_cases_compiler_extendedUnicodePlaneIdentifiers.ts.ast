@@ -1,0 +1,144 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 𝑚'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 𝑀'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      BinaryExpression
+        Identifier: '𝑀'
+        PlusToken
+        Identifier: ' 𝑚'
+  ClassDeclaration
+    Identifier: ' K'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ၡ'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      BinaryExpression
+        Identifier: 'ၡ'
+        AsteriskAsteriskToken
+        Identifier: ' ၡ'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ဒ'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      BinaryExpression
+        Identifier: 'ဒ'
+        AsteriskAsteriskToken
+        Identifier: ' ဒ'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ဒၡ𝑀'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      BinaryExpression
+        Identifier: 'ဒၡ𝑀'
+        AsteriskAsteriskToken
+        Identifier: ' ဒၡ𝑀'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ၡ𝑀ဒ'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      BinaryExpression
+        Identifier: 'ၡ𝑀ဒ'
+        AsteriskAsteriskToken
+        Identifier: ' ၡ𝑀ဒ'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 𝑀ဒၡ'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      BinaryExpression
+        Identifier: '𝑀ဒၡ'
+        AsteriskAsteriskToken
+        Identifier: ' 𝑀ဒၡ'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 𝓱𝓮𝓵𝓵𝓸'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Ɐⱱ'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 𓀸𓀹𓀺'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 𡚭𡚮𡚯'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 𡚭𓀺ⱱ𝓮'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 𓀺ⱱ𝓮𡚭'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ⱱ𝓮𡚭𓀺'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 𝓮𡚭𓀺ⱱ'
+        StringLiteral

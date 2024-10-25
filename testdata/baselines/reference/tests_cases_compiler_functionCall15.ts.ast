@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      QuestionToken
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'b'
+      ArrayType
+        NumberKeyword
+    Block

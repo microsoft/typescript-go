@@ -1,0 +1,28 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' a'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+    GetAccessor
+      Identifier: ' a'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'a'

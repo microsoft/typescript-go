@@ -1,0 +1,77 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' PartialDeep'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      QuestionToken
+      TypeReference
+        Identifier: ' PartialDeep'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' Many'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Collection'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    sortBy'
+      Parameter
+        DotDotDotToken
+        Identifier: 'iteratees'
+        ArrayType
+          TypeReference
+            Identifier: ' Many'
+            TypeReference
+              Identifier: 'PartialDeep'
+              TypeReference
+                Identifier: 'T'
+      TypeReference
+        Identifier: ' Collection'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Collection'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'x'
+              NumberKeyword
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            TypeReference
+              Identifier: ' Collection'
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'x'
+                  NumberKeyword
+                PropertySignature
+                  Identifier: ' y'
+                  NumberKeyword
+  ExportDeclaration
+    NamedExports

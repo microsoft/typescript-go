@@ -1,0 +1,71 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' fs'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' server'
+    ExternalModuleReference
+      StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IConfiguration'
+    PropertySignature
+      Identifier: '
+    workspace'
+      TypeReference
+        QualifiedName
+          Identifier: ' server'
+          Identifier: 'IWorkspace'
+    PropertySignature
+      Identifier: '
+    server'
+      QuestionToken
+      TypeReference
+        QualifiedName
+          Identifier: ' server'
+          Identifier: 'IServer'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IServer'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IWorkspace'
+    MethodSignature
+      Identifier: '
+    toAbsolutePath'
+      Parameter
+        Identifier: 'server'
+        TypeReference
+          Identifier: ' IServer'
+      Parameter
+        Identifier: ' workspaceRelativePath'
+        QuestionToken
+        StringKeyword
+      StringKeyword
+  ImportEqualsDeclaration
+    Identifier: ' commands'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' run'
+    Parameter
+      Identifier: 'configuration'
+      TypeReference
+        QualifiedName
+          Identifier: ' commands'
+          Identifier: 'IConfiguration'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' absoluteWorkspacePath'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' configuration'
+                  Identifier: 'workspace'
+                Identifier: 'toAbsolutePath'
+              PropertyAccessExpression
+                Identifier: 'configuration'
+                Identifier: 'server'

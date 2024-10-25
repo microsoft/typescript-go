@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    ParenthesizedExpression
+      ArrowFunction
+        Parameter
+          Identifier: 'item'
+          StringKeyword
+        EqualsGreaterThanToken
+        Identifier: '
+    item'

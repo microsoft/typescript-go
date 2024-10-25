@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              BinaryExpression
+                NumericLiteral
+                InKeyword
+                ArrayLiteralExpression
+            TrueKeyword

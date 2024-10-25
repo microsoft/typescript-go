@@ -1,0 +1,42 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' test'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        MethodDeclaration
+          Identifier: '
+        foo'
+          Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+        MethodDeclaration
+          Identifier: '
+        bar'
+          Parameter
+            Identifier: 'callback'
+            FunctionType
+              VoidKeyword
+          Block
+        MethodDeclaration
+          Identifier: '
+        runme'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'bar'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          SuperKeyword
+                          Identifier: 'foo'

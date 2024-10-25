@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' recurser'
+        FunctionExpression
+          Identifier: ' foo'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Error: foo should not be visible here
+foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// recurser should be
+recurser'
+  ExpressionStatement
+    ParenthesizedExpression
+      FunctionExpression
+        Identifier: ' bar'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // Error: foo should not be visible here either
+    foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Error: bar should not be visible
+bar'

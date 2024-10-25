@@ -1,0 +1,40 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' m1'
+            Identifier: 'm1'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' m2'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' _m2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' m2'
+            Identifier: 'm2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' m2'
+            Identifier: '_m2'

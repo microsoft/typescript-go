@@ -1,0 +1,9 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      ExpressionStatement
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral

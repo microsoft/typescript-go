@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Outer'
+    PropertyDeclaration
+      StaticKeyword
+      PublicKeyword
+      Identifier: ' intI'
+      NumberKeyword

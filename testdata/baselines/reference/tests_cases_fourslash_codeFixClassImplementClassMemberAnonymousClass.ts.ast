@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '/// <reference path='fourslash.ts' />
+
+//// class A {
+////     foo() {
+////         return class { x: number; }
+////     }
+////     bar() {
+////         return new class { x: number; }
+////     }
+//// }
+//// class C implements A {[| |]}
+
+verify'
+          Identifier: 'not'
+        Identifier: 'codeFixAvailable'

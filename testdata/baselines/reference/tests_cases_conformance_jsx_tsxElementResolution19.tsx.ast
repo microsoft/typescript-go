@@ -1,0 +1,29 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyClass'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'MyClass'
+    StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'MyClass'
+      JsxAttributes

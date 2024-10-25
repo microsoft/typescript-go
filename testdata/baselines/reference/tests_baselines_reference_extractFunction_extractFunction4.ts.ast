@@ -1,0 +1,227 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          FunctionDeclaration
+            AsyncKeyword
+            Identifier: ' a'
+            Parameter
+              Identifier: 'z'
+              NumberKeyword
+            Parameter
+              Identifier: ' z1'
+              AnyKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' y'
+                    NumericLiteral
+              IfStatement
+                Identifier: 'z'
+                Block
+                  ExpressionStatement
+                    AwaitExpression
+                      Identifier: ' z1'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' foo'
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          FunctionDeclaration
+            AsyncKeyword
+            Identifier: ' a'
+            Parameter
+              Identifier: 'z'
+              NumberKeyword
+            Parameter
+              Identifier: ' z1'
+              AnyKeyword
+            Block
+              ReturnStatement
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' /*RENAME*/newFunction'
+              FunctionDeclaration
+                AsyncKeyword
+                Identifier: ' newFunction'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' y'
+                        NumericLiteral
+                  IfStatement
+                    Identifier: 'z'
+                    Block
+                      ExpressionStatement
+                        AwaitExpression
+                          Identifier: ' z1'
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' foo'
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          FunctionDeclaration
+            AsyncKeyword
+            Identifier: ' a'
+            Parameter
+              Identifier: 'z'
+              NumberKeyword
+            Parameter
+              Identifier: ' z1'
+              AnyKeyword
+            Block
+              ReturnStatement
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' /*RENAME*/newFunction'
+                    Identifier: 'z'
+                    Identifier: ' z1'
+          FunctionDeclaration
+            AsyncKeyword
+            Identifier: ' newFunction'
+            Parameter
+              Identifier: 'z'
+              NumberKeyword
+            Parameter
+              Identifier: ' z1'
+              AnyKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' y'
+                    NumericLiteral
+              IfStatement
+                Identifier: 'z'
+                Block
+                  ExpressionStatement
+                    AwaitExpression
+                      Identifier: ' z1'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' foo'
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          FunctionDeclaration
+            AsyncKeyword
+            Identifier: ' a'
+            Parameter
+              Identifier: 'z'
+              NumberKeyword
+            Parameter
+              Identifier: ' z1'
+              AnyKeyword
+            Block
+              ReturnStatement
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' /*RENAME*/newFunction'
+                    Identifier: 'z'
+                    Identifier: ' z1'
+      FunctionDeclaration
+        AsyncKeyword
+        Identifier: ' newFunction'
+        Parameter
+          Identifier: 'z'
+          NumberKeyword
+        Parameter
+          Identifier: ' z1'
+          AnyKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                NumericLiteral
+          IfStatement
+            Identifier: 'z'
+            Block
+              ExpressionStatement
+                AwaitExpression
+                  Identifier: ' z1'
+          ReturnStatement
+            CallExpression
+              Identifier: ' foo'
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' foo'
+        Block
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          FunctionDeclaration
+            AsyncKeyword
+            Identifier: ' a'
+            Parameter
+              Identifier: 'z'
+              NumberKeyword
+            Parameter
+              Identifier: ' z1'
+              AnyKeyword
+            Block
+              ReturnStatement
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' /*RENAME*/newFunction'
+                    Identifier: 'z'
+                    Identifier: ' z1'
+                    Identifier: ' foo'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' newFunction'
+    Parameter
+      Identifier: 'z'
+      NumberKeyword
+    Parameter
+      Identifier: ' z1'
+      AnyKeyword
+    Parameter
+      Identifier: ' foo'
+      FunctionType
+        VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+      IfStatement
+        Identifier: 'z'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' z1'
+      ReturnStatement
+        CallExpression
+          Identifier: ' foo'

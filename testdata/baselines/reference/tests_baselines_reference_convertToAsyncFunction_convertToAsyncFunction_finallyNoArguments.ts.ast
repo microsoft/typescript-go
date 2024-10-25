@@ -1,0 +1,35 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' foo'
+            Identifier: 'finally'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' foo'

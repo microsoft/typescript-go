@@ -1,0 +1,9 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' libType'
+        TypeReference
+          QualifiedName
+            Identifier: ' Lib'
+            Identifier: 'LibType'

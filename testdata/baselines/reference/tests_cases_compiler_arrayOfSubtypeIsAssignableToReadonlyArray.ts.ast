@@ -1,0 +1,124 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' b'
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'T'
+    PropertyDeclaration
+      Identifier: ' c'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ara'
+        ArrayType
+          TypeReference
+            Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arb'
+        ArrayType
+          TypeReference
+            Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cra'
+        TypeReference
+          Identifier: ' C'
+          TypeReference
+            Identifier: 'A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' crb'
+        TypeReference
+          Identifier: ' C'
+          TypeReference
+            Identifier: 'B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rra'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            Identifier: 'A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rrb'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            Identifier: 'B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+rra'
+      EqualsToken
+      Identifier: ' ara'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+rrb'
+      EqualsToken
+      Identifier: ' arb'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK, Array<B> is assignable to ReadonlyArray<A>
+rra'
+      EqualsToken
+      Identifier: ' arb'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+rrb'
+      EqualsToken
+      Identifier: ' ara'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error: 'A' is not assignable to 'B'
+
+rra'
+      EqualsToken
+      Identifier: ' cra'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+rra'
+      EqualsToken
+      Identifier: ' crb'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK, C<B> is assignable to ReadonlyArray<A>
+rrb'
+      EqualsToken
+      Identifier: ' crb'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+rrb'
+      EqualsToken
+      Identifier: ' cra'

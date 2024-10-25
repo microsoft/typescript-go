@@ -1,0 +1,761 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    anyContext'
+        ImportSpecifier
+          Identifier: '
+    FormatContext'
+        ImportSpecifier
+          Identifier: '
+    FormattingContext'
+        ImportSpecifier
+          Identifier: '
+    getAllRules'
+        ImportSpecifier
+          Identifier: '
+    Rule'
+        ImportSpecifier
+          Identifier: '
+    RuleAction'
+        ImportSpecifier
+          Identifier: '
+    RuleSpec'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    every'
+        ImportSpecifier
+          Identifier: '
+    FormatCodeSettings'
+        ImportSpecifier
+          Identifier: '
+    FormattingHost'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFormatContext'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' FormatCodeSettings'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' FormattingHost'
+    TypeReference
+      Identifier: ' FormatContext'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' options'
+          PropertyAssignment
+            Identifier: ' getRules'
+            CallExpression
+              Identifier: ' getRulesMap'
+          ShorthandPropertyAssignment
+            Identifier: ' host'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rulesMapCache'
+        UnionType
+          TypeReference
+            Identifier: ' RulesMap'
+          UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' getRulesMap'
+    TypeReference
+      Identifier: ' RulesMap'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'rulesMapCache'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        rulesMapCache'
+              EqualsToken
+              CallExpression
+                Identifier: ' createRulesMap'
+                CallExpression
+                  Identifier: 'getAllRules'
+      ReturnStatement
+        Identifier: ' rulesMapCache'
+  FunctionDeclaration
+    Identifier: ' getRuleActionExclusion'
+    Parameter
+      Identifier: 'ruleAction'
+      TypeReference
+        Identifier: ' RuleAction'
+    TypeReference
+      Identifier: ' RuleAction'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mask'
+            PropertyAccessExpression
+              Identifier: ' RuleAction'
+              Identifier: 'None'
+      IfStatement
+        BinaryExpression
+          Identifier: 'ruleAction'
+          AmpersandToken
+          PropertyAccessExpression
+            Identifier: ' RuleAction'
+            Identifier: 'StopProcessingSpaceActions'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        mask'
+              BarEqualsToken
+              PropertyAccessExpression
+                Identifier: ' RuleAction'
+                Identifier: 'ModifySpaceAction'
+      IfStatement
+        BinaryExpression
+          Identifier: 'ruleAction'
+          AmpersandToken
+          PropertyAccessExpression
+            Identifier: ' RuleAction'
+            Identifier: 'StopProcessingTokenActions'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        mask'
+              BarEqualsToken
+              PropertyAccessExpression
+                Identifier: ' RuleAction'
+                Identifier: 'ModifyTokenAction'
+      IfStatement
+        BinaryExpression
+          Identifier: 'ruleAction'
+          AmpersandToken
+          PropertyAccessExpression
+            Identifier: ' RuleAction'
+            Identifier: 'ModifySpaceAction'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        mask'
+              BarEqualsToken
+              PropertyAccessExpression
+                Identifier: ' RuleAction'
+                Identifier: 'ModifySpaceAction'
+      IfStatement
+        BinaryExpression
+          Identifier: 'ruleAction'
+          AmpersandToken
+          PropertyAccessExpression
+            Identifier: ' RuleAction'
+            Identifier: 'ModifyTokenAction'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        mask'
+              BarEqualsToken
+              PropertyAccessExpression
+                Identifier: ' RuleAction'
+                Identifier: 'ModifyTokenAction'
+      ReturnStatement
+        Identifier: ' mask'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RulesMap'
+    FunctionType
+      Parameter
+        Identifier: 'context'
+        TypeReference
+          Identifier: ' FormattingContext'
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Rule'
+        UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' createRulesMap'
+    Parameter
+      Identifier: 'rules'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' RuleSpec'
+    TypeReference
+      Identifier: ' RulesMap'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' map'
+            CallExpression
+              Identifier: ' buildMap'
+              Identifier: 'rules'
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' context'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' bucket'
+                  ElementAccessExpression
+                    Identifier: ' map'
+                    CallExpression
+                      Identifier: 'getRuleBucketIndex'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'context'
+                          Identifier: 'currentTokenSpan'
+                        Identifier: 'kind'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'nextTokenSpan'
+                        Identifier: 'kind'
+            IfStatement
+              Identifier: 'bucket'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' rules'
+                      ArrayType
+                        TypeReference
+                          Identifier: ' Rule'
+                      ArrayLiteralExpression
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' ruleActionMask'
+                      TypeReference
+                        Identifier: ' RuleAction'
+                      NumericLiteral
+                ForOfStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' rule'
+                  Identifier: ' bucket'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' acceptRuleActions'
+                          PrefixUnaryExpression
+                            CallExpression
+                              Identifier: 'getRuleActionExclusion'
+                              Identifier: 'ruleActionMask'
+                    IfStatement
+                      BinaryExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'rule'
+                            Identifier: 'action'
+                          AmpersandToken
+                          Identifier: ' acceptRuleActions'
+                        AmpersandAmpersandToken
+                        CallExpression
+                          Identifier: ' every'
+                          PropertyAccessExpression
+                            Identifier: 'rule'
+                            Identifier: 'context'
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' c'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              Identifier: ' c'
+                              Identifier: 'context'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    rules'
+                              Identifier: 'push'
+                            Identifier: 'rule'
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                    ruleActionMask'
+                            BarEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' rule'
+                              Identifier: 'action'
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'rules'
+                    Identifier: 'length'
+                  Block
+                    ReturnStatement
+                      Identifier: ' rules'
+  FunctionDeclaration
+    Identifier: ' buildMap'
+    Parameter
+      Identifier: 'rules'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' RuleSpec'
+    TypeOperator
+      ArrayType
+        ParenthesizedType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Rule'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' map'
+            ArrayType
+              ArrayType
+                TypeReference
+                  Identifier: ' Rule'
+            NewExpression
+              Identifier: ' Array'
+              BinaryExpression
+                Identifier: 'mapRowLength'
+                AsteriskToken
+                Identifier: ' mapRowLength'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rulesBucketConstructionStateList'
+            NewExpression
+              Identifier: ' Array'
+              NumberKeyword
+              PropertyAccessExpression
+                Identifier: 'map'
+                Identifier: 'length'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rule'
+        Identifier: ' rules'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' specificRule'
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' rule'
+                      Identifier: 'leftTokenRange'
+                    Identifier: 'isSpecific'
+                  AmpersandAmpersandToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' rule'
+                      Identifier: 'rightTokenRange'
+                    Identifier: 'isSpecific'
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' left'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' rule'
+                Identifier: 'leftTokenRange'
+              Identifier: 'tokens'
+            Block
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' right'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' rule'
+                    Identifier: 'rightTokenRange'
+                  Identifier: 'tokens'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' index'
+                        CallExpression
+                          Identifier: ' getRuleBucketIndex'
+                          Identifier: 'left'
+                          Identifier: ' right'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' rulesBucket'
+                        ElementAccessExpression
+                          Identifier: ' map'
+                          Identifier: 'index'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'rulesBucket'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' undefined'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    rulesBucket'
+                          EqualsToken
+                          BinaryExpression
+                            ElementAccessExpression
+                              Identifier: ' map'
+                              Identifier: 'index'
+                            EqualsToken
+                            ArrayLiteralExpression
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                addRule'
+                      Identifier: 'rulesBucket'
+                      PropertyAccessExpression
+                        Identifier: ' rule'
+                        Identifier: 'rule'
+                      Identifier: ' specificRule'
+                      Identifier: ' rulesBucketConstructionStateList'
+                      Identifier: ' index'
+      ReturnStatement
+        Identifier: ' map'
+  FunctionDeclaration
+    Identifier: ' getRuleBucketIndex'
+    Parameter
+      Identifier: 'row'
+      NumberKeyword
+    Parameter
+      Identifier: ' column'
+      NumberKeyword
+    NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'row'
+              LessThanEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'LastKeyword'
+            AmpersandAmpersandToken
+            BinaryExpression
+              Identifier: ' column'
+              LessThanEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'LastKeyword'
+          StringLiteral
+      ReturnStatement
+        BinaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'row'
+              AsteriskToken
+              Identifier: ' mapRowLength'
+          PlusToken
+          Identifier: ' column'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' maskBitSize'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mask'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mapRowLength'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'LastToken'
+          PlusToken
+          NumericLiteral
+  EnumDeclaration
+    Identifier: ' RulesPosition'
+    EnumMember
+      Identifier: '
+    StopRulesSpecific'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StopRulesAny'
+      BinaryExpression
+        Identifier: ' maskBitSize'
+        AsteriskToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    ContextRulesSpecific'
+      BinaryExpression
+        Identifier: ' maskBitSize'
+        AsteriskToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    ContextRulesAny'
+      BinaryExpression
+        Identifier: ' maskBitSize'
+        AsteriskToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    NoContextRulesSpecific'
+      BinaryExpression
+        Identifier: ' maskBitSize'
+        AsteriskToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    NoContextRulesAny'
+      BinaryExpression
+        Identifier: ' maskBitSize'
+        AsteriskToken
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' addRule'
+    Parameter
+      Identifier: 'rules'
+      ArrayType
+        TypeReference
+          Identifier: ' Rule'
+    Parameter
+      Identifier: ' rule'
+      TypeReference
+        Identifier: ' Rule'
+    Parameter
+      Identifier: ' specificTokens'
+      BooleanKeyword
+    Parameter
+      Identifier: ' constructionState'
+      ArrayType
+        NumberKeyword
+    Parameter
+      Identifier: ' rulesBucketIndex'
+      NumberKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' position'
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' rule'
+                  Identifier: 'action'
+                AmpersandToken
+                PropertyAccessExpression
+                  Identifier: ' RuleAction'
+                  Identifier: 'StopAction'
+              QuestionToken
+              ConditionalExpression
+                Identifier: '
+        specificTokens'
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' RulesPosition'
+                  Identifier: 'StopRulesSpecific'
+                ColonToken
+                PropertyAccessExpression
+                  Identifier: ' RulesPosition'
+                  Identifier: 'StopRulesAny'
+              ColonToken
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        rule'
+                    Identifier: 'context'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' anyContext'
+                QuestionToken
+                ConditionalExpression
+                  Identifier: '
+        specificTokens'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' RulesPosition'
+                    Identifier: 'ContextRulesSpecific'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' RulesPosition'
+                    Identifier: 'ContextRulesAny'
+                ColonToken
+                ConditionalExpression
+                  Identifier: '
+        specificTokens'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' RulesPosition'
+                    Identifier: 'NoContextRulesSpecific'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' RulesPosition'
+                    Identifier: 'NoContextRulesAny'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' state'
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: ' constructionState'
+                Identifier: 'rulesBucketIndex'
+              BarBarToken
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    rules'
+            Identifier: 'splice'
+          CallExpression
+            Identifier: 'getInsertionIndex'
+            Identifier: 'state'
+            Identifier: ' position'
+          NumericLiteral
+          Identifier: ' rule'
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    constructionState'
+            Identifier: 'rulesBucketIndex'
+          EqualsToken
+          CallExpression
+            Identifier: ' increaseInsertionIndex'
+            Identifier: 'state'
+            Identifier: ' position'
+  FunctionDeclaration
+    Identifier: ' getInsertionIndex'
+    Parameter
+      Identifier: 'indexBitmap'
+      NumberKeyword
+    Parameter
+      Identifier: ' maskPosition'
+      TypeReference
+        Identifier: ' RulesPosition'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' index'
+            NumericLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' pos'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' pos'
+          LessThanEqualsToken
+          Identifier: ' maskPosition'
+        BinaryExpression
+          Identifier: ' pos'
+          PlusEqualsToken
+          Identifier: ' maskBitSize'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        index'
+              PlusEqualsToken
+              BinaryExpression
+                Identifier: ' indexBitmap'
+                AmpersandToken
+                Identifier: ' mask'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        indexBitmap'
+              GreaterThanGreaterThanEqualsToken
+              Identifier: ' maskBitSize'
+      ReturnStatement
+        Identifier: ' index'
+  FunctionDeclaration
+    Identifier: ' increaseInsertionIndex'
+    Parameter
+      Identifier: 'indexBitmap'
+      NumberKeyword
+    Parameter
+      Identifier: ' maskPosition'
+      TypeReference
+        Identifier: ' RulesPosition'
+    NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            BinaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'indexBitmap'
+                      GreaterThanGreaterThanToken
+                      Identifier: ' maskPosition'
+                  AmpersandToken
+                  Identifier: ' mask'
+              PlusToken
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'value'
+                AmpersandToken
+                Identifier: ' mask'
+            EqualsEqualsEqualsToken
+            Identifier: ' value'
+          StringLiteral
+      ReturnStatement
+        BinaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'indexBitmap'
+              AmpersandToken
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'mask'
+                    LessThanLessThanToken
+                    Identifier: ' maskPosition'
+          BarToken
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'value'
+              LessThanLessThanToken
+              Identifier: ' maskPosition'

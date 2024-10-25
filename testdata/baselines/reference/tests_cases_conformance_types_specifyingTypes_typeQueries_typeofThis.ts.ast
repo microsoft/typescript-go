@@ -1,0 +1,492 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test'
+    PropertyDeclaration
+      Identifier: '
+    data'
+      ObjectLiteralExpression
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' copy'
+              TypeQuery
+                QualifiedName
+                  Identifier: ' this'
+                  Identifier: 'data'
+              ObjectLiteralExpression
+  ClassDeclaration
+    Identifier: ' Test1'
+    PropertyDeclaration
+      Identifier: '
+    data'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' foo'
+          StringLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      StringLiteral
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' copy'
+              TypeQuery
+                QualifiedName
+                  Identifier: ' this'
+                  Identifier: 'data'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' foo'
+                  StringLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' foo'
+              TypeQuery
+                QualifiedName
+                  QualifiedName
+                    Identifier: ' this'
+                    Identifier: 'data'
+                  Identifier: 'foo'
+              StringLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' self'
+              TypeQuery
+                Identifier: ' this'
+              ThisKeyword
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        self'
+            Identifier: 'data'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' str'
+              TypeQuery
+                QualifiedName
+                  Identifier: ' this'
+                  Identifier: 'this'
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' Test2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeQuery
+              QualifiedName
+                Identifier: ' this'
+                Identifier: 'no'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' Test3'
+    Parameter
+      Identifier: 'this'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' no'
+          NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeQuery
+              QualifiedName
+                Identifier: ' this'
+                Identifier: 'no'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' Test4'
+    Parameter
+      Identifier: 'this'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' no'
+            NumberKeyword
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeQuery
+              QualifiedName
+                Identifier: ' this'
+                Identifier: 'no'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' Test5'
+    PropertyDeclaration
+      Identifier: '
+    no'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+
+    f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                TypeQuery
+                  QualifiedName
+                    Identifier: ' this'
+                    Identifier: 'no'
+                NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Test6'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' x'
+                      TypeQuery
+                        QualifiedName
+                          Identifier: ' this'
+                          Identifier: 'no'
+                      NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Test7'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' x'
+                      TypeQuery
+                        QualifiedName
+                          Identifier: ' this'
+                          Identifier: 'no'
+                      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Test8'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  TypeQuery
+                    QualifiedName
+                      Identifier: ' this'
+                      Identifier: 'no'
+                  NumericLiteral
+  ClassDeclaration
+    Identifier: ' Test9'
+    PropertyDeclaration
+      Identifier: '
+    no'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    this'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    f'
+      Block
+        IfStatement
+          BinaryExpression
+            ThisKeyword
+            InstanceOfKeyword
+            Identifier: ' Test9D1'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' d1'
+                  TypeQuery
+                    Identifier: ' this'
+                  ThisKeyword
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            d1'
+                  Identifier: 'f1'
+        IfStatement
+          BinaryExpression
+            ThisKeyword
+            InstanceOfKeyword
+            Identifier: ' Test9D2'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' d2'
+                  TypeQuery
+                    Identifier: ' this'
+                  ThisKeyword
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            d2'
+                  Identifier: 'f2'
+    MethodDeclaration
+      Identifier: '
+
+    g'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'no'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' no'
+                  TypeQuery
+                    QualifiedName
+                      Identifier: ' this'
+                      Identifier: 'no'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'no'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'this'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' no'
+                  TypeQuery
+                    QualifiedName
+                      Identifier: ' this'
+                      Identifier: 'this'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'this'
+  ClassDeclaration
+    Identifier: ' Test9D1'
+    MethodDeclaration
+      Identifier: '
+    f1'
+      Block
+  ClassDeclaration
+    Identifier: ' Test9D2'
+    MethodDeclaration
+      Identifier: '
+    f2'
+      Block
+  ClassDeclaration
+    Identifier: ' Test10'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          QuestionToken
+          StringKeyword
+    MethodDeclaration
+      Identifier: '
+
+    foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              TypeQuery
+                QualifiedName
+                  Identifier: ' this'
+                  Identifier: 'a'
+              AsExpression
+                Identifier: ' undefined'
+                AnyKeyword
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' a'
+                  TypeQuery
+                    QualifiedName
+                      Identifier: ' this'
+                      Identifier: 'a'
+                  AsExpression
+                    Identifier: ' undefined'
+                    AnyKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' b'
+                  TypeQuery
+                    QualifiedName
+                      QualifiedName
+                        Identifier: ' this'
+                        Identifier: 'a'
+                      Identifier: 'b'
+                  AsExpression
+                    Identifier: ' undefined'
+                    AnyKeyword
+            IfStatement
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'a'
+                Identifier: 'b'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' b'
+                      TypeQuery
+                        QualifiedName
+                          QualifiedName
+                            Identifier: ' this'
+                            Identifier: 'a'
+                          Identifier: 'b'
+                      AsExpression
+                        Identifier: ' undefined'
+                        AnyKeyword
+  ClassDeclaration
+    Identifier: ' Test11'
+    PropertyDeclaration
+      Identifier: '
+    this'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          QuestionToken
+          StringKeyword
+    MethodDeclaration
+      Identifier: '
+    
+    foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' o'
+              ThisKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' bar'
+              TypeQuery
+                QualifiedName
+                  Identifier: ' o'
+                  Identifier: 'this'
+              ObjectLiteralExpression
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'o'
+              Identifier: 'this'
+            AmpersandAmpersandToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' o'
+                Identifier: 'this'
+              Identifier: 'x'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y'
+                  StringKeyword
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' o'
+                      Identifier: 'this'
+                    Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' Tests12'
+    MethodDeclaration
+      Identifier: '
+    test1'
+      Block
+        TypeAliasDeclaration
+          Identifier: ' Test'
+          TypeQuery
+            Identifier: ' this'
+    MethodDeclaration
+      Identifier: '
+
+    test2'
+      Block
+        ForStatement
+          Block
+        TypeAliasDeclaration
+          Identifier: ' Test'
+          TypeQuery
+            Identifier: ' this'
+    MethodDeclaration
+      Identifier: '
+
+    test3'
+      Block
+        ForInStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' dummy'
+          ArrayLiteralExpression
+          Block
+        TypeAliasDeclaration
+          Identifier: ' Test'
+          TypeQuery
+            Identifier: ' this'
+    MethodDeclaration
+      Identifier: '
+
+    test4'
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' dummy'
+          ArrayLiteralExpression
+          Block
+        TypeAliasDeclaration
+          Identifier: ' Test'
+          TypeQuery
+            Identifier: ' this'

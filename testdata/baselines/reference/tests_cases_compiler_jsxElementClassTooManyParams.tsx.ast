@@ -1,0 +1,92 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Element'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IntrinsicClassAttributes'
+        TypeParameter
+          Identifier: 'TClass'
+        TypeParameter
+          Identifier: ' TOther'
+          NeverKeyword
+        PropertySignature
+          Identifier: '
+        ref'
+          QuestionToken
+          TypeReference
+            Identifier: ' TClass'
+        PropertySignature
+          Identifier: '
+        item'
+          QuestionToken
+          TypeReference
+            Identifier: ' TOther'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ElementClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Element'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ElementAttributesProperty'
+        PropertySignature
+          Identifier: ' props'
+          TypeLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ElementChildrenAttribute'
+        PropertySignature
+          Identifier: ' children'
+          TypeLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IntrinsicAttributes'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' Element'
+  ClassDeclaration
+    Identifier: ' ElemClass'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'x'
+          NumberKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' JSX'
+          Identifier: 'ElementClass'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' props'
+        TypeReference
+          Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elem'
+        JsxSelfClosingElement
+          Identifier: 'ElemClass'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' x'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' y'
+              JsxExpression
+                NumericLiteral

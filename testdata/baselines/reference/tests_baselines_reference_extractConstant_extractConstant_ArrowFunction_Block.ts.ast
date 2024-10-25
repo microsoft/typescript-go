@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              BinaryExpression
+                NumericLiteral
+                PlusToken
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' newLocal'
+                  BinaryExpression
+                    NumericLiteral
+                    PlusToken
+                    NumericLiteral
+            ReturnStatement
+              Identifier: ' /*RENAME*/newLocal'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newLocal'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              Identifier: ' /*RENAME*/newLocal'

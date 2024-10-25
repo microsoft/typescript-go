@@ -1,0 +1,15 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+      StringKeyword

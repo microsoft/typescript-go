@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C'
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          ThisKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      AnyKeyword
+      ThisKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' m'
+      Block
+        ExpressionStatement
+          ThisKeyword
+    GetAccessor
+      StaticKeyword
+      Identifier: ' g'
+      Block
+        ReturnStatement
+          ThisKeyword

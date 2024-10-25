@@ -1,0 +1,124 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' SFC'
+    TypeParameter
+      Identifier: 'P'
+      TypeLiteral
+    CallSignature
+      Parameter
+        Identifier: 'props'
+        IntersectionType
+          TypeReference
+            Identifier: ' P'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' children'
+              QuestionToken
+              AnyKeyword
+      UnionType
+        AnyKeyword
+        LiteralType
+          NullKeyword
+  InterfaceDeclaration
+    Identifier: ' Props'
+    PropertySignature
+      Identifier: '
+    name'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Parent'
+        TypeReference
+          Identifier: ' SFC'
+          TypeReference
+            Identifier: 'Props'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: '
+    children'
+              BindingElement
+                Identifier: '
+    name'
+                StringLiteral
+              BindingElement
+                DotDotDotToken
+                Identifier: 'props'
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' Child'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: 'name'
+              SpreadAssignment
+                Identifier: 'props'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Child'
+        TypeReference
+          Identifier: ' SFC'
+          TypeReference
+            Identifier: 'Props'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: '
+    children'
+              BindingElement
+                Identifier: '
+    name'
+                StringLiteral
+              BindingElement
+                DotDotDotToken
+                Identifier: 'props'
+          EqualsGreaterThanToken
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'name'
+              TemplateMiddle
+            TemplateSpan
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'JSON'
+                  Identifier: 'stringify'
+                Identifier: 'props'
+              TemplateTail
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'g'
+      FunctionType
+        Parameter
+          Identifier: 'as'
+          ArrayType
+            StringKeyword
+        VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      ArrowFunction
+        Parameter
+          ArrayBindingPattern
+            BindingElement
+              Identifier: '_1'
+            BindingElement
+              Identifier: ' _2'
+              Identifier: ' undefined'
+        EqualsGreaterThanToken
+        Identifier: ' undefined'

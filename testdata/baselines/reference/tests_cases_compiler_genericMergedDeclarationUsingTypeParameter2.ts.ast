@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'T'
+              NumericLiteral

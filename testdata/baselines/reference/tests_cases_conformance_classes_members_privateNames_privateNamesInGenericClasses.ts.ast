@@ -1,0 +1,208 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateIdentifier
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      PrivateIdentifier
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+    GetAccessor
+      PrivateIdentifier
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            Identifier: ' value'
+    MethodDeclaration
+      Identifier: '
+    
+    bar'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' C'
+          TypeReference
+            Identifier: 'T'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' x'
+            PrivateIdentifier
+    MethodDeclaration
+      Identifier: '          // OK
+    bar2'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' C'
+          TypeReference
+            Identifier: 'T'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              PrivateIdentifier
+    MethodDeclaration
+      Identifier: '    // OK
+    bar3'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' C'
+          TypeReference
+            Identifier: 'T'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' x'
+            PrivateIdentifier
+    MethodDeclaration
+      Identifier: '        // OK
+
+    baz'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' C'
+          NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' x'
+            PrivateIdentifier
+    MethodDeclaration
+      Identifier: '     // OK
+    baz2'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' C'
+          NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' x'
+            PrivateIdentifier
+    MethodDeclaration
+      Identifier: ' // OK
+    baz3'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' C'
+          NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' x'
+            PrivateIdentifier
+    MethodDeclaration
+      Identifier: '   // OK
+
+    quux'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' C'
+          StringKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' x'
+            PrivateIdentifier
+    MethodDeclaration
+      Identifier: '    // OK
+    quux2'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' C'
+          StringKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' x'
+            PrivateIdentifier
+    MethodDeclaration
+      Identifier: '// OK
+    quux3'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' C'
+          StringKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' x'
+            PrivateIdentifier
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' C'
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' C'
+          StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+a'
+      PrivateIdentifier
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '                                   // Error
+a'
+      PrivateIdentifier
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '                                // Error
+a'
+      PrivateIdentifier
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '                                  // Error
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '                                    // Error
+b'
+      EqualsToken
+      Identifier: ' a'

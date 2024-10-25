@@ -1,0 +1,42 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m1_1'
+        Identifier: ' m1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m1_2'
+        TypeQuery
+          Identifier: ' m1'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            TypeQuery
+              Identifier: ' m2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m2_1'
+        Identifier: ' m2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m2_2'
+        TypeQuery
+          Identifier: ' m2'

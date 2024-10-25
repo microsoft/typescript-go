@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BinaryExpression
+          StringLiteral
+          EqualsEqualsEqualsToken
+          AsExpression
+            StringLiteral
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BinaryExpression
+          StringLiteral
+          ExclamationEqualsEqualsToken
+          ParenthesizedExpression
+            AsExpression
+              StringLiteral
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        BinaryExpression
+          StringLiteral
+          EqualsEqualsToken
+          ParenthesizedExpression
+            TypeAssertionExpression
+              AnyKeyword
+              StringLiteral

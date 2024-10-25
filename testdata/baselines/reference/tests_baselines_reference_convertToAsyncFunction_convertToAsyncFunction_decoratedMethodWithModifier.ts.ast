@@ -1,0 +1,76 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' decorator'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'target'
+            AnyKeyword
+          Parameter
+            Identifier: ' key'
+            AnyKeyword
+          Parameter
+            Identifier: ' descriptor'
+            TypeReference
+              Identifier: ' PropertyDescriptor'
+          EqualsGreaterThanToken
+          Identifier: ' descriptor'
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'decorator'
+      PublicKeyword
+      Identifier: ' /*[#|*/method'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                Identifier: ' fetch'
+                StringLiteral
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' decorator'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'target'
+            AnyKeyword
+          Parameter
+            Identifier: ' key'
+            AnyKeyword
+          Parameter
+            Identifier: ' descriptor'
+            TypeReference
+              Identifier: ' PropertyDescriptor'
+          EqualsGreaterThanToken
+          Identifier: ' descriptor'
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'decorator'
+      PublicKeyword
+      AsyncKeyword
+      Identifier: ' method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              AwaitExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+        ReturnStatement
+          Identifier: ' x'

@@ -1,0 +1,118 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' foo'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' bar'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' baz'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' biz'
+      Block
+  InterfaceDeclaration
+    Identifier: ' MyDoc'
+    MethodSignature
+      Identifier: ' // Document
+    createElement'
+      Parameter
+        Identifier: 'tagName'
+        StringKeyword
+      TypeReference
+        Identifier: ' Base'
+    MethodSignature
+      Identifier: '
+    createElement'
+      Parameter
+        Identifier: 'tagName'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived1'
+    MethodSignature
+      Identifier: '
+    createElement'
+      Parameter
+        Identifier: 'tagName'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived2'
+    MethodSignature
+      Identifier: '
+    createElement'
+      Parameter
+        Identifier: 'tagName'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived3'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' MyDoc'
+    MethodDeclaration
+      Identifier: '
+    createElement'
+      Parameter
+        Identifier: 'tagName'
+        StringKeyword
+      TypeReference
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    createElement'
+      Parameter
+        Identifier: 'tagName'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived1'
+    MethodDeclaration
+      Identifier: '
+    createElement'
+      Parameter
+        Identifier: 'tagName'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived2'
+    MethodDeclaration
+      Identifier: '
+    createElement'
+      Parameter
+        Identifier: 'tagName'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived3'
+    MethodDeclaration
+      Identifier: '
+    createElement'
+      Parameter
+        Identifier: 'tagName'
+        AnyKeyword
+      TypeReference
+        Identifier: ' Base'
+      Block
+        ReturnStatement
+          NullKeyword

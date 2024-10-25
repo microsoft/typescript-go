@@ -1,0 +1,52 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////function functionOverload();
+////function functionOverload(test: string);
+////function functionOverload(test?: string) { }
+////functionOverload(/*functionOverload1*/);
+////functionOverload(""/*functionOverload2*/);
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        overloadsCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterCount'
+          NumericLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        overloadsCount'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral

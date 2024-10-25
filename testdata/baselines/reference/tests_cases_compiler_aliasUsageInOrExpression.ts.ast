@@ -1,0 +1,117 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Model'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' someData'
+      StringKeyword
+  ImportEqualsDeclaration
+    Identifier: ' Backbone'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' VisualizationModel'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' Backbone'
+          Identifier: 'Model'
+  ImportEqualsDeclaration
+    Identifier: ' Backbone'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' moduleA'
+    ExternalModuleReference
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' IHasVisualizationModel'
+    PropertySignature
+      Identifier: '
+    VisualizationModel'
+      TypeQuery
+        QualifiedName
+          Identifier: ' Backbone'
+          Identifier: 'Model'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' IHasVisualizationModel'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        BinaryExpression
+          Identifier: ' i'
+          BarBarToken
+          Identifier: ' moduleA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        TypeReference
+          Identifier: ' IHasVisualizationModel'
+        BinaryExpression
+          Identifier: ' i'
+          BarBarToken
+          Identifier: ' moduleA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        TypeReference
+          Identifier: ' IHasVisualizationModel'
+        BinaryExpression
+          Identifier: ' moduleA'
+          BarBarToken
+          Identifier: ' i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' IHasVisualizationModel'
+        BinaryExpression
+          TypeAssertionExpression
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                TypeReference
+                  Identifier: ' IHasVisualizationModel'
+            NullKeyword
+          BarBarToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              Identifier: ' moduleA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' IHasVisualizationModel'
+        ConditionalExpression
+          TypeAssertionExpression
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                TypeReference
+                  Identifier: ' IHasVisualizationModel'
+            NullKeyword
+          QuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              Identifier: ' moduleA'
+          ColonToken
+          NullKeyword

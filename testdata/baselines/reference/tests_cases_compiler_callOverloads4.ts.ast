@@ -1,0 +1,51 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Foo'
+    TypeReference
+      Identifier: 'Foo'
+  FunctionDeclaration
+    Identifier: ' Foo'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    TypeReference
+      Identifier: 'Foo'
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: ' // error
+    bar1'
+      Block
+    Constructor
+      Parameter
+        Identifier: 's'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        NewExpression
+          Identifier: ' Foo'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+f1'
+        Identifier: 'bar1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+Foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+Foo'
+      StringLiteral

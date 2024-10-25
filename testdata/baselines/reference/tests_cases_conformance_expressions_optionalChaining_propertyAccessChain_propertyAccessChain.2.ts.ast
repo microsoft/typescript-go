@@ -1,0 +1,62 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        UnionType
+          UndefinedKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o1'
+      QuestionDotToken
+      Identifier: 'b'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        UnionType
+          UndefinedKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' c'
+                  StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+o2'
+        QuestionDotToken
+        Identifier: 'b'
+      Identifier: 'c'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            UnionType
+              UndefinedKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' c'
+                  StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+o3'
+        Identifier: 'b'
+      QuestionDotToken
+      Identifier: 'c'

@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' maybeArray'
+        UnionType
+          NumberKeyword
+          ArrayType
+            NumberKeyword
+  IfStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'Array'
+        Identifier: 'isArray'
+      Identifier: 'maybeArray'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    maybeArray'
+          Identifier: 'length'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    maybeArray'
+            Identifier: 'toFixed'

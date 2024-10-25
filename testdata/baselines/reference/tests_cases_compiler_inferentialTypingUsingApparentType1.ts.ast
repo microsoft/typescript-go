@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      FunctionType
+        Parameter
+          Identifier: 'p'
+          StringKeyword
+        NumberKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'length'

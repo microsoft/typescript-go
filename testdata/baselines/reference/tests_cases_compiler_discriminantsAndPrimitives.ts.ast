@@ -1,0 +1,249 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    length'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Bar'
+        StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'x'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                StringLiteral
+                ExpressionStatement
+                  PropertyAccessExpression
+                    Identifier: '
+                x'
+                    Identifier: 'name'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Bar'
+        StringKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'x'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                StringLiteral
+                ExpressionStatement
+                  PropertyAccessExpression
+                    Identifier: '
+                x'
+                    Identifier: 'name'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Bar'
+        StringKeyword
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            ExclamationEqualsEqualsToken
+            StringLiteral
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'x'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                StringLiteral
+                ExpressionStatement
+                  PropertyAccessExpression
+                    Identifier: '
+                x'
+                    Identifier: 'name'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Bar'
+        StringKeyword
+        NumberKeyword
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'x'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                StringLiteral
+                ExpressionStatement
+                  PropertyAccessExpression
+                    Identifier: '
+                x'
+                    Identifier: 'name'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' EnumTypeNode'
+    EnumMember
+      Identifier: '
+    Pattern'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    Disjunction'
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' NodeA'
+    UnionType
+      TypeReference
+        Identifier: ' Disjunction'
+      TypeReference
+        Identifier: ' Pattern'
+  InterfaceDeclaration
+    Identifier: ' NodeBase'
+    PropertySignature
+      Identifier: '
+    type'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' NodeA'
+        LiteralType
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Disjunction'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' NodeBase'
+    PropertySignature
+      Identifier: '
+    type'
+      TypeReference
+        QualifiedName
+          Identifier: ' EnumTypeNode'
+          Identifier: 'Disjunction'
+    PropertySignature
+      Identifier: '
+    alternatives'
+      ArrayType
+        StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Pattern'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' NodeBase'
+    PropertySignature
+      Identifier: '
+    type'
+      TypeReference
+        QualifiedName
+          Identifier: ' EnumTypeNode'
+          Identifier: 'Pattern'
+    PropertySignature
+      Identifier: '
+    elements'
+      ArrayType
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        ExclamationToken
+        TypeReference
+          Identifier: ' NodeA'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'n'
+        Identifier: 'type'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    n'
+              Identifier: 'alternatives'
+            Identifier: 'slice'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    n'
+              Identifier: 'elements'
+            Identifier: 'slice'

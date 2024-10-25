@@ -1,0 +1,69 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    ConstructSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    ConstructSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' E'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' F'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' E'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' G'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' H'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' G'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword

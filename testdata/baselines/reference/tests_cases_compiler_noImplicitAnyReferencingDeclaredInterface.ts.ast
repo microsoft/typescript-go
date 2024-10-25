@@ -1,0 +1,11 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Entry'
+    ConstructSignature
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Entry'

@@ -1,0 +1,80 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Number'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' String'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Array'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            StringKeyword
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            StringKeyword

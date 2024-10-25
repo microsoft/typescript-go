@@ -1,0 +1,7 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        PrivateIdentifier
+      EqualsToken
+      Identifier: ''

@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' colors'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    royalBlue'
+            StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' brandColors'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    purple'
+            PropertyAccessExpression
+              Identifier: ' colors'
+              Identifier: 'royalBlue'

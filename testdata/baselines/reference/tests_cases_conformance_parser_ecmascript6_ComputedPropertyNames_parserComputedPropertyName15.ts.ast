@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'e'
+              NumberKeyword
+            StringKeyword
+          PropertySignature
+            ComputedPropertyName
+              Identifier: 'e'
+            NumberKeyword

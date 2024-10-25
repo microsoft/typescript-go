@@ -1,0 +1,37 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' C'
+    TypeParameter
+      Identifier: ' C'
+    MethodSignature
+      Identifier: '
+  foo'
+      Parameter
+        Identifier: 'bar'
+        TypeReference
+          Identifier: ' C'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'Bar'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+  foo'
+      Parameter
+        Identifier: 'bar'
+        StringKeyword
+      VoidKeyword
+      Block

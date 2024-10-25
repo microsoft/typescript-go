@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    BooleanKeyword

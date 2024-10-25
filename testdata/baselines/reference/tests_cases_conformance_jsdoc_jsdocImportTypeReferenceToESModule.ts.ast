@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' config'
+        TypeLiteral
+  FunctionDeclaration
+    Identifier: ' demo'
+    Parameter
+      Identifier: 'a'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    a'
+          Identifier: 'config'

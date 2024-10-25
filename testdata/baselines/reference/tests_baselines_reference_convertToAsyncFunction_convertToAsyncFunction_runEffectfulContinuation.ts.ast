@@ -1,0 +1,94 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              Identifier: 'res'
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              Identifier: '_'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' res'
+    Parameter
+      Identifier: 'result'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              Identifier: 'result'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            AwaitExpression
+              CallExpression
+                Identifier: ' fetch'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' _'
+            AwaitExpression
+              CallExpression
+                Identifier: ' res'
+                Identifier: 'result'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' console'
+            Identifier: 'log'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' res'
+    Parameter
+      Identifier: 'result'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              Identifier: 'result'

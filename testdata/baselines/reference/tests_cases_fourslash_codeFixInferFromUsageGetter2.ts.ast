@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noImplicitAny: true
+////class C {
+////    [|get x() |]{
+////       return undefined;
+////    }
+////}
+////(new C).x = 1;
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      StringLiteral
+      Identifier: ' undefined'
+      Identifier: ' undefined'
+      NumericLiteral

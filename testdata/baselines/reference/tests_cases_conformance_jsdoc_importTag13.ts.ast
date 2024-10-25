@@ -1,0 +1,8 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword

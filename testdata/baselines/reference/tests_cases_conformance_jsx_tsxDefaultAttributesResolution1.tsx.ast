@@ -1,0 +1,42 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Prop'
+    PropertySignature
+      Identifier: '
+    x'
+      BooleanKeyword
+  ClassDeclaration
+    Identifier: ' Poisoned'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'Prop'
+        TypeLiteral
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        JsxSelfClosingElement
+          Identifier: 'Poisoned'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' x'

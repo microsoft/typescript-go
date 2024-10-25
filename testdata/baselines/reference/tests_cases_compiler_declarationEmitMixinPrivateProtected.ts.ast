@@ -1,0 +1,87 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' mix'
+    TypeParameter
+      Identifier: 'TMix'
+    Parameter
+      Identifier: 'mixin'
+      TypeReference
+        Identifier: ' TMix'
+    TypeReference
+      Identifier: ' TMix'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' DisposableMixin'
+        ClassExpression
+          MethodDeclaration
+            ProtectedKeyword
+            Identifier: ' _onDispose'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_assertIsStripped'
+          MethodDeclaration
+            PrivateKeyword
+            Identifier: ' _assertIsStripped'
+            Block
+  ExportAssignment
+    CallExpression
+      Identifier: ' mix'
+      Identifier: 'DisposableMixin'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Monitor'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' mix'
+          Identifier: 'DisposableMixin'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' _onDispose'
+      Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' mix'
+    TypeParameter
+      Identifier: 'TMix'
+    Parameter
+      Identifier: 'mixin'
+      TypeReference
+        Identifier: ' TMix'
+    TypeReference
+      Identifier: ' TMix'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' DisposableMixin'
+        ClassExpression
+          MethodDeclaration
+            ProtectedKeyword
+            Identifier: ' _onDispose'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_assertIsStripped'
+          MethodDeclaration
+            PrivateKeyword
+            Identifier: ' _assertIsStripped'
+            Block
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' mix'
+          Identifier: 'DisposableMixin'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' _onDispose'
+      Block

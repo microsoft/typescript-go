@@ -1,0 +1,85 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' AnyFunction'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' Params'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Parameters'
+      TypeReference
+        Identifier: 'Extract'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' AnyFunction'
+  InterfaceDeclaration
+    Identifier: ' Wrapper'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+	call'
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      Parameter
+        Identifier: 'event'
+        TypeReference
+          Identifier: ' K'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' Params'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: 'K'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' AWrapped'
+    MethodSignature
+      Identifier: '
+	foo'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+	foo'
+      TypeReference
+        Identifier: ' Wrapper'
+        TypeReference
+          Identifier: 'AWrapped'
+  InterfaceDeclaration
+    Identifier: ' BWrapped'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AWrapped'
+    MethodSignature
+      Identifier: '
+	bar'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+	foo'
+      TypeReference
+        Identifier: ' Wrapper'
+        TypeReference
+          Identifier: 'BWrapped'

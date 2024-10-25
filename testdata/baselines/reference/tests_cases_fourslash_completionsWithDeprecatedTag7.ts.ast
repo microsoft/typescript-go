@@ -1,0 +1,60 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @strict: true
+
+////interface I {
+////    /** @deprecated a */
+////    a: number;
+////}
+
+////const foo = {
+////    a: 1
+////}
+
+////const i: I = {
+////    ...foo,
+////    /**/
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'Deprecated'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'completion'
+                      Identifier: 'SortText'
+                    Identifier: 'MemberDeclaredBySpreadAssignment'
+              PropertyAssignment
+                Identifier: '
+        kind'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        kindModifiers'
+                StringLiteral

@@ -1,0 +1,77 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Promise'
+                        Identifier: 'resolve'
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'x'
+                    EqualsGreaterThanToken
+                    NumericLiteral
+                Identifier: 'catch'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                EqualsGreaterThanToken
+                StringLiteral
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                Identifier: 'x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x_2'
+            UnionType
+              StringKeyword
+              NumberKeyword
+      TryStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                AwaitExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Promise'
+                      Identifier: 'resolve'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x_2'
+              EqualsToken
+              NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'x_1'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        x_2'
+                EqualsToken
+                StringLiteral
+      ReturnStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: 'x_2'

@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'console'
+        Identifier: 'log'
+      BinaryExpression
+        StringLiteral
+        InKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            TrueKeyword

@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'p'
+  ClassDeclaration
+    Identifier: ' C2'
+    Constructor
+      Block
+  ClassDeclaration
+    Identifier: ' C3'
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'p'

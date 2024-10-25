@@ -1,0 +1,216 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    self'
+      ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+    c'
+      NewExpression
+        Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          ThisKeyword
+    MethodDeclaration
+      Identifier: '
+    f1'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+    MethodDeclaration
+      Identifier: '
+    f2'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              ArrayType
+                TypeReference
+                  Identifier: ' C'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              ArrayLiteralExpression
+                ThisKeyword
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'c'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              ArrayType
+                ThisType
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              ArrayLiteralExpression
+                ThisKeyword
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'self'
+                NullKeyword
+                Identifier: ' undefined'
+    MethodDeclaration
+      Identifier: '
+    f3'
+      Parameter
+        Identifier: 'b'
+        BooleanKeyword
+      Block
+        ReturnStatement
+          ConditionalExpression
+            Identifier: ' b'
+            QuestionToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            ColonToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    self1'
+      ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+    self2'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'self'
+    PropertyDeclaration
+      Identifier: '
+    self3'
+      CallExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'foo'
+    PropertyDeclaration
+      Identifier: '
+    d'
+      NewExpression
+        Identifier: ' D'
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self1'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self2'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self3'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self1'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self2'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self3'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'd'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'd'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'self'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'd'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'd'

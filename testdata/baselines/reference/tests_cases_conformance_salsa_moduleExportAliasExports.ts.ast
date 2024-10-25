@@ -1,0 +1,30 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+exports'
+                  Identifier: 'bigOak'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+exports'
+                  Identifier: 'everywhere'
+                EqualsToken
+                NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+module'
+                  Identifier: 'exports'
+                EqualsToken
+                Identifier: ' exports'

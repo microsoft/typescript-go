@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' f'
+    TypeReference
+      Identifier: ' Iterator'
+      NumberKeyword
+    Block
+      ReturnStatement
+        Identifier: ' invalid'

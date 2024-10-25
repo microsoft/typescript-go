@@ -1,0 +1,79 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Promise'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'A'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' Promise'
+            TypeReference
+              Identifier: 'A'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'A'
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'B'
+      Parameter
+        Identifier: 'success'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' B'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'B'
+    PropertySignature
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Promise'
+          NumberKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' p'
+            Identifier: 'then'
+          FunctionExpression
+            Parameter
+              Identifier: 'x'
+            Block
+              ReturnStatement
+                Identifier: ' p'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          Identifier: ' p2'
+          Identifier: 'data'

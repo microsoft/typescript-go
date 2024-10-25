@@ -1,0 +1,19 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////var u = /*undefined*/undefined;
+////var n = /*null*/null;
+////var a = function() { return /*arguments*/arguments; };
+////var t = /*true*/true;
+////var f = /*false*/false;
+
+verify'
+        Identifier: 'baselineGoToDefinition'
+      SpreadElement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'test'
+            Identifier: 'markerNames'

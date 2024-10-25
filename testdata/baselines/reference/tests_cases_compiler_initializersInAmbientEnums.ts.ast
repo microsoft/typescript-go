@@ -1,0 +1,22 @@
+SourceFile
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+      Identifier: ' a'
+    EnumMember
+      Identifier: '
+    e'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        BinaryExpression
+          NumericLiteral
+          AsteriskToken
+          NumericLiteral

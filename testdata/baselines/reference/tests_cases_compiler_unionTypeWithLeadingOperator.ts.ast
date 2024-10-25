@@ -1,0 +1,39 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    UnionType
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' type'
+          LiteralType
+            StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' type'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' C'
+    TupleType
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' D'
+    UnionType
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral

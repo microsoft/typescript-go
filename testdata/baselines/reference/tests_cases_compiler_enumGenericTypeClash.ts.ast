@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: 'B'
+    TypeParameter
+      Identifier: 'C'
+  EnumDeclaration
+    Identifier: ' X'
+    EnumMember
+      Identifier: ' MyVal'

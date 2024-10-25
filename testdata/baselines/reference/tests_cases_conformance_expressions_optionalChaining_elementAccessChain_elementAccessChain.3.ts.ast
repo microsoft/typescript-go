@@ -1,0 +1,225 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        AnyKeyword
+  ExpressionStatement
+    PostfixUnaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+obj'
+        QuestionDotToken
+        StringLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+obj'
+          QuestionDotToken
+          Identifier: 'a'
+        StringLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ElementAccessExpression
+        Identifier: '
+obj'
+        QuestionDotToken
+        StringLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+obj'
+          QuestionDotToken
+          Identifier: 'a'
+        StringLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        Identifier: 'obj'
+        QuestionDotToken
+        StringLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'obj'
+          QuestionDotToken
+          Identifier: 'a'
+        StringLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        Identifier: 'obj'
+        QuestionDotToken
+        StringLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'obj'
+          QuestionDotToken
+          Identifier: 'a'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+obj'
+        QuestionDotToken
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+obj'
+          QuestionDotToken
+          Identifier: 'a'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+obj'
+        QuestionDotToken
+        StringLiteral
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+obj'
+          QuestionDotToken
+          Identifier: 'a'
+        StringLiteral
+      PlusEqualsToken
+      NumericLiteral
+  ForInStatement
+    ElementAccessExpression
+      Identifier: 'obj'
+      QuestionDotToken
+      StringLiteral
+    ObjectLiteralExpression
+    EmptyStatement
+  ForInStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        Identifier: 'obj'
+        QuestionDotToken
+        Identifier: 'a'
+      StringLiteral
+    ObjectLiteralExpression
+    EmptyStatement
+  ForOfStatement
+    ElementAccessExpression
+      Identifier: 'obj'
+      QuestionDotToken
+      StringLiteral
+    ArrayLiteralExpression
+    EmptyStatement
+  ForOfStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        Identifier: 'obj'
+        QuestionDotToken
+        Identifier: 'a'
+      StringLiteral
+    ArrayLiteralExpression
+    EmptyStatement
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            ElementAccessExpression
+              Identifier: ' obj'
+              QuestionDotToken
+              StringLiteral
+        EqualsToken
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            ElementAccessExpression
+              PropertyAccessExpression
+                Identifier: ' obj'
+                QuestionDotToken
+                Identifier: 'a'
+              StringLiteral
+        EqualsToken
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          SpreadAssignment
+            ElementAccessExpression
+              Identifier: 'obj'
+              QuestionDotToken
+              StringLiteral
+        EqualsToken
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          SpreadAssignment
+            ElementAccessExpression
+              PropertyAccessExpression
+                Identifier: 'obj'
+                QuestionDotToken
+                Identifier: 'a'
+              StringLiteral
+        EqualsToken
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        SpreadElement
+          ElementAccessExpression
+            Identifier: 'obj'
+            QuestionDotToken
+            StringLiteral
+      EqualsToken
+      ArrayLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        SpreadElement
+          ElementAccessExpression
+            PropertyAccessExpression
+              Identifier: 'obj'
+              QuestionDotToken
+              Identifier: 'a'
+            StringLiteral
+      EqualsToken
+      ArrayLiteralExpression

@@ -1,0 +1,92 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' each'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        AnyKeyword
+    Parameter
+      Identifier: 'cases'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        TypeReference
+          Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'fn'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TypeReference
+              Identifier: ' T'
+          AnyKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cases'
+        AsExpression
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+            ArrayLiteralExpression
+              NumericLiteral
+              StringLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' eacher'
+        CallExpression
+          Identifier: ' each'
+          Identifier: 'cases'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+eacher'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        Parameter
+          Identifier: ' b'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            Identifier: '
+    a'
+          ExpressionStatement
+            Identifier: '
+    b'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// TODO: https://github.com/microsoft/TypeScript/issues/53255
+eacher'
+      ArrowFunction
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'a'
+                  BindingElement
+                    Identifier: ' b'
+                Identifier: ' args'
+          ExpressionStatement
+            Identifier: '
+    a'
+          ExpressionStatement
+            Identifier: '
+    b'

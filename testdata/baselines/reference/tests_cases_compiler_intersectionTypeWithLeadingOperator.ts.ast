@@ -1,0 +1,41 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    IntersectionType
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' bar'
+          NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' C'
+    TupleType
+      IntersectionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            LiteralType
+              NumericLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' bar'
+            LiteralType
+              NumericLiteral
+      IntersectionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            LiteralType
+              NumericLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' bar'
+            LiteralType
+              NumericLiteral

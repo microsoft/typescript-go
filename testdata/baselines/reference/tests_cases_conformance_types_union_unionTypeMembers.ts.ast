@@ -1,0 +1,279 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    commonMethodType'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    commonPropertyType'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    commonMethodDifferentParameterType'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    commonMethodDifferentReturnType'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    commonPropertyDifferenType'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    commonMethodWithTypeParameter'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    commonMethodWithOwnTypeParameter'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+    MethodSignature
+      Identifier: '
+
+    methodOnlyInI1'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    propertyOnlyInI1'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    commonMethodType'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    commonPropertyType'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    commonMethodDifferentParameterType'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    commonMethodDifferentReturnType'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    commonPropertyDifferenType'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+
+    commonMethodWithTypeParameter'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    commonMethodWithOwnTypeParameter'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+    MethodSignature
+      Identifier: '
+
+    methodOnlyInI2'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    propertyOnlyInI2'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          TypeReference
+            Identifier: ' I1'
+            NumberKeyword
+          TypeReference
+            Identifier: ' I2'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNum'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// If each type in U has a property P, U has a property P of a union type of the types of P from each type in U.
+str'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' x'
+        Identifier: 'commonPropertyType'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // string
+str'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'commonMethodType'
+        Identifier: 'str'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // (a: string) => string so result should be string
+strOrNum'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' x'
+        Identifier: 'commonPropertyDifferenType'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'commonMethodDifferentReturnType'
+        Identifier: 'str'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // string | union
+x'
+      Identifier: 'commonMethodDifferentParameterType'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // No error - property exists
+x'
+        Identifier: 'commonMethodDifferentParameterType'
+      Identifier: 'strOrNum'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error - no call signatures because the type of this property is ((a: string) => string) | (a: number) => number
+                                                // and the call signatures arent identical
+num'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'commonMethodWithTypeParameter'
+        Identifier: 'num'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+num'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'commonMethodWithOwnTypeParameter'
+        Identifier: 'num'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+str'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'commonMethodWithOwnTypeParameter'
+        Identifier: 'str'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+strOrNum'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'commonMethodWithOwnTypeParameter'
+        Identifier: 'strOrNum'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+x'
+      Identifier: 'propertyOnlyInI1'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // error
+x'
+      Identifier: 'propertyOnlyInI2'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // error
+x'
+        Identifier: 'methodOnlyInI1'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // error
+x'
+        Identifier: 'methodOnlyInI2'
+      NumericLiteral

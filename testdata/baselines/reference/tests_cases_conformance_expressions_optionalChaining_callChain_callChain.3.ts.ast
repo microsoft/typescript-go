@@ -1,0 +1,125 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' absorb'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        UnionType
+          TypeLiteral
+            MethodSignature
+              Identifier: ' m'
+              QuestionToken
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'obj'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'x'
+                    TypeReference
+                      Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+          UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n1'
+        NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            QuestionDotToken
+            Identifier: 'm'
+          QuestionDotToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n2'
+        NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            QuestionDotToken
+            Identifier: 'm'
+          QuestionDotToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              CallExpression
+                Identifier: ' absorb'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n3'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            QuestionDotToken
+            Identifier: 'm'
+          QuestionDotToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n4'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            QuestionDotToken
+            Identifier: 'm'
+          QuestionDotToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              CallExpression
+                Identifier: ' absorb'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' a'
+            QuestionDotToken
+            Identifier: 'm'
+          QuestionDotToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t1'
+      EqualsToken
+      CallExpression
+        NonNullExpression
+          PropertyAccessExpression
+            NonNullExpression
+              Identifier: ' a'
+            Identifier: 'm'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'x'
+            NumericLiteral

@@ -1,0 +1,43 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    BinaryExpression
+                      NumericLiteral
+                      CommaToken
+                      NumericLiteral
+                    CommaToken
+                    NumericLiteral
+                CommaToken
+                NumericLiteral
+              CommaToken
+              NumericLiteral
+            CommaToken
+            ParenthesizedExpression
+              BinaryExpression
+                NumericLiteral
+                CommaToken
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' a'
+            CommaToken
+            Identifier: ' v1'
+          CommaToken
+          Identifier: ' a'

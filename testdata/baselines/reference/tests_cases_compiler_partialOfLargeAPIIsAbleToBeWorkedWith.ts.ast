@@ -1,0 +1,498 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' MyAPI'
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+    PropertySignature
+      NumericLiteral
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          LiteralType
+            NumericLiteral
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'MyAPI'
+        ObjectLiteralExpression
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' keys'
+        ArrayType
+          ParenthesizedType
+            TypeOperator
+              TypeReference
+                Identifier: ' MyAPI'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+    Identifier: ' keys'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'k'
+          EqualsToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' PartialNull'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      QuestionToken
+      UnionType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+        LiteralType
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        TypeReference
+          Identifier: ' PartialNull'
+          TypeReference
+            Identifier: 'MyAPI'
+        ObjectLiteralExpression
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+    Identifier: ' keys'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    obj2'
+            Identifier: 'k'
+          EqualsToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            StringLiteral

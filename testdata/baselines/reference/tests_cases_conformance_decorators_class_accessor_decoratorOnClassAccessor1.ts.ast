@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'target'
+      AnyKeyword
+    Parameter
+      Identifier: ' propertyKey'
+      StringKeyword
+    Parameter
+      Identifier: ' descriptor'
+      TypeReference
+        Identifier: ' TypedPropertyDescriptor'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' TypedPropertyDescriptor'
+      TypeReference
+        Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' C'
+    GetAccessor
+      Decorator
+        Identifier: 'dec'
+      Identifier: ' accessor'
+      Block
+        ReturnStatement
+          NumericLiteral

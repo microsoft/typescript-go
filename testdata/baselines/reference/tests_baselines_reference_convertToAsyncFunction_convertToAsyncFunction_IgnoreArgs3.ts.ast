@@ -1,0 +1,56 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' console'
+                    Identifier: 'log'
+                  StringLiteral
+            Identifier: 'then'
+          ArrowFunction
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      ExpressionStatement
+        AwaitExpression
+          CallExpression
+            Identifier: ' fetch'
+            StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          StringLiteral
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' console'
+            Identifier: 'log'
+          StringLiteral

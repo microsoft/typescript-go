@@ -1,0 +1,25 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Invalid1'
+    UnionType
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ComponentClass'
+        AnyKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' X'
+        TypeReference
+          Identifier: ' Invalid1'
+        NumericLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'X'
+      JsxAttributes

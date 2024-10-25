@@ -1,0 +1,24 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// Tests comment indentation with range ending before next token (same line)
+
+////if (true) {
+/////*begin*/// test comment/*end*/
+////}
+
+format'
+        Identifier: 'selection'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'currentFileContentIs'
+      StringLiteral

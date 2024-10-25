@@ -1,0 +1,28 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      NumericLiteral
+      TypeReference
+        Identifier: ' B'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' A'

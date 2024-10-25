@@ -1,0 +1,35 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' server'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Server'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Object'
+  InterfaceDeclaration
+    Identifier: ' server'
+    CallSignature
+      TypeReference
+        QualifiedName
+          Identifier: ' server'
+          Identifier: 'Server'
+    PropertySignature
+      Identifier: '
+    startTime'
+      TypeReference
+        Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' server'
+        NewExpression
+          Identifier: ' Date'
+  ExportAssignment
+    Identifier: ' server'

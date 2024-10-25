@@ -1,0 +1,97 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Zet'
+    Parameter
+      Identifier: 't'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'u'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 't'
+          EqualsToken
+          Identifier: ' t'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/**
+ * @param {T} v
+ * @param {object} o
+ * @param {T} o.nested
+ */
+Zet'
+          Identifier: 'prototype'
+        Identifier: 'add'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'v'
+        Parameter
+          Identifier: ' o'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'u'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' v'
+                BarBarToken
+                PropertyAccessExpression
+                  Identifier: ' o'
+                  Identifier: 'nested'
+          ReturnStatement
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'u'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        NewExpression
+          Identifier: ' Zet'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+z'
+        Identifier: 't'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+z'
+        Identifier: 'u'
+      EqualsToken
+      FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' answer'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' z'
+            Identifier: 'add'
+          NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' nested'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' options'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' value'
+            NullKeyword

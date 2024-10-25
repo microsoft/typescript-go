@@ -1,0 +1,125 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      NullKeyword
+      InstanceOfKeyword
+      ParenthesizedExpression
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ObjectLiteralExpression
+      InstanceOfKeyword
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      NullKeyword
+      InKeyword
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      StringLiteral
+      InKeyword
+      NullKeyword
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+    NullKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        ArrayLiteralExpression
+          NumericLiteral
+          ParenthesizedExpression
+            BinaryExpression
+              NumericLiteral
+              CommaToken
+              NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+t'
+        NumericLiteral
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeQuery
+          Identifier: ' undefined'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u'
+        ArrayLiteralExpression
+          NumericLiteral
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'y'
+              EqualsToken
+              NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+u'
+        NumericLiteral
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ob'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeQuery
+              Identifier: ' undefined'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          StringKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            NullKeyword

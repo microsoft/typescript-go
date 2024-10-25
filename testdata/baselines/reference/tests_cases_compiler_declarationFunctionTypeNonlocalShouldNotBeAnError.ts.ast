@@ -1,0 +1,17 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' bar'
+        VoidKeyword
+        Block
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+        bar'

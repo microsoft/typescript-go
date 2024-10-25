@@ -1,0 +1,88 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: none
+// @moduleResolution: node10
+// @target: es5
+
+// @Filename: /node_modules/dep/index.d.ts
+////export const x: number;
+
+// @Filename: /index.ts
+//// x/**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  excludes'
+          ArrayLiteralExpression
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'replaceLine'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSemanticDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  range'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' fileName'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' pos'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' end'
+                PropertyAccessExpression
+                  StringLiteral
+                  Identifier: 'length'
+          PropertyAssignment
+            Identifier: '
+  code'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Cannot_use_imports_exports_or_module_augmentations_when_module_is_none'
+              Identifier: 'code'
+          PropertyAssignment
+            Identifier: '
+  message'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Diagnostics'
+                Identifier: 'Cannot_use_imports_exports_or_module_augmentations_when_module_is_none'
+              Identifier: 'message'

@@ -1,0 +1,22 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' async'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' doSomething'
+            ArrowFunction
+              Parameter
+                Identifier: ' _'
+              EqualsGreaterThanToken
+              Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+async'
+        Identifier: 'doSomething'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block

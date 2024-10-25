@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'Symbol'
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'Symbol'
+      NumberKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'Symbol'
+      Block
+    GetAccessor
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'Symbol'
+      Block
+        ReturnStatement
+          NumericLiteral

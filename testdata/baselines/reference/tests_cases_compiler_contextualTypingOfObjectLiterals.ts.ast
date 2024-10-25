@@ -1,0 +1,58 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'x'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+obj1'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // Ok
+obj1'
+      EqualsToken
+      Identifier: ' obj2'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          StringKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // Ok
+f'
+      Identifier: 'obj1'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // Ok
+f'
+      Identifier: 'obj2'

@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      DotDotDotToken
+      Identifier: 'a'
+      ArrayType
+        NumberKeyword
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' 
+foo'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' 
+foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      NumericLiteral
+      StringLiteral

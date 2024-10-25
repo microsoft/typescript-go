@@ -1,0 +1,107 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' startPos'
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'markerByName'
+            StringLiteral
+          Identifier: 'position'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' endPos'
+        BinaryExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '  test'
+                Identifier: 'markerByName'
+              StringLiteral
+            Identifier: 'position'
+          MinusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wordPattern'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' linkedCursors'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    ranges'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' start'
+                  Identifier: ' startPos'
+                PropertyAssignment
+                  Identifier: ' length'
+                  NumericLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' start'
+                  Identifier: ' endPos'
+                PropertyAssignment
+                  Identifier: ' length'
+                  NumericLiteral
+          ShorthandPropertyAssignment
+            Identifier: '
+    wordPattern'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'linkedEditing'
+      ObjectLiteralExpression
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'

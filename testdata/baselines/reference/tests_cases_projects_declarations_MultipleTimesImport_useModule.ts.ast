@@ -1,0 +1,110 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' m4'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        PropertyAccessExpression
+          Identifier: ' m4'
+          Identifier: 'x'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d4'
+        PropertyAccessExpression
+          Identifier: ' m4'
+          Identifier: 'd'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' m4'
+            Identifier: 'foo'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            PropertyAccessExpression
+              Identifier: ' m4'
+              Identifier: 'x'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d2'
+            PropertyAccessExpression
+              Identifier: ' m4'
+              Identifier: 'd'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f2'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' m4'
+                Identifier: 'foo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            PropertyAccessExpression
+              Identifier: ' m4'
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d3'
+            PropertyAccessExpression
+              Identifier: ' m4'
+              Identifier: 'd'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f3'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' m4'
+                Identifier: 'foo'
+  ImportEqualsDeclaration
+    Identifier: ' multiImport_m4'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' useMultiImport_m4_x4'
+        PropertyAccessExpression
+          Identifier: ' multiImport_m4'
+          Identifier: 'x'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' useMultiImport_m4_d4'
+        PropertyAccessExpression
+          Identifier: ' multiImport_m4'
+          Identifier: 'd'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' useMultiImport_m4_f4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' multiImport_m4'
+            Identifier: 'foo'

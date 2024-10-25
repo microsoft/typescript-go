@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0'
+          BindingElement
+            Identifier: ' r1'
+          BindingElement
+            Identifier: ' r2'
+          BindingElement
+            Identifier: ' r3'
+          BindingElement
+            Identifier: ' r4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineDocumentHighlights'
+      ArrayLiteralExpression
+        Identifier: 'r1'
+        Identifier: ' r4'

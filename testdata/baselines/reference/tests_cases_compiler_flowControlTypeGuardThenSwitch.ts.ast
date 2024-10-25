@@ -1,0 +1,109 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Kind'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+  InterfaceDeclaration
+    Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' Kind'
+  InterfaceDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' Kind'
+          Identifier: 'A'
+    PropertySignature
+      Identifier: '
+    yar'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' Kind'
+          Identifier: 'B'
+    PropertySignature
+      Identifier: '
+    gar'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' Both'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  FunctionDeclaration
+    Identifier: ' isBoth'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Base'
+    TypePredicate
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' Both'
+    Block
+      ReturnStatement
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' Base'
+        Identifier: ' undefined'
+  IfStatement
+    CallExpression
+      Identifier: 'isBoth'
+      Identifier: 'foo'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'foo'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' Kind'
+              Identifier: 'A'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' myA'
+                  TypeReference
+                    Identifier: ' A'
+                  Identifier: ' foo'
+            BreakStatement
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' Kind'
+              Identifier: 'B'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' myB'
+                  TypeReference
+                    Identifier: ' B'
+                  Identifier: ' foo'
+            BreakStatement

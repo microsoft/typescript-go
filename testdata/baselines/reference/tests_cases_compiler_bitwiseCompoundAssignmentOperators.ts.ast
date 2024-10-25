@@ -1,0 +1,163 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      CaretEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      CaretEqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      CaretEqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      CaretEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      AmpersandEqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      FalseKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+d'
+      AmpersandEqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+d'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      AmpersandEqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      FalseKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+d'
+      AmpersandEqualsToken
+      Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      BarEqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+f'
+      BarEqualsToken
+      Identifier: ' f'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+f'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      BarEqualsToken
+      Identifier: ' f'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+f'
+      BarEqualsToken
+      Identifier: ' f'

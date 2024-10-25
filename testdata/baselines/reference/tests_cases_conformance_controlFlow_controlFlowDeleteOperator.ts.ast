@@ -1,0 +1,89 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                QuestionToken
+                UnionType
+                  NumberKeyword
+                  StringKeyword
+              PropertySignature
+                Identifier: ' b'
+                UnionType
+                  NumberKeyword
+                  StringKeyword
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' b'
+                NumericLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'a'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'b'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'a'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'b'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'a'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'b'
+      ExpressionStatement
+        DeleteExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'a'
+      ExpressionStatement
+        DeleteExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'b'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'a'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'b'
+      ExpressionStatement
+        Identifier: '
+    x'
+      ExpressionStatement
+        DeleteExpression
+          Identifier: ' x'
+      ExpressionStatement
+        Identifier: '  // No effect
+    x'

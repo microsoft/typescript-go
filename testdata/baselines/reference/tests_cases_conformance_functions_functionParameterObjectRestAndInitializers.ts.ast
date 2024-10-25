@@ -1,0 +1,40 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          DotDotDotToken
+          Identifier: 'x'
+    Parameter
+      Identifier: ' b'
+      Identifier: ' a'
+    Block
+      ReturnStatement
+        Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          DotDotDotToken
+          Identifier: 'x'
+    Parameter
+      Identifier: ' b'
+      ArrowFunction
+        Parameter
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'a'
+        Parameter
+          Identifier: ' b'
+          Identifier: ' a'
+        EqualsGreaterThanToken
+        Block
+    Block
+      ReturnStatement
+        Identifier: ' b'

@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        IntersectionType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              NumberKeyword
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'

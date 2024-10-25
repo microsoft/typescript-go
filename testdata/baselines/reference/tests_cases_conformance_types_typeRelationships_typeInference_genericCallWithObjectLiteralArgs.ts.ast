@@ -1,0 +1,73 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' bar'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: ' baz'
+          TypeReference
+            Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' foo'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' bar'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' baz'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' foo'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' bar'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' baz'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' foo'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' bar'
+              Identifier: ' foo'
+            PropertyAssignment
+              Identifier: ' baz'
+              Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo'
+          TypeReference
+            Identifier: 'Object'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' bar'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' baz'
+              StringLiteral

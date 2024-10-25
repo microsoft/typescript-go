@@ -1,0 +1,124 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Comparable'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+   compareTo'
+      Parameter
+        Identifier: 'other'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' Comparable'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' K'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+   x'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Comparable'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: ' compareTo'
+      Parameter
+        Identifier: 'other'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ReturnStatement
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NewExpression
+              Identifier: ' A'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        TypeReference
+          Identifier: ' I'
+          StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NewExpression
+              Identifier: ' A'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TypeReference
+          Identifier: ' I'
+          StringKeyword
+        CallExpression
+          FunctionExpression
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                TypeReference
+                  Identifier: ' A'
+                  NumberKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' z'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' x'
+                        NewExpression
+                          Identifier: ' A'
+                          NumberKeyword
+              ReturnStatement
+                Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        TypeReference
+          Identifier: ' I'
+          StringKeyword
+        Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        TypeReference
+          Identifier: ' I'
+          StringKeyword
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'K'
+            NumberKeyword
+          Identifier: 'z'

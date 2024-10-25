@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' parseInt'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+parseInt'
+      StringLiteral

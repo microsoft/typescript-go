@@ -1,0 +1,34 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' Foo2'
+    PropertyDeclaration
+      Identifier: ' x'
+    PropertyDeclaration
+      Identifier: ' y'
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Foo2'
+    GetAccessor
+      ComputedPropertyName
+        StringLiteral
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' Foo'
+    SetAccessor
+      ComputedPropertyName
+        StringLiteral
+      Parameter
+        Identifier: 'p'
+        TypeReference
+          Identifier: ' Foo2'
+      Block

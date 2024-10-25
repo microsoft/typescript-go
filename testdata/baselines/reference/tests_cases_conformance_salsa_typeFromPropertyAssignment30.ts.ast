@@ -1,0 +1,33 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Combo'
+    CallSignature
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    p'
+      QuestionToken
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' Combo'
+        ArrowFunction
+          EqualsGreaterThanToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+// should not be an expando object, but contextually typed by Combo.p
+c'
+        Identifier: 'p'
+      EqualsToken
+      ObjectLiteralExpression

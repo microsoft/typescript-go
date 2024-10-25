@@ -1,0 +1,62 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' wrap'
+    TypeParameter
+      Identifier: 'X'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' X'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' X'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' call'
+    TypeParameter
+      Identifier: 'A'
+      ArrayType
+        UnknownKeyword
+    TypeParameter
+      Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          FunctionType
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              TypeReference
+                Identifier: ' A'
+            TypeReference
+              Identifier: ' T'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' A'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' leak'
+        CallExpression
+          Identifier: ' call'
+          CallExpression
+            Identifier: 'wrap'
+            ArrowFunction
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+          NumericLiteral

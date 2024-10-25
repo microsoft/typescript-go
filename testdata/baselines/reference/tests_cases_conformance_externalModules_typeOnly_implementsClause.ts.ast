@@ -1,0 +1,39 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Component'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' types'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' types'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' types'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' nestedNamespace'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' types'
+          Identifier: 'Component'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' nestedNamespace'
+            Identifier: 'types'
+          Identifier: 'Component'

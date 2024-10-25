@@ -1,0 +1,83 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' test'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Number'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          StringKeyword
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' String'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          StringKeyword
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' Array'
+        TypeParameter
+          Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' C'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          StringKeyword
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' I'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          StringKeyword
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'x'
+                  StringKeyword
+                StringKeyword
+              IndexSignature
+                Parameter
+                  Identifier: 'x'
+                  StringKeyword
+                StringKeyword

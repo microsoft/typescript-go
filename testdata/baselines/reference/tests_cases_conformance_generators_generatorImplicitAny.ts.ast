@@ -1,0 +1,103 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g'
+    Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' noop'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' T'
+    VoidKeyword
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            YieldExpression
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            StringKeyword
+            YieldExpression
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g4'
+    Block
+      ExpressionStatement
+        YieldExpression
+      ExpressionStatement
+        BinaryExpression
+          YieldExpression
+          CommaToken
+          CallExpression
+            Identifier: ' noop'
+      ExpressionStatement
+        BinaryExpression
+          BinaryExpression
+            CallExpression
+              Identifier: ' // ok, result is unused
+    noop'
+            CommaToken
+            YieldExpression
+          CommaToken
+          CallExpression
+            Identifier: ' noop'
+      ExpressionStatement
+        ParenthesizedExpression
+          YieldExpression
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              YieldExpression
+              CommaToken
+              CallExpression
+                Identifier: ' noop'
+          CommaToken
+          CallExpression
+            Identifier: ' noop'
+      ForStatement
+        YieldExpression
+        FalseKeyword
+        YieldExpression
+        EmptyStatement
+      ExpressionStatement
+        VoidExpression
+          ParenthesizedExpression
+            YieldExpression
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g5'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+          YieldExpression
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g6'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+          StringKeyword
+          YieldExpression

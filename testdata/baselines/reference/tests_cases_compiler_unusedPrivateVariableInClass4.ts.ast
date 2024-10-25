@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' greeter'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' y'
+      StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: '  z'
+      StringKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' method1'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'

@@ -1,0 +1,35 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Comparable'
+  ClassDeclaration
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Comparable'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Comparable'
+  InterfaceDeclaration
+    Identifier: ' Comparable2'
+    TypeParameter
+      Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' A2'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Comparable2'
+        TypeReference
+          Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' B2'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Comparable2'
+        TypeReference
+          Identifier: 'T'

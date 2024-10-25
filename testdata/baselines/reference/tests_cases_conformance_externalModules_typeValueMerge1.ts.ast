@@ -1,0 +1,44 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' A'
+    Block
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' B'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' B'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+        ImportSpecifier
+          Identifier: ' B'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+A'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        Identifier: ' B'

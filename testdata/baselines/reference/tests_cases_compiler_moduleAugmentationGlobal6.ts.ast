@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Array'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: ' x'

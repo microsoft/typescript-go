@@ -1,0 +1,32 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @filename:circularMultipleAssignmentDeclaration.js
+// @allowJs: true
+// @checkJs: true
+// @noEmit: true
+ns'
+        Identifier: 'next'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' ns'
+          Identifier: 'next'
+        BarBarToken
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' shared'
+            ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+ns'
+            Identifier: 'next'
+          Identifier: 'shared'
+        Identifier: 'mymethod'
+      EqualsToken
+      ObjectLiteralExpression

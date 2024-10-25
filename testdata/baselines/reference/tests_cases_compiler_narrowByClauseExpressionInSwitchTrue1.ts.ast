@@ -1,0 +1,193 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' type'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' type'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' AorB'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' isA'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' AorB'
+          TypePredicate
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' A'
+          EqualsGreaterThanToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'type'
+            EqualsEqualsEqualsToken
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' isB'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' AorB'
+          TypePredicate
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' B'
+          EqualsGreaterThanToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'type'
+            EqualsEqualsEqualsToken
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' test1'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' AorB'
+    Block
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          CaseClause
+            CallExpression
+              Identifier: ' isA'
+              Identifier: 'x'
+            ExpressionStatement
+              Identifier: '
+      x'
+            BreakStatement
+          CaseClause
+            CallExpression
+              Identifier: ' isB'
+              Identifier: 'x'
+            ExpressionStatement
+              Identifier: '
+      x'
+            BreakStatement
+  FunctionDeclaration
+    Identifier: ' test2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' AorB'
+    Block
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          CaseClause
+            CallExpression
+              Identifier: ' isA'
+              Identifier: 'x'
+            ExpressionStatement
+              Identifier: '
+      x'
+          CaseClause
+            CallExpression
+              Identifier: ' isB'
+              Identifier: 'x'
+            ExpressionStatement
+              Identifier: '
+      x'
+            BreakStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  SwitchStatement
+    TrueKeyword
+    CaseBlock
+      CaseClause
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+    x'
+              Identifier: 'trim'
+  TypeAliasDeclaration
+    Identifier: ' SomeType'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' type'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isSomeType'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' SomeType'
+  FunctionDeclaration
+    Identifier: ' processInput'
+    Parameter
+      Identifier: 'input'
+      UnionType
+        StringKeyword
+        TypeReference
+          Identifier: ' RegExp'
+        TypeReference
+          Identifier: ' SomeType'
+    Block
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          CaseClause
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' input'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              Identifier: '
+      input'
+            BreakStatement
+          CaseClause
+            BinaryExpression
+              Identifier: ' input'
+              InstanceOfKeyword
+              Identifier: ' RegExp'
+            ExpressionStatement
+              Identifier: '
+      input'
+            BreakStatement
+          CaseClause
+            CallExpression
+              Identifier: ' isSomeType'
+              Identifier: 'input'
+            ExpressionStatement
+              Identifier: '
+      input'
+            BreakStatement

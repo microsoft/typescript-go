@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' getObj'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              Identifier: ''
+            Identifier: 'toString'

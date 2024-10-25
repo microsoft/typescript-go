@@ -1,0 +1,97 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Promise'
+                Identifier: 'resolve'
+            Identifier: 'then'
+          ArrowFunction
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Promise'
+                Identifier: 'all'
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'fetch'
+                  StringLiteral
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' Promise'
+                            Identifier: 'resolve'
+                        Identifier: 'then'
+                      FunctionExpression
+                        Block
+                          ReturnStatement
+                            CallExpression
+                              Identifier: ' fetch'
+                              StringLiteral
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'res'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' res'
+                        Identifier: 'toString'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'resolve'
+      ReturnStatement
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'all'
+            ArrayLiteralExpression
+              CallExpression
+                Identifier: 'fetch'
+                StringLiteral
+              CallExpression
+                Identifier: ' fetch'
+                StringLiteral
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' Promise'
+                          Identifier: 'resolve'
+                      Identifier: 'then'
+                    FunctionExpression
+                      Block
+                        ReturnStatement
+                          CallExpression
+                            Identifier: ' fetch'
+                            StringLiteral
+                  Identifier: 'then'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'res'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' res'
+                      Identifier: 'toString'

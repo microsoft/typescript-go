@@ -1,0 +1,167 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' require'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    TypeReference
+      QualifiedName
+        Identifier: ' require'
+        Identifier: 'I'
+    Block
+      ReturnStatement
+        NullKeyword
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' exports'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo2'
+    TypeReference
+      QualifiedName
+        Identifier: ' exports'
+        Identifier: 'I'
+    Block
+      ReturnStatement
+        NullKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' m1'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' require'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' I'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+      ModuleDeclaration
+        Identifier: ' exports'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' I'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' require'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' I'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+      ModuleDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' exports'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' I'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' require'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' exports'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' m3'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' require'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' I'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+      ModuleDeclaration
+        Identifier: ' exports'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' I'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+  ModuleDeclaration
+    Identifier: ' m4'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' require'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' I'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+      ModuleDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' exports'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' I'
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral

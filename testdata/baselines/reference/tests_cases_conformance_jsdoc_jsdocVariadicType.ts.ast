@@ -1,0 +1,22 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        FunctionExpression
+          Parameter
+            Identifier: 'a'
+          Parameter
+            Identifier: ' b'
+          Parameter
+            DotDotDotToken
+            Identifier: 'r'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// @filename: b.ts
+foo'
+      FalseKeyword
+      StringLiteral

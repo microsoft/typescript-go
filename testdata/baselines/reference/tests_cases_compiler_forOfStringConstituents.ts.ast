@@ -1,0 +1,66 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: ' x'
+      LiteralType
+        NumericLiteral
+    PropertySignature
+      Identifier: ' y'
+      ArrayType
+        TypeReference
+          Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: ' x'
+      LiteralType
+        NumericLiteral
+    PropertySignature
+      Identifier: ' y'
+      ArrayType
+        TypeReference
+          Identifier: ' CD'
+  InterfaceDeclaration
+    Identifier: ' C'
+    PropertySignature
+      Identifier: ' x'
+      LiteralType
+        NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' D'
+    PropertySignature
+      Identifier: ' x'
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' AB'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' CD'
+    UnionType
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        Identifier: ' D'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' AB'
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' CD'
+  ForOfStatement
+    Identifier: 'y'
+    PropertyAccessExpression
+      Identifier: ' x'
+      Identifier: 'y'
+    EmptyStatement

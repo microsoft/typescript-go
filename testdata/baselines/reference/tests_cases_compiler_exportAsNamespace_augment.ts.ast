@@ -1,0 +1,96 @@
+SourceFile
+  NamespaceExportDeclaration
+    Identifier: ' a'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' conflict'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a2'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' a'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                NumericLiteral
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' conflict'
+                NumericLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' conflict'
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+a'
+            Identifier: 'x'
+          PlusToken
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'y'
+        PlusToken
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'z'
+      PlusToken
+      PropertyAccessExpression
+        Identifier: ' a'
+        Identifier: 'conflict'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+a2'
+            Identifier: 'x'
+          PlusToken
+          PropertyAccessExpression
+            Identifier: ' a2'
+            Identifier: 'y'
+        PlusToken
+        PropertyAccessExpression
+          Identifier: ' a2'
+          Identifier: 'z'
+      PlusToken
+      PropertyAccessExpression
+        Identifier: ' a2'
+        Identifier: 'conflict'

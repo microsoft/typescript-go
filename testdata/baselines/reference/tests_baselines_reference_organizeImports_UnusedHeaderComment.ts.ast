@@ -1,0 +1,7 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' F1'
+    StringLiteral

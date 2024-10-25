@@ -1,0 +1,48 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Conn'
+    Constructor
+      Block
+    PropertyDeclaration
+      Identifier: '
+    item'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+  ExportAssignment
+    Identifier: ' Conn'
+  TypeAliasDeclaration
+    Identifier: ' Conn'
+    ImportType
+      LiteralType
+        StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Conn'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Wrap'
+    PropertyDeclaration
+      Identifier: '
+    connItem'
+      NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'c'
+        Identifier: ' x'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'connItem'
+            EqualsToken
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'item'

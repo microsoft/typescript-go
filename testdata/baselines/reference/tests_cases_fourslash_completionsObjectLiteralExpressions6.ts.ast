@@ -1,0 +1,106 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+/// <reference path="fourslash.ts" />
+
+//// type E = {}
+//// type F = string
+//// const i= { e: {} };
+//// interface I { e: E, f?: F }
+//// const k: I = {
+////     ["e"]: i
+////     /**/
+//// }
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+      name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'OptionalMember'
+              PropertyAssignment
+                Identifier: '
+      hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+      source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'ObjectLiteralMemberWithComma'
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+      allowIncompleteCompletions'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+      includeInsertTextCompletions'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+  
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'CompletionSource'
+            Identifier: 'ObjectLiteralMemberWithComma'
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+      allowIncompleteCompletions'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+      includeInsertTextCompletions'
+              TrueKeyword

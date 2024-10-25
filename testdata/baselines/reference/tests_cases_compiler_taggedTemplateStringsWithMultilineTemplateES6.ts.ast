@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+    VoidKeyword
+    Block
+  ExpressionStatement
+    TaggedTemplateExpression
+      Identifier: '
+
+f'
+      NoSubstitutionTemplateLiteral

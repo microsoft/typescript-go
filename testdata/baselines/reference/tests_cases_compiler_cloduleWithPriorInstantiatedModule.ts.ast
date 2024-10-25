@@ -1,0 +1,24 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Moclodule'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Someinterface'
+        MethodSignature
+          Identifier: '
+        foo'
+          VoidKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' Moclodule'
+  ModuleDeclaration
+    Identifier: ' Moclodule'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Manager'

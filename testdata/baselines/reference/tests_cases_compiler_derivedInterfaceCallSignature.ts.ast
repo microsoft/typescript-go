@@ -1,0 +1,214 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' D3SvgPath'
+    CallSignature
+      Parameter
+        Identifier: 'data'
+        AnyKeyword
+      Parameter
+        Identifier: ' index'
+        QuestionToken
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    x'
+      FunctionType
+        Parameter
+          Identifier: 'data'
+          AnyKeyword
+        Parameter
+          Identifier: ' index'
+          QuestionToken
+          NumberKeyword
+        NumberKeyword
+    MethodSignature
+      Identifier: '
+    y'
+      FunctionType
+        Parameter
+          Identifier: 'data'
+          AnyKeyword
+        Parameter
+          Identifier: ' index'
+          QuestionToken
+          NumberKeyword
+        NumberKeyword
+    MethodSignature
+      Identifier: '
+    interpolate'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    tension'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    defined'
+      FunctionType
+        Parameter
+          Identifier: 'data'
+          AnyKeyword
+        Parameter
+          Identifier: ' index'
+          QuestionToken
+          NumberKeyword
+        BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' D3SvgArea'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D3SvgPath'
+    MethodSignature
+      Identifier: '
+    x'
+      Parameter
+        Identifier: 'x'
+        FunctionType
+          Parameter
+            Identifier: 'data'
+            AnyKeyword
+          Parameter
+            Identifier: ' index'
+            QuestionToken
+            NumberKeyword
+          NumberKeyword
+      TypeReference
+        Identifier: ' D3SvgArea'
+    MethodSignature
+      Identifier: '
+    y'
+      Parameter
+        Identifier: 'y'
+        FunctionType
+          Parameter
+            Identifier: 'data'
+            AnyKeyword
+          Parameter
+            Identifier: ' index'
+            QuestionToken
+            NumberKeyword
+          NumberKeyword
+      TypeReference
+        Identifier: ' D3SvgArea'
+    MethodSignature
+      Identifier: '
+    y0'
+      FunctionType
+        Parameter
+          Identifier: 'data'
+          AnyKeyword
+        Parameter
+          Identifier: ' index'
+          QuestionToken
+          NumberKeyword
+        NumberKeyword
+    MethodSignature
+      Identifier: '
+    y0'
+      Parameter
+        Identifier: 'y'
+        NumberKeyword
+      TypeReference
+        Identifier: ' D3SvgArea'
+    MethodSignature
+      Identifier: '
+    y0'
+      Parameter
+        Identifier: 'y'
+        FunctionType
+          Parameter
+            Identifier: 'data'
+            AnyKeyword
+          Parameter
+            Identifier: ' index'
+            QuestionToken
+            NumberKeyword
+          NumberKeyword
+      TypeReference
+        Identifier: ' D3SvgArea'
+    MethodSignature
+      Identifier: '
+    y1'
+      FunctionType
+        Parameter
+          Identifier: 'data'
+          AnyKeyword
+        Parameter
+          Identifier: ' index'
+          QuestionToken
+          NumberKeyword
+        NumberKeyword
+    MethodSignature
+      Identifier: '
+    y1'
+      Parameter
+        Identifier: 'y'
+        NumberKeyword
+      TypeReference
+        Identifier: ' D3SvgArea'
+    MethodSignature
+      Identifier: '
+    y1'
+      Parameter
+        Identifier: 'y'
+        FunctionType
+          Parameter
+            Identifier: 'data'
+            AnyKeyword
+          Parameter
+            Identifier: ' index'
+            QuestionToken
+            NumberKeyword
+          NumberKeyword
+      TypeReference
+        Identifier: ' D3SvgArea'
+    MethodSignature
+      Identifier: '
+
+    interpolate'
+      Parameter
+        Identifier: 'interpolator'
+        StringKeyword
+      TypeReference
+        Identifier: ' D3SvgArea'
+    MethodSignature
+      Identifier: '
+    tension'
+      Parameter
+        Identifier: 'tension'
+        NumberKeyword
+      TypeReference
+        Identifier: ' D3SvgArea'
+    MethodSignature
+      Identifier: '
+    defined'
+      Parameter
+        Identifier: 'defined'
+        FunctionType
+          Parameter
+            Identifier: 'data'
+            AnyKeyword
+          Parameter
+            Identifier: ' index'
+            QuestionToken
+            NumberKeyword
+          BooleanKeyword
+      TypeReference
+        Identifier: ' D3SvgArea'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' area'
+        TypeReference
+          Identifier: ' D3SvgArea'
+  ExpressionStatement
+    CallExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+area'
+          Identifier: 'interpolate'
+        StringLiteral
+      StringLiteral

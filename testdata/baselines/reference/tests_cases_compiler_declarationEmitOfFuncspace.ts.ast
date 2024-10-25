@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' ExpandoMerge'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    Block
+      ReturnStatement
+        Identifier: ' n'
+  ModuleDeclaration
+    Identifier: ' ExpandoMerge'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'

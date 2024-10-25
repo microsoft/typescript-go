@@ -1,0 +1,126 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      StringKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        NumberKeyword
+      BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' a'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' a'
+          NumericLiteral
+          NumericLiteral
+  ModuleDeclaration
+    Identifier: ' G'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        TypeParameter
+          Identifier: 'T'
+        CallSignature
+          StringKeyword
+        CallSignature
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' A'
+        TypeParameter
+          Identifier: 'T'
+        CallSignature
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            NumberKeyword
+          TypeReference
+            Identifier: ' T'
+        CallSignature
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' A'
+              BooleanKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            CallExpression
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            CallExpression
+              Identifier: ' a'
+              TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            CallExpression
+              Identifier: ' a'
+              TrueKeyword
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r4'
+            CallExpression
+              Identifier: ' a'
+              NumericLiteral
+              TrueKeyword

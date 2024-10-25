@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ohno'
+        ConstructorType
+          NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' ff'
+    Parameter
+      Identifier: 't'
+      NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+ff'
+      Identifier: 'ohno'

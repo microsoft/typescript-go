@@ -1,0 +1,157 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bin1'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bin2'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bin3'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bin4'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    a'
+            Identifier: ' bin1'
+          ShorthandPropertyAssignment
+            Identifier: '
+    bin1'
+          PropertyAssignment
+            Identifier: '
+    b'
+            NumericLiteral
+          PropertyAssignment
+            NumericLiteral
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    a'
+            Identifier: ' bin2'
+          ShorthandPropertyAssignment
+            Identifier: '
+    bin2'
+          PropertyAssignment
+            Identifier: '
+    b'
+            NumericLiteral
+          PropertyAssignment
+            NumericLiteral
+            FalseKeyword
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+
+obj1'
+      NumericLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '    // string
+obj1'
+      NumericLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '         // string
+obj1'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '       // string
+obj1'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '  // any
+obj1'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '        // number
+obj1'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '        // number
+obj1'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '     // number
+obj1'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '   // boolean
+
+obj2'
+      NumericLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '    // string
+obj2'
+      NumericLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '         // string
+obj2'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '       // string
+obj2'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '  // any
+obj2'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '        // number
+obj2'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '        // number
+obj2'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '     // number
+obj2'
+      NumericLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '  // boolean
+obj2'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '  // boolean
+obj2'
+      StringLiteral

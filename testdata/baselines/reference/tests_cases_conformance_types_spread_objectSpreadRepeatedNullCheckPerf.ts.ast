@@ -1,0 +1,629 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Props'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' a'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' b'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' c'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' d'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' e'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' f'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' g'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' h'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' i'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' j'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' k'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' l'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' m'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' n'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' o'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' p'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' q'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' r'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' s'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' t'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' u'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' v'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' w'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' x'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' y'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' z'
+      QuestionToken
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' parseWithSpread'
+    Parameter
+      Identifier: 'config'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        NumberKeyword
+    TypeReference
+      Identifier: ' Props'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'a'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' a'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'a'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'b'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' b'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'b'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'c'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' c'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'c'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'd'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' d'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'd'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'e'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' e'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'e'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'f'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' f'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'f'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'g'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' g'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'g'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'h'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' h'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'h'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'i'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' i'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'i'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'j'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' j'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'j'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'k'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' k'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'k'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'l'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' l'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'l'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'm'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' m'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'm'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'n'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' n'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'n'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'o'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' o'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'o'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'p'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' p'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'p'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'q'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' q'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'q'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'r'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' r'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'r'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 's'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' s'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 's'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 't'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' t'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 't'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'u'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' u'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'u'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'v'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' v'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'v'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'w'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' w'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'w'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'x'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' x'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'x'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'y'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' y'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'y'
+                      Identifier: 'toString'
+          SpreadAssignment
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'config'
+                  Identifier: 'z'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' z'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' config'
+                        Identifier: 'z'
+                      Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+parseWithSpread'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' z'
+          NumericLiteral

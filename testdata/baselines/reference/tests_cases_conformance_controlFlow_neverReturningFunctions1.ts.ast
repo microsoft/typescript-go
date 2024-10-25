@@ -1,0 +1,929 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fail'
+    Parameter
+      Identifier: 'message'
+      QuestionToken
+      StringKeyword
+    NeverKeyword
+    Block
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+          Identifier: 'message'
+  FunctionDeclaration
+    Identifier: ' f01'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ExpressionStatement
+          CallExpression
+            Identifier: ' fail'
+            StringLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f02'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          GreaterThanEqualsToken
+          NumericLiteral
+        ReturnStatement
+          Identifier: ' x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    fail'
+          StringLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f03'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '  // string
+    fail'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f11'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' fail'
+      FunctionType
+        Parameter
+          Identifier: 'message'
+          QuestionToken
+          StringKeyword
+        NeverKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ExpressionStatement
+          CallExpression
+            Identifier: ' fail'
+            StringLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f12'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' fail'
+      FunctionType
+        Parameter
+          Identifier: 'message'
+          QuestionToken
+          StringKeyword
+        NeverKeyword
+    NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          GreaterThanEqualsToken
+          NumericLiteral
+        ReturnStatement
+          Identifier: ' x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    fail'
+          StringLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f13'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Parameter
+      Identifier: ' fail'
+      FunctionType
+        Parameter
+          Identifier: 'message'
+          QuestionToken
+          StringKeyword
+        NeverKeyword
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '  // string
+    fail'
+      ExpressionStatement
+        Identifier: '
+    x'
+  ModuleDeclaration
+    Identifier: ' Debug'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' fail'
+        Parameter
+          Identifier: 'message'
+          QuestionToken
+          StringKeyword
+        NeverKeyword
+  FunctionDeclaration
+    Identifier: ' f21'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Debug'
+              Identifier: 'fail'
+            StringLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f22'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          GreaterThanEqualsToken
+          NumericLiteral
+        ReturnStatement
+          Identifier: ' x'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'fail'
+          StringLiteral
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f23'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '  // string
+    Debug'
+            Identifier: 'fail'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f24'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+      ExpressionStatement
+        CallExpression
+          ParenthesizedExpression
+            PropertyAccessExpression
+              ParenthesizedExpression
+                Identifier: 'Debug'
+              Identifier: 'fail'
+      ExpressionStatement
+        Identifier: '
+    x'
+  ClassDeclaration
+    Identifier: ' Test'
+    MethodDeclaration
+      Identifier: '
+    fail'
+      Parameter
+        Identifier: 'message'
+        QuestionToken
+        StringKeyword
+      NeverKeyword
+      Block
+        ThrowStatement
+          NewExpression
+            Identifier: ' Error'
+            Identifier: 'message'
+    MethodDeclaration
+      Identifier: '
+    f1'
+      Parameter
+        Identifier: 'x'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'x'
+            EqualsEqualsEqualsToken
+            Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'fail'
+              StringLiteral
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        x'
+            Identifier: 'length'
+    MethodDeclaration
+      Identifier: '
+    f2'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'x'
+            GreaterThanEqualsToken
+            NumericLiteral
+          ReturnStatement
+            Identifier: ' x'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fail'
+            StringLiteral
+        ExpressionStatement
+          Identifier: '
+        x'
+    MethodDeclaration
+      Identifier: '
+    f3'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      Block
+        ExpressionStatement
+          Identifier: '
+        x'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fail'
+        ExpressionStatement
+          Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f30'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        fail'
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          IfStatement
+            BinaryExpression
+              Identifier: 'x'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+            Block
+              ExpressionStatement
+                Identifier: '
+            x'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '  // number
+            fail'
+              ExpressionStatement
+                Identifier: '
+            x'
+            Block
+              ExpressionStatement
+                Identifier: '
+            x'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '  // undefined
+            fail'
+              ExpressionStatement
+                Identifier: '
+            x'
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f31'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          UnionType
+            StringKeyword
+            NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'a'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        fail'
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '    // Unreachable
+        x'
+              Identifier: 'a'
+      ExpressionStatement
+        Identifier: '
+    x'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '    // { a: string | number }
+    x'
+          Identifier: 'a'
+  FunctionDeclaration
+    Identifier: ' f40'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      TryStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        fail'
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        fail'
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f41'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      TryStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        fail'
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f42'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      TryStatement
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        fail'
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f43'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fail'
+            ArrowFunction
+              NeverKeyword
+              EqualsGreaterThanToken
+              Block
+                ThrowStatement
+                  NewExpression
+                    Identifier: ' Error'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            ArrayLiteralExpression
+              Identifier: 'fail'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    fail'
+      ExpressionStatement
+        CallExpression
+          ElementAccessExpression
+            Identifier: '  // No effect (missing type annotation)
+    f'
+            NumericLiteral
+      ExpressionStatement
+        Identifier: '  // No effect (not a dotted name)
+    f'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Component'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+	attrName'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+	data'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+	dependencies'
+      QuestionToken
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+	el'
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+	id'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+	multiple'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+	name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+	schema'
+      UnknownKeyword
+    PropertySignature
+      Identifier: '
+	system'
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+
+	init'
+      Parameter
+        Identifier: 'data'
+        QuestionToken
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+	pause'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+	play'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+	remove'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+	tick'
+      QuestionToken
+      Parameter
+        Identifier: 'time'
+        NumberKeyword
+      Parameter
+        Identifier: ' timeDelta'
+        NumberKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+	update'
+      Parameter
+        Identifier: 'oldData'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+	updateSchema'
+      QuestionToken
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+
+	extendSchema'
+      Parameter
+        Identifier: 'update'
+        UnknownKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+	flushToDOM'
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ComponentConstructor'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    ConstructSignature
+      Parameter
+        Identifier: 'el'
+        UnknownKeyword
+      Parameter
+        Identifier: ' attrValue'
+        StringKeyword
+      Parameter
+        Identifier: ' id'
+        StringKeyword
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' Component'
+    PropertySignature
+      Identifier: '
+	prototype'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+		name'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+		system'
+            UnknownKeyword
+          MethodSignature
+            Identifier: '
+		play'
+            VoidKeyword
+          MethodSignature
+            Identifier: '
+		pause'
+            VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' registerComponent'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    Parameter
+      Identifier: '
+    name'
+      StringKeyword
+    Parameter
+      Identifier: '
+    component'
+      TypeReference
+        Identifier: ' ComponentDefinition'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' ComponentConstructor'
+      TypeReference
+        Identifier: 'T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ComponentDefinition'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+      ObjectKeyword
+    IntersectionType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'Component'
+      TypeReference
+        Identifier: ' ThisType'
+        IntersectionType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' Component'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Component'
+        CallExpression
+          Identifier: ' registerComponent'
+          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+	schema'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+		myProperty'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+			default'
+                      ArrayLiteralExpression
+                    MethodDeclaration
+                      Identifier: '
+			parse'
+                      Block
+                        ReturnStatement
+                          ArrayLiteralExpression
+                            TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+		string'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' type'
+                      StringLiteral
+                PropertyAssignment
+                  Identifier: '
+		num'
+                  NumericLiteral
+            MethodDeclaration
+              Identifier: '
+	init'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'data'
+                      Identifier: 'num'
+                    EqualsToken
+                    NumericLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'el'
+                      Identifier: 'setAttribute'
+                    StringLiteral
+                    StringLiteral
+            MethodDeclaration
+              Identifier: '
+	update'
+              Block
+            MethodDeclaration
+              Identifier: '
+	tick'
+              Block
+            MethodDeclaration
+              Identifier: '
+	remove'
+              Block
+            MethodDeclaration
+              Identifier: '
+	pause'
+              Block
+            MethodDeclaration
+              Identifier: '
+	play'
+              Block
+            MethodDeclaration
+              Identifier: '
+
+	multiply'
+              Parameter
+                Identifier: 'f'
+                NumberKeyword
+              Block
+                ReturnStatement
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: ' f'
+                      AsteriskToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'data'
+                        Identifier: 'num'
+                    AsteriskToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'system'
+                        Identifier: 'data'
+                      Identifier: 'counter'
+  ClassDeclaration
+    Identifier: ' MyThrowable'
+    MethodDeclaration
+      Identifier: '
+    throw'
+      NeverKeyword
+      Block
+        ThrowStatement
+          NewExpression
+            Identifier: ' Error'
+  ClassDeclaration
+    Identifier: ' SuperThrowable'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' MyThrowable'
+    MethodDeclaration
+      Identifier: '
+    err'
+      Parameter
+        Identifier: 'msg'
+        StringKeyword
+      NeverKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'throw'
+    MethodDeclaration
+      Identifier: '
+    ok'
+      NeverKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'throw'
+  InterfaceDeclaration
+    Identifier: ' Services'
+    MethodSignature
+      Identifier: '
+    panic'
+      Parameter
+        Identifier: 'message'
+        StringKeyword
+      NeverKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'services'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'Services'
+    Parameter
+      Identifier: ' s'
+      UnionType
+        StringKeyword
+        LiteralType
+          NullKeyword
+    StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 's'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        services'
+                Identifier: 'panic'
+              StringLiteral
+        Block
+          ReturnStatement
+            Identifier: ' s'

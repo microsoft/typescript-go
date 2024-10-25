@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+    	fn'
+      BooleanKeyword
+      Block

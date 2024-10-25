@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: 'id'
+            NumberKeyword
+      ArrayLiteralExpression
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'foo'
+          ParenthesizedExpression
+            ObjectLiteralExpression

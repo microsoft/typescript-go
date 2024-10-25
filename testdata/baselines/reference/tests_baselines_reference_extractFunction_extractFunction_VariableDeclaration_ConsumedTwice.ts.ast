@@ -1,0 +1,39 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+        NumericLiteral
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    Identifier: '/*|]*/
+x'
+  ExpressionStatement
+    Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+        CallExpression
+          Identifier: ' /*RENAME*/newFunction'
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' newFunction'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumberKeyword
+            NumericLiteral
+      ExpressionStatement
+        StringLiteral
+      ReturnStatement
+        Identifier: ' x'

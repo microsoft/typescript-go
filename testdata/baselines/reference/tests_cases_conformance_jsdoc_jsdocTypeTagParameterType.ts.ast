@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          Parameter
+            Identifier: 'value'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+    value'
+                EqualsToken
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 's'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsToken
+          NumericLiteral

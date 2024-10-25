@@ -1,0 +1,8 @@
+SourceFile
+  WhileStatement
+    TrueKeyword
+    Block
+      FunctionDeclaration
+        Identifier: ' f'
+        Block
+          ContinueStatement

@@ -1,0 +1,203 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' PositiveInfinity'
+    LiteralType
+      NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' NegativeInfinity'
+    LiteralType
+      PrefixUnaryExpression
+        NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' IsEqual'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    ConditionalType
+      ParenthesizedType
+        FunctionType
+          TypeParameter
+            Identifier: 'G'
+          ConditionalType
+            TypeReference
+              Identifier: ' G'
+            TypeReference
+              Identifier: ' A'
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+      FunctionType
+        TypeParameter
+          Identifier: '
+  G'
+        ConditionalType
+          TypeReference
+            Identifier: ' G'
+          TypeReference
+            Identifier: ' B'
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Add'
+    TypeParameter
+      Identifier: 'A'
+      NumberKeyword
+    TypeParameter
+      Identifier: ' B'
+      NumberKeyword
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: '
+  IsEqual'
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' PositiveInfinity'
+        TypeReference
+          Identifier: '
+  IsEqual'
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' NegativeInfinity'
+        TypeReference
+          Identifier: '
+  IsEqual'
+          TypeReference
+            Identifier: 'B'
+          TypeReference
+            Identifier: ' PositiveInfinity'
+        TypeReference
+          Identifier: '
+  IsEqual'
+          TypeReference
+            Identifier: 'B'
+          TypeReference
+            Identifier: ' NegativeInfinity'
+      InferType
+        TypeParameter
+          Identifier: ' R'
+          TupleType
+            BooleanKeyword
+            BooleanKeyword
+            BooleanKeyword
+            BooleanKeyword
+      ConditionalType
+        TupleType
+          LiteralType
+            TrueKeyword
+          LiteralType
+            FalseKeyword
+        ParenthesizedType
+          TupleType
+            IndexedAccessType
+              TypeReference
+                Identifier: 'R'
+              LiteralType
+                NumericLiteral
+            IndexedAccessType
+              TypeReference
+                Identifier: ' R'
+              LiteralType
+                NumericLiteral
+        TypeReference
+          Identifier: ' PositiveInfinity'
+        LiteralType
+          StringLiteral
+      NeverKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' AddWithoutParentheses'
+    TypeParameter
+      Identifier: 'A'
+      NumberKeyword
+    TypeParameter
+      Identifier: ' B'
+      NumberKeyword
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: '
+  IsEqual'
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' PositiveInfinity'
+        TypeReference
+          Identifier: '
+  IsEqual'
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' NegativeInfinity'
+        TypeReference
+          Identifier: '
+  IsEqual'
+          TypeReference
+            Identifier: 'B'
+          TypeReference
+            Identifier: ' PositiveInfinity'
+        TypeReference
+          Identifier: '
+  IsEqual'
+          TypeReference
+            Identifier: 'B'
+          TypeReference
+            Identifier: ' NegativeInfinity'
+      InferType
+        TypeParameter
+          Identifier: ' R'
+          TupleType
+            BooleanKeyword
+            BooleanKeyword
+            BooleanKeyword
+            BooleanKeyword
+      ConditionalType
+        TupleType
+          LiteralType
+            TrueKeyword
+          LiteralType
+            FalseKeyword
+        TupleType
+          IndexedAccessType
+            TypeReference
+              Identifier: 'R'
+            LiteralType
+              NumericLiteral
+          IndexedAccessType
+            TypeReference
+              Identifier: ' R'
+            LiteralType
+              NumericLiteral
+        TypeReference
+          Identifier: ' PositiveInfinity'
+        LiteralType
+          StringLiteral
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' AddTest0'
+    TypeReference
+      Identifier: ' Add'
+      TypeReference
+        Identifier: 'PositiveInfinity'
+      TypeReference
+        Identifier: ' PositiveInfinity'
+  TypeAliasDeclaration
+    Identifier: ' AddTest1'
+    TypeReference
+      Identifier: ' AddWithoutParentheses'
+      TypeReference
+        Identifier: 'PositiveInfinity'
+      TypeReference
+        Identifier: ' PositiveInfinity'

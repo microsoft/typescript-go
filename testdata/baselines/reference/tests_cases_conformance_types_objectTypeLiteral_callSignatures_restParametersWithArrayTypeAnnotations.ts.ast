@@ -1,0 +1,273 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      DotDotDotToken
+      Identifier: 'x'
+      ArrayType
+        NumberKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            ArrayType
+              NumberKeyword
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            ArrayType
+              NumberKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'y'
+            ArrayType
+              NumberKeyword
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        ArrayType
+          NumberKeyword
+      Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        ArrayType
+          NumberKeyword
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        ArrayType
+          NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'y'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              ArrayType
+                NumberKeyword
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              ArrayType
+                NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    foo'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              ArrayType
+                NumberKeyword
+            Block
+          PropertyAssignment
+            Identifier: '
+    a'
+            FunctionExpression
+              Identifier: ' foo'
+              Parameter
+                DotDotDotToken
+                Identifier: 'x'
+                ArrayType
+                  NumberKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'y'
+                ArrayType
+                  NumberKeyword
+              Block
+          PropertyAssignment
+            Identifier: '
+    b'
+            ArrowFunction
+              Parameter
+                DotDotDotToken
+                Identifier: 'x'
+                ArrayType
+                  NumberKeyword
+              EqualsGreaterThanToken
+              Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      DotDotDotToken
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Array'
+        StringKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Array'
+              StringKeyword
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Array'
+              StringKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'y'
+            TypeReference
+              Identifier: ' Array'
+              StringKeyword
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Identifier: ' C2'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' Array'
+          StringKeyword
+      Block
+  InterfaceDeclaration
+    Identifier: ' I2'
+    CallSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' Array'
+          StringKeyword
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' Array'
+          StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'y'
+        TypeReference
+          Identifier: ' Array'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TypeLiteral
+          CallSignature
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Array'
+                StringKeyword
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Array'
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    foo'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Array'
+                StringKeyword
+            Block
+          PropertyAssignment
+            Identifier: '
+    a'
+            FunctionExpression
+              Identifier: ' foo'
+              Parameter
+                DotDotDotToken
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' Array'
+                  StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'y'
+                TypeReference
+                  Identifier: ' Array'
+                  StringKeyword
+              Block
+          PropertyAssignment
+            Identifier: '
+    b'
+            ArrowFunction
+              Parameter
+                DotDotDotToken
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' Array'
+                  StringKeyword
+              EqualsGreaterThanToken
+              Block

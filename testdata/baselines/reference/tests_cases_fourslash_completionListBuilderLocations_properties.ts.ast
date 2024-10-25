@@ -1,0 +1,33 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////var aa = 1;
+
+////class A1 {
+////    public static /*property1*/
+////}
+
+////class A2 {
+////    public static a/*property2*/
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'markers'
+        PropertyAssignment
+          Identifier: ' exact'
+          PropertyAccessExpression
+            Identifier: ' completion'
+            Identifier: 'classElementKeywords'
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword

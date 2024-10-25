@@ -1,0 +1,79 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @moduleResolution: node
+// @noImplicitAny: true
+
+// @Filename: /node_modules/abs/index.js
+////not read
+
+// @Filename: /node_modules/zap/index.js
+////not read
+
+// @Filename: /a.ts
+/////**/import * as abs from "abs";
+////import * as zap from "zap";
+
+test'
+        Identifier: 'setTypesRegistry'
+      ObjectLiteralExpression
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixAllDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' // no changes
+    commands'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' packageName'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' file'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' type'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' packageName'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' file'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' type'
+                StringLiteral

@@ -1,0 +1,224 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Writeable'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      MinusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' EnumValues'
+    TupleType
+      StringKeyword
+      RestType
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Values'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' EnumValues'
+    MappedType
+      TypeParameter
+        Identifier: 'k'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          NumberKeyword
+      TypeReference
+        Identifier: ' k'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' ZodEnum'
+    TypeParameter
+      Identifier: 'T'
+      TupleType
+        StringKeyword
+        RestType
+          ArrayType
+            StringKeyword
+    GetAccessor
+      Identifier: ' enum'
+      TypeReference
+        Identifier: ' Values'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' createZodEnum'
+    TypeParameter
+      Identifier: 'U'
+      StringKeyword
+    TypeParameter
+      Identifier: ' T'
+      TypeReference
+        Identifier: ' Readonly'
+        TupleType
+          TypeReference
+            Identifier: 'U'
+          RestType
+            ArrayType
+              TypeReference
+                Identifier: 'U'
+    Parameter
+      Identifier: 'values'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' ZodEnum'
+      TypeReference
+        Identifier: 'Writeable'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Maybe'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      LiteralType
+        NullKeyword
+      UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' AnyTuple'
+    TupleType
+      UnknownKeyword
+      RestType
+        ArrayType
+          UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' AnyObject'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 'k'
+          StringKeyword
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' Flags'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  InterfaceDeclaration
+    Identifier: ' ISchema'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' C'
+      AnyKeyword
+    TypeParameter
+      Identifier: ' F'
+      TypeReference
+        Identifier: ' Flags'
+      AnyKeyword
+    TypeParameter
+      Identifier: ' D'
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+  __flags'
+      TypeReference
+        Identifier: ' F'
+    PropertySignature
+      Identifier: '
+  __context'
+      TypeReference
+        Identifier: ' C'
+    PropertySignature
+      Identifier: '
+  __outputType'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+  __default'
+      TypeReference
+        Identifier: ' D'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' TupleSchema'
+    TypeParameter
+      Identifier: '
+  TType'
+      TypeReference
+        Identifier: ' Maybe'
+        TypeReference
+          Identifier: 'AnyTuple'
+      UnionType
+        TypeReference
+          Identifier: ' AnyTuple'
+        UndefinedKeyword
+    TypeParameter
+      Identifier: '
+  TContext'
+      TypeReference
+        Identifier: ' AnyObject'
+    TypeParameter
+      Identifier: '
+  TDefault'
+      UndefinedKeyword
+    TypeParameter
+      Identifier: '
+  TFlags'
+      TypeReference
+        Identifier: ' Flags'
+      LiteralType
+        StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'schemas'
+        TupleType
+          TypeReference
+            Identifier: 'ISchema'
+            AnyKeyword
+          RestType
+            ArrayType
+              TypeReference
+                Identifier: 'ISchema'
+                AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' create'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' AnyTuple'
+    Parameter
+      Identifier: 'schemas'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        TypeReference
+          Identifier: ' ISchema'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: 'K'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' TupleSchema'
+          UnionType
+            TypeReference
+              Identifier: 'T'
+            UndefinedKeyword
+          Identifier: 'schemas'

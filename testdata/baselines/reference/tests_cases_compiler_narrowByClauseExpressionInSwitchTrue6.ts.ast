@@ -1,0 +1,233 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    aProps'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    bProps'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    PropertySignature
+      Identifier: '
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    cProps'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' MyType'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+      TypeReference
+        Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' isA'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' MyType'
+    Block
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          DefaultClause
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' never'
+                  NeverKeyword
+                  Identifier: ' x'
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            x'
+                Identifier: 'aProps'
+            BreakStatement
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            x'
+                Identifier: 'bProps'
+            BreakStatement
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            x'
+                Identifier: 'cProps'
+            BreakStatement
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          DefaultClause
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' never'
+                  NeverKeyword
+                  Identifier: ' x'
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+            x'
+                  Identifier: 'aProps'
+              BreakStatement
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+            x'
+                  Identifier: 'bProps'
+              BreakStatement
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+            x'
+                  Identifier: 'cProps'
+              BreakStatement
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          DefaultClause
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            x'
+                Identifier: 'aProps'
+            BreakStatement
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            x'
+                Identifier: 'bProps'
+            BreakStatement
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            x'
+                Identifier: 'cProps'
+            BreakStatement
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          DefaultClause
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' never'
+                  NeverKeyword
+                  Identifier: ' x'
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            x'
+                Identifier: 'aProps'
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            x'
+                Identifier: 'bProps'
+          CaseClause
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            x'
+                Identifier: 'cProps'

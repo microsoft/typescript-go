@@ -1,0 +1,54 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    foo'
+      TypeParameter
+        Identifier: 'U'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'A'
+            TypeReference
+              Identifier: 'U'
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    foo'
+      TypeParameter
+        Identifier: 'U'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'B'
+            TypeReference
+              Identifier: 'U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+          StringKeyword
+        Identifier: ' a'

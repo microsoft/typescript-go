@@ -1,0 +1,19 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' x'
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' y'
+        PropertySignature
+          Identifier: ' a'
+          TypeReference
+            Identifier: ' Date'
+      ExportAssignment
+        Identifier: ' y'

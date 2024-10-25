@@ -1,0 +1,25 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' AgeGroups'
+    EnumMember
+      StringLiteral
+    EnumMember
+      StringLiteral
+    EnumMember
+      StringLiteral
+    EnumMember
+      StringLiteral
+    EnumMember
+      StringLiteral
+    EnumMember
+      StringLiteral
+    EnumMember
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SpotifyAgeGroupEnum'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'AgeGroups'

@@ -1,0 +1,44 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' N'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                NumericLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' N'
+        QualifiedName
+          Identifier: ' M'
+          Identifier: 'N'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            PropertyAccessExpression
+              Identifier: ' N'
+              Identifier: 'y'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' M'
+                Identifier: 'N'
+              Identifier: 'y'

@@ -1,0 +1,35 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dynPropName'
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ExampleFunctionalComponent'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                StringLiteral
+                Identifier: ' dataTestId'
+              BindingElement
+                ComputedPropertyName
+                  Identifier: 'dynPropName'
+                Identifier: ' dynProp'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            BinaryExpression
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: ''
+                Identifier: 'Hello'
+              LessThanToken
+              RegularExpressionLiteral

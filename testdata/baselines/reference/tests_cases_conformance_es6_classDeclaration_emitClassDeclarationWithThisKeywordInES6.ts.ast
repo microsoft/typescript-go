@@ -1,0 +1,56 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' log'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        B'
+              Identifier: 'log'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+    GetAccessor
+      Identifier: ' X'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    SetAccessor
+      Identifier: ' bX'
+      Parameter
+        Identifier: 'y'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            Identifier: ' y'

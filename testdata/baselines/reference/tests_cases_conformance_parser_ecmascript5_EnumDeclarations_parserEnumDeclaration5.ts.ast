@@ -1,0 +1,17 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+    EnumMember
+      Identifier: '
+    C'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    D'

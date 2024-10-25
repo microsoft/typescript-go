@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+f'
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      EqualsToken
+      FunctionExpression
+        Block

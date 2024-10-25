@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' foo'
+    StringLiteral
+  ExpressionStatement
+    TypeAssertionExpression
+      AnyKeyword
+      Identifier: 'foo'
+  ExpressionStatement
+    ParenthesizedExpression
+      AsExpression
+        Identifier: 'foo'
+        AnyKeyword

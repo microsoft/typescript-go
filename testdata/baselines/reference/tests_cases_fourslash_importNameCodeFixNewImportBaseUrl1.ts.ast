@@ -1,0 +1,46 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /tsconfig.json
+////{
+////    "compilerOptions": {
+////        "baseUrl": "./a"
+////    }
+////}
+
+// @Filename: /a/b/x.ts
+////export function f1() { };
+
+// @Filename: /a/b/y.ts
+////[|f1/*0*/();|]
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+// Use the local import because it's simpler.
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral
+      Identifier: ' /*errorCode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    importModuleSpecifierPreference'
+          StringLiteral

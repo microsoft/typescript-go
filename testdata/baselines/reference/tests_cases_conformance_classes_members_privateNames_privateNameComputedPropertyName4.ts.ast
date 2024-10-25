@@ -1,0 +1,33 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      ComputedPropertyName
+        StringLiteral
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        StringLiteral
+      Block
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        StringLiteral
+      StringLiteral

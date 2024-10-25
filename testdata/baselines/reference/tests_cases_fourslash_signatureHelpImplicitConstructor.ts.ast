@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////class ImplicitConstructor {
+////}
+////var implicitConstructor = new ImplicitConstructor(/**/);
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    parameterCount'
+          NumericLiteral

@@ -1,0 +1,106 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' res'
+            NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'res'
+          GreaterThanToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              ArrowFunction
+                Parameter
+                  Identifier: 'res'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' console'
+                    Identifier: 'log'
+                  Identifier: 'res'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              Identifier: 'res_func'
+  FunctionDeclaration
+    Identifier: ' res_func'
+    Parameter
+      Identifier: 'result'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'result'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' res'
+            NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'res'
+          GreaterThanToken
+          NumericLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' res_1'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' fetch'
+                    StringLiteral
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              Identifier: 'res_1'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' fetch'
+                    StringLiteral
+          ReturnStatement
+            CallExpression
+              Identifier: ' res_func'
+              Identifier: 'result'
+  FunctionDeclaration
+    Identifier: ' res_func'
+    Parameter
+      Identifier: 'result'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'result'

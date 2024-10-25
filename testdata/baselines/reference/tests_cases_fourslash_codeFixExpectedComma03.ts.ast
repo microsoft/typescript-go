@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '/// <reference path='fourslash.ts' />
+
+////class C {
+////    const example = [|{ one: 1 one }|]
+////}
+
+verify'
+          Identifier: 'not'
+        Identifier: 'codeFixAvailable'
+      StringLiteral

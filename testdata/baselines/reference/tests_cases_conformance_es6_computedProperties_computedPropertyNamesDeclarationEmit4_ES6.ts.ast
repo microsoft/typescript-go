@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeLiteral
+          MethodSignature
+            ComputedPropertyName
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                StringLiteral
+            VoidKeyword

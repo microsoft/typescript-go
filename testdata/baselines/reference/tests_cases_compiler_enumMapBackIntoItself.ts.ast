@@ -1,0 +1,33 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' TShirtSize'
+    EnumMember
+      Identifier: '
+   Small'
+    EnumMember
+      Identifier: '
+   Medium'
+    EnumMember
+      Identifier: '
+   Large'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mySize'
+        PropertyAccessExpression
+          Identifier: ' TShirtSize'
+          Identifier: 'Large'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        ElementAccessExpression
+          Identifier: ' TShirtSize'
+          Identifier: 'mySize'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+// specifically checking output here, bug was that test used to be undefined at runtime
+test'
+      PlusToken
+      StringLiteral

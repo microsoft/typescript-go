@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' D'
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c'
+              NewExpression
+                Identifier: ' C'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        c'
+            PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d'
+              TypeReference
+                Identifier: ' D'
+              NewExpression
+                Identifier: ' C'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        d'
+            PrivateIdentifier
+  InterfaceDeclaration
+    Identifier: ' C'
+    ConstructSignature
+      TypeReference
+        Identifier: ' D'

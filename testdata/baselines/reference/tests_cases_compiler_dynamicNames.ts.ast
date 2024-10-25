@@ -1,0 +1,798 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c0'
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s0'
+        CallExpression
+          Identifier: ' Symbol'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' T0'
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'c0'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'c1'
+      StringKeyword
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 's0'
+      BooleanKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' T1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T2'
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'c0'
+      NumberKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'c1'
+      StringKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 's0'
+      BooleanKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' T2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T1'
+  TypeAliasDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' T3'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'c0'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'c1'
+        StringKeyword
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 's0'
+        BooleanKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' c0'
+        ImportSpecifier
+          Identifier: ' c1'
+        ImportSpecifier
+          Identifier: ' s0'
+        ImportSpecifier
+          Identifier: ' T0'
+        ImportSpecifier
+          Identifier: ' T1'
+        ImportSpecifier
+          Identifier: ' T2'
+        ImportSpecifier
+          Identifier: ' T3'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' M'
+    StringLiteral
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            StringLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s1'
+            TypeQuery
+              Identifier: ' s0'
+            Identifier: ' s0'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' T4'
+        PropertySignature
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'N'
+              Identifier: 'c2'
+          NumberKeyword
+        PropertySignature
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'N'
+              Identifier: 'c3'
+          StringKeyword
+        PropertySignature
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'N'
+              Identifier: 's1'
+          BooleanKeyword
+      ClassDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' T5'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' T4'
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'N'
+              Identifier: 'c2'
+          NumberKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'N'
+              Identifier: 'c3'
+          StringKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'N'
+              Identifier: 's1'
+          BooleanKeyword
+      ClassDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' T6'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' T5'
+      TypeAliasDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' T7'
+        TypeLiteral
+          PropertySignature
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'N'
+                Identifier: 'c2'
+            NumberKeyword
+          PropertySignature
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'N'
+                Identifier: 'c3'
+            StringKeyword
+          PropertySignature
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'N'
+                Identifier: 's1'
+            BooleanKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2'
+        TypeQuery
+          Identifier: ' s0'
+        Identifier: ' s0'
+  InterfaceDeclaration
+    Identifier: ' T8'
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'c4'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'c5'
+      StringKeyword
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 's2'
+      BooleanKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' T9'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T8'
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'c4'
+      NumberKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'c5'
+      StringKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 's2'
+      BooleanKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' T10'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T9'
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' T11'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'c4'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'c5'
+        StringKeyword
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 's2'
+        BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' T12'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      NumericLiteral
+      StringKeyword
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 's2'
+      BooleanKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' T13'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T2'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertyDeclaration
+      NumericLiteral
+      StringKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 's2'
+      BooleanKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' T14'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T13'
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' T15'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    a'
+        NumberKeyword
+      PropertySignature
+        NumericLiteral
+        StringKeyword
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 's2'
+        BooleanKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' a'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      NumericLiteral
+      StringKeyword
+    PropertyDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 's2'
+      BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t0'
+        TypeReference
+          Identifier: ' T0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        TypeReference
+          Identifier: ' T1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TypeReference
+          Identifier: ' T2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        TypeReference
+          Identifier: ' T3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t0_1'
+        TypeReference
+          QualifiedName
+            Identifier: ' M'
+            Identifier: 'T0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1_1'
+        TypeReference
+          QualifiedName
+            Identifier: ' M'
+            Identifier: 'T1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2_1'
+        TypeReference
+          QualifiedName
+            Identifier: ' M'
+            Identifier: 'T2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3_1'
+        TypeReference
+          QualifiedName
+            Identifier: ' M'
+            Identifier: 'T3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        TypeReference
+          QualifiedName
+            Identifier: ' N'
+            Identifier: 'T4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t5'
+        TypeReference
+          QualifiedName
+            Identifier: ' N'
+            Identifier: 'T5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t6'
+        TypeReference
+          QualifiedName
+            Identifier: ' N'
+            Identifier: 'T6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t7'
+        TypeReference
+          QualifiedName
+            Identifier: ' N'
+            Identifier: 'T7'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t8'
+        TypeReference
+          Identifier: ' T8'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t9'
+        TypeReference
+          Identifier: ' T9'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t10'
+        TypeReference
+          Identifier: ' T10'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t11'
+        TypeReference
+          Identifier: ' T11'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t12'
+        TypeReference
+          Identifier: ' T12'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t13'
+        TypeReference
+          Identifier: ' T13'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t14'
+        TypeReference
+          Identifier: ' T14'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t15'
+        TypeReference
+          Identifier: ' T15'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            Identifier: '
+
+// assignability
+t0'
+                            EqualsToken
+                            Identifier: ' t1'
+                          CommaToken
+                          BinaryExpression
+                            Identifier: ' t0'
+                            EqualsToken
+                            Identifier: ' t2'
+                        CommaToken
+                        BinaryExpression
+                          Identifier: ' t0'
+                          EqualsToken
+                          Identifier: ' t3'
+                      CommaToken
+                      BinaryExpression
+                        Identifier: ' t1'
+                        EqualsToken
+                        Identifier: ' t0'
+                    CommaToken
+                    BinaryExpression
+                      Identifier: ' t1'
+                      EqualsToken
+                      Identifier: ' t2'
+                  CommaToken
+                  BinaryExpression
+                    Identifier: ' t1'
+                    EqualsToken
+                    Identifier: ' t3'
+                CommaToken
+                BinaryExpression
+                  Identifier: ' t2'
+                  EqualsToken
+                  Identifier: ' t0'
+              CommaToken
+              BinaryExpression
+                Identifier: ' t2'
+                EqualsToken
+                Identifier: ' t1'
+            CommaToken
+            BinaryExpression
+              Identifier: ' t2'
+              EqualsToken
+              Identifier: ' t3'
+          CommaToken
+          BinaryExpression
+            Identifier: ' t3'
+            EqualsToken
+            Identifier: ' t0'
+        CommaToken
+        BinaryExpression
+          Identifier: ' t3'
+          EqualsToken
+          Identifier: ' t1'
+      CommaToken
+      BinaryExpression
+        Identifier: ' t3'
+        EqualsToken
+        Identifier: ' t2'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            Identifier: '
+t4'
+                            EqualsToken
+                            Identifier: ' t5'
+                          CommaToken
+                          BinaryExpression
+                            Identifier: ' t4'
+                            EqualsToken
+                            Identifier: ' t6'
+                        CommaToken
+                        BinaryExpression
+                          Identifier: ' t4'
+                          EqualsToken
+                          Identifier: ' t7'
+                      CommaToken
+                      BinaryExpression
+                        Identifier: ' t5'
+                        EqualsToken
+                        Identifier: ' t4'
+                    CommaToken
+                    BinaryExpression
+                      Identifier: ' t5'
+                      EqualsToken
+                      Identifier: ' t6'
+                  CommaToken
+                  BinaryExpression
+                    Identifier: ' t5'
+                    EqualsToken
+                    Identifier: ' t7'
+                CommaToken
+                BinaryExpression
+                  Identifier: ' t6'
+                  EqualsToken
+                  Identifier: ' t4'
+              CommaToken
+              BinaryExpression
+                Identifier: ' t6'
+                EqualsToken
+                Identifier: ' t5'
+            CommaToken
+            BinaryExpression
+              Identifier: ' t6'
+              EqualsToken
+              Identifier: ' t7'
+          CommaToken
+          BinaryExpression
+            Identifier: ' t7'
+            EqualsToken
+            Identifier: ' t4'
+        CommaToken
+        BinaryExpression
+          Identifier: ' t7'
+          EqualsToken
+          Identifier: ' t5'
+      CommaToken
+      BinaryExpression
+        Identifier: ' t7'
+        EqualsToken
+        Identifier: ' t6'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: '
+t0'
+                    EqualsToken
+                    Identifier: ' t12'
+                  CommaToken
+                  BinaryExpression
+                    Identifier: ' t0'
+                    EqualsToken
+                    Identifier: ' t13'
+                CommaToken
+                BinaryExpression
+                  Identifier: ' t0'
+                  EqualsToken
+                  Identifier: ' t14'
+              CommaToken
+              BinaryExpression
+                Identifier: ' t0'
+                EqualsToken
+                Identifier: ' t15'
+            CommaToken
+            BinaryExpression
+              Identifier: ' t12'
+              EqualsToken
+              Identifier: ' t0'
+          CommaToken
+          BinaryExpression
+            Identifier: ' t13'
+            EqualsToken
+            Identifier: ' t0'
+        CommaToken
+        BinaryExpression
+          Identifier: ' t14'
+          EqualsToken
+          Identifier: ' t0'
+      CommaToken
+      BinaryExpression
+        Identifier: ' t15'
+        EqualsToken
+        Identifier: ' t0'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+t0'
+      EqualsToken
+      Identifier: ' C'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'c4'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'c5'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 's2'
+            TrueKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1_c4'
+        ElementAccessExpression
+          Identifier: ' o1'
+          Identifier: 'c4'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1_c5'
+        ElementAccessExpression
+          Identifier: ' o1'
+          Identifier: 'c5'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1_s2'
+        ElementAccessExpression
+          Identifier: ' o1'
+          Identifier: 's2'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        TypeReference
+          Identifier: ' T0'
+        Identifier: ' o1'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rI'
+        TypeReference
+          Identifier: ' RI'
+          LiteralType
+            StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+rI'
+      Identifier: 'x'
+  InterfaceDeclaration
+    Identifier: ' RI'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'rI'
+          Identifier: 'x'
+      LiteralType
+        StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rC'
+        TypeReference
+          Identifier: ' RC'
+          LiteralType
+            StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+rC'
+      Identifier: 'x'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' RC'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'rC'
+          Identifier: 'x'
+      LiteralType
+        StringLiteral

@@ -1,0 +1,162 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Installer'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'arg'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'unknown'
+          EqualsToken
+          NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'twice'
+          EqualsToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'twice'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'twices'
+          EqualsToken
+          ArrayLiteralExpression
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'twices'
+          EqualsToken
+          NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Installer'
+          Identifier: 'prototype'
+        Identifier: 'first'
+      EqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'arg'
+              EqualsToken
+              StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'unknown'
+              EqualsToken
+              StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'newProperty'
+              EqualsToken
+              NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'twice'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'twice'
+              EqualsToken
+              StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Installer'
+          Identifier: 'prototype'
+        Identifier: 'second'
+      EqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'arg'
+              EqualsToken
+              FalseKeyword
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'unknown'
+              EqualsToken
+              FalseKeyword
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'newProperty'
+              EqualsToken
+              FalseKeyword
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'twice'
+              EqualsToken
+              NullKeyword
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'twice'
+              EqualsToken
+              FalseKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'twices'
+                Identifier: 'push'
+              NumericLiteral
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'twices'
+              ExclamationEqualsToken
+              NullKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'twices'
+                    Identifier: 'push'
+                  StringLiteral

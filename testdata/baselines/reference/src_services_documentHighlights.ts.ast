@@ -1,0 +1,2965 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    __String'
+        ImportSpecifier
+          Identifier: '
+    arrayFrom'
+        ImportSpecifier
+          Identifier: '
+    arrayToMultiMap'
+        ImportSpecifier
+          Identifier: '
+    Block'
+        ImportSpecifier
+          Identifier: '
+    BreakOrContinueStatement'
+        ImportSpecifier
+          Identifier: '
+    CancellationToken'
+        ImportSpecifier
+          Identifier: '
+    canHaveSymbol'
+        ImportSpecifier
+          Identifier: '
+    CaseClause'
+        ImportSpecifier
+          Identifier: '
+    cast'
+        ImportSpecifier
+          Identifier: '
+    concatenate'
+        ImportSpecifier
+          Identifier: '
+    ConstructorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    contains'
+        ImportSpecifier
+          Identifier: '
+    createGetCanonicalFileName'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromBounds'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromNode'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    DefaultClause'
+        ImportSpecifier
+          Identifier: '
+    find'
+        ImportSpecifier
+          Identifier: '
+    FindAllReferences'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    findChildOfKind'
+        ImportSpecifier
+          Identifier: '
+    findModifier'
+        ImportSpecifier
+          Identifier: '
+    forEach'
+        ImportSpecifier
+          Identifier: '
+    forEachChild'
+        ImportSpecifier
+          Identifier: '
+    forEachReturnStatement'
+        ImportSpecifier
+          Identifier: '
+    FunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    FunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    getContainingFunction'
+        ImportSpecifier
+          Identifier: '
+    getTouchingPropertyName'
+        ImportSpecifier
+          Identifier: '
+    HighlightSpan'
+        ImportSpecifier
+          Identifier: '
+    HighlightSpanKind'
+        ImportSpecifier
+          Identifier: '
+    IfStatement'
+        ImportSpecifier
+          Identifier: '
+    isAccessor'
+        ImportSpecifier
+          Identifier: '
+    isAwaitExpression'
+        ImportSpecifier
+          Identifier: '
+    isBlock'
+        ImportSpecifier
+          Identifier: '
+    isBreakOrContinueStatement'
+        ImportSpecifier
+          Identifier: '
+    isCaseClause'
+        ImportSpecifier
+          Identifier: '
+    isClassDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isClassLike'
+        ImportSpecifier
+          Identifier: '
+    isConstructorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isDefaultClause'
+        ImportSpecifier
+          Identifier: '
+    isFunctionBlock'
+        ImportSpecifier
+          Identifier: '
+    isFunctionLike'
+        ImportSpecifier
+          Identifier: '
+    isIfStatement'
+        ImportSpecifier
+          Identifier: '
+    isInterfaceDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isIterationStatement'
+        ImportSpecifier
+          Identifier: '
+    isJsxClosingElement'
+        ImportSpecifier
+          Identifier: '
+    isJsxOpeningElement'
+        ImportSpecifier
+          Identifier: '
+    isLabeledStatement'
+        ImportSpecifier
+          Identifier: '
+    isModifierKind'
+        ImportSpecifier
+          Identifier: '
+    isModuleDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isReturnStatement'
+        ImportSpecifier
+          Identifier: '
+    isSwitchStatement'
+        ImportSpecifier
+          Identifier: '
+    isThrowStatement'
+        ImportSpecifier
+          Identifier: '
+    isTryStatement'
+        ImportSpecifier
+          Identifier: '
+    isTypeAliasDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isVariableStatement'
+        ImportSpecifier
+          Identifier: '
+    isWhiteSpaceSingleLine'
+        ImportSpecifier
+          Identifier: '
+    isYieldExpression'
+        ImportSpecifier
+          Identifier: '
+    IterationStatement'
+        ImportSpecifier
+          Identifier: '
+    mapDefined'
+        ImportSpecifier
+          Identifier: '
+    mapDefinedIterator'
+        ImportSpecifier
+          Identifier: '
+    MethodDeclaration'
+        ImportSpecifier
+          Identifier: '
+    Modifier'
+        ImportSpecifier
+          Identifier: '
+    ModifierFlags'
+        ImportSpecifier
+          Identifier: '
+    modifierToFlag'
+        ImportSpecifier
+          Identifier: '
+    ModuleBlock'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    ObjectTypeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    ReturnStatement'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SwitchStatement'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    ThrowStatement'
+        ImportSpecifier
+          Identifier: '
+    toArray'
+        ImportSpecifier
+          Identifier: '
+    toPath'
+        ImportSpecifier
+          Identifier: '
+    tryCast'
+        ImportSpecifier
+          Identifier: '
+    TryStatement'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DocumentHighlights'
+    PropertySignature
+      Identifier: '
+    fileName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    highlightSpans'
+      ArrayType
+        TypeReference
+          Identifier: ' HighlightSpan'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' DocumentHighlights'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' getDocumentHighlights'
+        Parameter
+          Identifier: 'program'
+          TypeReference
+            Identifier: ' Program'
+        Parameter
+          Identifier: ' cancellationToken'
+          TypeReference
+            Identifier: ' CancellationToken'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' position'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFilesToSearch'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' SourceFile'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' DocumentHighlights'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' node'
+                CallExpression
+                  Identifier: ' getTouchingPropertyName'
+                  Identifier: 'sourceFile'
+                  Identifier: ' position'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'parent'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'isJsxOpeningElement'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'parent'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' node'
+                          Identifier: 'parent'
+                        Identifier: 'tagName'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' node'
+                  BarBarToken
+                  CallExpression
+                    Identifier: ' isJsxClosingElement'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' openingElement'
+                      BindingElement
+                        Identifier: ' closingElement'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'parent'
+                      Identifier: 'parent'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' highlightSpans'
+                    CallExpression
+                      PropertyAccessExpression
+                        ArrayLiteralExpression
+                          Identifier: 'openingElement'
+                          Identifier: ' closingElement'
+                        Identifier: 'map'
+                      ArrowFunction
+                        Parameter
+                          ObjectBindingPattern
+                            BindingElement
+                              Identifier: ' tagName'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' getHighlightSpanForNode'
+                          Identifier: 'tagName'
+                          Identifier: ' sourceFile'
+              ReturnStatement
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' fileName'
+                      PropertyAccessExpression
+                        Identifier: ' sourceFile'
+                        Identifier: 'fileName'
+                    ShorthandPropertyAssignment
+                      Identifier: ' highlightSpans'
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                Identifier: ' getSemanticDocumentHighlights'
+                Identifier: 'position'
+                Identifier: ' node'
+                Identifier: ' program'
+                Identifier: ' cancellationToken'
+                Identifier: ' sourceFilesToSearch'
+              BarBarToken
+              CallExpression
+                Identifier: ' getSyntacticDocumentHighlights'
+                Identifier: 'node'
+                Identifier: ' sourceFile'
+      FunctionDeclaration
+        Identifier: ' getHighlightSpanForNode'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' HighlightSpan'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            fileName'
+                PropertyAccessExpression
+                  Identifier: ' sourceFile'
+                  Identifier: 'fileName'
+              PropertyAssignment
+                Identifier: '
+            textSpan'
+                CallExpression
+                  Identifier: ' createTextSpanFromNode'
+                  Identifier: 'node'
+                  Identifier: ' sourceFile'
+              PropertyAssignment
+                Identifier: '
+            kind'
+                PropertyAccessExpression
+                  Identifier: ' HighlightSpanKind'
+                  Identifier: 'none'
+      FunctionDeclaration
+        Identifier: ' getSemanticDocumentHighlights'
+        Parameter
+          Identifier: 'position'
+          NumberKeyword
+        Parameter
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' program'
+          TypeReference
+            Identifier: ' Program'
+        Parameter
+          Identifier: ' cancellationToken'
+          TypeReference
+            Identifier: ' CancellationToken'
+        Parameter
+          Identifier: ' sourceFilesToSearch'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' SourceFile'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' DocumentHighlights'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sourceFilesSet'
+                NewExpression
+                  Identifier: ' Set'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'sourceFilesToSearch'
+                      Identifier: 'map'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'f'
+                      EqualsGreaterThanToken
+                      PropertyAccessExpression
+                        Identifier: ' f'
+                        Identifier: 'fileName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' referenceEntries'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' FindAllReferences'
+                    Identifier: 'getReferenceEntriesForNode'
+                  Identifier: 'position'
+                  Identifier: ' node'
+                  Identifier: ' program'
+                  Identifier: ' sourceFilesToSearch'
+                  Identifier: ' cancellationToken'
+                  Identifier: ' /*options*/ undefined'
+                  Identifier: ' sourceFilesSet'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'referenceEntries'
+            ReturnStatement
+              Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' map'
+                CallExpression
+                  Identifier: ' arrayToMultiMap'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'referenceEntries'
+                      Identifier: 'map'
+                    PropertyAccessExpression
+                      Identifier: 'FindAllReferences'
+                      Identifier: 'toHighlightSpan'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' e'
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      Identifier: ' e'
+                      Identifier: 'fileName'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' e'
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      Identifier: ' e'
+                      Identifier: 'span'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' getCanonicalFileName'
+                CallExpression
+                  Identifier: ' createGetCanonicalFileName'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'program'
+                      Identifier: 'useCaseSensitiveFileNames'
+          ReturnStatement
+            CallExpression
+              Identifier: ' arrayFrom'
+              CallExpression
+                Identifier: 'mapDefinedIterator'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'map'
+                    Identifier: 'entries'
+                ArrowFunction
+                  Parameter
+                    ArrayBindingPattern
+                      BindingElement
+                        Identifier: 'fileName'
+                      BindingElement
+                        Identifier: ' highlightSpans'
+                  EqualsGreaterThanToken
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'sourceFilesSet'
+                            Identifier: 'has'
+                          Identifier: 'fileName'
+                      Block
+                        IfStatement
+                          PrefixUnaryExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'program'
+                                  Identifier: 'redirectTargetsMap'
+                                Identifier: 'has'
+                              CallExpression
+                                Identifier: 'toPath'
+                                Identifier: 'fileName'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' program'
+                                    Identifier: 'getCurrentDirectory'
+                                Identifier: ' getCanonicalFileName'
+                          Block
+                            ReturnStatement
+                              Identifier: ' undefined'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' redirectTarget'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' program'
+                                  Identifier: 'getSourceFile'
+                                Identifier: 'fileName'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' redirect'
+                              NonNullExpression
+                                CallExpression
+                                  Identifier: ' find'
+                                  Identifier: 'sourceFilesToSearch'
+                                  ArrowFunction
+                                    Parameter
+                                      Identifier: ' f'
+                                    EqualsGreaterThanToken
+                                    BinaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'f'
+                                            Identifier: 'redirectInfo'
+                                      AmpersandAmpersandToken
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' f'
+                                            Identifier: 'redirectInfo'
+                                          Identifier: 'redirectTarget'
+                                        EqualsEqualsEqualsToken
+                                        Identifier: ' redirectTarget'
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                fileName'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' redirect'
+                              Identifier: 'fileName'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                Debug'
+                              Identifier: 'assert'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'sourceFilesSet'
+                                Identifier: 'has'
+                              Identifier: 'fileName'
+                    ReturnStatement
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: ' fileName'
+                        ShorthandPropertyAssignment
+                          Identifier: ' highlightSpans'
+      FunctionDeclaration
+        Identifier: ' getSyntacticDocumentHighlights'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' DocumentHighlights'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' highlightSpans'
+                CallExpression
+                  Identifier: ' getHighlightSpans'
+                  Identifier: 'node'
+                  Identifier: ' sourceFile'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' highlightSpans'
+              AmpersandAmpersandToken
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' fileName'
+                    PropertyAccessExpression
+                      Identifier: ' sourceFile'
+                      Identifier: 'fileName'
+                  ShorthandPropertyAssignment
+                    Identifier: ' highlightSpans'
+      FunctionDeclaration
+        Identifier: ' getHighlightSpans'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' HighlightSpan'
+          UndefinedKeyword
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'IfKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ElseKeyword'
+                ReturnStatement
+                  ConditionalExpression
+                    CallExpression
+                      Identifier: ' isIfStatement'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'parent'
+                    QuestionToken
+                    CallExpression
+                      Identifier: ' getIfElseOccurrences'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'parent'
+                      Identifier: ' sourceFile'
+                    ColonToken
+                    Identifier: ' undefined'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ReturnKeyword'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' useParent'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                    Identifier: ' isReturnStatement'
+                    Identifier: ' getReturnOccurrences'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ThrowKeyword'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' useParent'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                    Identifier: ' isThrowStatement'
+                    Identifier: ' getThrowOccurrences'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TryKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CatchKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FinallyKeyword'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' tryStatement'
+                      ConditionalExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' node'
+                            Identifier: 'kind'
+                          EqualsEqualsEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'CatchKeyword'
+                        QuestionToken
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' node'
+                            Identifier: 'parent'
+                          Identifier: 'parent'
+                        ColonToken
+                        PropertyAccessExpression
+                          Identifier: ' node'
+                          Identifier: 'parent'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' useParent'
+                    Identifier: 'tryStatement'
+                    Identifier: ' isTryStatement'
+                    Identifier: ' getTryCatchFinallyOccurrences'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SwitchKeyword'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' useParent'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                    Identifier: ' isSwitchStatement'
+                    Identifier: ' getSwitchCaseDefaultOccurrences'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CaseKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'DefaultKeyword'
+                Block
+                  IfStatement
+                    BinaryExpression
+                      CallExpression
+                        Identifier: 'isDefaultClause'
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'parent'
+                      BarBarToken
+                      CallExpression
+                        Identifier: ' isCaseClause'
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'parent'
+                    Block
+                      ReturnStatement
+                        CallExpression
+                          Identifier: ' useParent'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'node'
+                                Identifier: 'parent'
+                              Identifier: 'parent'
+                            Identifier: 'parent'
+                          Identifier: ' isSwitchStatement'
+                          Identifier: ' getSwitchCaseDefaultOccurrences'
+                  ReturnStatement
+                    Identifier: ' undefined'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'BreakKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ContinueKeyword'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' useParent'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                    Identifier: ' isBreakOrContinueStatement'
+                    Identifier: ' getBreakOrContinueStatementOccurrences'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ForKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'WhileKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'DoKeyword'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' useParent'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'n'
+                      TypePredicate
+                        Identifier: ' n'
+                        TypeReference
+                          Identifier: ' IterationStatement'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' isIterationStatement'
+                        Identifier: 'n'
+                        TrueKeyword
+                    Identifier: ' getLoopBreakContinueOccurrences'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructorKeyword'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getFromAllDeclarations'
+                    Identifier: 'isConstructorDeclaration'
+                    ArrayLiteralExpression
+                      PropertyAccessExpression
+                        Identifier: 'SyntaxKind'
+                        Identifier: 'ConstructorKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'GetKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SetKeyword'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getFromAllDeclarations'
+                    Identifier: 'isAccessor'
+                    ArrayLiteralExpression
+                      PropertyAccessExpression
+                        Identifier: 'SyntaxKind'
+                        Identifier: 'GetKeyword'
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'SetKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'AwaitKeyword'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' useParent'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'parent'
+                    Identifier: ' isAwaitExpression'
+                    Identifier: ' getAsyncAndAwaitOccurrences'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'AsyncKeyword'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' highlightSpans'
+                    CallExpression
+                      Identifier: 'getAsyncAndAwaitOccurrences'
+                      Identifier: 'node'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'YieldKeyword'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' highlightSpans'
+                    CallExpression
+                      Identifier: 'getYieldOccurrences'
+                      Identifier: 'node'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'InKeyword'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'OutKeyword'
+                ReturnStatement
+                  Identifier: ' undefined'
+              DefaultClause
+                ReturnStatement
+                  ConditionalExpression
+                    BinaryExpression
+                      CallExpression
+                        Identifier: ' isModifierKind'
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'kind'
+                      AmpersandAmpersandToken
+                      ParenthesizedExpression
+                        BinaryExpression
+                          CallExpression
+                            Identifier: 'isDeclaration'
+                            PropertyAccessExpression
+                              Identifier: 'node'
+                              Identifier: 'parent'
+                          BarBarToken
+                          CallExpression
+                            Identifier: ' isVariableStatement'
+                            PropertyAccessExpression
+                              Identifier: 'node'
+                              Identifier: 'parent'
+                    QuestionToken
+                    CallExpression
+                      Identifier: ' highlightSpans'
+                      CallExpression
+                        Identifier: 'getModifierOccurrences'
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'kind'
+                        PropertyAccessExpression
+                          Identifier: ' node'
+                          Identifier: 'parent'
+                    ColonToken
+                    Identifier: ' undefined'
+          FunctionDeclaration
+            Identifier: ' getFromAllDeclarations'
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' Node'
+            Parameter
+              Identifier: 'nodeTest'
+              FunctionType
+                Parameter
+                  Identifier: 'node'
+                  TypeReference
+                    Identifier: ' Node'
+                TypePredicate
+                  Identifier: ' node'
+                  TypeReference
+                    Identifier: ' T'
+            Parameter
+              Identifier: ' keywords'
+              TypeOperator
+                ArrayType
+                  TypeReference
+                    Identifier: ' SyntaxKind'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' HighlightSpan'
+              UndefinedKeyword
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' useParent'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'parent'
+                  Identifier: ' nodeTest'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' decl'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' mapDefined'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            Identifier: 'tryCast'
+                            Identifier: 'decl'
+                            Identifier: ' canHaveSymbol'
+                          QuestionDotToken
+                          Identifier: 'symbol'
+                        Identifier: 'declarations'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' d'
+                        EqualsGreaterThanToken
+                        ConditionalExpression
+                          CallExpression
+                            Identifier: ' nodeTest'
+                            Identifier: 'd'
+                          QuestionToken
+                          CallExpression
+                            Identifier: ' find'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'd'
+                                Identifier: 'getChildren'
+                              Identifier: 'sourceFile'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' c'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                Identifier: ' contains'
+                                Identifier: 'keywords'
+                                PropertyAccessExpression
+                                  Identifier: ' c'
+                                  Identifier: 'kind'
+                          ColonToken
+                          Identifier: ' undefined'
+          FunctionDeclaration
+            Identifier: ' useParent'
+            TypeParameter
+              Identifier: 'T'
+              TypeReference
+                Identifier: ' Node'
+            Parameter
+              Identifier: 'node'
+              TypeReference
+                Identifier: ' Node'
+            Parameter
+              Identifier: ' nodeTest'
+              FunctionType
+                Parameter
+                  Identifier: 'node'
+                  TypeReference
+                    Identifier: ' Node'
+                TypePredicate
+                  Identifier: ' node'
+                  TypeReference
+                    Identifier: ' T'
+            Parameter
+              Identifier: ' getNodes'
+              FunctionType
+                Parameter
+                  Identifier: 'node'
+                  TypeReference
+                    Identifier: ' T'
+                Parameter
+                  Identifier: ' sourceFile'
+                  TypeReference
+                    Identifier: ' SourceFile'
+                UnionType
+                  TypeOperator
+                    ArrayType
+                      TypeReference
+                        Identifier: ' Node'
+                  UndefinedKeyword
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' HighlightSpan'
+              UndefinedKeyword
+            Block
+              ReturnStatement
+                ConditionalExpression
+                  CallExpression
+                    Identifier: ' nodeTest'
+                    Identifier: 'node'
+                  QuestionToken
+                  CallExpression
+                    Identifier: ' highlightSpans'
+                    CallExpression
+                      Identifier: 'getNodes'
+                      Identifier: 'node'
+                      Identifier: ' sourceFile'
+                  ColonToken
+                  Identifier: ' undefined'
+          FunctionDeclaration
+            Identifier: ' highlightSpans'
+            Parameter
+              Identifier: 'nodes'
+              UnionType
+                TypeOperator
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Node'
+                UndefinedKeyword
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' HighlightSpan'
+              UndefinedKeyword
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' nodes'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' nodes'
+                      Identifier: 'map'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'node'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' getHighlightSpanForNode'
+                        Identifier: 'node'
+                        Identifier: ' sourceFile'
+      FunctionDeclaration
+        Identifier: ' aggregateOwnedThrowStatements'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' ThrowStatement'
+          UndefinedKeyword
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isThrowStatement'
+              Identifier: 'node'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'node'
+            IfStatement
+              CallExpression
+                Identifier: 'isTryStatement'
+                Identifier: 'node'
+              Block
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' concatenate'
+                    ConditionalExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                node'
+                        Identifier: 'catchClause'
+                      QuestionToken
+                      CallExpression
+                        Identifier: ' aggregateOwnedThrowStatements'
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'catchClause'
+                      ColonToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' node'
+                          Identifier: 'tryBlock'
+                        AmpersandAmpersandToken
+                        CallExpression
+                          Identifier: ' aggregateOwnedThrowStatements'
+                          PropertyAccessExpression
+                            Identifier: 'node'
+                            Identifier: 'tryBlock'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                node'
+                        Identifier: 'finallyBlock'
+                      AmpersandAmpersandToken
+                      CallExpression
+                        Identifier: ' aggregateOwnedThrowStatements'
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'finallyBlock'
+          ReturnStatement
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isFunctionLike'
+                Identifier: 'node'
+              QuestionToken
+              Identifier: ' undefined'
+              ColonToken
+              CallExpression
+                Identifier: ' flatMapChildren'
+                Identifier: 'node'
+                Identifier: ' aggregateOwnedThrowStatements'
+      FunctionDeclaration
+        Identifier: ' getThrowStatementOwner'
+        Parameter
+          Identifier: 'throwStatement'
+          TypeReference
+            Identifier: ' ThrowStatement'
+        UnionType
+          TypeReference
+            Identifier: ' Node'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' child'
+                TypeReference
+                  Identifier: ' Node'
+                Identifier: ' throwStatement'
+          WhileStatement
+            PropertyAccessExpression
+              Identifier: 'child'
+              Identifier: 'parent'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' parent'
+                    PropertyAccessExpression
+                      Identifier: ' child'
+                      Identifier: 'parent'
+              IfStatement
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'isFunctionBlock'
+                    Identifier: 'parent'
+                  BarBarToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' parent'
+                      Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'SourceFile'
+                Block
+                  ReturnStatement
+                    Identifier: ' parent'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'isTryStatement'
+                      Identifier: 'parent'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' parent'
+                        Identifier: 'tryBlock'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' child'
+                  AmpersandAmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' parent'
+                    Identifier: 'catchClause'
+                Block
+                  ReturnStatement
+                    Identifier: ' child'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            child'
+                  EqualsToken
+                  Identifier: ' parent'
+          ReturnStatement
+            Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' aggregateAllBreakAndContinueStatements'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' BreakOrContinueStatement'
+          UndefinedKeyword
+        Block
+          ReturnStatement
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isBreakOrContinueStatement'
+                Identifier: 'node'
+              QuestionToken
+              ArrayLiteralExpression
+                Identifier: 'node'
+              ColonToken
+              ConditionalExpression
+                CallExpression
+                  Identifier: ' isFunctionLike'
+                  Identifier: 'node'
+                QuestionToken
+                Identifier: ' undefined'
+                ColonToken
+                CallExpression
+                  Identifier: ' flatMapChildren'
+                  Identifier: 'node'
+                  Identifier: ' aggregateAllBreakAndContinueStatements'
+      FunctionDeclaration
+        Identifier: ' flatMapChildren'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' cb'
+          FunctionType
+            Parameter
+              Identifier: 'child'
+              TypeReference
+                Identifier: ' Node'
+            UnionType
+              TypeOperator
+                ArrayType
+                  TypeReference
+                    Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+              UndefinedKeyword
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                ArrayType
+                  TypeReference
+                    Identifier: ' T'
+                ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        node'
+                Identifier: 'forEachChild'
+              ArrowFunction
+                Parameter
+                  Identifier: 'child'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' value'
+                        CallExpression
+                          Identifier: ' cb'
+                          Identifier: 'child'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'value'
+                      ExclamationEqualsEqualsToken
+                      Identifier: ' undefined'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                result'
+                            Identifier: 'push'
+                          SpreadElement
+                            CallExpression
+                              Identifier: 'toArray'
+                              Identifier: 'value'
+          ReturnStatement
+            Identifier: ' result'
+      FunctionDeclaration
+        Identifier: ' ownsBreakOrContinueStatement'
+        Parameter
+          Identifier: 'owner'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' statement'
+          TypeReference
+            Identifier: ' BreakOrContinueStatement'
+        BooleanKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' actualOwner'
+                CallExpression
+                  Identifier: ' getBreakOrContinueOwner'
+                  Identifier: 'statement'
+          ReturnStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'actualOwner'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' actualOwner'
+                EqualsEqualsEqualsToken
+                Identifier: ' owner'
+      FunctionDeclaration
+        Identifier: ' getBreakOrContinueOwner'
+        Parameter
+          Identifier: 'statement'
+          TypeReference
+            Identifier: ' BreakOrContinueStatement'
+        UnionType
+          TypeReference
+            Identifier: ' Node'
+          UndefinedKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' findAncestor'
+              Identifier: 'statement'
+              ArrowFunction
+                Parameter
+                  Identifier: ' node'
+                EqualsGreaterThanToken
+                Block
+                  SwitchStatement
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'kind'
+                    CaseBlock
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'SwitchStatement'
+                        IfStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'statement'
+                              Identifier: 'kind'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' SyntaxKind'
+                              Identifier: 'ContinueStatement'
+                          Block
+                            ReturnStatement
+                              FalseKeyword
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'ForStatement'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'ForInStatement'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'ForOfStatement'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'WhileStatement'
+                      CaseClause
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'DoStatement'
+                        ReturnStatement
+                          BinaryExpression
+                            PrefixUnaryExpression
+                              PropertyAccessExpression
+                                Identifier: 'statement'
+                                Identifier: 'label'
+                            BarBarToken
+                            CallExpression
+                              Identifier: ' isLabeledBy'
+                              Identifier: 'node'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' statement'
+                                  Identifier: 'label'
+                                Identifier: 'escapedText'
+                      DefaultClause
+                        ReturnStatement
+                          BinaryExpression
+                            CallExpression
+                              Identifier: ' isFunctionLike'
+                              Identifier: 'node'
+                            AmpersandAmpersandToken
+                            StringLiteral
+      FunctionDeclaration
+        Identifier: ' getModifierOccurrences'
+        Parameter
+          Identifier: 'modifier'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' Modifier'
+            LiteralType
+              StringLiteral
+        Parameter
+          Identifier: ' declaration'
+          TypeReference
+            Identifier: ' Node'
+        ArrayType
+          TypeReference
+            Identifier: ' Node'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' mapDefined'
+              CallExpression
+                Identifier: 'getNodesToSearchForModifier'
+                Identifier: 'declaration'
+                CallExpression
+                  Identifier: ' modifierToFlag'
+                  Identifier: 'modifier'
+              ArrowFunction
+                Parameter
+                  Identifier: ' node'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' findModifier'
+                  Identifier: 'node'
+                  Identifier: ' modifier'
+      FunctionDeclaration
+        Identifier: ' getNodesToSearchForModifier'
+        Parameter
+          Identifier: 'declaration'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' modifierFlag'
+          TypeReference
+            Identifier: ' ModifierFlags'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Node'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' container'
+                AsExpression
+                  PropertyAccessExpression
+                    Identifier: ' declaration'
+                    Identifier: 'parent'
+                  UnionType
+                    TypeReference
+                      Identifier: ' ModuleBlock'
+                    TypeReference
+                      Identifier: ' SourceFile'
+                    TypeReference
+                      Identifier: ' Block'
+                    TypeReference
+                      Identifier: ' CaseClause'
+                    TypeReference
+                      Identifier: ' DefaultClause'
+                    TypeReference
+                      Identifier: ' ConstructorDeclaration'
+                    TypeReference
+                      Identifier: ' MethodDeclaration'
+                    TypeReference
+                      Identifier: ' FunctionDeclaration'
+                    TypeReference
+                      Identifier: ' ObjectTypeDeclaration'
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'container'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ModuleBlock'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SourceFile'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'Block'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CaseClause'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'DefaultClause'
+                IfStatement
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: 'modifierFlag'
+                      AmpersandToken
+                      PropertyAccessExpression
+                        Identifier: ' ModifierFlags'
+                        Identifier: 'Abstract'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: ' isClassDeclaration'
+                      Identifier: 'declaration'
+                  Block
+                    ReturnStatement
+                      ArrayLiteralExpression
+                        SpreadElement
+                          PropertyAccessExpression
+                            Identifier: 'declaration'
+                            Identifier: 'members'
+                        Identifier: ' declaration'
+                  Block
+                    ReturnStatement
+                      PropertyAccessExpression
+                        Identifier: ' container'
+                        Identifier: 'statements'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'Constructor'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionDeclaration'
+                ReturnStatement
+                  ArrayLiteralExpression
+                    SpreadElement
+                      PropertyAccessExpression
+                        Identifier: 'container'
+                        Identifier: 'parameters'
+                    SpreadElement
+                      ParenthesizedExpression
+                        ConditionalExpression
+                          CallExpression
+                            Identifier: 'isClassLike'
+                            PropertyAccessExpression
+                              Identifier: 'container'
+                              Identifier: 'parent'
+                          QuestionToken
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' container'
+                              Identifier: 'parent'
+                            Identifier: 'members'
+                          ColonToken
+                          ArrayLiteralExpression
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ClassDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ClassExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'InterfaceDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TypeLiteral'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' nodes'
+                      PropertyAccessExpression
+                        Identifier: ' container'
+                        Identifier: 'members'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'modifierFlag'
+                    AmpersandToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'ModifierFlags'
+                          Identifier: 'AccessibilityModifier'
+                        BarToken
+                        PropertyAccessExpression
+                          Identifier: ' ModifierFlags'
+                          Identifier: 'Readonly'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' constructor'
+                          CallExpression
+                            Identifier: ' find'
+                            PropertyAccessExpression
+                              Identifier: 'container'
+                              Identifier: 'members'
+                            Identifier: ' isConstructorDeclaration'
+                    IfStatement
+                      Identifier: 'constructor'
+                      Block
+                        ReturnStatement
+                          ArrayLiteralExpression
+                            SpreadElement
+                              Identifier: 'nodes'
+                            SpreadElement
+                              PropertyAccessExpression
+                                Identifier: 'constructor'
+                                Identifier: 'parameters'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'modifierFlag'
+                      AmpersandToken
+                      PropertyAccessExpression
+                        Identifier: ' ModifierFlags'
+                        Identifier: 'Abstract'
+                    Block
+                      ReturnStatement
+                        ArrayLiteralExpression
+                          SpreadElement
+                            Identifier: 'nodes'
+                          Identifier: ' container'
+                ReturnStatement
+                  Identifier: ' nodes'
+              DefaultClause
+                ReturnStatement
+                  Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' pushKeywordIf'
+        Parameter
+          Identifier: 'keywordList'
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+        Parameter
+          Identifier: ' token'
+          UnionType
+            TypeReference
+              Identifier: ' Node'
+            UndefinedKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'expected'
+          ArrayType
+            TypeReference
+              Identifier: ' SyntaxKind'
+        BooleanKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'token'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' contains'
+                Identifier: 'expected'
+                PropertyAccessExpression
+                  Identifier: ' token'
+                  Identifier: 'kind'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            keywordList'
+                    Identifier: 'push'
+                  Identifier: 'token'
+              ReturnStatement
+                TrueKeyword
+          ReturnStatement
+            FalseKeyword
+      FunctionDeclaration
+        Identifier: ' getLoopBreakContinueOccurrences'
+        Parameter
+          Identifier: 'loopNode'
+          TypeReference
+            Identifier: ' IterationStatement'
+        ArrayType
+          TypeReference
+            Identifier: ' Node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' keywords'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Node'
+                ArrayLiteralExpression
+          IfStatement
+            CallExpression
+              Identifier: 'pushKeywordIf'
+              Identifier: 'keywords'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' loopNode'
+                  Identifier: 'getFirstToken'
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'ForKeyword'
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'WhileKeyword'
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'DoKeyword'
+            Block
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'loopNode'
+                    Identifier: 'kind'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'DoStatement'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' loopTokens'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' loopNode'
+                            Identifier: 'getChildren'
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' i'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' loopTokens'
+                            Identifier: 'length'
+                          MinusToken
+                          NumericLiteral
+                    BinaryExpression
+                      Identifier: ' i'
+                      GreaterThanEqualsToken
+                      NumericLiteral
+                    PostfixUnaryExpression
+                      Identifier: ' i'
+                    Block
+                      IfStatement
+                        CallExpression
+                          Identifier: 'pushKeywordIf'
+                          Identifier: 'keywords'
+                          ElementAccessExpression
+                            Identifier: ' loopTokens'
+                            Identifier: 'i'
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'WhileKeyword'
+                        Block
+                          BreakStatement
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        forEach'
+              CallExpression
+                Identifier: 'aggregateAllBreakAndContinueStatements'
+                PropertyAccessExpression
+                  Identifier: 'loopNode'
+                  Identifier: 'statement'
+              ArrowFunction
+                Parameter
+                  Identifier: ' statement'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    CallExpression
+                      Identifier: 'ownsBreakOrContinueStatement'
+                      Identifier: 'loopNode'
+                      Identifier: ' statement'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                pushKeywordIf'
+                          Identifier: 'keywords'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' statement'
+                              Identifier: 'getFirstToken'
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'BreakKeyword'
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'ContinueKeyword'
+          ReturnStatement
+            Identifier: ' keywords'
+      FunctionDeclaration
+        Identifier: ' getBreakOrContinueStatementOccurrences'
+        Parameter
+          Identifier: 'breakOrContinueStatement'
+          TypeReference
+            Identifier: ' BreakOrContinueStatement'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' owner'
+                CallExpression
+                  Identifier: ' getBreakOrContinueOwner'
+                  Identifier: 'breakOrContinueStatement'
+          IfStatement
+            Identifier: 'owner'
+            Block
+              SwitchStatement
+                PropertyAccessExpression
+                  Identifier: 'owner'
+                  Identifier: 'kind'
+                CaseBlock
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'ForStatement'
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'ForInStatement'
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'ForOfStatement'
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'DoStatement'
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'WhileStatement'
+                    ReturnStatement
+                      CallExpression
+                        Identifier: ' getLoopBreakContinueOccurrences'
+                        AsExpression
+                          Identifier: 'owner'
+                          TypeReference
+                            Identifier: ' IterationStatement'
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'SwitchStatement'
+                    ReturnStatement
+                      CallExpression
+                        Identifier: ' getSwitchCaseDefaultOccurrences'
+                        AsExpression
+                          Identifier: 'owner'
+                          TypeReference
+                            Identifier: ' SwitchStatement'
+          ReturnStatement
+            Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' getSwitchCaseDefaultOccurrences'
+        Parameter
+          Identifier: 'switchStatement'
+          TypeReference
+            Identifier: ' SwitchStatement'
+        ArrayType
+          TypeReference
+            Identifier: ' Node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' keywords'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Node'
+                ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        pushKeywordIf'
+              Identifier: 'keywords'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' switchStatement'
+                  Identifier: 'getFirstToken'
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'SwitchKeyword'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        // Go through each clause in the switch statement, collecting the 'case'/'default' keywords.
+        forEach'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'switchStatement'
+                  Identifier: 'caseBlock'
+                Identifier: 'clauses'
+              ArrowFunction
+                Parameter
+                  Identifier: ' clause'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            pushKeywordIf'
+                      Identifier: 'keywords'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' clause'
+                          Identifier: 'getFirstToken'
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'CaseKeyword'
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'DefaultKeyword'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+            forEach'
+                      CallExpression
+                        Identifier: 'aggregateAllBreakAndContinueStatements'
+                        Identifier: 'clause'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' statement'
+                        EqualsGreaterThanToken
+                        Block
+                          IfStatement
+                            CallExpression
+                              Identifier: 'ownsBreakOrContinueStatement'
+                              Identifier: 'switchStatement'
+                              Identifier: ' statement'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                    pushKeywordIf'
+                                  Identifier: 'keywords'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' statement'
+                                      Identifier: 'getFirstToken'
+                                  PropertyAccessExpression
+                                    Identifier: ' SyntaxKind'
+                                    Identifier: 'BreakKeyword'
+          ReturnStatement
+            Identifier: ' keywords'
+      FunctionDeclaration
+        Identifier: ' getTryCatchFinallyOccurrences'
+        Parameter
+          Identifier: 'tryStatement'
+          TypeReference
+            Identifier: ' TryStatement'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        ArrayType
+          TypeReference
+            Identifier: ' Node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' keywords'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Node'
+                ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        pushKeywordIf'
+              Identifier: 'keywords'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' tryStatement'
+                  Identifier: 'getFirstToken'
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'TryKeyword'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'tryStatement'
+              Identifier: 'catchClause'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            pushKeywordIf'
+                  Identifier: 'keywords'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' tryStatement'
+                        Identifier: 'catchClause'
+                      Identifier: 'getFirstToken'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'CatchKeyword'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'tryStatement'
+              Identifier: 'finallyBlock'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' finallyKeyword'
+                    NonNullExpression
+                      CallExpression
+                        Identifier: ' findChildOfKind'
+                        Identifier: 'tryStatement'
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'FinallyKeyword'
+                        Identifier: ' sourceFile'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            pushKeywordIf'
+                  Identifier: 'keywords'
+                  Identifier: ' finallyKeyword'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'FinallyKeyword'
+          ReturnStatement
+            Identifier: ' keywords'
+      FunctionDeclaration
+        Identifier: ' getThrowOccurrences'
+        Parameter
+          Identifier: 'throwStatement'
+          TypeReference
+            Identifier: ' ThrowStatement'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' owner'
+                CallExpression
+                  Identifier: ' getThrowStatementOwner'
+                  Identifier: 'throwStatement'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'owner'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' keywords'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Node'
+                ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        forEach'
+              CallExpression
+                Identifier: 'aggregateOwnedThrowStatements'
+                Identifier: 'owner'
+              ArrowFunction
+                Parameter
+                  Identifier: ' throwStatement'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            keywords'
+                        Identifier: 'push'
+                      NonNullExpression
+                        CallExpression
+                          Identifier: 'findChildOfKind'
+                          Identifier: 'throwStatement'
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'ThrowKeyword'
+                          Identifier: ' sourceFile'
+          IfStatement
+            CallExpression
+              Identifier: 'isFunctionBlock'
+              Identifier: 'owner'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            forEachReturnStatement'
+                  AsExpression
+                    Identifier: 'owner'
+                    TypeReference
+                      Identifier: ' Block'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' returnStatement'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                keywords'
+                            Identifier: 'push'
+                          NonNullExpression
+                            CallExpression
+                              Identifier: 'findChildOfKind'
+                              Identifier: 'returnStatement'
+                              PropertyAccessExpression
+                                Identifier: ' SyntaxKind'
+                                Identifier: 'ReturnKeyword'
+                              Identifier: ' sourceFile'
+          ReturnStatement
+            Identifier: ' keywords'
+      FunctionDeclaration
+        Identifier: ' getReturnOccurrences'
+        Parameter
+          Identifier: 'returnStatement'
+          TypeReference
+            Identifier: ' ReturnStatement'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' func'
+                AsExpression
+                  CallExpression
+                    Identifier: ' getContainingFunction'
+                    Identifier: 'returnStatement'
+                  TypeReference
+                    Identifier: ' FunctionLikeDeclaration'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'func'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' keywords'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Node'
+                ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        forEachReturnStatement'
+              CallExpression
+                Identifier: 'cast'
+                PropertyAccessExpression
+                  Identifier: 'func'
+                  Identifier: 'body'
+                Identifier: ' isBlock'
+              ArrowFunction
+                Parameter
+                  Identifier: ' returnStatement'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            keywords'
+                        Identifier: 'push'
+                      NonNullExpression
+                        CallExpression
+                          Identifier: 'findChildOfKind'
+                          Identifier: 'returnStatement'
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'ReturnKeyword'
+                          Identifier: ' sourceFile'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        // Include 'throw' statements that do not occur within a try block.
+        forEach'
+              CallExpression
+                Identifier: 'aggregateOwnedThrowStatements'
+                NonNullExpression
+                  PropertyAccessExpression
+                    Identifier: 'func'
+                    Identifier: 'body'
+              ArrowFunction
+                Parameter
+                  Identifier: ' throwStatement'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            keywords'
+                        Identifier: 'push'
+                      NonNullExpression
+                        CallExpression
+                          Identifier: 'findChildOfKind'
+                          Identifier: 'throwStatement'
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'ThrowKeyword'
+                          Identifier: ' sourceFile'
+          ReturnStatement
+            Identifier: ' keywords'
+      FunctionDeclaration
+        Identifier: ' getAsyncAndAwaitOccurrences'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' func'
+                AsExpression
+                  CallExpression
+                    Identifier: ' getContainingFunction'
+                    Identifier: 'node'
+                  TypeReference
+                    Identifier: ' FunctionLikeDeclaration'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'func'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' keywords'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Node'
+                ArrayLiteralExpression
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'func'
+              Identifier: 'modifiers'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            func'
+                      Identifier: 'modifiers'
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'modifier'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                pushKeywordIf'
+                          Identifier: 'keywords'
+                          Identifier: ' modifier'
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'AsyncKeyword'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        forEachChild'
+              Identifier: 'func'
+              ArrowFunction
+                Parameter
+                  Identifier: ' child'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            traverseWithoutCrossingFunction'
+                      Identifier: 'child'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' node'
+                        EqualsGreaterThanToken
+                        Block
+                          IfStatement
+                            CallExpression
+                              Identifier: 'isAwaitExpression'
+                              Identifier: 'node'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                    pushKeywordIf'
+                                  Identifier: 'keywords'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' node'
+                                      Identifier: 'getFirstToken'
+                                  PropertyAccessExpression
+                                    Identifier: ' SyntaxKind'
+                                    Identifier: 'AwaitKeyword'
+          ReturnStatement
+            Identifier: ' keywords'
+      FunctionDeclaration
+        Identifier: ' getYieldOccurrences'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+          UndefinedKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' func'
+                AsExpression
+                  CallExpression
+                    Identifier: ' getContainingFunction'
+                    Identifier: 'node'
+                  TypeReference
+                    Identifier: ' FunctionDeclaration'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'func'
+            Block
+              ReturnStatement
+                Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' keywords'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Node'
+                ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        forEachChild'
+              Identifier: 'func'
+              ArrowFunction
+                Parameter
+                  Identifier: ' child'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            traverseWithoutCrossingFunction'
+                      Identifier: 'child'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' node'
+                        EqualsGreaterThanToken
+                        Block
+                          IfStatement
+                            CallExpression
+                              Identifier: 'isYieldExpression'
+                              Identifier: 'node'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                    pushKeywordIf'
+                                  Identifier: 'keywords'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' node'
+                                      Identifier: 'getFirstToken'
+                                  PropertyAccessExpression
+                                    Identifier: ' SyntaxKind'
+                                    Identifier: 'YieldKeyword'
+          ReturnStatement
+            Identifier: ' keywords'
+      FunctionDeclaration
+        Identifier: ' traverseWithoutCrossingFunction'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' cb'
+          FunctionType
+            Parameter
+              Identifier: 'node'
+              TypeReference
+                Identifier: ' Node'
+            VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        cb'
+              Identifier: 'node'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'isFunctionLike'
+                          Identifier: 'node'
+                      AmpersandAmpersandToken
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'isClassLike'
+                          Identifier: 'node'
+                    AmpersandAmpersandToken
+                    PrefixUnaryExpression
+                      CallExpression
+                        Identifier: 'isInterfaceDeclaration'
+                        Identifier: 'node'
+                  AmpersandAmpersandToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isModuleDeclaration'
+                      Identifier: 'node'
+                AmpersandAmpersandToken
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isTypeAliasDeclaration'
+                    Identifier: 'node'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'isTypeNode'
+                  Identifier: 'node'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            forEachChild'
+                  Identifier: 'node'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' child'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' traverseWithoutCrossingFunction'
+                      Identifier: 'child'
+                      Identifier: ' cb'
+      FunctionDeclaration
+        Identifier: ' getIfElseOccurrences'
+        Parameter
+          Identifier: 'ifStatement'
+          TypeReference
+            Identifier: ' IfStatement'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        ArrayType
+          TypeReference
+            Identifier: ' HighlightSpan'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' keywords'
+                CallExpression
+                  Identifier: ' getIfElseKeywords'
+                  Identifier: 'ifStatement'
+                  Identifier: ' sourceFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                ArrayType
+                  TypeReference
+                    Identifier: ' HighlightSpan'
+                ArrayLiteralExpression
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                NumericLiteral
+            BinaryExpression
+              Identifier: ' i'
+              LessThanToken
+              PropertyAccessExpression
+                Identifier: ' keywords'
+                Identifier: 'length'
+            PostfixUnaryExpression
+              Identifier: ' i'
+            Block
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ElementAccessExpression
+                        Identifier: 'keywords'
+                        Identifier: 'i'
+                      Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'ElseKeyword'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    Identifier: ' i'
+                    LessThanToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' keywords'
+                        Identifier: 'length'
+                      MinusToken
+                      NumericLiteral
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' elseKeyword'
+                        ElementAccessExpression
+                          Identifier: ' keywords'
+                          Identifier: 'i'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' ifKeyword'
+                        ElementAccessExpression
+                          Identifier: ' keywords'
+                          BinaryExpression
+                            Identifier: 'i'
+                            PlusToken
+                            NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' shouldCombineElseAndIf'
+                        TrueKeyword
+                  ForStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' j'
+                        BinaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' ifKeyword'
+                              Identifier: 'getStart'
+                            Identifier: 'sourceFile'
+                          MinusToken
+                          NumericLiteral
+                    BinaryExpression
+                      Identifier: ' j'
+                      GreaterThanEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' elseKeyword'
+                        Identifier: 'end'
+                    PostfixUnaryExpression
+                      Identifier: ' j'
+                    Block
+                      IfStatement
+                        PrefixUnaryExpression
+                          CallExpression
+                            Identifier: 'isWhiteSpaceSingleLine'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'sourceFile'
+                                  Identifier: 'text'
+                                Identifier: 'charCodeAt'
+                              Identifier: 'j'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                        shouldCombineElseAndIf'
+                              EqualsToken
+                              FalseKeyword
+                          BreakStatement
+                  IfStatement
+                    Identifier: 'shouldCombineElseAndIf'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    result'
+                            Identifier: 'push'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                        fileName'
+                              PropertyAccessExpression
+                                Identifier: ' sourceFile'
+                                Identifier: 'fileName'
+                            PropertyAssignment
+                              Identifier: '
+                        textSpan'
+                              CallExpression
+                                Identifier: ' createTextSpanFromBounds'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'elseKeyword'
+                                    Identifier: 'getStart'
+                                PropertyAccessExpression
+                                  Identifier: ' ifKeyword'
+                                  Identifier: 'end'
+                            PropertyAssignment
+                              Identifier: '
+                        kind'
+                              PropertyAccessExpression
+                                Identifier: ' HighlightSpanKind'
+                                Identifier: 'reference'
+                      ExpressionStatement
+                        PostfixUnaryExpression
+                          Identifier: '
+                    i'
+                      ContinueStatement
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            // Ordinary case: just highlight the keyword.
+            result'
+                    Identifier: 'push'
+                  CallExpression
+                    Identifier: 'getHighlightSpanForNode'
+                    ElementAccessExpression
+                      Identifier: 'keywords'
+                      Identifier: 'i'
+                    Identifier: ' sourceFile'
+          ReturnStatement
+            Identifier: ' result'
+      FunctionDeclaration
+        Identifier: ' getIfElseKeywords'
+        Parameter
+          Identifier: 'ifStatement'
+          TypeReference
+            Identifier: ' IfStatement'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        ArrayType
+          TypeReference
+            Identifier: ' Node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' keywords'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Node'
+                ArrayLiteralExpression
+          WhileStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isIfStatement'
+                PropertyAccessExpression
+                  Identifier: 'ifStatement'
+                  Identifier: 'parent'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ifStatement'
+                    Identifier: 'parent'
+                  Identifier: 'elseStatement'
+                EqualsEqualsEqualsToken
+                Identifier: ' ifStatement'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            ifStatement'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' ifStatement'
+                    Identifier: 'parent'
+          WhileStatement
+            TrueKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' children'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ifStatement'
+                        Identifier: 'getChildren'
+                      Identifier: 'sourceFile'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            pushKeywordIf'
+                  Identifier: 'keywords'
+                  ElementAccessExpression
+                    Identifier: ' children'
+                    NumericLiteral
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'IfKeyword'
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' i'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' children'
+                        Identifier: 'length'
+                      MinusToken
+                      NumericLiteral
+                BinaryExpression
+                  Identifier: ' i'
+                  GreaterThanEqualsToken
+                  NumericLiteral
+                PostfixUnaryExpression
+                  Identifier: ' i'
+                Block
+                  IfStatement
+                    CallExpression
+                      Identifier: 'pushKeywordIf'
+                      Identifier: 'keywords'
+                      ElementAccessExpression
+                        Identifier: ' children'
+                        Identifier: 'i'
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'ElseKeyword'
+                    Block
+                      BreakStatement
+              IfStatement
+                BinaryExpression
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'ifStatement'
+                      Identifier: 'elseStatement'
+                  BarBarToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isIfStatement'
+                      PropertyAccessExpression
+                        Identifier: 'ifStatement'
+                        Identifier: 'elseStatement'
+                Block
+                  BreakStatement
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            ifStatement'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' ifStatement'
+                    Identifier: 'elseStatement'
+          ReturnStatement
+            Identifier: ' keywords'
+      FunctionDeclaration
+        Identifier: ' isLabeledBy'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' labelName'
+          TypeReference
+            Identifier: ' __String'
+        BooleanKeyword
+        Block
+          ReturnStatement
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'findAncestor'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'parent'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' owner'
+                    EqualsGreaterThanToken
+                    ConditionalExpression
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'isLabeledStatement'
+                          Identifier: 'owner'
+                      QuestionToken
+                      StringLiteral
+                      ColonToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' owner'
+                            Identifier: 'label'
+                          Identifier: 'escapedText'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' labelName'

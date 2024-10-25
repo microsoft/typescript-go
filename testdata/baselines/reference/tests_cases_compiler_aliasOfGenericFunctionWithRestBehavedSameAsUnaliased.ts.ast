@@ -1,0 +1,232 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' ExtendedMapper'
+    TypeParameter
+      Identifier: 'HandledInputT'
+    TypeParameter
+      Identifier: ' OutputT'
+    TypeParameter
+      Identifier: ' ArgsT'
+      ArrayType
+        AnyKeyword
+    FunctionType
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Parameter
+        Identifier: ' mixed'
+        TypeReference
+          Identifier: ' HandledInputT'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' ArgsT'
+      TypeReference
+        Identifier: ' OutputT'
+  TypeAliasDeclaration
+    Identifier: ' a'
+    TypeReference
+      Identifier: ' ExtendedMapper'
+      AnyKeyword
+      AnyKeyword
+      TupleType
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' b'
+    TypeReference
+      Identifier: ' ExtendedMapper'
+      AnyKeyword
+      AnyKeyword
+      ArrayType
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' test'
+    ConditionalType
+      TypeReference
+        Identifier: ' a'
+      TypeReference
+        Identifier: ' b'
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' check'
+        TypeReference
+          Identifier: ' test'
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' ExtendedMapper1'
+    TypeParameter
+      Identifier: 'HandledInputT'
+    TypeParameter
+      Identifier: ' OutputT'
+    TypeParameter
+      Identifier: ' ArgsT'
+      ArrayType
+        AnyKeyword
+    ParenthesizedType
+      FunctionType
+        Parameter
+          Identifier: 'name'
+          StringKeyword
+        Parameter
+          Identifier: ' mixed'
+          TypeReference
+            Identifier: ' HandledInputT'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' ArgsT'
+        TypeReference
+          Identifier: ' OutputT'
+  TypeAliasDeclaration
+    Identifier: ' a1'
+    TypeReference
+      Identifier: ' ExtendedMapper1'
+      AnyKeyword
+      AnyKeyword
+      TupleType
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' b1'
+    TypeReference
+      Identifier: ' ExtendedMapper1'
+      AnyKeyword
+      AnyKeyword
+      ArrayType
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' test1'
+    ConditionalType
+      TypeReference
+        Identifier: ' a1'
+      TypeReference
+        Identifier: ' b1'
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' check1'
+        TypeReference
+          Identifier: ' test1'
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' ExtendedMapper2'
+    TypeParameter
+      Identifier: 'HandledInputT'
+    TypeParameter
+      Identifier: ' OutputT'
+    TypeParameter
+      Identifier: ' ArgsT'
+      ArrayType
+        AnyKeyword
+    ParenthesizedType
+      IndexedAccessType
+        TypeLiteral
+          PropertySignature
+            Identifier: 'x'
+            FunctionType
+              Parameter
+                Identifier: 'name'
+                StringKeyword
+              Parameter
+                Identifier: ' mixed'
+                TypeReference
+                  Identifier: ' HandledInputT'
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                TypeReference
+                  Identifier: ' ArgsT'
+              TypeReference
+                Identifier: ' OutputT'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' a2'
+    TypeReference
+      Identifier: ' ExtendedMapper2'
+      AnyKeyword
+      AnyKeyword
+      TupleType
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' b2'
+    TypeReference
+      Identifier: ' ExtendedMapper2'
+      AnyKeyword
+      AnyKeyword
+      ArrayType
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' test2'
+    ConditionalType
+      TypeReference
+        Identifier: ' a2'
+      TypeReference
+        Identifier: ' b2'
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' check2'
+        TypeReference
+          Identifier: ' test2'
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' a3'
+    FunctionType
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Parameter
+        Identifier: ' mixed'
+        AnyKeyword
+      Parameter
+        Identifier: ' args_0'
+        AnyKeyword
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' b3'
+    FunctionType
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Parameter
+        Identifier: ' mixed'
+        AnyKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' test3'
+    ConditionalType
+      TypeReference
+        Identifier: ' a3'
+      TypeReference
+        Identifier: ' b3'
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' check3'
+        TypeReference
+          Identifier: ' test3'
+        StringLiteral

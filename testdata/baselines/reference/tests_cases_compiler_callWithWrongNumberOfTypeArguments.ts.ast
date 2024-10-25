@@ -1,0 +1,27 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      NumberKeyword
+      StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      NumberKeyword
+      StringKeyword
+      NumberKeyword

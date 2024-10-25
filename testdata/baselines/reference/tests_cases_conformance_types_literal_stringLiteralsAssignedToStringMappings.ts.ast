@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Uppercase'
+          TypeReference
+            Identifier: 'Lowercase'
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// good
+x'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// bad
+x'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Uppercase'
+          TypeReference
+            Identifier: 'Lowercase'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                NumberKeyword
+                TemplateTail
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// good
+y'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// bad
+y'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      StringLiteral

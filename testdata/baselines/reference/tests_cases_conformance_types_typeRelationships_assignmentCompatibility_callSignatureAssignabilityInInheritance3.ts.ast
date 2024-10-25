@@ -1,0 +1,634 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Errors'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Base'
+        PropertyDeclaration
+          Identifier: ' foo'
+          StringKeyword
+      ClassDeclaration
+        Identifier: ' Derived'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+        PropertyDeclaration
+          Identifier: ' bar'
+          StringKeyword
+      ClassDeclaration
+        Identifier: ' Derived2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Derived'
+        PropertyDeclaration
+          Identifier: ' baz'
+          StringKeyword
+      ClassDeclaration
+        Identifier: ' OtherDerived'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+        PropertyDeclaration
+          Identifier: ' bing'
+          StringKeyword
+      ModuleDeclaration
+        Identifier: ' WithNonGenericSignaturesInBaseType'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            a2'
+              FunctionType
+                Parameter
+                  Identifier: 'x'
+                  NumberKeyword
+                ArrayType
+                  StringKeyword
+            PropertySignature
+              Identifier: '
+            a7'
+              FunctionType
+                Parameter
+                  Identifier: 'x'
+                  FunctionType
+                    Parameter
+                      Identifier: 'arg'
+                      TypeReference
+                        Identifier: ' Base'
+                    TypeReference
+                      Identifier: ' Derived'
+                FunctionType
+                  Parameter
+                    Identifier: 'r'
+                    TypeReference
+                      Identifier: ' Base'
+                  TypeReference
+                    Identifier: ' Derived2'
+            PropertySignature
+              Identifier: '
+            a8'
+              FunctionType
+                Parameter
+                  Identifier: 'x'
+                  FunctionType
+                    Parameter
+                      Identifier: 'arg'
+                      TypeReference
+                        Identifier: ' Base'
+                    TypeReference
+                      Identifier: ' Derived'
+                Parameter
+                  Identifier: ' y'
+                  FunctionType
+                    Parameter
+                      Identifier: 'arg2'
+                      TypeReference
+                        Identifier: ' Base'
+                    TypeReference
+                      Identifier: ' Derived'
+                FunctionType
+                  Parameter
+                    Identifier: 'r'
+                    TypeReference
+                      Identifier: ' Base'
+                  TypeReference
+                    Identifier: ' Derived'
+            PropertySignature
+              Identifier: '
+            a10'
+              FunctionType
+                Parameter
+                  DotDotDotToken
+                  Identifier: 'x'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+                TypeReference
+                  Identifier: ' Base'
+            PropertySignature
+              Identifier: '
+            a11'
+              FunctionType
+                Parameter
+                  Identifier: 'x'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' foo'
+                      StringKeyword
+                Parameter
+                  Identifier: ' y'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' foo'
+                      StringKeyword
+                    PropertySignature
+                      Identifier: ' bar'
+                      StringKeyword
+                TypeReference
+                  Identifier: ' Base'
+            PropertySignature
+              Identifier: '
+            a12'
+              FunctionType
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' Array'
+                    TypeReference
+                      Identifier: 'Base'
+                Parameter
+                  Identifier: ' y'
+                  TypeReference
+                    Identifier: ' Array'
+                    TypeReference
+                      Identifier: 'Derived2'
+                TypeReference
+                  Identifier: ' Array'
+                  TypeReference
+                    Identifier: 'Derived'
+            PropertySignature
+              Identifier: '
+            a14'
+              TypeLiteral
+                CallSignature
+                  Parameter
+                    Identifier: 'x'
+                    NumberKeyword
+                  ArrayType
+                    NumberKeyword
+                CallSignature
+                  Parameter
+                    Identifier: 'x'
+                    StringKeyword
+                  ArrayType
+                    StringKeyword
+            PropertySignature
+              Identifier: '
+            a15'
+              FunctionType
+                Parameter
+                  Identifier: 'x'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' a'
+                      StringKeyword
+                    PropertySignature
+                      Identifier: ' b'
+                      NumberKeyword
+                NumberKeyword
+            PropertySignature
+              Identifier: '
+            a16'
+              TypeLiteral
+                CallSignature
+                  Parameter
+                    Identifier: 'x'
+                    TypeLiteral
+                      CallSignature
+                        Parameter
+                          Identifier: 'a'
+                          NumberKeyword
+                        NumberKeyword
+                      CallSignature
+                        Parameter
+                          Identifier: 'a'
+                          QuestionToken
+                          NumberKeyword
+                        NumberKeyword
+                  ArrayType
+                    NumberKeyword
+                CallSignature
+                  Parameter
+                    Identifier: 'x'
+                    TypeLiteral
+                      CallSignature
+                        Parameter
+                          Identifier: 'a'
+                          BooleanKeyword
+                        BooleanKeyword
+                      CallSignature
+                        Parameter
+                          Identifier: 'a'
+                          QuestionToken
+                          BooleanKeyword
+                        BooleanKeyword
+                  ArrayType
+                    BooleanKeyword
+            PropertySignature
+              Identifier: '
+            a17'
+              TypeLiteral
+                CallSignature
+                  Parameter
+                    Identifier: 'x'
+                    TypeLiteral
+                      CallSignature
+                        TypeParameter
+                          Identifier: 'T'
+                          TypeReference
+                            Identifier: ' Derived'
+                        Parameter
+                          Identifier: 'a'
+                          TypeReference
+                            Identifier: ' T'
+                        TypeReference
+                          Identifier: ' T'
+                      CallSignature
+                        TypeParameter
+                          Identifier: 'T'
+                          TypeReference
+                            Identifier: ' Base'
+                        Parameter
+                          Identifier: 'a'
+                          TypeReference
+                            Identifier: ' T'
+                        TypeReference
+                          Identifier: ' T'
+                  ArrayType
+                    AnyKeyword
+                CallSignature
+                  Parameter
+                    Identifier: 'x'
+                    TypeLiteral
+                      CallSignature
+                        TypeParameter
+                          Identifier: 'T'
+                          TypeReference
+                            Identifier: ' Derived2'
+                        Parameter
+                          Identifier: 'a'
+                          TypeReference
+                            Identifier: ' T'
+                        TypeReference
+                          Identifier: ' T'
+                      CallSignature
+                        TypeParameter
+                          Identifier: 'T'
+                          TypeReference
+                            Identifier: ' Base'
+                        Parameter
+                          Identifier: 'a'
+                          TypeReference
+                            Identifier: ' T'
+                        TypeReference
+                          Identifier: ' T'
+                  ArrayType
+                    AnyKeyword
+          InterfaceDeclaration
+            Identifier: ' I'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            a2'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                TypeParameter
+                  Identifier: ' U'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                ArrayType
+                  TypeReference
+                    Identifier: ' U'
+          InterfaceDeclaration
+            Identifier: ' I2'
+            TypeParameter
+              Identifier: 'T'
+            TypeParameter
+              Identifier: ' U'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            a2'
+              FunctionType
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                ArrayType
+                  TypeReference
+                    Identifier: ' U'
+          InterfaceDeclaration
+            Identifier: ' I3'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            // valid, no inferences for V so it defaults to Derived2
+            a7'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                  TypeReference
+                    Identifier: ' Base'
+                TypeParameter
+                  Identifier: ' U'
+                  TypeReference
+                    Identifier: ' Derived'
+                TypeParameter
+                  Identifier: ' V'
+                  TypeReference
+                    Identifier: ' Derived2'
+                Parameter
+                  Identifier: 'x'
+                  FunctionType
+                    Parameter
+                      Identifier: 'arg'
+                      TypeReference
+                        Identifier: ' T'
+                    TypeReference
+                      Identifier: ' U'
+                FunctionType
+                  Parameter
+                    Identifier: 'r'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' V'
+          InterfaceDeclaration
+            Identifier: ' I4'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            a8'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                  TypeReference
+                    Identifier: ' Base'
+                TypeParameter
+                  Identifier: ' U'
+                  TypeReference
+                    Identifier: ' Derived'
+                Parameter
+                  Identifier: 'x'
+                  FunctionType
+                    Parameter
+                      Identifier: 'arg'
+                      TypeReference
+                        Identifier: ' T'
+                    TypeReference
+                      Identifier: ' U'
+                Parameter
+                  Identifier: ' y'
+                  FunctionType
+                    Parameter
+                      Identifier: 'arg2'
+                      TypeLiteral
+                        PropertySignature
+                          Identifier: ' foo'
+                          NumberKeyword
+                    TypeReference
+                      Identifier: ' U'
+                FunctionType
+                  Parameter
+                    Identifier: 'r'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' U'
+          InterfaceDeclaration
+            Identifier: ' I4B'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            a10'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                  TypeReference
+                    Identifier: ' Derived'
+                Parameter
+                  DotDotDotToken
+                  Identifier: 'x'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' T'
+                TypeReference
+                  Identifier: ' T'
+          InterfaceDeclaration
+            Identifier: ' I4C'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            a11'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                  TypeReference
+                    Identifier: ' Derived'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                Parameter
+                  Identifier: ' y'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T'
+          InterfaceDeclaration
+            Identifier: ' I4E'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            a12'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                  TypeReference
+                    Identifier: ' Array'
+                    TypeReference
+                      Identifier: 'Derived2'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' Array'
+                    TypeReference
+                      Identifier: 'Base'
+                Parameter
+                  Identifier: ' y'
+                  TypeReference
+                    Identifier: ' Array'
+                    TypeReference
+                      Identifier: 'Base'
+                TypeReference
+                  Identifier: ' T'
+          InterfaceDeclaration
+            Identifier: ' I6'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            a15'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' a'
+                      TypeReference
+                        Identifier: ' T'
+                    PropertySignature
+                      Identifier: ' b'
+                      TypeReference
+                        Identifier: ' T'
+                TypeReference
+                  Identifier: ' T'
+          InterfaceDeclaration
+            Identifier: ' I7'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            a15'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                  TypeReference
+                    Identifier: ' Base'
+                Parameter
+                  Identifier: 'x'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' a'
+                      TypeReference
+                        Identifier: ' T'
+                    PropertySignature
+                      Identifier: ' b'
+                      TypeReference
+                        Identifier: ' T'
+                NumberKeyword
+          InterfaceDeclaration
+            Identifier: ' I8'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            // ok, we relate each signature of a16 to b16, and within that, we make inferences from two different signatures in the respective A.a16 signature
+            a16'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  FunctionType
+                    Parameter
+                      Identifier: 'a'
+                      TypeReference
+                        Identifier: ' T'
+                    TypeReference
+                      Identifier: ' T'
+                ArrayType
+                  TypeReference
+                    Identifier: ' T'
+          InterfaceDeclaration
+            Identifier: ' I9'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            a17'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  FunctionType
+                    Parameter
+                      Identifier: 'a'
+                      TypeReference
+                        Identifier: ' T'
+                    TypeReference
+                      Identifier: ' T'
+                ArrayType
+                  AnyKeyword
+      ModuleDeclaration
+        Identifier: ' WithGenericSignaturesInBaseType'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' B'
+            PropertySignature
+              Identifier: '
+            a2'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                ArrayType
+                  TypeReference
+                    Identifier: ' T'
+          InterfaceDeclaration
+            Identifier: ' I6'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' B'
+            PropertySignature
+              Identifier: '
+            a2'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                ArrayType
+                  StringKeyword
+          InterfaceDeclaration
+            Identifier: ' C'
+            PropertySignature
+              Identifier: '
+            a2'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                ArrayType
+                  StringKeyword
+          InterfaceDeclaration
+            Identifier: ' I7'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' C'
+            PropertySignature
+              Identifier: '
+            a2'
+              FunctionType
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                ArrayType
+                  TypeReference
+                    Identifier: ' T'

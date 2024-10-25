@@ -1,0 +1,42 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+    GetAccessor
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'data'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        StringKeyword
+        PropertyAccessExpression
+          Identifier: ' c'
+          Identifier: 'x'

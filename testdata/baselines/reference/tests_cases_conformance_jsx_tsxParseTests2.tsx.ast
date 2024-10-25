@@ -1,0 +1,23 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          Identifier: ' div'
+        PropertySignature
+          Identifier: ' span'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        JsxElement
+          JsxOpeningElement
+            Identifier: '/**/div'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'div'

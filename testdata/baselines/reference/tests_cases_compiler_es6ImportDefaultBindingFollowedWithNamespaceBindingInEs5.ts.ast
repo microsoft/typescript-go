@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding'
+      NamespaceImport
+        Identifier: ' nameSpaceBinding'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' nameSpaceBinding'
+          Identifier: 'a'

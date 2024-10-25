@@ -1,0 +1,89 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' union'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'union'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o4'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              BooleanKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+            PropertySignature
+              Identifier: ' a'
+              BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o4'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'union'
+          PropertyAssignment
+            Identifier: ' a'
+            FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o5'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o5'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'union'
+          SpreadAssignment
+            Identifier: 'union'

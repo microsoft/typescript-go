@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ParenthesizedExpression
+            Identifier: 'a'
+          ColonToken
+          ParenthesizedExpression
+            FunctionExpression
+              Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ParenthesizedExpression
+            Identifier: 'a'
+          ColonToken
+          ParenthesizedExpression
+            ParenthesizedExpression
+              FunctionExpression
+                Block

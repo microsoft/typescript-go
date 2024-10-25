@@ -1,0 +1,22 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' doSomethingWithKeys'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      DotDotDotToken
+      Identifier: 'keys'
+      ArrayType
+        ParenthesizedType
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' utilityFunctions'
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+  doSomethingWithKeys'

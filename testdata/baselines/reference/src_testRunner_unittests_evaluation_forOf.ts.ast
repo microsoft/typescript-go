@@ -1,0 +1,397 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' evaluator'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' downlevelIteration'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES5'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        result'
+                        Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' downlevelIteration'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES5'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        result'
+                        Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' downlevelIteration'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES5'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'throws'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' downlevelIteration'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES5'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'throws'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                      RegularExpressionLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' downlevelIteration'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES5'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'throws'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' downlevelIteration'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES5'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'throws'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'main'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' downlevelIteration'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES5'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        result'
+                        Identifier: 'main'

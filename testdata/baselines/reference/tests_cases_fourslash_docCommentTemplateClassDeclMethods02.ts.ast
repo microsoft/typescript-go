@@ -1,0 +1,35 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiLineOffset'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+////class C {
+////    /*0*/
+////    [Symbol.iterator]() {
+////        return undefined;
+////    }
+////    /*1*/
+////    [1 + 2 + 3 + Math.rand()](x: number, y: string, z = true) { }
+////}
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      Identifier: ' multiLineOffset'
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      Identifier: ' multiLineOffset'
+      NoSubstitutionTemplateLiteral

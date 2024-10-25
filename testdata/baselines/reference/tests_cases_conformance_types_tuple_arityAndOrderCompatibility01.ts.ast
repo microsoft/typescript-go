@@ -1,0 +1,226 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' StrNum'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        UnionType
+          StringKeyword
+          NumberKeyword
+    PropertySignature
+      NumericLiteral
+      StringKeyword
+    PropertySignature
+      NumericLiteral
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    length'
+      LiteralType
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TupleType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' StrNum'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeLiteral
+          PropertySignature
+            NumericLiteral
+            StringKeyword
+          PropertySignature
+            NumericLiteral
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+    length'
+            LiteralType
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a'
+          BindingElement
+            Identifier: ' b'
+          BindingElement
+            Identifier: ' c'
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'd'
+          BindingElement
+            Identifier: ' e'
+          BindingElement
+            Identifier: ' f'
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'g'
+          BindingElement
+            Identifier: ' h'
+          BindingElement
+            Identifier: ' i'
+        Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j1'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j2'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j3'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+          NumberKeyword
+        Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k1'
+        TupleType
+          StringKeyword
+          NumberKeyword
+          NumberKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k2'
+        TupleType
+          StringKeyword
+          NumberKeyword
+          NumberKeyword
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k3'
+        TupleType
+          StringKeyword
+          NumberKeyword
+          NumberKeyword
+        Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l1'
+        TupleType
+          NumberKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l2'
+        TupleType
+          NumberKeyword
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l3'
+        TupleType
+          NumberKeyword
+        Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m1'
+        TupleType
+          StringKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m2'
+        TupleType
+          StringKeyword
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m3'
+        TupleType
+          StringKeyword
+        Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n1'
+        TupleType
+          NumberKeyword
+          StringKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n2'
+        TupleType
+          NumberKeyword
+          StringKeyword
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n3'
+        TupleType
+          NumberKeyword
+          StringKeyword
+        Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        TupleType
+          StringKeyword
+          NumberKeyword
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        TupleType
+          StringKeyword
+          NumberKeyword
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        TupleType
+          StringKeyword
+          NumberKeyword
+        Identifier: ' y'

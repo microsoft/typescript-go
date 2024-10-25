@@ -1,0 +1,62 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        IntersectionType
+          ObjectKeyword
+          StringKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        UnionType
+          ObjectKeyword
+          StringKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        IntersectionType
+          ObjectKeyword
+          TypeLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+b'
+      EqualsToken
+      Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        IntersectionType
+          ObjectKeyword
+          TypeLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'bar'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        IntersectionType
+          ObjectKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: 'err'
+              StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'bar'
+            StringLiteral

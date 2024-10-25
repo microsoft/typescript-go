@@ -1,0 +1,125 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' s'
+      NumberKeyword
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' s'
+      NumberKeyword
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' s'
+      NumberKeyword
+      NumericLiteral
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 's'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' Bs'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' s'
+      NumberKeyword
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' Cs'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' s'
+      NumberKeyword
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' Ds'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' s'
+      NumberKeyword
+      NumericLiteral
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumericLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          StringLiteral

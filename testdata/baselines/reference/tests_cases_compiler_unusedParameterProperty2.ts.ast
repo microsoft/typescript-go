@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' used'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' foge'
+              Identifier: ' used'

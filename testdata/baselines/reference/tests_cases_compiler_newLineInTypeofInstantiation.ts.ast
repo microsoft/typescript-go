@@ -1,0 +1,13 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Example'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      TypeQuery
+        Identifier: ' a'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      VoidKeyword

@@ -1,0 +1,71 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+// @allowJs: true
+// @Filename: in.js
+/////** I am documentation
+//// * @param {'literal'} p1
+//// * @param {"literal"} p2
+//// * @param {'other1' | 'other2'} p3
+//// * @param {'literal' | number} p4
+//// * @param {12 | true} p5
+//// */
+////function f(p1, p2, p3, p4, p5) {
+////    return p1 + p2 + p3 + p4 + p5 + '.';
+////}
+////f/*1*/('literal', 'literal', "[|o/*2*/ther1|]", 12);
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoExists'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'quickInfoIs'
+      StringLiteral
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' replacementSpan'
+        ElementAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'ranges'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              ShorthandPropertyAssignment
+                Identifier: ' replacementSpan'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              ShorthandPropertyAssignment
+                Identifier: ' replacementSpan'

@@ -1,0 +1,87 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' ENUM'
+  EmptyStatement
+  EnumDeclaration
+    Identifier: ' ENUM1'
+    EnumMember
+      Identifier: ' A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      StringLiteral
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean1'
+        DeleteExpression
+          Identifier: ' ENUM'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean2'
+        DeleteExpression
+          Identifier: ' ENUM1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean3'
+        DeleteExpression
+          ElementAccessExpression
+            Identifier: ' ENUM1'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean4'
+        DeleteExpression
+          ParenthesizedExpression
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: 'ENUM'
+                NumericLiteral
+              PlusToken
+              ElementAccessExpression
+                Identifier: ' ENUM1'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean5'
+        DeleteExpression
+          DeleteExpression
+            Identifier: ' ENUM'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsBoolean6'
+        DeleteExpression
+          DeleteExpression
+            DeleteExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: 'ENUM'
+                    NumericLiteral
+                  PlusToken
+                  ElementAccessExpression
+                    Identifier: ' ENUM1'
+                    StringLiteral
+  ExpressionStatement
+    DeleteExpression
+      Identifier: ' ENUM'
+  ExpressionStatement
+    DeleteExpression
+      Identifier: ' ENUM1'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' ENUM1'
+        Identifier: 'B'
+  ExpressionStatement
+    BinaryExpression
+      DeleteExpression
+        Identifier: ' ENUM'
+      CommaToken
+      Identifier: ' ENUM1'

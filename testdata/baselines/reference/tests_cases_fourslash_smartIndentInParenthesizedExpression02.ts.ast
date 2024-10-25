@@ -1,0 +1,36 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '/// <reference path="fourslash.ts"/>
+
+////var y = (
+////{| "indent": 4 |}
+ 
+test'
+            Identifier: 'markers'
+        Identifier: 'forEach'
+      ArrowFunction
+        Parameter
+          Identifier: 'marker'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    verify'
+                Identifier: 'indentationAtPositionIs'
+              PropertyAccessExpression
+                Identifier: 'marker'
+                Identifier: 'fileName'
+              PropertyAccessExpression
+                Identifier: ' marker'
+                Identifier: 'position'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' marker'
+                  Identifier: 'data'
+                Identifier: 'indent'

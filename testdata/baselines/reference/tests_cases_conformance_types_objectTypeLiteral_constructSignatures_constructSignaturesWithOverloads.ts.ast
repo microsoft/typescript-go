@@ -1,0 +1,248 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        NewExpression
+          Identifier: ' C'
+          NumericLiteral
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        NewExpression
+          Identifier: ' C2'
+          NumericLiteral
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' C'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+      TypeReference
+        Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        NewExpression
+          Identifier: ' i'
+          NumericLiteral
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' C2'
+        TypeReference
+          Identifier: 'T'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+      TypeReference
+        Identifier: ' C2'
+        TypeReference
+          Identifier: 'T'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' C2'
+        TypeReference
+          Identifier: 'T'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+      TypeReference
+        Identifier: ' C2'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        TypeReference
+          Identifier: ' I2'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        NewExpression
+          Identifier: ' i2'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' C'
+          ConstructSignature
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            Parameter
+              Identifier: ' y'
+              StringKeyword
+            TypeReference
+              Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        NewExpression
+          Identifier: ' a'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              QuestionToken
+              StringKeyword
+            TypeReference
+              Identifier: ' C2'
+              TypeReference
+                Identifier: 'T'
+          ConstructSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              StringKeyword
+            TypeReference
+              Identifier: ' C2'
+              TypeReference
+                Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        NewExpression
+          Identifier: ' b'
+          NumericLiteral
+          StringLiteral

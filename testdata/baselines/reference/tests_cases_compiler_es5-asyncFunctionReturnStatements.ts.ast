@@ -1,0 +1,75 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' z'
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+      VariableDeclaration
+        Identifier: ' c'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' returnStatement0'
+    TypeReference
+      Identifier: ' Promise'
+      AnyKeyword
+    Block
+      ReturnStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' returnStatement1'
+    TypeReference
+      Identifier: ' Promise'
+      AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' returnStatement2'
+    TypeReference
+      Identifier: ' Promise'
+      AnyKeyword
+    Block
+      ReturnStatement
+        AwaitExpression
+          Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' returnStatement3'
+    TypeReference
+      Identifier: ' Promise'
+      AnyKeyword
+    Block
+      Block
+        ReturnStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' returnStatement4'
+    TypeReference
+      Identifier: ' Promise'
+      AnyKeyword
+    Block
+      ExpressionStatement
+        AwaitExpression
+          Identifier: ' x'
+      Block
+        ReturnStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' returnStatement5'
+    TypeReference
+      Identifier: ' Promise'
+      AnyKeyword
+    Block
+      Block
+        ReturnStatement
+          AwaitExpression
+            Identifier: ' x'

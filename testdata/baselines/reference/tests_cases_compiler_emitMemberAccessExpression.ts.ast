@@ -1,0 +1,45 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    StringLiteral
+  ModuleDeclaration
+    Identifier: ' Microsoft'
+    ModuleDeclaration
+      Identifier: 'PeopleAtWork'
+      ModuleDeclaration
+        Identifier: 'Model'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' _Person'
+            MethodDeclaration
+              PublicKeyword
+              Identifier: ' populate'
+              Parameter
+                Identifier: 'raw'
+                AnyKeyword
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' res'
+                      PropertyAccessExpression
+                        Identifier: ' Model'
+                        Identifier: 'KnockoutExtentions'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' OData'
+        AnyKeyword
+  ModuleDeclaration
+    Identifier: ' Microsoft'
+    ModuleDeclaration
+      Identifier: 'PeopleAtWork'
+      ModuleDeclaration
+        Identifier: 'Model'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' KnockoutExtentions'

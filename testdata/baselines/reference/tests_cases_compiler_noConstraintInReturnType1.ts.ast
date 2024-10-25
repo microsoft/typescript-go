@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' empty'
+      TypeParameter
+        Identifier: 'T'
+        TypeLiteral
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'T'
+      Block
+        ReturnStatement
+          NullKeyword

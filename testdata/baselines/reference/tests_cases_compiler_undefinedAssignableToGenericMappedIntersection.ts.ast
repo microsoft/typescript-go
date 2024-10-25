@@ -1,0 +1,51 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Errors'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: 'all'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            ExclamationToken
+            TypeReference
+              Identifier: ' Errors'
+              TypeReference
+                Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ExclamationToken
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'x'
+          EqualsToken
+          Identifier: ' undefined'

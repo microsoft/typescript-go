@@ -1,0 +1,188 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' k'
+        NumberKeyword
+      Parameter
+        PrivateKeyword
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a'
+          BindingElement
+            Identifier: ' b'
+          BindingElement
+            Identifier: ' c'
+        TupleType
+          NumberKeyword
+          StringKeyword
+          BooleanKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                BinaryExpression
+                  Identifier: 'b'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' undefined'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  Identifier: ' c'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' undefined'
+            BarBarToken
+            ParenthesizedExpression
+              BinaryExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'b'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' undefined'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'c'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' undefined'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'a'
+                EqualsToken
+                BinaryExpression
+                  Identifier: ' a'
+                  BarBarToken
+                  Identifier: ' k'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getA'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getB'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'b'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getC'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' C1'
+          Identifier: 'undefined'
+          ArrayLiteralExpression
+            NumericLiteral
+            Identifier: ' undefined'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x_a'
+          BindingElement
+            Identifier: ' x_b'
+          BindingElement
+            Identifier: ' x_c'
+        ArrayLiteralExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'x'
+              Identifier: 'getA'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'getB'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'getC'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NewExpression
+          Identifier: ' C1'
+          NumericLiteral
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'y_a'
+          BindingElement
+            Identifier: ' y_b'
+          BindingElement
+            Identifier: ' y_c'
+        ArrayLiteralExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'y'
+              Identifier: 'getA'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' y'
+              Identifier: 'getB'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' y'
+              Identifier: 'getC'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        NewExpression
+          Identifier: ' C1'
+          NumericLiteral
+          ArrayLiteralExpression
+            Identifier: 'undefined'
+            StringLiteral
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'z_a'
+          BindingElement
+            Identifier: ' z_b'
+          BindingElement
+            Identifier: ' z_c'
+        ArrayLiteralExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'z'
+              Identifier: 'getA'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' z'
+              Identifier: 'getB'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' z'
+              Identifier: 'getC'

@@ -1,0 +1,37 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Object'
+  InterfaceDeclaration
+    Identifier: ' Array'
+    TypeParameter
+      Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' String'
+  InterfaceDeclaration
+    Identifier: ' Boolean'
+  InterfaceDeclaration
+    Identifier: ' Number'
+  InterfaceDeclaration
+    Identifier: ' Function'
+  InterfaceDeclaration
+    Identifier: ' RegExp'
+  InterfaceDeclaration
+    Identifier: ' IArguments'
+  InterfaceDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' HTMLElement'
+    PropertySignature
+      Identifier: ' field'
+      StringKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elem'
+        TypeReference
+          Identifier: ' HTMLElement'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' field'
+            StringLiteral

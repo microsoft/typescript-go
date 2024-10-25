@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Block
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' default'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' aa'
+        Identifier: ' default'
+    StringLiteral

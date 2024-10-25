@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: ' a'
+      TypeReference
+        Identifier: ' T'

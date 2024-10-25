@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      NumericLiteral
+    MethodDeclaration
+      NumericLiteral
+      Block

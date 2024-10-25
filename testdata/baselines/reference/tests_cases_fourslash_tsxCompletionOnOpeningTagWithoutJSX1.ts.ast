@@ -1,0 +1,30 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//@Filename: file.tsx
+//// var x = 'something'
+//// var y = </**/;
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' unsorted'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              Identifier: 'completion'
+              Identifier: 'globalThisEntry'
+            SpreadElement
+              PropertyAccessExpression
+                Identifier: 'completion'
+                Identifier: 'globalsVars'
+            StringLiteral
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'undefinedVarEntry'

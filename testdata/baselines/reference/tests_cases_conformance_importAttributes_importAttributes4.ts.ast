@@ -1,0 +1,11 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' f'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    Identifier: ''
+    ExpressionStatement
+      Identifier: ''

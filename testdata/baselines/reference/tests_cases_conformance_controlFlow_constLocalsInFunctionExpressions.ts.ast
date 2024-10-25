@@ -1,0 +1,138 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getStringOrNumber'
+    UnionType
+      StringKeyword
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              Identifier: ' getStringOrNumber'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' f'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              Identifier: ' getStringOrNumber'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            ArrowFunction
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              Identifier: ' getStringOrNumber'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' f'
+                FunctionExpression
+                  Block
+                    ReturnStatement
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              Identifier: ' getStringOrNumber'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              Identifier: ' getStringOrNumber'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' f'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'length'

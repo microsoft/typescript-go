@@ -1,0 +1,88 @@
+SourceFile
+  IfStatement
+    TrueKeyword
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' c1'
+          NumericLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' c2'
+          NumericLiteral
+  WhileStatement
+    TrueKeyword
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' c3'
+          NumericLiteral
+  DoStatement
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' c4'
+          NumericLiteral
+    TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+  WithStatement
+    Identifier: 'obj'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' c5'
+          NumericLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' c6'
+          NumericLiteral
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+    ObjectLiteralExpression
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' c7'
+          NumericLiteral
+  IfStatement
+    TrueKeyword
+    LabeledStatement
+      Identifier: ' 
+    label'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c8'
+            NumericLiteral
+  WhileStatement
+    FalseKeyword
+    LabeledStatement
+      Identifier: '
+    label2'
+      LabeledStatement
+        Identifier: ' label3'
+        LabeledStatement
+          Identifier: ' label4'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' c9'
+                NumericLiteral

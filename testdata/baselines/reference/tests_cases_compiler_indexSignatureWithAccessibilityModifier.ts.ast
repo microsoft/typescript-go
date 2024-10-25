@@ -1,0 +1,17 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        StringKeyword
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    IndexSignature
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        StringKeyword
+      StringKeyword

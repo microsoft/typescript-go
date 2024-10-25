@@ -1,0 +1,1422 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' assertNever'
+    Parameter
+      Identifier: 'x'
+      NeverKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertNumber'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertBoolean'
+    Parameter
+      Identifier: 'x'
+      BooleanKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertString'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertSymbol'
+    Parameter
+      Identifier: 'x'
+      SymbolKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertFunction'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Function'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertObject'
+    Parameter
+      Identifier: 'x'
+      ObjectKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertObjectOrNull'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        ObjectKeyword
+        LiteralType
+          NullKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertUndefined'
+    Parameter
+      Identifier: 'x'
+      UndefinedKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertAll'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Basic'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertStringOrNumber'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' assertBooleanOrObject'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        BooleanKeyword
+        ObjectKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  TypeAliasDeclaration
+    Identifier: ' Basic'
+    UnionType
+      NumberKeyword
+      BooleanKeyword
+      StringKeyword
+      SymbolKeyword
+      ObjectKeyword
+      TypeReference
+        Identifier: ' Function'
+      UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' testUnion'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Basic'
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertFunction'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertObject'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertString'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertUndefined'
+                Identifier: 'x'
+            ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    assertNever'
+          Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' testExtendsUnion'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Basic'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertAll'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertAll'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertString'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertUndefined'
+                Identifier: 'x'
+            ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    assertAll'
+          Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' testAny'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertFunction'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertObject'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertString'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertUndefined'
+                Identifier: 'x'
+            ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    assertAll'
+          Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' a1'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        ObjectKeyword
+        UndefinedKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' testUnionExplicitDefault'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Basic'
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertFunction'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'x'
+            ReturnStatement
+          DefaultClause
+            ExpressionStatement
+              CallExpression
+                Identifier: ' a1'
+                Identifier: 'x'
+            ReturnStatement
+  FunctionDeclaration
+    Identifier: ' testUnionImplicitDefault'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Basic'
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertFunction'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'x'
+            ReturnStatement
+      ReturnStatement
+        CallExpression
+          Identifier: ' a1'
+          Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' testExtendsExplicitDefault'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Basic'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertAll'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'x'
+            ReturnStatement
+          DefaultClause
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertAll'
+                Identifier: 'x'
+            ReturnStatement
+  FunctionDeclaration
+    Identifier: ' testExtendsImplicitDefault'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Basic'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertAll'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'x'
+            ReturnStatement
+      ReturnStatement
+        CallExpression
+          Identifier: ' assertAll'
+          Identifier: 'x'
+  TypeAliasDeclaration
+    Identifier: ' L'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' R'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        StringKeyword
+      PropertySignature
+        Identifier: ' y'
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' exhaustiveChecks'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        StringKeyword
+        TypeReference
+          Identifier: ' L'
+        TypeReference
+          Identifier: ' R'
+    StringKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'toString'
+                NumericLiteral
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              Identifier: ' x'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' x'
+                NumericLiteral
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' exhaustiveChecksGenerics'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' L'
+        TypeReference
+          Identifier: ' R'
+        NumberKeyword
+        StringKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    StringKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'toString'
+                NumericLiteral
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              Identifier: ' x'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                ParenthesizedExpression
+                  AsExpression
+                    Identifier: 'x'
+                    TypeReference
+                      Identifier: ' L'
+                NumericLiteral
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  AsExpression
+                    Identifier: 'x'
+                    TypeReference
+                      Identifier: ' R'
+                Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' multipleGeneric'
+    TypeParameter
+      Identifier: 'X'
+      TypeReference
+        Identifier: ' L'
+    TypeParameter
+      Identifier: ' Y'
+      TypeReference
+        Identifier: ' R'
+    Parameter
+      Identifier: 'xy'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' Y'
+    UnionType
+      TupleType
+        TypeReference
+          Identifier: 'X'
+        StringKeyword
+      TupleType
+        TypeReference
+          Identifier: 'Y'
+        NumberKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' xy'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'xy'
+                CallExpression
+                  Identifier: ' xy'
+                  NumericLiteral
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'xy'
+                PropertyAccessExpression
+                  Identifier: ' xy'
+                  Identifier: 'y'
+          DefaultClause
+            ReturnStatement
+              CallExpression
+                Identifier: ' assertNever'
+                Identifier: 'xy'
+  FunctionDeclaration
+    Identifier: ' multipleGenericFuse'
+    TypeParameter
+      Identifier: 'X'
+      UnionType
+        TypeReference
+          Identifier: ' L'
+        NumberKeyword
+    TypeParameter
+      Identifier: ' Y'
+      UnionType
+        TypeReference
+          Identifier: ' R'
+        NumberKeyword
+    Parameter
+      Identifier: 'xy'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' Y'
+    UnionType
+      TupleType
+        TypeReference
+          Identifier: 'X'
+        NumberKeyword
+      TupleType
+        TypeReference
+          Identifier: 'Y'
+        StringKeyword
+      TupleType
+        ParenthesizedType
+          UnionType
+            TypeReference
+              Identifier: 'X'
+            TypeReference
+              Identifier: ' Y'
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' xy'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'xy'
+                NumericLiteral
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'xy'
+                StringLiteral
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'xy'
+  FunctionDeclaration
+    Identifier: ' multipleGenericExhaustive'
+    TypeParameter
+      Identifier: 'X'
+      TypeReference
+        Identifier: ' L'
+    TypeParameter
+      Identifier: ' Y'
+      TypeReference
+        Identifier: ' R'
+    Parameter
+      Identifier: 'xy'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' Y'
+    UnionType
+      TupleType
+        TypeReference
+          Identifier: 'X'
+        StringKeyword
+      TupleType
+        TypeReference
+          Identifier: 'Y'
+        NumberKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' xy'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'xy'
+                PropertyAccessExpression
+                  Identifier: ' xy'
+                  Identifier: 'y'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'xy'
+                CallExpression
+                  Identifier: ' xy'
+                  NumericLiteral
+  FunctionDeclaration
+    Identifier: ' switchOrdering'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' assertString'
+                Identifier: 'x'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' assertNever'
+                Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' switchOrderingWithDefault'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+    Block
+      FunctionDeclaration
+        Identifier: ' local'
+        Parameter
+          Identifier: 'y'
+          UnionType
+            StringKeyword
+            NumberKeyword
+            BooleanKeyword
+        Block
+          ReturnStatement
+            Identifier: ' x'
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+          CaseClause
+            StringLiteral
+          DefaultClause
+            ReturnStatement
+              CallExpression
+                Identifier: ' local'
+                Identifier: 'x'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' assertNever'
+                Identifier: 'x'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' assertNever'
+                Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' fallThroughTest'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+        ObjectKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assertNumber'
+                Identifier: 'x'
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assertStringOrNumber'
+                Identifier: 'x'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assertObject'
+                Identifier: 'x'
+          CaseClause
+            StringLiteral
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assertBooleanOrObject'
+                Identifier: 'x'
+            BreakStatement
+  FunctionDeclaration
+    Identifier: ' unknownNarrowing'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertFunction'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertObjectOrNull'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertString'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertUndefined'
+                Identifier: 'x'
+            ReturnStatement
+  FunctionDeclaration
+    Identifier: ' keyofNarrowing'
+    TypeParameter
+      Identifier: 'S'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' S'
+        StringKeyword
+    Parameter
+      Identifier: 'k'
+      TypeOperator
+        TypeReference
+          Identifier: ' S'
+    Block
+      FunctionDeclaration
+        Identifier: ' assertKeyofS'
+        Parameter
+          Identifier: 'k1'
+          TypeOperator
+            TypeReference
+              Identifier: ' S'
+        Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' k'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'k'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertKeyofS'
+                Identifier: 'k'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'k'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertKeyofS'
+                Identifier: 'k'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertString'
+                Identifier: 'k'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertKeyofS'
+                Identifier: 'k'
+            ReturnStatement
+  FunctionDeclaration
+    Identifier: ' narrowingNarrows'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeLiteral
+        UndefinedKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertFunction'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' _'
+                  TypeLiteral
+                  Identifier: ' x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertString'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertUndefined'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNever'
+                Identifier: 'x'
+            ReturnStatement
+          DefaultClause
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' _y'
+                  TypeLiteral
+                  Identifier: ' x'
+            ReturnStatement
+  FunctionDeclaration
+    Identifier: ' narrowingNarrows2'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        LiteralType
+          TrueKeyword
+        LiteralType
+          NumericLiteral
+        LiteralType
+          StringLiteral
+        UndefinedKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNever'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNever'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' _'
+                  TypeLiteral
+                  CallExpression
+                    Identifier: ' assertNever'
+                    Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertString'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertUndefined'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNever'
+                Identifier: 'x'
+            ReturnStatement
+          DefaultClause
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' _y'
+                  TypeLiteral
+                  CallExpression
+                    Identifier: ' assertNever'
+                    Identifier: 'x'
+            ReturnStatement
+  FunctionDeclaration
+    Identifier: ' testUnionWithTempalte'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Basic'
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertBoolean'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertFunction'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertObject'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertString'
+                Identifier: 'x'
+            ReturnStatement
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertUndefined'
+                Identifier: 'x'
+            ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    assertNever'
+          Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' fallThroughTestWithTempalte'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+        ObjectKeyword
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' x'
+        CaseBlock
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assertNumber'
+                Identifier: 'x'
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assertStringOrNumber'
+                Identifier: 'x'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assertObject'
+                Identifier: 'x'
+          CaseClause
+            NoSubstitutionTemplateLiteral
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            assertBooleanOrObject'
+                Identifier: 'x'
+            BreakStatement
+  FunctionDeclaration
+    Identifier: ' keyofNarrowingWithTemplate'
+    TypeParameter
+      Identifier: 'S'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' S'
+        StringKeyword
+    Parameter
+      Identifier: 'k'
+      TypeOperator
+        TypeReference
+          Identifier: ' S'
+    Block
+      FunctionDeclaration
+        Identifier: ' assertKeyofS'
+        Parameter
+          Identifier: 'k1'
+          TypeOperator
+            TypeReference
+              Identifier: ' S'
+        Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' k'
+        CaseBlock
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertNumber'
+                Identifier: 'k'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertKeyofS'
+                Identifier: 'k'
+            ReturnStatement
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertSymbol'
+                Identifier: 'k'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertKeyofS'
+                Identifier: 'k'
+            ReturnStatement
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertString'
+                Identifier: 'k'
+            ExpressionStatement
+              CallExpression
+                Identifier: ' assertKeyofS'
+                Identifier: 'k'
+            ReturnStatement
+  FunctionDeclaration
+    Identifier: ' multipleGenericFuseWithBoth'
+    TypeParameter
+      Identifier: 'X'
+      UnionType
+        TypeReference
+          Identifier: ' L'
+        NumberKeyword
+    TypeParameter
+      Identifier: ' Y'
+      UnionType
+        TypeReference
+          Identifier: ' R'
+        NumberKeyword
+    Parameter
+      Identifier: 'xy'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' Y'
+    UnionType
+      TupleType
+        TypeReference
+          Identifier: 'X'
+        NumberKeyword
+      TupleType
+        TypeReference
+          Identifier: 'Y'
+        StringKeyword
+      TupleType
+        ParenthesizedType
+          UnionType
+            TypeReference
+              Identifier: 'X'
+            TypeReference
+              Identifier: ' Y'
+    Block
+      SwitchStatement
+        TypeOfExpression
+          Identifier: ' xy'
+        CaseBlock
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'xy'
+                NumericLiteral
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'xy'
+                StringLiteral
+          CaseClause
+            NoSubstitutionTemplateLiteral
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'xy'

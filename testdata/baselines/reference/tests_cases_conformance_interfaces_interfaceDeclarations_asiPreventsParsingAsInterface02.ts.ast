@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'interface'
+      NumberKeyword
+    Parameter
+      Identifier: ' I'
+      StringKeyword
+    Block
+      ExpressionStatement
+        Identifier: '
+    interface'
+      ExpressionStatement
+        Identifier: '   // This should be the identifier 'interface'
+    I'
+      Block

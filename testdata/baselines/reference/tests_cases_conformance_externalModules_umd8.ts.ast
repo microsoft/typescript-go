@@ -1,0 +1,49 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Thing'
+    MethodDeclaration
+      Identifier: '
+	foo'
+      NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Thing'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' SubThing'
+  ExportAssignment
+    Identifier: ' Thing'
+  NamespaceExportDeclaration
+    Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ff'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Foo'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // OK in type position
+y'
+        Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          QualifiedName
+            Identifier: ' Foo'
+            Identifier: 'SubThing'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+        Identifier: ' Foo'

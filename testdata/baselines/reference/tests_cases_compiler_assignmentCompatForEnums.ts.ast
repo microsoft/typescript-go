@@ -1,0 +1,38 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' TokenType'
+    EnumMember
+      Identifier: ' One'
+    EnumMember
+      Identifier: ' Two'
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' list'
+        ObjectLiteralExpression
+  FunctionDeclaration
+    Identifier: ' returnType'
+    TypeReference
+      Identifier: ' TokenType'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              Identifier: ' returnType'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' TokenType'
+            ElementAccessExpression
+              Identifier: ' list'
+              StringLiteral

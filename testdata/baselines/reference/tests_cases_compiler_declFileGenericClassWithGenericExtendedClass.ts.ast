@@ -1,0 +1,46 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IFoo'
+    PropertySignature
+      Identifier: '
+    baz'
+      TypeReference
+        Identifier: ' Baz'
+  ClassDeclaration
+    Identifier: ' Base'
+    TypeParameter
+      Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' Derived'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' IBar'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    derived'
+      TypeReference
+        Identifier: ' Derived'
+        TypeReference
+          Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' Baz'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IBar'
+        TypeReference
+          Identifier: 'Baz'
+    PropertyDeclaration
+      Identifier: '
+    derived'
+      TypeReference
+        Identifier: ' Derived'
+        TypeReference
+          Identifier: 'Baz'

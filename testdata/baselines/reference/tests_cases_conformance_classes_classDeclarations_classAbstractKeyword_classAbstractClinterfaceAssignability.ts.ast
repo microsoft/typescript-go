@@ -1,0 +1,63 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' IConstructor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    
+    y'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    prototype'
+      TypeReference
+        Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' I'
+        TypeReference
+          Identifier: ' IConstructor'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' AA'
+        TypeQuery
+          Identifier: ' A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+AA'
+      EqualsToken
+      Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' AAA'
+        TypeQuery
+          Identifier: ' I'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+AAA'
+      EqualsToken
+      Identifier: ' A'

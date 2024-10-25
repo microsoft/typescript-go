@@ -1,0 +1,161 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Editor'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' List'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' next'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'T'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' prev'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'T'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' isHead'
+            BooleanKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' data'
+            TypeReference
+              Identifier: ' T'
+          Block
+        MethodDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' MakeHead'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'T'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' entry'
+                  TypeReference
+                    Identifier: ' List'
+                    TypeReference
+                      Identifier: 'T'
+                  NewExpression
+                    Identifier: ' List'
+                    TypeReference
+                      Identifier: 'T'
+                    TrueKeyword
+                    NullKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            entry'
+                  Identifier: 'prev'
+                EqualsToken
+                Identifier: ' entry'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            entry'
+                  Identifier: 'next'
+                EqualsToken
+                Identifier: ' entry'
+            ReturnStatement
+              Identifier: ' entry'
+        MethodDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' MakeHead2'
+          TypeParameter
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'T'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' entry'
+                  TypeReference
+                    Identifier: ' List'
+                    TypeReference
+                      Identifier: 'T'
+                  NewExpression
+                    Identifier: ' List'
+                    TypeReference
+                      Identifier: 'T'
+                    TrueKeyword
+                    NullKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            entry'
+                  Identifier: 'prev'
+                EqualsToken
+                Identifier: ' entry'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            entry'
+                  Identifier: 'next'
+                EqualsToken
+                Identifier: ' entry'
+            ReturnStatement
+              Identifier: ' entry'
+        MethodDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' MakeHead3'
+          TypeParameter
+            Identifier: 'U'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'U'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' entry'
+                  TypeReference
+                    Identifier: ' List'
+                    TypeReference
+                      Identifier: 'U'
+                  NewExpression
+                    Identifier: ' List'
+                    TypeReference
+                      Identifier: 'U'
+                    TrueKeyword
+                    NullKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            entry'
+                  Identifier: 'prev'
+                EqualsToken
+                Identifier: ' entry'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            entry'
+                  Identifier: 'next'
+                EqualsToken
+                Identifier: ' entry'
+            ReturnStatement
+              Identifier: ' entry'

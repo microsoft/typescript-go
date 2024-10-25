@@ -1,0 +1,80 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'y'
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          LessThanEqualsToken
+          PostfixUnaryExpression
+            Identifier: ' x'
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' y'
+            LessThanEqualsToken
+            PostfixUnaryExpression
+              Identifier: ' x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          LessThanEqualsToken
+          PostfixUnaryExpression
+            Identifier: ' x'
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' y'
+            LessThanEqualsToken
+            PostfixUnaryExpression
+              Identifier: ' x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          LessThanEqualsToken
+          PrefixUnaryExpression
+            Identifier: 'x'
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' y'
+            LessThanEqualsToken
+            PrefixUnaryExpression
+              Identifier: 'x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          LessThanEqualsToken
+          PrefixUnaryExpression
+            Identifier: 'x'
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' y'
+            LessThanEqualsToken
+            PrefixUnaryExpression
+              Identifier: 'x'
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+
+    x'
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    x'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'x'
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: 'x'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' x'

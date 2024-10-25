@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts"/>
+
+////namespace bar { }
+////import bar = bar/**/;
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      NoSubstitutionTemplateLiteral

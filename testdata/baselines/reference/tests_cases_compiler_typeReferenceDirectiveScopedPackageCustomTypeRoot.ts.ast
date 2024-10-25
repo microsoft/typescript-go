@@ -1,0 +1,57 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typesCache'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mangledTypes'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nodeModulesCache'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mangledNodeModules'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' atTypesCache'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mangledAtTypesCache'
+        NumberKeyword
+  ExpressionStatement
+    Identifier: '
+
+// @Filename: /a.ts
+typesCache'
+  ExpressionStatement
+    Identifier: '
+mangledAtTypesCache'
+  ExpressionStatement
+    Identifier: '
+nodeModulesCache'
+  ExpressionStatement
+    Identifier: '
+mangledNodeModules'
+  ExpressionStatement
+    Identifier: '
+atTypesCache'
+  ExpressionStatement
+    Identifier: '
+mangledAtTypesCache'

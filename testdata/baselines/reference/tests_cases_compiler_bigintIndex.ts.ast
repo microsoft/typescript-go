@@ -1,0 +1,134 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' BigIntIndex'
+    TypeParameter
+      Identifier: 'E'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        BigIntKeyword
+      TypeReference
+        Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+        ElementAccessExpression
+          Identifier: ' arr'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+num'
+      EqualsToken
+      ElementAccessExpression
+        Identifier: ' arr'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+num'
+      EqualsToken
+      ElementAccessExpression
+        Identifier: ' arr'
+        BigintLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // should error
+num'
+      EqualsToken
+      ElementAccessExpression
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+        BigintLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' key'
+        TypeOperator
+          AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // should be type "string | number | symbol"
+key'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+key'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+key'
+      EqualsToken
+      CallExpression
+        Identifier: ' Symbol'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+key'
+      EqualsToken
+      BigintLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bigNum'
+        BigIntKeyword
+        BigintLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray'
+        NewExpression
+          Identifier: ' Uint8Array'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+typedArray'
+        Identifier: 'bigNum'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: ' // should error
+typedArray'
+        CallExpression
+          Identifier: 'String'
+          Identifier: 'bigNum'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+typedArray'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+typedArray'
+        NumericLiteral
+      EqualsToken
+      NumericLiteral

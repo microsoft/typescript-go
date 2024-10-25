@@ -1,0 +1,2809 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    combinePaths'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    forEachAncestorDirectory'
+        ImportSpecifier
+          Identifier: '
+    forEachKey'
+        ImportSpecifier
+          Identifier: '
+    getBaseFileName'
+        ImportSpecifier
+          Identifier: '
+    getDirectoryPath'
+        ImportSpecifier
+          Identifier: '
+    getProperty'
+        ImportSpecifier
+          Identifier: '
+    hasProperty'
+        ImportSpecifier
+          Identifier: '
+    JsTyping'
+        ImportSpecifier
+          Identifier: '
+    mangleScopedPackageName'
+        ImportSpecifier
+          Identifier: '
+    mapDefined'
+        ImportSpecifier
+          Identifier: '
+    MapLike'
+        ImportSpecifier
+          Identifier: '
+    ModuleResolutionKind'
+        ImportSpecifier
+          Identifier: '
+    noop'
+        ImportSpecifier
+          Identifier: '
+    Path'
+        ImportSpecifier
+          Identifier: '
+    resolveModuleName'
+        ImportSpecifier
+          Identifier: '
+    Version'
+        ImportSpecifier
+          Identifier: '
+    version'
+        ImportSpecifier
+          Identifier: '
+    versionMajorMinor'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ActionPackageInstalled'
+        ImportSpecifier
+          Identifier: '
+    ActionSet'
+        ImportSpecifier
+          Identifier: '
+    ActionWatchTypingLocations'
+        ImportSpecifier
+          Identifier: '
+    BeginInstallTypes'
+        ImportSpecifier
+          Identifier: '
+    CloseProject'
+        ImportSpecifier
+          Identifier: '
+    DiscoverTypings'
+        ImportSpecifier
+          Identifier: '
+    EndInstallTypes'
+        ImportSpecifier
+          Identifier: '
+    EventBeginInstallTypes'
+        ImportSpecifier
+          Identifier: '
+    EventEndInstallTypes'
+        ImportSpecifier
+          Identifier: '
+    EventTypesRegistry'
+        ImportSpecifier
+          Identifier: '
+    InstallPackageRequest'
+        ImportSpecifier
+          Identifier: '
+    InstallTypingHost'
+        ImportSpecifier
+          Identifier: '
+    InvalidateCachedTypings'
+        ImportSpecifier
+          Identifier: '
+    PackageInstalledResponse'
+        ImportSpecifier
+          Identifier: '
+    SetTypings'
+        ImportSpecifier
+          Identifier: '
+    stringifyIndented'
+        ImportSpecifier
+          Identifier: '
+    TypesRegistryResponse'
+        ImportSpecifier
+          Identifier: '
+    TypingInstallerRequestUnion'
+        ImportSpecifier
+          Identifier: '
+    WatchTypingLocations'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' NpmConfig'
+    PropertySignature
+      Identifier: '
+    devDependencies'
+      TypeReference
+        Identifier: ' MapLike'
+        AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' NpmLock'
+    PropertySignature
+      Identifier: '
+    dependencies'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'packageName'
+            StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' version'
+              StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Log'
+    MethodSignature
+      Identifier: '
+    isEnabled'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    writeLine'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullLog'
+        TypeReference
+          Identifier: ' Log'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    isEnabled'
+            ArrowFunction
+              EqualsGreaterThanToken
+              FalseKeyword
+          PropertyAssignment
+            Identifier: '
+    writeLine'
+            Identifier: ' noop'
+  FunctionDeclaration
+    Identifier: ' typingToFileName'
+    Parameter
+      Identifier: 'cachePath'
+      StringKeyword
+    Parameter
+      Identifier: ' packageName'
+      StringKeyword
+    Parameter
+      Identifier: ' installTypingHost'
+      TypeReference
+        Identifier: ' InstallTypingHost'
+    Parameter
+      Identifier: ' log'
+      TypeReference
+        Identifier: ' Log'
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+    Block
+      TryStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' resolveModuleName'
+                  Identifier: 'packageName'
+                  CallExpression
+                    Identifier: ' combinePaths'
+                    Identifier: 'cachePath'
+                    StringLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' moduleResolution'
+                      PropertyAccessExpression
+                        Identifier: ' ModuleResolutionKind'
+                        Identifier: 'Node10'
+                  Identifier: ' installTypingHost'
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' result'
+                Identifier: 'resolvedModule'
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' result'
+                  Identifier: 'resolvedModule'
+                Identifier: 'resolvedFileName'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'log'
+                  Identifier: 'isEnabled'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            log'
+                      Identifier: 'writeLine'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'packageName'
+                        TemplateMiddle
+                      TemplateSpan
+                        Identifier: 'cachePath'
+                        TemplateMiddle
+                      TemplateSpan
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            AsExpression
+                              Identifier: 'e'
+                              TypeReference
+                                Identifier: ' Error'
+                          Identifier: 'message'
+                        TemplateTail
+            ReturnStatement
+              Identifier: ' undefined'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' installNpmPackages'
+    Parameter
+      Identifier: 'npmPath'
+      StringKeyword
+    Parameter
+      Identifier: ' tsVersion'
+      StringKeyword
+    Parameter
+      Identifier: ' packageNames'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' install'
+      FunctionType
+        Parameter
+          Identifier: 'command'
+          StringKeyword
+        BooleanKeyword
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' hasError'
+            FalseKeyword
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' remaining'
+            PropertyAccessExpression
+              Identifier: ' packageNames'
+              Identifier: 'length'
+        BinaryExpression
+          Identifier: ' remaining'
+          GreaterThanToken
+          NumericLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' getNpmCommandForInstallation'
+                  Identifier: 'npmPath'
+                  Identifier: ' tsVersion'
+                  Identifier: ' packageNames'
+                  Identifier: ' remaining'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        remaining'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' result'
+                Identifier: 'remaining'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        hasError'
+              EqualsToken
+              BinaryExpression
+                CallExpression
+                  Identifier: ' install'
+                  PropertyAccessExpression
+                    Identifier: 'result'
+                    Identifier: 'command'
+                BarBarToken
+                Identifier: ' hasError'
+      ReturnStatement
+        Identifier: ' hasError'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getNpmCommandForInstallation'
+    Parameter
+      Identifier: 'npmPath'
+      StringKeyword
+    Parameter
+      Identifier: ' tsVersion'
+      StringKeyword
+    Parameter
+      Identifier: ' packageNames'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' remaining'
+      NumberKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    command'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    remaining'
+        NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sliceStart'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' packageNames'
+                Identifier: 'length'
+              MinusToken
+              Identifier: ' remaining'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' command'
+            StringKeyword
+          VariableDeclaration
+            Identifier: ' toSlice'
+            Identifier: ' remaining'
+      WhileStatement
+        TrueKeyword
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        command'
+              EqualsToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'npmPath'
+                  TemplateMiddle
+                TemplateSpan
+                  CallExpression
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        ConditionalExpression
+                          BinaryExpression
+                            Identifier: 'toSlice'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' packageNames'
+                              Identifier: 'length'
+                          QuestionToken
+                          Identifier: ' packageNames'
+                          ColonToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' packageNames'
+                              Identifier: 'slice'
+                            Identifier: 'sliceStart'
+                            BinaryExpression
+                              Identifier: ' sliceStart'
+                              PlusToken
+                              Identifier: ' toSlice'
+                      Identifier: 'join'
+                    StringLiteral
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'tsVersion'
+                  TemplateTail
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'command'
+                Identifier: 'length'
+              LessThanToken
+              NumericLiteral
+            Block
+              BreakStatement
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+        toSlice'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' toSlice'
+                MinusToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Math'
+                    Identifier: 'floor'
+                  BinaryExpression
+                    Identifier: 'toSlice'
+                    SlashToken
+                    NumericLiteral
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' command'
+          PropertyAssignment
+            Identifier: ' remaining'
+            BinaryExpression
+              Identifier: ' remaining'
+              MinusToken
+              Identifier: ' toSlice'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RequestCompletedAction'
+    FunctionType
+      Parameter
+        Identifier: 'success'
+        BooleanKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PendingRequest'
+    PropertySignature
+      Identifier: '
+    requestId'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    packageNames'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    cwd'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    onRequestCompleted'
+      TypeReference
+        Identifier: ' RequestCompletedAction'
+  ClassDeclaration
+    ExportKeyword
+    AbstractKeyword
+    Identifier: ' TypingsInstaller'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' packageNameToTypingLocation'
+      NewExpression
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          QualifiedName
+            Identifier: ' JsTyping'
+            Identifier: 'CachedTyping'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' missingTypingsSet'
+      NewExpression
+        Identifier: ' Set'
+        StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' knownCachesSet'
+      NewExpression
+        Identifier: ' Set'
+        StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' projectWatchers'
+      NewExpression
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' Set'
+          StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' safeList'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' JsTyping'
+            Identifier: 'SafeList'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' pendingRunRequests'
+      ArrayType
+        TypeReference
+          Identifier: ' PendingRequest'
+      ArrayLiteralExpression
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' installRunCount'
+      NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' inFlightRequestCount'
+      NumericLiteral
+    PropertyDeclaration
+      AbstractKeyword
+      ReadonlyKeyword
+      Identifier: ' typesRegistry'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' MapLike'
+          StringKeyword
+    Constructor
+      Parameter
+        ProtectedKeyword
+        ReadonlyKeyword
+        Identifier: ' installTypingHost'
+        TypeReference
+          Identifier: ' InstallTypingHost'
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' globalCachePath'
+        StringKeyword
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' safeListPath'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' typesMapLocation'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' throttleLimit'
+        NumberKeyword
+      Parameter
+        ProtectedKeyword
+        ReadonlyKeyword
+        Identifier: ' log'
+        TypeReference
+          Identifier: ' Log'
+        Identifier: ' nullLog'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' isLoggingEnabled'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'isEnabled'
+        IfStatement
+          Identifier: 'isLoggingEnabled'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'writeLine'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'globalCachePath'
+                    TemplateMiddle
+                  TemplateSpan
+                    Identifier: 'safeListPath'
+                    TemplateMiddle
+                  TemplateSpan
+                    Identifier: 'typesMapLocation'
+                    TemplateTail
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'processCacheLocation'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'globalCachePath'
+    MethodDeclaration
+      Identifier: '
+
+    /** @internal */
+    handleRequest'
+      Parameter
+        Identifier: 'req'
+        TypeReference
+          Identifier: ' TypingInstallerRequestUnion'
+      VoidKeyword
+      Block
+        SwitchStatement
+          PropertyAccessExpression
+            Identifier: 'req'
+            Identifier: 'kind'
+          CaseBlock
+            CaseClause
+              StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'install'
+                  Identifier: 'req'
+              BreakStatement
+            CaseClause
+              StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'closeProject'
+                  Identifier: 'req'
+              BreakStatement
+            CaseClause
+              StringLiteral
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' typesRegistry'
+                      TypeLiteral
+                        IndexSignature
+                          Parameter
+                            Identifier: 'key'
+                            StringKeyword
+                          TypeReference
+                            Identifier: ' MapLike'
+                            StringKeyword
+                      ObjectLiteralExpression
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'typesRegistry'
+                      Identifier: 'forEach'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'value'
+                      Parameter
+                        Identifier: ' key'
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            ElementAccessExpression
+                              Identifier: '
+                    typesRegistry'
+                              Identifier: 'key'
+                            EqualsToken
+                            Identifier: ' value'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' response'
+                      TypeReference
+                        Identifier: ' TypesRegistryResponse'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' kind'
+                          Identifier: ' EventTypesRegistry'
+                        ShorthandPropertyAssignment
+                          Identifier: ' typesRegistry'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'sendResponse'
+                    Identifier: 'response'
+                BreakStatement
+            CaseClause
+              StringLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'installPackage'
+                    Identifier: 'req'
+                BreakStatement
+            DefaultClause
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                Debug'
+                    Identifier: 'assertNever'
+                  Identifier: 'req'
+    MethodDeclaration
+      Identifier: '
+
+    closeProject'
+      Parameter
+        Identifier: 'req'
+        TypeReference
+          Identifier: ' CloseProject'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'closeWatchers'
+            PropertyAccessExpression
+              Identifier: 'req'
+              Identifier: 'projectName'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' closeWatchers'
+      Parameter
+        Identifier: 'projectName'
+        StringKeyword
+      VoidKeyword
+      Block
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'log'
+              Identifier: 'isEnabled'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'writeLine'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'projectName'
+                    TemplateTail
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' watchers'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'projectWatchers'
+                  Identifier: 'get'
+                Identifier: 'projectName'
+        IfStatement
+          PrefixUnaryExpression
+            Identifier: 'watchers'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'isEnabled'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'log'
+                      Identifier: 'writeLine'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'projectName'
+                        TemplateTail
+            ReturnStatement
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'projectWatchers'
+              Identifier: 'delete'
+            Identifier: 'projectName'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'sendResponse'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' kind'
+                Identifier: ' ActionWatchTypingLocations'
+              ShorthandPropertyAssignment
+                Identifier: ' projectName'
+              PropertyAssignment
+                Identifier: ' files'
+                ArrayLiteralExpression
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'log'
+              Identifier: 'isEnabled'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'writeLine'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'projectName'
+                    TemplateTail
+    MethodDeclaration
+      Identifier: '
+
+    install'
+      Parameter
+        Identifier: 'req'
+        TypeReference
+          Identifier: ' DiscoverTypings'
+      VoidKeyword
+      Block
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'log'
+              Identifier: 'isEnabled'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'writeLine'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    CallExpression
+                      Identifier: 'stringifyIndented'
+                      Identifier: 'req'
+                    TemplateTail
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'req'
+            Identifier: 'cachePath'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'isEnabled'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'log'
+                      Identifier: 'writeLine'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        PropertyAccessExpression
+                          Identifier: 'req'
+                          Identifier: 'cachePath'
+                        TemplateTail
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'processCacheLocation'
+                PropertyAccessExpression
+                  Identifier: 'req'
+                  Identifier: 'cachePath'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'safeList'
+            EqualsEqualsEqualsToken
+            Identifier: ' undefined'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'initializeSafeList'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' discoverTypingsResult'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' JsTyping'
+                  Identifier: 'discoverTypings'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'installTypingHost'
+                ConditionalExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'log'
+                      Identifier: 'isEnabled'
+                  QuestionToken
+                  ParenthesizedExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: 's'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'log'
+                          Identifier: 'writeLine'
+                        Identifier: 's'
+                  ColonToken
+                  Identifier: ' undefined'
+                PropertyAccessExpression
+                  Identifier: '
+            req'
+                  Identifier: 'fileNames'
+                PropertyAccessExpression
+                  Identifier: '
+            req'
+                  Identifier: 'projectRootPath'
+                NonNullExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'safeList'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'packageNameToTypingLocation'
+                PropertyAccessExpression
+                  Identifier: '
+            req'
+                  Identifier: 'typeAcquisition'
+                PropertyAccessExpression
+                  Identifier: '
+            req'
+                  Identifier: 'unresolvedImports'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'typesRegistry'
+                PropertyAccessExpression
+                  Identifier: '
+            req'
+                  Identifier: 'compilerOptions'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'watchFiles'
+            PropertyAccessExpression
+              Identifier: 'req'
+              Identifier: 'projectName'
+            PropertyAccessExpression
+              Identifier: ' discoverTypingsResult'
+              Identifier: 'filesToWatch'
+        IfStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'discoverTypingsResult'
+              Identifier: 'newTypingNames'
+            Identifier: 'length'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'installTypings'
+                Identifier: 'req'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' req'
+                    Identifier: 'cachePath'
+                  BarBarToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'globalCachePath'
+                PropertyAccessExpression
+                  Identifier: ' discoverTypingsResult'
+                  Identifier: 'cachedTypingPaths'
+                PropertyAccessExpression
+                  Identifier: ' discoverTypingsResult'
+                  Identifier: 'newTypingNames'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'sendResponse'
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'createSetTypings'
+                  Identifier: 'req'
+                  PropertyAccessExpression
+                    Identifier: ' discoverTypingsResult'
+                    Identifier: 'cachedTypingPaths'
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'isEnabled'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'log'
+                      Identifier: 'writeLine'
+                    NoSubstitutionTemplateLiteral
+    MethodDeclaration
+      Identifier: '
+
+    /** @internal */
+    installPackage'
+      Parameter
+        Identifier: 'req'
+        TypeReference
+          Identifier: ' InstallPackageRequest'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' fileName'
+                BindingElement
+                  Identifier: ' packageName'
+                BindingElement
+                  Identifier: ' projectName'
+                BindingElement
+                  Identifier: ' projectRootPath'
+                BindingElement
+                  Identifier: ' id'
+              Identifier: ' req'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' cwd'
+              BinaryExpression
+                CallExpression
+                  Identifier: ' forEachAncestorDirectory'
+                  CallExpression
+                    Identifier: 'getDirectoryPath'
+                    Identifier: 'fileName'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' directory'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'installTypingHost'
+                            Identifier: 'fileExists'
+                          CallExpression
+                            Identifier: 'combinePaths'
+                            Identifier: 'directory'
+                            StringLiteral
+                        Block
+                          ReturnStatement
+                            Identifier: ' directory'
+                BarBarToken
+                Identifier: ' projectRootPath'
+        IfStatement
+          Identifier: 'cwd'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'installWorker'
+                PrefixUnaryExpression
+                  NumericLiteral
+                ArrayLiteralExpression
+                  Identifier: 'packageName'
+                Identifier: ' cwd'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' success'
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' message'
+                          ConditionalExpression
+                            Identifier: ' success'
+                            QuestionToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'packageName'
+                                TemplateTail
+                            ColonToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'packageName'
+                                TemplateTail
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' response'
+                          TypeReference
+                            Identifier: ' PackageInstalledResponse'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    kind'
+                              Identifier: ' ActionPackageInstalled'
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                    projectName'
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                    id'
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                    success'
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                    message'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'sendResponse'
+                        Identifier: 'response'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' response'
+                  TypeReference
+                    Identifier: ' PackageInstalledResponse'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                kind'
+                      Identifier: ' ActionPackageInstalled'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                projectName'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                id'
+                    PropertyAssignment
+                      Identifier: '
+                success'
+                      FalseKeyword
+                    PropertyAssignment
+                      Identifier: '
+                message'
+                      StringLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'sendResponse'
+                Identifier: 'response'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' initializeSafeList'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'typesMapLocation'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' safeListFromMap'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' JsTyping'
+                      Identifier: 'loadTypesMap'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'installTypingHost'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'typesMapLocation'
+            IfStatement
+              Identifier: 'safeListFromMap'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'log'
+                      Identifier: 'writeLine'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'typesMapLocation'
+                        TemplateTail
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'safeList'
+                    EqualsToken
+                    Identifier: ' safeListFromMap'
+                ReturnStatement
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'writeLine'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'typesMapLocation'
+                    TemplateTail
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'safeList'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' JsTyping'
+                Identifier: 'loadSafeList'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'installTypingHost'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'safeListPath'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' processCacheLocation'
+      Parameter
+        Identifier: 'cacheLocation'
+        StringKeyword
+      Block
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'log'
+              Identifier: 'isEnabled'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'writeLine'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'cacheLocation'
+                    TemplateTail
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'knownCachesSet'
+              Identifier: 'has'
+            Identifier: 'cacheLocation'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'isEnabled'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'log'
+                      Identifier: 'writeLine'
+                    NoSubstitutionTemplateLiteral
+            ReturnStatement
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' packageJson'
+              CallExpression
+                Identifier: ' combinePaths'
+                Identifier: 'cacheLocation'
+                StringLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' packageLockJson'
+              CallExpression
+                Identifier: ' combinePaths'
+                Identifier: 'cacheLocation'
+                StringLiteral
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'log'
+              Identifier: 'isEnabled'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'writeLine'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'packageJson'
+                    TemplateTail
+        IfStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'installTypingHost'
+                Identifier: 'fileExists'
+              Identifier: 'packageJson'
+            AmpersandAmpersandToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'installTypingHost'
+                Identifier: 'fileExists'
+              Identifier: 'packageLockJson'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' npmConfig'
+                  AsExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' JSON'
+                        Identifier: 'parse'
+                      NonNullExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'installTypingHost'
+                            Identifier: 'readFile'
+                          Identifier: 'packageJson'
+                    TypeReference
+                      Identifier: ' NpmConfig'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' npmLock'
+                  AsExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' JSON'
+                        Identifier: 'parse'
+                      NonNullExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'installTypingHost'
+                            Identifier: 'readFile'
+                          Identifier: 'packageLockJson'
+                    TypeReference
+                      Identifier: ' NpmLock'
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'isEnabled'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'log'
+                      Identifier: 'writeLine'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'packageJson'
+                        TemplateMiddle
+                      TemplateSpan
+                        CallExpression
+                          Identifier: 'stringifyIndented'
+                          Identifier: 'npmConfig'
+                        TemplateTail
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'log'
+                      Identifier: 'writeLine'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'packageLockJson'
+                        TemplateMiddle
+                      TemplateSpan
+                        CallExpression
+                          Identifier: 'stringifyIndented'
+                          Identifier: 'npmLock'
+                        TemplateTail
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'npmConfig'
+                  Identifier: 'devDependencies'
+                AmpersandAmpersandToken
+                PropertyAccessExpression
+                  Identifier: ' npmLock'
+                  Identifier: 'dependencies'
+              Block
+                ForInStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' key'
+                  PropertyAccessExpression
+                    Identifier: ' npmConfig'
+                    Identifier: 'devDependencies'
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'hasProperty'
+                          PropertyAccessExpression
+                            Identifier: 'npmLock'
+                            Identifier: 'dependencies'
+                          Identifier: ' key'
+                      Block
+                        ContinueStatement
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' packageName'
+                          CallExpression
+                            Identifier: ' getBaseFileName'
+                            Identifier: 'key'
+                    IfStatement
+                      PrefixUnaryExpression
+                        Identifier: 'packageName'
+                      Block
+                        ContinueStatement
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' typingFile'
+                          CallExpression
+                            Identifier: ' typingToFileName'
+                            Identifier: 'cacheLocation'
+                            Identifier: ' packageName'
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'installTypingHost'
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'log'
+                    IfStatement
+                      PrefixUnaryExpression
+                        Identifier: 'typingFile'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'missingTypingsSet'
+                              Identifier: 'add'
+                            Identifier: 'packageName'
+                        ContinueStatement
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' existingTypingFile'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'packageNameToTypingLocation'
+                              Identifier: 'get'
+                            Identifier: 'packageName'
+                    IfStatement
+                      Identifier: 'existingTypingFile'
+                      Block
+                        IfStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'existingTypingFile'
+                              Identifier: 'typingLocation'
+                            EqualsEqualsEqualsToken
+                            Identifier: ' typingFile'
+                          Block
+                            ContinueStatement
+                        IfStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'log'
+                              Identifier: 'isEnabled'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    ThisKeyword
+                                    Identifier: 'log'
+                                  Identifier: 'writeLine'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'packageName'
+                                    TemplateMiddle
+                                  TemplateSpan
+                                    Identifier: 'typingFile'
+                                    TemplateMiddle
+                                  TemplateSpan
+                                    Identifier: 'existingTypingFile'
+                                    TemplateTail
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'log'
+                          Identifier: 'isEnabled'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'log'
+                              Identifier: 'writeLine'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'packageName'
+                                TemplateMiddle
+                              TemplateSpan
+                                Identifier: 'typingFile'
+                                TemplateTail
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' info'
+                          CallExpression
+                            Identifier: ' getProperty'
+                            PropertyAccessExpression
+                              Identifier: 'npmLock'
+                              Identifier: 'dependencies'
+                            Identifier: ' key'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' version'
+                          BinaryExpression
+                            Identifier: ' info'
+                            AmpersandAmpersandToken
+                            PropertyAccessExpression
+                              Identifier: ' info'
+                              Identifier: 'version'
+                    IfStatement
+                      PrefixUnaryExpression
+                        Identifier: 'version'
+                      Block
+                        ContinueStatement
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' newTyping'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' JsTyping'
+                              Identifier: 'CachedTyping'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' typingLocation'
+                              Identifier: ' typingFile'
+                            PropertyAssignment
+                              Identifier: ' version'
+                              NewExpression
+                                Identifier: ' Version'
+                                Identifier: 'version'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'packageNameToTypingLocation'
+                          Identifier: 'set'
+                        Identifier: 'packageName'
+                        Identifier: ' newTyping'
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'log'
+              Identifier: 'isEnabled'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'writeLine'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'cacheLocation'
+                    TemplateTail
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'knownCachesSet'
+              Identifier: 'add'
+            Identifier: 'cacheLocation'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' filterTypings'
+      Parameter
+        Identifier: 'typingsToInstall'
+        TypeOperator
+          ArrayType
+            StringKeyword
+      TypeOperator
+        ArrayType
+          StringKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            Identifier: ' mapDefined'
+            Identifier: 'typingsToInstall'
+            ArrowFunction
+              Parameter
+                Identifier: ' typing'
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' typingKey'
+                      CallExpression
+                        Identifier: ' mangleScopedPackageName'
+                        Identifier: 'typing'
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'missingTypingsSet'
+                      Identifier: 'has'
+                    Identifier: 'typingKey'
+                  Block
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'log'
+                          Identifier: 'isEnabled'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'log'
+                            Identifier: 'writeLine'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'typing'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'typingKey'
+                              TemplateTail
+                    ReturnStatement
+                      Identifier: ' undefined'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' validationResult'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' JsTyping'
+                          Identifier: 'validatePackageName'
+                        Identifier: 'typing'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'validationResult'
+                    ExclamationEqualsEqualsToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' JsTyping'
+                        Identifier: 'NameValidationResult'
+                      Identifier: 'Ok'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'missingTypingsSet'
+                          Identifier: 'add'
+                        Identifier: 'typingKey'
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'log'
+                          Identifier: 'isEnabled'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'log'
+                            Identifier: 'writeLine'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'JsTyping'
+                              Identifier: 'renderPackageNameValidationFailure'
+                            Identifier: 'validationResult'
+                            Identifier: ' typing'
+                    ReturnStatement
+                      Identifier: ' undefined'
+                IfStatement
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'typesRegistry'
+                        Identifier: 'has'
+                      Identifier: 'typingKey'
+                  Block
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'log'
+                          Identifier: 'isEnabled'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'log'
+                            Identifier: 'writeLine'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'typing'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'typingKey'
+                              TemplateTail
+                    ReturnStatement
+                      Identifier: ' undefined'
+                IfStatement
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'packageNameToTypingLocation'
+                        Identifier: 'get'
+                      Identifier: 'typingKey'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' JsTyping'
+                        Identifier: 'isTypingUpToDate'
+                      NonNullExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'packageNameToTypingLocation'
+                            Identifier: 'get'
+                          Identifier: 'typingKey'
+                      NonNullExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'typesRegistry'
+                            Identifier: 'get'
+                          Identifier: 'typingKey'
+                  Block
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'log'
+                          Identifier: 'isEnabled'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'log'
+                            Identifier: 'writeLine'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'typing'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'typingKey'
+                              TemplateTail
+                    ReturnStatement
+                      Identifier: ' undefined'
+                ReturnStatement
+                  Identifier: ' typingKey'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' ensurePackageDirectoryExists'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' npmConfigPath'
+              CallExpression
+                Identifier: ' combinePaths'
+                Identifier: 'directory'
+                StringLiteral
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'log'
+              Identifier: 'isEnabled'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'writeLine'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'npmConfigPath'
+                    TemplateTail
+        IfStatement
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'installTypingHost'
+                Identifier: 'fileExists'
+              Identifier: 'npmConfigPath'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'isEnabled'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'log'
+                      Identifier: 'writeLine'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'npmConfigPath'
+                        TemplateTail
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'ensureDirectoryExists'
+                Identifier: 'directory'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'installTypingHost'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'installTypingHost'
+                  Identifier: 'writeFile'
+                Identifier: 'npmConfigPath'
+                StringLiteral
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' installTypings'
+      Parameter
+        Identifier: 'req'
+        TypeReference
+          Identifier: ' DiscoverTypings'
+      Parameter
+        Identifier: ' cachePath'
+        StringKeyword
+      Parameter
+        Identifier: ' currentlyCachedTypings'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' typingsToInstall'
+        ArrayType
+          StringKeyword
+      Block
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'log'
+              Identifier: 'isEnabled'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'writeLine'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'JSON'
+                        Identifier: 'stringify'
+                      Identifier: 'typingsToInstall'
+                    TemplateTail
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' filteredTypings'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'filterTypings'
+                Identifier: 'typingsToInstall'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'filteredTypings'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'log'
+                  Identifier: 'isEnabled'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'log'
+                      Identifier: 'writeLine'
+                    NoSubstitutionTemplateLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'sendResponse'
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'createSetTypings'
+                  Identifier: 'req'
+                  Identifier: ' currentlyCachedTypings'
+            ReturnStatement
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ensurePackageDirectoryExists'
+            Identifier: 'cachePath'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' requestId'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'installRunCount'
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'installRunCount'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'sendResponse'
+            AsExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            kind'
+                  Identifier: ' EventBeginInstallTypes'
+                PropertyAssignment
+                  Identifier: '
+            eventId'
+                  Identifier: ' requestId'
+                PropertyAssignment
+                  Identifier: '
+            typingsInstallerVersion'
+                  Identifier: ' version'
+                PropertyAssignment
+                  Identifier: '
+            projectName'
+                  PropertyAccessExpression
+                    Identifier: ' req'
+                    Identifier: 'projectName'
+              TypeReference
+                Identifier: ' BeginInstallTypes'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' scopedTypings'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' filteredTypings'
+                  Identifier: 'map'
+                Identifier: 'typingsName'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'installTypingsAsync'
+            Identifier: 'requestId'
+            Identifier: ' scopedTypings'
+            Identifier: ' cachePath'
+            ArrowFunction
+              Parameter
+                Identifier: ' ok'
+              EqualsGreaterThanToken
+              Block
+                TryStatement
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        Identifier: 'ok'
+                      Block
+                        IfStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'log'
+                              Identifier: 'isEnabled'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    ThisKeyword
+                                    Identifier: 'log'
+                                  Identifier: 'writeLine'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'JSON'
+                                        Identifier: 'stringify'
+                                      Identifier: 'filteredTypings'
+                                    TemplateTail
+                        ForOfStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' typing'
+                          Identifier: ' filteredTypings'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    ThisKeyword
+                                    Identifier: 'missingTypingsSet'
+                                  Identifier: 'add'
+                                Identifier: 'typing'
+                        ReturnStatement
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'log'
+                          Identifier: 'isEnabled'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'log'
+                              Identifier: 'writeLine'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'JSON'
+                                    Identifier: 'stringify'
+                                  Identifier: 'scopedTypings'
+                                TemplateTail
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' installedTypingFiles'
+                          ArrayType
+                            StringKeyword
+                          ArrayLiteralExpression
+                    ForOfStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' packageName'
+                      Identifier: ' filteredTypings'
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' typingFile'
+                              CallExpression
+                                Identifier: ' typingToFileName'
+                                Identifier: 'cachePath'
+                                Identifier: ' packageName'
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'installTypingHost'
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'log'
+                        IfStatement
+                          PrefixUnaryExpression
+                            Identifier: 'typingFile'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    ThisKeyword
+                                    Identifier: 'missingTypingsSet'
+                                  Identifier: 'add'
+                                Identifier: 'packageName'
+                            ContinueStatement
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' distTags'
+                              NonNullExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'typesRegistry'
+                                    Identifier: 'get'
+                                  Identifier: 'packageName'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' newVersion'
+                              NewExpression
+                                Identifier: ' Version'
+                                BinaryExpression
+                                  ElementAccessExpression
+                                    Identifier: 'distTags'
+                                    TemplateExpression
+                                      TemplateHead
+                                      TemplateSpan
+                                        Identifier: 'versionMajorMinor'
+                                        TemplateTail
+                                  BarBarToken
+                                  ElementAccessExpression
+                                    Identifier: ' distTags'
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'latestDistTag'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' newTyping'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' JsTyping'
+                                  Identifier: 'CachedTyping'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' typingLocation'
+                                  Identifier: ' typingFile'
+                                PropertyAssignment
+                                  Identifier: ' version'
+                                  Identifier: ' newVersion'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'packageNameToTypingLocation'
+                              Identifier: 'set'
+                            Identifier: 'packageName'
+                            Identifier: ' newTyping'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    installedTypingFiles'
+                              Identifier: 'push'
+                            Identifier: 'typingFile'
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'log'
+                          Identifier: 'isEnabled'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'log'
+                              Identifier: 'writeLine'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'JSON'
+                                    Identifier: 'stringify'
+                                  Identifier: 'installedTypingFiles'
+                                TemplateTail
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'sendResponse'
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'createSetTypings'
+                          Identifier: 'req'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' currentlyCachedTypings'
+                              Identifier: 'concat'
+                            Identifier: 'installedTypingFiles'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' response'
+                          TypeReference
+                            Identifier: ' EndInstallTypes'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    kind'
+                              Identifier: ' EventEndInstallTypes'
+                            PropertyAssignment
+                              Identifier: '
+                    eventId'
+                              Identifier: ' requestId'
+                            PropertyAssignment
+                              Identifier: '
+                    projectName'
+                              PropertyAccessExpression
+                                Identifier: ' req'
+                                Identifier: 'projectName'
+                            PropertyAssignment
+                              Identifier: '
+                    packagesToInstall'
+                              Identifier: ' scopedTypings'
+                            PropertyAssignment
+                              Identifier: '
+                    installSuccess'
+                              Identifier: ' ok'
+                            PropertyAssignment
+                              Identifier: '
+                    typingsInstallerVersion'
+                              Identifier: ' version'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'sendResponse'
+                        Identifier: 'response'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' ensureDirectoryExists'
+      Parameter
+        Identifier: 'directory'
+        StringKeyword
+      Parameter
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' InstallTypingHost'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' directoryName'
+              CallExpression
+                Identifier: ' getDirectoryPath'
+                Identifier: 'directory'
+        IfStatement
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'host'
+                Identifier: 'directoryExists'
+              Identifier: 'directoryName'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'ensureDirectoryExists'
+                Identifier: 'directoryName'
+                Identifier: ' host'
+        IfStatement
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'host'
+                Identifier: 'directoryExists'
+              Identifier: 'directory'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            host'
+                  Identifier: 'createDirectory'
+                Identifier: 'directory'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' watchFiles'
+      Parameter
+        Identifier: 'projectName'
+        StringKeyword
+      Parameter
+        Identifier: ' files'
+        ArrayType
+          StringKeyword
+      Block
+        IfStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'files'
+              Identifier: 'length'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'closeWatchers'
+                Identifier: 'projectName'
+            ReturnStatement
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' existing'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'projectWatchers'
+                  Identifier: 'get'
+                Identifier: 'projectName'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' newSet'
+              NewExpression
+                Identifier: ' Set'
+                Identifier: 'files'
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'existing'
+              BarBarToken
+              CallExpression
+                Identifier: ' forEachKey'
+                Identifier: 'newSet'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' s'
+                  EqualsGreaterThanToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'existing'
+                        Identifier: 'has'
+                      Identifier: 's'
+            BarBarToken
+            CallExpression
+              Identifier: ' forEachKey'
+              Identifier: 'existing'
+              ArrowFunction
+                Parameter
+                  Identifier: ' s'
+                EqualsGreaterThanToken
+                PrefixUnaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'newSet'
+                      Identifier: 'has'
+                    Identifier: 's'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'projectWatchers'
+                  Identifier: 'set'
+                Identifier: 'projectName'
+                Identifier: ' newSet'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'sendResponse'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    Identifier: ' ActionWatchTypingLocations'
+                  ShorthandPropertyAssignment
+                    Identifier: ' projectName'
+                  ShorthandPropertyAssignment
+                    Identifier: ' files'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'sendResponse'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    Identifier: ' ActionWatchTypingLocations'
+                  ShorthandPropertyAssignment
+                    Identifier: ' projectName'
+                  PropertyAssignment
+                    Identifier: ' files'
+                    Identifier: ' undefined'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' createSetTypings'
+      Parameter
+        Identifier: 'request'
+        TypeReference
+          Identifier: ' DiscoverTypings'
+      Parameter
+        Identifier: ' typings'
+        ArrayType
+          StringKeyword
+      TypeReference
+        Identifier: ' SetTypings'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            projectName'
+              PropertyAccessExpression
+                Identifier: ' request'
+                Identifier: 'projectName'
+            PropertyAssignment
+              Identifier: '
+            typeAcquisition'
+              PropertyAccessExpression
+                Identifier: ' request'
+                Identifier: 'typeAcquisition'
+            PropertyAssignment
+              Identifier: '
+            compilerOptions'
+              PropertyAccessExpression
+                Identifier: ' request'
+                Identifier: 'compilerOptions'
+            ShorthandPropertyAssignment
+              Identifier: '
+            typings'
+            PropertyAssignment
+              Identifier: '
+            unresolvedImports'
+              PropertyAccessExpression
+                Identifier: ' request'
+                Identifier: 'unresolvedImports'
+            PropertyAssignment
+              Identifier: '
+            kind'
+              Identifier: ' ActionSet'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' installTypingsAsync'
+      Parameter
+        Identifier: 'requestId'
+        NumberKeyword
+      Parameter
+        Identifier: ' packageNames'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' cwd'
+        StringKeyword
+      Parameter
+        Identifier: ' onRequestCompleted'
+        TypeReference
+          Identifier: ' RequestCompletedAction'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pendingRunRequests'
+              Identifier: 'unshift'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' requestId'
+              ShorthandPropertyAssignment
+                Identifier: ' packageNames'
+              ShorthandPropertyAssignment
+                Identifier: ' cwd'
+              ShorthandPropertyAssignment
+                Identifier: ' onRequestCompleted'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'executeWithThrottling'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' executeWithThrottling'
+      Block
+        WhileStatement
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'inFlightRequestCount'
+              LessThanToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'throttleLimit'
+            AmpersandAmpersandToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pendingRunRequests'
+              Identifier: 'length'
+          Block
+            ExpressionStatement
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'inFlightRequestCount'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' request'
+                  NonNullExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'pendingRunRequests'
+                        Identifier: 'pop'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'installWorker'
+                PropertyAccessExpression
+                  Identifier: 'request'
+                  Identifier: 'requestId'
+                PropertyAccessExpression
+                  Identifier: ' request'
+                  Identifier: 'packageNames'
+                PropertyAccessExpression
+                  Identifier: ' request'
+                  Identifier: 'cwd'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' ok'
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      PostfixUnaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'inFlightRequestCount'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                request'
+                          Identifier: 'onRequestCompleted'
+                        Identifier: 'ok'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'executeWithThrottling'
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' installWorker'
+      Parameter
+        Identifier: 'requestId'
+        NumberKeyword
+      Parameter
+        Identifier: ' packageNames'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' cwd'
+        StringKeyword
+      Parameter
+        Identifier: ' onRequestCompleted'
+        TypeReference
+          Identifier: ' RequestCompletedAction'
+      VoidKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' sendResponse'
+      Parameter
+        Identifier: 'response'
+        UnionType
+          TypeReference
+            Identifier: ' SetTypings'
+          TypeReference
+            Identifier: ' InvalidateCachedTypings'
+          TypeReference
+            Identifier: ' BeginInstallTypes'
+          TypeReference
+            Identifier: ' EndInstallTypes'
+          TypeReference
+            Identifier: ' WatchTypingLocations'
+      VoidKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' sendResponse'
+      Parameter
+        Identifier: 'response'
+        UnionType
+          TypeReference
+            Identifier: ' SetTypings'
+          TypeReference
+            Identifier: ' InvalidateCachedTypings'
+          TypeReference
+            Identifier: ' BeginInstallTypes'
+          TypeReference
+            Identifier: ' EndInstallTypes'
+          TypeReference
+            Identifier: ' WatchTypingLocations'
+          TypeReference
+            Identifier: ' PackageInstalledResponse'
+          TypeReference
+            Identifier: ' TypesRegistryResponse'
+      VoidKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      ReadonlyKeyword
+      Identifier: ' latestDistTag'
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' typingsName'
+    Parameter
+      Identifier: 'packageName'
+      StringKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            Identifier: 'packageName'
+            TemplateMiddle
+          TemplateSpan
+            Identifier: 'versionMajorMinor'
+            TemplateTail

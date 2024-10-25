@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' A'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+A'
+        Identifier: 'B'
+      EqualsToken
+      ClassExpression
+        MethodDeclaration
+          Identifier: '
+    m'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  ArrayLiteralExpression
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        y'
+                EqualsToken
+                Identifier: ' x'

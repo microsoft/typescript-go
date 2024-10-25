@@ -1,0 +1,19 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+// #22732
+
+////console.log(0);
+////[|/*
+///// * Some text
+////  */|]
+
+verify'
+        Identifier: 'outliningHintSpansInCurrentFile'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'test'
+          Identifier: 'ranges'

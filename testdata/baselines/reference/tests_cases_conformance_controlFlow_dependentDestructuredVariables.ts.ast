@@ -1,0 +1,1925 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Action'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' kind'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' payload'
+          NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' kind'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' payload'
+          StringKeyword
+  FunctionDeclaration
+    Identifier: ' f10'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' kind'
+        BindingElement
+          Identifier: ' payload'
+      TypeReference
+        Identifier: ' Action'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        payload'
+                Identifier: 'toFixed'
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        payload'
+                Identifier: 'toUpperCase'
+  FunctionDeclaration
+    Identifier: ' f11'
+    Parameter
+      Identifier: 'action'
+      TypeReference
+        Identifier: ' Action'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' kind'
+              BindingElement
+                Identifier: ' payload'
+            Identifier: ' action'
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        payload'
+                Identifier: 'toFixed'
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        payload'
+                Identifier: 'toUpperCase'
+  FunctionDeclaration
+    Identifier: ' f12'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' kind'
+        BindingElement
+          Identifier: ' payload'
+      TypeReference
+        Identifier: ' Action'
+    Block
+      SwitchStatement
+        Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            payload'
+                  Identifier: 'toFixed'
+            BreakStatement
+          CaseClause
+            StringLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            payload'
+                  Identifier: 'toUpperCase'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              Identifier: '
+            payload'
+  FunctionDeclaration
+    Identifier: ' f13'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Action'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' kind'
+        BindingElement
+          Identifier: ' payload'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        payload'
+                Identifier: 'toFixed'
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        payload'
+                Identifier: 'toUpperCase'
+  FunctionDeclaration
+    Identifier: ' f14'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Action'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' kind'
+              BindingElement
+                Identifier: ' payload'
+            Identifier: ' t'
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        payload'
+                Identifier: 'toFixed'
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        payload'
+                Identifier: 'toUpperCase'
+  TypeAliasDeclaration
+    Identifier: ' Action2'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' kind'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' payload'
+          UnionType
+            NumberKeyword
+            UndefinedKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' kind'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' payload'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' f20'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' kind'
+        BindingElement
+          Identifier: ' payload'
+      TypeReference
+        Identifier: ' Action2'
+    Block
+      IfStatement
+        Identifier: 'payload'
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            payload'
+                    Identifier: 'toFixed'
+          IfStatement
+            BinaryExpression
+              Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            payload'
+                    Identifier: 'toUpperCase'
+  FunctionDeclaration
+    Identifier: ' f21'
+    Parameter
+      Identifier: 'action'
+      TypeReference
+        Identifier: ' Action2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' kind'
+              BindingElement
+                Identifier: ' payload'
+            Identifier: ' action'
+      IfStatement
+        Identifier: 'payload'
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            payload'
+                    Identifier: 'toFixed'
+          IfStatement
+            BinaryExpression
+              Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            payload'
+                    Identifier: 'toUpperCase'
+  FunctionDeclaration
+    Identifier: ' f22'
+    Parameter
+      Identifier: 'action'
+      TypeReference
+        Identifier: ' Action2'
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'action'
+          Identifier: 'payload'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' kind'
+                  BindingElement
+                    Identifier: ' payload'
+                Identifier: ' action'
+          IfStatement
+            BinaryExpression
+              Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            payload'
+                    Identifier: 'toFixed'
+          IfStatement
+            BinaryExpression
+              Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            payload'
+                    Identifier: 'toUpperCase'
+  FunctionDeclaration
+    Identifier: ' f23'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' kind'
+        BindingElement
+          Identifier: ' payload'
+      TypeReference
+        Identifier: ' Action2'
+    Block
+      IfStatement
+        Identifier: 'payload'
+        Block
+          SwitchStatement
+            Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                payload'
+                      Identifier: 'toFixed'
+                BreakStatement
+              CaseClause
+                StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                payload'
+                      Identifier: 'toUpperCase'
+                BreakStatement
+              DefaultClause
+                ExpressionStatement
+                  Identifier: '
+                payload'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' kind'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' isA'
+          LiteralType
+            TrueKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' kind'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' isA'
+          LiteralType
+            FalseKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' kind'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' isA'
+          LiteralType
+            FalseKeyword
+  FunctionDeclaration
+    Identifier: ' f30'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' kind'
+        BindingElement
+          Identifier: ' isA'
+      TypeReference
+        Identifier: ' Foo'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        isA'
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        isA'
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        isA'
+      IfStatement
+        Identifier: 'isA'
+        Block
+          ExpressionStatement
+            Identifier: '
+        kind'
+        Block
+          ExpressionStatement
+            Identifier: '
+        kind'
+  TypeAliasDeclaration
+    Identifier: ' Args'
+    UnionType
+      TupleType
+        LiteralType
+          StringLiteral
+        NumberKeyword
+      TupleType
+        LiteralType
+          StringLiteral
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' f40'
+    Parameter
+      DotDotDotToken
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'kind'
+        BindingElement
+          Identifier: ' data'
+      TypeReference
+        Identifier: ' Args'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        data'
+                Identifier: 'toFixed'
+      IfStatement
+        BinaryExpression
+          Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        data'
+                Identifier: 'toUpperCase'
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: ' variant'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: ' variant'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' AB'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' printValue'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' printValueList'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'T'
+    VoidKeyword
+  FunctionDeclaration
+    Identifier: ' unrefined1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'ab'
+      TypeReference
+        Identifier: ' AB'
+        TypeReference
+          Identifier: 'T'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' variant'
+              BindingElement
+                Identifier: ' value'
+            Identifier: ' ab'
+      IfStatement
+        BinaryExpression
+          Identifier: 'variant'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        printValue'
+              TypeReference
+                Identifier: 'T'
+              Identifier: 'value'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        printValueList'
+              TypeReference
+                Identifier: 'T'
+              Identifier: 'value'
+  TypeAliasDeclaration
+    Identifier: ' Action3'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: 'type'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' payload'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' toAdd'
+              NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: 'type'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' payload'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' toRemove'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' reducerBroken'
+        ArrowFunction
+          Parameter
+            Identifier: 'state'
+            NumberKeyword
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' type'
+              BindingElement
+                Identifier: ' payload'
+            TypeReference
+              Identifier: ' Action3'
+          EqualsGreaterThanToken
+          Block
+            SwitchStatement
+              Identifier: 'type'
+              CaseBlock
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    BinaryExpression
+                      Identifier: ' state'
+                      PlusToken
+                      PropertyAccessExpression
+                        Identifier: ' payload'
+                        Identifier: 'toAdd'
+                CaseClause
+                  StringLiteral
+                  ReturnStatement
+                    BinaryExpression
+                      Identifier: ' state'
+                      MinusToken
+                      PropertyAccessExpression
+                        Identifier: ' payload'
+                        Identifier: 'toRemove'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' it'
+        TypeReference
+          Identifier: ' Iterator'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' value'
+          BindingElement
+            Identifier: ' done'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' it'
+            Identifier: 'next'
+  IfStatement
+    PrefixUnaryExpression
+      Identifier: 'done'
+    Block
+      ExpressionStatement
+        Identifier: '
+    value'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f50'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' Args'
+        VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f50'
+      ArrowFunction
+        Parameter
+          Identifier: 'kind'
+        Parameter
+          Identifier: ' data'
+        EqualsGreaterThanToken
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        data'
+                    Identifier: 'toFixed'
+          IfStatement
+            BinaryExpression
+              Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        data'
+                    Identifier: 'toUpperCase'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f51'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            UnionType
+              TupleType
+                LiteralType
+                  StringLiteral
+                NumberKeyword
+              TupleType
+                LiteralType
+                  StringLiteral
+                StringKeyword
+          VoidKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'kind'
+          Parameter
+            Identifier: ' payload'
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              BinaryExpression
+                Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        payload'
+                      Identifier: 'toFixed'
+            IfStatement
+              BinaryExpression
+                Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        payload'
+                      Identifier: 'toUpperCase'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f52'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            UnionType
+              TupleType
+                LiteralType
+                  StringLiteral
+                NumberKeyword
+              TupleType
+                LiteralType
+                  StringLiteral
+          VoidKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'kind'
+          Parameter
+            Identifier: ' payload'
+            QuestionToken
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              BinaryExpression
+                Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        payload'
+                      Identifier: 'toFixed'
+              Block
+                ExpressionStatement
+                  Identifier: '
+        payload'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' readFile'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' callback'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          UnionType
+            TupleType
+              NamedTupleMember
+                Identifier: 'err'
+                LiteralType
+                  NullKeyword
+              NamedTupleMember
+                Identifier: ' data'
+                ArrayType
+                  UnknownKeyword
+            TupleType
+              NamedTupleMember
+                Identifier: 'err'
+                TypeReference
+                  Identifier: ' Error'
+              NamedTupleMember
+                Identifier: ' data'
+                UndefinedKeyword
+        VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+readFile'
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'err'
+        Parameter
+          Identifier: ' data'
+        EqualsGreaterThanToken
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'err'
+              EqualsEqualsEqualsToken
+              NullKeyword
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+        data'
+                  Identifier: 'length'
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+        err'
+                  Identifier: 'message'
+  TypeAliasDeclaration
+    Identifier: ' ReducerArgs'
+    UnionType
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            NumberKeyword
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' firstArr'
+            ArrayType
+              AnyKeyword
+          PropertySignature
+            Identifier: ' secondArr'
+            ArrayType
+              AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' reducer'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TypeReference
+              Identifier: ' ReducerArgs'
+          VoidKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'op'
+          Parameter
+            Identifier: ' args'
+          EqualsGreaterThanToken
+          Block
+            SwitchStatement
+              Identifier: 'op'
+              CaseBlock
+                CaseClause
+                  StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            console'
+                        Identifier: 'log'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'args'
+                          Identifier: 'a'
+                        PlusToken
+                        PropertyAccessExpression
+                          Identifier: ' args'
+                          Identifier: 'b'
+                  BreakStatement
+                CaseClause
+                  StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            console'
+                        Identifier: 'log'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'args'
+                            Identifier: 'firstArr'
+                          Identifier: 'concat'
+                        PropertyAccessExpression
+                          Identifier: 'args'
+                          Identifier: 'secondArr'
+                  BreakStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+reducer'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+reducer'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' firstArr'
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+        PropertyAssignment
+          Identifier: ' secondArr'
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' FooMethod'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+  method'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          UnionType
+            TupleType
+              NamedTupleMember
+                Identifier: 'type'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' cb'
+                FunctionType
+                  Parameter
+                    Identifier: 'e'
+                    StringKeyword
+                  VoidKeyword
+            TupleType
+              NamedTupleMember
+                Identifier: 'type'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' cb'
+                FunctionType
+                  Parameter
+                    Identifier: 'e'
+                    NumberKeyword
+                  VoidKeyword
+        VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooM'
+        TypeReference
+          Identifier: ' FooMethod'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+  method'
+            Parameter
+              Identifier: 'type'
+            Parameter
+              Identifier: ' cb'
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'type'
+                  EqualsEqualsToken
+                  StringLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+      cb'
+                      NumericLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+      cb'
+                      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' FooAsyncMethod'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+  method'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          UnionType
+            TupleType
+              NamedTupleMember
+                Identifier: 'type'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' cb'
+                FunctionType
+                  Parameter
+                    Identifier: 'e'
+                    StringKeyword
+                  VoidKeyword
+            TupleType
+              NamedTupleMember
+                Identifier: 'type'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' cb'
+                FunctionType
+                  Parameter
+                    Identifier: 'e'
+                    NumberKeyword
+                  VoidKeyword
+        TypeReference
+          Identifier: ' Promise'
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooAsyncM'
+        TypeReference
+          Identifier: ' FooAsyncMethod'
+        ObjectLiteralExpression
+          MethodDeclaration
+            AsyncKeyword
+            Identifier: ' method'
+            Parameter
+              Identifier: 'type'
+            Parameter
+              Identifier: ' cb'
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'type'
+                  EqualsEqualsToken
+                  StringLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+      cb'
+                      NumericLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+      cb'
+                      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' FooGenMethod'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+  method'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          UnionType
+            TupleType
+              NamedTupleMember
+                Identifier: 'type'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' cb'
+                FunctionType
+                  Parameter
+                    Identifier: 'e'
+                    StringKeyword
+                  VoidKeyword
+            TupleType
+              NamedTupleMember
+                Identifier: 'type'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' cb'
+                FunctionType
+                  Parameter
+                    Identifier: 'e'
+                    NumberKeyword
+                  VoidKeyword
+        TypeReference
+          Identifier: ' Generator'
+          AnyKeyword
+          AnyKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooGenM'
+        TypeReference
+          Identifier: ' FooGenMethod'
+        ObjectLiteralExpression
+          MethodDeclaration
+            AsteriskToken
+            Identifier: 'method'
+            Parameter
+              Identifier: 'type'
+            Parameter
+              Identifier: ' cb'
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'type'
+                  EqualsEqualsToken
+                  StringLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+      cb'
+                      NumericLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+      cb'
+                      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' FooAsyncGenMethod'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+  method'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          UnionType
+            TupleType
+              NamedTupleMember
+                Identifier: 'type'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' cb'
+                FunctionType
+                  Parameter
+                    Identifier: 'e'
+                    StringKeyword
+                  VoidKeyword
+            TupleType
+              NamedTupleMember
+                Identifier: 'type'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' cb'
+                FunctionType
+                  Parameter
+                    Identifier: 'e'
+                    NumberKeyword
+                  VoidKeyword
+        TypeReference
+          Identifier: ' AsyncGenerator'
+          AnyKeyword
+          AnyKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooAsyncGenM'
+        TypeReference
+          Identifier: ' FooAsyncGenMethod'
+        ObjectLiteralExpression
+          MethodDeclaration
+            AsyncKeyword
+            AsteriskToken
+            Identifier: 'method'
+            Parameter
+              Identifier: 'type'
+            Parameter
+              Identifier: ' cb'
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'type'
+                  EqualsEqualsToken
+                  StringLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+      cb'
+                      NumericLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+      cb'
+                      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Func'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+        UnionType
+          TupleType
+            LiteralType
+              StringLiteral
+            NumberKeyword
+          TupleType
+            LiteralType
+              StringLiteral
+            StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f60'
+        TypeReference
+          Identifier: ' Func'
+        ArrowFunction
+          Parameter
+            Identifier: 'kind'
+          Parameter
+            Identifier: ' payload'
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              BinaryExpression
+                Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        payload'
+                      Identifier: 'toFixed'
+            IfStatement
+              BinaryExpression
+                Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        payload'
+                      Identifier: 'toUpperCase'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '
+    value1'
+        BindingElement
+          Identifier: '
+    test1'
+          PropertyAccessExpression
+            Identifier: ' value1'
+            Identifier: 'test1'
+        BindingElement
+          Identifier: '
+    test2'
+          PropertyAccessExpression
+            Identifier: ' value1'
+            Identifier: 'test2'
+        BindingElement
+          Identifier: '
+    test3'
+          PropertyAccessExpression
+            Identifier: ' value1'
+            Identifier: 'test3'
+        BindingElement
+          Identifier: '
+    test4'
+          PropertyAccessExpression
+            Identifier: ' value1'
+            Identifier: 'test4'
+        BindingElement
+          Identifier: '
+    test5'
+          PropertyAccessExpression
+            Identifier: ' value1'
+            Identifier: 'test5'
+        BindingElement
+          Identifier: '
+    test6'
+          PropertyAccessExpression
+            Identifier: ' value1'
+            Identifier: 'test6'
+        BindingElement
+          Identifier: '
+    test7'
+          PropertyAccessExpression
+            Identifier: ' value1'
+            Identifier: 'test7'
+        BindingElement
+          Identifier: '
+    test8'
+          PropertyAccessExpression
+            Identifier: ' value1'
+            Identifier: 'test8'
+        BindingElement
+          Identifier: '
+    test9'
+          PropertyAccessExpression
+            Identifier: ' value1'
+            Identifier: 'test9'
+    Block
+  FunctionDeclaration
+    Identifier: ' fa1'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TupleType
+          LiteralType
+            TrueKeyword
+          NumberKeyword
+        TupleType
+          LiteralType
+            FalseKeyword
+          StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'guard'
+              BindingElement
+                Identifier: ' value'
+            Identifier: ' x'
+      IfStatement
+        Identifier: 'guard'
+        Block
+          ForStatement
+            Block
+              ExpressionStatement
+                Identifier: '
+            value'
+        Block
+          WhileStatement
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                TrueKeyword
+            Block
+              ExpressionStatement
+                Identifier: '
+            value'
+  FunctionDeclaration
+    Identifier: ' fa2'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' guard'
+            LiteralType
+              TrueKeyword
+          PropertySignature
+            Identifier: ' value'
+            NumberKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' guard'
+            LiteralType
+              FalseKeyword
+          PropertySignature
+            Identifier: ' value'
+            StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' guard'
+              BindingElement
+                Identifier: ' value'
+            Identifier: ' x'
+      IfStatement
+        Identifier: 'guard'
+        Block
+          ForStatement
+            Block
+              ExpressionStatement
+                Identifier: '
+            value'
+        Block
+          WhileStatement
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                TrueKeyword
+            Block
+              ExpressionStatement
+                Identifier: '
+            value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fa3'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            UnionType
+              TupleType
+                LiteralType
+                  TrueKeyword
+                NumberKeyword
+              TupleType
+                LiteralType
+                  FalseKeyword
+                StringKeyword
+          VoidKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'guard'
+          Parameter
+            Identifier: ' value'
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              Identifier: 'guard'
+              Block
+                ForStatement
+                  Block
+                    ExpressionStatement
+                      Identifier: '
+            value'
+              Block
+                WhileStatement
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      TrueKeyword
+                  Block
+                    ExpressionStatement
+                      Identifier: '
+            value'
+  InterfaceDeclaration
+    Identifier: ' ClientEvents'
+    PropertySignature
+      Identifier: '
+    warn'
+      TupleType
+        NamedTupleMember
+          Identifier: 'message'
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    shardDisconnect'
+      TupleType
+        NamedTupleMember
+          Identifier: 'closeEvent'
+          TypeReference
+            Identifier: ' CloseEvent'
+        NamedTupleMember
+          Identifier: ' shardId'
+          NumberKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Client'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' on'
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' ClientEvents'
+      Parameter
+        Identifier: 'event'
+        TypeReference
+          Identifier: ' K'
+      Parameter
+        Identifier: ' listener'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' ClientEvents'
+              TypeReference
+                Identifier: 'K'
+          VoidKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bot'
+        NewExpression
+          Identifier: ' Client'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+bot'
+        Identifier: 'on'
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'event'
+        Parameter
+          Identifier: ' shard'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' console'
+            Identifier: 'log'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'shard'
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'event'
+                Identifier: 'code'
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'event'
+                Identifier: 'wasClean'
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'event'
+                Identifier: 'reason'
+              TemplateTail
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+bot'
+        Identifier: 'on'
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: ' event'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' console'
+            Identifier: 'log'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'event'
+                Identifier: 'code'
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'event'
+                Identifier: 'wasClean'
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'event'
+                Identifier: 'reason'
+              TemplateTail
+  FunctionDeclaration
+    Identifier: ' fz1'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+        BindingElement
+          Identifier: ' y'
+      UnionType
+        TupleType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+        TupleType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+        TupleType
+          LiteralType
+            NumericLiteral
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        y'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        y'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        y'
+  FunctionDeclaration
+    Identifier: ' tooNarrow'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+        BindingElement
+          Identifier: ' y'
+      UnionType
+        TupleType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+        TupleType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+        TupleType
+          LiteralType
+            NumericLiteral
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' shouldNotBeOk'
+                NeverKeyword
+                Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' parameterReassigned1'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+        BindingElement
+          Identifier: ' y'
+      UnionType
+        TupleType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+        TupleType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+    Block
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'Math'
+            Identifier: 'random'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+    x'
+              EqualsToken
+              NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' parameterReassigned2'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+        BindingElement
+          Identifier: ' y'
+      UnionType
+        TupleType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+        TupleType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+    Block
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'Math'
+            Identifier: 'random'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+    y'
+              EqualsToken
+              NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'y'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+    x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' parameterReassignedContextualRest1'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            UnionType
+              TupleType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+              TupleType
+                LiteralType
+                  NumericLiteral
+                LiteralType
+                  NumericLiteral
+          VoidKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          Parameter
+            Identifier: ' y'
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'Math'
+                  Identifier: 'random'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+    y'
+                    EqualsToken
+                    NumericLiteral
+            IfStatement
+              BinaryExpression
+                Identifier: 'y'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              Block
+                ExpressionStatement
+                  Identifier: '
+    x'

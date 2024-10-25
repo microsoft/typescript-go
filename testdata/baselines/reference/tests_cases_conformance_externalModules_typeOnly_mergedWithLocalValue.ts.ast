@@ -1,0 +1,25 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    LiteralType
+      StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' A'
+        TypeReference
+          Identifier: ' A'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+A'
+        Identifier: 'toUpperCase'

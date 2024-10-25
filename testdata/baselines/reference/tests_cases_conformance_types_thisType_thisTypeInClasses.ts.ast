@@ -1,0 +1,215 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      ThisType
+    MethodDeclaration
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 'x'
+        ThisType
+      ThisType
+      Block
+        ReturnStatement
+          Identifier: ' undefined'
+  ClassDeclaration
+    Identifier: ' C2'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      ThisType
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    y'
+      ThisType
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      ArrayType
+        ThisType
+    PropertyDeclaration
+      Identifier: '
+    b'
+      TupleType
+        ThisType
+        ThisType
+    PropertyDeclaration
+      Identifier: '
+    c'
+      UnionType
+        ThisType
+        TypeReference
+          Identifier: ' Date'
+    PropertyDeclaration
+      Identifier: '
+    d'
+      IntersectionType
+        ThisType
+        TypeReference
+          Identifier: ' Date'
+    PropertyDeclaration
+      Identifier: '
+    e'
+      ParenthesizedType
+        ParenthesizedType
+          ParenthesizedType
+            ThisType
+    PropertyDeclaration
+      Identifier: '
+    f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          ThisType
+        ThisType
+    PropertyDeclaration
+      Identifier: '
+    g'
+      ConstructorType
+        Parameter
+          Identifier: 'x'
+          ThisType
+        ThisType
+    PropertyDeclaration
+      Identifier: '
+    h'
+      TypeReference
+        Identifier: ' Foo'
+        ThisType
+    PropertyDeclaration
+      Identifier: '
+    i'
+      TypeReference
+        Identifier: ' Foo'
+        UnionType
+          ThisType
+          ParenthesizedType
+            FunctionType
+              ThisType
+    PropertyDeclaration
+      Identifier: '
+    j'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          AnyKeyword
+        TypePredicate
+          Identifier: ' x'
+          ThisType
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C4'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      ThisType
+    MethodDeclaration
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 'x'
+        ThisType
+      ThisType
+  ClassDeclaration
+    Identifier: ' C5'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f1'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                  ThisType
+                ThisType
+                EqualsGreaterThanToken
+                ThisKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f2'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                  ThisType
+                EqualsGreaterThanToken
+                ThisKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f3'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                  ThisType
+                EqualsGreaterThanToken
+                ArrowFunction
+                  Parameter
+                    Identifier: 'y'
+                    ThisType
+                  EqualsGreaterThanToken
+                  ThisKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f4'
+              ArrowFunction
+                Parameter
+                  Identifier: 'x'
+                  ThisType
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' g'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'y'
+                            ThisType
+                          EqualsGreaterThanToken
+                          Block
+                            ReturnStatement
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                ThisKeyword
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' g'
+                      ThisKeyword
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x1'
+              TypeAssertionExpression
+                ThisType
+                Identifier: 'undefined'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x2'
+              AsExpression
+                Identifier: ' undefined'
+                ThisType

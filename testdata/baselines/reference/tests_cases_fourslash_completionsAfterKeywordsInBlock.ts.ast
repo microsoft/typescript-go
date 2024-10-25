@@ -1,0 +1,93 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////class C1 {
+////    method(map: Map<string, string>, key: string, defaultValue: string) {
+////        try {
+////            return map.get(key)!;
+////        }
+////        catch {
+////            return default/*1*/
+////        }
+////    }
+////}
+////class C2 {
+////    method(map: Map<string, string>, key: string, defaultValue: string) {
+////        if (map.has(key)) {
+////            return map.get(key)!;
+////        }
+////        else {
+////            return default/*2*/
+////        }
+////    }
+////}
+////class C3 {
+////    method(map: Map<string, string>, key: string, returnValue: string) {
+////        try {
+////            return map.get(key)!;
+////        }
+////        catch {
+////            return return/*3*/
+////        }
+////    }
+////}
+////class C4 {
+////    method(map: Map<string, string>, key: string, returnValue: string) {
+////        if (map.has(key)) {
+////            return map.get(key)!;
+////        }
+////        else {
+////            return return/*4*/
+////        }
+////    }
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'LocationPriority'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'LocationPriority'

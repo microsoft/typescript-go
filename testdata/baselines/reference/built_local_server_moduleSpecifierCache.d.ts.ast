@@ -1,0 +1,40 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' FileWatcher'
+        ImportSpecifier
+          Identifier: ' ModuleSpecifierCache'
+        ImportSpecifier
+          Identifier: ' Path'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ModuleSpecifierResolutionCacheHost'
+    MethodSignature
+      Identifier: '
+    watchNodeModulesForPackageJsonChanges'
+      Parameter
+        Identifier: 'directoryPath'
+        StringKeyword
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodSignature
+      Identifier: '
+    toPath'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' Path'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createModuleSpecifierCache'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' ModuleSpecifierResolutionCacheHost'
+    TypeReference
+      Identifier: ' ModuleSpecifierCache'

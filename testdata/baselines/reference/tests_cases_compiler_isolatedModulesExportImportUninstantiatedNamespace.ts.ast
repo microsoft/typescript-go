@@ -1,0 +1,51 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' JSXInternal'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' HTMLAttributes'
+        StringKeyword
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' ComponentChildren'
+        StringKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' JSXInternal'
+    StringLiteral
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' JSX'
+    Identifier: ' JSXInternal'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createElement'
+    TypeParameter
+      Identifier: 'ElementType'
+      TypeReference
+        Identifier: ' HTMLElement'
+    Parameter
+      Identifier: '
+  tagName'
+      StringKeyword
+    Parameter
+      Identifier: '
+  attributes'
+      TypeReference
+        QualifiedName
+          Identifier: ' JSX'
+          Identifier: 'HTMLAttributes'
+    Parameter
+      DotDotDotToken
+      Identifier: 'children'
+      ArrayType
+        TypeReference
+          QualifiedName
+            Identifier: ' JSX'
+            Identifier: 'ComponentChildren'
+    AnyKeyword
+    Block

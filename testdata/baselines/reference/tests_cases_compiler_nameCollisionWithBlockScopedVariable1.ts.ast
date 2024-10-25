@@ -1,0 +1,19 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' M'
+              NumericLiteral
+        ExpressionStatement
+          NewExpression
+            Identifier: ' C'

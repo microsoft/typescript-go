@@ -1,0 +1,48 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Point'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' x'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' y'
+            NumberKeyword
+          Block
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Origin'
+            TypeReference
+              Identifier: ' Point'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Unity'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' start'
+                NewExpression
+                  Identifier: ' Point'
+                  NumericLiteral
+                  NumericLiteral
+              PropertyAssignment
+                Identifier: ' end'
+                NewExpression
+                  Identifier: ' Point'
+                  NumericLiteral
+                  NumericLiteral

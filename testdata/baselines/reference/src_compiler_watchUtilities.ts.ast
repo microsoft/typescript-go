@@ -1,0 +1,3938 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    arrayToMap'
+        ImportSpecifier
+          Identifier: '
+    binarySearch'
+        ImportSpecifier
+          Identifier: '
+    BuilderProgram'
+        ImportSpecifier
+          Identifier: '
+    clearMap'
+        ImportSpecifier
+          Identifier: '
+    closeFileWatcher'
+        ImportSpecifier
+          Identifier: '
+    compareStringsCaseSensitive'
+        ImportSpecifier
+          Identifier: '
+    CompilerOptions'
+        ImportSpecifier
+          Identifier: '
+    createGetCanonicalFileName'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    DirectoryWatcherCallback'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    emptyFileSystemEntries'
+        ImportSpecifier
+          Identifier: '
+    ensureTrailingDirectorySeparator'
+        ImportSpecifier
+          Identifier: '
+    ExtendedConfigCacheEntry'
+        ImportSpecifier
+          Identifier: '
+    Extension'
+        ImportSpecifier
+          Identifier: '
+    FileExtensionInfo'
+        ImportSpecifier
+          Identifier: '
+    fileExtensionIsOneOf'
+        ImportSpecifier
+          Identifier: '
+    FileSystemEntries'
+        ImportSpecifier
+          Identifier: '
+    FileWatcher'
+        ImportSpecifier
+          Identifier: '
+    FileWatcherCallback'
+        ImportSpecifier
+          Identifier: '
+    FileWatcherEventKind'
+        ImportSpecifier
+          Identifier: '
+    find'
+        ImportSpecifier
+          Identifier: '
+    forEachAncestorDirectory'
+        ImportSpecifier
+          Identifier: '
+    getAllowJSCompilerOption'
+        ImportSpecifier
+          Identifier: '
+    getBaseFileName'
+        ImportSpecifier
+          Identifier: '
+    getDirectoryPath'
+        ImportSpecifier
+          Identifier: '
+    getNormalizedAbsolutePath'
+        ImportSpecifier
+          Identifier: '
+    getResolveJsonModule'
+        ImportSpecifier
+          Identifier: '
+    hasExtension'
+        ImportSpecifier
+          Identifier: '
+    identity'
+        ImportSpecifier
+          Identifier: '
+    insertSorted'
+        ImportSpecifier
+          Identifier: '
+    isArray'
+        ImportSpecifier
+          Identifier: '
+    isBuilderProgram'
+        ImportSpecifier
+          Identifier: '
+    isDeclarationFileName'
+        ImportSpecifier
+          Identifier: '
+    isExcludedFile'
+        ImportSpecifier
+          Identifier: '
+    isSupportedSourceFileName'
+        ImportSpecifier
+          Identifier: '
+    map'
+        ImportSpecifier
+          Identifier: '
+    MapLike'
+        ImportSpecifier
+          Identifier: '
+    matchesExclude'
+        ImportSpecifier
+          Identifier: '
+    matchFiles'
+        ImportSpecifier
+          Identifier: '
+    mutateMap'
+        ImportSpecifier
+          Identifier: '
+    noop'
+        ImportSpecifier
+          Identifier: '
+    normalizePath'
+        ImportSpecifier
+          Identifier: '
+    Path'
+        ImportSpecifier
+          Identifier: '
+    PollingInterval'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    removeFileExtension'
+        ImportSpecifier
+          Identifier: '
+    removeIgnoredPath'
+        ImportSpecifier
+          Identifier: '
+    returnNoopFileWatcher'
+        ImportSpecifier
+          Identifier: '
+    ScriptKind'
+        ImportSpecifier
+          Identifier: '
+    setSysLog'
+        ImportSpecifier
+          Identifier: '
+    SortedArray'
+        ImportSpecifier
+          Identifier: '
+    SortedReadonlyArray'
+        ImportSpecifier
+          Identifier: '
+    supportedJSExtensionsFlat'
+        ImportSpecifier
+          Identifier: '
+    timestamp'
+        ImportSpecifier
+          Identifier: '
+    toPath'
+          Identifier: ' ts_toPath'
+        ImportSpecifier
+          Identifier: '
+    WatchDirectoryFlags'
+        ImportSpecifier
+          Identifier: '
+    WatchFileKind'
+        ImportSpecifier
+          Identifier: '
+    WatchOptions'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DirectoryStructureHost'
+    MethodSignature
+      Identifier: '
+    fileExists'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    readFile'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' encoding'
+        QuestionToken
+        StringKeyword
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+
+    // TODO: GH#18217 Optional methods are frequently used as non-optional
+    directoryExists'
+      QuestionToken
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    getDirectories'
+      QuestionToken
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    readDirectory'
+      QuestionToken
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' extensions'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' exclude'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' include'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' depth'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    realpath'
+      QuestionToken
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+
+    createDirectory'
+      QuestionToken
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    writeFile'
+      QuestionToken
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' data'
+        StringKeyword
+      Parameter
+        Identifier: ' writeByteOrderMark'
+        QuestionToken
+        BooleanKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FileAndDirectoryExistence'
+    PropertySignature
+      Identifier: '
+    fileExists'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    directoryExists'
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CachedDirectoryStructureHost'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' DirectoryStructureHost'
+    PropertySignature
+      Identifier: '
+    useCaseSensitiveFileNames'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+
+    getDirectories'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    readDirectory'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' extensions'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' exclude'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' include'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' depth'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+
+    /** Returns the queried result for the file exists and directory exists if at all it was done */
+    addOrDeleteFileOrDirectory'
+      Parameter
+        Identifier: 'fileOrDirectory'
+        StringKeyword
+      Parameter
+        Identifier: ' fileOrDirectoryPath'
+        TypeReference
+          Identifier: ' Path'
+      UnionType
+        TypeReference
+          Identifier: ' FileAndDirectoryExistence'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    addOrDeleteFile'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' filePath'
+        TypeReference
+          Identifier: ' Path'
+      Parameter
+        Identifier: ' eventKind'
+        TypeReference
+          Identifier: ' FileWatcherEventKind'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    clearCache'
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Canonicalized'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' __canonicalized'
+          VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' MutableFileSystemEntries'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' files'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' directories'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    sortedAndCanonicalizedFiles'
+      QuestionToken
+      TypeReference
+        Identifier: ' SortedArray'
+        TypeReference
+          Identifier: 'Canonicalized'
+    PropertySignature
+      Identifier: '
+    sortedAndCanonicalizedDirectories'
+      QuestionToken
+      TypeReference
+        Identifier: ' SortedArray'
+        TypeReference
+          Identifier: 'Canonicalized'
+  InterfaceDeclaration
+    Identifier: ' SortedAndCanonicalizedMutableFileSystemEntries'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' files'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' directories'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' sortedAndCanonicalizedFiles'
+      TypeReference
+        Identifier: ' SortedArray'
+        TypeReference
+          Identifier: 'Canonicalized'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' sortedAndCanonicalizedDirectories'
+      TypeReference
+        Identifier: ' SortedArray'
+        TypeReference
+          Identifier: 'Canonicalized'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createCachedDirectoryStructureHost'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' DirectoryStructureHost'
+    Parameter
+      Identifier: ' currentDirectory'
+      StringKeyword
+    Parameter
+      Identifier: ' useCaseSensitiveFileNames'
+      BooleanKeyword
+    UnionType
+      TypeReference
+        Identifier: ' CachedDirectoryStructureHost'
+      UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'host'
+              Identifier: 'getDirectories'
+          BarBarToken
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'host'
+              Identifier: 'readDirectory'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cachedReadDirectoryResult'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              UnionType
+                TypeReference
+                  Identifier: ' MutableFileSystemEntries'
+                LiteralType
+                  FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' getCanonicalFileName'
+            AsExpression
+              CallExpression
+                Identifier: ' createGetCanonicalFileName'
+                Identifier: 'useCaseSensitiveFileNames'
+              ParenthesizedType
+                FunctionType
+                  Parameter
+                    Identifier: 'name'
+                    StringKeyword
+                  TypeReference
+                    Identifier: ' Canonicalized'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        useCaseSensitiveFileNames'
+          ShorthandPropertyAssignment
+            Identifier: '
+        fileExists'
+          PropertyAssignment
+            Identifier: '
+        readFile'
+            ArrowFunction
+              Parameter
+                Identifier: 'path'
+              Parameter
+                Identifier: ' encoding'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' host'
+                  Identifier: 'readFile'
+                Identifier: 'path'
+                Identifier: ' encoding'
+          PropertyAssignment
+            Identifier: '
+        directoryExists'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' host'
+                Identifier: 'directoryExists'
+              AmpersandAmpersandToken
+              Identifier: ' directoryExists'
+          ShorthandPropertyAssignment
+            Identifier: '
+        getDirectories'
+          ShorthandPropertyAssignment
+            Identifier: '
+        readDirectory'
+          PropertyAssignment
+            Identifier: '
+        createDirectory'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' host'
+                Identifier: 'createDirectory'
+              AmpersandAmpersandToken
+              Identifier: ' createDirectory'
+          PropertyAssignment
+            Identifier: '
+        writeFile'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' host'
+                Identifier: 'writeFile'
+              AmpersandAmpersandToken
+              Identifier: ' writeFile'
+          ShorthandPropertyAssignment
+            Identifier: '
+        addOrDeleteFileOrDirectory'
+          ShorthandPropertyAssignment
+            Identifier: '
+        addOrDeleteFile'
+          ShorthandPropertyAssignment
+            Identifier: '
+        clearCache'
+          PropertyAssignment
+            Identifier: '
+        realpath'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' host'
+                Identifier: 'realpath'
+              AmpersandAmpersandToken
+              Identifier: ' realpath'
+      FunctionDeclaration
+        Identifier: ' toPath'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' ts_toPath'
+              Identifier: 'fileName'
+              Identifier: ' currentDirectory'
+              Identifier: ' getCanonicalFileName'
+      FunctionDeclaration
+        Identifier: ' getCachedFileSystemEntries'
+        Parameter
+          Identifier: 'rootDirPath'
+          TypeReference
+            Identifier: ' Path'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' cachedReadDirectoryResult'
+                Identifier: 'get'
+              CallExpression
+                Identifier: 'ensureTrailingDirectorySeparator'
+                Identifier: 'rootDirPath'
+      FunctionDeclaration
+        Identifier: ' getCachedFileSystemEntriesForBaseDir'
+        Parameter
+          Identifier: 'path'
+          TypeReference
+            Identifier: ' Path'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' entries'
+                CallExpression
+                  Identifier: ' getCachedFileSystemEntries'
+                  CallExpression
+                    Identifier: 'getDirectoryPath'
+                    Identifier: 'path'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'entries'
+            Block
+              ReturnStatement
+                Identifier: ' entries'
+          IfStatement
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'entries'
+                Identifier: 'sortedAndCanonicalizedFiles'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            entries'
+                    Identifier: 'sortedAndCanonicalizedFiles'
+                  EqualsToken
+                  AsExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' entries'
+                              Identifier: 'files'
+                            Identifier: 'map'
+                          Identifier: 'getCanonicalFileName'
+                        Identifier: 'sort'
+                    TypeReference
+                      Identifier: ' SortedArray'
+                      TypeReference
+                        Identifier: 'Canonicalized'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            entries'
+                    Identifier: 'sortedAndCanonicalizedDirectories'
+                  EqualsToken
+                  AsExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' entries'
+                              Identifier: 'directories'
+                            Identifier: 'map'
+                          Identifier: 'getCanonicalFileName'
+                        Identifier: 'sort'
+                    TypeReference
+                      Identifier: ' SortedArray'
+                      TypeReference
+                        Identifier: 'Canonicalized'
+          ReturnStatement
+            AsExpression
+              Identifier: ' entries'
+              TypeReference
+                Identifier: ' SortedAndCanonicalizedMutableFileSystemEntries'
+      FunctionDeclaration
+        Identifier: ' getBaseNameOfFileName'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' getBaseFileName'
+              CallExpression
+                Identifier: 'normalizePath'
+                Identifier: 'fileName'
+      FunctionDeclaration
+        Identifier: ' createCachedFileSystemEntries'
+        Parameter
+          Identifier: 'rootDir'
+          StringKeyword
+        Parameter
+          Identifier: ' rootDirPath'
+          TypeReference
+            Identifier: ' Path'
+        Block
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'host'
+                  Identifier: 'realpath'
+              BarBarToken
+              BinaryExpression
+                CallExpression
+                  Identifier: ' ensureTrailingDirectorySeparator'
+                  CallExpression
+                    Identifier: 'toPath'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'host'
+                        Identifier: 'realpath'
+                      Identifier: 'rootDir'
+                EqualsEqualsEqualsToken
+                Identifier: ' rootDirPath'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' resultFromHost'
+                    TypeReference
+                      Identifier: ' MutableFileSystemEntries'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                files'
+                        BinaryExpression
+                          CallExpression
+                            Identifier: ' map'
+                            CallExpression
+                              NonNullExpression
+                                PropertyAccessExpression
+                                  Identifier: 'host'
+                                  Identifier: 'readDirectory'
+                              Identifier: 'rootDir'
+                              Identifier: ' /*extensions*/ undefined'
+                              Identifier: ' /*exclude*/ undefined'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            Identifier: ' getBaseNameOfFileName'
+                          BarBarToken
+                          ArrayLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                directories'
+                        BinaryExpression
+                          CallExpression
+                            NonNullExpression
+                              PropertyAccessExpression
+                                Identifier: ' host'
+                                Identifier: 'getDirectories'
+                            Identifier: 'rootDir'
+                          BarBarToken
+                          ArrayLiteralExpression
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            cachedReadDirectoryResult'
+                    Identifier: 'set'
+                  CallExpression
+                    Identifier: 'ensureTrailingDirectorySeparator'
+                    Identifier: 'rootDirPath'
+                  Identifier: ' resultFromHost'
+              ReturnStatement
+                Identifier: ' resultFromHost'
+          IfStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'host'
+                Identifier: 'directoryExists'
+              QuestionDotToken
+              Identifier: 'rootDir'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            cachedReadDirectoryResult'
+                    Identifier: 'set'
+                  Identifier: 'rootDirPath'
+                  FalseKeyword
+              ReturnStatement
+                FalseKeyword
+          ReturnStatement
+            Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' tryReadDirectory'
+        Parameter
+          Identifier: 'rootDir'
+          StringKeyword
+        Parameter
+          Identifier: ' rootDirPath'
+          TypeReference
+            Identifier: ' Path'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        rootDirPath'
+              EqualsToken
+              CallExpression
+                Identifier: ' ensureTrailingDirectorySeparator'
+                Identifier: 'rootDirPath'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' cachedResult'
+                CallExpression
+                  Identifier: ' getCachedFileSystemEntries'
+                  Identifier: 'rootDirPath'
+          IfStatement
+            Identifier: 'cachedResult'
+            Block
+              ReturnStatement
+                Identifier: ' cachedResult'
+          TryStatement
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' createCachedFileSystemEntries'
+                  Identifier: 'rootDir'
+                  Identifier: ' rootDirPath'
+            CatchClause
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            // If there is exception to read directories, dont cache the result and direct the calls to host
+            Debug'
+                      Identifier: 'assert'
+                    PrefixUnaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'cachedReadDirectoryResult'
+                          Identifier: 'has'
+                        CallExpression
+                          Identifier: 'ensureTrailingDirectorySeparator'
+                          Identifier: 'rootDirPath'
+                ReturnStatement
+                  Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' hasEntry'
+        Parameter
+          Identifier: 'entries'
+          TypeReference
+            Identifier: ' SortedReadonlyArray'
+            TypeReference
+              Identifier: 'Canonicalized'
+        Parameter
+          Identifier: ' name'
+          TypeReference
+            Identifier: ' Canonicalized'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' index'
+                CallExpression
+                  Identifier: ' binarySearch'
+                  Identifier: 'entries'
+                  Identifier: ' name'
+                  Identifier: ' identity'
+                  Identifier: ' compareStringsCaseSensitive'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' index'
+              GreaterThanEqualsToken
+              NumericLiteral
+      FunctionDeclaration
+        Identifier: ' writeFile'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Parameter
+          Identifier: ' data'
+          StringKeyword
+        Parameter
+          Identifier: ' writeByteOrderMark'
+          QuestionToken
+          BooleanKeyword
+        VoidKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' path'
+                CallExpression
+                  Identifier: ' toPath'
+                  Identifier: 'fileName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' getCachedFileSystemEntriesForBaseDir'
+                  Identifier: 'path'
+          IfStatement
+            Identifier: 'result'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            updateFilesOfFileSystemEntry'
+                  Identifier: 'result'
+                  CallExpression
+                    Identifier: ' getBaseNameOfFileName'
+                    Identifier: 'fileName'
+                  TrueKeyword
+          ReturnStatement
+            CallExpression
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: ' host'
+                  Identifier: 'writeFile'
+              Identifier: 'fileName'
+              Identifier: ' data'
+              Identifier: ' writeByteOrderMark'
+      FunctionDeclaration
+        Identifier: ' fileExists'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        BooleanKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' path'
+                CallExpression
+                  Identifier: ' toPath'
+                  Identifier: 'fileName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' getCachedFileSystemEntriesForBaseDir'
+                  Identifier: 'path'
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' result'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' hasEntry'
+                  PropertyAccessExpression
+                    Identifier: 'result'
+                    Identifier: 'sortedAndCanonicalizedFiles'
+                  CallExpression
+                    Identifier: ' getCanonicalFileName'
+                    CallExpression
+                      Identifier: 'getBaseNameOfFileName'
+                      Identifier: 'fileName'
+              BarBarToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            host'
+                  Identifier: 'fileExists'
+                Identifier: 'fileName'
+      FunctionDeclaration
+        Identifier: ' directoryExists'
+        Parameter
+          Identifier: 'dirPath'
+          StringKeyword
+        BooleanKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' path'
+                CallExpression
+                  Identifier: ' toPath'
+                  Identifier: 'dirPath'
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' cachedReadDirectoryResult'
+                  Identifier: 'has'
+                CallExpression
+                  Identifier: 'ensureTrailingDirectorySeparator'
+                  Identifier: 'path'
+              BarBarToken
+              CallExpression
+                NonNullExpression
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'directoryExists'
+                Identifier: 'dirPath'
+      FunctionDeclaration
+        Identifier: ' createDirectory'
+        Parameter
+          Identifier: 'dirPath'
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' path'
+                CallExpression
+                  Identifier: ' toPath'
+                  Identifier: 'dirPath'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' getCachedFileSystemEntriesForBaseDir'
+                  Identifier: 'path'
+          IfStatement
+            Identifier: 'result'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' baseName'
+                    CallExpression
+                      Identifier: ' getBaseNameOfFileName'
+                      Identifier: 'dirPath'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' canonicalizedBaseName'
+                    CallExpression
+                      Identifier: ' getCanonicalFileName'
+                      Identifier: 'baseName'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' canonicalizedDirectories'
+                    PropertyAccessExpression
+                      Identifier: ' result'
+                      Identifier: 'sortedAndCanonicalizedDirectories'
+              IfStatement
+                CallExpression
+                  Identifier: 'insertSorted'
+                  Identifier: 'canonicalizedDirectories'
+                  Identifier: ' canonicalizedBaseName'
+                  Identifier: ' compareStringsCaseSensitive'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                result'
+                          Identifier: 'directories'
+                        Identifier: 'push'
+                      Identifier: 'baseName'
+          ExpressionStatement
+            CallExpression
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: '
+        host'
+                  Identifier: 'createDirectory'
+              Identifier: 'dirPath'
+      FunctionDeclaration
+        Identifier: ' getDirectories'
+        Parameter
+          Identifier: 'rootDir'
+          StringKeyword
+        ArrayType
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' rootDirPath'
+                CallExpression
+                  Identifier: ' toPath'
+                  Identifier: 'rootDir'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' tryReadDirectory'
+                  Identifier: 'rootDir'
+                  Identifier: ' rootDirPath'
+          IfStatement
+            Identifier: 'result'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' result'
+                      Identifier: 'directories'
+                    Identifier: 'slice'
+          ReturnStatement
+            CallExpression
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: ' host'
+                  Identifier: 'getDirectories'
+              Identifier: 'rootDir'
+      FunctionDeclaration
+        Identifier: ' readDirectory'
+        Parameter
+          Identifier: 'rootDir'
+          StringKeyword
+        Parameter
+          Identifier: ' extensions'
+          QuestionToken
+          TypeOperator
+            ArrayType
+              StringKeyword
+        Parameter
+          Identifier: ' excludes'
+          QuestionToken
+          TypeOperator
+            ArrayType
+              StringKeyword
+        Parameter
+          Identifier: ' includes'
+          QuestionToken
+          TypeOperator
+            ArrayType
+              StringKeyword
+        Parameter
+          Identifier: ' depth'
+          QuestionToken
+          NumberKeyword
+        ArrayType
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' rootDirPath'
+                CallExpression
+                  Identifier: ' toPath'
+                  Identifier: 'rootDir'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' rootResult'
+                CallExpression
+                  Identifier: ' tryReadDirectory'
+                  Identifier: 'rootDir'
+                  Identifier: ' rootDirPath'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' rootSymLinkResult'
+                UnionType
+                  TypeReference
+                    Identifier: ' FileSystemEntries'
+                  UndefinedKeyword
+          IfStatement
+            BinaryExpression
+              Identifier: 'rootResult'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' matchFiles'
+                  Identifier: 'rootDir'
+                  Identifier: ' extensions'
+                  Identifier: ' excludes'
+                  Identifier: ' includes'
+                  Identifier: ' useCaseSensitiveFileNames'
+                  Identifier: ' currentDirectory'
+                  Identifier: ' depth'
+                  Identifier: ' getFileSystemEntries'
+                  Identifier: ' realpath'
+          ReturnStatement
+            CallExpression
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: ' host'
+                  Identifier: 'readDirectory'
+              Identifier: 'rootDir'
+              Identifier: ' extensions'
+              Identifier: ' excludes'
+              Identifier: ' includes'
+              Identifier: ' depth'
+          FunctionDeclaration
+            Identifier: ' getFileSystemEntries'
+            Parameter
+              Identifier: 'dir'
+              StringKeyword
+            TypeReference
+              Identifier: ' FileSystemEntries'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' path'
+                    CallExpression
+                      Identifier: ' toPath'
+                      Identifier: 'dir'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'path'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' rootDirPath'
+                Block
+                  ReturnStatement
+                    BinaryExpression
+                      Identifier: ' rootResult'
+                      BarBarToken
+                      CallExpression
+                        Identifier: ' getFileSystemEntriesFromHost'
+                        Identifier: 'dir'
+                        Identifier: ' path'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' result'
+                    CallExpression
+                      Identifier: ' tryReadDirectory'
+                      Identifier: 'dir'
+                      Identifier: ' path'
+              ReturnStatement
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' result'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' undefined'
+                  QuestionToken
+                  BinaryExpression
+                    Identifier: '
+                result'
+                    BarBarToken
+                    CallExpression
+                      Identifier: ' getFileSystemEntriesFromHost'
+                      Identifier: 'dir'
+                      Identifier: ' path'
+                  ColonToken
+                  Identifier: '
+                emptyFileSystemEntries'
+          FunctionDeclaration
+            Identifier: ' getFileSystemEntriesFromHost'
+            Parameter
+              Identifier: 'dir'
+              StringKeyword
+            Parameter
+              Identifier: ' path'
+              TypeReference
+                Identifier: ' Path'
+            TypeReference
+              Identifier: ' FileSystemEntries'
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'rootSymLinkResult'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    Identifier: ' path'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' rootDirPath'
+                ReturnStatement
+                  Identifier: ' rootSymLinkResult'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' result'
+                    TypeReference
+                      Identifier: ' FileSystemEntries'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                files'
+                        BinaryExpression
+                          CallExpression
+                            Identifier: ' map'
+                            CallExpression
+                              NonNullExpression
+                                PropertyAccessExpression
+                                  Identifier: 'host'
+                                  Identifier: 'readDirectory'
+                              Identifier: 'dir'
+                              Identifier: ' /*extensions*/ undefined'
+                              Identifier: ' /*exclude*/ undefined'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            Identifier: ' getBaseNameOfFileName'
+                          BarBarToken
+                          Identifier: ' emptyArray'
+                      PropertyAssignment
+                        Identifier: '
+                directories'
+                        BinaryExpression
+                          CallExpression
+                            NonNullExpression
+                              PropertyAccessExpression
+                                Identifier: ' host'
+                                Identifier: 'getDirectories'
+                            Identifier: 'dir'
+                          BarBarToken
+                          Identifier: ' emptyArray'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'path'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' rootDirPath'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: ' rootSymLinkResult'
+                    EqualsToken
+                    Identifier: ' result'
+              ReturnStatement
+                Identifier: ' result'
+      FunctionDeclaration
+        Identifier: ' realpath'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        Block
+          ReturnStatement
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' host'
+                Identifier: 'realpath'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' host'
+                  Identifier: 'realpath'
+                Identifier: 's'
+              ColonToken
+              Identifier: ' s'
+      FunctionDeclaration
+        Identifier: ' clearFirstAncestorEntry'
+        Parameter
+          Identifier: 'fileOrDirectoryPath'
+          TypeReference
+            Identifier: ' Path'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        forEachAncestorDirectory'
+              CallExpression
+                Identifier: '
+            getDirectoryPath'
+                Identifier: 'fileOrDirectoryPath'
+              ArrowFunction
+                Parameter
+                  Identifier: '
+            ancestor'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' cachedReadDirectoryResult'
+                      Identifier: 'delete'
+                    CallExpression
+                      Identifier: 'ensureTrailingDirectorySeparator'
+                      Identifier: 'ancestor'
+                  QuestionToken
+                  TrueKeyword
+                  ColonToken
+                  Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' addOrDeleteFileOrDirectory'
+        Parameter
+          Identifier: 'fileOrDirectory'
+          StringKeyword
+        Parameter
+          Identifier: ' fileOrDirectoryPath'
+          TypeReference
+            Identifier: ' Path'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' existingResult'
+                CallExpression
+                  Identifier: ' getCachedFileSystemEntries'
+                  Identifier: 'fileOrDirectoryPath'
+          IfStatement
+            BinaryExpression
+              Identifier: 'existingResult'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            // Just clear the cache for now
+            // For now just clear the cache, since this could mean that multiple level entries might need to be re-evaluated
+            clearCache'
+              ReturnStatement
+                Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' parentResult'
+                CallExpression
+                  Identifier: ' getCachedFileSystemEntriesForBaseDir'
+                  Identifier: 'fileOrDirectoryPath'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'parentResult'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            clearFirstAncestorEntry'
+                  Identifier: 'fileOrDirectoryPath'
+              ReturnStatement
+                Identifier: ' undefined'
+          IfStatement
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'host'
+                Identifier: 'directoryExists'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            // Since host doesnt support directory exists, clear the cache as otherwise it might not be same
+            clearCache'
+              ReturnStatement
+                Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' baseName'
+                CallExpression
+                  Identifier: ' getBaseNameOfFileName'
+                  Identifier: 'fileOrDirectory'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' fsQueryResult'
+                TypeReference
+                  Identifier: ' FileAndDirectoryExistence'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            fileExists'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' host'
+                        Identifier: 'fileExists'
+                      Identifier: 'fileOrDirectory'
+                  PropertyAssignment
+                    Identifier: '
+            directoryExists'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' host'
+                        Identifier: 'directoryExists'
+                      Identifier: 'fileOrDirectory'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'fsQueryResult'
+                Identifier: 'directoryExists'
+              BarBarToken
+              CallExpression
+                Identifier: ' hasEntry'
+                PropertyAccessExpression
+                  Identifier: 'parentResult'
+                  Identifier: 'sortedAndCanonicalizedDirectories'
+                CallExpression
+                  Identifier: ' getCanonicalFileName'
+                  Identifier: 'baseName'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            // Folder added or removed, clear the cache instead of updating the folder and its structure
+            clearCache'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            // No need to update the directory structure, just files
+            updateFilesOfFileSystemEntry'
+                  Identifier: 'parentResult'
+                  Identifier: ' baseName'
+                  PropertyAccessExpression
+                    Identifier: ' fsQueryResult'
+                    Identifier: 'fileExists'
+          ReturnStatement
+            Identifier: ' fsQueryResult'
+      FunctionDeclaration
+        Identifier: ' addOrDeleteFile'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Parameter
+          Identifier: ' filePath'
+          TypeReference
+            Identifier: ' Path'
+        Parameter
+          Identifier: ' eventKind'
+          TypeReference
+            Identifier: ' FileWatcherEventKind'
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'eventKind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' FileWatcherEventKind'
+                Identifier: 'Changed'
+            Block
+              ReturnStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' parentResult'
+                CallExpression
+                  Identifier: ' getCachedFileSystemEntriesForBaseDir'
+                  Identifier: 'filePath'
+          IfStatement
+            Identifier: 'parentResult'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            updateFilesOfFileSystemEntry'
+                  Identifier: 'parentResult'
+                  CallExpression
+                    Identifier: ' getBaseNameOfFileName'
+                    Identifier: 'fileName'
+                  BinaryExpression
+                    Identifier: ' eventKind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' FileWatcherEventKind'
+                      Identifier: 'Created'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            clearFirstAncestorEntry'
+                  Identifier: 'filePath'
+      FunctionDeclaration
+        Identifier: ' updateFilesOfFileSystemEntry'
+        Parameter
+          Identifier: 'parentResult'
+          TypeReference
+            Identifier: ' SortedAndCanonicalizedMutableFileSystemEntries'
+        Parameter
+          Identifier: ' baseName'
+          StringKeyword
+        Parameter
+          Identifier: ' fileExists'
+          BooleanKeyword
+        VoidKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' canonicalizedFiles'
+                PropertyAccessExpression
+                  Identifier: ' parentResult'
+                  Identifier: 'sortedAndCanonicalizedFiles'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' canonicalizedBaseName'
+                CallExpression
+                  Identifier: ' getCanonicalFileName'
+                  Identifier: 'baseName'
+          IfStatement
+            Identifier: 'fileExists'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'insertSorted'
+                  Identifier: 'canonicalizedFiles'
+                  Identifier: ' canonicalizedBaseName'
+                  Identifier: ' compareStringsCaseSensitive'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                parentResult'
+                          Identifier: 'files'
+                        Identifier: 'push'
+                      Identifier: 'baseName'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sortedIndex'
+                    CallExpression
+                      Identifier: ' binarySearch'
+                      Identifier: 'canonicalizedFiles'
+                      Identifier: ' canonicalizedBaseName'
+                      Identifier: ' identity'
+                      Identifier: ' compareStringsCaseSensitive'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'sortedIndex'
+                  GreaterThanEqualsToken
+                  NumericLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                canonicalizedFiles'
+                        Identifier: 'splice'
+                      Identifier: 'sortedIndex'
+                      NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' unsortedIndex'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' parentResult'
+                              Identifier: 'files'
+                            Identifier: 'findIndex'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'entry'
+                            EqualsGreaterThanToken
+                            BinaryExpression
+                              CallExpression
+                                Identifier: ' getCanonicalFileName'
+                                Identifier: 'entry'
+                              EqualsEqualsEqualsToken
+                              Identifier: ' canonicalizedBaseName'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                parentResult'
+                          Identifier: 'files'
+                        Identifier: 'splice'
+                      Identifier: 'unsortedIndex'
+                      NumericLiteral
+      FunctionDeclaration
+        Identifier: ' clearCache'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        cachedReadDirectoryResult'
+                Identifier: 'clear'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' ProgramUpdateLevel'
+    EnumMember
+      Identifier: '
+    /** Program is updated with same root file names and options */
+    Update'
+    EnumMember
+      Identifier: '
+    /** Loads program after updating root file names from the disk */
+    RootNamesAndUpdate'
+    EnumMember
+      Identifier: '
+    /**
+     * Loads program completely, including:
+     *  - re-reading contents of config file from disk
+     *  - calculating root file names for the program
+     *  - Updating the program
+     */
+
+    Full'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SharedExtendedConfigFileWatcher'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' FileWatcher'
+    PropertySignature
+      Identifier: '
+    watcher'
+      TypeReference
+        Identifier: ' FileWatcher'
+    PropertySignature
+      Identifier: '
+    projects'
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' updateSharedExtendedConfigFileWatcher'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: '
+    projectPath'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+    options'
+      UnionType
+        TypeReference
+          Identifier: ' CompilerOptions'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    extendedConfigFilesMap'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        TypeReference
+          Identifier: ' SharedExtendedConfigFileWatcher'
+          TypeReference
+            Identifier: 'T'
+    Parameter
+      Identifier: '
+    createExtendedConfigFileWatch'
+      FunctionType
+        Parameter
+          Identifier: 'extendedConfigPath'
+          StringKeyword
+        Parameter
+          Identifier: ' extendedConfigFilePath'
+          TypeReference
+            Identifier: ' Path'
+        TypeReference
+          Identifier: ' FileWatcher'
+    Parameter
+      Identifier: '
+    toPath'
+      FunctionType
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        TypeReference
+          Identifier: ' Path'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' extendedConfigs'
+            CallExpression
+              Identifier: ' arrayToMap'
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'options'
+                    QuestionDotToken
+                    Identifier: 'configFile'
+                  QuestionDotToken
+                  Identifier: 'extendedSourceFiles'
+                BarBarToken
+                Identifier: ' emptyArray'
+              Identifier: ' toPath'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    // remove project from all unrelated watchers
+    extendedConfigFilesMap'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'watcher'
+            Parameter
+              Identifier: ' extendedConfigFilePath'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'extendedConfigs'
+                      Identifier: 'has'
+                    Identifier: 'extendedConfigFilePath'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            watcher'
+                          Identifier: 'projects'
+                        Identifier: 'delete'
+                      Identifier: 'projectPath'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            watcher'
+                        Identifier: 'close'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    // Update the extended config files watcher
+    extendedConfigs'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'extendedConfigFileName'
+            Parameter
+              Identifier: ' extendedConfigFilePath'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' existing'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' extendedConfigFilesMap'
+                        Identifier: 'get'
+                      Identifier: 'extendedConfigFilePath'
+              IfStatement
+                Identifier: 'existing'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            existing'
+                          Identifier: 'projects'
+                        Identifier: 'add'
+                      Identifier: 'projectPath'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            // start watching previously unseen extended config
+            extendedConfigFilesMap'
+                        Identifier: 'set'
+                      Identifier: 'extendedConfigFilePath'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                projects'
+                          NewExpression
+                            Identifier: ' Set'
+                            ArrayLiteralExpression
+                              Identifier: 'projectPath'
+                        PropertyAssignment
+                          Identifier: '
+                watcher'
+                          CallExpression
+                            Identifier: ' createExtendedConfigFileWatch'
+                            Identifier: 'extendedConfigFileName'
+                            Identifier: ' extendedConfigFilePath'
+                        PropertyAssignment
+                          Identifier: '
+                close'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' existing'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' extendedConfigFilesMap'
+                                        Identifier: 'get'
+                                      Identifier: 'extendedConfigFilePath'
+                              IfStatement
+                                BinaryExpression
+                                  PrefixUnaryExpression
+                                    Identifier: 'existing'
+                                  BarBarToken
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' existing'
+                                        Identifier: 'projects'
+                                      Identifier: 'size'
+                                    ExclamationEqualsEqualsToken
+                                    NumericLiteral
+                                ReturnStatement
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                    existing'
+                                      Identifier: 'watcher'
+                                    Identifier: 'close'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    extendedConfigFilesMap'
+                                    Identifier: 'delete'
+                                  Identifier: 'extendedConfigFilePath'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' clearSharedExtendedConfigFileWatcher'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: '
+    projectPath'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+    extendedConfigFilesMap'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        TypeReference
+          Identifier: ' SharedExtendedConfigFileWatcher'
+          TypeReference
+            Identifier: 'T'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    extendedConfigFilesMap'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'watcher'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'watcher'
+                      Identifier: 'projects'
+                    Identifier: 'delete'
+                  Identifier: 'projectPath'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' watcher'
+                      Identifier: 'close'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' cleanExtendedConfigCache'
+    Parameter
+      Identifier: '
+    extendedConfigCache'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' ExtendedConfigCacheEntry'
+    Parameter
+      Identifier: '
+    extendedConfigFilePath'
+      TypeReference
+        Identifier: ' Path'
+    Parameter
+      Identifier: '
+    toPath'
+      FunctionType
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        TypeReference
+          Identifier: ' Path'
+    VoidKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'extendedConfigCache'
+              Identifier: 'delete'
+            Identifier: 'extendedConfigFilePath'
+        ReturnStatement
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    extendedConfigCache'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' extendedResult'
+            Parameter
+              Identifier: ' key'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'extendedResult'
+                      Identifier: 'extendedSourceFiles'
+                    QuestionDotToken
+                    Identifier: 'some'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'extendedFile'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      CallExpression
+                        Identifier: ' toPath'
+                        Identifier: 'extendedFile'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' extendedConfigFilePath'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            cleanExtendedConfigCache'
+                      Identifier: 'extendedConfigCache'
+                      AsExpression
+                        Identifier: ' key'
+                        TypeReference
+                          Identifier: ' Path'
+                      Identifier: ' toPath'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' updateMissingFilePathsWatch'
+    Parameter
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: '
+    missingFileWatches'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Path'
+        TypeReference
+          Identifier: ' FileWatcher'
+    Parameter
+      Identifier: '
+    createMissingFileWatch'
+      FunctionType
+        Parameter
+          Identifier: 'missingFilePath'
+          TypeReference
+            Identifier: ' Path'
+        Parameter
+          Identifier: ' missingFileName'
+          StringKeyword
+        TypeReference
+          Identifier: ' FileWatcher'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    // Update the missing file paths watcher
+    mutateMap'
+          Identifier: '
+        missingFileWatches'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        program'
+              Identifier: 'getMissingFilePaths'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            // Watch the missing files
+            createNewValue'
+              Identifier: ' createMissingFileWatch'
+            PropertyAssignment
+              Identifier: '
+            // Files that are no longer missing (e.g. because they are no longer required)
+            // should no longer be watched.
+            onDeleteValue'
+              Identifier: ' closeFileWatcher'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' WildcardDirectoryWatcher'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' FileWatcher'
+      TypeReference
+        Identifier: ' FileWatcher'
+    PropertySignature
+      Identifier: '
+    watcher'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    flags'
+      TypeReference
+        Identifier: ' WatchDirectoryFlags'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' updateWatchingWildcardDirectories'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' FileWatcher'
+    Parameter
+      Identifier: '
+    existingWatchedForWildcards'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' WildcardDirectoryWatcher'
+          TypeReference
+            Identifier: 'T'
+    Parameter
+      Identifier: '
+    wildcardDirectories'
+      UnionType
+        TypeReference
+          Identifier: ' MapLike'
+          TypeReference
+            Identifier: 'WatchDirectoryFlags'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    watchDirectory'
+      FunctionType
+        Parameter
+          Identifier: 'directory'
+          StringKeyword
+        Parameter
+          Identifier: ' flags'
+          TypeReference
+            Identifier: ' WatchDirectoryFlags'
+        TypeReference
+          Identifier: ' T'
+    VoidKeyword
+    Block
+      IfStatement
+        Identifier: 'wildcardDirectories'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        mutateMap'
+              Identifier: '
+            existingWatchedForWildcards'
+              NewExpression
+                Identifier: ' Map'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Object'
+                    Identifier: 'entries'
+                  Identifier: 'wildcardDirectories'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+                // Create new watch and recursive info
+                createNewValue'
+                  Identifier: ' createWildcardDirectoryWatcher'
+                PropertyAssignment
+                  Identifier: '
+                // Close existing watch thats not needed any more
+                onDeleteValue'
+                  Identifier: ' closeFileWatcherOf'
+                PropertyAssignment
+                  Identifier: '
+                // Close existing watch that doesnt match in the flags
+                onExistingValue'
+                  Identifier: ' updateWildcardDirectoryWatcher'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        clearMap'
+              Identifier: 'existingWatchedForWildcards'
+              Identifier: ' closeFileWatcherOf'
+      FunctionDeclaration
+        Identifier: ' createWildcardDirectoryWatcher'
+        Parameter
+          Identifier: 'directory'
+          StringKeyword
+        Parameter
+          Identifier: ' flags'
+          TypeReference
+            Identifier: ' WatchDirectoryFlags'
+        TypeReference
+          Identifier: ' WildcardDirectoryWatcher'
+          TypeReference
+            Identifier: 'T'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            watcher'
+                CallExpression
+                  Identifier: ' watchDirectory'
+                  Identifier: 'directory'
+                  Identifier: ' flags'
+              ShorthandPropertyAssignment
+                Identifier: '
+            flags'
+      FunctionDeclaration
+        Identifier: ' updateWildcardDirectoryWatcher'
+        Parameter
+          Identifier: 'existingWatcher'
+          TypeReference
+            Identifier: ' WildcardDirectoryWatcher'
+            TypeReference
+              Identifier: 'T'
+        Parameter
+          Identifier: ' flags'
+          TypeReference
+            Identifier: ' WatchDirectoryFlags'
+        Parameter
+          Identifier: ' directory'
+          StringKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'existingWatcher'
+                Identifier: 'flags'
+              EqualsEqualsEqualsToken
+              Identifier: ' flags'
+            Block
+              ReturnStatement
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+
+        existingWatcher'
+                  Identifier: 'watcher'
+                Identifier: 'close'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        existingWatchedForWildcards'
+                Identifier: 'set'
+              Identifier: 'directory'
+              CallExpression
+                Identifier: ' createWildcardDirectoryWatcher'
+                Identifier: 'directory'
+                Identifier: ' flags'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IsIgnoredFileFromWildCardWatchingInput'
+    PropertySignature
+      Identifier: '
+    watchedDirPath'
+      TypeReference
+        Identifier: ' Path'
+    PropertySignature
+      Identifier: '
+    fileOrDirectory'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    fileOrDirectoryPath'
+      TypeReference
+        Identifier: ' Path'
+    PropertySignature
+      Identifier: '
+    configFileName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    options'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    PropertySignature
+      Identifier: '
+    program'
+      UnionType
+        TypeReference
+          Identifier: ' BuilderProgram'
+        TypeReference
+          Identifier: ' Program'
+        TypeOperator
+          ArrayType
+            StringKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    extraFileExtensions'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' FileExtensionInfo'
+    PropertySignature
+      Identifier: '
+    currentDirectory'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    useCaseSensitiveFileNames'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    writeLog'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    toPath'
+      FunctionType
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        TypeReference
+          Identifier: ' Path'
+    PropertySignature
+      Identifier: '
+    getScriptKind'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        TypeReference
+          Identifier: ' ScriptKind'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isIgnoredFileFromWildCardWatching'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '
+    watchedDirPath'
+        BindingElement
+          Identifier: '
+    fileOrDirectory'
+        BindingElement
+          Identifier: '
+    fileOrDirectoryPath'
+        BindingElement
+          Identifier: '
+    configFileName'
+        BindingElement
+          Identifier: '
+    options'
+        BindingElement
+          Identifier: '
+    program'
+        BindingElement
+          Identifier: '
+    extraFileExtensions'
+        BindingElement
+          Identifier: '
+    currentDirectory'
+        BindingElement
+          Identifier: '
+    useCaseSensitiveFileNames'
+        BindingElement
+          Identifier: '
+    writeLog'
+        BindingElement
+          Identifier: '
+    toPath'
+        BindingElement
+          Identifier: '
+    getScriptKind'
+      TypeReference
+        Identifier: ' IsIgnoredFileFromWildCardWatchingInput'
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newPath'
+            CallExpression
+              Identifier: ' removeIgnoredPath'
+              Identifier: 'fileOrDirectoryPath'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'newPath'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        writeLog'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'configFileName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'fileOrDirectory'
+                  TemplateTail
+          ReturnStatement
+            TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    fileOrDirectoryPath'
+          EqualsToken
+          Identifier: ' newPath'
+      IfStatement
+        BinaryExpression
+          Identifier: 'fileOrDirectoryPath'
+          EqualsEqualsEqualsToken
+          Identifier: ' watchedDirPath'
+        ReturnStatement
+          FalseKeyword
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: '
+        hasExtension'
+            Identifier: 'fileOrDirectoryPath'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: '
+            isSupportedSourceFileName'
+                  Identifier: 'fileOrDirectory'
+                  Identifier: ' options'
+                  Identifier: ' extraFileExtensions'
+                BarBarToken
+                CallExpression
+                  Identifier: '
+            isSupportedScriptKind'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        writeLog'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'configFileName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'fileOrDirectory'
+                  TemplateTail
+          ReturnStatement
+            TrueKeyword
+      IfStatement
+        CallExpression
+          Identifier: 'isExcludedFile'
+          Identifier: 'fileOrDirectory'
+          NonNullExpression
+            PropertyAccessExpression
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: ' options'
+                  Identifier: 'configFile'
+              Identifier: 'configFileSpecs'
+          CallExpression
+            Identifier: ' getNormalizedAbsolutePath'
+            CallExpression
+              Identifier: 'getDirectoryPath'
+              Identifier: 'configFileName'
+            Identifier: ' currentDirectory'
+          Identifier: ' useCaseSensitiveFileNames'
+          Identifier: ' currentDirectory'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        writeLog'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'configFileName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'fileOrDirectory'
+                  TemplateTail
+          ReturnStatement
+            TrueKeyword
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'program'
+        ReturnStatement
+          FalseKeyword
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'options'
+            Identifier: 'outFile'
+          BarBarToken
+          PropertyAccessExpression
+            Identifier: ' options'
+            Identifier: 'outDir'
+        ReturnStatement
+          FalseKeyword
+      IfStatement
+        CallExpression
+          Identifier: 'isDeclarationFileName'
+          Identifier: 'fileOrDirectoryPath'
+        Block
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'options'
+              Identifier: 'declarationDir'
+            ReturnStatement
+              FalseKeyword
+        IfStatement
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'fileExtensionIsOneOf'
+              Identifier: 'fileOrDirectoryPath'
+              Identifier: ' supportedJSExtensionsFlat'
+          Block
+            ReturnStatement
+              FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' filePathWithoutExtension'
+            CallExpression
+              Identifier: ' removeFileExtension'
+              Identifier: 'fileOrDirectoryPath'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' realProgram'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isArray'
+                Identifier: 'program'
+              QuestionToken
+              Identifier: ' undefined'
+              ColonToken
+              ConditionalExpression
+                CallExpression
+                  Identifier: ' isBuilderProgram'
+                  Identifier: 'program'
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getProgramOrUndefined'
+                ColonToken
+                Identifier: ' program'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' builderProgram'
+            ConditionalExpression
+              BinaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'realProgram'
+                AmpersandAmpersandToken
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isArray'
+                    Identifier: 'program'
+              QuestionToken
+              AsExpression
+                Identifier: ' program'
+                TypeReference
+                  Identifier: ' BuilderProgram'
+              ColonToken
+              Identifier: ' undefined'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: '
+        hasSourceFile'
+            AsExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'filePathWithoutExtension'
+                  PlusToken
+                  PropertyAccessExpression
+                    Identifier: ' Extension'
+                    Identifier: 'Ts'
+              TypeReference
+                Identifier: ' Path'
+          BarBarToken
+          CallExpression
+            Identifier: '
+        hasSourceFile'
+            AsExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'filePathWithoutExtension'
+                  PlusToken
+                  PropertyAccessExpression
+                    Identifier: ' Extension'
+                    Identifier: 'Tsx'
+              TypeReference
+                Identifier: ' Path'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        writeLog'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'configFileName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'fileOrDirectory'
+                  TemplateTail
+          ReturnStatement
+            TrueKeyword
+      ReturnStatement
+        FalseKeyword
+      FunctionDeclaration
+        Identifier: ' hasSourceFile'
+        Parameter
+          Identifier: 'file'
+          TypeReference
+            Identifier: ' Path'
+        BooleanKeyword
+        Block
+          ReturnStatement
+            ConditionalExpression
+              Identifier: ' realProgram'
+              QuestionToken
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'realProgram'
+                      Identifier: 'getSourceFileByPath'
+                    Identifier: 'file'
+              ColonToken
+              ConditionalExpression
+                Identifier: '
+            builderProgram'
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            builderProgram'
+                        Identifier: 'state'
+                      Identifier: 'fileInfos'
+                    Identifier: 'has'
+                  Identifier: 'file'
+                ColonToken
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'find'
+                      AsExpression
+                        Identifier: 'program'
+                        TypeOperator
+                          ArrayType
+                            StringKeyword
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' rootFile'
+                        EqualsGreaterThanToken
+                        BinaryExpression
+                          CallExpression
+                            Identifier: ' toPath'
+                            Identifier: 'rootFile'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' file'
+      FunctionDeclaration
+        Identifier: ' isSupportedScriptKind'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'getScriptKind'
+            ReturnStatement
+              FalseKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' scriptKind'
+                CallExpression
+                  Identifier: ' getScriptKind'
+                  Identifier: 'fileOrDirectory'
+          SwitchStatement
+            Identifier: 'scriptKind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScriptKind'
+                  Identifier: 'TS'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScriptKind'
+                  Identifier: 'TSX'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScriptKind'
+                  Identifier: 'Deferred'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScriptKind'
+                  Identifier: 'External'
+                ReturnStatement
+                  TrueKeyword
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScriptKind'
+                  Identifier: 'JS'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScriptKind'
+                  Identifier: 'JSX'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getAllowJSCompilerOption'
+                    Identifier: 'options'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScriptKind'
+                  Identifier: 'JSON'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getResolveJsonModule'
+                    Identifier: 'options'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScriptKind'
+                  Identifier: 'Unknown'
+                ReturnStatement
+                  FalseKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isEmittedFileOfProgram'
+    Parameter
+      Identifier: 'program'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' file'
+      StringKeyword
+    BooleanKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'program'
+        Block
+          ReturnStatement
+            FalseKeyword
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' program'
+            Identifier: 'isEmittedFile'
+          Identifier: 'file'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' WatchLogLevel'
+    EnumMember
+      Identifier: '
+    None'
+    EnumMember
+      Identifier: '
+    TriggerOnly'
+    EnumMember
+      Identifier: '
+    Verbose'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' WatchFactoryHost'
+    MethodSignature
+      Identifier: '
+    watchFile'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' callback'
+        TypeReference
+          Identifier: ' FileWatcherCallback'
+      Parameter
+        Identifier: ' pollingInterval'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' WatchOptions'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodSignature
+      Identifier: '
+    watchDirectory'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' callback'
+        TypeReference
+          Identifier: ' DirectoryWatcherCallback'
+      Parameter
+        Identifier: ' recursive'
+        QuestionToken
+        BooleanKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' WatchOptions'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodSignature
+      Identifier: '
+    getCurrentDirectory'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    useCaseSensitiveFileNames'
+      UnionType
+        BooleanKeyword
+        ParenthesizedType
+          FunctionType
+            BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' WatchFactory'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' Y'
+      UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    watchFile'
+      FunctionType
+        Parameter
+          Identifier: 'file'
+          StringKeyword
+        Parameter
+          Identifier: ' callback'
+          TypeReference
+            Identifier: ' FileWatcherCallback'
+        Parameter
+          Identifier: ' pollingInterval'
+          TypeReference
+            Identifier: ' PollingInterval'
+        Parameter
+          Identifier: ' options'
+          UnionType
+            TypeReference
+              Identifier: ' WatchOptions'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' detailInfo1'
+          TypeReference
+            Identifier: ' X'
+        Parameter
+          Identifier: ' detailInfo2'
+          QuestionToken
+          TypeReference
+            Identifier: ' Y'
+        TypeReference
+          Identifier: ' FileWatcher'
+    PropertySignature
+      Identifier: '
+    watchDirectory'
+      FunctionType
+        Parameter
+          Identifier: 'directory'
+          StringKeyword
+        Parameter
+          Identifier: ' callback'
+          TypeReference
+            Identifier: ' DirectoryWatcherCallback'
+        Parameter
+          Identifier: ' flags'
+          TypeReference
+            Identifier: ' WatchDirectoryFlags'
+        Parameter
+          Identifier: ' options'
+          UnionType
+            TypeReference
+              Identifier: ' WatchOptions'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' detailInfo1'
+          TypeReference
+            Identifier: ' X'
+        Parameter
+          Identifier: ' detailInfo2'
+          QuestionToken
+          TypeReference
+            Identifier: ' Y'
+        TypeReference
+          Identifier: ' FileWatcher'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' GetDetailWatchInfo'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' Y'
+    FunctionType
+      Parameter
+        Identifier: 'detailInfo1'
+        TypeReference
+          Identifier: ' X'
+      Parameter
+        Identifier: ' detailInfo2'
+        UnionType
+          TypeReference
+            Identifier: ' Y'
+          UndefinedKeyword
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getWatchFactory'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' Y'
+      UndefinedKeyword
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' WatchFactoryHost'
+    Parameter
+      Identifier: ' watchLogLevel'
+      TypeReference
+        Identifier: ' WatchLogLevel'
+    Parameter
+      Identifier: ' log'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        VoidKeyword
+    Parameter
+      Identifier: ' getDetailWatchInfo'
+      QuestionToken
+      TypeReference
+        Identifier: ' GetDetailWatchInfo'
+        TypeReference
+          Identifier: 'X'
+        TypeReference
+          Identifier: ' Y'
+    TypeReference
+      Identifier: ' WatchFactory'
+      TypeReference
+        Identifier: 'X'
+      TypeReference
+        Identifier: ' Y'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    setSysLog'
+          ConditionalExpression
+            BinaryExpression
+              Identifier: 'watchLogLevel'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' WatchLogLevel'
+                Identifier: 'Verbose'
+            QuestionToken
+            Identifier: ' log'
+            ColonToken
+            Identifier: ' noop'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' plainInvokeFactory'
+            TypeReference
+              Identifier: ' WatchFactory'
+              TypeReference
+                Identifier: 'X'
+              TypeReference
+                Identifier: ' Y'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        watchFile'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'file'
+                  Parameter
+                    Identifier: ' callback'
+                  Parameter
+                    Identifier: ' pollingInterval'
+                  Parameter
+                    Identifier: ' options'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'watchFile'
+                    Identifier: 'file'
+                    Identifier: ' callback'
+                    Identifier: ' pollingInterval'
+                    Identifier: ' options'
+              PropertyAssignment
+                Identifier: '
+        watchDirectory'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'directory'
+                  Parameter
+                    Identifier: ' callback'
+                  Parameter
+                    Identifier: ' flags'
+                  Parameter
+                    Identifier: ' options'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' host'
+                      Identifier: 'watchDirectory'
+                    Identifier: 'directory'
+                    Identifier: ' callback'
+                    BinaryExpression
+                      ParenthesizedExpression
+                        BinaryExpression
+                          Identifier: 'flags'
+                          AmpersandToken
+                          PropertyAccessExpression
+                            Identifier: ' WatchDirectoryFlags'
+                            Identifier: 'Recursive'
+                      ExclamationEqualsEqualsToken
+                      NumericLiteral
+                    Identifier: ' options'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' triggerInvokingFactory'
+            UnionType
+              TypeReference
+                Identifier: ' WatchFactory'
+                TypeReference
+                  Identifier: 'X'
+                TypeReference
+                  Identifier: ' Y'
+              UndefinedKeyword
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' watchLogLevel'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' WatchLogLevel'
+                  Identifier: 'None'
+              QuestionToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            watchFile'
+                  CallExpression
+                    Identifier: ' createTriggerLoggingAddWatch'
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            watchDirectory'
+                  CallExpression
+                    Identifier: ' createTriggerLoggingAddWatch'
+                    StringLiteral
+              ColonToken
+              Identifier: '
+        undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' factory'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' watchLogLevel'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' WatchLogLevel'
+                  Identifier: 'Verbose'
+              QuestionToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            watchFile'
+                  Identifier: ' createFileWatcherWithLogging'
+                PropertyAssignment
+                  Identifier: '
+            watchDirectory'
+                  Identifier: ' createDirectoryWatcherWithLogging'
+              ColonToken
+              BinaryExpression
+                Identifier: '
+        triggerInvokingFactory'
+                BarBarToken
+                Identifier: ' plainInvokeFactory'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' excludeWatcherFactory'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' watchLogLevel'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' WatchLogLevel'
+                  Identifier: 'Verbose'
+              QuestionToken
+              Identifier: '
+        createExcludeWatcherWithLogging'
+              ColonToken
+              Identifier: '
+        returnNoopFileWatcher'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        watchFile'
+            CallExpression
+              Identifier: ' createExcludeHandlingAddWatch'
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+        watchDirectory'
+            CallExpression
+              Identifier: ' createExcludeHandlingAddWatch'
+              StringLiteral
+      FunctionDeclaration
+        Identifier: ' createExcludeHandlingAddWatch'
+        TypeParameter
+          Identifier: 'T'
+          TypeOperator
+            TypeReference
+              Identifier: ' WatchFactory'
+              TypeReference
+                Identifier: 'X'
+              TypeReference
+                Identifier: ' Y'
+        Parameter
+          Identifier: 'key'
+          TypeReference
+            Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' WatchFactory'
+            TypeReference
+              Identifier: 'X'
+            TypeReference
+              Identifier: ' Y'
+          TypeReference
+            Identifier: 'T'
+        Block
+          ReturnStatement
+            ArrowFunction
+              Parameter
+                Identifier: '
+            file'
+                StringKeyword
+              Parameter
+                Identifier: '
+            cb'
+                UnionType
+                  TypeReference
+                    Identifier: ' FileWatcherCallback'
+                  TypeReference
+                    Identifier: ' DirectoryWatcherCallback'
+              Parameter
+                Identifier: '
+            flags'
+                UnionType
+                  TypeReference
+                    Identifier: ' PollingInterval'
+                  TypeReference
+                    Identifier: ' WatchDirectoryFlags'
+              Parameter
+                Identifier: '
+            options'
+                UnionType
+                  TypeReference
+                    Identifier: ' WatchOptions'
+                  UndefinedKeyword
+              Parameter
+                Identifier: '
+            detailInfo1'
+                TypeReference
+                  Identifier: ' X'
+              Parameter
+                Identifier: '
+            detailInfo2'
+                QuestionToken
+                TypeReference
+                  Identifier: ' Y'
+              EqualsGreaterThanToken
+              ConditionalExpression
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'matchesExclude'
+                    Identifier: 'file'
+                    ConditionalExpression
+                      BinaryExpression
+                        Identifier: ' key'
+                        EqualsEqualsEqualsToken
+                        StringLiteral
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' options'
+                        QuestionDotToken
+                        Identifier: 'excludeFiles'
+                      ColonToken
+                      PropertyAccessExpression
+                        Identifier: ' options'
+                        QuestionDotToken
+                        Identifier: 'excludeDirectories'
+                    CallExpression
+                      Identifier: ' useCaseSensitiveFileNames'
+                    BinaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' host'
+                          Identifier: 'getCurrentDirectory'
+                        QuestionDotToken
+                      BarBarToken
+                      StringLiteral
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'key'
+                    Identifier: 'call'
+                  Identifier: '/*thisArgs*/ undefined'
+                  Identifier: ' file'
+                  Identifier: ' cb'
+                  Identifier: ' flags'
+                  Identifier: ' options'
+                  Identifier: ' detailInfo1'
+                  Identifier: ' detailInfo2'
+                ColonToken
+                CallExpression
+                  Identifier: '
+            excludeWatcherFactory'
+                  Identifier: 'file'
+                  Identifier: ' flags'
+                  Identifier: ' options'
+                  Identifier: ' detailInfo1'
+                  Identifier: ' detailInfo2'
+      FunctionDeclaration
+        Identifier: ' useCaseSensitiveFileNames'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    Identifier: ' host'
+                    Identifier: 'useCaseSensitiveFileNames'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: '
+            host'
+                Identifier: 'useCaseSensitiveFileNames'
+              ColonToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            host'
+                  Identifier: 'useCaseSensitiveFileNames'
+      FunctionDeclaration
+        Identifier: ' createExcludeWatcherWithLogging'
+        Parameter
+          Identifier: '
+        file'
+          StringKeyword
+        Parameter
+          Identifier: '
+        flags'
+          UnionType
+            TypeReference
+              Identifier: ' PollingInterval'
+            TypeReference
+              Identifier: ' WatchDirectoryFlags'
+        Parameter
+          Identifier: '
+        options'
+          UnionType
+            TypeReference
+              Identifier: ' WatchOptions'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        detailInfo1'
+          TypeReference
+            Identifier: ' X'
+        Parameter
+          Identifier: '
+        detailInfo2'
+          QuestionToken
+          TypeReference
+            Identifier: ' Y'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        log'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  CallExpression
+                    Identifier: 'getWatchInfo'
+                    Identifier: 'file'
+                    Identifier: ' flags'
+                    Identifier: ' options'
+                    Identifier: ' detailInfo1'
+                    Identifier: ' detailInfo2'
+                    Identifier: ' getDetailWatchInfo'
+                  TemplateTail
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            close'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' log'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        CallExpression
+                          Identifier: 'getWatchInfo'
+                          Identifier: 'file'
+                          Identifier: ' flags'
+                          Identifier: ' options'
+                          Identifier: ' detailInfo1'
+                          Identifier: ' detailInfo2'
+                          Identifier: ' getDetailWatchInfo'
+                        TemplateTail
+      FunctionDeclaration
+        Identifier: ' createFileWatcherWithLogging'
+        Parameter
+          Identifier: '
+        file'
+          StringKeyword
+        Parameter
+          Identifier: '
+        cb'
+          TypeReference
+            Identifier: ' FileWatcherCallback'
+        Parameter
+          Identifier: '
+        flags'
+          TypeReference
+            Identifier: ' PollingInterval'
+        Parameter
+          Identifier: '
+        options'
+          UnionType
+            TypeReference
+              Identifier: ' WatchOptions'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        detailInfo1'
+          TypeReference
+            Identifier: ' X'
+        Parameter
+          Identifier: '
+        detailInfo2'
+          QuestionToken
+          TypeReference
+            Identifier: ' Y'
+        TypeReference
+          Identifier: ' FileWatcher'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        log'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  CallExpression
+                    Identifier: 'getWatchInfo'
+                    Identifier: 'file'
+                    Identifier: ' flags'
+                    Identifier: ' options'
+                    Identifier: ' detailInfo1'
+                    Identifier: ' detailInfo2'
+                    Identifier: ' getDetailWatchInfo'
+                  TemplateTail
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' watcher'
+                CallExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      Identifier: ' triggerInvokingFactory'
+                    Identifier: 'watchFile'
+                  Identifier: 'file'
+                  Identifier: ' cb'
+                  Identifier: ' flags'
+                  Identifier: ' options'
+                  Identifier: ' detailInfo1'
+                  Identifier: ' detailInfo2'
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            close'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                log'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            CallExpression
+                              Identifier: 'getWatchInfo'
+                              Identifier: 'file'
+                              Identifier: ' flags'
+                              Identifier: ' options'
+                              Identifier: ' detailInfo1'
+                              Identifier: ' detailInfo2'
+                              Identifier: ' getDetailWatchInfo'
+                            TemplateTail
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                watcher'
+                          Identifier: 'close'
+      FunctionDeclaration
+        Identifier: ' createDirectoryWatcherWithLogging'
+        Parameter
+          Identifier: '
+        file'
+          StringKeyword
+        Parameter
+          Identifier: '
+        cb'
+          TypeReference
+            Identifier: ' DirectoryWatcherCallback'
+        Parameter
+          Identifier: '
+        flags'
+          TypeReference
+            Identifier: ' WatchDirectoryFlags'
+        Parameter
+          Identifier: '
+        options'
+          UnionType
+            TypeReference
+              Identifier: ' WatchOptions'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        detailInfo1'
+          TypeReference
+            Identifier: ' X'
+        Parameter
+          Identifier: '
+        detailInfo2'
+          QuestionToken
+          TypeReference
+            Identifier: ' Y'
+        TypeReference
+          Identifier: ' FileWatcher'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' watchInfo'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    CallExpression
+                      Identifier: 'getWatchInfo'
+                      Identifier: 'file'
+                      Identifier: ' flags'
+                      Identifier: ' options'
+                      Identifier: ' detailInfo1'
+                      Identifier: ' detailInfo2'
+                      Identifier: ' getDetailWatchInfo'
+                    TemplateTail
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        log'
+              Identifier: 'watchInfo'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' start'
+                CallExpression
+                  Identifier: ' timestamp'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' watcher'
+                CallExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      Identifier: ' triggerInvokingFactory'
+                    Identifier: 'watchDirectory'
+                  Identifier: 'file'
+                  Identifier: ' cb'
+                  Identifier: ' flags'
+                  Identifier: ' options'
+                  Identifier: ' detailInfo1'
+                  Identifier: ' detailInfo2'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' elapsed'
+                BinaryExpression
+                  CallExpression
+                    Identifier: ' timestamp'
+                  MinusToken
+                  Identifier: ' start'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        log'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'elapsed'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'watchInfo'
+                  TemplateTail
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            close'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' watchInfo'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              CallExpression
+                                Identifier: 'getWatchInfo'
+                                Identifier: 'file'
+                                Identifier: ' flags'
+                                Identifier: ' options'
+                                Identifier: ' detailInfo1'
+                                Identifier: ' detailInfo2'
+                                Identifier: ' getDetailWatchInfo'
+                              TemplateTail
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                log'
+                        Identifier: 'watchInfo'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' start'
+                          CallExpression
+                            Identifier: ' timestamp'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                watcher'
+                          Identifier: 'close'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' elapsed'
+                          BinaryExpression
+                            CallExpression
+                              Identifier: ' timestamp'
+                            MinusToken
+                            Identifier: ' start'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                log'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            Identifier: 'elapsed'
+                            TemplateMiddle
+                          TemplateSpan
+                            Identifier: 'watchInfo'
+                            TemplateTail
+      FunctionDeclaration
+        Identifier: ' createTriggerLoggingAddWatch'
+        TypeParameter
+          Identifier: 'T'
+          TypeOperator
+            TypeReference
+              Identifier: ' WatchFactory'
+              TypeReference
+                Identifier: 'X'
+              TypeReference
+                Identifier: ' Y'
+        Parameter
+          Identifier: 'key'
+          TypeReference
+            Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' WatchFactory'
+            TypeReference
+              Identifier: 'X'
+            TypeReference
+              Identifier: ' Y'
+          TypeReference
+            Identifier: 'T'
+        Block
+          ReturnStatement
+            ArrowFunction
+              Parameter
+                Identifier: '
+            file'
+                StringKeyword
+              Parameter
+                Identifier: '
+            cb'
+                UnionType
+                  TypeReference
+                    Identifier: ' FileWatcherCallback'
+                  TypeReference
+                    Identifier: ' DirectoryWatcherCallback'
+              Parameter
+                Identifier: '
+            flags'
+                UnionType
+                  TypeReference
+                    Identifier: ' PollingInterval'
+                  TypeReference
+                    Identifier: ' WatchDirectoryFlags'
+              Parameter
+                Identifier: '
+            options'
+                UnionType
+                  TypeReference
+                    Identifier: ' WatchOptions'
+                  UndefinedKeyword
+              Parameter
+                Identifier: '
+            detailInfo1'
+                TypeReference
+                  Identifier: ' X'
+              Parameter
+                Identifier: '
+            detailInfo2'
+                QuestionToken
+                TypeReference
+                  Identifier: ' Y'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  ElementAccessExpression
+                    Identifier: ' plainInvokeFactory'
+                    Identifier: 'key'
+                  Identifier: 'call'
+                Identifier: '
+            /*thisArgs*/ undefined'
+                Identifier: '
+            file'
+                ArrowFunction
+                  Parameter
+                    DotDotDotToken
+                    Identifier: 'args'
+                    ArrayType
+                      AnyKeyword
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' triggerredInfo'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              ConditionalExpression
+                                BinaryExpression
+                                  Identifier: 'key'
+                                  EqualsEqualsEqualsToken
+                                  StringLiteral
+                                QuestionToken
+                                StringLiteral
+                                ColonToken
+                                StringLiteral
+                              TemplateMiddle
+                            TemplateSpan
+                              ElementAccessExpression
+                                Identifier: 'args'
+                                NumericLiteral
+                              TemplateMiddle
+                            TemplateSpan
+                              ConditionalExpression
+                                BinaryExpression
+                                  ElementAccessExpression
+                                    Identifier: 'args'
+                                    NumericLiteral
+                                  ExclamationEqualsEqualsToken
+                                  Identifier: ' undefined'
+                                QuestionToken
+                                ElementAccessExpression
+                                  Identifier: ' args'
+                                  NumericLiteral
+                                ColonToken
+                                StringLiteral
+                              TemplateMiddle
+                            TemplateSpan
+                              CallExpression
+                                Identifier: 'getWatchInfo'
+                                Identifier: 'file'
+                                Identifier: ' flags'
+                                Identifier: ' options'
+                                Identifier: ' detailInfo1'
+                                Identifier: ' detailInfo2'
+                                Identifier: ' getDetailWatchInfo'
+                              TemplateTail
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                log'
+                        Identifier: 'triggerredInfo'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' start'
+                          CallExpression
+                            Identifier: ' timestamp'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                cb'
+                          Identifier: 'call'
+                        Identifier: '/*thisArg*/ undefined'
+                        SpreadElement
+                          Identifier: 'args'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' elapsed'
+                          BinaryExpression
+                            CallExpression
+                              Identifier: ' timestamp'
+                            MinusToken
+                            Identifier: ' start'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                log'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            Identifier: 'elapsed'
+                            TemplateMiddle
+                          TemplateSpan
+                            Identifier: 'triggerredInfo'
+                            TemplateTail
+                Identifier: '
+            flags'
+                Identifier: '
+            options'
+                Identifier: '
+            detailInfo1'
+                Identifier: '
+            detailInfo2'
+      FunctionDeclaration
+        Identifier: ' getWatchInfo'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'file'
+          StringKeyword
+        Parameter
+          Identifier: ' flags'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' options'
+          UnionType
+            TypeReference
+              Identifier: ' WatchOptions'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' detailInfo1'
+          TypeReference
+            Identifier: ' X'
+        Parameter
+          Identifier: ' detailInfo2'
+          UnionType
+            TypeReference
+              Identifier: ' Y'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' getDetailWatchInfo'
+          UnionType
+            TypeReference
+              Identifier: ' GetDetailWatchInfo'
+              TypeReference
+                Identifier: 'X'
+              TypeReference
+                Identifier: ' Y'
+            UndefinedKeyword
+        Block
+          ReturnStatement
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'file'
+                TemplateMiddle
+              TemplateSpan
+                Identifier: 'flags'
+                TemplateMiddle
+              TemplateSpan
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'JSON'
+                    Identifier: 'stringify'
+                  Identifier: 'options'
+                TemplateMiddle
+              TemplateSpan
+                ConditionalExpression
+                  Identifier: 'getDetailWatchInfo'
+                  QuestionToken
+                  CallExpression
+                    Identifier: ' getDetailWatchInfo'
+                    Identifier: 'detailInfo1'
+                    Identifier: ' detailInfo2'
+                  ColonToken
+                  ConditionalExpression
+                    BinaryExpression
+                      Identifier: ' detailInfo2'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' undefined'
+                    QuestionToken
+                    Identifier: ' detailInfo1'
+                    ColonToken
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'detailInfo1'
+                        TemplateMiddle
+                      TemplateSpan
+                        Identifier: 'detailInfo2'
+                        TemplateTail
+                TemplateTail
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFallbackOptions'
+    Parameter
+      Identifier: 'options'
+      UnionType
+        TypeReference
+          Identifier: ' WatchOptions'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' WatchOptions'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fallbackPolling'
+            PropertyAccessExpression
+              Identifier: ' options'
+              QuestionDotToken
+              Identifier: 'fallbackPolling'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        watchFile'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' fallbackPolling'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              AsExpression
+                AsExpression
+                  Identifier: '
+            fallbackPolling'
+                  UnknownKeyword
+                TypeReference
+                  Identifier: ' WatchFileKind'
+              ColonToken
+              PropertyAccessExpression
+                Identifier: '
+            WatchFileKind'
+                Identifier: 'PriorityPollingInterval'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' closeFileWatcherOf'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' watcher'
+          TypeReference
+            Identifier: ' FileWatcher'
+    Parameter
+      Identifier: 'objWithWatcher'
+      TypeReference
+        Identifier: ' T'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    objWithWatcher'
+              Identifier: 'watcher'
+            Identifier: 'close'

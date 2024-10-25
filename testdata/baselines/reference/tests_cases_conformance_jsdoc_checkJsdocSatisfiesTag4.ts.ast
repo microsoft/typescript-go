@@ -1,0 +1,10 @@
+SourceFile
+  ExportAssignment
+    ParenthesizedExpression
+      ObjectLiteralExpression
+  ExportAssignment
+    ParenthesizedExpression
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral

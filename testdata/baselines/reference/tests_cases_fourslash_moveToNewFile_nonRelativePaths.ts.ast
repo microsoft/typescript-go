@@ -1,0 +1,45 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /tsconfig.json
+//// {
+////     "compilerOptions": {
+////         "moduleResolution": "Bundler",
+////         "baseUrl": "."
+////         "paths": {
+////             "@foo/*": ["src/*"]
+////         }
+////     }
+//// }
+
+// @Filename: /src/a.ts
+////export function a() {
+////    b();
+////}
+////[|export function b() {
+////}|]
+
+verify'
+        Identifier: 'moveToNewFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        importModuleSpecifierPreference'
+              StringLiteral

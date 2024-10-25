@@ -1,0 +1,775 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'a'
+    PropertySignature
+      Identifier: '
+    value'
+      TypeReference
+        Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' fn'
+    TypeParameter
+      Identifier: 'a'
+    Parameter
+      Identifier: 'values'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'a'
+    Parameter
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' a'
+    VoidKeyword
+    Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' handlers'
+        TypeReference
+          Identifier: ' A'
+          FunctionType
+            Parameter
+              Identifier: 'value'
+              NumberKeyword
+            VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      Identifier: 'handlers'
+      ArrowFunction
+        Parameter
+          Identifier: ' value'
+        EqualsGreaterThanToken
+        CallExpression
+          Identifier: ' alert'
+          Identifier: 'value'
+  InterfaceDeclaration
+    Identifier: ' BaseProps'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+  initialValues'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+  nextValues'
+      FunctionType
+        Parameter
+          Identifier: 'cur'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Component'
+    TypeParameter
+      Identifier: 'P'
+    Constructor
+      Parameter
+        Identifier: 'props'
+        TypeReference
+          Identifier: ' P'
+    PropertyDeclaration
+      Identifier: ' props'
+      TypeReference
+        Identifier: ' P'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' GenericComponent'
+    TypeParameter
+      Identifier: 'Props'
+      TypeLiteral
+    TypeParameter
+      Identifier: ' Values'
+      ObjectKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Component'
+        IntersectionType
+          TypeReference
+            Identifier: 'Props'
+          TypeReference
+            Identifier: ' BaseProps'
+            TypeReference
+              Identifier: 'Values'
+    PropertyDeclaration
+      Identifier: '
+  iv'
+      TypeReference
+        Identifier: ' Values'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' GenericComponent'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' initialValues'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' nextValues'
+          ArrowFunction
+            Parameter
+              Identifier: ' val'
+            EqualsGreaterThanToken
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' useStringOrNumber'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' useIt'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        StringKeyword
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            VoidKeyword
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+useStringOrNumber'
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: ' foo'
+        EqualsGreaterThanToken
+        Block
+  TypeAliasDeclaration
+    Identifier: ' ActionType'
+    TypeParameter
+      Identifier: 'P'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' attachPayloadTypeHack'
+          QuestionToken
+          IntersectionType
+            TypeReference
+              Identifier: ' P'
+            NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' Handler'
+    TypeParameter
+      Identifier: 'S'
+    TypeParameter
+      Identifier: ' P'
+    ConditionalType
+      TypeReference
+        Identifier: ' P'
+      VoidKeyword
+      FunctionType
+        Parameter
+          Identifier: 'state'
+          TypeReference
+            Identifier: ' S'
+        TypeReference
+          Identifier: ' S'
+      FunctionType
+        Parameter
+          Identifier: 'state'
+          TypeReference
+            Identifier: ' S'
+        Parameter
+          Identifier: ' payload'
+          TypeReference
+            Identifier: ' P'
+        TypeReference
+          Identifier: ' S'
+  InterfaceDeclaration
+    Identifier: ' ActionHandler'
+    TypeParameter
+      Identifier: 'S'
+    TypeParameter
+      Identifier: ' P'
+    PropertySignature
+      Identifier: '
+    actionType'
+      TypeReference
+        Identifier: ' ActionType'
+        TypeReference
+          Identifier: 'P'
+    PropertySignature
+      Identifier: '
+    handler'
+      TypeReference
+        Identifier: ' Handler'
+        TypeReference
+          Identifier: 'S'
+        TypeReference
+          Identifier: ' P'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' handler'
+    TypeParameter
+      Identifier: 'S'
+    TypeParameter
+      Identifier: ' P'
+    Parameter
+      Identifier: 'actionType'
+      TypeReference
+        Identifier: ' ActionType'
+        TypeReference
+          Identifier: 'P'
+    Parameter
+      Identifier: ' handler'
+      TypeReference
+        Identifier: ' Handler'
+        TypeReference
+          Identifier: 'S'
+        TypeReference
+          Identifier: ' P'
+    TypeReference
+      Identifier: ' ActionHandler'
+      TypeReference
+        Identifier: 'S'
+      TypeReference
+        Identifier: ' P'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' createReducer'
+    TypeParameter
+      Identifier: 'S'
+    Parameter
+      Identifier: '
+        defaultState'
+      TypeReference
+        Identifier: ' S'
+    Parameter
+      DotDotDotToken
+      Identifier: 'actionHandlers'
+      ArrayType
+        TypeReference
+          Identifier: ' ActionHandler'
+          TypeReference
+            Identifier: 'S'
+          AnyKeyword
+    AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' AppState'
+    PropertySignature
+      Identifier: '
+    dummy'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' defaultState'
+        TypeReference
+          Identifier: ' AppState'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    dummy'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NON_VOID_ACTION'
+        TypeReference
+          Identifier: ' ActionType'
+          NumberKeyword
+        StringLiteral
+      VariableDeclaration
+        Identifier: ' VOID_ACTION'
+        TypeReference
+          Identifier: ' ActionType'
+          VoidKeyword
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+createReducer'
+      Identifier: '
+    defaultState'
+      CallExpression
+        Identifier: '
+    handler'
+        Identifier: 'NON_VOID_ACTION'
+        ArrowFunction
+          Parameter
+            Identifier: 'state'
+          Parameter
+            Identifier: ' _payload'
+          EqualsGreaterThanToken
+          Identifier: ' state'
+      CallExpression
+        Identifier: '
+    handler'
+        Identifier: 'VOID_ACTION'
+        ArrowFunction
+          Parameter
+            Identifier: ' state'
+          EqualsGreaterThanToken
+          Identifier: ' state'
+  TypeAliasDeclaration
+    Identifier: ' R'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  a'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          VoidKeyword
+      PropertySignature
+        Identifier: '
+  b'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' O'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+  on'
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' R'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' P'
+        Parameter
+          Identifier: ' callback'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' R'
+            TypeReference
+              Identifier: 'P'
+        VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' O'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+x'
+        Identifier: 'on'
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: ' a'
+        EqualsGreaterThanToken
+        Block
+  ModuleDeclaration
+    Identifier: ' N1'
+    ModuleBlock
+      ClassDeclaration
+        DeclareKeyword
+        Identifier: ' Component'
+        TypeParameter
+          Identifier: 'P'
+        Constructor
+          Parameter
+            Identifier: 'props'
+            TypeReference
+              Identifier: ' P'
+      InterfaceDeclaration
+        Identifier: ' ComponentClass'
+        TypeParameter
+          Identifier: 'P'
+          TypeLiteral
+        ConstructSignature
+          Parameter
+            Identifier: 'props'
+            TypeReference
+              Identifier: ' P'
+          TypeReference
+            Identifier: ' Component'
+            TypeReference
+              Identifier: 'P'
+      TypeAliasDeclaration
+        Identifier: ' CreateElementChildren'
+        TypeParameter
+          Identifier: 'P'
+        ConditionalType
+          TypeReference
+            Identifier: '
+  P'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' children'
+              QuestionToken
+              InferType
+                TypeParameter
+                  Identifier: ' C'
+          ConditionalType
+            TypeReference
+              Identifier: ' C'
+            ArrayType
+              AnyKeyword
+            TypeReference
+              Identifier: ' C'
+            ArrayType
+              TypeReference
+                Identifier: ' C'
+          UnknownKeyword
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' createElement'
+        TypeParameter
+          Identifier: 'P'
+          TypeLiteral
+        Parameter
+          Identifier: '
+  type'
+          TypeReference
+            Identifier: ' ComponentClass'
+            TypeReference
+              Identifier: 'P'
+        Parameter
+          DotDotDotToken
+          Identifier: 'children'
+          TypeReference
+            Identifier: ' CreateElementChildren'
+            TypeReference
+              Identifier: 'P'
+        AnyKeyword
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' createElement2'
+        TypeParameter
+          Identifier: 'P'
+          TypeLiteral
+        Parameter
+          Identifier: '
+  type'
+          TypeReference
+            Identifier: ' ComponentClass'
+            TypeReference
+              Identifier: 'P'
+        Parameter
+          Identifier: '
+  child'
+          TypeReference
+            Identifier: ' CreateElementChildren'
+            TypeReference
+              Identifier: 'P'
+        AnyKeyword
+      ClassDeclaration
+        Identifier: ' InferFunctionTypes'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Component'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'children'
+                FunctionType
+                  Parameter
+                    Identifier: 'foo'
+                    NumberKeyword
+                  StringKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+createElement'
+          Identifier: 'InferFunctionTypes'
+          ArrowFunction
+            Parameter
+              Identifier: 'foo'
+            EqualsGreaterThanToken
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              Identifier: ' foo'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+createElement2'
+          Identifier: 'InferFunctionTypes'
+          ArrayLiteralExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'foo'
+              EqualsGreaterThanToken
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                Identifier: ' foo'
+  TypeAliasDeclaration
+    Identifier: ' InnerBox'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  value'
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' OuterBox'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  inner'
+        TypeReference
+          Identifier: ' InnerBox'
+          TypeReference
+            Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' BoxConsumerFromOuterBox'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+  T'
+      TypeReference
+        Identifier: ' OuterBox'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+      FunctionType
+        Parameter
+          Identifier: 'box'
+          TypeReference
+            Identifier: ' InnerBox'
+            TypeReference
+              Identifier: 'U'
+        VoidKeyword
+      NeverKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' passContentsToFunc'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'outerBox'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' consumer'
+      TypeReference
+        Identifier: ' BoxConsumerFromOuterBox'
+        TypeReference
+          Identifier: 'T'
+    VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' outerBoxOfString'
+        TypeReference
+          Identifier: ' OuterBox'
+          StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+passContentsToFunc'
+      Identifier: 'outerBoxOfString'
+      ArrowFunction
+        Parameter
+          Identifier: ' box'
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          Identifier: ' box'
+          Identifier: 'value'
+  TypeAliasDeclaration
+    Identifier: ' DooDad'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' Interesting'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' compiles'
+      ArrowFunction
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'DooDad'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'resolve'
+                Identifier: 'then'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    BinaryExpression
+                      NumericLiteral
+                      LessThanToken
+                      NumericLiteral
+                    Block
+                      ReturnStatement
+                        StringLiteral
+                  ReturnStatement
+                    StringLiteral
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' doesnt'
+      ArrowFunction
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'DooDad'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'resolve'
+                Identifier: 'then'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    StringLiteral
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' slightlyDifferentErrorMessage'
+      ArrowFunction
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'DooDad'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Promise'
+                    Identifier: 'resolve'
+                Identifier: 'then'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    BinaryExpression
+                      NumericLiteral
+                      LessThanToken
+                      NumericLiteral
+                    Block
+                      ReturnStatement
+                        StringLiteral
+                  ReturnStatement
+                    StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' invoke'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xx'
+        UnionType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+        CallExpression
+          Identifier: ' invoke'
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' assignPartial'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' partial'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+  foo'
+            Parameter
+              Identifier: 'bar'
+              StringKeyword
+            Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+assignPartial'
+      Identifier: 'obj'
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: ' foo'
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+          Block

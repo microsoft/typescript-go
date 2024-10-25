@@ -1,0 +1,322 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' onlyErrorsWhenTestingNonNullableFunctionType'
+    Parameter
+      Identifier: 'required'
+      FunctionType
+        BooleanKeyword
+    Parameter
+      Identifier: ' optional'
+      QuestionToken
+      FunctionType
+        BooleanKeyword
+    Block
+      ExpressionStatement
+        ConditionalExpression
+          Identifier: '
+    // error
+    required'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            StringLiteral
+          ColonToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        ConditionalExpression
+          Identifier: '
+
+    // ok
+    optional'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            StringLiteral
+          ColonToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        ConditionalExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              Identifier: 'required'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            StringLiteral
+          ColonToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        ConditionalExpression
+          CallExpression
+            Identifier: '
+
+    // ok
+    required'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            StringLiteral
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' onlyErrorsWhenUnusedInBody'
+    Block
+      FunctionDeclaration
+        Identifier: ' test'
+        Block
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Math'
+                  Identifier: 'random'
+              GreaterThanToken
+              NumericLiteral
+      ExpressionStatement
+        ConditionalExpression
+          Identifier: '
+
+    // error
+    test'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            StringLiteral
+          ColonToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        ConditionalExpression
+          Identifier: '
+
+    // ok
+    test'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            Identifier: 'test'
+          ColonToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        ConditionalExpression
+          Identifier: '
+
+    // ok
+    test'
+          QuestionToken
+          CallExpression
+            Identifier: ' test'
+          ColonToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        ConditionalExpression
+          Identifier: '
+
+    // ok
+    test'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  NullKeyword
+              Identifier: 'forEach'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' test'
+          ColonToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        ConditionalExpression
+          Identifier: '
+
+    // error
+    test'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  NullKeyword
+              Identifier: 'forEach'
+            ArrowFunction
+              Parameter
+                Identifier: 'test'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' test'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' checksPropertyAccess'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        foo'
+                ObjectLiteralExpression
+                  MethodDeclaration
+                    Identifier: '
+            bar'
+                    Block
+                      ReturnStatement
+                        TrueKeyword
+      ExpressionStatement
+        ConditionalExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+
+    // error
+    x'
+              Identifier: 'foo'
+            Identifier: 'bar'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            StringLiteral
+          ColonToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        ConditionalExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+
+    // ok
+    x'
+              Identifier: 'foo'
+            Identifier: 'bar'
+          QuestionToken
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'foo'
+            Identifier: 'bar'
+          ColonToken
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' chrome'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        platformKeys'
+                ObjectLiteralExpression
+                  MethodDeclaration
+                    Identifier: '
+            subtleCrypto'
+                    Block
+                      ReturnStatement
+                        ObjectLiteralExpression
+                          MethodDeclaration
+                            Identifier: '
+                    sign'
+                            Block
+                          MethodDeclaration
+                            Identifier: '
+                    exportKey'
+                            Block
+                              ReturnStatement
+                                TrueKeyword
+      IfStatement
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'chrome'
+                Identifier: 'platformKeys'
+              Identifier: 'subtleCrypto'
+          Identifier: 'exportKey'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        chrome'
+                    Identifier: 'platformKeys'
+                  Identifier: 'subtleCrypto'
+              Identifier: 'exportKey'
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    maybeIsUser'
+      QuestionToken
+      FunctionType
+        BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+
+    isUser'
+      Block
+        ReturnStatement
+          TrueKeyword
+    MethodDeclaration
+      Identifier: '
+
+    test'
+      Block
+        ExpressionStatement
+          ConditionalExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'isUser'
+            QuestionToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              StringLiteral
+            ColonToken
+            Identifier: ' undefined'
+        ExpressionStatement
+          ConditionalExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'maybeIsUser'
+            QuestionToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              StringLiteral
+            ColonToken
+            Identifier: ' undefined'
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'isUser'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'isUser'

@@ -1,0 +1,343 @@
+SourceFile
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' x'
+      LessThanToken
+      Identifier: ' y'
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'x'
+      CommaToken
+      PrefixUnaryExpression
+        Identifier: 'y'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrowFunction
+              EqualsGreaterThanToken
+              BinaryExpression
+                PostfixUnaryExpression
+                  Identifier: ' x'
+                PlusToken
+                PostfixUnaryExpression
+                  Identifier: ' y'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsToken
+          NumericLiteral
+        Block
+          BreakStatement
+        Block
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                NumericLiteral
+            BinaryExpression
+              Identifier: ' a'
+              LessThanToken
+              NumericLiteral
+            PrefixUnaryExpression
+              Identifier: 'a'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' f'
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      Identifier: ' a'
+              IfStatement
+                Identifier: 'a'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                a'
+                      EqualsToken
+                      Identifier: ' x'
+                  BreakStatement
+                Block
+                  ExpressionStatement
+                    PostfixUnaryExpression
+                      Identifier: '
+                y'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        
+        y'
+              EqualsToken
+              NumericLiteral
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' x'
+      LessThanToken
+      Identifier: ' y'
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'x'
+      CommaToken
+      PrefixUnaryExpression
+        Identifier: 'y'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrowFunction
+              EqualsGreaterThanToken
+              BinaryExpression
+                PostfixUnaryExpression
+                  Identifier: ' x'
+                PlusToken
+                PostfixUnaryExpression
+                  Identifier: ' y'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsToken
+          NumericLiteral
+        Block
+          ContinueStatement
+        Block
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                NumericLiteral
+            BinaryExpression
+              Identifier: ' a'
+              LessThanToken
+              NumericLiteral
+            PrefixUnaryExpression
+              Identifier: 'a'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' f'
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      Identifier: ' a'
+              IfStatement
+                Identifier: 'a'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                a'
+                      EqualsToken
+                      Identifier: ' x'
+                  ContinueStatement
+                Block
+                  ExpressionStatement
+                    PostfixUnaryExpression
+                      Identifier: '
+                y'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        
+        y'
+              EqualsToken
+              NumericLiteral
+  LabeledStatement
+    Identifier: '
+
+loop2'
+    ForStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+          NumericLiteral
+        VariableDeclaration
+          Identifier: ' y'
+          NumericLiteral
+      BinaryExpression
+        Identifier: ' x'
+        LessThanToken
+        Identifier: ' y'
+      BinaryExpression
+        PrefixUnaryExpression
+          Identifier: 'x'
+        CommaToken
+        PrefixUnaryExpression
+          Identifier: 'y'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              ArrowFunction
+                EqualsGreaterThanToken
+                BinaryExpression
+                  PostfixUnaryExpression
+                    Identifier: ' x'
+                  PlusToken
+                  PostfixUnaryExpression
+                    Identifier: ' y'
+        IfStatement
+          BinaryExpression
+            Identifier: 'x'
+            EqualsEqualsToken
+            NumericLiteral
+          Block
+            BreakStatement
+              Identifier: ' loop2'
+          Block
+            LabeledStatement
+              Identifier: '
+        loop1'
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' a'
+                    NumericLiteral
+                BinaryExpression
+                  Identifier: ' a'
+                  LessThanToken
+                  NumericLiteral
+                PrefixUnaryExpression
+                  Identifier: 'a'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f'
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          Identifier: ' a'
+                  IfStatement
+                    Identifier: 'a'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                a'
+                          EqualsToken
+                          Identifier: ' x'
+                      BreakStatement
+                        Identifier: ' loop1'
+                    Block
+                      ExpressionStatement
+                        PostfixUnaryExpression
+                          Identifier: '
+                y'
+                      BreakStatement
+                        Identifier: ' loop2'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        
+        y'
+                EqualsToken
+                NumericLiteral
+  LabeledStatement
+    Identifier: '
+
+loop2'
+    ForStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+          NumericLiteral
+        VariableDeclaration
+          Identifier: ' y'
+          NumericLiteral
+      BinaryExpression
+        Identifier: ' x'
+        LessThanToken
+        Identifier: ' y'
+      BinaryExpression
+        PrefixUnaryExpression
+          Identifier: 'x'
+        CommaToken
+        PrefixUnaryExpression
+          Identifier: 'y'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              ArrowFunction
+                EqualsGreaterThanToken
+                BinaryExpression
+                  PostfixUnaryExpression
+                    Identifier: ' x'
+                  PlusToken
+                  PostfixUnaryExpression
+                    Identifier: ' y'
+        IfStatement
+          BinaryExpression
+            Identifier: 'x'
+            EqualsEqualsToken
+            NumericLiteral
+          Block
+            ContinueStatement
+              Identifier: ' loop2'
+          Block
+            LabeledStatement
+              Identifier: '
+        loop1'
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' a'
+                    NumericLiteral
+                BinaryExpression
+                  Identifier: ' a'
+                  LessThanToken
+                  NumericLiteral
+                PrefixUnaryExpression
+                  Identifier: 'a'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f'
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          Identifier: ' a'
+                  IfStatement
+                    Identifier: 'a'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                a'
+                          EqualsToken
+                          Identifier: ' x'
+                      ContinueStatement
+                        Identifier: ' loop1'
+                    Block
+                      ExpressionStatement
+                        PostfixUnaryExpression
+                          Identifier: '
+                y'
+                      ContinueStatement
+                        Identifier: ' loop2'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        
+        y'
+                EqualsToken
+                NumericLiteral

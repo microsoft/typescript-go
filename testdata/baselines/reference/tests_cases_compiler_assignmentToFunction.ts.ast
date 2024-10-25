@@ -1,0 +1,27 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+fn'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' xyz'
+        Block
+          FunctionDeclaration
+            Identifier: ' bar'
+            Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        bar'
+              EqualsToken
+              NullKeyword

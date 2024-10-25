@@ -1,0 +1,100 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' a'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'while'
+          Identifier: ''
+    Block
+  FunctionDeclaration
+    Identifier: ' a1'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'public'
+    Block
+  FunctionDeclaration
+    Identifier: ' a4'
+    Parameter
+      ArrayBindingPattern
+    Block
+  WhileStatement
+    BinaryExpression
+      Identifier: ''
+      CommaToken
+      Identifier: ''
+    ForStatement
+      BinaryExpression
+        Identifier: ''
+        CommaToken
+        Identifier: ' public'
+      Identifier: ''
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ''
+  Block
+  FunctionDeclaration
+    Identifier: ' a5'
+    Parameter
+      DotDotDotToken
+      Identifier: ''
+    Block
+  WhileStatement
+    Identifier: ''
+    Block
+  FunctionDeclaration
+    Identifier: ' a6'
+    Parameter
+      DotDotDotToken
+      Identifier: 'public'
+    Block
+  FunctionDeclaration
+    Identifier: ' a7'
+    Parameter
+      DotDotDotToken
+      Identifier: 'a'
+      StringKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+a'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' while'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' b1'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'public'
+          Identifier: ' x'
+    Block
+  FunctionDeclaration
+    Identifier: ' b2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'while'
+          Identifier: ' y'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+b1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' public'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+b2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' while'
+          NumericLiteral

@@ -1,0 +1,402 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  FunctionDeclaration
+    Identifier: ' defered'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    defered'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: '
+        a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fexp'
+        FunctionExpression
+          Parameter
+            Identifier: 'a'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+    defered'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      Identifier: '
+        a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fexp'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' farrow'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+    defered'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      Identifier: '
+        a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+farrow'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' prop1'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    // Method declaration paramter
+    method'
+      Parameter
+        Identifier: 'a'
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        defered'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  Identifier: '
+            a'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'v'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        defered'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  Identifier: '
+            v'
+    PropertyDeclaration
+      Identifier: '
+    // in a property initalizer
+    p'
+      CallExpression
+        Identifier: ' defered'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              Identifier: '
+        prop1'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' prop2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' E'
+        ClassExpression
+          MethodDeclaration
+            Identifier: '
+    // Method declaration paramter
+    method'
+            Parameter
+              Identifier: 'a'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        defered'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        Identifier: '
+            a'
+          SetAccessor
+            Identifier: ' x'
+            Parameter
+              Identifier: 'v'
+              NumberKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        defered'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        Identifier: '
+            v'
+          PropertyDeclaration
+            Identifier: '
+    // in a property initalizer
+    p'
+            CallExpression
+              Identifier: ' defered'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    Identifier: '
+        prop2'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    // Object literal method declaration paramter
+    method'
+            Parameter
+              Identifier: 'a'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        defered'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        Identifier: '
+            a'
+          SetAccessor
+            Identifier: ' x'
+            Parameter
+              Identifier: 'v'
+              NumberKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        defered'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        Identifier: '
+            v'
+          PropertyAssignment
+            Identifier: '
+    // in a property initalizer
+    p'
+            CallExpression
+              Identifier: ' defered'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    Identifier: '
+        prop1'
+  ExpressionStatement
+    Identifier: '
+
+o'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+    Identifier: ' o'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    defered'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: '
+        i'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    defered'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: '
+        i'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    defered'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: '
+        i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' condition'
+        FalseKeyword
+  IfStatement
+    Identifier: 'condition'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    defered'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: '
+        c'
+  TryStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    defered'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: '
+        a'
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c'
+              NumericLiteral
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+    defered'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  Identifier: '
+        c'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    defered'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: '
+        c'
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    defered'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: '
+        x'
+  ExpressionStatement
+    Identifier: '
+N'

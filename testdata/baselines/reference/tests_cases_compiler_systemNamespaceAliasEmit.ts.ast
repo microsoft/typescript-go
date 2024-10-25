@@ -1,0 +1,29 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' ns'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            NumericLiteral
+  EnumDeclaration
+    Identifier: ' AnEnum'
+    EnumMember
+      Identifier: '
+    ONE'
+    EnumMember
+      Identifier: '
+    TWO'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'ns'
+      ExportSpecifier
+        Identifier: ' AnEnum'
+      ExportSpecifier
+        Identifier: ' ns'
+        Identifier: ' FooBar'
+      ExportSpecifier
+        Identifier: ' AnEnum'
+        Identifier: ' BarEnum'

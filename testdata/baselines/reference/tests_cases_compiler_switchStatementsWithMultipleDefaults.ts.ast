@@ -1,0 +1,61 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  SwitchStatement
+    Identifier: 'x'
+    CaseBlock
+      CaseClause
+        NumericLiteral
+      CaseClause
+        NumericLiteral
+      DefaultClause
+        BreakStatement
+      DefaultClause
+      DefaultClause
+      CaseClause
+        NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        x'
+            AsteriskEqualsToken
+            Identifier: ' x'
+  SwitchStatement
+    Identifier: 'x'
+    CaseBlock
+      DefaultClause
+        BreakStatement
+      CaseClause
+        NumericLiteral
+        SwitchStatement
+          BinaryExpression
+            Identifier: 'x'
+            AsteriskToken
+            Identifier: ' x'
+          CaseBlock
+            DefaultClause
+            DefaultClause
+              BreakStatement
+            CaseClause
+              NumericLiteral
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+                x'
+                  SlashEqualsToken
+                  Identifier: ' x'
+            DefaultClause
+              ExpressionStatement
+                Identifier: '    // Error, third 'default' clause
+            def'
+              LabeledStatement
+                Identifier: '\u0061ult'
+                ExpressionStatement
+                  Identifier: ''
+            DefaultClause
+              ReturnStatement
+            DefaultClause
+            DefaultClause

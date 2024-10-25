@@ -1,0 +1,4847 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    AnyImportOrRequireStatement'
+        ImportSpecifier
+          Identifier: '
+    binarySearch'
+        ImportSpecifier
+          Identifier: '
+    compareBooleans'
+        ImportSpecifier
+          Identifier: '
+    Comparer'
+        ImportSpecifier
+          Identifier: '
+    compareStringsCaseInsensitiveEslintCompatible'
+        ImportSpecifier
+          Identifier: '
+    compareStringsCaseSensitive'
+        ImportSpecifier
+          Identifier: '
+    compareValues'
+        ImportSpecifier
+          Identifier: '
+    Comparison'
+        ImportSpecifier
+          Identifier: '
+    createScanner'
+        ImportSpecifier
+          Identifier: '
+    EmitFlags'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    ExportDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ExportSpecifier'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    FileTextChanges'
+        ImportSpecifier
+          Identifier: '
+    FindAllReferences'
+        ImportSpecifier
+          Identifier: '
+    firstOrUndefined'
+        ImportSpecifier
+          Identifier: '
+    flatMap'
+        ImportSpecifier
+          Identifier: '
+    formatting'
+        ImportSpecifier
+          Identifier: '
+    getNewLineOrDefaultFromHost'
+        ImportSpecifier
+          Identifier: '
+    getUILocale'
+        ImportSpecifier
+          Identifier: '
+    group'
+        ImportSpecifier
+          Identifier: '
+    groupBy'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    identity'
+        ImportSpecifier
+          Identifier: '
+    ImportClause'
+        ImportSpecifier
+          Identifier: '
+    ImportDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ImportOrExportSpecifier'
+        ImportSpecifier
+          Identifier: '
+    ImportSpecifier'
+        ImportSpecifier
+          Identifier: '
+    isAmbientModule'
+        ImportSpecifier
+          Identifier: '
+    isExportDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isExternalModuleNameRelative'
+        ImportSpecifier
+          Identifier: '
+    isExternalModuleReference'
+        ImportSpecifier
+          Identifier: '
+    isImportDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isNamedExports'
+        ImportSpecifier
+          Identifier: '
+    isNamedImports'
+        ImportSpecifier
+          Identifier: '
+    isNamespaceImport'
+        ImportSpecifier
+          Identifier: '
+    isString'
+        ImportSpecifier
+          Identifier: '
+    isStringLiteral'
+        ImportSpecifier
+          Identifier: '
+    isStringLiteralLike'
+        ImportSpecifier
+          Identifier: '
+    JSDocImportTag'
+        ImportSpecifier
+          Identifier: '
+    jsxModeNeedsExplicitImport'
+        ImportSpecifier
+          Identifier: '
+    LanguageServiceHost'
+        ImportSpecifier
+          Identifier: '
+    length'
+        ImportSpecifier
+          Identifier: '
+    map'
+        ImportSpecifier
+          Identifier: '
+    moduleExportNameTextEscaped'
+        ImportSpecifier
+          Identifier: '
+    NamedImportBindings'
+        ImportSpecifier
+          Identifier: '
+    NamedImports'
+        ImportSpecifier
+          Identifier: '
+    NamespaceImport'
+        ImportSpecifier
+          Identifier: '
+    OrganizeImportsMode'
+        ImportSpecifier
+          Identifier: '
+    OrganizeImportsTypeOrder'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    rangeIsOnSingleLine'
+        ImportSpecifier
+          Identifier: '
+    Scanner'
+        ImportSpecifier
+          Identifier: '
+    setEmitFlags'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    toSorted'
+        ImportSpecifier
+          Identifier: '
+    TransformFlags'
+        ImportSpecifier
+          Identifier: '
+    tryCast'
+        ImportSpecifier
+          Identifier: '
+    UserPreferences'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' organizeImports'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: '
+    formatContext'
+      TypeReference
+        QualifiedName
+          Identifier: ' formatting'
+          Identifier: 'FormatContext'
+    Parameter
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: '
+    mode'
+      TypeReference
+        Identifier: ' OrganizeImportsMode'
+    ArrayType
+      TypeReference
+        Identifier: ' FileTextChanges'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' changeTracker'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' textChanges'
+                  Identifier: 'ChangeTracker'
+                Identifier: 'fromContext'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' host'
+                ShorthandPropertyAssignment
+                  Identifier: ' formatContext'
+                ShorthandPropertyAssignment
+                  Identifier: ' preferences'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' shouldSort'
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' mode'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' OrganizeImportsMode'
+                  Identifier: 'SortAndCombine'
+              BarBarToken
+              BinaryExpression
+                Identifier: ' mode'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' OrganizeImportsMode'
+                  Identifier: 'All'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' shouldCombine'
+            Identifier: ' shouldSort'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' shouldRemove'
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' mode'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' OrganizeImportsMode'
+                  Identifier: 'RemoveUnused'
+              BarBarToken
+              BinaryExpression
+                Identifier: ' mode'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' OrganizeImportsMode'
+                  Identifier: 'All'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' topLevelImportDecls'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' sourceFile'
+                  Identifier: 'statements'
+                Identifier: 'filter'
+              Identifier: 'isImportDeclaration'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' topLevelImportGroupDecls'
+            CallExpression
+              Identifier: ' groupByNewlineContiguous'
+              Identifier: 'sourceFile'
+              Identifier: ' topLevelImportDecls'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' comparersToTest'
+              BindingElement
+                Identifier: ' typeOrdersToTest'
+            CallExpression
+              Identifier: ' getDetectionLists'
+              Identifier: 'preferences'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' defaultComparer'
+            ElementAccessExpression
+              Identifier: ' comparersToTest'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' comparer'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        moduleSpecifierComparer'
+                ConditionalExpression
+                  BinaryExpression
+                    TypeOfExpression
+                      PropertyAccessExpression
+                        Identifier: ' preferences'
+                        Identifier: 'organizeImportsIgnoreCase'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  QuestionToken
+                  Identifier: ' defaultComparer'
+                  ColonToken
+                  Identifier: ' undefined'
+              PropertyAssignment
+                Identifier: '
+        namedImportComparer'
+                ConditionalExpression
+                  BinaryExpression
+                    TypeOfExpression
+                      PropertyAccessExpression
+                        Identifier: ' preferences'
+                        Identifier: 'organizeImportsIgnoreCase'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  QuestionToken
+                  Identifier: ' defaultComparer'
+                  ColonToken
+                  Identifier: ' undefined'
+              PropertyAssignment
+                Identifier: '
+        typeOrder'
+                PropertyAccessExpression
+                  Identifier: ' preferences'
+                  Identifier: 'organizeImportsTypeOrder'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' preferences'
+              Identifier: 'organizeImportsIgnoreCase'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            ParenthesizedExpression
+              BinaryExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' comparer'
+                    PropertyAccessExpression
+                      Identifier: ' comparer'
+                      Identifier: 'moduleSpecifierComparer'
+                EqualsToken
+                CallExpression
+                  Identifier: ' detectModuleSpecifierCaseBySort'
+                  Identifier: 'topLevelImportGroupDecls'
+                  Identifier: ' comparersToTest'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'comparer'
+              Identifier: 'typeOrder'
+          BarBarToken
+          BinaryExpression
+            TypeOfExpression
+              PropertyAccessExpression
+                Identifier: ' preferences'
+                Identifier: 'organizeImportsIgnoreCase'
+            ExclamationEqualsEqualsToken
+            StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' namedImportSort'
+                CallExpression
+                  Identifier: ' detectNamedImportOrganizationBySort'
+                  Identifier: 'topLevelImportDecls'
+                  Identifier: ' comparersToTest'
+                  Identifier: ' typeOrdersToTest'
+          IfStatement
+            Identifier: 'namedImportSort'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' namedImportComparer'
+                      BindingElement
+                        Identifier: ' typeOrder'
+                    Identifier: ' namedImportSort'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            comparer'
+                    Identifier: 'namedImportComparer'
+                  EqualsToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' comparer'
+                      Identifier: 'namedImportComparer'
+                    QuestionQuestionToken
+                    Identifier: ' namedImportComparer'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            comparer'
+                    Identifier: 'typeOrder'
+                  EqualsToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' comparer'
+                      Identifier: 'typeOrder'
+                    QuestionQuestionToken
+                    Identifier: ' typeOrder'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    topLevelImportGroupDecls'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'importGroupDecl'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' organizeImportsWorker'
+              Identifier: 'importGroupDecl'
+              Identifier: ' comparer'
+      IfStatement
+        BinaryExpression
+          Identifier: 'mode'
+          ExclamationEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' OrganizeImportsMode'
+            Identifier: 'RemoveUnused'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: '
+        // All of the old ExportDeclarations in the file, in syntactic order.
+        getTopLevelExportGroups'
+                  Identifier: 'sourceFile'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'exportGroupDecl'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' organizeExportsWorker'
+                  Identifier: 'exportGroupDecl'
+                  PropertyAccessExpression
+                    Identifier: ' comparer'
+                    Identifier: 'namedImportComparer'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ambientModule'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' sourceFile'
+              Identifier: 'statements'
+            Identifier: 'filter'
+          Identifier: 'isAmbientModule'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'ambientModule'
+                Identifier: 'body'
+            ContinueStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' ambientModuleImportGroupDecls'
+                CallExpression
+                  Identifier: ' groupByNewlineContiguous'
+                  Identifier: 'sourceFile'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ambientModule'
+                          Identifier: 'body'
+                        Identifier: 'statements'
+                      Identifier: 'filter'
+                    Identifier: 'isImportDeclaration'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        ambientModuleImportGroupDecls'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'importGroupDecl'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' organizeImportsWorker'
+                  Identifier: 'importGroupDecl'
+                  Identifier: ' comparer'
+          IfStatement
+            BinaryExpression
+              Identifier: 'mode'
+              ExclamationEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' OrganizeImportsMode'
+                Identifier: 'RemoveUnused'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' ambientModuleExportDecls'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' ambientModule'
+                            Identifier: 'body'
+                          Identifier: 'statements'
+                        Identifier: 'filter'
+                      Identifier: 'isExportDeclaration'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            organizeExportsWorker'
+                  Identifier: 'ambientModuleExportDecls'
+                  PropertyAccessExpression
+                    Identifier: ' comparer'
+                    Identifier: 'namedImportComparer'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' changeTracker'
+            Identifier: 'getChanges'
+      FunctionDeclaration
+        Identifier: ' organizeDeclsWorker'
+        TypeParameter
+          Identifier: 'T'
+          UnionType
+            TypeReference
+              Identifier: ' ImportDeclaration'
+            TypeReference
+              Identifier: ' ExportDeclaration'
+        Parameter
+          Identifier: '
+        oldImportDecls'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+        Parameter
+          Identifier: '
+        coalesce'
+          FunctionType
+            Parameter
+              Identifier: 'group'
+              TypeOperator
+                ArrayType
+                  TypeReference
+                    Identifier: ' T'
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+        Block
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'length'
+                Identifier: 'oldImportDecls'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ReturnStatement
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        // Special case: normally, we'd expect leading and trailing trivia to follow each import
+        // around as it's sorted.  However, we do not want this to happen for leading trivia
+        // on the first import because it is probably the header comment for the file.
+        // Consider: we could do a more careful check that this trivia is actually a header,
+        // but the consequences of being wrong are very minor.
+        setEmitFlags'
+              ElementAccessExpression
+                Identifier: 'oldImportDecls'
+                NumericLiteral
+              PropertyAccessExpression
+                Identifier: ' EmitFlags'
+                Identifier: 'NoLeadingComments'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' oldImportGroups'
+                ConditionalExpression
+                  Identifier: ' shouldCombine'
+                  QuestionToken
+                  CallExpression
+                    Identifier: ' group'
+                    Identifier: 'oldImportDecls'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' importDecl'
+                      EqualsGreaterThanToken
+                      NonNullExpression
+                        CallExpression
+                          Identifier: ' getExternalModuleName'
+                          PropertyAccessExpression
+                            Identifier: 'importDecl'
+                            Identifier: 'moduleSpecifier'
+                  ColonToken
+                  ArrayLiteralExpression
+                    Identifier: 'oldImportDecls'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sortedImportGroups'
+                ConditionalExpression
+                  Identifier: ' shouldSort'
+                  QuestionToken
+                  CallExpression
+                    Identifier: ' toSorted'
+                    Identifier: 'oldImportGroups'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'group1'
+                      Parameter
+                        Identifier: ' group2'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' compareModuleSpecifiersWorker'
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: 'group1'
+                            NumericLiteral
+                          Identifier: 'moduleSpecifier'
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: ' group2'
+                            NumericLiteral
+                          Identifier: 'moduleSpecifier'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' comparer'
+                            Identifier: 'moduleSpecifierComparer'
+                          QuestionQuestionToken
+                          Identifier: ' defaultComparer'
+                  ColonToken
+                  Identifier: ' oldImportGroups'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newImportDecls'
+                CallExpression
+                  Identifier: ' flatMap'
+                  Identifier: 'sortedImportGroups'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' importGroup'
+                    EqualsGreaterThanToken
+                    ConditionalExpression
+                      BinaryExpression
+                        CallExpression
+                          Identifier: '
+            getExternalModuleName'
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              Identifier: 'importGroup'
+                              NumericLiteral
+                            Identifier: 'moduleSpecifier'
+                        BarBarToken
+                        BinaryExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              Identifier: ' importGroup'
+                              NumericLiteral
+                            Identifier: 'moduleSpecifier'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' undefined'
+                      QuestionToken
+                      CallExpression
+                        Identifier: ' coalesce'
+                        Identifier: 'importGroup'
+                      ColonToken
+                      Identifier: ' importGroup'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'newImportDecls'
+                Identifier: 'length'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            // Consider the first node to have trailingTrivia as we want to exclude the
+            // "header" comment.
+            changeTracker'
+                    Identifier: 'deleteNodes'
+                  Identifier: 'sourceFile'
+                  Identifier: ' oldImportDecls'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                leadingTriviaOption'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'LeadingTriviaOption'
+                        Identifier: 'Exclude'
+                    PropertyAssignment
+                      Identifier: '
+                trailingTriviaOption'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'TrailingTriviaOption'
+                        Identifier: 'Include'
+                  TrueKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' replaceOptions'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                leadingTriviaOption'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' textChanges'
+                            Identifier: 'LeadingTriviaOption'
+                          Identifier: 'Exclude'
+                      PropertyAssignment
+                        Identifier: ' // Leave header comment in place
+                trailingTriviaOption'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' textChanges'
+                            Identifier: 'TrailingTriviaOption'
+                          Identifier: 'Include'
+                      PropertyAssignment
+                        Identifier: '
+                suffix'
+                        CallExpression
+                          Identifier: ' getNewLineOrDefaultFromHost'
+                          Identifier: 'host'
+                          PropertyAccessExpression
+                            Identifier: ' formatContext'
+                            Identifier: 'options'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            changeTracker'
+                    Identifier: 'replaceNodeWithNodes'
+                  Identifier: 'sourceFile'
+                  ElementAccessExpression
+                    Identifier: ' oldImportDecls'
+                    NumericLiteral
+                  Identifier: ' newImportDecls'
+                  Identifier: ' replaceOptions'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' hasTrailingComment'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' changeTracker'
+                        Identifier: 'nodeHasTrailingComment'
+                      Identifier: 'sourceFile'
+                      ElementAccessExpression
+                        Identifier: ' oldImportDecls'
+                        NumericLiteral
+                      Identifier: ' replaceOptions'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            changeTracker'
+                    Identifier: 'deleteNodes'
+                  Identifier: 'sourceFile'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' oldImportDecls'
+                      Identifier: 'slice'
+                    NumericLiteral
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                trailingTriviaOption'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'TrailingTriviaOption'
+                        Identifier: 'Include'
+                  Identifier: ' hasTrailingComment'
+      FunctionDeclaration
+        Identifier: ' organizeImportsWorker'
+        Parameter
+          Identifier: 'oldImportDecls'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' ImportDeclaration'
+        Parameter
+          Identifier: ' comparer'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' moduleSpecifierComparer'
+              QuestionToken
+              TypeReference
+                Identifier: ' Comparer'
+                StringKeyword
+            PropertySignature
+              Identifier: ' namedImportComparer'
+              QuestionToken
+              TypeReference
+                Identifier: ' Comparer'
+                StringKeyword
+            PropertySignature
+              Identifier: ' typeOrder'
+              QuestionToken
+              TypeReference
+                Identifier: ' OrganizeImportsTypeOrder'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' detectedModuleCaseComparer'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' comparer'
+                    Identifier: 'moduleSpecifierComparer'
+                  QuestionQuestionToken
+                  Identifier: ' defaultComparer'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' detectedNamedImportCaseComparer'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' comparer'
+                    Identifier: 'namedImportComparer'
+                  QuestionQuestionToken
+                  Identifier: ' defaultComparer'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' detectedTypeOrder'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' comparer'
+                    Identifier: 'typeOrder'
+                  QuestionQuestionToken
+                  StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' specifierComparer'
+                CallExpression
+                  Identifier: ' getNamedImportSpecifierComparer'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' organizeImportsTypeOrder'
+                      Identifier: ' detectedTypeOrder'
+                  Identifier: ' detectedNamedImportCaseComparer'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' processImportsOfSameModuleSpecifier'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'importGroup'
+                    TypeOperator
+                      ArrayType
+                        TypeReference
+                          Identifier: ' ImportDeclaration'
+                  EqualsGreaterThanToken
+                  Block
+                    IfStatement
+                      Identifier: 'shouldRemove'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: ' importGroup'
+                          EqualsToken
+                          CallExpression
+                            Identifier: ' removeUnusedImports'
+                            Identifier: 'importGroup'
+                            Identifier: ' sourceFile'
+                            Identifier: ' program'
+                    IfStatement
+                      Identifier: 'shouldCombine'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: ' importGroup'
+                          EqualsToken
+                          CallExpression
+                            Identifier: ' coalesceImportsWorker'
+                            Identifier: 'importGroup'
+                            Identifier: ' detectedModuleCaseComparer'
+                            Identifier: ' specifierComparer'
+                            Identifier: ' sourceFile'
+                    IfStatement
+                      Identifier: 'shouldSort'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: ' importGroup'
+                          EqualsToken
+                          CallExpression
+                            Identifier: ' toSorted'
+                            Identifier: 'importGroup'
+                            ArrowFunction
+                              Parameter
+                                Identifier: 's1'
+                              Parameter
+                                Identifier: ' s2'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                Identifier: ' compareImportsOrRequireStatements'
+                                Identifier: 's1'
+                                Identifier: ' s2'
+                                Identifier: ' detectedModuleCaseComparer'
+                    ReturnStatement
+                      Identifier: ' importGroup'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        organizeDeclsWorker'
+              Identifier: 'oldImportDecls'
+              Identifier: ' processImportsOfSameModuleSpecifier'
+      FunctionDeclaration
+        Identifier: ' organizeExportsWorker'
+        Parameter
+          Identifier: 'oldExportDecls'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' ExportDeclaration'
+        Parameter
+          Identifier: ' specifierCaseComparer'
+          QuestionToken
+          TypeReference
+            Identifier: ' Comparer'
+            StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' useComparer'
+                CallExpression
+                  Identifier: ' getNamedImportSpecifierComparer'
+                  Identifier: 'preferences'
+                  Identifier: ' specifierCaseComparer'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        organizeDeclsWorker'
+              Identifier: 'oldExportDecls'
+              ArrowFunction
+                Parameter
+                  Identifier: ' group'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' coalesceExportsWorker'
+                  Identifier: 'group'
+                  Identifier: ' useComparer'
+  FunctionDeclaration
+    Identifier: ' getDetectionLists'
+    Parameter
+      Identifier: 'preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' comparersToTest'
+        ArrayType
+          TypeReference
+            Identifier: ' Comparer'
+            StringKeyword
+      PropertySignature
+        Identifier: ' typeOrdersToTest'
+        ArrayType
+          TypeReference
+            Identifier: ' OrganizeImportsTypeOrder'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        comparersToTest'
+            ConditionalExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    Identifier: ' preferences'
+                    Identifier: 'organizeImportsIgnoreCase'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              QuestionToken
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'getOrganizeImportsStringComparer'
+                  Identifier: 'preferences'
+                  PropertyAccessExpression
+                    Identifier: ' preferences'
+                    Identifier: 'organizeImportsIgnoreCase'
+              ColonToken
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'getOrganizeImportsStringComparer'
+                  Identifier: 'preferences'
+                  TrueKeyword
+                CallExpression
+                  Identifier: ' getOrganizeImportsStringComparer'
+                  Identifier: 'preferences'
+                  FalseKeyword
+          PropertyAssignment
+            Identifier: '
+        typeOrdersToTest'
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' preferences'
+                Identifier: 'organizeImportsTypeOrder'
+              QuestionToken
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  Identifier: 'preferences'
+                  Identifier: 'organizeImportsTypeOrder'
+              ColonToken
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+  FunctionDeclaration
+    Identifier: ' groupByNewlineContiguous'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' ImportDeclaration'
+        TypeReference
+          Identifier: ' ExportDeclaration'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' decls'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    ArrayType
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' scanner'
+            CallExpression
+              Identifier: ' createScanner'
+              PropertyAccessExpression
+                Identifier: 'sourceFile'
+                Identifier: 'languageVersion'
+              FalseKeyword
+              PropertyAccessExpression
+                Identifier: ' sourceFile'
+                Identifier: 'languageVariant'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' group'
+            ArrayType
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' groupIndex'
+            NumericLiteral
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' decl'
+        Identifier: ' decls'
+        Block
+          IfStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: 'group'
+                Identifier: 'groupIndex'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isNewGroup'
+                Identifier: 'sourceFile'
+                Identifier: ' decl'
+                Identifier: ' scanner'
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            groupIndex'
+          IfStatement
+            PrefixUnaryExpression
+              ElementAccessExpression
+                Identifier: 'group'
+                Identifier: 'groupIndex'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: '
+            group'
+                    Identifier: 'groupIndex'
+                  EqualsToken
+                  ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: '
+
+        group'
+                  Identifier: 'groupIndex'
+                Identifier: 'push'
+              Identifier: 'decl'
+      ReturnStatement
+        Identifier: ' group'
+  FunctionDeclaration
+    Identifier: ' isNewGroup'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' decl'
+      UnionType
+        TypeReference
+          Identifier: ' ImportDeclaration'
+        TypeReference
+          Identifier: ' ExportDeclaration'
+    Parameter
+      Identifier: ' scanner'
+      TypeReference
+        Identifier: ' Scanner'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' startPos'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' decl'
+                Identifier: 'getFullStart'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' endPos'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' decl'
+                Identifier: 'getStart'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    scanner'
+            Identifier: 'setText'
+          PropertyAccessExpression
+            Identifier: 'sourceFile'
+            Identifier: 'text'
+          Identifier: ' startPos'
+          BinaryExpression
+            Identifier: ' endPos'
+            MinusToken
+            Identifier: ' startPos'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' numberOfNewLines'
+            NumericLiteral
+      WhileStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'scanner'
+              Identifier: 'getTokenStart'
+          LessThanToken
+          Identifier: ' endPos'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' tokenKind'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' scanner'
+                    Identifier: 'scan'
+          IfStatement
+            BinaryExpression
+              Identifier: 'tokenKind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'NewLineTrivia'
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            numberOfNewLines'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'numberOfNewLines'
+                  GreaterThanEqualsToken
+                  NumericLiteral
+                Block
+                  ReturnStatement
+                    TrueKeyword
+      ReturnStatement
+        FalseKeyword
+  FunctionDeclaration
+    Identifier: ' getTopLevelExportGroups'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' topLevelExportGroups'
+            ArrayType
+              ArrayType
+                TypeReference
+                  Identifier: ' ExportDeclaration'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statements'
+            PropertyAccessExpression
+              Identifier: ' sourceFile'
+              Identifier: 'statements'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' len'
+            CallExpression
+              Identifier: ' length'
+              Identifier: 'statements'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' groupIndex'
+            NumericLiteral
+      WhileStatement
+        BinaryExpression
+          Identifier: 'i'
+          LessThanToken
+          Identifier: ' len'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isExportDeclaration'
+              ElementAccessExpression
+                Identifier: 'statements'
+                Identifier: 'i'
+            Block
+              IfStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: 'topLevelExportGroups'
+                    Identifier: 'groupIndex'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+                topLevelExportGroups'
+                        Identifier: 'groupIndex'
+                      EqualsToken
+                      ArrayLiteralExpression
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' exportDecl'
+                    AsExpression
+                      ElementAccessExpression
+                        Identifier: ' statements'
+                        Identifier: 'i'
+                      TypeReference
+                        Identifier: ' ExportDeclaration'
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'exportDecl'
+                  Identifier: 'moduleSpecifier'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: '
+                topLevelExportGroups'
+                          Identifier: 'groupIndex'
+                        Identifier: 'push'
+                      Identifier: 'exportDecl'
+                  ExpressionStatement
+                    PostfixUnaryExpression
+                      Identifier: '
+                i'
+                Block
+                  WhileStatement
+                    BinaryExpression
+                      BinaryExpression
+                        Identifier: 'i'
+                        LessThanToken
+                        Identifier: ' len'
+                      AmpersandAmpersandToken
+                      CallExpression
+                        Identifier: ' isExportDeclaration'
+                        ElementAccessExpression
+                          Identifier: 'statements'
+                          Identifier: 'i'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              Identifier: '
+                    topLevelExportGroups'
+                              Identifier: 'groupIndex'
+                            Identifier: 'push'
+                          AsExpression
+                            ElementAccessExpression
+                              Identifier: 'statements'
+                              PostfixUnaryExpression
+                                Identifier: 'i'
+                            TypeReference
+                              Identifier: ' ExportDeclaration'
+                  ExpressionStatement
+                    PostfixUnaryExpression
+                      Identifier: '
+                groupIndex'
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            i'
+      ReturnStatement
+        CallExpression
+          Identifier: ' flatMap'
+          Identifier: 'topLevelExportGroups'
+          ArrowFunction
+            Parameter
+              Identifier: ' exportGroupDecls'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' groupByNewlineContiguous'
+              Identifier: 'sourceFile'
+              Identifier: ' exportGroupDecls'
+  FunctionDeclaration
+    Identifier: ' removeUnusedImports'
+    Parameter
+      Identifier: 'oldImports'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ImportDeclaration'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeChecker'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getTypeChecker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' compilerOptions'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getCompilerOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' jsxNamespace'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' typeChecker'
+                Identifier: 'getJsxNamespace'
+              Identifier: 'sourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' jsxFragmentFactory'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' typeChecker'
+                Identifier: 'getJsxFragmentFactory'
+              Identifier: 'sourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' jsxElementsPresent'
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'sourceFile'
+                      Identifier: 'transformFlags'
+                    AmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' TransformFlags'
+                      Identifier: 'ContainsJsx'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' usedImports'
+            ArrayType
+              TypeReference
+                Identifier: ' ImportDeclaration'
+            ArrayLiteralExpression
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importDecl'
+        Identifier: ' oldImports'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' importClause'
+                  BindingElement
+                    Identifier: ' moduleSpecifier'
+                Identifier: ' importDecl'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'importClause'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            // Imports without import clauses are assumed to be included for their side effects and are not removed.
+            usedImports'
+                    Identifier: 'push'
+                  Identifier: 'importDecl'
+              ContinueStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' name'
+                  BindingElement
+                    Identifier: ' namedBindings'
+                Identifier: ' importClause'
+          IfStatement
+            BinaryExpression
+              Identifier: 'name'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'isDeclarationUsed'
+                  Identifier: 'name'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            name'
+                  EqualsToken
+                  Identifier: ' undefined'
+          IfStatement
+            Identifier: 'namedBindings'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'isNamespaceImport'
+                  Identifier: 'namedBindings'
+                Block
+                  IfStatement
+                    PrefixUnaryExpression
+                      CallExpression
+                        Identifier: 'isDeclarationUsed'
+                        PropertyAccessExpression
+                          Identifier: 'namedBindings'
+                          Identifier: 'name'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    namedBindings'
+                          EqualsToken
+                          Identifier: ' undefined'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' newElements'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' namedBindings'
+                              Identifier: 'elements'
+                            Identifier: 'filter'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'e'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              Identifier: ' isDeclarationUsed'
+                              PropertyAccessExpression
+                                Identifier: 'e'
+                                Identifier: 'name'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'newElements'
+                        Identifier: 'length'
+                      LessThanToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' namedBindings'
+                          Identifier: 'elements'
+                        Identifier: 'length'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    namedBindings'
+                          EqualsToken
+                          ConditionalExpression
+                            PropertyAccessExpression
+                              Identifier: ' newElements'
+                              Identifier: 'length'
+                            QuestionToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' factory'
+                                Identifier: 'updateNamedImports'
+                              Identifier: 'namedBindings'
+                              Identifier: ' newElements'
+                            ColonToken
+                            Identifier: ' undefined'
+          IfStatement
+            BinaryExpression
+              Identifier: 'name'
+              BarBarToken
+              Identifier: ' namedBindings'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            usedImports'
+                    Identifier: 'push'
+                  CallExpression
+                    Identifier: 'updateImportDeclarationAndClause'
+                    Identifier: 'importDecl'
+                    Identifier: ' name'
+                    Identifier: ' namedBindings'
+            IfStatement
+              CallExpression
+                Identifier: 'hasModuleDeclarationMatchingSpecifier'
+                Identifier: 'sourceFile'
+                Identifier: ' moduleSpecifier'
+              Block
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'sourceFile'
+                    Identifier: 'isDeclarationFile'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                usedImports'
+                          Identifier: 'push'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'factory'
+                            Identifier: 'createImportDeclaration'
+                          PropertyAccessExpression
+                            Identifier: '
+                    importDecl'
+                            Identifier: 'modifiers'
+                          Identifier: '
+                    /*importClause*/ undefined'
+                          Identifier: '
+                    moduleSpecifier'
+                          Identifier: '
+                    /*attributes*/ undefined'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                usedImports'
+                          Identifier: 'push'
+                        Identifier: 'importDecl'
+      ReturnStatement
+        Identifier: ' usedImports'
+      FunctionDeclaration
+        Identifier: ' isDeclarationUsed'
+        Parameter
+          Identifier: 'identifier'
+          TypeReference
+            Identifier: ' Identifier'
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  Identifier: ' jsxElementsPresent'
+                  AmpersandAmpersandToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'identifier'
+                          Identifier: 'text'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' jsxNamespace'
+                      BarBarToken
+                      BinaryExpression
+                        Identifier: ' jsxFragmentFactory'
+                        AmpersandAmpersandToken
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' identifier'
+                            Identifier: 'text'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' jsxFragmentFactory'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' jsxModeNeedsExplicitImport'
+                  PropertyAccessExpression
+                    Identifier: 'compilerOptions'
+                    Identifier: 'jsx'
+              BarBarToken
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            FindAllReferences'
+                    Identifier: 'Core'
+                  Identifier: 'isSymbolReferencedInFile'
+                Identifier: 'identifier'
+                Identifier: ' typeChecker'
+                Identifier: ' sourceFile'
+  FunctionDeclaration
+    Identifier: ' getExternalModuleName'
+    Parameter
+      Identifier: 'specifier'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: ' specifier'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isStringLiteralLike'
+              Identifier: 'specifier'
+          QuestionToken
+          PropertyAccessExpression
+            Identifier: ' specifier'
+            Identifier: 'text'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' getCategorizedImports'
+    Parameter
+      Identifier: 'importGroup'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ImportDeclaration'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importWithoutClause'
+            UnionType
+              TypeReference
+                Identifier: ' ImportDeclaration'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeOnlyImports'
+            TypeReference
+              Identifier: ' ImportGroup'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' defaultImports'
+                ArrayLiteralExpression
+              PropertyAssignment
+                Identifier: ' namespaceImports'
+                ArrayLiteralExpression
+              PropertyAssignment
+                Identifier: ' namedImports'
+                ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' regularImports'
+            TypeReference
+              Identifier: ' ImportGroup'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' defaultImports'
+                ArrayLiteralExpression
+              PropertyAssignment
+                Identifier: ' namespaceImports'
+                ArrayLiteralExpression
+              PropertyAssignment
+                Identifier: ' namedImports'
+                ArrayLiteralExpression
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importDeclaration'
+        Identifier: ' importGroup'
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'importDeclaration'
+                Identifier: 'importClause'
+              EqualsEqualsEqualsToken
+              Identifier: ' undefined'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            // Only the first such import is interesting - the others are redundant.
+            // Note: Unfortunately, we will lose trivia that was on this node.
+            importWithoutClause'
+                  EqualsToken
+                  BinaryExpression
+                    Identifier: ' importWithoutClause'
+                    BarBarToken
+                    Identifier: ' importDeclaration'
+              ContinueStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' group'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' importDeclaration'
+                      Identifier: 'importClause'
+                    Identifier: 'isTypeOnly'
+                  QuestionToken
+                  Identifier: ' typeOnlyImports'
+                  ColonToken
+                  Identifier: ' regularImports'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' name'
+                  BindingElement
+                    Identifier: ' namedBindings'
+                PropertyAccessExpression
+                  Identifier: ' importDeclaration'
+                  Identifier: 'importClause'
+          IfStatement
+            Identifier: 'name'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            group'
+                      Identifier: 'defaultImports'
+                    Identifier: 'push'
+                  AsExpression
+                    Identifier: 'importDeclaration'
+                    TypeReference
+                      Identifier: ' ImportDeclarationWithDefaultImport'
+          IfStatement
+            Identifier: 'namedBindings'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'isNamespaceImport'
+                  Identifier: 'namedBindings'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                group'
+                          Identifier: 'namespaceImports'
+                        Identifier: 'push'
+                      AsExpression
+                        Identifier: 'importDeclaration'
+                        TypeReference
+                          Identifier: ' ImportDeclarationWithNamespaceImport'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                group'
+                          Identifier: 'namedImports'
+                        Identifier: 'push'
+                      AsExpression
+                        Identifier: 'importDeclaration'
+                        TypeReference
+                          Identifier: ' ImportDeclarationWithNamedImports'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        importWithoutClause'
+          ShorthandPropertyAssignment
+            Identifier: '
+        typeOnlyImports'
+          ShorthandPropertyAssignment
+            Identifier: '
+        regularImports'
+  FunctionDeclaration
+    Identifier: ' coalesceImportsWorker'
+    Parameter
+      Identifier: 'importGroup'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ImportDeclaration'
+    Parameter
+      Identifier: ' comparer'
+      TypeReference
+        Identifier: ' Comparer'
+        StringKeyword
+    Parameter
+      Identifier: ' specifierComparer'
+      TypeReference
+        Identifier: ' Comparer'
+        TypeReference
+          Identifier: 'ImportSpecifier'
+    Parameter
+      Identifier: ' sourceFile'
+      QuestionToken
+      TypeReference
+        Identifier: ' SourceFile'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' ImportDeclaration'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'importGroup'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            Identifier: ' importGroup'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importGroupsByAttributes'
+            CallExpression
+              Identifier: ' groupBy'
+              Identifier: 'importGroup'
+              ArrowFunction
+                Parameter
+                  Identifier: ' decl'
+                EqualsGreaterThanToken
+                Block
+                  IfStatement
+                    PropertyAccessExpression
+                      Identifier: 'decl'
+                      Identifier: 'attributes'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' attrs'
+                            BinaryExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' decl'
+                                  Identifier: 'attributes'
+                                Identifier: 'token'
+                              PlusToken
+                              StringLiteral
+                      ForOfStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' x'
+                        CallExpression
+                          Identifier: ' toSorted'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'decl'
+                              Identifier: 'attributes'
+                            Identifier: 'elements'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'x'
+                            Parameter
+                              Identifier: ' y'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              Identifier: ' compareStringsCaseSensitive'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'x'
+                                  Identifier: 'name'
+                                Identifier: 'text'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' y'
+                                  Identifier: 'name'
+                                Identifier: 'text'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                attrs'
+                              PlusEqualsToken
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' x'
+                                    Identifier: 'name'
+                                  Identifier: 'text'
+                                PlusToken
+                                StringLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                attrs'
+                              PlusEqualsToken
+                              ConditionalExpression
+                                CallExpression
+                                  Identifier: ' isStringLiteralLike'
+                                  PropertyAccessExpression
+                                    Identifier: 'x'
+                                    Identifier: 'value'
+                                QuestionToken
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'x'
+                                        Identifier: 'value'
+                                      Identifier: 'text'
+                                    TemplateTail
+                                ColonToken
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' x'
+                                        Identifier: 'value'
+                                      Identifier: 'getText'
+                                  PlusToken
+                                  StringLiteral
+                      ReturnStatement
+                        Identifier: ' attrs'
+                  ReturnStatement
+                    StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' coalescedImports'
+            ArrayType
+              TypeReference
+                Identifier: ' ImportDeclaration'
+            ArrayLiteralExpression
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' attribute'
+        Identifier: ' importGroupsByAttributes'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' importGroupSameAttrs'
+                AsExpression
+                  ElementAccessExpression
+                    Identifier: ' importGroupsByAttributes'
+                    Identifier: 'attribute'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' ImportDeclaration'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' importWithoutClause'
+                  BindingElement
+                    Identifier: ' typeOnlyImports'
+                  BindingElement
+                    Identifier: ' regularImports'
+                CallExpression
+                  Identifier: ' getCategorizedImports'
+                  Identifier: 'importGroupSameAttrs'
+          IfStatement
+            Identifier: 'importWithoutClause'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            coalescedImports'
+                    Identifier: 'push'
+                  Identifier: 'importWithoutClause'
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' group'
+            ArrayLiteralExpression
+              Identifier: 'regularImports'
+              Identifier: ' typeOnlyImports'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' isTypeOnly'
+                    BinaryExpression
+                      Identifier: ' group'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' typeOnlyImports'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' defaultImports'
+                      BindingElement
+                        Identifier: ' namespaceImports'
+                      BindingElement
+                        Identifier: ' namedImports'
+                    Identifier: ' group'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        Identifier: 'isTypeOnly'
+                      AmpersandAmpersandToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' defaultImports'
+                          Identifier: 'length'
+                        EqualsEqualsEqualsToken
+                        NumericLiteral
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' namespaceImports'
+                        Identifier: 'length'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' namedImports'
+                      Identifier: 'length'
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' defaultImport'
+                        ElementAccessExpression
+                          Identifier: ' defaultImports'
+                          NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                coalescedImports'
+                        Identifier: 'push'
+                      CallExpression
+                        Identifier: '
+                    updateImportDeclarationAndClause'
+                        Identifier: 'defaultImport'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' defaultImport'
+                            Identifier: 'importClause'
+                          Identifier: 'name'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              Identifier: ' namespaceImports'
+                              NumericLiteral
+                            Identifier: 'importClause'
+                          Identifier: 'namedBindings'
+                  ContinueStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sortedNamespaceImports'
+                    CallExpression
+                      Identifier: ' toSorted'
+                      Identifier: 'namespaceImports'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'i1'
+                        Parameter
+                          Identifier: ' i2'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' comparer'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'i1'
+                                  Identifier: 'importClause'
+                                Identifier: 'namedBindings'
+                              Identifier: 'name'
+                            Identifier: 'text'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' i2'
+                                  Identifier: 'importClause'
+                                Identifier: 'namedBindings'
+                              Identifier: 'name'
+                            Identifier: 'text'
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' namespaceImport'
+                Identifier: ' sortedNamespaceImports'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                // Drop the name, if any
+                coalescedImports'
+                        Identifier: 'push'
+                      CallExpression
+                        Identifier: '
+                    updateImportDeclarationAndClause'
+                        Identifier: 'namespaceImport'
+                        Identifier: ' /*name*/ undefined'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' namespaceImport'
+                            Identifier: 'importClause'
+                          Identifier: 'namedBindings'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' firstDefaultImport'
+                    CallExpression
+                      Identifier: ' firstOrUndefined'
+                      Identifier: 'defaultImports'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' firstNamedImport'
+                    CallExpression
+                      Identifier: ' firstOrUndefined'
+                      Identifier: 'namedImports'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' importDecl'
+                    BinaryExpression
+                      Identifier: ' firstDefaultImport'
+                      QuestionQuestionToken
+                      Identifier: ' firstNamedImport'
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'importDecl'
+                Block
+                  ContinueStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' newDefaultImport'
+                    UnionType
+                      TypeReference
+                        Identifier: ' Identifier'
+                      UndefinedKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' newImportSpecifiers'
+                    ArrayType
+                      TypeReference
+                        Identifier: ' ImportSpecifier'
+                    ArrayLiteralExpression
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'defaultImports'
+                    Identifier: 'length'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                newDefaultImport'
+                      EqualsToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: ' defaultImports'
+                            NumericLiteral
+                          Identifier: 'importClause'
+                        Identifier: 'name'
+                Block
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' defaultImport'
+                    Identifier: ' defaultImports'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    newImportSpecifiers'
+                            Identifier: 'push'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        factory'
+                              Identifier: 'createImportSpecifier'
+                            FalseKeyword
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' factory'
+                                Identifier: 'createIdentifier'
+                              StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' defaultImport'
+                                Identifier: 'importClause'
+                              Identifier: 'name'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            newImportSpecifiers'
+                    Identifier: 'push'
+                  SpreadElement
+                    CallExpression
+                      Identifier: 'getNewImportSpecifiers'
+                      Identifier: 'namedImports'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sortedImportSpecifiers'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createNodeArray'
+                      CallExpression
+                        Identifier: '
+                toSorted'
+                        Identifier: 'newImportSpecifiers'
+                        Identifier: ' specifierComparer'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                firstNamedImport'
+                              QuestionDotToken
+                              Identifier: 'importClause'
+                            Identifier: 'namedBindings'
+                          Identifier: 'elements'
+                        Identifier: 'hasTrailingComma'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' newNamedImports'
+                    ConditionalExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' sortedImportSpecifiers'
+                          Identifier: 'length'
+                        EqualsEqualsEqualsToken
+                        NumericLiteral
+                      QuestionToken
+                      ConditionalExpression
+                        Identifier: ' newDefaultImport'
+                        QuestionToken
+                        Identifier: ' undefined'
+                        ColonToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' factory'
+                            Identifier: 'createNamedImports'
+                          Identifier: 'emptyArray'
+                      ColonToken
+                      ConditionalExpression
+                        Identifier: ' firstNamedImport'
+                        QuestionToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' factory'
+                            Identifier: 'updateNamedImports'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'firstNamedImport'
+                              Identifier: 'importClause'
+                            Identifier: 'namedBindings'
+                          Identifier: ' sortedImportSpecifiers'
+                        ColonToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' factory'
+                            Identifier: 'createNamedImports'
+                          Identifier: 'sortedImportSpecifiers'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: '
+                sourceFile'
+                      AmpersandAmpersandToken
+                      Identifier: '
+                newNamedImports'
+                    AmpersandAmpersandToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                firstNamedImport'
+                        QuestionDotToken
+                        Identifier: 'importClause'
+                      Identifier: 'namedBindings'
+                  AmpersandAmpersandToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'rangeIsOnSingleLine'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'firstNamedImport'
+                          Identifier: 'importClause'
+                        Identifier: 'namedBindings'
+                      Identifier: ' sourceFile'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                setEmitFlags'
+                      Identifier: 'newNamedImports'
+                      PropertyAccessExpression
+                        Identifier: ' EmitFlags'
+                        Identifier: 'MultiLine'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: 'isTypeOnly'
+                    AmpersandAmpersandToken
+                    Identifier: ' newDefaultImport'
+                  AmpersandAmpersandToken
+                  Identifier: ' newNamedImports'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                coalescedImports'
+                        Identifier: 'push'
+                      CallExpression
+                        Identifier: '
+                    updateImportDeclarationAndClause'
+                        Identifier: 'importDecl'
+                        Identifier: ' newDefaultImport'
+                        Identifier: ' /*namedBindings*/ undefined'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                coalescedImports'
+                        Identifier: 'push'
+                      CallExpression
+                        Identifier: '
+                    updateImportDeclarationAndClause'
+                        BinaryExpression
+                          Identifier: 'firstNamedImport'
+                          QuestionQuestionToken
+                          Identifier: ' importDecl'
+                        Identifier: ' /*name*/ undefined'
+                        Identifier: ' newNamedImports'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                coalescedImports'
+                        Identifier: 'push'
+                      CallExpression
+                        Identifier: '
+                    updateImportDeclarationAndClause'
+                        Identifier: 'importDecl'
+                        Identifier: ' newDefaultImport'
+                        Identifier: ' newNamedImports'
+      ReturnStatement
+        Identifier: ' coalescedImports'
+  TypeAliasDeclaration
+    Identifier: ' ImportDeclarationWithDefaultImport'
+    IntersectionType
+      TypeReference
+        Identifier: ' ImportDeclaration'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' importClause'
+          IntersectionType
+            TypeReference
+              Identifier: ' ImportClause'
+            TypeLiteral
+              PropertySignature
+                ReadonlyKeyword
+                Identifier: ' name'
+                TypeReference
+                  Identifier: ' Identifier'
+  TypeAliasDeclaration
+    Identifier: ' ImportDeclarationWithNamespaceImport'
+    IntersectionType
+      TypeReference
+        Identifier: ' ImportDeclaration'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' importClause'
+          IntersectionType
+            TypeReference
+              Identifier: ' ImportClause'
+            TypeLiteral
+              PropertySignature
+                ReadonlyKeyword
+                Identifier: ' namedBindings'
+                TypeReference
+                  Identifier: ' NamespaceImport'
+  TypeAliasDeclaration
+    Identifier: ' ImportDeclarationWithNamedImports'
+    IntersectionType
+      TypeReference
+        Identifier: ' ImportDeclaration'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' importClause'
+          IntersectionType
+            TypeReference
+              Identifier: ' ImportClause'
+            TypeLiteral
+              PropertySignature
+                ReadonlyKeyword
+                Identifier: ' namedBindings'
+                TypeReference
+                  Identifier: ' NamedImports'
+  InterfaceDeclaration
+    Identifier: ' ImportGroup'
+    PropertySignature
+      Identifier: '
+    defaultImports'
+      ArrayType
+        TypeReference
+          Identifier: ' ImportDeclarationWithDefaultImport'
+    PropertySignature
+      Identifier: '
+    namespaceImports'
+      ArrayType
+        TypeReference
+          Identifier: ' ImportDeclarationWithNamespaceImport'
+    PropertySignature
+      Identifier: '
+    namedImports'
+      ArrayType
+        TypeReference
+          Identifier: ' ImportDeclarationWithNamedImports'
+  FunctionDeclaration
+    Identifier: ' coalesceExportsWorker'
+    Parameter
+      Identifier: 'exportGroup'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ExportDeclaration'
+    Parameter
+      Identifier: ' specifierComparer'
+      TypeReference
+        Identifier: ' Comparer'
+        TypeReference
+          Identifier: 'ExportSpecifier'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'exportGroup'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            Identifier: ' exportGroup'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' exportWithoutClause'
+              BindingElement
+                Identifier: ' namedExports'
+              BindingElement
+                Identifier: ' typeOnlyExports'
+            CallExpression
+              Identifier: ' getCategorizedExports'
+              Identifier: 'exportGroup'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' coalescedExports'
+            ArrayType
+              TypeReference
+                Identifier: ' ExportDeclaration'
+            ArrayLiteralExpression
+      IfStatement
+        Identifier: 'exportWithoutClause'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        coalescedExports'
+                Identifier: 'push'
+              Identifier: 'exportWithoutClause'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exportGroup'
+        ArrayLiteralExpression
+          Identifier: 'namedExports'
+          Identifier: ' typeOnlyExports'
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'exportGroup'
+                Identifier: 'length'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ContinueStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' newExportSpecifiers'
+                ArrayType
+                  TypeReference
+                    Identifier: ' ExportSpecifier'
+                ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        newExportSpecifiers'
+                Identifier: 'push'
+              SpreadElement
+                CallExpression
+                  Identifier: 'flatMap'
+                  Identifier: 'exportGroup'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' i'
+                    EqualsGreaterThanToken
+                    ConditionalExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' i'
+                          Identifier: 'exportClause'
+                        AmpersandAmpersandToken
+                        CallExpression
+                          Identifier: ' isNamedExports'
+                          PropertyAccessExpression
+                            Identifier: 'i'
+                            Identifier: 'exportClause'
+                      QuestionToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' i'
+                          Identifier: 'exportClause'
+                        Identifier: 'elements'
+                      ColonToken
+                      Identifier: ' emptyArray'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sortedExportSpecifiers'
+                CallExpression
+                  Identifier: ' toSorted'
+                  Identifier: 'newExportSpecifiers'
+                  Identifier: ' specifierComparer'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' exportDecl'
+                ElementAccessExpression
+                  Identifier: ' exportGroup'
+                  NumericLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        coalescedExports'
+                Identifier: 'push'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            factory'
+                  Identifier: 'updateExportDeclaration'
+                Identifier: '
+                exportDecl'
+                PropertyAccessExpression
+                  Identifier: '
+                exportDecl'
+                  Identifier: 'modifiers'
+                PropertyAccessExpression
+                  Identifier: '
+                exportDecl'
+                  Identifier: 'isTypeOnly'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                exportDecl'
+                    Identifier: 'exportClause'
+                  AmpersandAmpersandToken
+                  ParenthesizedExpression
+                    ConditionalExpression
+                      CallExpression
+                        Identifier: '
+                    isNamedExports'
+                        PropertyAccessExpression
+                          Identifier: 'exportDecl'
+                          Identifier: 'exportClause'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                        factory'
+                          Identifier: 'updateNamedExports'
+                        PropertyAccessExpression
+                          Identifier: 'exportDecl'
+                          Identifier: 'exportClause'
+                        Identifier: ' sortedExportSpecifiers'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                        factory'
+                          Identifier: 'updateNamespaceExport'
+                        PropertyAccessExpression
+                          Identifier: 'exportDecl'
+                          Identifier: 'exportClause'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' exportDecl'
+                            Identifier: 'exportClause'
+                          Identifier: 'name'
+                PropertyAccessExpression
+                  Identifier: '
+                exportDecl'
+                  Identifier: 'moduleSpecifier'
+                PropertyAccessExpression
+                  Identifier: '
+                exportDecl'
+                  Identifier: 'attributes'
+      ReturnStatement
+        Identifier: ' coalescedExports'
+      FunctionDeclaration
+        Identifier: ' getCategorizedExports'
+        Parameter
+          Identifier: 'exportGroup'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' ExportDeclaration'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' exportWithoutClause'
+                UnionType
+                  TypeReference
+                    Identifier: ' ExportDeclaration'
+                  UndefinedKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' namedExports'
+                ArrayType
+                  TypeReference
+                    Identifier: ' ExportDeclaration'
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' typeOnlyExports'
+                ArrayType
+                  TypeReference
+                    Identifier: ' ExportDeclaration'
+                ArrayLiteralExpression
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' exportDeclaration'
+            Identifier: ' exportGroup'
+            Block
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'exportDeclaration'
+                    Identifier: 'exportClause'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                // Only the first such export is interesting - the others are redundant.
+                // Note: Unfortunately, we will lose trivia that was on this node.
+                exportWithoutClause'
+                      EqualsToken
+                      BinaryExpression
+                        Identifier: ' exportWithoutClause'
+                        BarBarToken
+                        Identifier: ' exportDeclaration'
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'exportDeclaration'
+                    Identifier: 'isTypeOnly'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                typeOnlyExports'
+                          Identifier: 'push'
+                        Identifier: 'exportDeclaration'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                namedExports'
+                          Identifier: 'push'
+                        Identifier: 'exportDeclaration'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+            exportWithoutClause'
+              ShorthandPropertyAssignment
+                Identifier: '
+            namedExports'
+              ShorthandPropertyAssignment
+                Identifier: '
+            typeOnlyExports'
+  FunctionDeclaration
+    Identifier: ' updateImportDeclarationAndClause'
+    Parameter
+      Identifier: '
+    importDeclaration'
+      TypeReference
+        Identifier: ' ImportDeclaration'
+    Parameter
+      Identifier: '
+    name'
+      UnionType
+        TypeReference
+          Identifier: ' Identifier'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    namedBindings'
+      UnionType
+        TypeReference
+          Identifier: ' NamedImportBindings'
+        UndefinedKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'updateImportDeclaration'
+          Identifier: '
+        importDeclaration'
+          PropertyAccessExpression
+            Identifier: '
+        importDeclaration'
+            Identifier: 'modifiers'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        factory'
+              Identifier: 'updateImportClause'
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: 'importDeclaration'
+                Identifier: 'importClause'
+            PropertyAccessExpression
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: ' importDeclaration'
+                  Identifier: 'importClause'
+              Identifier: 'isTypeOnly'
+            Identifier: ' name'
+            Identifier: ' namedBindings'
+          PropertyAccessExpression
+            Identifier: ' // TODO: GH#18217
+        importDeclaration'
+            Identifier: 'moduleSpecifier'
+          PropertyAccessExpression
+            Identifier: '
+        importDeclaration'
+            Identifier: 'attributes'
+  FunctionDeclaration
+    Identifier: ' compareImportOrExportSpecifiers'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ImportOrExportSpecifier'
+    Parameter
+      Identifier: 's1'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' s2'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' comparer'
+      TypeReference
+        Identifier: ' Comparer'
+        StringKeyword
+    Parameter
+      Identifier: ' preferences'
+      QuestionToken
+      TypeReference
+        Identifier: ' UserPreferences'
+    TypeReference
+      Identifier: ' Comparison'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'preferences'
+          QuestionDotToken
+          Identifier: 'organizeImportsTypeOrder'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              BinaryExpression
+                CallExpression
+                  Identifier: ' compareBooleans'
+                  PropertyAccessExpression
+                    Identifier: 's2'
+                    Identifier: 'isTypeOnly'
+                  PropertyAccessExpression
+                    Identifier: ' s1'
+                    Identifier: 'isTypeOnly'
+                BarBarToken
+                CallExpression
+                  Identifier: ' comparer'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 's1'
+                      Identifier: 'name'
+                    Identifier: 'text'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' s2'
+                      Identifier: 'name'
+                    Identifier: 'text'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              CallExpression
+                Identifier: ' comparer'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 's1'
+                    Identifier: 'name'
+                  Identifier: 'text'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' s2'
+                    Identifier: 'name'
+                  Identifier: 'text'
+          DefaultClause
+            ReturnStatement
+              BinaryExpression
+                CallExpression
+                  Identifier: ' compareBooleans'
+                  PropertyAccessExpression
+                    Identifier: 's1'
+                    Identifier: 'isTypeOnly'
+                  PropertyAccessExpression
+                    Identifier: ' s2'
+                    Identifier: 'isTypeOnly'
+                BarBarToken
+                CallExpression
+                  Identifier: ' comparer'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 's1'
+                      Identifier: 'name'
+                    Identifier: 'text'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' s2'
+                      Identifier: 'name'
+                    Identifier: 'text'
+  FunctionDeclaration
+    Identifier: ' compareModuleSpecifiersWorker'
+    Parameter
+      Identifier: 'm1'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' m2'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' comparer'
+      TypeReference
+        Identifier: ' Comparer'
+        StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' name1'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' m1'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              Identifier: ' undefined'
+              ColonToken
+              CallExpression
+                Identifier: ' getExternalModuleName'
+                Identifier: 'm1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' name2'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' m2'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              Identifier: ' undefined'
+              ColonToken
+              CallExpression
+                Identifier: ' getExternalModuleName'
+                Identifier: 'm2'
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            CallExpression
+              Identifier: ' compareBooleans'
+              BinaryExpression
+                Identifier: 'name1'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              BinaryExpression
+                Identifier: ' name2'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+            BarBarToken
+            CallExpression
+              Identifier: '
+        compareBooleans'
+              CallExpression
+                Identifier: 'isExternalModuleNameRelative'
+                NonNullExpression
+                  Identifier: 'name1'
+              CallExpression
+                Identifier: ' isExternalModuleNameRelative'
+                NonNullExpression
+                  Identifier: 'name2'
+          BarBarToken
+          CallExpression
+            Identifier: '
+        comparer'
+            NonNullExpression
+              Identifier: 'name1'
+            NonNullExpression
+              Identifier: ' name2'
+  FunctionDeclaration
+    Identifier: ' getModuleNamesFromDecls'
+    Parameter
+      Identifier: 'decls'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' AnyImportOrRequireStatement'
+    ArrayType
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' decls'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            BinaryExpression
+              CallExpression
+                Identifier: ' getExternalModuleName'
+                CallExpression
+                  Identifier: 'getModuleSpecifierExpression'
+                  Identifier: 's'
+              BarBarToken
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' getModuleSpecifierExpression'
+    Parameter
+      Identifier: 'declaration'
+      TypeReference
+        Identifier: ' AnyImportOrRequireStatement'
+    UnionType
+      TypeReference
+        Identifier: ' Expression'
+      UndefinedKeyword
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'declaration'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ImportEqualsDeclaration'
+            ReturnStatement
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' tryCast'
+                  PropertyAccessExpression
+                    Identifier: 'declaration'
+                    Identifier: 'moduleReference'
+                  Identifier: ' isExternalModuleReference'
+                QuestionDotToken
+                Identifier: 'expression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ImportDeclaration'
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' declaration'
+                Identifier: 'moduleSpecifier'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'VariableStatement'
+            ReturnStatement
+              ElementAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' declaration'
+                          Identifier: 'declarationList'
+                        Identifier: 'declarations'
+                      NumericLiteral
+                    Identifier: 'initializer'
+                  Identifier: 'arguments'
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' hasModuleDeclarationMatchingSpecifier'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' moduleSpecifier'
+      TypeReference
+        Identifier: ' Expression'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleSpecifierText'
+            BinaryExpression
+              CallExpression
+                Identifier: ' isStringLiteral'
+                Identifier: 'moduleSpecifier'
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                Identifier: ' moduleSpecifier'
+                Identifier: 'text'
+      ReturnStatement
+        BinaryExpression
+          CallExpression
+            Identifier: ' isString'
+            Identifier: 'moduleSpecifierText'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' some'
+            PropertyAccessExpression
+              Identifier: 'sourceFile'
+              Identifier: 'moduleAugmentations'
+            ArrowFunction
+              Parameter
+                Identifier: ' moduleName'
+              EqualsGreaterThanToken
+              BinaryExpression
+                CallExpression
+                  Identifier: '
+        isStringLiteral'
+                  Identifier: 'moduleName'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' moduleName'
+                    Identifier: 'text'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' moduleSpecifierText'
+  FunctionDeclaration
+    Identifier: ' getNewImportSpecifiers'
+    Parameter
+      Identifier: 'namedImports'
+      ArrayType
+        TypeReference
+          Identifier: ' ImportDeclaration'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' flatMap'
+          Identifier: 'namedImports'
+          ArrowFunction
+            Parameter
+              Identifier: ' namedImport'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        map'
+              CallExpression
+                Identifier: 'tryGetNamedBindingElements'
+                Identifier: 'namedImport'
+              ArrowFunction
+                Parameter
+                  Identifier: ' importSpecifier'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  BinaryExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            importSpecifier'
+                        Identifier: 'name'
+                      AmpersandAmpersandToken
+                      PropertyAccessExpression
+                        Identifier: ' importSpecifier'
+                        Identifier: 'propertyName'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      CallExpression
+                        Identifier: ' moduleExportNameTextEscaped'
+                        PropertyAccessExpression
+                          Identifier: 'importSpecifier'
+                          Identifier: 'name'
+                      EqualsEqualsEqualsToken
+                      CallExpression
+                        Identifier: ' moduleExportNameTextEscaped'
+                        PropertyAccessExpression
+                          Identifier: 'importSpecifier'
+                          Identifier: 'propertyName'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'updateImportSpecifier'
+                    Identifier: 'importSpecifier'
+                    PropertyAccessExpression
+                      Identifier: ' importSpecifier'
+                      Identifier: 'isTypeOnly'
+                    Identifier: ' /*propertyName*/ undefined'
+                    PropertyAccessExpression
+                      Identifier: ' importSpecifier'
+                      Identifier: 'name'
+                  ColonToken
+                  Identifier: ' importSpecifier'
+  FunctionDeclaration
+    Identifier: ' tryGetNamedBindingElements'
+    Parameter
+      Identifier: 'namedImport'
+      TypeReference
+        Identifier: ' ImportDeclaration'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' namedImport'
+                Identifier: 'importClause'
+              QuestionDotToken
+              Identifier: 'namedBindings'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isNamedImports'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'namedImport'
+                  Identifier: 'importClause'
+                Identifier: 'namedBindings'
+          QuestionToken
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' namedImport'
+                Identifier: 'importClause'
+              Identifier: 'namedBindings'
+            Identifier: 'elements'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' detectModuleSpecifierCaseBySort'
+    Parameter
+      Identifier: 'importDeclsByGroup'
+      ArrayType
+        ParenthesizedType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' AnyImportOrRequireStatement'
+    Parameter
+      Identifier: ' comparersToTest'
+      ArrayType
+        TypeReference
+          Identifier: ' Comparer'
+          StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleSpecifiersByGroup'
+            ArrayType
+              ArrayType
+                StringKeyword
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    importDeclsByGroup'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'importGroup'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        // Turns importDeclsByGroup into string[][] of module specifiers grouped by declGroup
+        moduleSpecifiersByGroup'
+                    Identifier: 'push'
+                  CallExpression
+                    Identifier: 'getModuleNamesFromDecls'
+                    Identifier: 'importGroup'
+      ReturnStatement
+        CallExpression
+          Identifier: ' detectCaseSensitivityBySort'
+          Identifier: 'moduleSpecifiersByGroup'
+          Identifier: ' comparersToTest'
+  FunctionDeclaration
+    Identifier: ' detectNamedImportOrganizationBySort'
+    Parameter
+      Identifier: 'originalGroups'
+      TypeOperator
+        ArrayType
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'ImportDeclaration'
+              TypeReference
+                Identifier: ' JSDocImportTag'
+    Parameter
+      Identifier: ' comparersToTest'
+      ArrayType
+        TypeReference
+          Identifier: ' Comparer'
+          StringKeyword
+    Parameter
+      Identifier: ' typesToTest'
+      ArrayType
+        TypeReference
+          Identifier: ' OrganizeImportsTypeOrder'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' namedImportComparer'
+          TypeReference
+            Identifier: ' Comparer'
+            StringKeyword
+        PropertySignature
+          Identifier: ' typeOrder'
+          UnionType
+            TypeReference
+              Identifier: ' OrganizeImportsTypeOrder'
+            UndefinedKeyword
+        PropertySignature
+          Identifier: ' isSorted'
+          BooleanKeyword
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bothNamedImports'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importDeclsWithNamed'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' originalGroups'
+                Identifier: 'filter'
+              ArrowFunction
+                Parameter
+                  Identifier: 'i'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' namedImports'
+                        PropertyAccessExpression
+                          CallExpression
+                            Identifier: ' tryCast'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'i'
+                                Identifier: 'importClause'
+                              QuestionDotToken
+                              Identifier: 'namedBindings'
+                            Identifier: ' isNamedImports'
+                          QuestionDotToken
+                          Identifier: 'elements'
+                  IfStatement
+                    PrefixUnaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'namedImports'
+                        QuestionDotToken
+                        Identifier: 'length'
+                    ReturnStatement
+                      FalseKeyword
+                  IfStatement
+                    BinaryExpression
+                      BinaryExpression
+                        PrefixUnaryExpression
+                          Identifier: 'bothNamedImports'
+                        AmpersandAmpersandToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' namedImports'
+                            Identifier: 'some'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'n'
+                            EqualsGreaterThanToken
+                            PropertyAccessExpression
+                              Identifier: ' n'
+                              Identifier: 'isTypeOnly'
+                      AmpersandAmpersandToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' namedImports'
+                          Identifier: 'some'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'n'
+                          EqualsGreaterThanToken
+                          PrefixUnaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'n'
+                              Identifier: 'isTypeOnly'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+            bothNamedImports'
+                          EqualsToken
+                          TrueKeyword
+                  ReturnStatement
+                    TrueKeyword
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'importDeclsWithNamed'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' namedImportsByDecl'
+            AsExpression
+              AsExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' importDeclsWithNamed'
+                        Identifier: 'map'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'importDecl'
+                        EqualsGreaterThanToken
+                        Block
+                          ReturnStatement
+                            PropertyAccessExpression
+                              CallExpression
+                                Identifier: ' tryCast'
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'importDecl'
+                                    Identifier: 'importClause'
+                                  QuestionDotToken
+                                  Identifier: 'namedBindings'
+                                Identifier: ' isNamedImports'
+                              QuestionDotToken
+                              Identifier: 'elements'
+                    Identifier: 'filter'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'elements'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      Identifier: ' elements'
+                      ExclamationEqualsEqualsToken
+                      Identifier: ' undefined'
+                AnyKeyword
+              ArrayType
+                ArrayType
+                  TypeReference
+                    Identifier: ' ImportSpecifier'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'bothNamedImports'
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' typesToTest'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sortState'
+                CallExpression
+                  Identifier: ' detectCaseSensitivityBySort'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'namedImportsByDecl'
+                      Identifier: 'map'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'i'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' i'
+                          Identifier: 'map'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'n'
+                          EqualsGreaterThanToken
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' n'
+                              Identifier: 'name'
+                            Identifier: 'text'
+                  Identifier: ' comparersToTest'
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            namedImportComparer'
+                PropertyAccessExpression
+                  Identifier: ' sortState'
+                  Identifier: 'comparer'
+              PropertyAssignment
+                Identifier: '
+            typeOrder'
+                ConditionalExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' typesToTest'
+                      Identifier: 'length'
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+                  QuestionToken
+                  ElementAccessExpression
+                    Identifier: ' typesToTest'
+                    NumericLiteral
+                  ColonToken
+                  Identifier: ' undefined'
+              PropertyAssignment
+                Identifier: '
+            isSorted'
+                PropertyAccessExpression
+                  Identifier: ' sortState'
+                  Identifier: 'isSorted'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bestDiff'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' first'
+                Identifier: ' Infinity'
+              PropertyAssignment
+                Identifier: ' last'
+                Identifier: ' Infinity'
+              PropertyAssignment
+                Identifier: ' inline'
+                Identifier: ' Infinity'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bestComparer'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' first'
+                ElementAccessExpression
+                  Identifier: ' comparersToTest'
+                  NumericLiteral
+              PropertyAssignment
+                Identifier: ' last'
+                ElementAccessExpression
+                  Identifier: ' comparersToTest'
+                  NumericLiteral
+              PropertyAssignment
+                Identifier: ' inline'
+                ElementAccessExpression
+                  Identifier: ' comparersToTest'
+                  NumericLiteral
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' curComparer'
+        Identifier: ' comparersToTest'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' currDiff'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' first'
+                    NumericLiteral
+                  PropertyAssignment
+                    Identifier: ' last'
+                    NumericLiteral
+                  PropertyAssignment
+                    Identifier: ' inline'
+                    NumericLiteral
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' importDecl'
+            Identifier: ' namedImportsByDecl'
+            Block
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' typeOrder'
+                Identifier: ' typesToTest'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+                currDiff'
+                        Identifier: 'typeOrder'
+                      EqualsToken
+                      BinaryExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            ElementAccessExpression
+                              Identifier: 'currDiff'
+                              Identifier: 'typeOrder'
+                            QuestionQuestionToken
+                            NumericLiteral
+                        PlusToken
+                        CallExpression
+                          Identifier: ' measureSortedness'
+                          Identifier: 'importDecl'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'n1'
+                            Parameter
+                              Identifier: ' n2'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              Identifier: ' compareImportOrExportSpecifiers'
+                              Identifier: 'n1'
+                              Identifier: ' n2'
+                              Identifier: ' curComparer'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' organizeImportsTypeOrder'
+                                  Identifier: ' typeOrder'
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' key'
+            Identifier: ' typesToTest'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' typeOrder'
+                    Identifier: ' key'
+              IfStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: 'currDiff'
+                    Identifier: 'typeOrder'
+                  LessThanToken
+                  ElementAccessExpression
+                    Identifier: ' bestDiff'
+                    Identifier: 'typeOrder'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+                bestDiff'
+                        Identifier: 'typeOrder'
+                      EqualsToken
+                      ElementAccessExpression
+                        Identifier: ' currDiff'
+                        Identifier: 'typeOrder'
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+                bestComparer'
+                        Identifier: 'typeOrder'
+                      EqualsToken
+                      Identifier: ' curComparer'
+      LabeledStatement
+        Identifier: '
+
+    outer'
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' bestKey'
+          Identifier: ' typesToTest'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' bestTypeOrder'
+                  Identifier: ' bestKey'
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' testKey'
+              Identifier: ' typesToTest'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' testTypeOrder'
+                      Identifier: ' testKey'
+                IfStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: 'bestDiff'
+                      Identifier: 'testTypeOrder'
+                    LessThanToken
+                    ElementAccessExpression
+                      Identifier: ' bestDiff'
+                      Identifier: 'bestTypeOrder'
+                  ContinueStatement
+                    Identifier: ' outer'
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' namedImportComparer'
+                  ElementAccessExpression
+                    Identifier: ' bestComparer'
+                    Identifier: 'bestTypeOrder'
+                PropertyAssignment
+                  Identifier: ' typeOrder'
+                  Identifier: ' bestTypeOrder'
+                PropertyAssignment
+                  Identifier: ' isSorted'
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: ' bestDiff'
+                      Identifier: 'bestTypeOrder'
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' namedImportComparer'
+            PropertyAccessExpression
+              Identifier: ' bestComparer'
+              Identifier: 'last'
+          PropertyAssignment
+            Identifier: ' typeOrder'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' isSorted'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' bestDiff'
+                Identifier: 'last'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' measureSortedness'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'arr'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' comparer'
+      TypeReference
+        Identifier: ' Comparer'
+        TypeReference
+          Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' j'
+          LessThanToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' arr'
+              Identifier: 'length'
+            MinusToken
+            NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' j'
+        Block
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'comparer'
+                ElementAccessExpression
+                  Identifier: 'arr'
+                  Identifier: 'j'
+                ElementAccessExpression
+                  Identifier: ' arr'
+                  BinaryExpression
+                    Identifier: 'j'
+                    PlusToken
+                    NumericLiteral
+              GreaterThanToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            i'
+      ReturnStatement
+        Identifier: ' i'
+  FunctionDeclaration
+    Identifier: ' detectCaseSensitivityBySort'
+    Parameter
+      Identifier: 'originalGroups'
+      ArrayType
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: ' comparersToTest'
+      ArrayType
+        TypeReference
+          Identifier: ' Comparer'
+          StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: ' comparer'
+        TypeReference
+          Identifier: ' Comparer'
+          StringKeyword
+      PropertySignature
+        Identifier: ' isSorted'
+        BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bestComparer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bestDiff'
+            Identifier: ' Infinity'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' curComparer'
+        Identifier: ' comparersToTest'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' diffOfCurrentComparer'
+                NumericLiteral
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' listToSort'
+            Identifier: ' originalGroups'
+            Block
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'listToSort'
+                    Identifier: 'length'
+                  LessThanEqualsToken
+                  NumericLiteral
+                ContinueStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' diff'
+                    CallExpression
+                      Identifier: ' measureSortedness'
+                      Identifier: 'listToSort'
+                      Identifier: ' curComparer'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            diffOfCurrentComparer'
+                  PlusEqualsToken
+                  Identifier: ' diff'
+          IfStatement
+            BinaryExpression
+              Identifier: 'diffOfCurrentComparer'
+              LessThanToken
+              Identifier: ' bestDiff'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            bestDiff'
+                  EqualsToken
+                  Identifier: ' diffOfCurrentComparer'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            bestComparer'
+                  EqualsToken
+                  Identifier: ' curComparer'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        comparer'
+            BinaryExpression
+              Identifier: ' bestComparer'
+              QuestionQuestionToken
+              ElementAccessExpression
+                Identifier: ' comparersToTest'
+                NumericLiteral
+          PropertyAssignment
+            Identifier: '
+        isSorted'
+            BinaryExpression
+              Identifier: ' bestDiff'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' compareImportKind'
+    Parameter
+      Identifier: 's1'
+      TypeReference
+        Identifier: ' AnyImportOrRequireStatement'
+    Parameter
+      Identifier: ' s2'
+      TypeReference
+        Identifier: ' AnyImportOrRequireStatement'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' compareValues'
+          CallExpression
+            Identifier: 'getImportKindOrder'
+            Identifier: 's1'
+          CallExpression
+            Identifier: ' getImportKindOrder'
+            Identifier: 's2'
+  FunctionDeclaration
+    Identifier: ' getImportKindOrder'
+    Parameter
+      Identifier: 's1'
+      TypeReference
+        Identifier: ' AnyImportOrRequireStatement'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 's1'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ImportDeclaration'
+            IfStatement
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 's1'
+                  Identifier: 'importClause'
+              ReturnStatement
+                NumericLiteral
+            IfStatement
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 's1'
+                  Identifier: 'importClause'
+                Identifier: 'isTypeOnly'
+              ReturnStatement
+                NumericLiteral
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 's1'
+                      Identifier: 'importClause'
+                    Identifier: 'namedBindings'
+                  QuestionDotToken
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'NamespaceImport'
+              ReturnStatement
+                NumericLiteral
+            IfStatement
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 's1'
+                  Identifier: 'importClause'
+                Identifier: 'name'
+              ReturnStatement
+                NumericLiteral
+            ReturnStatement
+              NumericLiteral
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ImportEqualsDeclaration'
+            ReturnStatement
+              NumericLiteral
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'VariableStatement'
+            ReturnStatement
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' getOrganizeImportsOrdinalStringComparer'
+    Parameter
+      Identifier: 'ignoreCase'
+      BooleanKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' ignoreCase'
+          QuestionToken
+          Identifier: ' compareStringsCaseInsensitiveEslintCompatible'
+          ColonToken
+          Identifier: ' compareStringsCaseSensitive'
+  FunctionDeclaration
+    Identifier: ' getOrganizeImportsUnicodeStringComparer'
+    Parameter
+      Identifier: 'ignoreCase'
+      BooleanKeyword
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    TypeReference
+      Identifier: ' Comparer'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' resolvedLocale'
+            CallExpression
+              Identifier: ' getOrganizeImportsLocale'
+              Identifier: 'preferences'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' caseFirst'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' preferences'
+                Identifier: 'organizeImportsCaseFirst'
+              QuestionQuestionToken
+              FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' numeric'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' preferences'
+                Identifier: 'organizeImportsNumericCollation'
+              QuestionQuestionToken
+              FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' accents'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' preferences'
+                Identifier: 'organizeImportsAccentCollation'
+              QuestionQuestionToken
+              TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sensitivity'
+            ConditionalExpression
+              Identifier: ' ignoreCase'
+              QuestionToken
+              ConditionalExpression
+                Identifier: '
+        accents'
+                QuestionToken
+                StringLiteral
+                ColonToken
+                StringLiteral
+              ColonToken
+              ConditionalExpression
+                Identifier: '
+        accents'
+                QuestionToken
+                StringLiteral
+                ColonToken
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' collator'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'Collator'
+              Identifier: 'resolvedLocale'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        usage'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        caseFirst'
+                  BinaryExpression
+                    Identifier: ' caseFirst'
+                    BarBarToken
+                    StringLiteral
+                ShorthandPropertyAssignment
+                  Identifier: '
+        sensitivity'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        numeric'
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' collator'
+          Identifier: 'compare'
+  FunctionDeclaration
+    Identifier: ' getOrganizeImportsLocale'
+    Parameter
+      Identifier: 'preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' locale'
+            PropertyAccessExpression
+              Identifier: ' preferences'
+              Identifier: 'organizeImportsLocale'
+      IfStatement
+        BinaryExpression
+          Identifier: 'locale'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' locale'
+            EqualsToken
+            CallExpression
+              Identifier: ' getUILocale'
+      IfStatement
+        BinaryExpression
+          Identifier: 'locale'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' locale'
+            EqualsToken
+            StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' supportedLocales'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' Intl'
+                  Identifier: 'Collator'
+                Identifier: 'supportedLocalesOf'
+              Identifier: 'locale'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' resolvedLocale'
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' supportedLocales'
+                Identifier: 'length'
+              QuestionToken
+              ElementAccessExpression
+                Identifier: ' supportedLocales'
+                NumericLiteral
+              ColonToken
+              StringLiteral
+      ReturnStatement
+        Identifier: ' resolvedLocale'
+  FunctionDeclaration
+    Identifier: ' getOrganizeImportsStringComparer'
+    Parameter
+      Identifier: 'preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' ignoreCase'
+      BooleanKeyword
+    TypeReference
+      Identifier: ' Comparer'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' collation'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' preferences'
+                Identifier: 'organizeImportsCollation'
+              QuestionQuestionToken
+              StringLiteral
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' collation'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          QuestionToken
+          CallExpression
+            Identifier: '
+        getOrganizeImportsUnicodeStringComparer'
+            Identifier: 'ignoreCase'
+            Identifier: ' preferences'
+          ColonToken
+          CallExpression
+            Identifier: '
+        getOrganizeImportsOrdinalStringComparer'
+            Identifier: 'ignoreCase'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getOrganizeImportsStringComparerWithDetection'
+    Parameter
+      Identifier: 'originalImportDecls'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' AnyImportOrRequireStatement'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' comparer'
+        TypeReference
+          Identifier: ' Comparer'
+          StringKeyword
+      PropertySignature
+        Identifier: ' isSorted'
+        BooleanKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' detectModuleSpecifierCaseBySort'
+          ArrayLiteralExpression
+            Identifier: 'originalImportDecls'
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' getDetectionLists'
+              Identifier: 'preferences'
+            Identifier: 'comparersToTest'
+  FunctionDeclaration
+    Identifier: ' getNamedImportSpecifierComparer'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ImportOrExportSpecifier'
+    Parameter
+      Identifier: 'preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' comparer'
+      QuestionToken
+      TypeReference
+        Identifier: ' Comparer'
+        StringKeyword
+    TypeReference
+      Identifier: ' Comparer'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' stringComparer'
+            BinaryExpression
+              Identifier: ' comparer'
+              QuestionQuestionToken
+              CallExpression
+                Identifier: ' getOrganizeImportsOrdinalStringComparer'
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'preferences'
+                      Identifier: 'organizeImportsIgnoreCase'
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 's1'
+          Parameter
+            Identifier: ' s2'
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' compareImportOrExportSpecifiers'
+            Identifier: 's1'
+            Identifier: ' s2'
+            Identifier: ' stringComparer'
+            Identifier: ' preferences'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getNamedImportSpecifierComparerWithDetection'
+    Parameter
+      Identifier: 'importDecl'
+      UnionType
+        TypeReference
+          Identifier: ' ImportDeclaration'
+        TypeReference
+          Identifier: ' JSDocImportTag'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' sourceFile'
+      QuestionToken
+      TypeReference
+        Identifier: ' SourceFile'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' specifierComparer'
+        TypeReference
+          Identifier: ' Comparer'
+          TypeReference
+            Identifier: 'ImportSpecifier'
+      PropertySignature
+        Identifier: ' isSorted'
+        UnionType
+          BooleanKeyword
+          UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' comparersToTest'
+              BindingElement
+                Identifier: ' typeOrdersToTest'
+            CallExpression
+              Identifier: ' getDetectionLists'
+              Identifier: 'preferences'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' detectFromDecl'
+            CallExpression
+              Identifier: ' detectNamedImportOrganizationBySort'
+              ArrayLiteralExpression
+                Identifier: 'importDecl'
+              Identifier: ' comparersToTest'
+              Identifier: ' typeOrdersToTest'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' specifierComparer'
+            CallExpression
+              Identifier: ' getNamedImportSpecifierComparer'
+              Identifier: 'preferences'
+              ElementAccessExpression
+                Identifier: ' comparersToTest'
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isSorted'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              PropertyAccessExpression
+                Identifier: ' preferences'
+                Identifier: 'organizeImportsIgnoreCase'
+            ExclamationEqualsEqualsToken
+            StringLiteral
+          BarBarToken
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'preferences'
+              Identifier: 'organizeImportsTypeOrder'
+        Block
+          IfStatement
+            Identifier: 'detectFromDecl'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' namedImportComparer'
+                      BindingElement
+                        Identifier: ' typeOrder'
+                      BindingElement
+                        Identifier: ' isSorted'
+                        Identifier: ' isDetectedSorted'
+                    Identifier: ' detectFromDecl'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            isSorted'
+                  EqualsToken
+                  Identifier: ' isDetectedSorted'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            specifierComparer'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' getNamedImportSpecifierComparer'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' organizeImportsTypeOrder'
+                        Identifier: ' typeOrder'
+                    Identifier: ' namedImportComparer'
+            IfStatement
+              Identifier: 'sourceFile'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' detectFromFile'
+                      CallExpression
+                        Identifier: ' detectNamedImportOrganizationBySort'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'sourceFile'
+                              Identifier: 'statements'
+                            Identifier: 'filter'
+                          Identifier: 'isImportDeclaration'
+                        Identifier: ' comparersToTest'
+                        Identifier: ' typeOrdersToTest'
+                IfStatement
+                  Identifier: 'detectFromFile'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          ObjectBindingPattern
+                            BindingElement
+                              Identifier: ' namedImportComparer'
+                            BindingElement
+                              Identifier: ' typeOrder'
+                            BindingElement
+                              Identifier: ' isSorted'
+                              Identifier: ' isDetectedSorted'
+                          Identifier: ' detectFromFile'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                isSorted'
+                        EqualsToken
+                        Identifier: ' isDetectedSorted'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                specifierComparer'
+                        EqualsToken
+                        CallExpression
+                          Identifier: ' getNamedImportSpecifierComparer'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' organizeImportsTypeOrder'
+                              Identifier: ' typeOrder'
+                          Identifier: ' namedImportComparer'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' specifierComparer'
+          ShorthandPropertyAssignment
+            Identifier: ' isSorted'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getImportDeclarationInsertionIndex'
+    Parameter
+      Identifier: 'sortedImports'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' AnyImportOrRequireStatement'
+    Parameter
+      Identifier: ' newImport'
+      TypeReference
+        Identifier: ' AnyImportOrRequireStatement'
+    Parameter
+      Identifier: ' comparer'
+      TypeReference
+        Identifier: ' Comparer'
+        StringKeyword
+    NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' index'
+            CallExpression
+              Identifier: ' binarySearch'
+              Identifier: 'sortedImports'
+              Identifier: ' newImport'
+              Identifier: ' identity'
+              ArrowFunction
+                Parameter
+                  Identifier: 'a'
+                Parameter
+                  Identifier: ' b'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' compareImportsOrRequireStatements'
+                  Identifier: 'a'
+                  Identifier: ' b'
+                  Identifier: ' comparer'
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' index'
+            LessThanToken
+            NumericLiteral
+          QuestionToken
+          PrefixUnaryExpression
+            Identifier: 'index'
+          ColonToken
+          Identifier: ' index'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getImportSpecifierInsertionIndex'
+    Parameter
+      Identifier: 'sortedImports'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ImportSpecifier'
+    Parameter
+      Identifier: ' newImport'
+      TypeReference
+        Identifier: ' ImportSpecifier'
+    Parameter
+      Identifier: ' comparer'
+      TypeReference
+        Identifier: ' Comparer'
+        TypeReference
+          Identifier: 'ImportSpecifier'
+    NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' index'
+            CallExpression
+              Identifier: ' binarySearch'
+              Identifier: 'sortedImports'
+              Identifier: ' newImport'
+              Identifier: ' identity'
+              Identifier: ' comparer'
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' index'
+            LessThanToken
+            NumericLiteral
+          QuestionToken
+          PrefixUnaryExpression
+            Identifier: 'index'
+          ColonToken
+          Identifier: ' index'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' compareImportsOrRequireStatements'
+    Parameter
+      Identifier: 's1'
+      TypeReference
+        Identifier: ' AnyImportOrRequireStatement'
+    Parameter
+      Identifier: ' s2'
+      TypeReference
+        Identifier: ' AnyImportOrRequireStatement'
+    Parameter
+      Identifier: ' comparer'
+      TypeReference
+        Identifier: ' Comparer'
+        StringKeyword
+    TypeReference
+      Identifier: ' Comparison'
+    Block
+      ReturnStatement
+        BinaryExpression
+          CallExpression
+            Identifier: ' compareModuleSpecifiersWorker'
+            CallExpression
+              Identifier: 'getModuleSpecifierExpression'
+              Identifier: 's1'
+            CallExpression
+              Identifier: ' getModuleSpecifierExpression'
+              Identifier: 's2'
+            Identifier: ' comparer'
+          BarBarToken
+          CallExpression
+            Identifier: ' compareImportKind'
+            Identifier: 's1'
+            Identifier: ' s2'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' testCoalesceImports'
+    Parameter
+      Identifier: 'importGroup'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ImportDeclaration'
+    Parameter
+      Identifier: ' ignoreCase'
+      BooleanKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      QuestionToken
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' preferences'
+      QuestionToken
+      TypeReference
+        Identifier: ' UserPreferences'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' ImportDeclaration'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' comparer'
+            CallExpression
+              Identifier: ' getOrganizeImportsOrdinalStringComparer'
+              Identifier: 'ignoreCase'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' specifierComparer'
+            CallExpression
+              Identifier: ' getNamedImportSpecifierComparer'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' organizeImportsTypeOrder'
+                  PropertyAccessExpression
+                    Identifier: ' preferences'
+                    QuestionDotToken
+                    Identifier: 'organizeImportsTypeOrder'
+              Identifier: ' comparer'
+      ReturnStatement
+        CallExpression
+          Identifier: ' coalesceImportsWorker'
+          Identifier: 'importGroup'
+          Identifier: ' comparer'
+          Identifier: ' specifierComparer'
+          Identifier: ' sourceFile'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' testCoalesceExports'
+    Parameter
+      Identifier: 'exportGroup'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ExportDeclaration'
+    Parameter
+      Identifier: ' ignoreCase'
+      BooleanKeyword
+    Parameter
+      Identifier: ' preferences'
+      QuestionToken
+      TypeReference
+        Identifier: ' UserPreferences'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' ExportDeclaration'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' comparer'
+            ArrowFunction
+              Parameter
+                Identifier: 's1'
+                TypeReference
+                  Identifier: ' ExportSpecifier'
+              Parameter
+                Identifier: ' s2'
+                TypeReference
+                  Identifier: ' ExportSpecifier'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' compareImportOrExportSpecifiers'
+                Identifier: 's1'
+                Identifier: ' s2'
+                CallExpression
+                  Identifier: ' getOrganizeImportsOrdinalStringComparer'
+                  Identifier: 'ignoreCase'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' organizeImportsTypeOrder'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' preferences'
+                        QuestionDotToken
+                        Identifier: 'organizeImportsTypeOrder'
+                      QuestionQuestionToken
+                      StringLiteral
+      ReturnStatement
+        CallExpression
+          Identifier: ' coalesceExportsWorker'
+          Identifier: 'exportGroup'
+          Identifier: ' comparer'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' compareModuleSpecifiers'
+    Parameter
+      Identifier: 'm1'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' m2'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' Comparison'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' comparer'
+            CallExpression
+              Identifier: ' getOrganizeImportsOrdinalStringComparer'
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'ignoreCase'
+      ReturnStatement
+        CallExpression
+          Identifier: ' compareModuleSpecifiersWorker'
+          Identifier: 'm1'
+          Identifier: ' m2'
+          Identifier: ' comparer'

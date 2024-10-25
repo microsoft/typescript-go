@@ -1,0 +1,200 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'x'
+          ArrayBindingPattern
+            BindingElement
+              Identifier: 'a'
+            BindingElement
+              Identifier: ' b'
+        BindingElement
+          Identifier: ' y'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'c'
+            BindingElement
+              Identifier: ' d'
+            BindingElement
+              Identifier: ' e'
+    Block
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'x'
+          ArrayBindingPattern
+            BindingElement
+              Identifier: 'a'
+            BindingElement
+              Identifier: ' b'
+              NumericLiteral
+        BindingElement
+          Identifier: ' y'
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'c'
+            BindingElement
+              Identifier: ' d'
+            BindingElement
+              Identifier: ' e'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' f'
+                  NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' baz'
+    Parameter
+      Identifier: 'x'
+      TupleType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            ArrayLiteralExpression
+              StringLiteral
+              NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' c'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: ' d'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' e'
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TupleType
+              StringKeyword
+              NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' c'
+                BooleanKeyword
+              PropertySignature
+                Identifier: ' d'
+                StringKeyword
+              PropertySignature
+                Identifier: ' e'
+                NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            ArrayLiteralExpression
+              StringLiteral
+              NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' c'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: ' d'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' e'
+                NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'o1'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // Not error since x has contextual type of tuple namely [string, number]
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+        PropertyAssignment
+          Identifier: ' y'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' c'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: ' d'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' e'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array'
+        ArrayLiteralExpression
+          StringLiteral
+          NumericLiteral
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tuple'
+        TupleType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+        ArrayLiteralExpression
+          StringLiteral
+          NumericLiteral
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+baz'
+      Identifier: 'tuple'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+baz'
+      ArrayLiteralExpression
+        StringLiteral
+        NumericLiteral
+        TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+baz'
+      Identifier: 'array'
+  ExpressionStatement
+    CallExpression
+      Identifier: '                          // Error
+baz'
+      ArrayLiteralExpression
+        StringLiteral
+        NumericLiteral
+        TrueKeyword
+        SpreadElement
+          Identifier: 'array'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // Error
+foo'
+      Identifier: 'o'

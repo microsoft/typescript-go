@@ -1,0 +1,8 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ArrayType
+          TypeQuery
+            Identifier: ' A'

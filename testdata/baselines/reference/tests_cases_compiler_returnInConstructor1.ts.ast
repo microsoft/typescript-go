@@ -1,0 +1,115 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+    Constructor
+      Block
+        ReturnStatement
+  ClassDeclaration
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+    Constructor
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+    Constructor
+      Block
+        ReturnStatement
+          ThisKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+    Constructor
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' E'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      NumberKeyword
+    Constructor
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' foo'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' F'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      StringKeyword
+    Constructor
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' foo'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' G'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' test'
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' test1'
+      Block
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'test'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' H'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' F'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ReturnStatement
+          NewExpression
+            Identifier: ' G'
+  ClassDeclaration
+    Identifier: ' I'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' G'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ReturnStatement
+          NewExpression
+            Identifier: ' G'

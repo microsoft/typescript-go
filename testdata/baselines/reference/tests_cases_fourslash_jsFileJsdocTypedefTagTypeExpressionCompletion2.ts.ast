@@ -1,0 +1,179 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' getCompletions'
+    Parameter
+      Identifier: 'nonWarnings'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        StringKeyword
+    TypeReference
+      Identifier: ' ReadonlyArray'
+      TypeReference
+        QualifiedName
+          Identifier: 'FourSlashInterface'
+          Identifier: 'ExpectedCompletionEntry'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' withKinds'
+            TypeReference
+              Identifier: ' ReadonlyArray'
+              TypeReference
+                QualifiedName
+                  Identifier: 'FourSlashInterface'
+                  Identifier: 'ExpectedCompletionEntryObject'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'JavascriptIdentifiers'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' name'
+        Identifier: ' nonWarnings'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Debug'
+              Identifier: 'assert'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'withKinds'
+                Identifier: 'some'
+              ArrowFunction
+                Parameter
+                  Identifier: 'entry'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' entry'
+                    Identifier: 'name'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' name'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' withKinds'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'entry'
+            EqualsGreaterThanToken
+            ConditionalExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' nonWarnings'
+                  Identifier: 'includes'
+                PropertyAccessExpression
+                  Identifier: 'entry'
+                  Identifier: 'name'
+              QuestionToken
+              Identifier: ' entry'
+              ColonToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' name'
+                    PropertyAccessExpression
+                      Identifier: ' entry'
+                      Identifier: 'name'
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' sortText'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' completion'
+                        Identifier: 'SortText'
+                      Identifier: 'JavascriptIdentifiers'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          CallExpression
+            Identifier: ' getCompletions'
+            ArrayLiteralExpression
+              StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          CallExpression
+            Identifier: ' getCompletions'
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          CallExpression
+            Identifier: ' getCompletions'
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+              StringLiteral
+              StringLiteral

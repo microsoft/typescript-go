@@ -1,0 +1,210 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      NumberKeyword
+  EmptyStatement
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+    b'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Other'
+    PropertySignature
+      Identifier: '
+    totallyUnrelatedProperty'
+      NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Other'
+    AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' Bar'
+        TypeReference
+          Identifier: ' Other'
+    AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+g'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' h'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Bar'
+        TypeReference
+          Identifier: ' Other'
+    AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+h'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+h'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' CatDog'
+    PropertySignature
+      Identifier: ' cat'
+      AnyKeyword
+    PropertySignature
+      Identifier: ' dog'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' ManBearPig'
+    PropertySignature
+      Identifier: ' man'
+      AnyKeyword
+    PropertySignature
+      Identifier: ' bear'
+      AnyKeyword
+    PropertySignature
+      Identifier: ' pig'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Platypus'
+    PropertySignature
+      Identifier: ' platypus'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' ExoticAnimal'
+    UnionType
+      TypeReference
+        Identifier: ' CatDog'
+      TypeReference
+        Identifier: ' ManBearPig'
+      TypeReference
+        Identifier: ' Platypus'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' addToZoo'
+    Parameter
+      Identifier: 'animal'
+      TypeReference
+        Identifier: ' ExoticAnimal'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+addToZoo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' dog'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+addToZoo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' man'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' bear'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' manBeer'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' man'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' beer'
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+addToZoo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' man'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' beer'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+addToZoo'
+      Identifier: 'manBeer'

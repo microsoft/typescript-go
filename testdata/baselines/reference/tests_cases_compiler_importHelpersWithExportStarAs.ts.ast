@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' a'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' __importStar'
+        Parameter
+          Identifier: 'm'
+          AnyKeyword
+        VoidKeyword

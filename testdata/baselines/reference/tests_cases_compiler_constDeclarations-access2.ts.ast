@@ -1,0 +1,142 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// Errors
+x'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      MinusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      SlashEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      PercentEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      LessThanLessThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      AmpersandEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      BarEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      CaretEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+
+x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        ParenthesizedExpression
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BinaryExpression
+          Identifier: ' x'
+          PlusToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'v'
+      NumberKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      Identifier: 'x'
+  IfStatement
+    Identifier: 'x'
+    Block
+  ExpressionStatement
+    Identifier: '
+
+x'
+  ExpressionStatement
+    ParenthesizedExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+x'
+        Identifier: 'toString'

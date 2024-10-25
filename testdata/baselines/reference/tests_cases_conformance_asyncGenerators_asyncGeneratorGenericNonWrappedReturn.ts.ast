@@ -1,0 +1,23 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' AsyncGenerator'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' a'

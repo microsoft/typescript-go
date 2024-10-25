@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        ThisKeyword
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      EqualsToken
+      NumericLiteral

@@ -1,0 +1,50 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' x'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' q'
+      TypeReference
+        Identifier: ' B'
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' B'
+    Parameter
+      Identifier: ' q'
+      TypeReference
+        Identifier: ' A'
+    StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        NumberKeyword
+        CallExpression
+          Identifier: ' f'
+          Identifier: 'x'
+          Identifier: ' x'

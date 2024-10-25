@@ -1,0 +1,40 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' v'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' p'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' s'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' c'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+      v'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'p'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+      s'
+            EqualsToken
+            NumericLiteral

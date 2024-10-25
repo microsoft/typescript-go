@@ -1,0 +1,77 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      FalseKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        TypeReference
+          Identifier: ' T'
+    FunctionType
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' NotificationRequest'
+    TypeLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' NotificationResponse'
+    TypeLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getNotification'
+    TypeReference
+      Identifier: ' NotificationResponse'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' test'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' getNotification'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NotificationScenario'
+        CallExpression
+          Identifier: ' test'
+          Identifier: '
+  getNotification'

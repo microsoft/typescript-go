@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c3'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  ClassDeclaration
+    Identifier: ' c3'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Block

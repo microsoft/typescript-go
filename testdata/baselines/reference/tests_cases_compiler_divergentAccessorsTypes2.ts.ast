@@ -1,0 +1,54 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test1'
+    TypeParameter
+      Identifier: 'T'
+    GetAccessor
+      Identifier: ' foo'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          AsExpression
+            NullKeyword
+            AnyKeyword
+    SetAccessor
+      Identifier: ' foo'
+      Parameter
+        Identifier: 's'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        NewExpression
+          Identifier: ' Test1'
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+s'
+        Identifier: 'foo'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+s'
+        Identifier: 'foo'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+s'
+        Identifier: 'foo'
+      EqualsToken
+      NumericLiteral

@@ -1,0 +1,59 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertyDeclaration
+      PrivateIdentifier
+    MethodDeclaration
+      Identifier: '
+    copy'
+      Parameter
+        Identifier: 'other'
+        ImportType
+          LiteralType
+            StringLiteral
+          Identifier: 'Foo'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        other'
+            PrivateIdentifier
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertyDeclaration
+      PrivateIdentifier
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Foo'
+          Identifier: ' A'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Foo'
+          Identifier: ' B'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' B'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+a'
+        Identifier: 'copy'
+      Identifier: 'b'

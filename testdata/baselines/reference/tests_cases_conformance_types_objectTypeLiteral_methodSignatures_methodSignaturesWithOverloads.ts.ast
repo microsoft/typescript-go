@@ -1,0 +1,83 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    func4'
+            QuestionToken
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            NumberKeyword
+          MethodSignature
+            Identifier: '
+    func4'
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            StringKeyword
+          PropertySignature
+            Identifier: ' // error, mismatched optionality
+    func5'
+            QuestionToken
+            TypeLiteral
+              CallSignature
+                Parameter
+                  Identifier: 'x'
+                  NumberKeyword
+                NumberKeyword
+              CallSignature
+                Parameter
+                  Identifier: 's'
+                  StringKeyword
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    func4'
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            NumberKeyword
+          MethodSignature
+            Identifier: '
+    func4'
+            QuestionToken
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 's'
+              TypeReference
+                Identifier: ' T'
+            StringKeyword
+          PropertySignature
+            Identifier: ' // error, mismatched optionality
+    func5'
+            QuestionToken
+            TypeLiteral
+              CallSignature
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 'x'
+                  TypeReference
+                    Identifier: ' T'
+                NumberKeyword
+              CallSignature
+                TypeParameter
+                  Identifier: 'T'
+                Parameter
+                  Identifier: 's'
+                  TypeReference
+                    Identifier: ' T'
+                StringKeyword

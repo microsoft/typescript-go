@@ -1,0 +1,50 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts" />
+
+// @Filename: /home/src/workspaces/project/tsconfig.json
+//// { "compilerOptions": { "module": "nodenext" } }
+
+// @Filename: /home/src/workspaces/project/package.json
+//// { "name": "foo", "type": "module", "exports": { ".": "./main.js" } }
+
+// @Filename: /home/src/workspaces/project/main.ts
+//// export {};
+
+// @Filename: /home/src/workspaces/project/index.ts
+//// import {} from "foo";
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'noErrors'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'paste'
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          CallExpression
+            PropertyAccessExpression
+              StringLiteral
+              Identifier: 'repeat'
+            NumericLiteral
+          TemplateTail
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'noErrors'

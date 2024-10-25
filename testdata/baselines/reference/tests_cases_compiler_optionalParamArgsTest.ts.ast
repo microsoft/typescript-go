@@ -1,0 +1,663 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    MethodSignature
+      Identifier: '
+    C1M1'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    C1M2'
+      Parameter
+        Identifier: 'C1M2A1'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    C1M3'
+      Parameter
+        Identifier: 'C1M3A1'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: 'C1M3A2'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    C1M4'
+      Parameter
+        Identifier: 'C1M4A1'
+        NumberKeyword
+      Parameter
+        Identifier: 'C1M4A2'
+        QuestionToken
+        NumberKeyword
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C1'
+    Constructor
+      Parameter
+        Identifier: 'v'
+        NumberKeyword
+        NumericLiteral
+      Parameter
+        Identifier: ' p'
+        NumberKeyword
+        NumericLiteral
+      Block
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' n'
+      NumberKeyword
+      NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' C1M1'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' C1M2'
+      Parameter
+        Identifier: 'C1M2A1'
+        NumberKeyword
+      Block
+        ReturnStatement
+          Identifier: ' C1M2A1'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' C1M3'
+      Parameter
+        Identifier: 'C1M3A1'
+        NumberKeyword
+        NumericLiteral
+      Parameter
+        Identifier: 'C1M3A2'
+        NumberKeyword
+        Identifier: 'C1M3A1'
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' C1M3A1'
+            PlusToken
+            Identifier: ' C1M3A2'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' C1M4'
+      Parameter
+        Identifier: 'C1M4A1'
+        NumberKeyword
+      Parameter
+        Identifier: 'C1M4A2'
+        QuestionToken
+        NumberKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' C1M4A1'
+            PlusToken
+            Identifier: ' C1M4A2'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' C1M5'
+      Parameter
+        Identifier: 'C1M5A1'
+        NumberKeyword
+      Parameter
+        Identifier: 'C1M5A2'
+        NumberKeyword
+        NumericLiteral
+      Parameter
+        Identifier: 'C1M5A3'
+        QuestionToken
+        NumberKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' C1M5A1'
+            PlusToken
+            Identifier: ' C1M5A2'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' C1M5'
+      Parameter
+        Identifier: 'C1M5A1'
+        NumberKeyword
+      Parameter
+        Identifier: 'C1M5A2'
+        NumberKeyword
+        NumericLiteral
+      Parameter
+        Identifier: 'C1M5A3'
+        NumberKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' C1M5A1'
+            PlusToken
+            Identifier: ' C1M5A2'
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+    Constructor
+      Parameter
+        Identifier: 'v2'
+        NumberKeyword
+        NumericLiteral
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'v2'
+  FunctionDeclaration
+    Identifier: ' F1'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' F2'
+    Parameter
+      Identifier: 'F2A1'
+      NumberKeyword
+    Block
+      ReturnStatement
+        Identifier: ' F2A1'
+  FunctionDeclaration
+    Identifier: ' F3'
+    Parameter
+      Identifier: 'F3A1'
+      NumericLiteral
+    Parameter
+      Identifier: 'F3A2'
+      Identifier: 'F3A1'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' F3A1'
+          PlusToken
+          Identifier: ' F3A2'
+  FunctionDeclaration
+    Identifier: ' F4'
+    Parameter
+      Identifier: 'F4A1'
+      NumberKeyword
+    Parameter
+      Identifier: 'F4A2'
+      QuestionToken
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' F4A1'
+          PlusToken
+          Identifier: ' F4A2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' L1'
+        FunctionExpression
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' L2'
+        FunctionExpression
+          Parameter
+            Identifier: 'L2A1'
+            NumberKeyword
+          Block
+            ReturnStatement
+              Identifier: ' L2A1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' L3'
+        FunctionExpression
+          Parameter
+            Identifier: 'L3A1'
+            NumericLiteral
+          Parameter
+            Identifier: 'L3A2'
+            Identifier: 'L3A1'
+          Block
+            ReturnStatement
+              BinaryExpression
+                Identifier: ' L3A1'
+                PlusToken
+                Identifier: ' L3A2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' L4'
+        FunctionExpression
+          Parameter
+            Identifier: 'L4A1'
+            NumberKeyword
+          Parameter
+            Identifier: 'L4A2'
+            QuestionToken
+            NumberKeyword
+          Block
+            ReturnStatement
+              BinaryExpression
+                Identifier: ' L4A1'
+                PlusToken
+                Identifier: ' L4A2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1o1'
+        TypeReference
+          Identifier: 'C1'
+        NewExpression
+          Identifier: ' C1'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i1o1'
+        TypeReference
+          Identifier: 'I1'
+        NewExpression
+          Identifier: ' C1'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+// Valid
+c1o1'
+        Identifier: 'C1M1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1v1'
+        CallExpression
+          Identifier: 'F1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l1v1'
+        CallExpression
+          Identifier: 'L1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Valid
+c1o1'
+        Identifier: 'C1M2'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M2'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2v1'
+        CallExpression
+          Identifier: 'F2'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l2v1'
+        CallExpression
+          Identifier: 'L2'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Valid
+c1o1'
+        Identifier: 'C1M3'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M3'
+      NumericLiteral
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3v1'
+        CallExpression
+          Identifier: 'F3'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l3v1'
+        CallExpression
+          Identifier: 'L3'
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Valid
+c1o1'
+        Identifier: 'C1M4'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M4'
+      NumericLiteral
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4v1'
+        CallExpression
+          Identifier: 'F4'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l4v1'
+        CallExpression
+          Identifier: 'L4'
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Valid
+c1o1'
+        Identifier: 'C1M3'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M3'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3v2'
+        CallExpression
+          Identifier: 'F3'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l3v2'
+        CallExpression
+          Identifier: 'L3'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Valid 
+c1o1'
+        Identifier: 'C1M3'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3v3'
+        CallExpression
+          Identifier: 'F3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l3v3'
+        CallExpression
+          Identifier: 'L3'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Valid
+c1o1'
+        Identifier: 'C1M4'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M4'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4v2'
+        CallExpression
+          Identifier: 'F4'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l4v2'
+        CallExpression
+          Identifier: 'L4'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Negative tests - we expect these cases to fail
+c1o1'
+        Identifier: 'C1M1'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M1'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F1'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+L1'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c1o1'
+        Identifier: 'C1M2'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+L2'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c1o1'
+        Identifier: 'C1M2'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M2'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F2'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+L2'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c1o1'
+        Identifier: 'C1M3'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M3'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F3'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+L3'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c1o1'
+        Identifier: 'C1M4'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i1o1'
+        Identifier: 'C1M4'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F4'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+L4'
+  FunctionDeclaration
+    Identifier: ' fnOpt1'
+    Parameter
+      Identifier: 'id'
+      NumberKeyword
+    Parameter
+      Identifier: ' children'
+      ArrayType
+        NumberKeyword
+      ArrayLiteralExpression
+    Parameter
+      Identifier: ' expectedPath'
+      ArrayType
+        NumberKeyword
+      ArrayLiteralExpression
+    Parameter
+      Identifier: ' isRoot'
+      QuestionToken
+      BooleanKeyword
+    VoidKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' fnOpt2'
+    Parameter
+      Identifier: 'id'
+      NumberKeyword
+    Parameter
+      Identifier: ' children'
+      QuestionToken
+      ArrayType
+        NumberKeyword
+    Parameter
+      Identifier: ' expectedPath'
+      QuestionToken
+      ArrayType
+        NumberKeyword
+    Parameter
+      Identifier: ' isRoot'
+      QuestionToken
+      BooleanKeyword
+    VoidKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fnOpt1'
+      NumericLiteral
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+      ArrayLiteralExpression
+        NumericLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fnOpt2'
+      NumericLiteral
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+      ArrayLiteralExpression
+        NumericLiteral
+      TrueKeyword

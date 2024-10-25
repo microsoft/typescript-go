@@ -1,0 +1,1666 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' fakes'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vfs'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' makePrintsCorrectly'
+            Parameter
+              Identifier: 'prefix'
+              StringKeyword
+            Block
+              ReturnStatement
+                FunctionExpression
+                  Identifier: ' printsCorrectly'
+                  Parameter
+                    Identifier: 'name'
+                    StringKeyword
+                  Parameter
+                    Identifier: ' options'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'PrinterOptions'
+                  Parameter
+                    Identifier: ' printCallback'
+                    FunctionType
+                      Parameter
+                        Identifier: 'printer'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'Printer'
+                      StringKeyword
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+            it'
+                        Identifier: 'name'
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                Harness'
+                                    Identifier: 'Baseline'
+                                  Identifier: 'runBaseline'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'prefix'
+                                    TemplateMiddle
+                                  TemplateSpan
+                                    Identifier: 'name'
+                                    TemplateTail
+                                CallExpression
+                                  Identifier: ' printCallback'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'createPrinter'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' newLine'
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'NewLineKind'
+                                          Identifier: 'CarriageReturnLineFeed'
+                                      SpreadAssignment
+                                        Identifier: 'options'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' printsCorrectly'
+                        CallExpression
+                          Identifier: ' makePrintsCorrectly'
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' sourceFile'
+                                TypeReference
+                                  QualifiedName
+                                    Identifier: ' ts'
+                                    Identifier: 'SourceFile'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            before'
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                Block
+                                  ExpressionStatement
+                                    BinaryExpression
+                                      Identifier: '
+                sourceFile'
+                                      EqualsToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'createSourceFile'
+                                        StringLiteral
+                                        NoSubstitutionTemplateLiteral
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                    ts'
+                                            Identifier: 'ScriptTarget'
+                                          Identifier: 'ES2015'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            printsCorrectly'
+                              StringLiteral
+                              ObjectLiteralExpression
+                              ArrowFunction
+                                Parameter
+                                  Identifier: ' printer'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' printer'
+                                    Identifier: 'printFile'
+                                  Identifier: 'sourceFile'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            printsCorrectly'
+                              StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' removeComments'
+                                  TrueKeyword
+                              ArrowFunction
+                                Parameter
+                                  Identifier: ' printer'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' printer'
+                                    Identifier: 'printFile'
+                                  Identifier: 'sourceFile'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // https://github.com/microsoft/TypeScript/issues/14948
+        // eslint-disable-next-line no-template-curly-in-string
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' printer'
+                            Identifier: 'printFile'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES2017'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // https://github.com/microsoft/TypeScript/issues/18071
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' printer'
+                            Identifier: 'printFile'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES2017'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // https://github.com/microsoft/TypeScript/issues/22239
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' removeComments'
+                          TrueKeyword
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' printer'
+                            Identifier: 'printFile'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ESNext'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'printFile'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            NoSubstitutionTemplateLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES2017'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // https://github.com/microsoft/TypeScript/issues/35093
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'printFile'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            NoSubstitutionTemplateLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES2017'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // https://github.com/microsoft/TypeScript/issues/35054
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        Block
+                          ReturnStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' printer'
+                                Identifier: 'printFile'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'createSourceFile'
+                                StringLiteral
+                                TaggedTemplateExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                String'
+                                    Identifier: 'raw'
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                ts'
+                                    Identifier: 'ScriptTarget'
+                                  Identifier: 'ESNext'
+                                Identifier: '
+                /*setParentNodes*/ undefined'
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                ts'
+                                    Identifier: 'ScriptKind'
+                                  Identifier: 'TSX'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // https://github.com/microsoft/TypeScript/issues/59587
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        Block
+                          ReturnStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' printer'
+                                Identifier: 'printFile'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'createSourceFile'
+                                StringLiteral
+                                TaggedTemplateExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                String'
+                                    Identifier: 'raw'
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                ts'
+                                    Identifier: 'ScriptTarget'
+                                  Identifier: 'ESNext'
+                                Identifier: '
+                /*setParentNodes*/ undefined'
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                ts'
+                                    Identifier: 'ScriptKind'
+                                  Identifier: 'TSX'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' host'
+                                NewExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' fakes'
+                                    Identifier: 'CompilerHost'
+                                  NewExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' vfs'
+                                      Identifier: 'FileSystem'
+                                    TrueKeyword
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    files'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            NoSubstitutionTemplateLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' program'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createProgram'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                  ObjectLiteralExpression
+                                  Identifier: ' host'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' file'
+                                NonNullExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' program'
+                                      Identifier: 'getSourceFile'
+                                    StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' printer'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createPrinter'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' newLine'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'NewLineKind'
+                                        Identifier: 'CarriageReturnLineFeed'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' output'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' printer'
+                                    Identifier: 'printFile'
+                                  Identifier: 'file'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'equal'
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'output'
+                                    Identifier: 'split'
+                                  RegularExpressionLiteral
+                                Identifier: 'length'
+                              NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' host'
+                                NewExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' fakes'
+                                    Identifier: 'CompilerHost'
+                                  NewExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' vfs'
+                                      Identifier: 'FileSystem'
+                                    TrueKeyword
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    files'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            StringLiteral
+                                            NoSubstitutionTemplateLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' program'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createProgram'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                  ObjectLiteralExpression
+                                  Identifier: ' host'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' file'
+                                NonNullExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' program'
+                                      Identifier: 'getSourceFile'
+                                    StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' printer'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createPrinter'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' newLine'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'NewLineKind'
+                                        Identifier: 'CarriageReturnLineFeed'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' output'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' printer'
+                                    Identifier: 'printFile'
+                                  Identifier: 'file'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'equal'
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'output'
+                                    Identifier: 'split'
+                                  RegularExpressionLiteral
+                                Identifier: 'length'
+                              NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' printsCorrectly'
+                        CallExpression
+                          Identifier: ' makePrintsCorrectly'
+                          StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' bundle'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' ts'
+                            Identifier: 'Bundle'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        before'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+            bundle'
+                              EqualsToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createBundle'
+                                ArrayLiteralExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'createSourceFile'
+                                    StringLiteral
+                                    NoSubstitutionTemplateLiteral
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    ts'
+                                        Identifier: 'ScriptTarget'
+                                      Identifier: 'ES2015'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'createSourceFile'
+                                    StringLiteral
+                                    NoSubstitutionTemplateLiteral
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    ts'
+                                        Identifier: 'ScriptTarget'
+                                      Identifier: 'ES2015'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' printer'
+                            Identifier: 'printBundle'
+                          Identifier: 'bundle'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' removeComments'
+                          TrueKeyword
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' printer'
+                            Identifier: 'printBundle'
+                          Identifier: 'bundle'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' printsCorrectly'
+                        CallExpression
+                          Identifier: ' makePrintsCorrectly'
+                          StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'printNode'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'EmitHint'
+                            Identifier: 'Unspecified'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                ts'
+                                Identifier: 'factory'
+                              Identifier: 'createClassDeclaration'
+                            Identifier: '
+                    /*modifiers*/ undefined'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    /*name*/ ts'
+                                  Identifier: 'factory'
+                                Identifier: 'createIdentifier'
+                              StringLiteral
+                            Identifier: '
+                    /*typeParameters*/ undefined'
+                            Identifier: '
+                    /*heritageClauses*/ undefined'
+                            ArrayLiteralExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createPropertyDeclaration'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createNodeArray'
+                                  ArrayLiteralExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createToken'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'SyntaxKind'
+                                        Identifier: 'PublicKeyword'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createIdentifier'
+                                  StringLiteral
+                                Identifier: '
+                        /*questionOrExclamationToken*/ undefined'
+                                Identifier: '
+                        /*type*/ undefined'
+                                Identifier: '
+                        /*initializer*/ undefined'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES2015'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'printNode'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'EmitHint'
+                            Identifier: 'Unspecified'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                ts'
+                                Identifier: 'factory'
+                              Identifier: 'createNamespaceExportDeclaration'
+                            StringLiteral
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES2015'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'printNode'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'EmitHint'
+                            Identifier: 'Unspecified'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                ts'
+                                Identifier: 'factory'
+                              Identifier: 'createNewExpression'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    ts'
+                                  Identifier: 'factory'
+                                Identifier: 'createPropertyAccessExpression'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createCallExpression'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createIdentifier'
+                                  StringLiteral
+                                Identifier: ' /*typeArguments*/ undefined'
+                                Identifier: ' /*argumentsArray*/ undefined'
+                              StringLiteral
+                            Identifier: '
+                    /*typeArguments*/ undefined'
+                            Identifier: '
+                    /*argumentsArray*/ undefined'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ESNext'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'printNode'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'EmitHint'
+                            Identifier: 'Unspecified'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                ts'
+                                Identifier: 'factory'
+                              Identifier: 'createNewExpression'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    ts'
+                                  Identifier: 'factory'
+                                Identifier: 'createConditionalExpression'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createIdentifier'
+                                StringLiteral
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createToken'
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'SyntaxKind'
+                                  Identifier: 'QuestionToken'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createIdentifier'
+                                StringLiteral
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createToken'
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'SyntaxKind'
+                                  Identifier: 'ColonToken'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createIdentifier'
+                                StringLiteral
+                            Identifier: '
+                    /*typeArguments*/ undefined'
+                            Identifier: '
+                    /*argumentsArray*/ undefined'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ESNext'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'printNode'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'EmitHint'
+                            Identifier: 'Unspecified'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                ts'
+                                Identifier: 'factory'
+                              Identifier: 'createModuleDeclaration'
+                            ArrayLiteralExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createToken'
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'SyntaxKind'
+                                  Identifier: 'DeclareKeyword'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    ts'
+                                  Identifier: 'factory'
+                                Identifier: 'createIdentifier'
+                              StringLiteral
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    ts'
+                                  Identifier: 'factory'
+                                Identifier: 'createModuleBlock'
+                              PropertyAccessExpression
+                                Identifier: 'ts'
+                                Identifier: 'emptyArray'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    ts'
+                                Identifier: 'NodeFlags'
+                              Identifier: 'GlobalAugmentation'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES2015'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'printNode'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'EmitHint'
+                            Identifier: 'Unspecified'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                ts'
+                                Identifier: 'factory'
+                              Identifier: 'createModuleDeclaration'
+                            Identifier: '
+                    /*modifiers*/ undefined'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    ts'
+                                  Identifier: 'factory'
+                                Identifier: 'createIdentifier'
+                              StringLiteral
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    ts'
+                                  Identifier: 'factory'
+                                Identifier: 'createModuleBlock'
+                              PropertyAccessExpression
+                                Identifier: 'ts'
+                                Identifier: 'emptyArray'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    ts'
+                                Identifier: 'NodeFlags'
+                              Identifier: 'GlobalAugmentation'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES2015'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // https://github.com/Microsoft/TypeScript/issues/15971
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'printNode'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'EmitHint'
+                            Identifier: 'Unspecified'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                ts'
+                                Identifier: 'factory'
+                              Identifier: 'createClassDeclaration'
+                            ArrayLiteralExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createToken'
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'SyntaxKind'
+                                  Identifier: 'DeclareKeyword'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    /*name*/ ts'
+                                  Identifier: 'factory'
+                                Identifier: 'createIdentifier'
+                              StringLiteral
+                            Identifier: '
+                    /*typeParameters*/ undefined'
+                            Identifier: '
+                    /*heritageClauses*/ undefined'
+                            ArrayLiteralExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createMethodDeclaration'
+                                Identifier: '
+                            /*modifiers*/ undefined'
+                                Identifier: '
+                            /*asteriskToken*/ undefined'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            /*name*/ ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createIdentifier'
+                                  StringLiteral
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            /*questionToken*/ ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createToken'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'SyntaxKind'
+                                    Identifier: 'QuestionToken'
+                                Identifier: '
+                            /*typeParameters*/ undefined'
+                                ArrayLiteralExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            /*type*/ ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createKeywordTypeNode'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'SyntaxKind'
+                                    Identifier: 'VoidKeyword'
+                                Identifier: '
+                            /*body*/ undefined'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                        ts'
+                                    Identifier: 'factory'
+                                  Identifier: 'createPropertyDeclaration'
+                                Identifier: '
+                            /*modifiers*/ undefined'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            /*name*/ ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createIdentifier'
+                                  StringLiteral
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            /*questionToken*/ ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createToken'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'SyntaxKind'
+                                    Identifier: 'QuestionToken'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            /*type*/ ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createKeywordTypeNode'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ts'
+                                      Identifier: 'SyntaxKind'
+                                    Identifier: 'StringKeyword'
+                                Identifier: '
+                            /*initializer*/ undefined'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES2015'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        // https://github.com/Microsoft/TypeScript/issues/15651
+        printsCorrectly'
+                      StringLiteral
+                      ObjectLiteralExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' printer'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            printer'
+                            Identifier: 'printNode'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'EmitHint'
+                            Identifier: 'Unspecified'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'setEmitFlags'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    ts'
+                                  Identifier: 'factory'
+                                Identifier: 'createTupleTypeNode'
+                              ArrayLiteralExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createFunctionTypeNode'
+                                  Identifier: '
+                            /*typeParameters*/ undefined'
+                                  ArrayLiteralExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createParameterDeclaration'
+                                      Identifier: '
+                                /*modifiers*/ undefined'
+                                      Identifier: '
+                                /*dotDotDotToken*/ undefined'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                                ts'
+                                            Identifier: 'factory'
+                                          Identifier: 'createIdentifier'
+                                        StringLiteral
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createKeywordTypeNode'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'SyntaxKind'
+                                      Identifier: 'AnyKeyword'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createFunctionTypeNode'
+                                  ArrayLiteralExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createTypeParameterDeclaration'
+                                      Identifier: '/*modifiers*/ undefined'
+                                      StringLiteral
+                                  ArrayLiteralExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createParameterDeclaration'
+                                      Identifier: '
+                                /*modifiers*/ undefined'
+                                      Identifier: '
+                                /*dotDotDotToken*/ undefined'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                                ts'
+                                            Identifier: 'factory'
+                                          Identifier: 'createIdentifier'
+                                        StringLiteral
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createKeywordTypeNode'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'SyntaxKind'
+                                      Identifier: 'AnyKeyword'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createFunctionTypeNode'
+                                  Identifier: '
+                            /*typeParameters*/ undefined'
+                                  ArrayLiteralExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createParameterDeclaration'
+                                      Identifier: '
+                                /*modifiers*/ undefined'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                                ts'
+                                            Identifier: 'factory'
+                                          Identifier: 'createToken'
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'ts'
+                                            Identifier: 'SyntaxKind'
+                                          Identifier: 'DotDotDotToken'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                                ts'
+                                            Identifier: 'factory'
+                                          Identifier: 'createIdentifier'
+                                        StringLiteral
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createKeywordTypeNode'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'SyntaxKind'
+                                      Identifier: 'AnyKeyword'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createFunctionTypeNode'
+                                  Identifier: '
+                            /*typeParameters*/ undefined'
+                                  ArrayLiteralExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createParameterDeclaration'
+                                      Identifier: '
+                                /*modifiers*/ undefined'
+                                      Identifier: '
+                                /*dotDotDotToken*/ undefined'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                                ts'
+                                            Identifier: 'factory'
+                                          Identifier: 'createIdentifier'
+                                        StringLiteral
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                                ts'
+                                            Identifier: 'factory'
+                                          Identifier: 'createToken'
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'ts'
+                                            Identifier: 'SyntaxKind'
+                                          Identifier: 'QuestionToken'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createKeywordTypeNode'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'SyntaxKind'
+                                      Identifier: 'AnyKeyword'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createFunctionTypeNode'
+                                  Identifier: '
+                            /*typeParameters*/ undefined'
+                                  ArrayLiteralExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createParameterDeclaration'
+                                      Identifier: '
+                                /*modifiers*/ undefined'
+                                      Identifier: '
+                                /*dotDotDotToken*/ undefined'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                                ts'
+                                            Identifier: 'factory'
+                                          Identifier: 'createIdentifier'
+                                        StringLiteral
+                                      Identifier: '
+                                /*questionToken*/ undefined'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                                ts'
+                                            Identifier: 'factory'
+                                          Identifier: 'createKeywordTypeNode'
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'ts'
+                                            Identifier: 'SyntaxKind'
+                                          Identifier: 'AnyKeyword'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createKeywordTypeNode'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'SyntaxKind'
+                                      Identifier: 'AnyKeyword'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        ts'
+                                      Identifier: 'factory'
+                                    Identifier: 'createFunctionTypeNode'
+                                  Identifier: '
+                            /*typeParameters*/ undefined'
+                                  ArrayLiteralExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'factory'
+                                        Identifier: 'createParameterDeclaration'
+                                      Identifier: '
+                                /*modifiers*/ undefined'
+                                      Identifier: '
+                                /*dotDotDotToken*/ undefined'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: '
+                                ts'
+                                            Identifier: 'factory'
+                                          Identifier: 'createObjectBindingPattern'
+                                        ArrayLiteralExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            ts'
+                                        Identifier: 'factory'
+                                      Identifier: 'createKeywordTypeNode'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'SyntaxKind'
+                                      Identifier: 'AnyKeyword'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                    ts'
+                                Identifier: 'EmitFlags'
+                              Identifier: 'SingleLine'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'createSourceFile'
+                            StringLiteral
+                            StringLiteral
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'ScriptTarget'
+                              Identifier: 'ES2015'

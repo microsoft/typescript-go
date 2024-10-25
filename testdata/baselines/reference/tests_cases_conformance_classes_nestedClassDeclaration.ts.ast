@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ClassDeclaration
+        Identifier: ' C3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    class'
+            Identifier: ' C4'
+      VariableDeclaration
+        ObjectBindingPattern

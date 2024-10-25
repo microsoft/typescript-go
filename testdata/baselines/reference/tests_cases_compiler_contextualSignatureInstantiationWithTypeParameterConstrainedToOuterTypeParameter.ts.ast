@@ -1,0 +1,57 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      FunctionDeclaration
+        Identifier: ' g'
+        TypeParameter
+          Identifier: 'U'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: 'u'
+          TypeReference
+            Identifier: ' U'
+        TypeReference
+          Identifier: ' U'
+        Block
+          ReturnStatement
+            NullKeyword
+      ReturnStatement
+        Identifier: ' g'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        FunctionType
+          TypeParameter
+            Identifier: 'V'
+          TypeParameter
+            Identifier: ' W'
+          Parameter
+            Identifier: 'v'
+            TypeReference
+              Identifier: ' V'
+          Parameter
+            Identifier: ' func'
+            FunctionType
+              Parameter
+                Identifier: 'v'
+                TypeReference
+                  Identifier: ' V'
+              TypeReference
+                Identifier: ' W'
+          TypeReference
+            Identifier: ' W'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' h'
+          StringLiteral
+          CallExpression
+            Identifier: ' f'
+            StringKeyword

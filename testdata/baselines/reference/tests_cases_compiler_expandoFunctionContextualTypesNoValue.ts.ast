@@ -1,0 +1,20 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Foo'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Foo'
+        Identifier: 'bar'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block

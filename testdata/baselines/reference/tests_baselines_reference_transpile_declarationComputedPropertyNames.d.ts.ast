@@ -1,0 +1,3237 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' presentNs'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            CallExpression
+              Identifier: ' Symbol'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aliasing'
+        Identifier: ' Symbol'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'missing'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'ns'
+            Identifier: 'missing'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'presentNs'
+            Identifier: 'a'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'Symbol'
+            Identifier: 'iterator'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'globalThis'
+              Identifier: 'Symbol'
+            Identifier: 'toStringTag'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                Identifier: 'globalThis'
+                Identifier: 'Symbol'
+            Identifier: 'unscopables'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'aliasing'
+            Identifier: 'isConcatSpreadable'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          NumericLiteral
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          StringLiteral
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          ParenthesizedExpression
+            Identifier: 'missing2'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          ConditionalExpression
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'Math'
+                  Identifier: 'random'
+              GreaterThanToken
+              NumericLiteral
+            QuestionToken
+            StringLiteral
+            ColonToken
+            StringLiteral
+        NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'missing'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'ns'
+          Identifier: 'missing'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'presentNs'
+          Identifier: 'a'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'globalThis'
+            Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          ParenthesizedExpression
+            PropertyAccessExpression
+              Identifier: 'globalThis'
+              Identifier: 'Symbol'
+          Identifier: 'unscopables'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'aliasing'
+          Identifier: 'isConcatSpreadable'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        NumericLiteral
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        StringLiteral
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        ParenthesizedExpression
+          Identifier: 'missing2'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Math'
+                Identifier: 'random'
+            GreaterThanToken
+            NumericLiteral
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+      NumberKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'missing'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'ns'
+          Identifier: 'missing'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'presentNs'
+          Identifier: 'a'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'globalThis'
+            Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          ParenthesizedExpression
+            PropertyAccessExpression
+              Identifier: 'globalThis'
+              Identifier: 'Symbol'
+          Identifier: 'unscopables'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'aliasing'
+          Identifier: 'isConcatSpreadable'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        NumericLiteral
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        ParenthesizedExpression
+          Identifier: 'missing2'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Math'
+                Identifier: 'random'
+            GreaterThanToken
+            NumericLiteral
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+      NumberKeyword
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' D'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'missing'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'ns'
+                Identifier: 'missing'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'presentNs'
+                Identifier: 'a'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'iterator'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'globalThis'
+                  Identifier: 'Symbol'
+                Identifier: 'toStringTag'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  PropertyAccessExpression
+                    Identifier: 'globalThis'
+                    Identifier: 'Symbol'
+                Identifier: 'unscopables'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'aliasing'
+                Identifier: 'isConcatSpreadable'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              NumericLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              ParenthesizedExpression
+                Identifier: 'missing2'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              ConditionalExpression
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'Math'
+                      Identifier: 'random'
+                  GreaterThanToken
+                  NumericLiteral
+                QuestionToken
+                StringLiteral
+                ColonToken
+                StringLiteral
+            NumericLiteral
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' presentNs'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeOperator
+              SymbolKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aliasing'
+        TypeReference
+          Identifier: ' SymbolConstructor'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'missing'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'ns'
+            Identifier: 'missing'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'presentNs'
+            Identifier: 'a'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'Symbol'
+            Identifier: 'iterator'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'globalThis'
+              Identifier: 'Symbol'
+            Identifier: 'toStringTag'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'aliasing'
+            Identifier: 'isConcatSpreadable'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          NumericLiteral
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          StringLiteral
+        NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'missing'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'ns'
+          Identifier: 'missing'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'presentNs'
+          Identifier: 'a'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'globalThis'
+            Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'aliasing'
+          Identifier: 'isConcatSpreadable'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        NumericLiteral
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        StringLiteral
+      NumberKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' C'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      NumberKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'globalThis'
+            Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      NumberKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        NumericLiteral
+      NumberKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      NumberKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' D'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            NumberKeyword
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            NumberKeyword
+          PropertySignature
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'presentNs'
+                Identifier: 'a'
+            NumberKeyword
+          PropertySignature
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'aliasing'
+                Identifier: 'toStringTag'
+            NumberKeyword
+          PropertySignature
+            NumericLiteral
+            NumberKeyword
+          PropertySignature
+            StringLiteral
+            NumberKeyword
+  ExportDeclaration
+    NamedExports
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+//// [Diagnostics reported]
+declarationComputedPropertyNames'
+        Identifier: 'ts'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9010'
+    ExpressionStatement
+      Identifier: ' Variable'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' with'
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9010'
+    ExpressionStatement
+      Identifier: ' Variable'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' with'
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: '
+declarationComputedPropertyNames'
+          Identifier: 'ts'
+        NumericLiteral
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+      EqualsEqualsEqualsToken
+      Identifier: ''
+    ExpressionStatement
+      BinaryExpression
+        Identifier: ''
+        EqualsToken
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' declarationComputedPropertyNames'
+              Identifier: 'ts'
+            NumericLiteral
+            Identifier: ' errors'
+          EqualsEqualsEqualsToken
+          Identifier: ''
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' presentNs'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            CallExpression
+              Identifier: ' Symbol'
+      ExpressionStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                Identifier: ' error'
+      LabeledStatement
+        Identifier: ' TS9010'
+        ExpressionStatement
+          Identifier: ' Variable'
+      ExpressionStatement
+        Identifier: ' must'
+      ExpressionStatement
+        Identifier: ' have'
+      ExpressionStatement
+        Identifier: ' an'
+      ExpressionStatement
+        Identifier: ' explicit'
+      TypeAliasDeclaration
+        Identifier: ' annotation'
+        TypeReference
+          Identifier: ' with'
+      ExpressionStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'isolatedDeclarations'
+            Identifier: ''
+      ExpressionStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              Identifier: ' related'
+      ExpressionStatement
+        Identifier: ' TS9027'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' declarationComputedPropertyNames'
+          Identifier: 'ts'
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        NumericLiteral
+      ExpressionStatement
+        Identifier: ' Add'
+      ExpressionStatement
+        Identifier: ' a'
+      TypeAliasDeclaration
+        Identifier: ' annotation'
+        TypeReference
+          Identifier: ' to'
+      ExpressionStatement
+        Identifier: ' the'
+      ExpressionStatement
+        Identifier: ' variable'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aliasing'
+        Identifier: ' Symbol'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9010'
+    ExpressionStatement
+      Identifier: ' Variable'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' have'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' explicit'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' with'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' declarationComputedPropertyNames'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' aliasing'
+      Identifier: ''
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'missing'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'ns'
+            Identifier: 'missing'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'presentNs'
+            Identifier: 'a'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'Symbol'
+            Identifier: 'iterator'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'globalThis'
+              Identifier: 'Symbol'
+            Identifier: 'toStringTag'
+        NumberKeyword
+      PropertySignature
+        ComputedPropertyName
+          PropertyAccessExpression
+            ParenthesizedExpression
+              PropertyAccessExpression
+                Identifier: 'globalThis'
+                Identifier: 'Symbol'
+            Identifier: 'unscopables'
+        NumberKeyword
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              PrefixUnaryExpression
+                                                                PrefixUnaryExpression
+                                                                  PrefixUnaryExpression
+                                                                    PrefixUnaryExpression
+                                                                      PrefixUnaryExpression
+                                                                        PrefixUnaryExpression
+                                                                          PrefixUnaryExpression
+                                                                            Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+        PropertyAccessExpression
+          Identifier: 'aliasing'
+          Identifier: 'isConcatSpreadable'
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' number'
+          CommaToken
+          ArrayLiteralExpression
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      CommaToken
+      ArrayLiteralExpression
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      CommaToken
+      ArrayLiteralExpression
+        ParenthesizedExpression
+          Identifier: 'missing2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      CommaToken
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Math'
+                Identifier: 'random'
+            GreaterThanToken
+            NumericLiteral
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' number'
+          CommaToken
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              PrefixUnaryExpression
+                                                                PrefixUnaryExpression
+                                                                  PrefixUnaryExpression
+                                                                    PrefixUnaryExpression
+                                                                      PrefixUnaryExpression
+                                                                        PrefixUnaryExpression
+                                                                          PrefixUnaryExpression
+                                                                            PrefixUnaryExpression
+                                                                              PrefixUnaryExpression
+                                                                                PrefixUnaryExpression
+                                                                                  PrefixUnaryExpression
+                                                                                    PrefixUnaryExpression
+                                                                                      Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+    ExpressionStatement
+      Identifier: ''
+  EmptyStatement
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'missing'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'ns'
+          Identifier: 'missing'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'presentNs'
+          Identifier: 'a'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'globalThis'
+            Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      NumberKeyword
+    PropertySignature
+      ComputedPropertyName
+        PropertyAccessExpression
+          ParenthesizedExpression
+            PropertyAccessExpression
+              Identifier: 'globalThis'
+              Identifier: 'Symbol'
+          Identifier: 'unscopables'
+      NumberKeyword
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              PrefixUnaryExpression
+                                                                PrefixUnaryExpression
+                                                                  PrefixUnaryExpression
+                                                                    PrefixUnaryExpression
+                                                                      PrefixUnaryExpression
+                                                                        PrefixUnaryExpression
+                                                                          PrefixUnaryExpression
+                                                                            Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+        PropertyAccessExpression
+          Identifier: 'aliasing'
+          Identifier: 'isConcatSpreadable'
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' number'
+          CommaToken
+          ArrayLiteralExpression
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      CommaToken
+      ArrayLiteralExpression
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      CommaToken
+      ArrayLiteralExpression
+        ParenthesizedExpression
+          Identifier: 'missing2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      CommaToken
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Math'
+                Identifier: 'random'
+            GreaterThanToken
+            NumericLiteral
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' number'
+          CommaToken
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              PrefixUnaryExpression
+                                                                PrefixUnaryExpression
+                                                                  PrefixUnaryExpression
+                                                                    PrefixUnaryExpression
+                                                                      PrefixUnaryExpression
+                                                                        PrefixUnaryExpression
+                                                                          PrefixUnaryExpression
+                                                                            PrefixUnaryExpression
+                                                                              PrefixUnaryExpression
+                                                                                PrefixUnaryExpression
+                                                                                  PrefixUnaryExpression
+                                                                                    PrefixUnaryExpression
+                                                                                      Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9014'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' properties'
+  ExpressionStatement
+    Identifier: ' must'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' number'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' string'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' literals'
+      CommaToken
+      Identifier: ' variables'
+  ExpressionStatement
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' dotted'
+  ExpressionStatement
+    Identifier: ' expressions'
+  WithStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+    ExpressionStatement
+      Identifier: ''
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'missing'
+      NumberKeyword
+      NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+        PropertyAccessExpression
+          Identifier: 'ns'
+          Identifier: 'missing'
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' number'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+        PropertyAccessExpression
+          Identifier: 'presentNs'
+          Identifier: 'a'
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' number'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' number'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    ArrayLiteralExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: 'globalThis'
+          Identifier: 'Symbol'
+        Identifier: 'toStringTag'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    ArrayLiteralExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          PropertyAccessExpression
+            Identifier: 'globalThis'
+            Identifier: 'Symbol'
+        Identifier: 'unscopables'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              PrefixUnaryExpression
+                                                                PrefixUnaryExpression
+                                                                  PrefixUnaryExpression
+                                                                    PrefixUnaryExpression
+                                                                      PrefixUnaryExpression
+                                                                        PrefixUnaryExpression
+                                                                          PrefixUnaryExpression
+                                                                            Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+        PropertyAccessExpression
+          Identifier: 'aliasing'
+          Identifier: 'isConcatSpreadable'
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' number'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              PrefixUnaryExpression
+                                                                PrefixUnaryExpression
+                                                                  PrefixUnaryExpression
+                                                                    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+        NumericLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' number'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    ArrayLiteralExpression
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    ArrayLiteralExpression
+      ParenthesizedExpression
+        Identifier: 'missing2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' number'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: 'isolatedDeclarations'
+          Identifier: ''
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'Math'
+                Identifier: 'random'
+            GreaterThanToken
+            NumericLiteral
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+    LabeledStatement
+      Identifier: ''
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' number'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              PrefixUnaryExpression
+                                                                PrefixUnaryExpression
+                                                                  PrefixUnaryExpression
+                                                                    PrefixUnaryExpression
+                                                                      PrefixUnaryExpression
+                                                                        PrefixUnaryExpression
+                                                                          PrefixUnaryExpression
+                                                                            PrefixUnaryExpression
+                                                                              PrefixUnaryExpression
+                                                                                Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+    ExpressionStatement
+      Identifier: ''
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' D'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'missing'
+            NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+    ExpressionStatement
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' declarationComputedPropertyNames'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        Identifier: ' D'
+        Identifier: ''
+      PropertyAccessExpression
+        Identifier: 'ns'
+        Identifier: 'missing'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+    ExpressionStatement
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' declarationComputedPropertyNames'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        Identifier: ' D'
+        Identifier: ''
+      PropertyAccessExpression
+        Identifier: 'presentNs'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+    ExpressionStatement
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' declarationComputedPropertyNames'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        Identifier: ' D'
+        Identifier: ''
+      PropertyAccessExpression
+        Identifier: 'Symbol'
+        Identifier: 'iterator'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      ArrayLiteralExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'globalThis'
+            Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      ArrayLiteralExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            PropertyAccessExpression
+              Identifier: 'globalThis'
+              Identifier: 'Symbol'
+          Identifier: 'unscopables'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              PrefixUnaryExpression
+                                                                PrefixUnaryExpression
+                                                                  PrefixUnaryExpression
+                                                                    PrefixUnaryExpression
+                                                                      PrefixUnaryExpression
+                                                                        PrefixUnaryExpression
+                                                                          PrefixUnaryExpression
+                                                                            PrefixUnaryExpression
+                                                                              Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+    ExpressionStatement
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' declarationComputedPropertyNames'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        Identifier: ' D'
+        Identifier: ''
+      PropertyAccessExpression
+        Identifier: 'aliasing'
+        Identifier: 'isConcatSpreadable'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              PrefixUnaryExpression
+                                                                PrefixUnaryExpression
+                                                                  PrefixUnaryExpression
+                                                                    PrefixUnaryExpression
+                                                                      Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+    ExpressionStatement
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' declarationComputedPropertyNames'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        Identifier: ' D'
+        Identifier: ''
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      ArrayLiteralExpression
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      ArrayLiteralExpression
+        ParenthesizedExpression
+          Identifier: 'missing2'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+    ExpressionStatement
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' declarationComputedPropertyNames'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    ElementAccessExpression
+      PropertyAccessExpression
+        Identifier: ' D'
+        Identifier: ''
+      ConditionalExpression
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          GreaterThanToken
+          NumericLiteral
+        QuestionToken
+        StringLiteral
+        ColonToken
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              PrefixUnaryExpression
+                                PrefixUnaryExpression
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PrefixUnaryExpression
+                                        PrefixUnaryExpression
+                                          PrefixUnaryExpression
+                                            PrefixUnaryExpression
+                                              PrefixUnaryExpression
+                                                PrefixUnaryExpression
+                                                  PrefixUnaryExpression
+                                                    PrefixUnaryExpression
+                                                      PrefixUnaryExpression
+                                                        PrefixUnaryExpression
+                                                          PrefixUnaryExpression
+                                                            PrefixUnaryExpression
+                                                              PrefixUnaryExpression
+                                                                PrefixUnaryExpression
+                                                                  PrefixUnaryExpression
+                                                                    PrefixUnaryExpression
+                                                                      PrefixUnaryExpression
+                                                                        PrefixUnaryExpression
+                                                                          PrefixUnaryExpression
+                                                                            PrefixUnaryExpression
+                                                                              PrefixUnaryExpression
+                                                                                PrefixUnaryExpression
+                                                                                  Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS9038'
+    ExpressionStatement
+      Identifier: ' Computed'
+  ExpressionStatement
+    Identifier: ' property'
+  ExpressionStatement
+    Identifier: ' names'
+  ExpressionStatement
+    Identifier: ' on'
+  ClassDeclaration
+    Identifier: ' or'
+  ExpressionStatement
+    Identifier: ' object'
+  ExpressionStatement
+    Identifier: ' literals'
+  ExpressionStatement
+    Identifier: ' cannot'
+  ExpressionStatement
+    Identifier: ' be'
+  ExpressionStatement
+    Identifier: ' inferred'
+  WithStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'isolatedDeclarations'
+        Identifier: ''
+    ExpressionStatement
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: ' related'
+  ExpressionStatement
+    Identifier: ' TS9027'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' declarationComputedPropertyNames'
+      Identifier: 'ts'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    Identifier: ' Add'
+  ExpressionStatement
+    Identifier: ' a'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' to'
+  ExpressionStatement
+    Identifier: ' the'
+  ExpressionStatement
+    Identifier: ' variable'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' D'
+      Identifier: ''
+  EmptyStatement

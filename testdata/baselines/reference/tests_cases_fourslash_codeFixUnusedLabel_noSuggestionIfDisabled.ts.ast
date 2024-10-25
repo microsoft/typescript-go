@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowUnusedLabels: true
+
+////foo: while (true) {}
+
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression

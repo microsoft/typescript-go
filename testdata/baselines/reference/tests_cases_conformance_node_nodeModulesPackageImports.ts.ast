@@ -1,0 +1,111 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' type'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+cjs'
+  ExpressionStatement
+    Identifier: '
+mjs'
+  ExpressionStatement
+    Identifier: '
+type'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' type'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+cjs'
+  ExpressionStatement
+    Identifier: '
+mjs'
+  ExpressionStatement
+    Identifier: '
+type'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' cjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mjs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' type'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+cjs'
+  ExpressionStatement
+    Identifier: '
+mjs'
+  ExpressionStatement
+    Identifier: '
+type'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        StringLiteral

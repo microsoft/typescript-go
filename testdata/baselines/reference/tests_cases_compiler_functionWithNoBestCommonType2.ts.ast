@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        FunctionExpression
+          Block
+            ReturnStatement
+              TrueKeyword
+            ReturnStatement
+              CallExpression
+                Identifier: ' bar'
+  FunctionDeclaration
+    Identifier: ' bar'
+    VoidKeyword
+    Block

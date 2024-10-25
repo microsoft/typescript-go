@@ -1,0 +1,57 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' HasDecorators'
+        ImportSpecifier
+          Identifier: ' HasModifiers'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' TextRange'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' setTextRange'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' TextRange'
+    Parameter
+      Identifier: 'range'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' location'
+      UnionType
+        TypeReference
+          Identifier: ' TextRange'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' canHaveModifiers'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' HasModifiers'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' canHaveDecorators'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' HasDecorators'

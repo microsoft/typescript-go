@@ -1,0 +1,68 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IFoo'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    foo'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' IntFooBad'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IFoo'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' StringFoo2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IFoo'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' StringFoo3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IFoo'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          NullKeyword

@@ -1,0 +1,97 @@
+SourceFile
+  ExportAssignment
+    Identifier: ' React'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' React'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' Component'
+        TypeParameter
+          Identifier: 'T'
+          AnyKeyword
+        TypeParameter
+          Identifier: ' U'
+          TypeLiteral
+        TypeParameter
+          Identifier: ' V'
+          TypeLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+          PropertySignature
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          PropertySignature
+            Identifier: ' z'
+            TypeReference
+              Identifier: ' V'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' DOMAttributes'
+        TypeParameter
+          Identifier: 'T'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Component'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' DOMAttributes'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        css'
+          QuestionToken
+          AnyKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Component'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getComp'
+    TypeReference
+      Identifier: ' Component'
+    Block
+      ReturnStatement
+        AsExpression
+          AsExpression
+            ObjectLiteralExpression
+            AnyKeyword
+          TypeReference
+            Identifier: ' Component'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' getComp'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    comp'
+            CallExpression
+              Identifier: ' getComp'
+  ExportDeclaration
+    StringLiteral

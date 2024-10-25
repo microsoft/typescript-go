@@ -1,0 +1,28 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' IHeapObjectProperty'
+  ClassDeclaration
+    Identifier: ' IDirectChildrenMap'
+    MethodDeclaration
+      Identifier: '
+    // Decided to enforce a semicolon after declarations
+    hasOwnProperty'
+      Parameter
+        Identifier: 'objectId'
+        NumberKeyword
+      BooleanKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'objectId'
+        NumberKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' IHeapObjectProperty'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' directChildrenMap'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IDirectChildrenMap'
+          ObjectLiteralExpression

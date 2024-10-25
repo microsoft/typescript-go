@@ -1,0 +1,192 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' a'
+                  AnyKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ArrayBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ArrayBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ArrayBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                  Identifier: ' a'
+                VariableDeclaration
+                  ArrayBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                  Identifier: ' a'
+                VariableDeclaration
+                  ArrayBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                  Identifier: ' a'
+                VariableDeclaration
+                  ArrayBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' p1'
+                      ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' p2'
+                      ArrayBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' p1'
+                      ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' p2'
+                      ArrayBindingPattern
+                  Identifier: ' a'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' p1'
+                      ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' p2'
+                      ArrayBindingPattern
+                  Identifier: ' a'
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                  ObjectLiteralExpression
+                VariableDeclaration
+                  ObjectBindingPattern
+                  ObjectLiteralExpression
+              FalseKeyword
+              VoidExpression
+                NumericLiteral
+              Block
+            FunctionDeclaration
+              Identifier: ' f'
+              Parameter
+                ObjectBindingPattern
+                Identifier: ' a'
+              Parameter
+                ArrayBindingPattern
+                Identifier: ' a'
+              Parameter
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' p'
+                    ObjectBindingPattern
+                    Identifier: ' a'
+                Identifier: ' a'
+              Block
+                ReturnStatement
+                  ArrowFunction
+                    Parameter
+                      ObjectBindingPattern
+                      Identifier: ' a'
+                    Parameter
+                      ArrayBindingPattern
+                      Identifier: ' a'
+                    Parameter
+                      ObjectBindingPattern
+                        BindingElement
+                          Identifier: ' p'
+                          ObjectBindingPattern
+                          Identifier: ' a'
+                      Identifier: ' a'
+                    EqualsGreaterThanToken
+                    Identifier: ' a'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' ns'
+                  ArrayType
+                    ArrayType
+                      NumberKeyword
+                  ArrayLiteralExpression
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+              Identifier: ' ns'
+              Block
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+              Identifier: ' ns'
+              Block
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+              Identifier: ' ns'
+              Block
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ArrayBindingPattern
+              Identifier: ' ns'
+              Block
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ArrayBindingPattern
+              Identifier: ' ns'
+              Block
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ArrayBindingPattern
+              Identifier: ' ns'
+              Block

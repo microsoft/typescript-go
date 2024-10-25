@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' require'
+            StringLiteral
+          Identifier: 'C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' D'
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' require'
+            StringLiteral
+          QuestionDotToken
+          Identifier: 'C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+c'
+      Identifier: 'start'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+c'
+      Identifier: 'end'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' D'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+d'
+      Identifier: 'start'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+d'
+      Identifier: 'end'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    start'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    end'
+      NumberKeyword

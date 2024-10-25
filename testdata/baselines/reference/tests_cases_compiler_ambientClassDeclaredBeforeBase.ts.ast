@@ -1,0 +1,12 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' ns'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' SecondNS'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' FirstNS'
+      ClassDeclaration
+        Identifier: ' FirstNS'

@@ -1,0 +1,13 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' B'

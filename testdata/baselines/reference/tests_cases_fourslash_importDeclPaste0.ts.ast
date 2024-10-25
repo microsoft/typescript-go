@@ -1,0 +1,27 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// // @Filename: exportEqualsInterface_A.ts
+//// interface A {
+//// 	p1: number;
+//// }
+//// 
+//// export = A;
+//// /*1*/
+//// var i: I1;
+//// 
+//// var n: number = i.p1;
+
+edit'
+        Identifier: 'disableFormatting'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral

@@ -1,0 +1,283 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+	a'
+          EqualsToken
+          ObjectLiteralExpression
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    a'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+	a'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' z'
+              NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' z'
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' Animal'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' Giraffe'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Animal'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' g'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NewExpression
+              Identifier: ' Animal'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            NewExpression
+              Identifier: ' Giraffe'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' aa'
+            ArrayLiteralExpression
+              Identifier: ' a'
+              Identifier: ' a'
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' gg'
+            ArrayLiteralExpression
+              Identifier: ' g'
+              Identifier: ' g'
+              Identifier: ' g'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    aa'
+          EqualsToken
+          Identifier: ' gg'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    gg'
+          EqualsToken
+          Identifier: ' aa'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' xa'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' f1'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' f2'
+                Identifier: ' aa'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' xb'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' f1'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' f2'
+                Identifier: ' gg'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    xa'
+          EqualsToken
+          Identifier: ' xb'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // Should be ok
+    xb'
+          EqualsToken
+          Identifier: ' xa'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' _any'
+            AnyKeyword
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          EqualsToken
+          NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' 
+    i'
+          EqualsToken
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' 
+    a'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              Identifier: ' undefined'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' 
+    a'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              Identifier: ' _any'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' 
+    a'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              Identifier: ' _any'
+            PropertyAssignment
+              Identifier: ' z'
+              NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' 
+    a'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mf'
+            FunctionExpression
+              Identifier: ' m'
+              Parameter
+                Identifier: 'n'
+              Block
+                ReturnStatement
+                  FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' zf'
+            FunctionExpression
+              Identifier: ' z'
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              Block
+                ReturnStatement
+                  TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    mf'
+          EqualsToken
+          Identifier: 'zf'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    mf'
+          Identifier: '_any'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    zf'
+          Identifier: '_any'

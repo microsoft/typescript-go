@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+      TupleType
+        NumberKeyword
+        AnyKeyword
+    Block

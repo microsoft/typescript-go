@@ -1,0 +1,6 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' j'
+    ExternalModuleReference
+      StringLiteral
+  Block

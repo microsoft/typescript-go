@@ -1,0 +1,44 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'message'
+              QuestionToken
+              AnyKeyword
+            Parameter
+              DotDotDotToken
+              Identifier: 'optionalParams'
+              ArrayType
+                AnyKeyword
+            VoidKeyword
+  ClassDeclaration
+    Identifier: ' Greeter'
+    Constructor
+      Parameter
+        Identifier: 'message'
+        StringKeyword
+      Block
+    PropertyDeclaration
+      Identifier: '
+
+    messageHandler'
+      ArrowFunction
+        Parameter
+          Identifier: 'message'
+          StringKeyword
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'message'

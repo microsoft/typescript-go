@@ -1,0 +1,100 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          GetAccessor
+            ComputedPropertyName
+              Identifier: 's'
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            ComputedPropertyName
+              Identifier: 'n'
+            Parameter
+              Identifier: 'v'
+            Block
+          GetAccessor
+            ComputedPropertyName
+              BinaryExpression
+                Identifier: 's'
+                PlusToken
+                Identifier: ' s'
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            ComputedPropertyName
+              BinaryExpression
+                Identifier: 's'
+                PlusToken
+                Identifier: ' n'
+            Parameter
+              Identifier: 'v'
+            Block
+          GetAccessor
+            ComputedPropertyName
+              PrefixUnaryExpression
+                Identifier: 's'
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            ComputedPropertyName
+              StringLiteral
+            Parameter
+              Identifier: 'v'
+            Block
+          GetAccessor
+            ComputedPropertyName
+              NumericLiteral
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            ComputedPropertyName
+              Identifier: 'a'
+            Parameter
+              Identifier: 'v'
+            Block
+          GetAccessor
+            ComputedPropertyName
+              TypeAssertionExpression
+                AnyKeyword
+                TrueKeyword
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            ComputedPropertyName
+              NoSubstitutionTemplateLiteral
+            Parameter
+              Identifier: 'v'
+            Block
+          GetAccessor
+            ComputedPropertyName
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'a'
+                  TemplateTail
+            Block
+              ReturnStatement
+                NumericLiteral

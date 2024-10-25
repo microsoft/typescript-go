@@ -1,0 +1,213 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' WhatFoo'
+        ExpressionWithTypeArguments
+          Identifier: ' foo'
+          JSDocNullableType
+            TypeReference
+              Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' HuhFoo'
+        ExpressionWithTypeArguments
+          Identifier: ' foo'
+          JSDocNullableType
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NopeFoo'
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' foo'
+            LessThanToken
+            Identifier: ''
+          QuestionToken
+          BinaryExpression
+            Identifier: 'string'
+            GreaterThanToken
+            Identifier: ''
+          ColonToken
+          Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ComeOnFoo'
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' foo'
+            LessThanToken
+            Identifier: ''
+          QuestionToken
+          ConditionalExpression
+            Identifier: 'string'
+            QuestionToken
+            BinaryExpression
+              Identifier: ''
+              GreaterThanToken
+              Identifier: ''
+            ColonToken
+            Identifier: ''
+          ColonToken
+          Identifier: ''
+  TypeAliasDeclaration
+    Identifier: ' TWhatFoo'
+    TypeQuery
+      Identifier: ' foo'
+      JSDocNullableType
+        TypeReference
+          Identifier: ''
+  TypeAliasDeclaration
+    Identifier: ' THuhFoo'
+    TypeQuery
+      Identifier: ' foo'
+      JSDocNullableType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TNopeFoo'
+    TypeQuery
+      Identifier: ' foo'
+      TypeReference
+        Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'string'
+      GreaterThanToken
+      Identifier: ''
+  TypeAliasDeclaration
+    Identifier: ' TComeOnFoo'
+    TypeQuery
+      Identifier: ' foo'
+      TypeReference
+        Identifier: ''
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: 'string'
+      QuestionToken
+      BinaryExpression
+        Identifier: ''
+        GreaterThanToken
+        Identifier: ''
+      ColonToken
+      Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' WhatBar'
+        ExpressionWithTypeArguments
+          Identifier: ' Bar'
+          JSDocNullableType
+            TypeReference
+              Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' HuhBar'
+        ExpressionWithTypeArguments
+          Identifier: ' Bar'
+          JSDocNullableType
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NopeBar'
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' Bar'
+            LessThanToken
+            Identifier: ''
+          QuestionToken
+          BinaryExpression
+            Identifier: 'string'
+            GreaterThanToken
+            Identifier: ''
+          ColonToken
+          Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ComeOnBar'
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' Bar'
+            LessThanToken
+            Identifier: ''
+          QuestionToken
+          ConditionalExpression
+            Identifier: 'string'
+            QuestionToken
+            BinaryExpression
+              Identifier: ''
+              GreaterThanToken
+              Identifier: ''
+            ColonToken
+            Identifier: ''
+          ColonToken
+          Identifier: ''
+  TypeAliasDeclaration
+    Identifier: ' TWhatBar'
+    TypeQuery
+      Identifier: ' Bar'
+      JSDocNullableType
+        TypeReference
+          Identifier: ''
+  TypeAliasDeclaration
+    Identifier: ' THuhBar'
+    TypeQuery
+      Identifier: ' Bar'
+      JSDocNullableType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TNopeBar'
+    TypeQuery
+      Identifier: ' Bar'
+      TypeReference
+        Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'string'
+      GreaterThanToken
+      Identifier: ''
+  TypeAliasDeclaration
+    Identifier: ' TComeOnBar'
+    TypeQuery
+      Identifier: ' Bar'
+      TypeReference
+        Identifier: ''
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: 'string'
+      QuestionToken
+      BinaryExpression
+        Identifier: ''
+        GreaterThanToken
+        Identifier: ''
+      ColonToken
+      Identifier: ''

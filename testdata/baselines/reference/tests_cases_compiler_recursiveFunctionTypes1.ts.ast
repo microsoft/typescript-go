@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' g'
+      Parameter
+        Identifier: 't'
+        TypeQuery
+          QualifiedName
+            Identifier: ' C'
+            Identifier: 'g'
+      Block

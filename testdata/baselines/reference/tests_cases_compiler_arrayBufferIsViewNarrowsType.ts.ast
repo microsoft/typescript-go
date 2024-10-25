@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeReference
+          Identifier: ' Object'
+  IfStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'ArrayBuffer'
+        Identifier: 'isView'
+      Identifier: 'obj'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ab'
+            TypeReference
+              Identifier: ' ArrayBufferView'
+            Identifier: ' obj'

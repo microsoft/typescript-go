@@ -1,0 +1,819 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Defaultize'
+    TypeParameter
+      Identifier: 'TProps'
+    TypeParameter
+      Identifier: ' TDefaults'
+    IntersectionType
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeReference
+            Identifier: ' Extract'
+            TypeOperator
+              TypeReference
+                Identifier: ' TProps'
+            TypeOperator
+              TypeReference
+                Identifier: ' TDefaults'
+        QuestionToken
+        IndexedAccessType
+          TypeReference
+            Identifier: ' TProps'
+          TypeReference
+            Identifier: 'K'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeReference
+            Identifier: ' Exclude'
+            TypeOperator
+              TypeReference
+                Identifier: ' TProps'
+            TypeOperator
+              TypeReference
+                Identifier: ' TDefaults'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' TProps'
+          TypeReference
+            Identifier: 'K'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'TDefaults'
+  TypeAliasDeclaration
+    Identifier: ' InferredPropTypes'
+    TypeParameter
+      Identifier: 'P'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' P'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' P'
+          TypeReference
+            Identifier: 'K'
+        TypeReference
+          Identifier: ' PropTypeChecker'
+          InferType
+            TypeParameter
+              Identifier: ' T'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' PropTypeChecker'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' U'
+          TypeQuery
+            Identifier: ' checkedType'
+        TypeLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' checkedType'
+        TypeOperator
+          SymbolKeyword
+  InterfaceDeclaration
+    Identifier: ' PropTypeChecker'
+    TypeParameter
+      Identifier: 'U'
+    TypeParameter
+      Identifier: ' TRequired'
+      LiteralType
+        FalseKeyword
+    CallSignature
+      Parameter
+        Identifier: 'props'
+        AnyKeyword
+      Parameter
+        Identifier: ' propName'
+        StringKeyword
+      Parameter
+        Identifier: ' componentName'
+        StringKeyword
+      Parameter
+        Identifier: ' location'
+        AnyKeyword
+      Parameter
+        Identifier: ' propFullName'
+        StringKeyword
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    isRequired'
+      TypeReference
+        Identifier: ' PropTypeChecker'
+        TypeReference
+          Identifier: 'U'
+        LiteralType
+          TrueKeyword
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'checkedType'
+      ConditionalType
+        TypeReference
+          Identifier: ' TRequired'
+        LiteralType
+          TrueKeyword
+        TypeReference
+          Identifier: ' U'
+        UnionType
+          TypeReference
+            Identifier: ' U'
+          LiteralType
+            NullKeyword
+          UndefinedKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' PropTypes'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' number'
+            TypeReference
+              Identifier: ' PropTypeChecker'
+              NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' string'
+            TypeReference
+              Identifier: ' PropTypeChecker'
+              StringKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            TypeReference
+              Identifier: ' PropTypeChecker'
+              TypeReference
+                Identifier: 'ReactNode'
+  TypeAliasDeclaration
+    Identifier: ' ReactNode'
+    UnionType
+      StringKeyword
+      NumberKeyword
+      TypeReference
+        Identifier: ' ReactComponent'
+        TypeLiteral
+        TypeLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' ReactComponent'
+    TypeParameter
+      Identifier: 'P'
+      TypeLiteral
+    TypeParameter
+      Identifier: ' S'
+      TypeLiteral
+    Constructor
+      Parameter
+        Identifier: 'props'
+        TypeReference
+          Identifier: ' P'
+    PropertyDeclaration
+      Identifier: '
+    props'
+      IntersectionType
+        TypeReference
+          Identifier: ' P'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'children'
+              ArrayType
+                TypeReference
+                  Identifier: ' ReactNode'
+    MethodDeclaration
+      Identifier: '
+    setState'
+      Parameter
+        Identifier: 's'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'S'
+      TypeReference
+        Identifier: ' S'
+    MethodDeclaration
+      Identifier: '
+    render'
+      TypeReference
+        Identifier: ' ReactNode'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' ReactComponent'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+      TypeAliasDeclaration
+        Identifier: ' LibraryManagedAttributes'
+        TypeParameter
+          Identifier: 'TComponent'
+        TypeParameter
+          Identifier: ' TProps'
+        ConditionalType
+          TypeReference
+            Identifier: '
+        TComponent'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' defaultProps'
+              InferType
+                TypeParameter
+                  Identifier: ' D'
+            PropertySignature
+              Identifier: ' propTypes'
+              InferType
+                TypeParameter
+                  Identifier: ' P'
+          TypeReference
+            Identifier: ' Defaultize'
+            IntersectionType
+              TypeReference
+                Identifier: 'TProps'
+              TypeReference
+                Identifier: ' InferredPropTypes'
+                TypeReference
+                  Identifier: 'P'
+            TypeReference
+              Identifier: ' D'
+          ConditionalType
+            TypeReference
+              Identifier: ' TComponent'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' defaultProps'
+                InferType
+                  TypeParameter
+                    Identifier: ' D'
+            TypeReference
+              Identifier: ' Defaultize'
+              TypeReference
+                Identifier: 'TProps'
+              TypeReference
+                Identifier: ' D'
+            ConditionalType
+              TypeReference
+                Identifier: ' TComponent'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' propTypes'
+                  InferType
+                    TypeParameter
+                      Identifier: ' P'
+              IntersectionType
+                TypeReference
+                  Identifier: ' TProps'
+                TypeReference
+                  Identifier: ' InferredPropTypes'
+                  TypeReference
+                    Identifier: 'P'
+              TypeReference
+                Identifier: ' TProps'
+  ClassDeclaration
+    Identifier: ' Component'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ReactComponent'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' propTypes'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        foo'
+          PropertyAccessExpression
+            Identifier: ' PropTypes'
+            Identifier: 'number'
+        PropertyAssignment
+          Identifier: '
+        bar'
+          PropertyAccessExpression
+            Identifier: ' PropTypes'
+            Identifier: 'node'
+        PropertyAssignment
+          Identifier: '
+        baz'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' PropTypes'
+              Identifier: 'string'
+            Identifier: 'isRequired'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' defaultProps'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        foo'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxSelfClosingElement
+          Identifier: 'Component'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' baz'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        JsxSelfClosingElement
+          Identifier: 'Component'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        JsxSelfClosingElement
+          Identifier: 'Component'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' baz'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        JsxSelfClosingElement
+          Identifier: 'Component'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' baz'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' bat'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        JsxSelfClosingElement
+          Identifier: 'Component'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              JsxExpression
+                NullKeyword
+            JsxAttribute
+              Identifier: ' baz'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        JsxSelfClosingElement
+          Identifier: 'Component'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' baz'
+              JsxExpression
+                NullKeyword
+  ClassDeclaration
+    Identifier: ' JustPropTypes'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ReactComponent'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' propTypes'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        foo'
+          PropertyAccessExpression
+            Identifier: ' PropTypes'
+            Identifier: 'number'
+        PropertyAssignment
+          Identifier: '
+        bar'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' PropTypes'
+              Identifier: 'node'
+            Identifier: 'isRequired'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        JsxSelfClosingElement
+          Identifier: 'JustPropTypes'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        JsxSelfClosingElement
+          Identifier: 'JustPropTypes'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        JsxSelfClosingElement
+          Identifier: 'JustPropTypes'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NullKeyword
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        JsxSelfClosingElement
+          Identifier: 'JustPropTypes'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              JsxExpression
+                NullKeyword
+  ClassDeclaration
+    Identifier: ' JustDefaultProps'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ReactComponent'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' defaultProps'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        foo'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        JsxSelfClosingElement
+          Identifier: 'JustDefaultProps'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        JsxSelfClosingElement
+          Identifier: 'JustDefaultProps'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        JsxSelfClosingElement
+          Identifier: 'JustDefaultProps'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+  InterfaceDeclaration
+    Identifier: ' FooProps'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' BothWithSpecifiedGeneric'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ReactComponent'
+        TypeReference
+          Identifier: 'FooProps'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' propTypes'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        foo'
+          PropertyAccessExpression
+            Identifier: ' PropTypes'
+            Identifier: 'string'
+        PropertyAssignment
+          Identifier: '
+        bar'
+          PropertyAccessExpression
+            Identifier: ' PropTypes'
+            Identifier: 'node'
+        PropertyAssignment
+          Identifier: '
+        baz'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' PropTypes'
+              Identifier: 'number'
+            Identifier: 'isRequired'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' defaultProps'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        foo'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        JsxSelfClosingElement
+          Identifier: 'BothWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' baz'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        JsxSelfClosingElement
+          Identifier: 'BothWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        JsxSelfClosingElement
+          Identifier: 'BothWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' baz'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q'
+        JsxSelfClosingElement
+          Identifier: 'BothWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' baz'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' bat'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        JsxSelfClosingElement
+          Identifier: 'BothWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              JsxExpression
+                NullKeyword
+            JsxAttribute
+              Identifier: ' baz'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        JsxSelfClosingElement
+          Identifier: 'BothWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' baz'
+              JsxExpression
+                NullKeyword
+  ClassDeclaration
+    Identifier: ' JustPropTypesWithSpecifiedGeneric'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ReactComponent'
+        TypeReference
+          Identifier: 'FooProps'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' propTypes'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        foo'
+          PropertyAccessExpression
+            Identifier: ' PropTypes'
+            Identifier: 'string'
+        PropertyAssignment
+          Identifier: '
+        bar'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' PropTypes'
+              Identifier: 'node'
+            Identifier: 'isRequired'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        JsxSelfClosingElement
+          Identifier: 'JustPropTypesWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u'
+        JsxSelfClosingElement
+          Identifier: 'JustPropTypesWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        JsxSelfClosingElement
+          Identifier: 'JustPropTypesWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NullKeyword
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' w'
+        JsxSelfClosingElement
+          Identifier: 'JustPropTypesWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              JsxExpression
+                NullKeyword
+  ClassDeclaration
+    Identifier: ' JustDefaultPropsWithSpecifiedGeneric'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ReactComponent'
+        TypeReference
+          Identifier: 'FooProps'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' defaultProps'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        foo'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        JsxSelfClosingElement
+          Identifier: 'JustDefaultPropsWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        JsxSelfClosingElement
+          Identifier: 'JustDefaultPropsWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        JsxSelfClosingElement
+          Identifier: 'JustDefaultPropsWithSpecifiedGeneric'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' foo'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa'
+        JsxSelfClosingElement
+          Identifier: 'JustDefaultPropsWithSpecifiedGeneric'
+          JsxAttributes

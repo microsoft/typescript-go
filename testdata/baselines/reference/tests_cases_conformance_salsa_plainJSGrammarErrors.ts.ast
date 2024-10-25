@@ -1,0 +1,761 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    // #private mistakes
+    q'
+      PrivateIdentifier
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ExpressionStatement
+          PrivateIdentifier
+        IfStatement
+          BinaryExpression
+            PrivateIdentifier
+            InKeyword
+            ThisKeyword
+          Block
+    MethodDeclaration
+      PrivateIdentifier
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+    ClassStaticBlockDeclaration
+      Block
+        ForOfStatement
+          AwaitKeyword
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+            NumericLiteral
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            console'
+                  Identifier: 'log'
+                Identifier: 'x'
+        ReturnStatement
+          NullKeyword
+    Constructor
+      StaticKeyword
+      Block
+    Constructor
+      AsyncKeyword
+      Block
+    PropertyDeclaration
+      ConstKeyword
+      Identifier: ' x'
+      NumericLiteral
+    MethodDeclaration
+      ConstKeyword
+      Identifier: ' y'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      AsyncKeyword
+      AsyncKeyword
+      Identifier: ' extremelyAsync'
+      Block
+    MethodDeclaration
+      AsyncKeyword
+      StaticKeyword
+      Identifier: ' oorder'
+      Block
+    PropertyDeclaration
+      ExportKeyword
+      Identifier: ' cantExportProperty'
+      NumericLiteral
+    MethodDeclaration
+      ExportKeyword
+      Identifier: ' cantExportMethod'
+      Block
+    GetAccessor
+      Identifier: ' incorporeal'
+    GetAccessor
+      Identifier: ' parametric'
+      Parameter
+        Identifier: 'n'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' invariant'
+      Block
+    SetAccessor
+      Identifier: ' binary'
+      Parameter
+        Identifier: 'fst'
+      Parameter
+        Identifier: ' snd'
+      Block
+    SetAccessor
+      Identifier: ' variable'
+      Parameter
+        DotDotDotToken
+        Identifier: 'n'
+      Block
+    PropertyDeclaration
+      StringLiteral
+      NumericLiteral
+  ClassDeclaration
+    PropertyDeclaration
+      Identifier: '
+    missingName'
+      TrueKeyword
+  ClassDeclaration
+    Identifier: ' Doubler'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' Trebler'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+      ExpressionWithTypeArguments
+        Identifier: 'C'
+      ExpressionWithTypeArguments
+        Identifier: 'C'
+  ExpressionStatement
+    PrivateIdentifier
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+junk'
+      PrivateIdentifier
+  ExpressionStatement
+    PropertyAccessExpression
+      NewExpression
+        Identifier: ' C'
+      PrivateIdentifier
+  VariableStatement
+    ExportKeyword
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' extremelyExported'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    StaticKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' staticExport'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' staticParam'
+    Parameter
+      StaticKeyword
+      Identifier: ' x'
+      NumericLiteral
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    ExportKeyword
+    Identifier: ' oorder'
+    Parameter
+      Identifier: 'x'
+      NumericLiteral
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' cantExportParam'
+    Parameter
+      ExportKeyword
+      Identifier: ' x'
+      NumericLiteral
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' cantAsyncParam'
+    Parameter
+      AsyncKeyword
+      Identifier: ' x'
+      NumericLiteral
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    AsyncKeyword
+    Identifier: ' extremelyAsync'
+    Block
+  ClassDeclaration
+    AsyncKeyword
+    Identifier: ' CantAsyncClass'
+    PropertyDeclaration
+      AsyncKeyword
+      Identifier: ' cantAsyncPropert'
+      NumericLiteral
+  VariableStatement
+    AsyncKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cantAsyncConst'
+        NumericLiteral
+  ImportDeclaration
+    AsyncKeyword
+    StringLiteral
+  ExportDeclaration
+    AsyncKeyword
+    NamedExports
+      ExportSpecifier
+        Identifier: ' CantAsyncClass'
+  ImportDeclaration
+    ExportKeyword
+    StringLiteral
+  ExportDeclaration
+    ExportKeyword
+    NamedExports
+      ExportSpecifier
+        Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' nestedExports'
+    Block
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' staticParam'
+      ImportDeclaration
+        StringLiteral
+      ExportAssignment
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' outerStaticFunction'
+    Block
+      FunctionDeclaration
+        StaticKeyword
+        Identifier: ' staticFunction'
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noStaticLiteralMethods'
+        ObjectLiteralExpression
+          MethodDeclaration
+            StaticKeyword
+            Identifier: ' m'
+            Block
+  FunctionDeclaration
+    Identifier: ' restMustBeLast'
+    Parameter
+      DotDotDotToken
+      Identifier: 'x'
+    Parameter
+      Identifier: ' y'
+    Block
+  FunctionDeclaration
+    Identifier: ' restCantHaveInitialiser'
+    Parameter
+      DotDotDotToken
+      Identifier: 'x'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' restCantHaveTrailingComma'
+    Parameter
+      DotDotDotToken
+      Identifier: 'x'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          SpreadAssignment
+            ObjectLiteralExpression
+        EqualsToken
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' doom'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' e'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' m'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' name'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest'
+          BindingElement
+            Identifier: ' e'
+            Identifier: ' episode'
+          BindingElement
+            Identifier: ' m'
+            Identifier: ' mission'
+        Identifier: ' doom'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' e'
+            Identifier: ' eep'
+          BindingElement
+            Identifier: ' m'
+            Identifier: ' em'
+          BindingElement
+            Identifier: 'rest'
+            DotDotDotToken
+            Identifier: ' noRestAllowed'
+        Identifier: ' doom'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' e'
+            Identifier: ' erp'
+          BindingElement
+            Identifier: ' m'
+            Identifier: ' erm'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'noInitialiser'
+            TrueKeyword
+        Identifier: ' doom'
+  VariableStatement
+    VariableDeclarationList
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          BinaryExpression
+            NumericLiteral
+            BarBarToken
+            NumericLiteral
+          QuestionQuestionToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          NumericLiteral
+          QuestionQuestionToken
+          BinaryExpression
+            NumericLiteral
+            BarBarToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrowFunction
+          Parameter
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' x'
+            PlusToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    TaggedTemplateExpression
+      Identifier: '
+a'
+      QuestionDotToken
+      NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'console'
+                    Identifier: 'log'
+                  StringLiteral
+                CommaToken
+                NumericLiteral
+            StringLiteral
+          PropertyAssignment
+            PrivateIdentifier
+            NumericLiteral
+          PropertyAssignment
+            ExportKeyword
+            Identifier: ' cantExportProperties'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    // TODO: See what the existing JS error is like for these
+    cantHaveQuestionMark'
+            QuestionToken
+            NumericLiteral
+          MethodDeclaration
+            Identifier: '
+    m'
+            QuestionToken
+            Block
+              ReturnStatement
+                NumericLiteral
+          ShorthandPropertyAssignment
+            Identifier: '
+    definitely'
+            ExclamationToken
+          MethodDeclaration
+            Identifier: '
+    definiteMethod'
+            ExclamationToken
+            Block
+              ReturnStatement
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noAssignment'
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+    assignment'
+            EqualsToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noTrailingComma'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' MissingExtends'
+    HeritageClause
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' e'
+            Identifier: ' ee'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noInit'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' let'
+        NumericLiteral
+  IfStatement
+    TrueKeyword
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' onlyBlockLet'
+          NumericLiteral
+  IfStatement
+    TrueKeyword
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' onlyBlockConst'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' async'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  ForOfStatement
+    Identifier: 'async'
+    Identifier: ' l'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'x'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cantHaveInit'
+        NumericLiteral
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'cantHaveInit'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cantHaveInit'
+        NumericLiteral
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'cantHaveInit'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' x'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'x'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' x'
+    ArrayLiteralExpression
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+  SwitchStatement
+    Identifier: 'b'
+    CaseBlock
+      CaseClause
+        FalseKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            StringLiteral
+      DefaultClause
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            StringLiteral
+      DefaultClause
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            StringLiteral
+  TryStatement
+    Block
+      ThrowStatement
+        NumericLiteral
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' e'
+              NumericLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+    console'
+              Identifier: 'log'
+            Identifier: 'e'
+  TryStatement
+    Block
+      ThrowStatement
+        NumericLiteral
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+        NumericLiteral
+      Block
+  LabeledStatement
+    Identifier: '
+label'
+    ForInStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' x'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+      Block
+        LabeledStatement
+          Identifier: '
+    label'
+          ForInStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            Block
+              BreakStatement
+                Identifier: ' label'
+  FunctionDeclaration
+    Identifier: ' crossFunctionBoundary'
+    Block
+      LabeledStatement
+        Identifier: '
+    outer'
+        ForStatement
+          Block
+            FunctionDeclaration
+              Identifier: ' test'
+              Block
+                BreakStatement
+                  Identifier: ' outer'
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+        test'
+  FunctionDeclaration
+    Identifier: ' continueIterationOnly'
+    Parameter
+      Identifier: 'x'
+    Block
+      LabeledStatement
+        Identifier: '
+    outer'
+        SwitchStatement
+          Identifier: 'x'
+          CaseBlock
+            CaseClause
+              NumericLiteral
+              ContinueStatement
+                Identifier: ' outer'
+  FunctionDeclaration
+    Identifier: ' jumpToLabelOnly'
+    Parameter
+      Identifier: 'x'
+    Block
+      BreakStatement
+        Identifier: ' jumpToLabelOnly'
+  ForStatement
+    Block
+      BreakStatement
+        Identifier: ' toplevel'
+      ContinueStatement
+        Identifier: ' toplevel'
+  BreakStatement
+  ContinueStatement
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noMeta'
+        NewExpression
+          Identifier: 'metal'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        NewExpression
+          Identifier: 'targe'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullaryDynamicImport'
+        CallExpression
+          ImportKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' trinaryDynamicImport'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spreadDynamicImport'
+        CallExpression
+          ImportKeyword
+          SpreadElement
+            ArrayLiteralExpression
+  ReturnStatement

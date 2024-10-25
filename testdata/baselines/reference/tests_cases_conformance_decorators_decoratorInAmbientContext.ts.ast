@@ -1,0 +1,33 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' decorator'
+    Parameter
+      Identifier: 'target'
+      AnyKeyword
+    Parameter
+      Identifier: ' key'
+      AnyKeyword
+    AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' Symbol'
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'decorator'
+      DeclareKeyword
+      Identifier: ' a'
+      NumberKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'decorator'
+      DeclareKeyword
+      ComputedPropertyName
+        Identifier: 'b'
+      NumberKeyword

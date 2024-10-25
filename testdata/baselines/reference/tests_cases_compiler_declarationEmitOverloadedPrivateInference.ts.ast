@@ -1,0 +1,117 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' noArgs'
+    StringKeyword
+    Block
+      ReturnStatement
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  FunctionDeclaration
+    Identifier: ' oneArg'
+    Parameter
+      Identifier: 'input'
+      StringKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Wrapper'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' proxy'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'fn'
+        FunctionType
+          Parameter
+            Identifier: 'options'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      FunctionType
+        Parameter
+          Identifier: 'options'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' proxy'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'fn'
+        FunctionType
+          Parameter
+            Identifier: 'options'
+            QuestionToken
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' noArgs'
+        LiteralType
+          TrueKeyword
+      FunctionType
+        Parameter
+          Identifier: 'options'
+          QuestionToken
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' proxy'
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'fn'
+        FunctionType
+          Parameter
+            Identifier: 'options'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' U'
+      Block
+        ReturnStatement
+          AsExpression
+            NullKeyword
+            AnyKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' Proxies'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        Failure'
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'proxy'
+            Identifier: 'noArgs'
+            TrueKeyword
+        PropertyAssignment
+          Identifier: '
+        Success'
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'proxy'
+            Identifier: 'oneArg'

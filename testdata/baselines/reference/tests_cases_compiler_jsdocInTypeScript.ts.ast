@@ -1,0 +1,130 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      NumberKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+x'
+      Identifier: 'prop'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myType'
+        TypeReference
+          Identifier: ' MyType'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      BooleanKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' x'
+          AsteriskToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // Should error
+// Should fail, because it takes a boolean and returns a number
+f'
+      NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        Identifier: ' f'
+        TrueKeyword
+      Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+z'
+        Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+      LiteralType
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' tem'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' I'
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  ImportEqualsDeclaration
+    Identifier: ' M'
+    Identifier: ' N'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            ArrowFunction
+              Parameter
+                Identifier: 'a'
+              Parameter
+                Identifier: ' b'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' a'
+                PlusToken
+                Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' E'
+        ObjectLiteralExpression
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+E'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        CallExpression
+          ImportKeyword
+          CallExpression
+            Identifier: 'String'

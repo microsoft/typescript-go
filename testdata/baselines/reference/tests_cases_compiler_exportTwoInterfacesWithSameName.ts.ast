@@ -1,0 +1,7 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I'

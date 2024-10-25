@@ -1,0 +1,30 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' A'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' AA'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' Create'
+      TypeReference
+        Identifier: ' IA'
+      Block
+        ReturnStatement
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' A'
+              Identifier: 'A'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IA'
+    MethodSignature
+      Identifier: '
+    A'
+      StringKeyword

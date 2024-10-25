@@ -1,0 +1,34 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' R1'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+	R1'
+      ReturnStatement
+  FunctionDeclaration
+    Identifier: ' R2'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: ' R2'
+  FunctionDeclaration
+    Identifier: ' R3'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'n'
+          EqualsEqualsToken
+          NumericLiteral
+        Block
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+		R3'
+              PostfixUnaryExpression
+                Identifier: 'n'

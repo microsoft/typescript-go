@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        ArrayType
+          AnyKeyword
+        NewExpression
+          ElementAccessExpression
+            Identifier: ' any'
+            NumericLiteral

@@ -1,0 +1,20 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' type'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ClassExpression
+          Identifier: ' C'
+          PropertyDeclaration
+            Identifier: '
+    prop'
+            TypeReference
+              QualifiedName
+                Identifier: ' C'
+                Identifier: 'type'

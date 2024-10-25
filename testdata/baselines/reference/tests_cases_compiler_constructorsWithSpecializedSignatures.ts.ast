@@ -1,0 +1,111 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C2'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      Block
+  ClassDeclaration
+    Identifier: ' D2'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword

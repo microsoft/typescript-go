@@ -1,0 +1,45 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    MethodSignature
+      Identifier: '
+	m'
+      Parameter
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I1'
+          BooleanKeyword
+          StringKeyword
+        NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 'p'
+        TypeReference
+          Identifier: ' I1'
+          BooleanKeyword
+          TypeReference
+            Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+          Identifier: 'i'

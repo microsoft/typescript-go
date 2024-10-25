@@ -1,0 +1,28 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' my'
+    ModuleDeclaration
+      Identifier: 'data'
+      ModuleDeclaration
+        Identifier: 'foo'
+        ModuleBlock
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' buz'
+            Block
+  ModuleDeclaration
+    Identifier: ' my'
+    ModuleDeclaration
+      Identifier: 'data'
+      ModuleBlock
+        FunctionDeclaration
+          Identifier: ' data'
+          Parameter
+            Identifier: 'my'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        foo'
+                  Identifier: 'buz'

@@ -1,0 +1,18 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        NullKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'

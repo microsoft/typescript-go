@@ -1,0 +1,70 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' BiomePlainLinkProps'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  href'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+  onClick'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'event'
+            StringKeyword
+          VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' BiomeButtonProps'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  href'
+        QuestionToken
+        NeverKeyword
+      PropertySignature
+        Identifier: '
+  onClick'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'event'
+            NumberKeyword
+          VoidKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ClickableDiscriminatedUnion'
+    UnionType
+      TypeReference
+        Identifier: ' BiomePlainLinkProps'
+      TypeReference
+        Identifier: ' BiomeButtonProps'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p3'
+        TypeReference
+          Identifier: ' ClickableDiscriminatedUnion'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  href'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'undefined'
+                TemplateTail
+          PropertyAssignment
+            Identifier: '
+  onClick'
+            ArrowFunction
+              Parameter
+                Identifier: 'ev'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                StringLiteral
+                Identifier: ' ev'

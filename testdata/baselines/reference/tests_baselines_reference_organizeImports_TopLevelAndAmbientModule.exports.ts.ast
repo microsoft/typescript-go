@@ -1,0 +1,54 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' D'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' F1'
+        StringLiteral
+      ExportDeclaration
+        StringLiteral
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' F2'
+        StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' E'
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' D'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ExportDeclaration
+        StringLiteral
+      ExportDeclaration
+        NamedExports
+          ExportSpecifier
+            Identifier: ' F1'
+          ExportSpecifier
+            Identifier: ' F2'
+        StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' E'
+    StringLiteral

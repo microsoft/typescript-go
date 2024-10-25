@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+   add'
+      Parameter
+        Identifier: 'item'
+        TypeReference
+          Identifier: ' T'
+      Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+List'
+          Identifier: 'prototype'
+        Identifier: 'add'
+      StringLiteral

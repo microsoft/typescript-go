@@ -1,0 +1,33 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowJs: true
+// @target: esnext
+
+// @Filename: /a.js
+////exports.x = 0;
+////exports.x;
+////
+////const y = 1;
+////exports.y = y;
+////exports.y;
+////
+////exports.z = 2;
+////exports.f = function(z) {
+////    exports.z; z;
+////}
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' AAA'
+        ConstructorType
+          TypeReference
+            Identifier: ' A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// AA = A; // okay
+AAA'
+      EqualsToken
+      Identifier: ' A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error. 
+AAA'
+      EqualsToken
+      StringLiteral

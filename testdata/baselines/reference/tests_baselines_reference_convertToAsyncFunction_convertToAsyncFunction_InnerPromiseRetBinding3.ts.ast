@@ -1,0 +1,144 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/innerPromise'
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              ArrowFunction
+                Parameter
+                  Identifier: 'resp'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' resp'
+                                Identifier: 'blob'
+                            Identifier: 'then'
+                          ArrowFunction
+                            Parameter
+                              ObjectBindingPattern
+                                BindingElement
+                                  Identifier: ' blob'
+                            EqualsGreaterThanToken
+                            PropertyAccessExpression
+                              Identifier: ' blob'
+                              Identifier: 'byteOffset'
+                        Identifier: 'catch'
+                      ArrowFunction
+                        Parameter
+                          ObjectBindingPattern
+                            BindingElement
+                              Identifier: ' message'
+                        EqualsGreaterThanToken
+                        BinaryExpression
+                          StringLiteral
+                          PlusToken
+                          Identifier: ' message'
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              ArrayBindingPattern
+                BindingElement
+                  Identifier: 'x'
+                BindingElement
+                  Identifier: ' y'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      BinaryExpression
+                        Identifier: 'x'
+                        BarBarToken
+                        Identifier: ' y'
+                    Identifier: 'toString'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' innerPromise'
+    TypeReference
+      Identifier: ' Promise'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' resp'
+            AwaitExpression
+              CallExpression
+                Identifier: ' fetch'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            AnyKeyword
+      TryStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' blob'
+                AwaitExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' resp'
+                      Identifier: 'blob'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        result'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' blob'
+                Identifier: 'byteOffset'
+        CatchClause
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' message'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        result'
+                EqualsToken
+                BinaryExpression
+                  StringLiteral
+                  PlusToken
+                  Identifier: ' message'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'x'
+              BindingElement
+                Identifier: ' y'
+            Identifier: ' result'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'x'
+                BarBarToken
+                Identifier: ' y'
+            Identifier: 'toString'

@@ -1,0 +1,73 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+////9007199254740991;
+////-9007199254740991;
+////9007199254740992;
+////-9007199254740992;
+////9007199254740993;
+////-9007199254740993;
+////9007199254740994;
+////-9007199254740994;
+////0x19999999999998;
+////-0x19999999999998;
+////0x19999999999999;
+////-0x19999999999999;
+////0x20000000000000;
+////-0x20000000000000;
+////0x20000000000001;
+////-0x20000000000001;
+////2e52;
+////2e53;
+////2e54;
+////1e00000000010;
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  description'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_to_a_bigint_numeric_literal'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+  index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  fixAllDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Convert_all_to_bigint_numeric_literals'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: ' 
+  fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

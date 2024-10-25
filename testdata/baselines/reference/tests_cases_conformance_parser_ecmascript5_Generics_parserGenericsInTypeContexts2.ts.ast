@@ -1,0 +1,149 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'X'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' Y'
+          TypeReference
+            Identifier: 'Z'
+            TypeReference
+              Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'X'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' Y'
+          TypeReference
+            Identifier: 'Z'
+            TypeReference
+              Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        TypeReference
+          Identifier: ' C'
+          TypeReference
+            Identifier: 'X'
+            TypeReference
+              Identifier: 'T'
+          TypeReference
+            Identifier: ' Y'
+            TypeReference
+              Identifier: 'Z'
+              TypeReference
+                Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        TypeReference
+          Identifier: ' D'
+          TypeReference
+            Identifier: 'X'
+            TypeReference
+              Identifier: 'T'
+          TypeReference
+            Identifier: ' Y'
+            TypeReference
+              Identifier: 'Z'
+              TypeReference
+                Identifier: 'T'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        TypeReference
+          QualifiedName
+            Identifier: ' E'
+            Identifier: 'F'
+          TypeReference
+            Identifier: 'X'
+            TypeReference
+              Identifier: 'T'
+          TypeReference
+            Identifier: ' Y'
+            TypeReference
+              Identifier: 'Z'
+              TypeReference
+                Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' G'
+              Identifier: 'H'
+            Identifier: 'I'
+          TypeReference
+            Identifier: 'X'
+            TypeReference
+              Identifier: 'T'
+          TypeReference
+            Identifier: ' Y'
+            TypeReference
+              Identifier: 'Z'
+              TypeReference
+                Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v6'
+        ArrayType
+          TypeReference
+            Identifier: ' K'
+            TypeReference
+              Identifier: 'X'
+              TypeReference
+                Identifier: 'T'
+            TypeReference
+              Identifier: ' Y'
+              TypeReference
+                Identifier: 'Z'
+                TypeReference
+                  Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' E'
+        TypeReference
+          Identifier: 'X'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' Y'
+          TypeReference
+            Identifier: 'Z'
+            TypeReference
+              Identifier: 'T'
+    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeReference
+      Identifier: ' F'
+      TypeReference
+        Identifier: 'X'
+        TypeReference
+          Identifier: 'T'
+      TypeReference
+        Identifier: ' Y'
+        TypeReference
+          Identifier: 'Z'
+          TypeReference
+            Identifier: 'T'
+    Block

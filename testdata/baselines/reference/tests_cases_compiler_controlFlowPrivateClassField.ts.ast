@@ -1,0 +1,56 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Example'
+    PropertyDeclaration
+      PrivateIdentifier
+    Constructor
+      Parameter
+        Identifier: 'test'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            Identifier: ' test'
+    GetAccessor
+      Identifier: ' test'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+  ClassDeclaration
+    Identifier: ' Example2'
+    PropertyDeclaration
+      PrivateIdentifier
+    Constructor
+      Parameter
+        Identifier: 'test'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            Identifier: ' test'
+    GetAccessor
+      Identifier: ' test'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+        ReturnStatement
+          NumericLiteral

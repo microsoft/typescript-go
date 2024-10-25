@@ -1,0 +1,81 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' MyConstEnum'
+    EnumMember
+      Identifier: '
+    Foo'
+    EnumMember
+      Identifier: '
+    Bar'
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyConstEnum'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' MyConstEnum'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyConstEnum'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' MyConstEnum'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' MyConstEnum'
+        Identifier: ' default'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' MyConstEnum'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' MyConstEnum1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' MyConstEnum2'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+MyConstEnum1'
+      Identifier: 'Foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+MyConstEnum2'
+      Identifier: 'Foo'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyConstEnum'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+MyConstEnum'
+      Identifier: 'Foo'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyConstEnum'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+MyConstEnum'
+      Identifier: 'Foo'

@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+            Identifier: 'splice'
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral

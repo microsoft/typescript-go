@@ -1,0 +1,141 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' any'
+  EnumDeclaration
+    Identifier: ' number'
+  EnumDeclaration
+    Identifier: ' string'
+  EnumDeclaration
+    Identifier: ' boolean'
+  EnumDeclaration
+    Identifier: ' E5'
+    EnumMember
+      Identifier: '
+    C'
+      NewExpression
+        Identifier: ' Number'
+        NumericLiteral
+  EnumDeclaration
+    Identifier: ' E9'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+      Identifier: ' A'
+  EnumDeclaration
+    Identifier: ' E10'
+    EnumMember
+      Identifier: '
+    A'
+      PropertyAccessExpression
+        Identifier: ' E9'
+        Identifier: 'A'
+    EnumMember
+      Identifier: '
+    B'
+      PropertyAccessExpression
+        Identifier: ' E9'
+        Identifier: 'B'
+  EnumDeclaration
+    Identifier: ' E11'
+    EnumMember
+      Identifier: '
+    A'
+      TrueKeyword
+    EnumMember
+      Identifier: '
+    B'
+      NewExpression
+        Identifier: ' Date'
+    EnumMember
+      Identifier: '
+    C'
+      Identifier: ' window'
+    EnumMember
+      Identifier: '
+    D'
+      ObjectLiteralExpression
+    EnumMember
+      Identifier: '
+    E'
+      CallExpression
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            StringLiteral
+  EnumDeclaration
+    Identifier: ' E12'
+    EnumMember
+      Identifier: '
+    A'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    B'
+      NewExpression
+        Identifier: ' Date'
+    EnumMember
+      Identifier: '
+    C'
+      Identifier: ' window'
+    EnumMember
+      Identifier: '
+    D'
+      ObjectLiteralExpression
+    EnumMember
+      Identifier: '
+    E'
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    F'
+      CallExpression
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            StringLiteral
+  EnumDeclaration
+    Identifier: ' E13'
+    EnumMember
+      Identifier: '
+    postComma'
+    EnumMember
+      Identifier: '
+    postValueComma'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+
+    postSemicolon'
+    EnumMember
+      Identifier: '
+    postColonValueComma'
+    EnumMember
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    postColonValueSemicolon'
+    EnumMember
+      NumericLiteral
+  EmptyStatement
+  EnumDeclaration
+    Identifier: ' E14'
+    EnumMember
+      Identifier: ' a'
+    EnumMember
+      Identifier: ' b'
+    EnumMember
+      Identifier: ' any'
+    EnumMember
+      StringLiteral
+    EnumMember
+      NumericLiteral
+    EnumMember
+      Identifier: ' c'
+    EnumMember
+      Identifier: ' d'

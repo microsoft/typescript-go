@@ -1,0 +1,62 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            NumericLiteral
+  ExportAssignment
+    Identifier: ' foo'
+  ImportEqualsDeclaration
+    Identifier: ' x'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' 
+x'
+        Identifier: 'b'
+      EqualsToken
+      NumericLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        PropertySignature
+          Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' x'
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          QualifiedName
+            Identifier: ' x'
+            Identifier: 'A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        PropertyAccessExpression
+          Identifier: ' x'
+          Identifier: 'b'

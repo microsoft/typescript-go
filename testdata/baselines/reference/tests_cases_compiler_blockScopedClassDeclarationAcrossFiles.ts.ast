@@ -1,0 +1,9 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeQuery
+          Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' C'

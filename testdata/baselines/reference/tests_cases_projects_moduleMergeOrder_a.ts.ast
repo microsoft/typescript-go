@@ -1,0 +1,51 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Test'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' A'
+        PropertyDeclaration
+          Identifier: '
+        one'
+          StringKeyword
+        PropertyDeclaration
+          Identifier: '
+        two'
+          BooleanKeyword
+        Constructor
+          Parameter
+            Identifier: 't'
+            StringKeyword
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'one'
+                EqualsToken
+                Identifier: ' t'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'two'
+                EqualsToken
+                FalseKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' member'
+          ArrayType
+            TypeReference
+              Identifier: ' A'
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'member'
+                EqualsToken
+                ArrayLiteralExpression

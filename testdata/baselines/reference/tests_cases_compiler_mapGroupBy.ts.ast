@@ -1,0 +1,93 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' basic'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Map'
+            Identifier: 'groupBy'
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+            NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' x'
+                LessThanToken
+                NumericLiteral
+              QuestionToken
+              StringLiteral
+              ColonToken
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' chars'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Map'
+            Identifier: 'groupBy'
+          StringLiteral
+          ArrowFunction
+            Parameter
+              Identifier: ' c'
+            EqualsGreaterThanToken
+            Identifier: ' c'
+  TypeAliasDeclaration
+    Identifier: ' Employee'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' name'
+        StringKeyword
+      PropertySignature
+        Identifier: ' role'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' employees'
+        TypeReference
+          Identifier: ' Set'
+          TypeReference
+            Identifier: 'Employee'
+        NewExpression
+          Identifier: ' Set'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' byRole'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Map'
+            Identifier: 'groupBy'
+          Identifier: 'employees'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'role'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' byNonKey'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Map'
+            Identifier: 'groupBy'
+          Identifier: 'employees'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            Identifier: ' x'

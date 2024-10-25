@@ -1,0 +1,156 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' Function'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      FunctionExpression
+        Block
+  InterfaceDeclaration
+    Identifier: ' foo'
+    MethodSignature
+      Identifier: '
+    get'
+      Parameter
+        Identifier: 'handler'
+        FunctionType
+          Parameter
+            Identifier: 'bar'
+            NumberKeyword
+          VoidKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' baz'
+    MethodSignature
+      Identifier: '
+    get'
+      Parameter
+        Identifier: 'callback'
+        TypeReference
+          Identifier: ' Function'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' barbaz'
+        TypeReference
+          Identifier: ' baz'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        TypeReference
+          Identifier: ' foo'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+test'
+        Identifier: 'get'
+      FunctionExpression
+        Parameter
+          Identifier: 'param'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' barbaz'
+                    Identifier: 'get'
+                  FunctionExpression
+                    Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'n'
+      FunctionType
+        VoidKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+    n'
+              EqualsToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' callb'
+    Parameter
+      Identifier: 'lam'
+      FunctionType
+        Parameter
+          Identifier: 'l'
+          NumberKeyword
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' callb'
+    Parameter
+      Identifier: 'lam'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' callb'
+    Parameter
+      Identifier: 'a'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+callb'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'length'

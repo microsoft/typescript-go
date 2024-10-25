@@ -1,0 +1,27 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lib'
+        FunctionType
+          VoidKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' lib'
+    ModuleBlock
+  ExportAssignment
+    Identifier: ' lib'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' lib'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fn'
+        VoidKeyword

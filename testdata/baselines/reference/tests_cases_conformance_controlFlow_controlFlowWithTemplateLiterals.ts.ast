@@ -1,0 +1,49 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' envVar'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' envVar'
+      EqualsEqualsEqualsToken
+      NoSubstitutionTemplateLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  envVar'
+            Identifier: 'slice'
+          NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: 'test'
+              StringKeyword
+          TypeLiteral
+  IfStatement
+    BinaryExpression
+      NoSubstitutionTemplateLiteral
+      InKeyword
+      Identifier: ' obj'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+  obj'
+              Identifier: 'test'
+            Identifier: 'slice'
+          NumericLiteral

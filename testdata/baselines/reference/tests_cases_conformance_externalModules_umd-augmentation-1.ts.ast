@@ -1,0 +1,127 @@
+SourceFile
+  NamespaceExportDeclaration
+    Identifier: ' Math2d'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Point'
+    PropertySignature
+      Identifier: '
+	x'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+	y'
+      NumberKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Vector'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Point'
+    PropertyDeclaration
+      Identifier: '
+	x'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+	y'
+      NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+
+	translate'
+      Parameter
+        Identifier: 'dx'
+        NumberKeyword
+      Parameter
+        Identifier: ' dy'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Vector'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getLength'
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' Vector'
+    NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Math2d'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Vector'
+        MethodSignature
+          Identifier: '
+		reverse'
+          TypeReference
+            QualifiedName
+              Identifier: ' Math2d'
+              Identifier: 'Point'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' m'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' m'
+            Identifier: 'Vector'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' magnitude'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' m'
+            Identifier: 'getLength'
+          Identifier: 'v'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          QualifiedName
+            Identifier: ' m'
+            Identifier: 'Point'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' v'
+            Identifier: 'translate'
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+p'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' v'
+          Identifier: 'reverse'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        PropertyAccessExpression
+          Identifier: ' p'
+          Identifier: 'x'

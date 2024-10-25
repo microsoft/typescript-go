@@ -1,0 +1,30 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Sizing'
+    AnyKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Sizing'
+        NullKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' Sizing'
+        Identifier: ' GridViewSizing'
+    StringLiteral
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Sizing'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Distribute'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' type'
+                StringLiteral

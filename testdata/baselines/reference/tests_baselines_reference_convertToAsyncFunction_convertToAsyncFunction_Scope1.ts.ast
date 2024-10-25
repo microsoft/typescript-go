@@ -1,0 +1,141 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' var1'
+            TypeReference
+              Identifier: ' Response'
+          VariableDeclaration
+            Identifier: ' var2'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' fetch'
+                  StringLiteral
+                Identifier: 'then'
+              ArrowFunction
+                Parameter
+                  Identifier: ' _'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+      Promise'
+                            Identifier: 'resolve'
+                        Identifier: 'then'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' res'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+        var2'
+                              EqualsToken
+                              StringLiteral
+                          ReturnStatement
+                            CallExpression
+                              Identifier: ' fetch'
+                              StringLiteral
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'res'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      Identifier: '
+         var1'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' res'
+            Identifier: 'then'
+          Identifier: 'res'
+  FunctionDeclaration
+    Identifier: ' res'
+    Parameter
+      Identifier: 'response'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+      console'
+            Identifier: 'log'
+          Identifier: 'response'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' var1'
+            TypeReference
+              Identifier: ' Response'
+          VariableDeclaration
+            Identifier: ' var2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' _'
+            AwaitExpression
+              CallExpression
+                Identifier: ' fetch'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' res'
+            AwaitExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Promise'
+                  Identifier: 'resolve'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    var2'
+          EqualsToken
+          StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' res_1'
+            AwaitExpression
+              CallExpression
+                Identifier: ' fetch'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' response'
+            BinaryExpression
+              Identifier: ' var1'
+              EqualsEqualsEqualsToken
+              Identifier: ' res_1'
+      ReturnStatement
+        CallExpression
+          Identifier: ' res'
+          Identifier: 'response'
+  FunctionDeclaration
+    Identifier: ' res'
+    Parameter
+      Identifier: 'response'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+      console'
+            Identifier: 'log'
+          Identifier: 'response'

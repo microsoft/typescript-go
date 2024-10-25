@@ -1,0 +1,38 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          Parameter
+            Identifier: 'hdr'
+            StringKeyword
+          Parameter
+            Identifier: ' val'
+            NumberKeyword
+          EqualsGreaterThanToken
+          AsExpression
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'hdr'
+                TemplateMiddle
+              TemplateSpan
+                Identifier: 'val'
+                TemplateTail
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateMiddle
+              TemplateLiteralTypeSpan
+                NumberKeyword
+                TemplateTail
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        Identifier: '
+
+f'
+        StringLiteral
+      Identifier: 'foo'

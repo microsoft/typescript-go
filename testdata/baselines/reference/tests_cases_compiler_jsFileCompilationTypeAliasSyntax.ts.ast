@@ -1,0 +1,5 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' a'
+    TypeReference
+      Identifier: ' b'

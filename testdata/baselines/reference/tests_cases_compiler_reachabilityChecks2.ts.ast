@@ -1,0 +1,23 @@
+SourceFile
+  WhileStatement
+    TrueKeyword
+    Block
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' X'
+  ModuleDeclaration
+    Identifier: ' A4'
+    ModuleBlock
+      WhileStatement
+        TrueKeyword
+        EmptyStatement
+      ModuleDeclaration
+        Identifier: ' A'
+        ModuleBlock
+          EnumDeclaration
+            ConstKeyword
+            Identifier: ' E'
+            EnumMember
+              Identifier: ' X'

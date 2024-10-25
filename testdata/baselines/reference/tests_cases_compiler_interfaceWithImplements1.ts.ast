@@ -1,0 +1,8 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IFoo'
+  InterfaceDeclaration
+    Identifier: ' IBar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IFoo'

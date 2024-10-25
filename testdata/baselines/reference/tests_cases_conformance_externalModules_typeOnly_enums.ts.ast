@@ -1,0 +1,92 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' SyntaxKind'
+    EnumMember
+      Identifier: '
+  ImportClause'
+    EnumMember
+      Identifier: '
+  ExportDeclaration'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' SymbolFlags'
+    EnumMember
+      Identifier: '
+  Type'
+      StringLiteral
+    EnumMember
+      Identifier: '
+  Value'
+      StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' SyntaxKind'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' SymbolFlags'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' SyntaxKind'
+        ImportSpecifier
+          Identifier: ' SymbolFlags'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+SyntaxKind'
+      Identifier: 'ImportClause'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+SymbolFlags'
+      Identifier: 'Type'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' kind'
+        TypeReference
+          QualifiedName
+            Identifier: ' SyntaxKind'
+            Identifier: 'ImportClause'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' flags'
+        TypeReference
+          Identifier: ' SymbolFlags'
+  TypeAliasDeclaration
+    Identifier: ' TypeFlag'
+    TypeReference
+      QualifiedName
+        Identifier: ' SymbolFlags'
+        Identifier: 'Type'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' TypeFlag'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' SymbolFlags'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TypeFlag'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' flags'
+        TypeReference
+          Identifier: ' TypeFlag'
+        PropertyAccessExpression
+          Identifier: ' SymbolFlags'
+          Identifier: 'Type'

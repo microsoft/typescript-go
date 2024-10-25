@@ -1,0 +1,6561 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' p'
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' m'
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' n'
+  InterfaceDeclaration
+    Identifier: ' Genric'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: ' func'
+      Parameter
+        Identifier: 'n'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' Base'
+      VariableDeclaration
+        Identifier: ' d1'
+        NewExpression
+          Identifier: ' Derived1'
+      VariableDeclaration
+        Identifier: ' d2'
+        NewExpression
+          Identifier: ' Derived2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x7'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x8'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x9'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x10'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          AnyKeyword
+        ArrowFunction
+          Parameter
+            Identifier: ' n'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' n'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+            ReturnStatement
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x12'
+        TypeReference
+          Identifier: ' Genric'
+          TypeReference
+            Identifier: 'Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' func'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x13'
+    PropertyDeclaration
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x14'
+    PropertyDeclaration
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x15'
+    PropertyDeclaration
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x16'
+    PropertyDeclaration
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x17'
+    PropertyDeclaration
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x18'
+    PropertyDeclaration
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x19'
+    PropertyDeclaration
+      Identifier: ' member'
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x20'
+    PropertyDeclaration
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x21'
+    PropertyDeclaration
+      Identifier: ' member'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x22'
+    PropertyDeclaration
+      Identifier: ' member'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'n'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x23'
+    PropertyDeclaration
+      Identifier: ' member'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        AnyKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' x24'
+    PropertyDeclaration
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Genric'
+        TypeReference
+          Identifier: 'Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x25'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x26'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x27'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x28'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x29'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x30'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x31'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x32'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x33'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x34'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'n'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x35'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        AnyKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' x36'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Genric'
+        TypeReference
+          Identifier: 'Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x37'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x38'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x39'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x40'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x41'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x42'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x43'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x44'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x45'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x46'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'n'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x47'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        AnyKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' x48'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Genric'
+        TypeReference
+          Identifier: 'Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x49'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x50'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x51'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x52'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x53'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x54'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x55'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x56'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x57'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x58'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'n'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x59'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        AnyKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' x60'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Genric'
+        TypeReference
+          Identifier: 'Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x61'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x62'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x63'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x64'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x65'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x66'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x67'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x68'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x69'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x70'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'n'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x71'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        AnyKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' x72'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Genric'
+        TypeReference
+          Identifier: 'Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x73'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x74'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x75'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x76'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x77'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x78'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x79'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x80'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x81'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x82'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'n'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x83'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        AnyKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' x84'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' member'
+      TypeReference
+        Identifier: ' Genric'
+        TypeReference
+          Identifier: 'Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  ClassDeclaration
+    Identifier: ' x85'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x86'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x87'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x88'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x89'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x90'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x91'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x92'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x93'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x94'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x95'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          AnyKeyword
+        ArrowFunction
+          Parameter
+            Identifier: ' n'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' n'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+            ReturnStatement
+              NullKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' x96'
+    Constructor
+      Parameter
+        Identifier: 'parm'
+        TypeReference
+          Identifier: ' Genric'
+          TypeReference
+            Identifier: 'Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' func'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x97'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x98'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x99'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x100'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x101'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x102'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x103'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x104'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x105'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x106'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x107'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          AnyKeyword
+        ArrowFunction
+          Parameter
+            Identifier: ' n'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' n'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+            ReturnStatement
+              NullKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' x108'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' parm'
+        TypeReference
+          Identifier: ' Genric'
+          TypeReference
+            Identifier: 'Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' func'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x109'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x110'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x111'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x112'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x113'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x114'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x115'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x116'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x117'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x118'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+      Block
+  ClassDeclaration
+    Identifier: ' x119'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          AnyKeyword
+        ArrowFunction
+          Parameter
+            Identifier: ' n'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' n'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+            ReturnStatement
+              NullKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' x120'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' parm'
+        TypeReference
+          Identifier: ' Genric'
+          TypeReference
+            Identifier: 'Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' func'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+      Block
+  FunctionDeclaration
+    Identifier: ' x121'
+    Parameter
+      Identifier: 'parm'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x122'
+    Parameter
+      Identifier: 'parm'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x123'
+    Parameter
+      Identifier: 'parm'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x124'
+    Parameter
+      Identifier: 'parm'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x125'
+    Parameter
+      Identifier: 'parm'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x126'
+    Parameter
+      Identifier: 'parm'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x127'
+    Parameter
+      Identifier: 'parm'
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x128'
+    Parameter
+      Identifier: 'parm'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x129'
+    Parameter
+      Identifier: 'parm'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Base'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x130'
+    Parameter
+      Identifier: 'parm'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'n'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x131'
+    Parameter
+      Identifier: 'parm'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        AnyKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' x132'
+    Parameter
+      Identifier: 'parm'
+      TypeReference
+        Identifier: ' Genric'
+        TypeReference
+          Identifier: 'Base'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+    Block
+  FunctionDeclaration
+    Identifier: ' x133'
+    FunctionType
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+    Block
+      ReturnStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x134'
+    FunctionType
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x135'
+    FunctionType
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x136'
+    TypeLiteral
+      CallSignature
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+      ReturnStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x137'
+    TypeLiteral
+      CallSignature
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x138'
+    TypeLiteral
+      CallSignature
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x139'
+    ArrayType
+      TypeReference
+        Identifier: ' Base'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x140'
+    TypeReference
+      Identifier: ' Array'
+      TypeReference
+        Identifier: 'Base'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x141'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        TypeReference
+          Identifier: ' Base'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x142'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'n'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x143'
+    FunctionType
+      Parameter
+        Identifier: 's'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      AnyKeyword
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' n'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' n'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+            ReturnStatement
+              NullKeyword
+  FunctionDeclaration
+    Identifier: ' x144'
+    TypeReference
+      Identifier: ' Genric'
+      TypeReference
+        Identifier: 'Base'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' func'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x145'
+    FunctionType
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+    Block
+      ReturnStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+      ReturnStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x146'
+    FunctionType
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      ReturnStatement
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x147'
+    FunctionType
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      ReturnStatement
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x148'
+    TypeLiteral
+      CallSignature
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+      ReturnStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+      ReturnStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x149'
+    TypeLiteral
+      CallSignature
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      ReturnStatement
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x150'
+    TypeLiteral
+      CallSignature
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+      ReturnStatement
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+      ReturnStatement
+        FunctionExpression
+          Identifier: ' named'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x151'
+    ArrayType
+      TypeReference
+        Identifier: ' Base'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x152'
+    TypeReference
+      Identifier: ' Array'
+      TypeReference
+        Identifier: 'Base'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x153'
+    TypeLiteral
+      IndexSignature
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        TypeReference
+          Identifier: ' Base'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x154'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'n'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x155'
+    FunctionType
+      Parameter
+        Identifier: 's'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+      AnyKeyword
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' n'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' n'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+            ReturnStatement
+              NullKeyword
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' n'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' n'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+            ReturnStatement
+              NullKeyword
+  FunctionDeclaration
+    Identifier: ' x156'
+    TypeReference
+      Identifier: ' Genric'
+      TypeReference
+        Identifier: 'Base'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' func'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' func'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x157'
+        FunctionType
+          FunctionType
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x158'
+        FunctionType
+          FunctionType
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              FunctionExpression
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x159'
+        FunctionType
+          FunctionType
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              FunctionExpression
+                Identifier: ' named'
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x160'
+        FunctionType
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x161'
+        FunctionType
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              FunctionExpression
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x162'
+        FunctionType
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              FunctionExpression
+                Identifier: ' named'
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x163'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x164'
+        FunctionType
+          TypeReference
+            Identifier: ' Array'
+            TypeReference
+              Identifier: 'Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x165'
+        FunctionType
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              TypeReference
+                Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x166'
+        FunctionType
+          TypeLiteral
+            PropertySignature
+              Identifier: 'n'
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' n'
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x167'
+        FunctionType
+          FunctionType
+            Parameter
+              Identifier: 's'
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+            AnyKeyword
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' n'
+                        ArrayType
+                          TypeReference
+                            Identifier: ' Base'
+                  ReturnStatement
+                    NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x168'
+        FunctionType
+          TypeReference
+            Identifier: ' Genric'
+            TypeReference
+              Identifier: 'Base'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' func'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' n'
+                    EqualsGreaterThanToken
+                    Block
+                      ReturnStatement
+                        ArrayLiteralExpression
+                          Identifier: 'd1'
+                          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x169'
+        FunctionType
+          FunctionType
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x170'
+        FunctionType
+          FunctionType
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              FunctionExpression
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x171'
+        FunctionType
+          FunctionType
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              FunctionExpression
+                Identifier: ' named'
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x172'
+        FunctionType
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrowFunction
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x173'
+        FunctionType
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              FunctionExpression
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x174'
+        FunctionType
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              FunctionExpression
+                Identifier: ' named'
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x175'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x176'
+        FunctionType
+          TypeReference
+            Identifier: ' Array'
+            TypeReference
+              Identifier: 'Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x177'
+        FunctionType
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              TypeReference
+                Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x178'
+        FunctionType
+          TypeLiteral
+            PropertySignature
+              Identifier: 'n'
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' n'
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x179'
+        FunctionType
+          FunctionType
+            Parameter
+              Identifier: 's'
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+            AnyKeyword
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' n'
+                        ArrayType
+                          TypeReference
+                            Identifier: ' Base'
+                  ReturnStatement
+                    NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x180'
+        FunctionType
+          TypeReference
+            Identifier: ' Genric'
+            TypeReference
+              Identifier: 'Base'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' func'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' n'
+                    EqualsGreaterThanToken
+                    Block
+                      ReturnStatement
+                        ArrayLiteralExpression
+                          Identifier: 'd1'
+                          Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x181'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+            ArrowFunction
+              EqualsGreaterThanToken
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x182'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x183'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+            FunctionExpression
+              Identifier: ' named'
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x184'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+            ArrowFunction
+              EqualsGreaterThanToken
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x185'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x186'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+            FunctionExpression
+              Identifier: ' named'
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x187'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x188'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Base'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x189'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                TypeReference
+                  Identifier: ' Base'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x190'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' n'
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x191'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            FunctionType
+              Parameter
+                Identifier: 's'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+              AnyKeyword
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' n'
+                      ArrayType
+                        TypeReference
+                          Identifier: ' Base'
+                ReturnStatement
+                  NullKeyword
+  ModuleDeclaration
+    Identifier: ' x192'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' Genric'
+              TypeReference
+                Identifier: 'Base'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' func'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' n'
+                  EqualsGreaterThanToken
+                  Block
+                    ReturnStatement
+                      ArrayLiteralExpression
+                        Identifier: 'd1'
+                        Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x193'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+            ArrowFunction
+              EqualsGreaterThanToken
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x194'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x195'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+            FunctionExpression
+              Identifier: ' named'
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x196'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+            ArrowFunction
+              EqualsGreaterThanToken
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x197'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x198'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+            FunctionExpression
+              Identifier: ' named'
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x199'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x200'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Base'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x201'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                TypeReference
+                  Identifier: ' Base'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x202'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' n'
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  ModuleDeclaration
+    Identifier: ' x203'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            FunctionType
+              Parameter
+                Identifier: 's'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+              AnyKeyword
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' n'
+                      ArrayType
+                        TypeReference
+                          Identifier: ' Base'
+                ReturnStatement
+                  NullKeyword
+  ModuleDeclaration
+    Identifier: ' x204'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeReference
+              Identifier: ' Genric'
+              TypeReference
+                Identifier: 'Base'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' func'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' n'
+                  EqualsGreaterThanToken
+                  Block
+                    ReturnStatement
+                      ArrayLiteralExpression
+                        Identifier: 'd1'
+                        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x206'
+        TypeAssertionExpression
+          FunctionType
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x207'
+        TypeAssertionExpression
+          FunctionType
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x209'
+        TypeAssertionExpression
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x210'
+        TypeAssertionExpression
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x211'
+        TypeAssertionExpression
+          ArrayType
+            TypeReference
+              Identifier: 'Base'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x212'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'Array'
+            TypeReference
+              Identifier: 'Base'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x213'
+        TypeAssertionExpression
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              TypeReference
+                Identifier: ' Base'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x214'
+        TypeAssertionExpression
+          TypeLiteral
+            PropertySignature
+              Identifier: 'n'
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x216'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'Genric'
+            TypeReference
+              Identifier: 'Base'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' func'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x217'
+        BinaryExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              FunctionType
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+              Identifier: 'undefined'
+          BarBarToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x218'
+        BinaryExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              FunctionType
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+              Identifier: 'undefined'
+          BarBarToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x219'
+        BinaryExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              TypeLiteral
+                CallSignature
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+              Identifier: 'undefined'
+          BarBarToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x220'
+        BinaryExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              TypeLiteral
+                CallSignature
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+              Identifier: 'undefined'
+          BarBarToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x221'
+        BinaryExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              ArrayType
+                TypeReference
+                  Identifier: 'Base'
+              Identifier: 'undefined'
+          BarBarToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x222'
+        BinaryExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'Array'
+                TypeReference
+                  Identifier: 'Base'
+              Identifier: 'undefined'
+          BarBarToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x223'
+        BinaryExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              TypeLiteral
+                IndexSignature
+                  Parameter
+                    Identifier: 'n'
+                    NumberKeyword
+                  TypeReference
+                    Identifier: ' Base'
+              Identifier: 'undefined'
+          BarBarToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x224'
+        BinaryExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'n'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Base'
+              Identifier: 'undefined'
+          BarBarToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x225'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x225'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x226'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x226'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x227'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x227'
+      EqualsToken
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x228'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x228'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x229'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x229'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x230'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x230'
+      EqualsToken
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x231'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x231'
+      EqualsToken
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x232'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x232'
+      EqualsToken
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x233'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x233'
+      EqualsToken
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x234'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x234'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x235'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x235'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x236'
+        TypeReference
+          Identifier: ' Genric'
+          TypeReference
+            Identifier: 'Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' x236'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x237'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrowFunction
+              EqualsGreaterThanToken
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x238'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x239'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            FunctionExpression
+              Identifier: ' named'
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x240'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrowFunction
+              EqualsGreaterThanToken
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x241'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x242'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            FunctionExpression
+              Identifier: ' named'
+              Block
+                ReturnStatement
+                  ArrayLiteralExpression
+                    Identifier: 'd1'
+                    Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x243'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x244'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x245'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                TypeReference
+                  Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x246'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' n'
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x247'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            FunctionType
+              Parameter
+                Identifier: 's'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+              AnyKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ArrowFunction
+              Parameter
+                Identifier: ' n'
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' n'
+                      ArrayType
+                        TypeReference
+                          Identifier: ' Base'
+                ReturnStatement
+                  NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x248'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            TypeReference
+              Identifier: ' Genric'
+              TypeReference
+                Identifier: 'Base'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' n'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' func'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' n'
+                  EqualsGreaterThanToken
+                  Block
+                    ReturnStatement
+                      ArrayLiteralExpression
+                        Identifier: 'd1'
+                        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x252'
+        ArrayType
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ArrayLiteralExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x253'
+        ArrayType
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ArrayLiteralExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x254'
+        ArrayType
+          TypeLiteral
+            CallSignature
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ArrayLiteralExpression
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x255'
+        ArrayType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x256'
+        ArrayType
+          TypeReference
+            Identifier: ' Array'
+            TypeReference
+              Identifier: 'Base'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x257'
+        ArrayType
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              TypeReference
+                Identifier: ' Base'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x258'
+        ArrayType
+          TypeLiteral
+            PropertySignature
+              Identifier: 'n'
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x260'
+        ArrayType
+          TypeReference
+            Identifier: ' Genric'
+            TypeReference
+              Identifier: 'Base'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' func'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x261'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        BinaryExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          BarBarToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x262'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        BinaryExpression
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          BarBarToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x263'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        BinaryExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          BarBarToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x264'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        BinaryExpression
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          BarBarToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x265'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+        BinaryExpression
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          BarBarToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x266'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+        BinaryExpression
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          BarBarToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x267'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+        BinaryExpression
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          BarBarToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x268'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        BinaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+          BarBarToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x269'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        BinaryExpression
+          Identifier: ' undefined'
+          BarBarToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x270'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        BinaryExpression
+          Identifier: ' undefined'
+          BarBarToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x271'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        BinaryExpression
+          Identifier: ' undefined'
+          BarBarToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x272'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        BinaryExpression
+          Identifier: ' undefined'
+          BarBarToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x273'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+        BinaryExpression
+          Identifier: ' undefined'
+          BarBarToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x274'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+        BinaryExpression
+          Identifier: ' undefined'
+          BarBarToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x275'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+        BinaryExpression
+          Identifier: ' undefined'
+          BarBarToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x276'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        BinaryExpression
+          Identifier: ' undefined'
+          BarBarToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x277'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        BinaryExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          BarBarToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x278'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        BinaryExpression
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          BarBarToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x279'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        BinaryExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          BarBarToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x280'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        BinaryExpression
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          BarBarToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x281'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+        BinaryExpression
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          BarBarToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x282'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+        BinaryExpression
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          BarBarToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x283'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+        BinaryExpression
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          BarBarToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x284'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        BinaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+          BarBarToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x285'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+          ColonToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x286'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          ColonToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x287'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          ColonToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x288'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+          ColonToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x289'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          ColonToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x290'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          ColonToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x291'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          ColonToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x292'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          ColonToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x293'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          ColonToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x294'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+          ColonToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x295'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          AnyKeyword
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' n'
+                    ArrayType
+                      TypeReference
+                        Identifier: ' Base'
+              ReturnStatement
+                NullKeyword
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' n'
+                    ArrayType
+                      TypeReference
+                        Identifier: ' Base'
+              ReturnStatement
+                NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x296'
+        TypeReference
+          Identifier: ' Genric'
+          TypeReference
+            Identifier: 'Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' func'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+          ColonToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' func'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x297'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x298'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x299'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x300'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x301'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x302'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x303'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x304'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x305'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x306'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x307'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          AnyKeyword
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' n'
+                    ArrayType
+                      TypeReference
+                        Identifier: ' Base'
+              ReturnStatement
+                NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x308'
+        TypeReference
+          Identifier: ' Genric'
+          TypeReference
+            Identifier: 'Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          Identifier: ' undefined'
+          ColonToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' func'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x309'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x310'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x311'
+        FunctionType
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x312'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x313'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          FunctionExpression
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x314'
+        TypeLiteral
+          CallSignature
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          FunctionExpression
+            Identifier: ' named'
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x315'
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x316'
+        TypeReference
+          Identifier: ' Array'
+          TypeReference
+            Identifier: 'Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x317'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x318'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' n'
+              ArrayLiteralExpression
+                Identifier: 'd1'
+                Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x319'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          AnyKeyword
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' n'
+                    ArrayType
+                      TypeReference
+                        Identifier: ' Base'
+              ReturnStatement
+                NullKeyword
+          ColonToken
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x320'
+        TypeReference
+          Identifier: ' Genric'
+          TypeReference
+            Identifier: 'Base'
+        ConditionalExpression
+          TrueKeyword
+          QuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' func'
+              ArrowFunction
+                Parameter
+                  Identifier: ' n'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      Identifier: 'd1'
+                      Identifier: ' d2'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' x321'
+    Parameter
+      Identifier: 'n'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x321'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x322'
+    Parameter
+      Identifier: 'n'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x322'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x323'
+    Parameter
+      Identifier: 'n'
+      FunctionType
+        ArrayType
+          TypeReference
+            Identifier: ' Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x323'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x324'
+    Parameter
+      Identifier: 'n'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x324'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x325'
+    Parameter
+      Identifier: 'n'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x325'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x326'
+    Parameter
+      Identifier: 'n'
+      TypeLiteral
+        CallSignature
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x326'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x327'
+    Parameter
+      Identifier: 'n'
+      ArrayType
+        TypeReference
+          Identifier: ' Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x327'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x328'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x328'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x329'
+    Parameter
+      Identifier: 'n'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x329'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x330'
+    Parameter
+      Identifier: 'n'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'n'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x330'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  FunctionDeclaration
+    Identifier: ' x331'
+    Parameter
+      Identifier: 'n'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          ArrayType
+            TypeReference
+              Identifier: ' Base'
+        AnyKeyword
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x331'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+  FunctionDeclaration
+    Identifier: ' x332'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' Genric'
+        TypeReference
+          Identifier: 'Base'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x332'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x333'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x333'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x334'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x334'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x335'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x335'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x336'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x336'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x337'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x337'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x338'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x338'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x339'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x339'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x340'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x340'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x341'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                TypeReference
+                  Identifier: ' Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x341'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x342'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x342'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x343'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            FunctionType
+              Parameter
+                Identifier: 's'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+              AnyKeyword
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x343'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x344'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            TypeReference
+              Identifier: ' Genric'
+              TypeReference
+                Identifier: 'Base'
+          EqualsGreaterThanToken
+          Identifier: ' n'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x344'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x345'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x345'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x346'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x346'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x347'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            FunctionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x347'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x348'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x348'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrayLiteralExpression
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x349'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x349'
+      FunctionExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x350'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+              CallSignature
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x350'
+      FunctionExpression
+        Identifier: ' named'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'd1'
+              Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x351'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            ArrayType
+              TypeReference
+                Identifier: ' Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x351'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x352'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x352'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x353'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                TypeReference
+                  Identifier: ' Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x353'
+      ArrayLiteralExpression
+        Identifier: 'd1'
+        Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x354'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x354'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' n'
+          ArrayLiteralExpression
+            Identifier: 'd1'
+            Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x355'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            FunctionType
+              Parameter
+                Identifier: 's'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+              AnyKeyword
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x355'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' n'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Base'
+          ReturnStatement
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x356'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+            TypeReference
+              Identifier: ' Genric'
+              TypeReference
+                Identifier: 'Base'
+          Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' x356'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' func'
+          ArrowFunction
+            Parameter
+              Identifier: ' n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  Identifier: 'd1'
+                  Identifier: ' d2'

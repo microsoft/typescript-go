@@ -1,0 +1,44 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumberKeyword
+      ForOfStatement
+        AwaitKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        ObjectLiteralExpression
+        Block
+      ForOfStatement
+        AwaitKeyword
+        Identifier: 'y'
+        ObjectLiteralExpression
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumberKeyword
+      ForOfStatement
+        AwaitKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+        ObjectLiteralExpression
+        Block
+      ForOfStatement
+        AwaitKeyword
+        Identifier: 'y'
+        ObjectLiteralExpression
+        Block

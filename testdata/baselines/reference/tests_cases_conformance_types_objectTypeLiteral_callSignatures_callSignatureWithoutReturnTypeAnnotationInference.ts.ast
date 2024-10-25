@@ -1,0 +1,325 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+    Block
+      ReturnStatement
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' foo'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' foo2'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' foo3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' foo3'
+  FunctionDeclaration
+    Identifier: ' foo4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          Identifier: ' foo4'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+        Block
+          ReturnStatement
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          Identifier: ' foo5'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          Identifier: ' foo6'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'x'
+    Block
+      ReturnStatement
+        TypeOfExpression
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          Identifier: ' foo7'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo8'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          Identifier: ' foo8'
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo9'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            TypeReference
+              Identifier: ' I'
+      ReturnStatement
+        Identifier: ' i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        CallExpression
+          Identifier: ' foo9'
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo10'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            TypeReference
+              Identifier: ' C'
+      ReturnStatement
+        Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        CallExpression
+          Identifier: ' foo10'
+          NumericLiteral
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        PropertyDeclaration
+          Identifier: ' foo'
+          StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo11'
+    Block
+      ReturnStatement
+        Identifier: ' M'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        CallExpression
+          Identifier: ' foo11'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    PropertySignature
+      Identifier: '
+    y'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo12'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i2'
+            TypeReference
+              Identifier: ' I2'
+      ReturnStatement
+        Identifier: ' i2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12'
+        CallExpression
+          Identifier: ' foo12'
+  FunctionDeclaration
+    Identifier: ' m1'
+    Block
+      ReturnStatement
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo13'
+    Block
+      ReturnStatement
+        Identifier: ' m1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13'
+        CallExpression
+          Identifier: ' foo13'
+  ClassDeclaration
+    Identifier: ' c1'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+      Block
+  ModuleDeclaration
+    Identifier: ' c1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo14'
+    Block
+      ReturnStatement
+        Identifier: ' c1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r14'
+        CallExpression
+          Identifier: ' foo14'
+  EnumDeclaration
+    Identifier: ' e1'
+    EnumMember
+      Identifier: ' A'
+  ModuleDeclaration
+    Identifier: ' e1'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo15'
+    Block
+      ReturnStatement
+        Identifier: ' e1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r15'
+        CallExpression
+          Identifier: ' foo15'

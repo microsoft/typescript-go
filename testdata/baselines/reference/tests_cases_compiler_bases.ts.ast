@@ -1,0 +1,42 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    x'
+  ClassDeclaration
+    Identifier: ' B'
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'y'
+        ExpressionStatement
+          Identifier: ' any'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          Identifier: ' any'
+  ExpressionStatement
+    PropertyAccessExpression
+      NewExpression
+        Identifier: ' C'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      NewExpression
+        Identifier: ' C'
+      Identifier: 'y'

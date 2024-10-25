@@ -1,0 +1,48 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' comment'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' documentation'
+              Identifier: ' comment'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' marker'
+    ArrayLiteralExpression
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'quickInfoAt'
+          Identifier: 'marker'
+          StringLiteral
+          Identifier: ' comment'

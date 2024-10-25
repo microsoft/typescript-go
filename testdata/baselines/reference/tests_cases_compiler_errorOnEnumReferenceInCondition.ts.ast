@@ -1,0 +1,117 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Nums'
+    EnumMember
+      Identifier: '
+    Zero'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    One'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ConditionalExpression
+          PropertyAccessExpression
+            Identifier: ' Nums'
+            Identifier: 'Zero'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ConditionalExpression
+          PropertyAccessExpression
+            Identifier: ' Nums'
+            Identifier: 'One'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+  IfStatement
+    PropertyAccessExpression
+      Identifier: 'Nums'
+      Identifier: 'Zero'
+    Block
+      ExpressionStatement
+        Identifier: '
+    Nums'
+    Block
+      ExpressionStatement
+        Identifier: '
+    Nums'
+  IfStatement
+    PropertyAccessExpression
+      Identifier: 'Nums'
+      Identifier: 'One'
+    Block
+      ExpressionStatement
+        Identifier: '
+    Nums'
+    Block
+      ExpressionStatement
+        Identifier: '
+    Nums'
+  EnumDeclaration
+    Identifier: ' Strs'
+    EnumMember
+      Identifier: '
+    Empty'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    A'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ConditionalExpression
+          PropertyAccessExpression
+            Identifier: ' Strs'
+            Identifier: 'Empty'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        ConditionalExpression
+          PropertyAccessExpression
+            Identifier: ' Strs'
+            Identifier: 'A'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+  IfStatement
+    PropertyAccessExpression
+      Identifier: 'Strs'
+      Identifier: 'Empty'
+    Block
+      ExpressionStatement
+        Identifier: '
+    Strs'
+    Block
+      ExpressionStatement
+        Identifier: '
+    Strs'
+  IfStatement
+    PropertyAccessExpression
+      Identifier: 'Strs'
+      Identifier: 'A'
+    Block
+      ExpressionStatement
+        Identifier: '
+    Strs'
+    Block
+      ExpressionStatement
+        Identifier: '
+    Strs'

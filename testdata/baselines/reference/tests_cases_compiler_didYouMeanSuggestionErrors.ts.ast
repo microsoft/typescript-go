@@ -1,0 +1,158 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: '// @lib: es5
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a'
+                        CallExpression
+                          Identifier: ' $'
+                          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+suite'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    test'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        console'
+                        Identifier: 'log'
+                      PropertyAccessExpression
+                        Identifier: 'process'
+                        Identifier: 'env'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        document'
+                        Identifier: 'createElement'
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' x'
+                        CallExpression
+                          Identifier: ' require'
+                          StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' y'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' Buffer'
+                            Identifier: 'from'
+                          ArrayLiteralExpression
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' z'
+                        PropertyAccessExpression
+                          Identifier: ' module'
+                          Identifier: 'exports'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' a'
+                        NewExpression
+                          Identifier: ' Map'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        NewExpression
+                          Identifier: ' Set'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' c'
+                        NewExpression
+                          Identifier: ' WeakMap'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' d'
+                        NewExpression
+                          Identifier: ' WeakSet'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' e'
+                        CallExpression
+                          Identifier: ' Symbol'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' f'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' Promise'
+                            Identifier: 'resolve'
+                          NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' i'
+                        TypeReference
+                          Identifier: ' Iterator'
+                          AnyKeyword
+                        AsExpression
+                          NullKeyword
+                          AnyKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' j'
+                        TypeReference
+                          Identifier: ' AsyncIterator'
+                          AnyKeyword
+                        AsExpression
+                          NullKeyword
+                          AnyKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' k'
+                        TypeReference
+                          Identifier: ' Symbol'
+                        AsExpression
+                          NullKeyword
+                          AnyKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' l'
+                        TypeReference
+                          Identifier: ' Promise'
+                          AnyKeyword
+                        AsExpression
+                          NullKeyword
+                          AnyKeyword

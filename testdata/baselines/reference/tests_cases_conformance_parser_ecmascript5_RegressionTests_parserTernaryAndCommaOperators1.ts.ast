@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      ConditionalExpression
+        PropertyAccessExpression
+          Identifier: 'b'
+          Identifier: 'src'
+        QuestionToken
+        NumericLiteral
+        ColonToken
+        NumericLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' c'
+        AmpersandAmpersandToken
+        Identifier: ' d'

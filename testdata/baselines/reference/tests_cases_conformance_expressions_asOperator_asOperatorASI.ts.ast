@@ -1,0 +1,31 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' as'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      ArrayType
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExpressionStatement
+    TaggedTemplateExpression
+      Identifier: '
+as'
+      NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+as'
+      Identifier: 'Foo'

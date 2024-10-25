@@ -1,0 +1,87 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ImportInterface'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RequireInterface'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' RequireInterface'
+    StringLiteral
+    ImportAttributes
+  ExpressionStatement
+    Identifier: ' assert'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ImportInterface'
+    StringLiteral
+    ImportAttributes
+  ExpressionStatement
+    Identifier: ' assert'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' RequireInterface'
+          Identifier: ' Req'
+        ImportSpecifier
+          Identifier: ' RequireInterface'
+          Identifier: ' Req2'
+    StringLiteral
+    ImportAttributes
+  ExpressionStatement
+    Identifier: ' assert'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  EmptyStatement
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' LocalInterface'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' RequireInterface'
+      ExpressionWithTypeArguments
+        Identifier: ' ImportInterface'

@@ -1,0 +1,102 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Radio'
+        FunctionType
+          Parameter
+            Identifier: 'props'
+            TypeLiteral
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'ReactElement'
+            TypeLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' OtherRadio'
+        FunctionType
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'ReactElement'
+            TypeLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Checkbox'
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'SFC'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' condition1'
+        BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' condition2'
+        BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' condition3'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' RandomComponent'
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'SFC'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' Component'
+                  ConditionalExpression
+                    Identifier: '
+    condition1'
+                    QuestionToken
+                    Identifier: ' Radio'
+                    ColonToken
+                    Identifier: ' Checkbox'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' OtherComponent'
+                  ConditionalExpression
+                    Identifier: '
+    condition2'
+                    QuestionToken
+                    Identifier: ' OtherRadio'
+                    ColonToken
+                    Identifier: ' Checkbox'
+            ReturnStatement
+              ConditionalExpression
+                Identifier: ' condition1'
+                QuestionToken
+                JsxSelfClosingElement
+                  Identifier: 'Component'
+                  JsxAttributes
+                ColonToken
+                JsxSelfClosingElement
+                  Identifier: 'OtherComponent'
+                  JsxAttributes

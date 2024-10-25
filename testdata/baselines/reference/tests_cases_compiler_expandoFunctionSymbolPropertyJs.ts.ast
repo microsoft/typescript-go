@@ -1,0 +1,41 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' symb'
+        CallExpression
+          Identifier: ' Symbol'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TestSymb'
+    CallSignature
+      VoidKeyword
+    PropertySignature
+      ReadonlyKeyword
+      ComputedPropertyName
+        Identifier: 'symb'
+      BooleanKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' symb'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' test'
+    Block
+      FunctionDeclaration
+        Identifier: ' inner'
+        Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+  inner'
+            Identifier: 'symb'
+          EqualsToken
+          TrueKeyword
+      ReturnStatement
+        Identifier: ' inner'

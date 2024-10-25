@@ -1,0 +1,60 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    c'
+      BooleanKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    TypeReference
+      Identifier: ' Omit'
+      TypeReference
+        Identifier: 'Foo'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Baz'
+    TypeReference
+      Identifier: ' Omit'
+      TypeReference
+        Identifier: 'Foo'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getBarC'
+    Parameter
+      Identifier: 'bar'
+      TypeReference
+        Identifier: ' Bar'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' bar'
+          Identifier: 'c'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getBazB'
+    Parameter
+      Identifier: 'baz'
+      TypeReference
+        Identifier: ' Baz'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' baz'
+          Identifier: 'b'

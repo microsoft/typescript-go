@@ -1,0 +1,41 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Component'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Text'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeLiteral
+        TypeLiteral
+    PropertyDeclaration
+      Identifier: '
+  _tagName'
+      StringKeyword
+      StringLiteral
+    MethodDeclaration
+      Identifier: '
+
+  render'
+      Block
+        ReturnStatement
+          ParenthesizedExpression
+            JsxSelfClosingElement
+              ThisKeyword
+              JsxAttributes

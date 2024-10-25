@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    x'

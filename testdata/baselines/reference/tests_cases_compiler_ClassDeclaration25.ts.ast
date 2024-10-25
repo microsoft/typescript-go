@@ -1,0 +1,32 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IList'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    next'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IList'
+        TypeReference
+          Identifier: 'U'
+    MethodDeclaration
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' U'
+    MethodDeclaration
+      Identifier: '
+    next'
+      StringKeyword

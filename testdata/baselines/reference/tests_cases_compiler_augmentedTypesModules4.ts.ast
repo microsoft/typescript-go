@@ -1,0 +1,73 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m4'
+    ModuleBlock
+  EnumDeclaration
+    Identifier: ' m4'
+  ModuleDeclaration
+    Identifier: ' m4a'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  EnumDeclaration
+    Identifier: ' m4a'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' m4b'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  EnumDeclaration
+    Identifier: ' m4b'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' m4c'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' I'
+        MethodSignature
+          Identifier: ' foo'
+          VoidKeyword
+  EnumDeclaration
+    Identifier: ' m4c'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' m4d'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: ' foo'
+          Block
+  EnumDeclaration
+    Identifier: ' m4d'
+    EnumMember
+      Identifier: ' One'
+  ModuleDeclaration
+    Identifier: ' m5'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m5'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        MethodSignature
+          Identifier: ' foo'
+          VoidKeyword

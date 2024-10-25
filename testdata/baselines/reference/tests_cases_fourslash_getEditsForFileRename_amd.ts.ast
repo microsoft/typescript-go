@@ -1,0 +1,32 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @moduleResolution: classic
+
+// @Filename: /src/user.ts
+////import { x } from "old";
+
+// @Filename: /src/old.ts
+////export const x = 0;
+
+verify'
+        Identifier: 'getEditsForFileRename'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    oldPath'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newPath'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral

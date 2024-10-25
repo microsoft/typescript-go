@@ -1,0 +1,7 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '// @target: es6
+yield'
+      AsteriskToken
+      Identifier: ''

@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Bbb'
+  ClassDeclaration
+    Identifier: ' Aaa'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Bbb'
+  ModuleDeclaration
+    Identifier: ' Aaa'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' SomeType'
+  ModuleDeclaration
+    Identifier: ' Bbb'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' SomeType'
+      ExportDeclaration
+        Identifier: ' Aaa'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          QualifiedName
+            Identifier: ' Bbb'
+            Identifier: 'SomeType'

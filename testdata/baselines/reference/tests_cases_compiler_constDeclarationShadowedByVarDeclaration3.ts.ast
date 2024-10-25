@@ -1,0 +1,28 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Rule'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' regex'
+      TypeReference
+        Identifier: ' RegExp'
+      NewExpression
+        Identifier: ' RegExp'
+        StringLiteral
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' name'
+      StringKeyword
+      StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'name'
+            EqualsToken
+            Identifier: ' name'

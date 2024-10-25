@@ -1,0 +1,126 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CompilerOptions'
+        ImportSpecifier
+          Identifier: '
+    concatenate'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticWithLocation'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    fixupCompilerOptions'
+        ImportSpecifier
+          Identifier: '
+    isArray'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    TransformationResult'
+        ImportSpecifier
+          Identifier: '
+    TransformerFactory'
+        ImportSpecifier
+          Identifier: '
+    transformNodes'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' transform'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'source'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' transformers'
+      ArrayType
+        TypeReference
+          Identifier: ' TransformerFactory'
+          TypeReference
+            Identifier: 'T'
+    Parameter
+      Identifier: ' compilerOptions'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompilerOptions'
+    TypeReference
+      Identifier: ' TransformationResult'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' diagnostics'
+            ArrayType
+              TypeReference
+                Identifier: ' DiagnosticWithLocation'
+            ArrayLiteralExpression
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    compilerOptions'
+          EqualsToken
+          CallExpression
+            Identifier: ' fixupCompilerOptions'
+            NonNullExpression
+              Identifier: 'compilerOptions'
+            Identifier: ' diagnostics'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nodes'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isArray'
+                Identifier: 'source'
+              QuestionToken
+              Identifier: ' source'
+              ColonToken
+              ArrayLiteralExpression
+                Identifier: 'source'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            CallExpression
+              Identifier: ' transformNodes'
+              Identifier: '/*resolver*/ undefined'
+              Identifier: ' /*host*/ undefined'
+              Identifier: ' factory'
+              Identifier: ' compilerOptions'
+              Identifier: ' nodes'
+              Identifier: ' transformers'
+              TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    result'
+            Identifier: 'diagnostics'
+          EqualsToken
+          CallExpression
+            Identifier: ' concatenate'
+            PropertyAccessExpression
+              Identifier: 'result'
+              Identifier: 'diagnostics'
+            Identifier: ' diagnostics'
+      ReturnStatement
+        Identifier: ' result'

@@ -1,0 +1,226 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' SomeType'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' SomeType2'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' IWithNoStringIndexSignature'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' IWithNoNumberIndexSignature'
+    PropertySignature
+      NumericLiteral
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' IWithStringIndexSignature1'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      TypeReference
+        Identifier: ' SomeType'
+  InterfaceDeclaration
+    Identifier: ' IWithStringIndexSignature2'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      TypeReference
+        Identifier: ' SomeType2'
+  InterfaceDeclaration
+    Identifier: ' IWithNumberIndexSignature1'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      TypeReference
+        Identifier: ' SomeType'
+  InterfaceDeclaration
+    Identifier: ' IWithNumberIndexSignature2'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      TypeReference
+        Identifier: ' SomeType2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          TypeReference
+            Identifier: ' IWithNoStringIndexSignature'
+          TypeReference
+            Identifier: ' IWithStringIndexSignature1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' z'
+            ArrowFunction
+              Parameter
+                Identifier: ' a'
+              EqualsGreaterThanToken
+              Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          TypeReference
+            Identifier: ' IWithNoStringIndexSignature'
+          TypeReference
+            Identifier: ' IWithStringIndexSignature1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            ArrowFunction
+              Parameter
+                Identifier: ' a'
+              EqualsGreaterThanToken
+              Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          TypeReference
+            Identifier: ' IWithNoStringIndexSignature'
+          TypeReference
+            Identifier: ' IWithStringIndexSignature1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        UnionType
+          TypeReference
+            Identifier: ' IWithStringIndexSignature1'
+          TypeReference
+            Identifier: ' IWithStringIndexSignature2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' z'
+            ArrowFunction
+              Parameter
+                Identifier: ' a'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        UnionType
+          TypeReference
+            Identifier: ' IWithStringIndexSignature1'
+          TypeReference
+            Identifier: ' IWithStringIndexSignature2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' z'
+            ArrowFunction
+              Parameter
+                Identifier: ' a'
+              EqualsGreaterThanToken
+              Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        UnionType
+          TypeReference
+            Identifier: ' IWithNoNumberIndexSignature'
+          TypeReference
+            Identifier: ' IWithNumberIndexSignature1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: ' a'
+              EqualsGreaterThanToken
+              Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        UnionType
+          TypeReference
+            Identifier: ' IWithNoNumberIndexSignature'
+          TypeReference
+            Identifier: ' IWithNumberIndexSignature1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: ' a'
+              EqualsGreaterThanToken
+              Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        UnionType
+          TypeReference
+            Identifier: ' IWithNoNumberIndexSignature'
+          TypeReference
+            Identifier: ' IWithNumberIndexSignature1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        UnionType
+          TypeReference
+            Identifier: ' IWithNumberIndexSignature1'
+          TypeReference
+            Identifier: ' IWithNumberIndexSignature2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: ' a'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        UnionType
+          TypeReference
+            Identifier: ' IWithNumberIndexSignature1'
+          TypeReference
+            Identifier: ' IWithNumberIndexSignature2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            ArrowFunction
+              Parameter
+                Identifier: ' a'
+              EqualsGreaterThanToken
+              Identifier: ' a'

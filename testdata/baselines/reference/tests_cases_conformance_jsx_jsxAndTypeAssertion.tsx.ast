@@ -1,0 +1,174 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' createElement'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'any'
+          JsxAttributes
+        JsxText
+        JsxExpression
+          Identifier: ' test'
+        JsxText
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'any'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'any'
+        JsxText
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'any'
+            JsxAttributes
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'any'
+              JsxAttributes
+            JsxClosingElement
+              Identifier: 'any'
+          JsxText
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'foo'
+              JsxAttributes
+            JsxText
+            JsxExpression
+              JsxElement
+                JsxOpeningElement
+                  Identifier: 'foo'
+                  JsxAttributes
+                JsxExpression
+                JsxText
+                JsxClosingElement
+                  Identifier: 'foo'
+            JsxText
+            JsxSelfClosingElement
+              Identifier: 'foo'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' test'
+                  JsxExpression
+                    JsxElement
+                      JsxOpeningElement
+                        Identifier: 'foo'
+                        JsxAttributes
+                      JsxExpression
+                      JsxText
+                      JsxClosingElement
+                        Identifier: 'foo'
+            JsxText
+            JsxSelfClosingElement
+              Identifier: 'foo'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' test'
+                  JsxExpression
+                    JsxElement
+                      JsxOpeningElement
+                        Identifier: 'foo'
+                        JsxAttributes
+                      JsxExpression
+                      JsxText
+                      JsxExpression
+                        JsxElement
+                          JsxOpeningElement
+                            Identifier: 'foo'
+                            JsxAttributes
+                          JsxExpression
+                          JsxText
+                          JsxClosingElement
+                            Identifier: 'foo'
+                      JsxText
+                      JsxElement
+                        JsxOpeningElement
+                          Identifier: 'foo'
+                          JsxAttributes
+                        JsxText
+                        JsxClosingElement
+                          Identifier: 'foo'
+                      JsxText
+                      JsxSelfClosingElement
+                        Identifier: 'foo'
+                        JsxAttributes
+                      JsxText
+                      JsxElement
+                        JsxOpeningElement
+                          Identifier: 'foo'
+                          JsxAttributes
+                        JsxExpression
+                          JsxElement
+                            JsxOpeningElement
+                              Identifier: 'foo'
+                              JsxAttributes
+                            JsxElement
+                              JsxOpeningElement
+                                Identifier: 'foo'
+                                JsxAttributes
+                              JsxExpression
+                                ConditionalExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      RegularExpressionLiteral
+                                      Identifier: 'test'
+                                    Identifier: 'x'
+                                  QuestionToken
+                                  JsxElement
+                                    JsxOpeningElement
+                                      Identifier: 'foo'
+                                      JsxAttributes
+                                    JsxElement
+                                      JsxOpeningElement
+                                        Identifier: 'foo'
+                                        JsxAttributes
+                                      JsxClosingElement
+                                        Identifier: 'foo'
+                                    JsxText
+                                    JsxElement
+                                      JsxOpeningElement
+                                        Identifier: 'foo'
+                                        JsxAttributes
+                                      JsxElement
+                                        JsxOpeningElement
+                                          Identifier: 'foo'
+                                          JsxAttributes
+                                        JsxClosingElement
+                                          Identifier: 'foo'
+                                      JsxText
+                                      JsxClosingElement
+                                        Identifier: 'foo'
+                                    JsxText
+                                    JsxClosingElement
+                                      Identifier: 'foo'
+                                  ColonToken
+                                  Identifier: ''
+                              JsxText
+                              JsxClosingElement
+                                Identifier: ''
+                            JsxClosingElement
+                              Identifier: ''
+                        JsxClosingElement
+                          Identifier: ''
+                      JsxClosingElement
+                        Identifier: ''
+            JsxClosingElement
+              Identifier: ''
+          JsxClosingElement
+            Identifier: ''
+        JsxClosingElement
+          Identifier: ''

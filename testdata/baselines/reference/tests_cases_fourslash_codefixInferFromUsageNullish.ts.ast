@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noImplicitAny: true
+////declare const a: string
+////function wat([|b |]) {
+////    b(a ?? 1);
+////}
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      StringLiteral

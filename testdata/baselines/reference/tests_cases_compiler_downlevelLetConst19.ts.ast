@@ -1,0 +1,54 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' use'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' a'
+    Block
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+    use'
+            Identifier: 'x'
+        FunctionDeclaration
+          Identifier: ' b'
+          Block
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' x'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            use'
+                  Identifier: 'x'
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+        use'
+                Identifier: 'x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  use'
+          Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+use'
+      Identifier: 'x'

@@ -1,0 +1,10 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' ElidedModule'
+    ModuleBlock
+  ModuleDeclaration
+    Identifier: ' ElidedModule2'
+    ModuleBlock
+  ModuleDeclaration
+    Identifier: ' ElidedModule3'
+    ModuleBlock

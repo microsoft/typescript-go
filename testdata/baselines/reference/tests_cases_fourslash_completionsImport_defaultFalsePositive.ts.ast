@@ -1,0 +1,103 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /node_modules/foo/index.ts
+////export default function f(): void;
+
+// @Filename: /node_modules/bar/concat.d.ts
+////export const concat = 0;
+
+// @Filename: /a.ts
+////export {};
+////conca/**/
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        source'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        sourceDisplay'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        kindModifiers'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        hasAction'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' includeCompletionsForModuleExports'
+              TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

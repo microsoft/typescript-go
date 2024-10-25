@@ -1,0 +1,16 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' x'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  EnumDeclaration
+    Identifier: ' x'
+    EnumMember
+      Identifier: '
+  z'
+      Identifier: ' y'

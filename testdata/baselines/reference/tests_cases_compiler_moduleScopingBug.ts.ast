@@ -1,0 +1,34 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' outer'
+            NumberKeyword
+      FunctionDeclaration
+        Identifier: ' f'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' inner'
+                Identifier: ' outer'
+      ClassDeclaration
+        Identifier: ' C'
+        Constructor
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' inner'
+                  Identifier: ' outer'
+      ModuleDeclaration
+        Identifier: ' X'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' inner'
+                Identifier: ' outer'

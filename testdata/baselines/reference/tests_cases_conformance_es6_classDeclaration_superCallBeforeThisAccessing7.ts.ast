@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Parameter
+        Identifier: 'c'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _t'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            j'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_t'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'undefined'

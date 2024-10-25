@@ -1,0 +1,39 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' /*C*/ F2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' /*L*/ F1'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '/*Q*/ //R
+
+F1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F2'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' /*L*/ F1'
+        ImportSpecifier
+          Identifier: ' /*C*/ F2'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' /*H*/ //I
+
+F1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F2'

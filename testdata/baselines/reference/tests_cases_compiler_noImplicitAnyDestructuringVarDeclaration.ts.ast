@@ -1,0 +1,99 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a'
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'b'
+      VariableDeclaration
+        Identifier: ' c'
+      VariableDeclaration
+        Identifier: ' d'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a1'
+            Identifier: ' undefined'
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'b1'
+            NullKeyword
+      VariableDeclaration
+        Identifier: ' c1'
+        Identifier: ' undefined'
+      VariableDeclaration
+        Identifier: ' d1'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a2'
+        TupleType
+          AnyKeyword
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'b2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b2'
+            AnyKeyword
+      VariableDeclaration
+        Identifier: ' c2'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' d2'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'b3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b3'
+      VariableDeclaration
+        Identifier: ' c3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a4'
+        ArrayLiteralExpression
+          Identifier: 'undefined'
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'b4'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' b4'
+            NullKeyword
+      VariableDeclaration
+        Identifier: ' c4'
+        Identifier: ' undefined'
+      VariableDeclaration
+        Identifier: ' d4'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a5'
+            Identifier: ' undefined'
+        ArrayLiteralExpression

@@ -1,0 +1,4569 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    collapseTextChangeRangesAcrossMultipleVersions'
+        ImportSpecifier
+          Identifier: '
+    computeLineStarts'
+        ImportSpecifier
+          Identifier: '
+    createTextChangeRange'
+        ImportSpecifier
+          Identifier: '
+    createTextSpan'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    IScriptSnapshot'
+        ImportSpecifier
+          Identifier: '
+    TextChangeRange'
+        ImportSpecifier
+          Identifier: '
+    TextSpan'
+        ImportSpecifier
+          Identifier: '
+    unchangedTextChangeRange'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' emptyArray'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' protocol'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lineCollectionCapacity'
+        NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' LineCollection'
+    MethodSignature
+      Identifier: '
+    charCount'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    lineCount'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    isLeaf'
+      TypePredicate
+        ThisType
+        TypeReference
+          Identifier: ' LineLeaf'
+    MethodSignature
+      Identifier: '
+    walk'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' walkFns'
+        TypeReference
+          Identifier: ' LineIndexWalker'
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' AbsolutePositionAndLineText'
+    PropertySignature
+      Identifier: '
+    absolutePosition'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    lineText'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' CharRangeSection'
+    EnumMember
+      Identifier: '
+    PreStart'
+    EnumMember
+      Identifier: '
+    Start'
+    EnumMember
+      Identifier: '
+    Entire'
+    EnumMember
+      Identifier: '
+    Mid'
+    EnumMember
+      Identifier: '
+    End'
+    EnumMember
+      Identifier: '
+    PostEnd'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' LineIndexWalker'
+    PropertySignature
+      Identifier: '
+    goSubtree'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    done'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    leaf'
+      Parameter
+        Identifier: 'relativeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' relativeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' lineCollection'
+        TypeReference
+          Identifier: ' LineLeaf'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    pre'
+      QuestionToken
+      Parameter
+        Identifier: 'relativeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' relativeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' lineCollection'
+        TypeReference
+          Identifier: ' LineCollection'
+      Parameter
+        Identifier: ' parent'
+        TypeReference
+          Identifier: ' LineNode'
+      Parameter
+        Identifier: ' nodeType'
+        TypeReference
+          Identifier: ' CharRangeSection'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    post'
+      QuestionToken
+      Parameter
+        Identifier: 'relativeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' relativeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' lineCollection'
+        TypeReference
+          Identifier: ' LineCollection'
+      Parameter
+        Identifier: ' parent'
+        TypeReference
+          Identifier: ' LineNode'
+      Parameter
+        Identifier: ' nodeType'
+        TypeReference
+          Identifier: ' CharRangeSection'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' EditWalker'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' LineIndexWalker'
+    PropertyDeclaration
+      Identifier: '
+    goSubtree'
+      TrueKeyword
+    GetAccessor
+      Identifier: ' done'
+      Block
+        ReturnStatement
+          FalseKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' lineIndex'
+      NewExpression
+        Identifier: ' LineIndex'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' startPath'
+      ArrayType
+        TypeReference
+          Identifier: ' LineCollection'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' endBranch'
+      ArrayType
+        TypeReference
+          Identifier: ' LineCollection'
+      ArrayLiteralExpression
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' branchNode'
+      UnionType
+        TypeReference
+          Identifier: ' LineNode'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' stack'
+      ArrayType
+        TypeReference
+          Identifier: ' LineNode'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' state'
+      PropertyAccessExpression
+        Identifier: ' CharRangeSection'
+        Identifier: 'Entire'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' lineCollectionAtBranch'
+      UnionType
+        TypeReference
+          Identifier: ' LineCollection'
+        UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' initialText'
+      StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' trailingText'
+      StringLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'lineIndex'
+              Identifier: 'root'
+            EqualsToken
+            NewExpression
+              Identifier: ' LineNode'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'startPath'
+            EqualsToken
+            ArrayLiteralExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'lineIndex'
+                Identifier: 'root'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'stack'
+            EqualsToken
+            ArrayLiteralExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'lineIndex'
+                Identifier: 'root'
+    MethodDeclaration
+      Identifier: '
+
+    insertLines'
+      Parameter
+        Identifier: 'insertedText'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' suppressTrailingText'
+        BooleanKeyword
+      Block
+        IfStatement
+          Identifier: 'suppressTrailingText'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'trailingText'
+                EqualsToken
+                StringLiteral
+        IfStatement
+          Identifier: 'insertedText'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            insertedText'
+                EqualsToken
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'initialText'
+                    PlusToken
+                    Identifier: ' insertedText'
+                  PlusToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'trailingText'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            insertedText'
+                EqualsToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'initialText'
+                  PlusToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'trailingText'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lm'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' LineIndex'
+                  Identifier: 'linesFromText'
+                Identifier: 'insertedText'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lines'
+              PropertyAccessExpression
+                Identifier: ' lm'
+                Identifier: 'lines'
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'lines'
+                Identifier: 'length'
+              GreaterThanToken
+              NumericLiteral
+            AmpersandAmpersandToken
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: ' lines'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'lines'
+                    Identifier: 'length'
+                  MinusToken
+                  NumericLiteral
+              EqualsEqualsEqualsToken
+              StringLiteral
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            lines'
+                  Identifier: 'pop'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' branchParent'
+              UnionType
+                TypeReference
+                  Identifier: ' LineNode'
+                UndefinedKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lastZeroCount'
+              UnionType
+                TypeReference
+                  Identifier: ' LineCollection'
+                UndefinedKeyword
+        ForStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' k'
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'endBranch'
+                  Identifier: 'length'
+                MinusToken
+                NumericLiteral
+          BinaryExpression
+            Identifier: ' k'
+            GreaterThanEqualsToken
+            NumericLiteral
+          PostfixUnaryExpression
+            Identifier: ' k'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'endBranch'
+                        Identifier: 'k'
+                      TypeReference
+                        Identifier: ' LineNode'
+                  Identifier: 'updateCounts'
+            IfStatement
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'endBranch'
+                      Identifier: 'k'
+                    Identifier: 'charCount'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                lastZeroCount'
+                    EqualsToken
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'endBranch'
+                      Identifier: 'k'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'k'
+                    GreaterThanToken
+                    NumericLiteral
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    branchParent'
+                        EqualsToken
+                        AsExpression
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'endBranch'
+                            BinaryExpression
+                              Identifier: 'k'
+                              MinusToken
+                              NumericLiteral
+                          TypeReference
+                            Identifier: ' LineNode'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    branchParent'
+                        EqualsToken
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'branchNode'
+        IfStatement
+          Identifier: 'lastZeroCount'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  NonNullExpression
+                    Identifier: '
+            branchParent'
+                  Identifier: 'remove'
+                Identifier: 'lastZeroCount'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' leafNode'
+              AsExpression
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'startPath'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'startPath'
+                      Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+                TypeReference
+                  Identifier: ' LineLeaf'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'lines'
+              Identifier: 'length'
+            GreaterThanToken
+            NumericLiteral
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            leafNode'
+                  Identifier: 'text'
+                EqualsToken
+                ElementAccessExpression
+                  Identifier: ' lines'
+                  NumericLiteral
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'lines'
+                  Identifier: 'length'
+                GreaterThanToken
+                NumericLiteral
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' insertedNodes'
+                      AsExpression
+                        NewExpression
+                          Identifier: ' Array'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'lines'
+                              Identifier: 'length'
+                            MinusToken
+                            NumericLiteral
+                        ArrayType
+                          TypeReference
+                            Identifier: ' LineCollection'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' startNode'
+                      AsExpression
+                        Identifier: ' leafNode'
+                        TypeReference
+                          Identifier: ' LineCollection'
+                ForStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' i'
+                      NumericLiteral
+                  BinaryExpression
+                    Identifier: ' i'
+                    LessThanToken
+                    PropertyAccessExpression
+                      Identifier: ' lines'
+                      Identifier: 'length'
+                  PostfixUnaryExpression
+                    Identifier: ' i'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        ElementAccessExpression
+                          Identifier: '
+                    insertedNodes'
+                          BinaryExpression
+                            Identifier: 'i'
+                            MinusToken
+                            NumericLiteral
+                        EqualsToken
+                        NewExpression
+                          Identifier: ' LineLeaf'
+                          ElementAccessExpression
+                            Identifier: 'lines'
+                            Identifier: 'i'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' pathIndex'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'startPath'
+                          Identifier: 'length'
+                        MinusToken
+                        NumericLiteral
+                WhileStatement
+                  BinaryExpression
+                    Identifier: 'pathIndex'
+                    GreaterThanEqualsToken
+                    NumericLiteral
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' insertionNode'
+                          AsExpression
+                            ElementAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'startPath'
+                              Identifier: 'pathIndex'
+                            TypeReference
+                              Identifier: ' LineNode'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    insertedNodes'
+                        EqualsToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' insertionNode'
+                            Identifier: 'insertAt'
+                          Identifier: 'startNode'
+                          Identifier: ' insertedNodes'
+                    ExpressionStatement
+                      PostfixUnaryExpression
+                        Identifier: '
+                    pathIndex'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    startNode'
+                        EqualsToken
+                        Identifier: ' insertionNode'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' insertedNodesLen'
+                      PropertyAccessExpression
+                        Identifier: ' insertedNodes'
+                        Identifier: 'length'
+                WhileStatement
+                  BinaryExpression
+                    Identifier: 'insertedNodesLen'
+                    GreaterThanToken
+                    NumericLiteral
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' newRoot'
+                          NewExpression
+                            Identifier: ' LineNode'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    newRoot'
+                          Identifier: 'add'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'lineIndex'
+                          Identifier: 'root'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    insertedNodes'
+                        EqualsToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' newRoot'
+                            Identifier: 'insertAt'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'lineIndex'
+                            Identifier: 'root'
+                          Identifier: ' insertedNodes'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    insertedNodesLen'
+                        EqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' insertedNodes'
+                          Identifier: 'length'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'lineIndex'
+                          Identifier: 'root'
+                        EqualsToken
+                        Identifier: ' newRoot'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'lineIndex'
+                        Identifier: 'root'
+                      Identifier: 'updateCounts'
+              Block
+                ForStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' j'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'startPath'
+                          Identifier: 'length'
+                        MinusToken
+                        NumericLiteral
+                  BinaryExpression
+                    Identifier: ' j'
+                    GreaterThanEqualsToken
+                    NumericLiteral
+                  PostfixUnaryExpression
+                    Identifier: ' j'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            AsExpression
+                              ElementAccessExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'startPath'
+                                Identifier: 'j'
+                              TypeReference
+                                Identifier: ' LineNode'
+                          Identifier: 'updateCounts'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' insertionNode'
+                  AsExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'startPath'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'startPath'
+                          Identifier: 'length'
+                        MinusToken
+                        NumericLiteral
+                    TypeReference
+                      Identifier: ' LineNode'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            // no content for leaf node, so delete it
+            insertionNode'
+                  Identifier: 'remove'
+                Identifier: 'leafNode'
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' j'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'startPath'
+                      Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+              BinaryExpression
+                Identifier: ' j'
+                GreaterThanEqualsToken
+                NumericLiteral
+              PostfixUnaryExpression
+                Identifier: ' j'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'startPath'
+                            Identifier: 'j'
+                          TypeReference
+                            Identifier: ' LineNode'
+                      Identifier: 'updateCounts'
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'lineIndex'
+    MethodDeclaration
+      Identifier: '
+
+    post'
+      Parameter
+        Identifier: '_relativeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' _relativeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' lineCollection'
+        TypeReference
+          Identifier: ' LineCollection'
+      VoidKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'lineCollection'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'lineCollectionAtBranch'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'state'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' CharRangeSection'
+                  Identifier: 'End'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'stack'
+              Identifier: 'pop'
+    MethodDeclaration
+      Identifier: '
+
+    pre'
+      Parameter
+        Identifier: '_relativeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' _relativeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' lineCollection'
+        TypeReference
+          Identifier: ' LineCollection'
+      Parameter
+        Identifier: ' _parent'
+        TypeReference
+          Identifier: ' LineCollection'
+      Parameter
+        Identifier: ' nodeType'
+        TypeReference
+          Identifier: ' CharRangeSection'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' currentNode'
+              ElementAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'stack'
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'stack'
+                    Identifier: 'length'
+                  MinusToken
+                  NumericLiteral
+        IfStatement
+          BinaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'state'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' CharRangeSection'
+                  Identifier: 'Entire'
+            AmpersandAmpersandToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'nodeType'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' CharRangeSection'
+                  Identifier: 'Start'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'state'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' CharRangeSection'
+                  Identifier: 'Start'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'branchNode'
+                EqualsToken
+                Identifier: ' currentNode'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'lineCollectionAtBranch'
+                EqualsToken
+                Identifier: ' lineCollection'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' child'
+              UnionType
+                TypeReference
+                  Identifier: ' LineCollection'
+                UndefinedKeyword
+        FunctionDeclaration
+          Identifier: ' fresh'
+          Parameter
+            Identifier: 'node'
+            TypeReference
+              Identifier: ' LineCollection'
+          TypeReference
+            Identifier: ' LineCollection'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'isLeaf'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' LineLeaf'
+                    StringLiteral
+              ReturnStatement
+                NewExpression
+                  Identifier: ' LineNode'
+        SwitchStatement
+          Identifier: 'nodeType'
+          CaseBlock
+            CaseClause
+              PropertyAccessExpression
+                Identifier: ' CharRangeSection'
+                Identifier: 'PreStart'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'goSubtree'
+                  EqualsToken
+                  FalseKeyword
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'state'
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' CharRangeSection'
+                    Identifier: 'End'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    currentNode'
+                        Identifier: 'add'
+                      Identifier: 'lineCollection'
+              BreakStatement
+            CaseClause
+              PropertyAccessExpression
+                Identifier: ' CharRangeSection'
+                Identifier: 'Start'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'state'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' CharRangeSection'
+                    Identifier: 'End'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'goSubtree'
+                      EqualsToken
+                      FalseKeyword
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                    child'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' fresh'
+                        Identifier: 'lineCollection'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    currentNode'
+                        Identifier: 'add'
+                      Identifier: 'child'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'startPath'
+                        Identifier: 'push'
+                      Identifier: 'child'
+              BreakStatement
+            CaseClause
+              PropertyAccessExpression
+                Identifier: ' CharRangeSection'
+                Identifier: 'Entire'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'state'
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' CharRangeSection'
+                    Identifier: 'End'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                    child'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' fresh'
+                        Identifier: 'lineCollection'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    currentNode'
+                        Identifier: 'add'
+                      Identifier: 'child'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'startPath'
+                        Identifier: 'push'
+                      Identifier: 'child'
+                Block
+                  IfStatement
+                    PrefixUnaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'lineCollection'
+                          Identifier: 'isLeaf'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                        child'
+                          EqualsToken
+                          CallExpression
+                            Identifier: ' fresh'
+                            Identifier: 'lineCollection'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                        currentNode'
+                            Identifier: 'add'
+                          Identifier: 'child'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'endBranch'
+                            Identifier: 'push'
+                          Identifier: 'child'
+              BreakStatement
+            CaseClause
+              PropertyAccessExpression
+                Identifier: ' CharRangeSection'
+                Identifier: 'Mid'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'goSubtree'
+                  EqualsToken
+                  FalseKeyword
+              BreakStatement
+            CaseClause
+              PropertyAccessExpression
+                Identifier: ' CharRangeSection'
+                Identifier: 'End'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'state'
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' CharRangeSection'
+                    Identifier: 'End'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'goSubtree'
+                      EqualsToken
+                      FalseKeyword
+                Block
+                  IfStatement
+                    PrefixUnaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'lineCollection'
+                          Identifier: 'isLeaf'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                        child'
+                          EqualsToken
+                          CallExpression
+                            Identifier: ' fresh'
+                            Identifier: 'lineCollection'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                        currentNode'
+                            Identifier: 'add'
+                          Identifier: 'child'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'endBranch'
+                            Identifier: 'push'
+                          Identifier: 'child'
+              BreakStatement
+            CaseClause
+              PropertyAccessExpression
+                Identifier: ' CharRangeSection'
+                Identifier: 'PostEnd'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'goSubtree'
+                  EqualsToken
+                  FalseKeyword
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'state'
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' CharRangeSection'
+                    Identifier: 'Start'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                    currentNode'
+                        Identifier: 'add'
+                      Identifier: 'lineCollection'
+              BreakStatement
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'goSubtree'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'stack'
+                  Identifier: 'push'
+                AsExpression
+                  Identifier: 'child'
+                  TypeReference
+                    Identifier: ' LineNode'
+    MethodDeclaration
+      Identifier: '
+    // just gather text from the leaves
+    leaf'
+      Parameter
+        Identifier: 'relativeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' relativeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' ll'
+        TypeReference
+          Identifier: ' LineLeaf'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'state'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CharRangeSection'
+              Identifier: 'Start'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'initialText'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ll'
+                      Identifier: 'text'
+                    Identifier: 'substring'
+                  NumericLiteral
+                  Identifier: ' relativeStart'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'state'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' CharRangeSection'
+                Identifier: 'Entire'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'initialText'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' ll'
+                        Identifier: 'text'
+                      Identifier: 'substring'
+                    NumericLiteral
+                    Identifier: ' relativeStart'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'trailingText'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' ll'
+                        Identifier: 'text'
+                      Identifier: 'substring'
+                    BinaryExpression
+                      Identifier: 'relativeStart'
+                      PlusToken
+                      Identifier: ' relativeLength'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'trailingText'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' ll'
+                        Identifier: 'text'
+                      Identifier: 'substring'
+                    BinaryExpression
+                      Identifier: 'relativeStart'
+                      PlusToken
+                      Identifier: ' relativeLength'
+  ClassDeclaration
+    Identifier: ' TextChange'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' pos'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' deleteLen'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' insertedText'
+        QuestionToken
+        StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    getTextChangeRange'
+      Block
+        ReturnStatement
+          CallExpression
+            Identifier: ' createTextChangeRange'
+            CallExpression
+              Identifier: 'createTextSpan'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'pos'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'deleteLen'
+            ConditionalExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'insertedText'
+              QuestionToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'insertedText'
+                Identifier: 'length'
+              ColonToken
+              NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ScriptVersionCache'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' changeNumberThreshold'
+      NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' changeLengthThreshold'
+      NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' maxVersions'
+      NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' changes'
+      ArrayType
+        TypeReference
+          Identifier: ' TextChange'
+      ArrayLiteralExpression
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' versions'
+      ArrayType
+        TypeReference
+          Identifier: ' LineIndexSnapshot'
+      NewExpression
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'LineIndexSnapshot'
+        PropertyAccessExpression
+          Identifier: 'ScriptVersionCache'
+          Identifier: 'maxVersions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' minVersion'
+      NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' currentVersion'
+      NumericLiteral
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' versionToIndex'
+      Parameter
+        Identifier: 'version'
+        NumberKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'version'
+              LessThanToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'minVersion'
+            BarBarToken
+            BinaryExpression
+              Identifier: ' version'
+              GreaterThanToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'currentVersion'
+          Block
+            ReturnStatement
+              Identifier: ' undefined'
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' version'
+            PercentToken
+            PropertyAccessExpression
+              Identifier: ' ScriptVersionCache'
+              Identifier: 'maxVersions'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' currentVersionToIndex'
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'currentVersion'
+            PercentToken
+            PropertyAccessExpression
+              Identifier: ' ScriptVersionCache'
+              Identifier: 'maxVersions'
+    MethodDeclaration
+      Identifier: '
+
+    // REVIEW: can optimize by coalescing simple edits
+    edit'
+      Parameter
+        Identifier: 'pos'
+        NumberKeyword
+      Parameter
+        Identifier: ' deleteLen'
+        NumberKeyword
+      Parameter
+        Identifier: ' insertedText'
+        QuestionToken
+        StringKeyword
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'changes'
+              Identifier: 'push'
+            NewExpression
+              Identifier: ' TextChange'
+              Identifier: 'pos'
+              Identifier: ' deleteLen'
+              Identifier: ' insertedText'
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'changes'
+                  Identifier: 'length'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' ScriptVersionCache'
+                  Identifier: 'changeNumberThreshold'
+              BarBarToken
+              BinaryExpression
+                Identifier: '
+            deleteLen'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' ScriptVersionCache'
+                  Identifier: 'changeLengthThreshold'
+            BarBarToken
+            BinaryExpression
+              Identifier: '
+            insertedText'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' insertedText'
+                  Identifier: 'length'
+                GreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' ScriptVersionCache'
+                  Identifier: 'changeLengthThreshold'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getSnapshot'
+    MethodDeclaration
+      Identifier: '
+
+    getSnapshot'
+      TypeReference
+        Identifier: ' IScriptSnapshot'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_getSnapshot'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' _getSnapshot'
+      TypeReference
+        Identifier: ' LineIndexSnapshot'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' snap'
+              ElementAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'versions'
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'currentVersionToIndex'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'changes'
+              Identifier: 'length'
+            GreaterThanToken
+            NumericLiteral
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' snapIndex'
+                  PropertyAccessExpression
+                    Identifier: ' snap'
+                    Identifier: 'index'
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' change'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'changes'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                snapIndex'
+                    EqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' snapIndex'
+                        Identifier: 'edit'
+                      PropertyAccessExpression
+                        Identifier: 'change'
+                        Identifier: 'pos'
+                      PropertyAccessExpression
+                        Identifier: ' change'
+                        Identifier: 'deleteLen'
+                      PropertyAccessExpression
+                        Identifier: ' change'
+                        Identifier: 'insertedText'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            snap'
+                EqualsToken
+                NewExpression
+                  Identifier: ' LineIndexSnapshot'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'currentVersion'
+                    PlusToken
+                    NumericLiteral
+                  ThisKeyword
+                  Identifier: ' snapIndex'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'changes'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'currentVersion'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' snap'
+                  Identifier: 'version'
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'versions'
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'currentVersionToIndex'
+                EqualsToken
+                Identifier: ' snap'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'changes'
+                EqualsToken
+                ArrayLiteralExpression
+            IfStatement
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'currentVersion'
+                    MinusToken
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'minVersion'
+                GreaterThanEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' ScriptVersionCache'
+                  Identifier: 'maxVersions'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'minVersion'
+                    EqualsToken
+                    BinaryExpression
+                      ParenthesizedExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'currentVersion'
+                          MinusToken
+                          PropertyAccessExpression
+                            Identifier: ' ScriptVersionCache'
+                            Identifier: 'maxVersions'
+                      PlusToken
+                      NumericLiteral
+        ReturnStatement
+          Identifier: ' snap'
+    MethodDeclaration
+      Identifier: '
+
+    getSnapshotVersion'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: '_getSnapshot'
+            Identifier: 'version'
+    MethodDeclaration
+      Identifier: '
+
+    getAbsolutePositionAndLineText'
+      Parameter
+        Identifier: 'oneBasedLine'
+        NumberKeyword
+      TypeReference
+        Identifier: ' AbsolutePositionAndLineText'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_getSnapshot'
+                Identifier: 'index'
+              Identifier: 'lineNumberToInfo'
+            Identifier: 'oneBasedLine'
+    MethodDeclaration
+      Identifier: '
+
+    lineOffsetToPosition'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      Parameter
+        Identifier: ' column'
+        NumberKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: '_getSnapshot'
+                  Identifier: 'index'
+                Identifier: 'absolutePositionOfStartOfLine'
+              Identifier: 'line'
+            PlusToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'column'
+                MinusToken
+                NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    positionToLineOffset'
+      Parameter
+        Identifier: 'position'
+        NumberKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Location'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_getSnapshot'
+                Identifier: 'index'
+              Identifier: 'positionToLineOffset'
+            Identifier: 'position'
+    MethodDeclaration
+      Identifier: '
+
+    lineToTextSpan'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      TypeReference
+        Identifier: ' TextSpan'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' index'
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_getSnapshot'
+                Identifier: 'index'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' lineText'
+                BindingElement
+                  Identifier: ' absolutePosition'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' index'
+                  Identifier: 'lineNumberToInfo'
+                BinaryExpression
+                  Identifier: 'line'
+                  PlusToken
+                  NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' len'
+              ConditionalExpression
+                BinaryExpression
+                  Identifier: ' lineText'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' lineText'
+                  Identifier: 'length'
+                ColonToken
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' index'
+                      Identifier: 'absolutePositionOfStartOfLine'
+                    BinaryExpression
+                      Identifier: 'line'
+                      PlusToken
+                      NumericLiteral
+                  MinusToken
+                  Identifier: ' absolutePosition'
+        ReturnStatement
+          CallExpression
+            Identifier: ' createTextSpan'
+            Identifier: 'absolutePosition'
+            Identifier: ' len'
+    MethodDeclaration
+      Identifier: '
+
+    getTextChangesBetweenVersions'
+      Parameter
+        Identifier: 'oldVersion'
+        NumberKeyword
+      Parameter
+        Identifier: ' newVersion'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' TextChangeRange'
+        UndefinedKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'oldVersion'
+            LessThanToken
+            Identifier: ' newVersion'
+          Block
+            IfStatement
+              BinaryExpression
+                Identifier: 'oldVersion'
+                GreaterThanEqualsToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'minVersion'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' textChangeRanges'
+                      ArrayType
+                        TypeReference
+                          Identifier: ' TextChangeRange'
+                      ArrayLiteralExpression
+                ForStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' i'
+                      BinaryExpression
+                        Identifier: ' oldVersion'
+                        PlusToken
+                        NumericLiteral
+                  BinaryExpression
+                    Identifier: ' i'
+                    LessThanEqualsToken
+                    Identifier: ' newVersion'
+                  PostfixUnaryExpression
+                    Identifier: ' i'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' snap'
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'versions'
+                            NonNullExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'versionToIndex'
+                                Identifier: 'i'
+                    ForOfStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' textChange'
+                      PropertyAccessExpression
+                        Identifier: ' snap'
+                        Identifier: 'changesSincePreviousVersion'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        textChangeRanges'
+                              Identifier: 'push'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'textChange'
+                                Identifier: 'getTextChangeRange'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' collapseTextChangeRangesAcrossMultipleVersions'
+                    Identifier: 'textChangeRanges'
+              Block
+                ReturnStatement
+                  Identifier: ' undefined'
+          Block
+            ReturnStatement
+              Identifier: ' unchangedTextChangeRange'
+    MethodDeclaration
+      Identifier: '
+
+    getLineCount'
+      NumberKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: '_getSnapshot'
+                Identifier: 'index'
+              Identifier: 'getLineCount'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fromString'
+      Parameter
+        Identifier: 'script'
+        StringKeyword
+      TypeReference
+        Identifier: ' ScriptVersionCache'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' svc'
+              NewExpression
+                Identifier: ' ScriptVersionCache'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' snap'
+              NewExpression
+                Identifier: ' LineIndexSnapshot'
+                NumericLiteral
+                Identifier: ' svc'
+                NewExpression
+                  Identifier: ' LineIndex'
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        svc'
+                Identifier: 'versions'
+              PropertyAccessExpression
+                Identifier: 'svc'
+                Identifier: 'currentVersion'
+            EqualsToken
+            Identifier: ' snap'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lm'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' LineIndex'
+                  Identifier: 'linesFromText'
+                Identifier: 'script'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        snap'
+                Identifier: 'index'
+              Identifier: 'load'
+            PropertyAccessExpression
+              Identifier: 'lm'
+              Identifier: 'lines'
+        ReturnStatement
+          Identifier: ' svc'
+  ClassDeclaration
+    Identifier: ' LineIndexSnapshot'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IScriptSnapshot'
+    Constructor
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' version'
+        NumberKeyword
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' cache'
+        TypeReference
+          Identifier: ' ScriptVersionCache'
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' index'
+        TypeReference
+          Identifier: ' LineIndex'
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' changesSincePreviousVersion'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' TextChange'
+        Identifier: ' emptyArray'
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    getText'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeEnd'
+        NumberKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'index'
+              Identifier: 'getText'
+            Identifier: 'rangeStart'
+            BinaryExpression
+              Identifier: ' rangeEnd'
+              MinusToken
+              Identifier: ' rangeStart'
+    MethodDeclaration
+      Identifier: '
+
+    getLength'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'index'
+              Identifier: 'getLength'
+    MethodDeclaration
+      Identifier: '
+
+    getChangeRange'
+      Parameter
+        Identifier: 'oldSnapshot'
+        TypeReference
+          Identifier: ' IScriptSnapshot'
+      UnionType
+        TypeReference
+          Identifier: ' TextChangeRange'
+        UndefinedKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'oldSnapshot'
+              InstanceOfKeyword
+              Identifier: ' LineIndexSnapshot'
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'cache'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' oldSnapshot'
+                Identifier: 'cache'
+          Block
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'version'
+                LessThanEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' oldSnapshot'
+                  Identifier: 'version'
+              Block
+                ReturnStatement
+                  Identifier: ' unchangedTextChangeRange'
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'cache'
+                      Identifier: 'getTextChangesBetweenVersions'
+                    PropertyAccessExpression
+                      Identifier: 'oldSnapshot'
+                      Identifier: 'version'
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'version'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' LineIndex'
+    PropertyDeclaration
+      Identifier: '
+    root'
+      ExclamationToken
+      TypeReference
+        Identifier: ' LineNode'
+    PropertyDeclaration
+      Identifier: '
+    // set this to true to check each edit for accuracy
+    checkEdits'
+      FalseKeyword
+    MethodDeclaration
+      Identifier: '
+
+    absolutePositionOfStartOfLine'
+      Parameter
+        Identifier: 'oneBasedLine'
+        NumberKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'lineNumberToInfo'
+              Identifier: 'oneBasedLine'
+            Identifier: 'absolutePosition'
+    MethodDeclaration
+      Identifier: '
+
+    positionToLineOffset'
+      Parameter
+        Identifier: 'position'
+        NumberKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Location'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' oneBasedLine'
+                BindingElement
+                  Identifier: ' zeroBasedColumn'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'root'
+                  Identifier: 'charOffsetToLineInfo'
+                NumericLiteral
+                Identifier: ' position'
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' line'
+              Identifier: ' oneBasedLine'
+            PropertyAssignment
+              Identifier: ' offset'
+              BinaryExpression
+                Identifier: ' zeroBasedColumn'
+                PlusToken
+                NumericLiteral
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' positionToColumnAndLineText'
+      Parameter
+        Identifier: 'position'
+        NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' zeroBasedColumn'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' lineText'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'root'
+              Identifier: 'charOffsetToLineInfo'
+            NumericLiteral
+            Identifier: ' position'
+    MethodDeclaration
+      Identifier: '
+
+    getLineCount'
+      NumberKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'root'
+              Identifier: 'lineCount'
+    MethodDeclaration
+      Identifier: '
+
+    lineNumberToInfo'
+      Parameter
+        Identifier: 'oneBasedLine'
+        NumberKeyword
+      TypeReference
+        Identifier: ' AbsolutePositionAndLineText'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lineCount'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getLineCount'
+        IfStatement
+          BinaryExpression
+            Identifier: 'oneBasedLine'
+            LessThanEqualsToken
+            Identifier: ' lineCount'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' position'
+                    BindingElement
+                      Identifier: ' leaf'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'root'
+                      Identifier: 'lineNumberToInfo'
+                    Identifier: 'oneBasedLine'
+                    NumericLiteral
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' absolutePosition'
+                  Identifier: ' position'
+                PropertyAssignment
+                  Identifier: ' lineText'
+                  BinaryExpression
+                    Identifier: ' leaf'
+                    AmpersandAmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' leaf'
+                      Identifier: 'text'
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' absolutePosition'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'root'
+                      Identifier: 'charCount'
+                PropertyAssignment
+                  Identifier: ' lineText'
+                  Identifier: ' undefined'
+    MethodDeclaration
+      Identifier: '
+
+    load'
+      Parameter
+        Identifier: 'lines'
+        ArrayType
+          StringKeyword
+      VoidKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'lines'
+              Identifier: 'length'
+            GreaterThanToken
+            NumericLiteral
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' leaves'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' LineLeaf'
+                  ArrayLiteralExpression
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' lines'
+                  Identifier: 'length'
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: '
+                leaves'
+                      Identifier: 'i'
+                    EqualsToken
+                    NewExpression
+                      Identifier: ' LineLeaf'
+                      ElementAccessExpression
+                        Identifier: 'lines'
+                        Identifier: 'i'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'root'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' LineIndex'
+                    Identifier: 'buildTreeFromBottom'
+                  Identifier: 'leaves'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'root'
+                EqualsToken
+                NewExpression
+                  Identifier: ' LineNode'
+    MethodDeclaration
+      Identifier: '
+
+    walk'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' walkFns'
+        TypeReference
+          Identifier: ' LineIndexWalker'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'root'
+              Identifier: 'walk'
+            Identifier: 'rangeStart'
+            Identifier: ' rangeLength'
+            Identifier: ' walkFns'
+    MethodDeclaration
+      Identifier: '
+
+    getText'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' accum'
+              StringLiteral
+        IfStatement
+          BinaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'rangeLength'
+                GreaterThanToken
+                NumericLiteral
+            AmpersandAmpersandToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'rangeStart'
+                LessThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'root'
+                    Identifier: 'charCount'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'walk'
+                Identifier: 'rangeStart'
+                Identifier: ' rangeLength'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                goSubtree'
+                    TrueKeyword
+                  PropertyAssignment
+                    Identifier: '
+                done'
+                    FalseKeyword
+                  PropertyAssignment
+                    Identifier: '
+                leaf'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'relativeStart'
+                        NumberKeyword
+                      Parameter
+                        Identifier: ' relativeLength'
+                        NumberKeyword
+                      Parameter
+                        Identifier: ' ll'
+                        TypeReference
+                          Identifier: ' LineLeaf'
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                    accum'
+                            EqualsToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' accum'
+                                Identifier: 'concat'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'll'
+                                    Identifier: 'text'
+                                  Identifier: 'substring'
+                                Identifier: 'relativeStart'
+                                BinaryExpression
+                                  Identifier: ' relativeStart'
+                                  PlusToken
+                                  Identifier: ' relativeLength'
+        ReturnStatement
+          Identifier: ' accum'
+    MethodDeclaration
+      Identifier: '
+
+    getLength'
+      NumberKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'root'
+              Identifier: 'charCount'
+    MethodDeclaration
+      Identifier: '
+
+    every'
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          Parameter
+            Identifier: 'll'
+            TypeReference
+              Identifier: ' LineLeaf'
+          Parameter
+            Identifier: ' s'
+            NumberKeyword
+          Parameter
+            Identifier: ' len'
+            NumberKeyword
+          BooleanKeyword
+      Parameter
+        Identifier: ' rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeEnd'
+        QuestionToken
+        NumberKeyword
+      BooleanKeyword
+      Block
+        IfStatement
+          PrefixUnaryExpression
+            Identifier: 'rangeEnd'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            rangeEnd'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'root'
+                    Identifier: 'charCount'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' walkFns'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            goSubtree'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            done'
+                  FalseKeyword
+                MethodDeclaration
+                  Identifier: '
+            leaf'
+                  Parameter
+                    Identifier: 'this'
+                    TypeReference
+                      Identifier: ' LineIndexWalker'
+                  Parameter
+                    Identifier: ' relativeStart'
+                    NumberKeyword
+                  Parameter
+                    Identifier: ' relativeLength'
+                    NumberKeyword
+                  Parameter
+                    Identifier: ' ll'
+                    TypeReference
+                      Identifier: ' LineLeaf'
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'f'
+                          Identifier: 'll'
+                          Identifier: ' relativeStart'
+                          Identifier: ' relativeLength'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'done'
+                            EqualsToken
+                            TrueKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'walk'
+            Identifier: 'rangeStart'
+            BinaryExpression
+              Identifier: ' rangeEnd'
+              MinusToken
+              Identifier: ' rangeStart'
+            Identifier: ' walkFns'
+        ReturnStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              Identifier: 'walkFns'
+              Identifier: 'done'
+    MethodDeclaration
+      Identifier: '
+
+    edit'
+      Parameter
+        Identifier: 'pos'
+        NumberKeyword
+      Parameter
+        Identifier: ' deleteLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' newText'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' LineIndex'
+      Block
+        IfStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'root'
+                Identifier: 'charCount'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            Debug'
+                  Identifier: 'assert'
+                BinaryExpression
+                  Identifier: 'deleteLength'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+            IfStatement
+              BinaryExpression
+                Identifier: 'newText'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'load'
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'LineIndex'
+                          Identifier: 'linesFromText'
+                        Identifier: 'newText'
+                      Identifier: 'lines'
+                ReturnStatement
+                  ThisKeyword
+            ReturnStatement
+              NonNullExpression
+                Identifier: ' undefined'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' checkText'
+                  UnionType
+                    StringKeyword
+                    UndefinedKeyword
+            IfStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'checkEdits'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' source'
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'getText'
+                        NumericLiteral
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'root'
+                            Identifier: 'charCount'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                checkText'
+                    EqualsToken
+                    BinaryExpression
+                      BinaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' source'
+                            Identifier: 'slice'
+                          NumericLiteral
+                          Identifier: ' pos'
+                        PlusToken
+                        Identifier: ' newText'
+                      PlusToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' source'
+                          Identifier: 'slice'
+                        BinaryExpression
+                          Identifier: 'pos'
+                          PlusToken
+                          Identifier: ' deleteLength'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' walker'
+                  NewExpression
+                    Identifier: ' EditWalker'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' suppressTrailingText'
+                  FalseKeyword
+            IfStatement
+              BinaryExpression
+                Identifier: 'pos'
+                GreaterThanEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'root'
+                    Identifier: 'charCount'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                // insert at end
+                pos'
+                    EqualsToken
+                    BinaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'root'
+                          Identifier: 'charCount'
+                      MinusToken
+                      NumericLiteral
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' endString'
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'getText'
+                        Identifier: 'pos'
+                        NumericLiteral
+                IfStatement
+                  Identifier: 'newText'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    newText'
+                        EqualsToken
+                        BinaryExpression
+                          Identifier: ' endString'
+                          PlusToken
+                          Identifier: ' newText'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    newText'
+                        EqualsToken
+                        Identifier: ' endString'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                deleteLength'
+                    EqualsToken
+                    NumericLiteral
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                suppressTrailingText'
+                    EqualsToken
+                    TrueKeyword
+              IfStatement
+                BinaryExpression
+                  Identifier: 'deleteLength'
+                  GreaterThanToken
+                  NumericLiteral
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' e'
+                        BinaryExpression
+                          Identifier: ' pos'
+                          PlusToken
+                          Identifier: ' deleteLength'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' zeroBasedColumn'
+                          BindingElement
+                            Identifier: ' lineText'
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'positionToColumnAndLineText'
+                          Identifier: 'e'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'zeroBasedColumn'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    // move range end just past line that will merge with previous line
+                    deleteLength'
+                          PlusEqualsToken
+                          PropertyAccessExpression
+                            NonNullExpression
+                              Identifier: ' lineText'
+                            Identifier: 'length'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: ' // TODO: GH#18217
+                    // store text by appending to end of insertedText
+                    newText'
+                          EqualsToken
+                          ConditionalExpression
+                            Identifier: ' newText'
+                            QuestionToken
+                            BinaryExpression
+                              Identifier: ' newText'
+                              PlusToken
+                              Identifier: ' lineText'
+                            ColonToken
+                            Identifier: ' lineText'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'root'
+                  Identifier: 'walk'
+                Identifier: 'pos'
+                Identifier: ' deleteLength'
+                Identifier: ' walker'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            walker'
+                  Identifier: 'insertLines'
+                Identifier: 'newText'
+                Identifier: ' suppressTrailingText'
+            IfStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'checkEdits'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' updatedText'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' walker'
+                            Identifier: 'lineIndex'
+                          Identifier: 'getText'
+                        NumericLiteral
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' walker'
+                              Identifier: 'lineIndex'
+                            Identifier: 'getLength'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                Debug'
+                      Identifier: 'assert'
+                    BinaryExpression
+                      Identifier: 'checkText'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' updatedText'
+                    StringLiteral
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' walker'
+                Identifier: 'lineIndex'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' buildTreeFromBottom'
+      Parameter
+        Identifier: 'nodes'
+        ArrayType
+          TypeReference
+            Identifier: ' LineCollection'
+      TypeReference
+        Identifier: ' LineNode'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'nodes'
+              Identifier: 'length'
+            LessThanToken
+            Identifier: ' lineCollectionCapacity'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' LineNode'
+                Identifier: 'nodes'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' interiorNodes'
+              NewExpression
+                Identifier: ' Array'
+                TypeReference
+                  Identifier: 'LineNode'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Math'
+                    Identifier: 'ceil'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'nodes'
+                      Identifier: 'length'
+                    SlashToken
+                    Identifier: ' lineCollectionCapacity'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' nodeIndex'
+              NumericLiteral
+        ForStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' i'
+              NumericLiteral
+          BinaryExpression
+            Identifier: ' i'
+            LessThanToken
+            PropertyAccessExpression
+              Identifier: ' interiorNodes'
+              Identifier: 'length'
+          PostfixUnaryExpression
+            Identifier: ' i'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' end'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Math'
+                      Identifier: 'min'
+                    BinaryExpression
+                      Identifier: 'nodeIndex'
+                      PlusToken
+                      Identifier: ' lineCollectionCapacity'
+                    PropertyAccessExpression
+                      Identifier: ' nodes'
+                      Identifier: 'length'
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: '
+            interiorNodes'
+                  Identifier: 'i'
+                EqualsToken
+                NewExpression
+                  Identifier: ' LineNode'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'nodes'
+                      Identifier: 'slice'
+                    Identifier: 'nodeIndex'
+                    Identifier: ' end'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            nodeIndex'
+                EqualsToken
+                Identifier: ' end'
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'buildTreeFromBottom'
+            Identifier: 'interiorNodes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' linesFromText'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        lines'
+          ArrayType
+            StringKeyword
+        PropertySignature
+          Identifier: '
+        lineMap'
+          ArrayType
+            NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lineMap'
+              CallExpression
+                Identifier: ' computeLineStarts'
+                Identifier: 'text'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'lineMap'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' lines'
+                  AsExpression
+                    ArrayLiteralExpression
+                    ArrayType
+                      StringKeyword
+                ShorthandPropertyAssignment
+                  Identifier: ' lineMap'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lines'
+              AsExpression
+                NewExpression
+                  Identifier: ' Array'
+                  PropertyAccessExpression
+                    Identifier: 'lineMap'
+                    Identifier: 'length'
+                ArrayType
+                  StringKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lc'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' lineMap'
+                  Identifier: 'length'
+                MinusToken
+                NumericLiteral
+        ForStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lmi'
+              NumericLiteral
+          BinaryExpression
+            Identifier: ' lmi'
+            LessThanToken
+            Identifier: ' lc'
+          PostfixUnaryExpression
+            Identifier: ' lmi'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: '
+            lines'
+                  Identifier: 'lmi'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' text'
+                    Identifier: 'substring'
+                  ElementAccessExpression
+                    Identifier: 'lineMap'
+                    Identifier: 'lmi'
+                  ElementAccessExpression
+                    Identifier: ' lineMap'
+                    BinaryExpression
+                      Identifier: 'lmi'
+                      PlusToken
+                      NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' endText'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' text'
+                  Identifier: 'substring'
+                ElementAccessExpression
+                  Identifier: 'lineMap'
+                  Identifier: 'lc'
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'endText'
+              Identifier: 'length'
+            GreaterThanToken
+            NumericLiteral
+          Block
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: '
+            lines'
+                  Identifier: 'lc'
+                EqualsToken
+                Identifier: ' endText'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            lines'
+                  Identifier: 'pop'
+        ReturnStatement
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' lines'
+            ShorthandPropertyAssignment
+              Identifier: ' lineMap'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' LineNode'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' LineCollection'
+    PropertyDeclaration
+      Identifier: '
+    totalChars'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    totalLines'
+      NumericLiteral
+    Constructor
+      Parameter
+        PrivateKeyword
+        ReadonlyKeyword
+        Identifier: ' children'
+        ArrayType
+          TypeReference
+            Identifier: ' LineCollection'
+        ArrayLiteralExpression
+      Block
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'children'
+            Identifier: 'length'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'updateCounts'
+    MethodDeclaration
+      Identifier: '
+
+    isLeaf'
+      TypePredicate
+        ThisType
+        TypeReference
+          Identifier: ' LineLeaf'
+      Block
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      Identifier: '
+
+    updateCounts'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'totalChars'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'totalLines'
+            EqualsToken
+            NumericLiteral
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' child'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'children'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'totalChars'
+                PlusEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' child'
+                    Identifier: 'charCount'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'totalLines'
+                PlusEqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' child'
+                    Identifier: 'lineCount'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' execWalk'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' walkFns'
+        TypeReference
+          Identifier: ' LineIndexWalker'
+      Parameter
+        Identifier: ' childIndex'
+        NumberKeyword
+      Parameter
+        Identifier: ' nodeType'
+        TypeReference
+          Identifier: ' CharRangeSection'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'walkFns'
+            Identifier: 'pre'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            walkFns'
+                  Identifier: 'pre'
+                Identifier: 'rangeStart'
+                Identifier: ' rangeLength'
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'children'
+                  Identifier: 'childIndex'
+                ThisKeyword
+                Identifier: ' nodeType'
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'walkFns'
+            Identifier: 'goSubtree'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'children'
+                    Identifier: 'childIndex'
+                  Identifier: 'walk'
+                Identifier: 'rangeStart'
+                Identifier: ' rangeLength'
+                Identifier: ' walkFns'
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'walkFns'
+                Identifier: 'post'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                walkFns'
+                      Identifier: 'post'
+                    Identifier: 'rangeStart'
+                    Identifier: ' rangeLength'
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'children'
+                      Identifier: 'childIndex'
+                    ThisKeyword
+                    Identifier: ' nodeType'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            walkFns'
+                  Identifier: 'goSubtree'
+                EqualsToken
+                TrueKeyword
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' walkFns'
+            Identifier: 'done'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' skipChild'
+      Parameter
+        Identifier: 'relativeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' relativeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' childIndex'
+        NumberKeyword
+      Parameter
+        Identifier: ' walkFns'
+        TypeReference
+          Identifier: ' LineIndexWalker'
+      Parameter
+        Identifier: ' nodeType'
+        TypeReference
+          Identifier: ' CharRangeSection'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'walkFns'
+              Identifier: 'pre'
+            AmpersandAmpersandToken
+            ParenthesizedExpression
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'walkFns'
+                  Identifier: 'done'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            walkFns'
+                  Identifier: 'pre'
+                Identifier: 'relativeStart'
+                Identifier: ' relativeLength'
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'children'
+                  Identifier: 'childIndex'
+                ThisKeyword
+                Identifier: ' nodeType'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            walkFns'
+                  Identifier: 'goSubtree'
+                EqualsToken
+                TrueKeyword
+    MethodDeclaration
+      Identifier: '
+
+    walk'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' walkFns'
+        TypeReference
+          Identifier: ' LineIndexWalker'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' childIndex'
+              NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' childCharCount'
+              CallExpression
+                PropertyAccessExpression
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'children'
+                    Identifier: 'childIndex'
+                  Identifier: 'charCount'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' adjustedStart'
+              Identifier: ' rangeStart'
+        WhileStatement
+          BinaryExpression
+            Identifier: 'adjustedStart'
+            GreaterThanEqualsToken
+            Identifier: ' childCharCount'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'skipChild'
+                Identifier: 'adjustedStart'
+                Identifier: ' rangeLength'
+                Identifier: ' childIndex'
+                Identifier: ' walkFns'
+                PropertyAccessExpression
+                  Identifier: ' CharRangeSection'
+                  Identifier: 'PreStart'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            adjustedStart'
+                MinusEqualsToken
+                Identifier: ' childCharCount'
+            ExpressionStatement
+              PostfixUnaryExpression
+                Identifier: '
+            childIndex'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            childCharCount'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'children'
+                      Identifier: 'childIndex'
+                    Identifier: 'charCount'
+        IfStatement
+          BinaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'adjustedStart'
+                PlusToken
+                Identifier: ' rangeLength'
+            LessThanEqualsToken
+            Identifier: ' childCharCount'
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'execWalk'
+                Identifier: 'adjustedStart'
+                Identifier: ' rangeLength'
+                Identifier: ' walkFns'
+                Identifier: ' childIndex'
+                PropertyAccessExpression
+                  Identifier: ' CharRangeSection'
+                  Identifier: 'Entire'
+              Block
+                ReturnStatement
+          Block
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'execWalk'
+                Identifier: 'adjustedStart'
+                BinaryExpression
+                  Identifier: ' childCharCount'
+                  MinusToken
+                  Identifier: ' adjustedStart'
+                Identifier: ' walkFns'
+                Identifier: ' childIndex'
+                PropertyAccessExpression
+                  Identifier: ' CharRangeSection'
+                  Identifier: 'Start'
+              Block
+                ReturnStatement
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' adjustedLength'
+                  BinaryExpression
+                    Identifier: ' rangeLength'
+                    MinusToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        Identifier: 'childCharCount'
+                        MinusToken
+                        Identifier: ' adjustedStart'
+            ExpressionStatement
+              PostfixUnaryExpression
+                Identifier: '
+            childIndex'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' child'
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'children'
+                    Identifier: 'childIndex'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            childCharCount'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' child'
+                    Identifier: 'charCount'
+            WhileStatement
+              BinaryExpression
+                Identifier: 'adjustedLength'
+                GreaterThanToken
+                Identifier: ' childCharCount'
+              Block
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'execWalk'
+                    NumericLiteral
+                    Identifier: ' childCharCount'
+                    Identifier: ' walkFns'
+                    Identifier: ' childIndex'
+                    PropertyAccessExpression
+                      Identifier: ' CharRangeSection'
+                      Identifier: 'Mid'
+                  Block
+                    ReturnStatement
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                adjustedLength'
+                    MinusEqualsToken
+                    Identifier: ' childCharCount'
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    Identifier: '
+                childIndex'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                childCharCount'
+                    EqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'children'
+                          Identifier: 'childIndex'
+                        Identifier: 'charCount'
+            IfStatement
+              BinaryExpression
+                Identifier: 'adjustedLength'
+                GreaterThanToken
+                NumericLiteral
+              Block
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'execWalk'
+                    NumericLiteral
+                    Identifier: ' adjustedLength'
+                    Identifier: ' walkFns'
+                    Identifier: ' childIndex'
+                    PropertyAccessExpression
+                      Identifier: ' CharRangeSection'
+                      Identifier: 'End'
+                  Block
+                    ReturnStatement
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'walkFns'
+            Identifier: 'pre'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' clen'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'children'
+                    Identifier: 'length'
+            IfStatement
+              BinaryExpression
+                Identifier: 'childIndex'
+                LessThanToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'clen'
+                    MinusToken
+                    NumericLiteral
+              Block
+                ForStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' ej'
+                      BinaryExpression
+                        Identifier: ' childIndex'
+                        PlusToken
+                        NumericLiteral
+                  BinaryExpression
+                    Identifier: ' ej'
+                    LessThanToken
+                    Identifier: ' clen'
+                  PostfixUnaryExpression
+                    Identifier: ' ej'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'skipChild'
+                        NumericLiteral
+                        NumericLiteral
+                        Identifier: ' ej'
+                        Identifier: ' walkFns'
+                        PropertyAccessExpression
+                          Identifier: ' CharRangeSection'
+                          Identifier: 'PostEnd'
+    MethodDeclaration
+      Identifier: '
+
+    // Input position is relative to the start of this node.
+    // Output line number is absolute.
+    charOffsetToLineInfo'
+      Parameter
+        Identifier: 'lineNumberAccumulator'
+        NumberKeyword
+      Parameter
+        Identifier: ' relativePosition'
+        NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' oneBasedLine'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' zeroBasedColumn'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' lineText'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'children'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' oneBasedLine'
+                  Identifier: ' lineNumberAccumulator'
+                PropertyAssignment
+                  Identifier: ' zeroBasedColumn'
+                  Identifier: ' relativePosition'
+                PropertyAssignment
+                  Identifier: ' lineText'
+                  Identifier: ' undefined'
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' child'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'children'
+          Block
+            IfStatement
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'child'
+                    Identifier: 'charCount'
+                GreaterThanToken
+                Identifier: ' relativePosition'
+              Block
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'child'
+                      Identifier: 'isLeaf'
+                  Block
+                    ReturnStatement
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' oneBasedLine'
+                          Identifier: ' lineNumberAccumulator'
+                        PropertyAssignment
+                          Identifier: ' zeroBasedColumn'
+                          Identifier: ' relativePosition'
+                        PropertyAssignment
+                          Identifier: ' lineText'
+                          PropertyAccessExpression
+                            Identifier: ' child'
+                            Identifier: 'text'
+                  Block
+                    ReturnStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            AsExpression
+                              Identifier: 'child'
+                              TypeReference
+                                Identifier: ' LineNode'
+                          Identifier: 'charOffsetToLineInfo'
+                        Identifier: 'lineNumberAccumulator'
+                        Identifier: ' relativePosition'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                relativePosition'
+                    MinusEqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' child'
+                        Identifier: 'charCount'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                lineNumberAccumulator'
+                    PlusEqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' child'
+                        Identifier: 'lineCount'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lineCount'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'lineCount'
+        IfStatement
+          BinaryExpression
+            Identifier: 'lineCount'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' oneBasedLine'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' zeroBasedColumn'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' lineText'
+                  Identifier: ' undefined'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' leaf'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Debug'
+                  Identifier: 'checkDefined'
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'lineNumberToInfo'
+                    Identifier: 'lineCount'
+                    NumericLiteral
+                  Identifier: 'leaf'
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' oneBasedLine'
+              Identifier: ' lineCount'
+            PropertyAssignment
+              Identifier: ' zeroBasedColumn'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' leaf'
+                  Identifier: 'charCount'
+            PropertyAssignment
+              Identifier: ' lineText'
+              Identifier: ' undefined'
+    MethodDeclaration
+      Identifier: '
+
+    /**
+     * Input line number is relative to the start of this node.
+     * Output line number is relative to the child.
+     * positionAccumulator will be an absolute position once relativeLineNumber reaches 0.
+     */
+    lineNumberToInfo'
+      Parameter
+        Identifier: 'relativeOneBasedLine'
+        NumberKeyword
+      Parameter
+        Identifier: ' positionAccumulator'
+        NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' position'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' leaf'
+          UnionType
+            TypeReference
+              Identifier: ' LineLeaf'
+            UndefinedKeyword
+      Block
+        ForOfStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' child'
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'children'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' childLineCount'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' child'
+                      Identifier: 'lineCount'
+            IfStatement
+              BinaryExpression
+                Identifier: 'childLineCount'
+                GreaterThanEqualsToken
+                Identifier: ' relativeOneBasedLine'
+              Block
+                ReturnStatement
+                  ConditionalExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' child'
+                        Identifier: 'isLeaf'
+                    QuestionToken
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' position'
+                        Identifier: ' positionAccumulator'
+                      PropertyAssignment
+                        Identifier: ' leaf'
+                        Identifier: ' child'
+                    ColonToken
+                    CallExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'child'
+                            TypeReference
+                              Identifier: ' LineNode'
+                        Identifier: 'lineNumberToInfo'
+                      Identifier: 'relativeOneBasedLine'
+                      Identifier: ' positionAccumulator'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                relativeOneBasedLine'
+                    MinusEqualsToken
+                    Identifier: ' childLineCount'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                positionAccumulator'
+                    PlusEqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' child'
+                        Identifier: 'charCount'
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' position'
+              Identifier: ' positionAccumulator'
+            PropertyAssignment
+              Identifier: ' leaf'
+              Identifier: ' undefined'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' splitAfter'
+      Parameter
+        Identifier: 'childIndex'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' splitNode'
+              UnionType
+                TypeReference
+                  Identifier: ' LineNode'
+                UndefinedKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' clen'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'children'
+                Identifier: 'length'
+        ExpressionStatement
+          PostfixUnaryExpression
+            Identifier: '
+        childIndex'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' endLength'
+              Identifier: ' childIndex'
+        IfStatement
+          BinaryExpression
+            Identifier: 'childIndex'
+            LessThanToken
+            Identifier: ' clen'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            splitNode'
+                EqualsToken
+                NewExpression
+                  Identifier: ' LineNode'
+            WhileStatement
+              BinaryExpression
+                Identifier: 'childIndex'
+                LessThanToken
+                Identifier: ' clen'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                splitNode'
+                      Identifier: 'add'
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'children'
+                      Identifier: 'childIndex'
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    Identifier: '
+                childIndex'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            splitNode'
+                  Identifier: 'updateCounts'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'children'
+              Identifier: 'length'
+            EqualsToken
+            Identifier: ' endLength'
+        ReturnStatement
+          Identifier: ' splitNode'
+    MethodDeclaration
+      Identifier: '
+
+    remove'
+      Parameter
+        Identifier: 'child'
+        TypeReference
+          Identifier: ' LineCollection'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' childIndex'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'findChildIndex'
+                Identifier: 'child'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' clen'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'children'
+                Identifier: 'length'
+        IfStatement
+          BinaryExpression
+            Identifier: 'childIndex'
+            LessThanToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'clen'
+                MinusToken
+                NumericLiteral
+          Block
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  Identifier: ' childIndex'
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'clen'
+                    MinusToken
+                    NumericLiteral
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'children'
+                      Identifier: 'i'
+                    EqualsToken
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'children'
+                      BinaryExpression
+                        Identifier: 'i'
+                        PlusToken
+                        NumericLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'children'
+              Identifier: 'pop'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' findChildIndex'
+      Parameter
+        Identifier: 'child'
+        TypeReference
+          Identifier: ' LineCollection'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' childIndex'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'children'
+                  Identifier: 'indexOf'
+                Identifier: 'child'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        Debug'
+              Identifier: 'assert'
+            BinaryExpression
+              Identifier: 'childIndex'
+              ExclamationEqualsEqualsToken
+              PrefixUnaryExpression
+                NumericLiteral
+        ReturnStatement
+          Identifier: ' childIndex'
+    MethodDeclaration
+      Identifier: '
+
+    insertAt'
+      Parameter
+        Identifier: 'child'
+        TypeReference
+          Identifier: ' LineCollection'
+      Parameter
+        Identifier: ' nodes'
+        ArrayType
+          TypeReference
+            Identifier: ' LineCollection'
+      ArrayType
+        TypeReference
+          Identifier: ' LineNode'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' childIndex'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'findChildIndex'
+                Identifier: 'child'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' clen'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'children'
+                Identifier: 'length'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' nodeCount'
+              PropertyAccessExpression
+                Identifier: ' nodes'
+                Identifier: 'length'
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'clen'
+                  LessThanToken
+                  Identifier: ' lineCollectionCapacity'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'childIndex'
+                  EqualsEqualsEqualsToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'clen'
+                      MinusToken
+                      NumericLiteral
+            AmpersandAmpersandToken
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'nodeCount'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'add'
+                ElementAccessExpression
+                  Identifier: 'nodes'
+                  NumericLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'updateCounts'
+            ReturnStatement
+              ArrayLiteralExpression
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' shiftNode'
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'splitAfter'
+                    Identifier: 'childIndex'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' nodeIndex'
+                  NumericLiteral
+            ExpressionStatement
+              PostfixUnaryExpression
+                Identifier: '
+            childIndex'
+            WhileStatement
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'childIndex'
+                    LessThanToken
+                    Identifier: ' lineCollectionCapacity'
+                AmpersandAmpersandToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'nodeIndex'
+                    LessThanToken
+                    Identifier: ' nodeCount'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'children'
+                      Identifier: 'childIndex'
+                    EqualsToken
+                    ElementAccessExpression
+                      Identifier: ' nodes'
+                      Identifier: 'nodeIndex'
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    Identifier: '
+                childIndex'
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    Identifier: '
+                nodeIndex'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' splitNodes'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' LineNode'
+                  ArrayLiteralExpression
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' splitNodeCount'
+                  NumericLiteral
+            IfStatement
+              BinaryExpression
+                Identifier: 'nodeIndex'
+                LessThanToken
+                Identifier: ' nodeCount'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                splitNodeCount'
+                    EqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Math'
+                        Identifier: 'ceil'
+                      BinaryExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            Identifier: 'nodeCount'
+                            MinusToken
+                            Identifier: ' nodeIndex'
+                        SlashToken
+                        Identifier: ' lineCollectionCapacity'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                splitNodes'
+                    EqualsToken
+                    AsExpression
+                      NewExpression
+                        Identifier: ' Array'
+                        Identifier: 'splitNodeCount'
+                      ArrayType
+                        TypeReference
+                          Identifier: ' LineNode'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' splitNodeIndex'
+                      NumericLiteral
+                ForStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' i'
+                      NumericLiteral
+                  BinaryExpression
+                    Identifier: ' i'
+                    LessThanToken
+                    Identifier: ' splitNodeCount'
+                  PostfixUnaryExpression
+                    Identifier: ' i'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        ElementAccessExpression
+                          Identifier: '
+                    splitNodes'
+                          Identifier: 'i'
+                        EqualsToken
+                        NewExpression
+                          Identifier: ' LineNode'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' splitNode'
+                      ElementAccessExpression
+                        Identifier: ' splitNodes'
+                        NumericLiteral
+                WhileStatement
+                  BinaryExpression
+                    Identifier: 'nodeIndex'
+                    LessThanToken
+                    Identifier: ' nodeCount'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    splitNode'
+                          Identifier: 'add'
+                        ElementAccessExpression
+                          Identifier: 'nodes'
+                          Identifier: 'nodeIndex'
+                    ExpressionStatement
+                      PostfixUnaryExpression
+                        Identifier: '
+                    nodeIndex'
+                    IfStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'splitNode'
+                            Identifier: 'children'
+                          Identifier: 'length'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' lineCollectionCapacity'
+                      Block
+                        ExpressionStatement
+                          PostfixUnaryExpression
+                            Identifier: '
+                        splitNodeIndex'
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                        splitNode'
+                            EqualsToken
+                            ElementAccessExpression
+                              Identifier: ' splitNodes'
+                              Identifier: 'splitNodeIndex'
+                ForStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' i'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' splitNodes'
+                          Identifier: 'length'
+                        MinusToken
+                        NumericLiteral
+                  BinaryExpression
+                    Identifier: ' i'
+                    GreaterThanEqualsToken
+                    NumericLiteral
+                  PostfixUnaryExpression
+                    Identifier: ' i'
+                  Block
+                    IfStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              Identifier: 'splitNodes'
+                              Identifier: 'i'
+                            Identifier: 'children'
+                          Identifier: 'length'
+                        EqualsEqualsEqualsToken
+                        NumericLiteral
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        splitNodes'
+                              Identifier: 'pop'
+            IfStatement
+              Identifier: 'shiftNode'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                splitNodes'
+                      Identifier: 'push'
+                    Identifier: 'shiftNode'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'updateCounts'
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                Identifier: ' splitNodeCount'
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ElementAccessExpression
+                        Identifier: '
+                splitNodes'
+                        Identifier: 'i'
+                      Identifier: 'updateCounts'
+            ReturnStatement
+              Identifier: ' splitNodes'
+    MethodDeclaration
+      Identifier: '
+
+    // assume there is room for the item; return true if more room
+    add'
+      Parameter
+        Identifier: 'collection'
+        TypeReference
+          Identifier: ' LineCollection'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'children'
+              Identifier: 'push'
+            Identifier: 'collection'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        Debug'
+              Identifier: 'assert'
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'children'
+                Identifier: 'length'
+              LessThanEqualsToken
+              Identifier: ' lineCollectionCapacity'
+    MethodDeclaration
+      Identifier: '
+
+    charCount'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'totalChars'
+    MethodDeclaration
+      Identifier: '
+
+    lineCount'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'totalLines'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' LineLeaf'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' LineCollection'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' text'
+        StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    isLeaf'
+      TypePredicate
+        ThisType
+        TypeReference
+          Identifier: ' LineLeaf'
+      Block
+        ReturnStatement
+          TrueKeyword
+    MethodDeclaration
+      Identifier: '
+
+    walk'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' walkFns'
+        TypeReference
+          Identifier: ' LineIndexWalker'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        walkFns'
+              Identifier: 'leaf'
+            Identifier: 'rangeStart'
+            Identifier: ' rangeLength'
+            ThisKeyword
+    MethodDeclaration
+      Identifier: '
+
+    charCount'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'text'
+            Identifier: 'length'
+    MethodDeclaration
+      Identifier: '
+
+    lineCount'
+      Block
+        ReturnStatement
+          NumericLiteral

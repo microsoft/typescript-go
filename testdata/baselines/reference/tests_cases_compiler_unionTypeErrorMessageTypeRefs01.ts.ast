@@ -1,0 +1,206 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: ' foo'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: ' bar'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Baz'
+    PropertySignature
+      Identifier: ' baz'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' Kwah'
+    PropertySignature
+      Identifier: ' kwah'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    aProp'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    bProp'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    cProp'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+          TypeReference
+            Identifier: 'Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thingOfInterfaces'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+            TypeReference
+              Identifier: 'Bar'
+          TypeReference
+            Identifier: ' B'
+            TypeReference
+              Identifier: 'Baz'
+          TypeReference
+            Identifier: ' C'
+            TypeReference
+              Identifier: 'Kwah'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+thingOfInterfaces'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+thingOfInterfaces'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+thingOfInterfaces'
+      EqualsToken
+      Identifier: ' c'
+  TypeAliasDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    xProp'
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Y'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    yProp'
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Z'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    zProp'
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' X'
+          TypeReference
+            Identifier: 'Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Y'
+          TypeReference
+            Identifier: 'Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' Z'
+          TypeReference
+            Identifier: 'Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thingOfTypeAliases'
+        UnionType
+          TypeReference
+            Identifier: ' X'
+            TypeReference
+              Identifier: 'Bar'
+          TypeReference
+            Identifier: ' Y'
+            TypeReference
+              Identifier: 'Baz'
+          TypeReference
+            Identifier: ' Z'
+            TypeReference
+              Identifier: 'Kwah'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+thingOfTypeAliases'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+thingOfTypeAliases'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+thingOfTypeAliases'
+      EqualsToken
+      Identifier: ' z'

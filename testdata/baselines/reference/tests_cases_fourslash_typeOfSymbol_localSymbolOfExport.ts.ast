@@ -1,0 +1,70 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ranges'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' symbolsInScope'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'symbolsInScope'
+          ElementAccessExpression
+            Identifier: 'ranges'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' symbolsInScope'
+            Identifier: 'find'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' s'
+                Identifier: 'name'
+              EqualsEqualsEqualsToken
+              StringLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'f'
+      EqualsEqualsEqualsToken
+      Identifier: ' undefined'
+    ThrowStatement
+      NewExpression
+        Identifier: ' Error'
+        StringLiteral
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'f'
+        Identifier: 'exportSymbol'
+      EqualsEqualsEqualsToken
+      Identifier: ' undefined'
+    ThrowStatement
+      NewExpression
+        Identifier: ' Error'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'typeOfSymbolAtLocation'
+      ElementAccessExpression
+        Identifier: 'ranges'
+        NumericLiteral
+      Identifier: ' f'
+      StringLiteral

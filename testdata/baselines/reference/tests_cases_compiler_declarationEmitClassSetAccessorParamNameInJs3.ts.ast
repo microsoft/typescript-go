@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    SetAccessor
+      Identifier: ' bar'
+      Parameter
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' prop'
+            StringLiteral
+      Block

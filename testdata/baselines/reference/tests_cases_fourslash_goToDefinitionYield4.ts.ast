@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// function* gen() {
+////     class C { [/*start*/yield 10]() {} }
+//// }
+
+verify'
+        Identifier: 'baselineGoToDefinition'
+      StringLiteral

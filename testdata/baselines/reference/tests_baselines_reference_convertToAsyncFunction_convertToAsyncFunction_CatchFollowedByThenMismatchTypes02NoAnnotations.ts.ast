@@ -1,0 +1,93 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*[#|*/f'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: ' fetch'
+                      StringLiteral
+                    Identifier: 'then'
+                  Identifier: 'res'
+                Identifier: 'catch'
+              Identifier: 'rej'
+            Identifier: 'then'
+          Identifier: 'res'
+  FunctionDeclaration
+    Identifier: ' res'
+    Parameter
+      Identifier: 'result'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' rej'
+    Parameter
+      Identifier: 'reject'
+    Block
+      ReturnStatement
+        Identifier: ' reject'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            AnyKeyword
+      TryStatement
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result_1'
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' fetch'
+                    StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        result'
+              EqualsToken
+              AwaitExpression
+                CallExpression
+                  Identifier: ' res'
+                  Identifier: 'result_1'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'reject'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        result'
+                EqualsToken
+                AwaitExpression
+                  CallExpression
+                    Identifier: ' rej'
+                    Identifier: 'reject'
+      ReturnStatement
+        CallExpression
+          Identifier: ' res'
+          Identifier: 'result'
+  FunctionDeclaration
+    Identifier: ' res'
+    Parameter
+      Identifier: 'result'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' rej'
+    Parameter
+      Identifier: 'reject'
+    Block
+      ReturnStatement
+        Identifier: ' reject'

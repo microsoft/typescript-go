@@ -1,0 +1,60 @@
+SourceFile
+  IfStatement
+    TrueKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      IfStatement
+        TrueKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' x'
+                    NumericLiteral
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' x'
+                    NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' x'
+                    Identifier: ' x'
+                    NumericLiteral
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' x'
+                    NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' x'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' x'
+                    NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' x'
+                    Identifier: ' x'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' x'
+                    NumericLiteral

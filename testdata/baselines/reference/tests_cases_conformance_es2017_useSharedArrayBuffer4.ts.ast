@@ -1,0 +1,43 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foge'
+        NewExpression
+          Identifier: ' SharedArrayBuffer'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foge'
+            Identifier: 'slice'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' species'
+        ElementAccessExpression
+          Identifier: ' foge'
+          PropertyAccessExpression
+            Identifier: 'Symbol'
+            Identifier: 'species'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' stringTag'
+        ElementAccessExpression
+          Identifier: ' foge'
+          PropertyAccessExpression
+            Identifier: 'Symbol'
+            Identifier: 'toStringTag'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' len'
+        PropertyAccessExpression
+          Identifier: ' foge'
+          Identifier: 'byteLength'

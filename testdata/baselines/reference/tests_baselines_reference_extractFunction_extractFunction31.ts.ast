@@ -1,0 +1,160 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            NumericLiteral
+      ExpressionStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' f'
+                  FunctionType
+                    NumberKeyword
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        /*[#|*/f'
+                EqualsToken
+                FunctionExpression
+                  NumberKeyword
+                  Block
+                    ReturnStatement
+                      Identifier: ' value'
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            NumericLiteral
+      ExpressionStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' f'
+                  FunctionType
+                    NumberKeyword
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+        /*RENAME*/newFunction'
+            FunctionDeclaration
+              Identifier: ' newFunction'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            f'
+                    EqualsToken
+                    FunctionExpression
+                      NumberKeyword
+                      Block
+                        ReturnStatement
+                          Identifier: ' value'
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            NumericLiteral
+      ExpressionStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' f'
+                  FunctionType
+                    NumberKeyword
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        f'
+                EqualsToken
+                CallExpression
+                  Identifier: ' /*RENAME*/newFunction'
+                  Identifier: 'f'
+      FunctionDeclaration
+        Identifier: ' newFunction'
+        Parameter
+          Identifier: 'f'
+          FunctionType
+            NumberKeyword
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        f'
+              EqualsToken
+              FunctionExpression
+                NumberKeyword
+                Block
+                  ReturnStatement
+                    Identifier: ' value'
+          ReturnStatement
+            Identifier: ' f'
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            NumericLiteral
+      ExpressionStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' f'
+                  FunctionType
+                    NumberKeyword
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        f'
+                EqualsToken
+                CallExpression
+                  Identifier: ' /*RENAME*/newFunction'
+                  Identifier: 'f'
+  FunctionDeclaration
+    Identifier: ' newFunction'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    f'
+          EqualsToken
+          FunctionExpression
+            NumberKeyword
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' N'
+                  Identifier: 'value'
+      ReturnStatement
+        Identifier: ' f'

@@ -1,0 +1,153 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              AnyKeyword
+            VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Robot'
+    TupleType
+      StringKeyword
+      ArrayType
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robotA'
+        TypeReference
+          Identifier: ' Robot'
+        ArrayLiteralExpression
+          StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      ArrayBindingPattern
+        OmittedExpression
+        BindingElement
+          Identifier: ' skillA'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+      ArrayLiteralExpression
+        StringLiteral
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'skillA'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'nameMB'
+          StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+      ArrayLiteralExpression
+        StringLiteral
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameMB'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'nameMA'
+          StringLiteral
+        BindingElement
+          ArrayBindingPattern
+            BindingElement
+              Identifier: '
+    primarySkillA'
+              StringLiteral
+            BindingElement
+              Identifier: '
+    secondarySkillA'
+              StringLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameMA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo1'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo1'
+      ArrayLiteralExpression
+        StringLiteral
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo2'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo2'
+      ArrayLiteralExpression
+        StringLiteral
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo3'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo3'
+      ArrayLiteralExpression
+        StringLiteral
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral

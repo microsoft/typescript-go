@@ -1,0 +1,114 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        NumberKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// oneliner
+f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// multiline, body
+f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// multiline 2, body
+f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// multiline 3, arrow on a new line
+f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// multiline 4, arguments
+f'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        Parameter
+          Identifier: '
+    b'
+        Parameter
+          Identifier: '
+    c'
+        Parameter
+          Identifier: '
+    d'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// single line with a comment
+f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// multi line with a comment
+f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// multi line with a comment 2
+f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// multi line with a comment 3
+f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: ' 
+
+// body is not a block
+f'
+      ArrowFunction
+        Parameter
+          Identifier: '_'
+        EqualsGreaterThanToken
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral

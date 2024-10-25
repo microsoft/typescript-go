@@ -1,0 +1,59 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        IntersectionType
+          TypeLiteral
+            MethodSignature
+              Identifier: ' f'
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              VoidKeyword
+          TypeReference
+            Identifier: ' Record'
+            StringKeyword
+            UnknownKeyword
+        SatisfiesExpression
+          ObjectLiteralExpression
+            MethodDeclaration
+              Identifier: '
+    f'
+              Parameter
+                Identifier: 's'
+              Block
+            MethodDeclaration
+              Identifier: ' // "incorrect" implicit any on 's'
+    g'
+              Parameter
+                Identifier: 's'
+              Block
+          IntersectionType
+            TypeLiteral
+              MethodSignature
+                Identifier: ' g'
+                Parameter
+                  Identifier: 's'
+                  StringKeyword
+                VoidKeyword
+            TypeReference
+              Identifier: ' Record'
+              StringKeyword
+              UnknownKeyword
+  ExpressionStatement
+    SatisfiesExpression
+      ParenthesizedExpression
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: ' f'
+            Parameter
+              Identifier: 'x'
+            Block
+      TypeLiteral
+        MethodSignature
+          Identifier: ' f'
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          VoidKeyword

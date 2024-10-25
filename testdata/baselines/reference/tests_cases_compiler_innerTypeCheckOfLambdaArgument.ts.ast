@@ -1,0 +1,26 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' takesCallback'
+    Parameter
+      Identifier: 'callback'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+        AnyKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+ 
+takesCallback'
+      FunctionExpression
+        Identifier: ' inner'
+        Parameter
+          Identifier: 'n'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' k'
+                StringKeyword
+                NumericLiteral

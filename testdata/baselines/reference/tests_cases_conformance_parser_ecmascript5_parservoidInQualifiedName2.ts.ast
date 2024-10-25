@@ -1,0 +1,9 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeReference
+          QualifiedName
+            Identifier: ' x'
+            Identifier: 'void'

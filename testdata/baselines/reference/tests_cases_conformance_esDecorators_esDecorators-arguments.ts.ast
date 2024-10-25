@@ -1,0 +1,60 @@
+SourceFile
+  ClassDeclaration
+    Decorator
+      ParenthesizedExpression
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+    Decorator
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            AnyKeyword
+          EqualsGreaterThanToken
+          Block
+    Decorator
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            AnyKeyword
+          Parameter
+            Identifier: ' b'
+            AnyKeyword
+          EqualsGreaterThanToken
+          Block
+    Decorator
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            AnyKeyword
+          Parameter
+            Identifier: ' b'
+            AnyKeyword
+          Parameter
+            Identifier: ' c'
+            AnyKeyword
+          EqualsGreaterThanToken
+          Block
+    Decorator
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            AnyKeyword
+          Parameter
+            Identifier: ' b'
+            AnyKeyword
+          Parameter
+            Identifier: ' c'
+            AnyKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'd'
+            ArrayType
+              AnyKeyword
+          EqualsGreaterThanToken
+          Block
+    Identifier: ' C1'

@@ -1,0 +1,35 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' NumberIterator'
+    MethodDeclaration
+      Identifier: '
+    next'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            value'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: '
+            done'
+              FalseKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Block
+        ReturnStatement
+          ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        StringKeyword
+  ForOfStatement
+    Identifier: 'v'
+    NewExpression
+      Identifier: ' NumberIterator'
+    Block

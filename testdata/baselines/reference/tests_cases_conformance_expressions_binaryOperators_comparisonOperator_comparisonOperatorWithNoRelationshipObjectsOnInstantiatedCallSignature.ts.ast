@@ -1,0 +1,970 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' b'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' c'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+              StringKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+              ArrayType
+                StringKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b5'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            Parameter
+              Identifier: ' y'
+              NumberKeyword
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            TypeParameter
+              Identifier: 'T'
+            TypeParameter
+              Identifier: ' U'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' U'
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b6'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' Base'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' C'
+            TypeReference
+              Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a1'
+        BinaryExpression
+          Identifier: ' a1'
+          LessThanToken
+          Identifier: ' b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a2'
+        BinaryExpression
+          Identifier: ' a2'
+          LessThanToken
+          Identifier: ' b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a3'
+        BinaryExpression
+          Identifier: ' a3'
+          LessThanToken
+          Identifier: ' b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a4'
+        BinaryExpression
+          Identifier: ' a4'
+          LessThanToken
+          Identifier: ' b4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a5'
+        BinaryExpression
+          Identifier: ' a5'
+          LessThanToken
+          Identifier: ' b5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a6'
+        BinaryExpression
+          Identifier: ' a6'
+          LessThanToken
+          Identifier: ' b6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b1'
+        BinaryExpression
+          Identifier: ' b1'
+          LessThanToken
+          Identifier: ' a1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b2'
+        BinaryExpression
+          Identifier: ' b2'
+          LessThanToken
+          Identifier: ' a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b3'
+        BinaryExpression
+          Identifier: ' b3'
+          LessThanToken
+          Identifier: ' a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b4'
+        BinaryExpression
+          Identifier: ' b4'
+          LessThanToken
+          Identifier: ' a4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b5'
+        BinaryExpression
+          Identifier: ' b5'
+          LessThanToken
+          Identifier: ' a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b6'
+        BinaryExpression
+          Identifier: ' b6'
+          LessThanToken
+          Identifier: ' a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2a1'
+        BinaryExpression
+          Identifier: ' a1'
+          GreaterThanToken
+          Identifier: ' b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2a2'
+        BinaryExpression
+          Identifier: ' a2'
+          GreaterThanToken
+          Identifier: ' b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2a3'
+        BinaryExpression
+          Identifier: ' a3'
+          GreaterThanToken
+          Identifier: ' b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2a4'
+        BinaryExpression
+          Identifier: ' a4'
+          GreaterThanToken
+          Identifier: ' b4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2a5'
+        BinaryExpression
+          Identifier: ' a5'
+          GreaterThanToken
+          Identifier: ' b5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2a6'
+        BinaryExpression
+          Identifier: ' a6'
+          GreaterThanToken
+          Identifier: ' b6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b1'
+        BinaryExpression
+          Identifier: ' b1'
+          GreaterThanToken
+          Identifier: ' a1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b2'
+        BinaryExpression
+          Identifier: ' b2'
+          GreaterThanToken
+          Identifier: ' a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b3'
+        BinaryExpression
+          Identifier: ' b3'
+          GreaterThanToken
+          Identifier: ' a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b4'
+        BinaryExpression
+          Identifier: ' b4'
+          GreaterThanToken
+          Identifier: ' a4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b5'
+        BinaryExpression
+          Identifier: ' b5'
+          GreaterThanToken
+          Identifier: ' a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b6'
+        BinaryExpression
+          Identifier: ' b6'
+          GreaterThanToken
+          Identifier: ' a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3a1'
+        BinaryExpression
+          Identifier: ' a1'
+          LessThanEqualsToken
+          Identifier: ' b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3a2'
+        BinaryExpression
+          Identifier: ' a2'
+          LessThanEqualsToken
+          Identifier: ' b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3a3'
+        BinaryExpression
+          Identifier: ' a3'
+          LessThanEqualsToken
+          Identifier: ' b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3a4'
+        BinaryExpression
+          Identifier: ' a4'
+          LessThanEqualsToken
+          Identifier: ' b4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3a5'
+        BinaryExpression
+          Identifier: ' a5'
+          LessThanEqualsToken
+          Identifier: ' b5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3a6'
+        BinaryExpression
+          Identifier: ' a6'
+          LessThanEqualsToken
+          Identifier: ' b6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b1'
+        BinaryExpression
+          Identifier: ' b1'
+          LessThanEqualsToken
+          Identifier: ' a1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b2'
+        BinaryExpression
+          Identifier: ' b2'
+          LessThanEqualsToken
+          Identifier: ' a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b3'
+        BinaryExpression
+          Identifier: ' b3'
+          LessThanEqualsToken
+          Identifier: ' a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b4'
+        BinaryExpression
+          Identifier: ' b4'
+          LessThanEqualsToken
+          Identifier: ' a4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b5'
+        BinaryExpression
+          Identifier: ' b5'
+          LessThanEqualsToken
+          Identifier: ' a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b6'
+        BinaryExpression
+          Identifier: ' b6'
+          LessThanEqualsToken
+          Identifier: ' a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4a1'
+        BinaryExpression
+          Identifier: ' a1'
+          GreaterThanEqualsToken
+          Identifier: ' b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4a2'
+        BinaryExpression
+          Identifier: ' a2'
+          GreaterThanEqualsToken
+          Identifier: ' b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4a3'
+        BinaryExpression
+          Identifier: ' a3'
+          GreaterThanEqualsToken
+          Identifier: ' b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4a4'
+        BinaryExpression
+          Identifier: ' a4'
+          GreaterThanEqualsToken
+          Identifier: ' b4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4a5'
+        BinaryExpression
+          Identifier: ' a5'
+          GreaterThanEqualsToken
+          Identifier: ' b5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4a6'
+        BinaryExpression
+          Identifier: ' a6'
+          GreaterThanEqualsToken
+          Identifier: ' b6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4b1'
+        BinaryExpression
+          Identifier: ' b1'
+          GreaterThanEqualsToken
+          Identifier: ' a1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4b2'
+        BinaryExpression
+          Identifier: ' b2'
+          GreaterThanEqualsToken
+          Identifier: ' a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4b3'
+        BinaryExpression
+          Identifier: ' b3'
+          GreaterThanEqualsToken
+          Identifier: ' a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4b4'
+        BinaryExpression
+          Identifier: ' b4'
+          GreaterThanEqualsToken
+          Identifier: ' a4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4b5'
+        BinaryExpression
+          Identifier: ' b5'
+          GreaterThanEqualsToken
+          Identifier: ' a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4b6'
+        BinaryExpression
+          Identifier: ' b6'
+          GreaterThanEqualsToken
+          Identifier: ' a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5a1'
+        BinaryExpression
+          Identifier: ' a1'
+          EqualsEqualsToken
+          Identifier: ' b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5a2'
+        BinaryExpression
+          Identifier: ' a2'
+          EqualsEqualsToken
+          Identifier: ' b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5a3'
+        BinaryExpression
+          Identifier: ' a3'
+          EqualsEqualsToken
+          Identifier: ' b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5a4'
+        BinaryExpression
+          Identifier: ' a4'
+          EqualsEqualsToken
+          Identifier: ' b4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5a5'
+        BinaryExpression
+          Identifier: ' a5'
+          EqualsEqualsToken
+          Identifier: ' b5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5a6'
+        BinaryExpression
+          Identifier: ' a6'
+          EqualsEqualsToken
+          Identifier: ' b6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5b1'
+        BinaryExpression
+          Identifier: ' b1'
+          EqualsEqualsToken
+          Identifier: ' a1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5b2'
+        BinaryExpression
+          Identifier: ' b2'
+          EqualsEqualsToken
+          Identifier: ' a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5b3'
+        BinaryExpression
+          Identifier: ' b3'
+          EqualsEqualsToken
+          Identifier: ' a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5b4'
+        BinaryExpression
+          Identifier: ' b4'
+          EqualsEqualsToken
+          Identifier: ' a4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5b5'
+        BinaryExpression
+          Identifier: ' b5'
+          EqualsEqualsToken
+          Identifier: ' a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5b6'
+        BinaryExpression
+          Identifier: ' b6'
+          EqualsEqualsToken
+          Identifier: ' a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6a1'
+        BinaryExpression
+          Identifier: ' a1'
+          ExclamationEqualsToken
+          Identifier: ' b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6a2'
+        BinaryExpression
+          Identifier: ' a2'
+          ExclamationEqualsToken
+          Identifier: ' b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6a3'
+        BinaryExpression
+          Identifier: ' a3'
+          ExclamationEqualsToken
+          Identifier: ' b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6a4'
+        BinaryExpression
+          Identifier: ' a4'
+          ExclamationEqualsToken
+          Identifier: ' b4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6a5'
+        BinaryExpression
+          Identifier: ' a5'
+          ExclamationEqualsToken
+          Identifier: ' b5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6a6'
+        BinaryExpression
+          Identifier: ' a6'
+          ExclamationEqualsToken
+          Identifier: ' b6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6b1'
+        BinaryExpression
+          Identifier: ' b1'
+          ExclamationEqualsToken
+          Identifier: ' a1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6b2'
+        BinaryExpression
+          Identifier: ' b2'
+          ExclamationEqualsToken
+          Identifier: ' a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6b3'
+        BinaryExpression
+          Identifier: ' b3'
+          ExclamationEqualsToken
+          Identifier: ' a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6b4'
+        BinaryExpression
+          Identifier: ' b4'
+          ExclamationEqualsToken
+          Identifier: ' a4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6b5'
+        BinaryExpression
+          Identifier: ' b5'
+          ExclamationEqualsToken
+          Identifier: ' a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6b6'
+        BinaryExpression
+          Identifier: ' b6'
+          ExclamationEqualsToken
+          Identifier: ' a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7a1'
+        BinaryExpression
+          Identifier: ' a1'
+          EqualsEqualsEqualsToken
+          Identifier: ' b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7a2'
+        BinaryExpression
+          Identifier: ' a2'
+          EqualsEqualsEqualsToken
+          Identifier: ' b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7a3'
+        BinaryExpression
+          Identifier: ' a3'
+          EqualsEqualsEqualsToken
+          Identifier: ' b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7a4'
+        BinaryExpression
+          Identifier: ' a4'
+          EqualsEqualsEqualsToken
+          Identifier: ' b4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7a5'
+        BinaryExpression
+          Identifier: ' a5'
+          EqualsEqualsEqualsToken
+          Identifier: ' b5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7a6'
+        BinaryExpression
+          Identifier: ' a6'
+          EqualsEqualsEqualsToken
+          Identifier: ' b6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7b1'
+        BinaryExpression
+          Identifier: ' b1'
+          EqualsEqualsEqualsToken
+          Identifier: ' a1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7b2'
+        BinaryExpression
+          Identifier: ' b2'
+          EqualsEqualsEqualsToken
+          Identifier: ' a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7b3'
+        BinaryExpression
+          Identifier: ' b3'
+          EqualsEqualsEqualsToken
+          Identifier: ' a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7b4'
+        BinaryExpression
+          Identifier: ' b4'
+          EqualsEqualsEqualsToken
+          Identifier: ' a4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7b5'
+        BinaryExpression
+          Identifier: ' b5'
+          EqualsEqualsEqualsToken
+          Identifier: ' a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7b6'
+        BinaryExpression
+          Identifier: ' b6'
+          EqualsEqualsEqualsToken
+          Identifier: ' a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8a1'
+        BinaryExpression
+          Identifier: ' a1'
+          ExclamationEqualsEqualsToken
+          Identifier: ' b1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8a2'
+        BinaryExpression
+          Identifier: ' a2'
+          ExclamationEqualsEqualsToken
+          Identifier: ' b2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8a3'
+        BinaryExpression
+          Identifier: ' a3'
+          ExclamationEqualsEqualsToken
+          Identifier: ' b3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8a4'
+        BinaryExpression
+          Identifier: ' a4'
+          ExclamationEqualsEqualsToken
+          Identifier: ' b4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8a5'
+        BinaryExpression
+          Identifier: ' a5'
+          ExclamationEqualsEqualsToken
+          Identifier: ' b5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8a6'
+        BinaryExpression
+          Identifier: ' a6'
+          ExclamationEqualsEqualsToken
+          Identifier: ' b6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8b1'
+        BinaryExpression
+          Identifier: ' b1'
+          ExclamationEqualsEqualsToken
+          Identifier: ' a1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8b2'
+        BinaryExpression
+          Identifier: ' b2'
+          ExclamationEqualsEqualsToken
+          Identifier: ' a2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8b3'
+        BinaryExpression
+          Identifier: ' b3'
+          ExclamationEqualsEqualsToken
+          Identifier: ' a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8b4'
+        BinaryExpression
+          Identifier: ' b4'
+          ExclamationEqualsEqualsToken
+          Identifier: ' a4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8b5'
+        BinaryExpression
+          Identifier: ' b5'
+          ExclamationEqualsEqualsToken
+          Identifier: ' a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8b6'
+        BinaryExpression
+          Identifier: ' b6'
+          ExclamationEqualsEqualsToken
+          Identifier: ' a6'

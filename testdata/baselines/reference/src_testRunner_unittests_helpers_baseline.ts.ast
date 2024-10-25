@@ -1,0 +1,3345 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' SourceMapRecorder'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    changeToHostTrackingWrittenFiles'
+        ImportSpecifier
+          Identifier: '
+    SerializeOutputOrder'
+        ImportSpecifier
+          Identifier: '
+    StateLogger'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+        ImportSpecifier
+          Identifier: '
+    TestServerHostTrackingWrittenFiles'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' CommandLineProgram'
+    TupleType
+      TypeReference
+        QualifiedName
+          Identifier: 'ts'
+          Identifier: 'Program'
+      OptionalType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'BuilderProgram'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CommandLineCallbacks'
+    PropertySignature
+      Identifier: '
+    cb'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ExecuteCommandLineCallbacks'
+    PropertySignature
+      Identifier: '
+    getPrograms'
+      FunctionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' CommandLineProgram'
+  FunctionDeclaration
+    Identifier: ' isAnyProgram'
+    Parameter
+      Identifier: 'program'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'Program'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'BuilderProgram'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'ParsedCommandLine'
+    TypePredicate
+      Identifier: ' program'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'Program'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'BuilderProgram'
+    Block
+      ReturnStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              ParenthesizedExpression
+                AsExpression
+                  Identifier: 'program'
+                  UnionType
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'Program'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'BuilderProgram'
+              Identifier: 'getCompilerOptions'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' commandLineCallbacks'
+    Parameter
+      Identifier: '
+    sys'
+      TypeReference
+        Identifier: ' TestServerHost'
+    Parameter
+      Identifier: '
+    originalReadCall'
+      QuestionToken
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'System'
+        LiteralType
+          StringLiteral
+    TypeReference
+      Identifier: ' CommandLineCallbacks'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' programs'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' CommandLineProgram'
+              UndefinedKeyword
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        cb'
+            ArrowFunction
+              Parameter
+                Identifier: ' program'
+              EqualsGreaterThanToken
+              Block
+                IfStatement
+                  CallExpression
+                    Identifier: 'isAnyProgram'
+                    Identifier: 'program'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                baselineBuildInfo'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'program'
+                            Identifier: 'getCompilerOptions'
+                        Identifier: ' sys'
+                        Identifier: ' originalReadCall'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            BinaryExpression
+                              Identifier: 'programs'
+                              BarBarToken
+                              ParenthesizedExpression
+                                BinaryExpression
+                                  Identifier: 'programs'
+                                  EqualsToken
+                                  ArrayLiteralExpression
+                          Identifier: 'push'
+                        ConditionalExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    ts'
+                              Identifier: 'isBuilderProgram'
+                            Identifier: 'program'
+                          QuestionToken
+                          ArrayLiteralExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'program'
+                                Identifier: 'getProgram'
+                            Identifier: ' program'
+                          ColonToken
+                          ArrayLiteralExpression
+                            Identifier: 'program'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                baselineBuildInfo'
+                        PropertyAccessExpression
+                          Identifier: 'program'
+                          Identifier: 'options'
+                        Identifier: ' sys'
+                        Identifier: ' originalReadCall'
+          PropertyAssignment
+            Identifier: '
+        getPrograms'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' result'
+                      BinaryExpression
+                        Identifier: ' programs'
+                        BarBarToken
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'emptyArray'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            programs'
+                    EqualsToken
+                    Identifier: ' undefined'
+                ReturnStatement
+                  Identifier: ' result'
+  FunctionDeclaration
+    Identifier: ' baselinePrograms'
+    Parameter
+      Identifier: '
+    baseline'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: '
+    programs'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' CommandLineProgram'
+    Parameter
+      Identifier: '
+    oldPrograms'
+      TypeOperator
+        ArrayType
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'CommandLineProgram'
+              UndefinedKeyword
+    Parameter
+      Identifier: '
+    baselineDependencies'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' programs'
+            Identifier: 'length'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        baselineProgram'
+              Identifier: 'baseline'
+              ElementAccessExpression
+                Identifier: ' programs'
+                Identifier: 'i'
+              ElementAccessExpression
+                Identifier: ' oldPrograms'
+                Identifier: 'i'
+              Identifier: ' baselineDependencies'
+  FunctionDeclaration
+    Identifier: ' baselineProgram'
+    Parameter
+      Identifier: 'baseline'
+      ArrayType
+        StringKeyword
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'program'
+        BindingElement
+          Identifier: ' builderProgram'
+      TypeReference
+        Identifier: ' CommandLineProgram'
+    Parameter
+      Identifier: ' oldProgram'
+      UnionType
+        TypeReference
+          Identifier: ' CommandLineProgram'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' baselineDependencies'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'program'
+          ExclamationEqualsEqualsToken
+          ElementAccessExpression
+            Identifier: ' oldProgram'
+            QuestionDotToken
+            NumericLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' options'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getCompilerOptions'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baseline'
+                Identifier: 'push'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  CallExpression
+                    Identifier: 'jsonToReadableText'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'program'
+                        Identifier: 'getRootFileNames'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baseline'
+                Identifier: 'push'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  CallExpression
+                    Identifier: 'jsonToReadableText'
+                    Identifier: 'options'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baseline'
+                Identifier: 'push'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'ts'
+                          AnyKeyword
+                      Identifier: 'StructureIsReused'
+                    PropertyAccessExpression
+                      Identifier: 'program'
+                      Identifier: 'structureIsReused'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baseline'
+                Identifier: 'push'
+              StringLiteral
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' file'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getSourceFiles'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            baseline'
+                    Identifier: 'push'
+                  PropertyAccessExpression
+                    Identifier: 'file'
+                    Identifier: 'fileName'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baseline'
+                Identifier: 'push'
+              NoSubstitutionTemplateLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    baseline'
+            Identifier: 'push'
+          StringLiteral
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'builderProgram'
+        ReturnStatement
+      IfStatement
+        BinaryExpression
+          Identifier: 'builderProgram'
+          ExclamationEqualsEqualsToken
+          ElementAccessExpression
+            Identifier: ' oldProgram'
+            QuestionDotToken
+            NumericLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' internalState'
+                AsExpression
+                  PropertyAccessExpression
+                    Identifier: ' builderProgram'
+                    Identifier: 'state'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'BuilderProgramState'
+          IfStatement
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'builderProgram'
+                  Identifier: 'state'
+                Identifier: 'semanticDiagnosticsPerFile'
+              Identifier: 'size'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            baseline'
+                    Identifier: 'push'
+                  StringLiteral
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' file'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getSourceFiles'
+                Block
+                  IfStatement
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'internalState'
+                          Identifier: 'semanticDiagnosticsFromOldState'
+                      BarBarToken
+                      PrefixUnaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'internalState'
+                              Identifier: 'semanticDiagnosticsFromOldState'
+                            Identifier: 'has'
+                          PropertyAccessExpression
+                            Identifier: 'file'
+                            Identifier: 'resolvedPath'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    baseline'
+                            Identifier: 'push'
+                          PropertyAccessExpression
+                            Identifier: 'file'
+                            Identifier: 'fileName'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            baseline'
+                    Identifier: 'push'
+                  StringLiteral
+          IfStatement
+            Identifier: 'internalState'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            baseline'
+                    Identifier: 'push'
+                  StringLiteral
+              IfStatement
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'internalState'
+                    Identifier: 'hasCalledUpdateShapeSignature'
+                  QuestionDotToken
+                  Identifier: 'size'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                baseline'
+                        Identifier: 'push'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                internalState'
+                          Identifier: 'hasCalledUpdateShapeSignature'
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'path'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'Path'
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' info'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' builderProgram'
+                                        Identifier: 'state'
+                                      Identifier: 'fileInfos'
+                                    Identifier: 'get'
+                                  Identifier: 'path'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' signatureInfo'
+                                NonNullExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' internalState'
+                                        Identifier: 'signatureInfo'
+                                      QuestionDotToken
+                                      Identifier: 'get'
+                                    Identifier: 'path'
+                          SwitchStatement
+                            Identifier: 'signatureInfo'
+                            CaseBlock
+                              CaseClause
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'SignatureInfo'
+                                  Identifier: 'ComputedDts'
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            baseline'
+                                      Identifier: 'push'
+                                    BinaryExpression
+                                      Identifier: 'path'
+                                      PlusToken
+                                      StringLiteral
+                                BreakStatement
+                              CaseClause
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'SignatureInfo'
+                                  Identifier: 'StoredSignatureAtEmit'
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            baseline'
+                                      Identifier: 'push'
+                                    BinaryExpression
+                                      Identifier: 'path'
+                                      PlusToken
+                                      StringLiteral
+                                BreakStatement
+                              CaseClause
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'SignatureInfo'
+                                  Identifier: 'UsedVersion'
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            ts'
+                                        Identifier: 'Debug'
+                                      Identifier: 'assert'
+                                    BinaryExpression
+                                      BinaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'info'
+                                          QuestionDotToken
+                                          Identifier: 'version'
+                                        EqualsEqualsEqualsToken
+                                        PropertyAccessExpression
+                                          Identifier: ' info'
+                                          QuestionDotToken
+                                          Identifier: 'signature'
+                                      BarBarToken
+                                      PrefixUnaryExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'info'
+                                          QuestionDotToken
+                                          Identifier: 'signature'
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            baseline'
+                                      Identifier: 'push'
+                                    BinaryExpression
+                                      Identifier: 'path'
+                                      PlusToken
+                                      StringLiteral
+                                BreakStatement
+                              DefaultClause
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                            ts'
+                                        Identifier: 'Debug'
+                                      Identifier: 'assertNever'
+                                    Identifier: 'signatureInfo'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                baseline'
+                        Identifier: 'push'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baseline'
+                Identifier: 'push'
+              StringLiteral
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'baselineDependencies'
+            ReturnStatement
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baseline'
+                Identifier: 'push'
+              StringLiteral
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' file'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' builderProgram'
+                Identifier: 'getSourceFiles'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            baseline'
+                    Identifier: 'push'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'file'
+                        Identifier: 'fileName'
+                      TemplateTail
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' depenedency'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' builderProgram'
+                    Identifier: 'getAllDependencies'
+                  Identifier: 'file'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                baseline'
+                        Identifier: 'push'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'depenedency'
+                          TemplateTail
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baseline'
+                Identifier: 'push'
+              NoSubstitutionTemplateLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    baseline'
+            Identifier: 'push'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' generateSourceMapBaselineFiles'
+    Parameter
+      Identifier: 'sys'
+      IntersectionType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'System'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' writtenFiles'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'ReadonlyCollection'
+              TypeReference
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'Path'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mapFileNames'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'mapDefinedIterator'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'sys'
+                    Identifier: 'writtenFiles'
+                  Identifier: 'keys'
+              ArrowFunction
+                Parameter
+                  Identifier: ' f'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' f'
+                      Identifier: 'endsWith'
+                    StringLiteral
+                  QuestionToken
+                  Identifier: ' f'
+                  ColonToken
+                  Identifier: ' undefined'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mapFile'
+        Identifier: ' mapFileNames'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' text'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' SourceMapRecorder'
+                    Identifier: 'getSourceMapRecordWithSystem'
+                  Identifier: 'sys'
+                  Identifier: ' mapFile'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sys'
+                Identifier: 'writeFile'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'mapFile'
+                  TemplateTail
+              Identifier: ' text'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuildInfoDiagnosticOfFile'
+    TupleType
+      NamedTupleMember
+        Identifier: 'file'
+        StringKeyword
+      NamedTupleMember
+        Identifier: ' diagnostics'
+        TypeOperator
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'ReusableDiagnostic'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuildInfoDiagnostic'
+    UnionType
+      TupleType
+        NamedTupleMember
+          Identifier: 'file'
+          StringKeyword
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' ReadableIncrementalBuildInfoDiagnosticOfFile'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuildInfoEmitDiagnostic'
+    TypeReference
+      Identifier: ' ReadableIncrementalBuildInfoDiagnosticOfFile'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableBuilderFileEmit'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' __readableBuilderFileEmit'
+          AnyKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuilderInfoFilePendingEmit'
+    TupleType
+      NamedTupleMember
+        Identifier: 'original'
+        UnionType
+          StringKeyword
+          TupleType
+            NamedTupleMember
+              Identifier: 'file'
+              StringKeyword
+          TupleType
+            NamedTupleMember
+              Identifier: 'file'
+              StringKeyword
+            NamedTupleMember
+              Identifier: ' emitKind'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'BuilderFileEmit'
+      NamedTupleMember
+        Identifier: ' emitKind'
+        TypeReference
+          Identifier: ' ReadableBuilderFileEmit'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuildInfoEmitSignature'
+    UnionType
+      StringKeyword
+      TupleType
+        NamedTupleMember
+          Identifier: 'file'
+          StringKeyword
+        NamedTupleMember
+          Identifier: ' signature'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'EmitSignature'
+            TupleType
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuildInfoFileInfo'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: 'ts'
+              Identifier: 'BuilderState'
+            Identifier: 'FileInfo'
+        LiteralType
+          StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    impliedFormat'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+    original'
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuildInfoRoot'
+    UnionType
+      TupleType
+        NamedTupleMember
+          Identifier: 'original'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'IncrementalBuildInfoFileId'
+        NamedTupleMember
+          Identifier: ' readable'
+          StringKeyword
+      TupleType
+        NamedTupleMember
+          Identifier: 'original'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'IncrementalBuildInfoRootStartEnd'
+        NamedTupleMember
+          Identifier: ' readable'
+          TypeOperator
+            ArrayType
+              StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuildInfoResolvedRoot'
+    TupleType
+      NamedTupleMember
+        Identifier: '
+    original'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'IncrementalBuildInfoResolvedRoot'
+      NamedTupleMember
+        Identifier: '
+    readable'
+        TupleType
+          NamedTupleMember
+            Identifier: 'resolved'
+            StringKeyword
+          NamedTupleMember
+            Identifier: ' root'
+            StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuildInfoBase'
+    IntersectionType
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          QualifiedName
+            Identifier: '
+        ts'
+            Identifier: 'IncrementalBuildInfoBase'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        root'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' ReadableIncrementalBuildInfoRoot'
+        PropertySignature
+          Identifier: '
+        resolvedRoot'
+          UnionType
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' ReadableIncrementalBuildInfoResolvedRoot'
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        semanticDiagnosticsPerFile'
+          UnionType
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' ReadableIncrementalBuildInfoDiagnostic'
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        emitDiagnosticsPerFile'
+          UnionType
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' ReadableIncrementalBuildInfoEmitDiagnostic'
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        changeFileSet'
+          UnionType
+            TypeOperator
+              ArrayType
+                StringKeyword
+            UndefinedKeyword
+      TypeReference
+        Identifier: ' ReadableBuildInfo'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalMultiFileEmitBuildInfo'
+    IntersectionType
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          QualifiedName
+            Identifier: '
+        ts'
+            Identifier: 'IncrementalMultiFileEmitBuildInfo'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeReference
+        Identifier: ' ReadableIncrementalBuildInfoBase'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        fileIdsList'
+          UnionType
+            TypeOperator
+              ArrayType
+                ParenthesizedType
+                  TypeOperator
+                    ArrayType
+                      StringKeyword
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        fileInfos'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'MapLike'
+            TypeReference
+              Identifier: 'ReadableIncrementalBuildInfoFileInfo'
+              TypeReference
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'IncrementalMultiFileEmitBuildInfoFileInfo'
+        PropertySignature
+          Identifier: '
+        referencedMap'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'MapLike'
+              ArrayType
+                StringKeyword
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        affectedFilesPendingEmit'
+          UnionType
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' ReadableIncrementalBuilderInfoFilePendingEmit'
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        emitSignatures'
+          UnionType
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' ReadableIncrementalBuildInfoEmitSignature'
+            UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuildInfoBundlePendingEmit'
+    TupleType
+      NamedTupleMember
+        Identifier: 'emitKind'
+        TypeReference
+          Identifier: ' ReadableBuilderFileEmit'
+      NamedTupleMember
+        Identifier: ' original'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'IncrementalBuildInfoBundlePendingEmit'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBundleEmitBuildInfo'
+    IntersectionType
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          QualifiedName
+            Identifier: '
+        ts'
+            Identifier: 'IncrementalBundleEmitBuildInfo'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeReference
+        Identifier: ' ReadableIncrementalBuildInfoBase'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        fileInfos'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'MapLike'
+            UnionType
+              StringKeyword
+              TypeReference
+                Identifier: ' ReadableIncrementalBuildInfoFileInfo'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      Identifier: 'ts'
+                      Identifier: 'BuilderState'
+                    Identifier: 'FileInfo'
+        PropertySignature
+          Identifier: '
+        pendingEmit'
+          UnionType
+            TypeReference
+              Identifier: ' ReadableIncrementalBuildInfoBundlePendingEmit'
+            UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReadableIncrementalBuildInfo'
+    UnionType
+      TypeReference
+        Identifier: ' ReadableIncrementalMultiFileEmitBuildInfo'
+      TypeReference
+        Identifier: ' ReadableIncrementalBundleEmitBuildInfo'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isReadableIncrementalBuildInfo'
+    Parameter
+      Identifier: 'buildInfo'
+      TypeReference
+        Identifier: ' ReadableBuildInfo'
+    TypePredicate
+      Identifier: ' buildInfo'
+      TypeReference
+        Identifier: ' ReadableIncrementalBuildInfo'
+    Block
+      ReturnStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              ParenthesizedExpression
+                AsExpression
+                  Identifier: 'buildInfo'
+                  TypeReference
+                    Identifier: ' ReadableIncrementalBuildInfo'
+              Identifier: 'fileNames'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isReadableIncrementalBundleEmitBuildInfo'
+    Parameter
+      Identifier: 'info'
+      UnionType
+        TypeReference
+          Identifier: ' ReadableBuildInfo'
+        UndefinedKeyword
+    TypePredicate
+      Identifier: ' info'
+      TypeReference
+        Identifier: ' ReadableIncrementalBundleEmitBuildInfo'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                Identifier: 'info'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isReadableIncrementalBuildInfo'
+              Identifier: 'info'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'info'
+                  Identifier: 'options'
+                QuestionDotToken
+                Identifier: 'outFile'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isReadableIncrementalMultiFileEmitBuildInfo'
+    Parameter
+      Identifier: 'info'
+      UnionType
+        TypeReference
+          Identifier: ' ReadableBuildInfo'
+        UndefinedKeyword
+    TypePredicate
+      Identifier: ' info'
+      TypeReference
+        Identifier: ' ReadableIncrementalMultiFileEmitBuildInfo'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                Identifier: 'info'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isReadableIncrementalBuildInfo'
+              Identifier: 'info'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'info'
+                Identifier: 'options'
+              QuestionDotToken
+              Identifier: 'outFile'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ReadableBuildInfo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' ts'
+          Identifier: 'BuildInfo'
+    PropertySignature
+      Identifier: '
+    size'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' generateBuildInfoBaseline'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'System'
+    Parameter
+      Identifier: ' buildInfoPath'
+      StringKeyword
+    Parameter
+      Identifier: ' buildInfo'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuildInfo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fileIdsList'
+            UnionType
+              ArrayType
+                ArrayType
+                  StringKeyword
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' version'
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' buildInfo'
+                  Identifier: 'version'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'version'
+              QuestionToken
+              Identifier: ' fakeTsVersion'
+              ColonToken
+              PropertyAccessExpression
+                Identifier: ' buildInfo'
+                Identifier: 'version'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ts'
+              Identifier: 'isIncrementalBuildInfo'
+            Identifier: 'buildInfo'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        result'
+              EqualsToken
+              SatisfiesExpression
+                ObjectLiteralExpression
+                  SpreadAssignment
+                    Identifier: 'buildInfo'
+                  ShorthandPropertyAssignment
+                    Identifier: '
+            version'
+                  PropertyAssignment
+                    Identifier: '
+            size'
+                    CallExpression
+                      Identifier: ' toSize'
+                TypeReference
+                  Identifier: ' ReadableBuildInfo'
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ts'
+              Identifier: 'isIncrementalBundleEmitBuildInfo'
+            Identifier: 'buildInfo'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' fileInfos'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: ' ReadableIncrementalBundleEmitBuildInfo'
+                    LiteralType
+                      StringLiteral
+                  ObjectLiteralExpression
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        buildInfo'
+                    Identifier: 'fileInfos'
+                  QuestionDotToken
+                  Identifier: 'forEach'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'fileInfo'
+                  Parameter
+                    Identifier: ' index'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: '
+            fileInfos'
+                      CallExpression
+                        Identifier: 'toFileName'
+                        AsExpression
+                          BinaryExpression
+                            Identifier: 'index'
+                            PlusToken
+                            NumericLiteral
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'IncrementalBuildInfoFileId'
+                    EqualsToken
+                    ConditionalExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'isString'
+                        Identifier: 'fileInfo'
+                      QuestionToken
+                      Identifier: '
+                fileInfo'
+                      ColonToken
+                      CallExpression
+                        Identifier: '
+                toReadableIncrementalBuildInfoFileInfo'
+                        Identifier: 'fileInfo'
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'identity'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' pendingEmit'
+                  PropertyAccessExpression
+                    Identifier: ' buildInfo'
+                    Identifier: 'pendingEmit'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        result'
+                EqualsToken
+                SatisfiesExpression
+                  ObjectLiteralExpression
+                    SpreadAssignment
+                      Identifier: 'buildInfo'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            fileInfos'
+                    PropertyAssignment
+                      Identifier: '
+            root'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' buildInfo'
+                            Identifier: 'root'
+                          Identifier: 'map'
+                        Identifier: 'toReadableIncrementalBuildInfoRoot'
+                    PropertyAssignment
+                      Identifier: '
+            resolvedRoot'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' buildInfo'
+                            Identifier: 'resolvedRoot'
+                          QuestionDotToken
+                          Identifier: 'map'
+                        Identifier: 'toReadableIncrementalBuildInfoResolvedRoot'
+                    PropertyAssignment
+                      Identifier: '
+            semanticDiagnosticsPerFile'
+                      CallExpression
+                        Identifier: ' toReadableIncrementalBuildInfoDiagnostic'
+                        PropertyAccessExpression
+                          Identifier: 'buildInfo'
+                          Identifier: 'semanticDiagnosticsPerFile'
+                    PropertyAssignment
+                      Identifier: '
+            emitDiagnosticsPerFile'
+                      CallExpression
+                        Identifier: ' toReadableIncrementalBuildInfoEmitDiagnostic'
+                        PropertyAccessExpression
+                          Identifier: 'buildInfo'
+                          Identifier: 'emitDiagnosticsPerFile'
+                    PropertyAssignment
+                      Identifier: '
+            changeFileSet'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' buildInfo'
+                            Identifier: 'changeFileSet'
+                          QuestionDotToken
+                          Identifier: 'map'
+                        Identifier: 'toFileName'
+                    PropertyAssignment
+                      Identifier: '
+            pendingEmit'
+                      ConditionalExpression
+                        BinaryExpression
+                          Identifier: ' pendingEmit'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' undefined'
+                        QuestionToken
+                        Identifier: '
+                undefined'
+                        ColonToken
+                        ArrayLiteralExpression
+                          CallExpression
+                            Identifier: '
+                    toReadableBuilderFileEmit'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'ts'
+                                Identifier: 'toProgramEmitPending'
+                              Identifier: 'pendingEmit'
+                              PropertyAccessExpression
+                                Identifier: ' buildInfo'
+                                Identifier: 'options'
+                          Identifier: '
+                    pendingEmit'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            version'
+                    PropertyAssignment
+                      Identifier: '
+            size'
+                      CallExpression
+                        Identifier: ' toSize'
+                  TypeReference
+                    Identifier: ' ReadableIncrementalBundleEmitBuildInfo'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' fileInfos'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: ' ReadableIncrementalMultiFileEmitBuildInfo'
+                    LiteralType
+                      StringLiteral
+                  ObjectLiteralExpression
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        buildInfo'
+                    Identifier: 'fileInfos'
+                  Identifier: 'forEach'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'fileInfo'
+                  Parameter
+                    Identifier: ' index'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: ' fileInfos'
+                      CallExpression
+                        Identifier: 'toFileName'
+                        AsExpression
+                          BinaryExpression
+                            Identifier: 'index'
+                            PlusToken
+                            NumericLiteral
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'IncrementalBuildInfoFileId'
+                    EqualsToken
+                    CallExpression
+                      Identifier: ' toReadableIncrementalBuildInfoFileInfo'
+                      Identifier: 'fileInfo'
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'toBuilderStateFileInfoForMultiEmit'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        fileIdsList'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' buildInfo'
+                      Identifier: 'fileIdsList'
+                    QuestionDotToken
+                    Identifier: 'map'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'fileIdsListId'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' fileIdsListId'
+                        Identifier: 'map'
+                      Identifier: 'toFileName'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' fullEmitForOptions'
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' buildInfo'
+                      Identifier: 'affectedFilesPendingEmit'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getBuilderFileEmit'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'buildInfo'
+                          Identifier: 'options'
+                        BarBarToken
+                        ObjectLiteralExpression
+                    ColonToken
+                    Identifier: ' undefined'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        result'
+                EqualsToken
+                SatisfiesExpression
+                  ObjectLiteralExpression
+                    SpreadAssignment
+                      Identifier: 'buildInfo'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            fileIdsList'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            fileInfos'
+                    PropertyAssignment
+                      Identifier: '
+            root'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' buildInfo'
+                            Identifier: 'root'
+                          Identifier: 'map'
+                        Identifier: 'toReadableIncrementalBuildInfoRoot'
+                    PropertyAssignment
+                      Identifier: '
+            resolvedRoot'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' buildInfo'
+                            Identifier: 'resolvedRoot'
+                          QuestionDotToken
+                          Identifier: 'map'
+                        Identifier: 'toReadableIncrementalBuildInfoResolvedRoot'
+                    PropertyAssignment
+                      Identifier: '
+            referencedMap'
+                      CallExpression
+                        Identifier: ' toMapOfReferencedSet'
+                        PropertyAccessExpression
+                          Identifier: 'buildInfo'
+                          Identifier: 'referencedMap'
+                    PropertyAssignment
+                      Identifier: '
+            semanticDiagnosticsPerFile'
+                      CallExpression
+                        Identifier: ' toReadableIncrementalBuildInfoDiagnostic'
+                        PropertyAccessExpression
+                          Identifier: 'buildInfo'
+                          Identifier: 'semanticDiagnosticsPerFile'
+                    PropertyAssignment
+                      Identifier: '
+            emitDiagnosticsPerFile'
+                      CallExpression
+                        Identifier: ' toReadableIncrementalBuildInfoEmitDiagnostic'
+                        PropertyAccessExpression
+                          Identifier: 'buildInfo'
+                          Identifier: 'emitDiagnosticsPerFile'
+                    PropertyAssignment
+                      Identifier: '
+            changeFileSet'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' buildInfo'
+                            Identifier: 'changeFileSet'
+                          QuestionDotToken
+                          Identifier: 'map'
+                        Identifier: 'toFileName'
+                    PropertyAssignment
+                      Identifier: '
+            affectedFilesPendingEmit'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' buildInfo'
+                            Identifier: 'affectedFilesPendingEmit'
+                          QuestionDotToken
+                          Identifier: 'map'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'value'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            Identifier: ' toReadableIncrementalBuilderInfoFilePendingEmit'
+                            Identifier: 'value'
+                            NonNullExpression
+                              Identifier: ' fullEmitForOptions'
+                    PropertyAssignment
+                      Identifier: '
+            emitSignatures'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' buildInfo'
+                            Identifier: 'emitSignatures'
+                          QuestionDotToken
+                          Identifier: 'map'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 's'
+                          EqualsGreaterThanToken
+                          ConditionalExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                ts'
+                                Identifier: 'isNumber'
+                              Identifier: 's'
+                            QuestionToken
+                            CallExpression
+                              Identifier: '
+                    toFileName'
+                              Identifier: 's'
+                            ColonToken
+                            ArrayLiteralExpression
+                              CallExpression
+                                Identifier: 'toFileName'
+                                ElementAccessExpression
+                                  Identifier: 's'
+                                  NumericLiteral
+                              ElementAccessExpression
+                                Identifier: ' s'
+                                NumericLiteral
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            version'
+                    PropertyAssignment
+                      Identifier: '
+            size'
+                      CallExpression
+                        Identifier: ' toSize'
+                  TypeReference
+                    Identifier: ' ReadableIncrementalMultiFileEmitBuildInfo'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    // For now its just JSON.stringify
+    sys'
+            Identifier: 'writeFile'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'buildInfoPath'
+              TemplateTail
+          CallExpression
+            Identifier: ' jsonToReadableText'
+            Identifier: 'result'
+      FunctionDeclaration
+        Identifier: ' toSize'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'getBuildInfoText'
+                ObjectLiteralExpression
+                  SpreadAssignment
+                    Identifier: 'buildInfo'
+                  ShorthandPropertyAssignment
+                    Identifier: ' version'
+              Identifier: 'length'
+      FunctionDeclaration
+        Identifier: ' toFileName'
+        Parameter
+          Identifier: 'fileId'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'IncrementalBuildInfoFileId'
+        Block
+          ReturnStatement
+            ElementAccessExpression
+              PropertyAccessExpression
+                ParenthesizedExpression
+                  AsExpression
+                    Identifier: 'buildInfo'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' ts'
+                        Identifier: 'IncrementalBuildInfo'
+                Identifier: 'fileNames'
+              BinaryExpression
+                Identifier: 'fileId'
+                MinusToken
+                NumericLiteral
+      FunctionDeclaration
+        Identifier: ' toFileNames'
+        Parameter
+          Identifier: 'fileIdsListId'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'IncrementalBuildInfoFileIdListId'
+        Block
+          ReturnStatement
+            ElementAccessExpression
+              NonNullExpression
+                Identifier: ' fileIdsList'
+              BinaryExpression
+                Identifier: 'fileIdsListId'
+                MinusToken
+                NumericLiteral
+      FunctionDeclaration
+        Identifier: ' toReadableIncrementalBuildInfoFileInfo'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: '
+        original'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: '
+        toFileInfo'
+          FunctionType
+            Parameter
+              Identifier: 'fileInfo'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              QualifiedName
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'BuilderState'
+                Identifier: 'FileInfo'
+        TypeReference
+          Identifier: ' ReadableIncrementalBuildInfoFileInfo'
+          TypeReference
+            Identifier: 'T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' info'
+                CallExpression
+                  Identifier: ' toFileInfo'
+                  Identifier: 'original'
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            original'
+                ConditionalExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'isString'
+                    Identifier: 'original'
+                  QuestionToken
+                  Identifier: ' undefined'
+                  ColonToken
+                  Identifier: ' original'
+              SpreadAssignment
+                Identifier: 'info'
+              PropertyAssignment
+                Identifier: '
+            impliedFormat'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' info'
+                    Identifier: 'impliedFormat'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'getNameOfCompilerOptionValue'
+                    PropertyAccessExpression
+                      Identifier: 'info'
+                      Identifier: 'impliedFormat'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'moduleOptionDeclaration'
+                      Identifier: 'type'
+      FunctionDeclaration
+        Identifier: ' toReadableIncrementalBuildInfoRoot'
+        Parameter
+          Identifier: '
+        original'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'IncrementalBuildInfoRoot'
+        TypeReference
+          Identifier: ' ReadableIncrementalBuildInfoRoot'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'isArray'
+                Identifier: 'original'
+            ReturnStatement
+              ArrayLiteralExpression
+                Identifier: 'original'
+                CallExpression
+                  Identifier: ' toFileName'
+                  Identifier: 'original'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' readable'
+                ArrayType
+                  StringKeyword
+                ArrayLiteralExpression
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' index'
+                ElementAccessExpression
+                  Identifier: ' original'
+                  NumericLiteral
+            BinaryExpression
+              Identifier: ' index'
+              LessThanEqualsToken
+              ElementAccessExpression
+                Identifier: ' original'
+                NumericLiteral
+            PostfixUnaryExpression
+              Identifier: ' index'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' readable'
+                  Identifier: 'push'
+                CallExpression
+                  Identifier: 'toFileName'
+                  Identifier: 'index'
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'original'
+              Identifier: ' readable'
+      FunctionDeclaration
+        Identifier: ' toReadableIncrementalBuildInfoResolvedRoot'
+        Parameter
+          Identifier: '
+        original'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'IncrementalBuildInfoResolvedRoot'
+        TypeReference
+          Identifier: ' ReadableIncrementalBuildInfoResolvedRoot'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              Identifier: 'original'
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'toFileName'
+                  ElementAccessExpression
+                    Identifier: 'original'
+                    NumericLiteral
+                CallExpression
+                  Identifier: ' toFileName'
+                  ElementAccessExpression
+                    Identifier: 'original'
+                    NumericLiteral
+      FunctionDeclaration
+        Identifier: ' toMapOfReferencedSet'
+        Parameter
+          Identifier: '
+        referenceMap'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'IncrementalBuildInfoReferencedMap'
+            UndefinedKeyword
+        UnionType
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'MapLike'
+            ArrayType
+              StringKeyword
+          UndefinedKeyword
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'referenceMap'
+            ReturnStatement
+              Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'MapLike'
+                  ArrayType
+                    StringKeyword
+                ObjectLiteralExpression
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'fileNamesKey'
+                  BindingElement
+                    Identifier: ' fileNamesListKey'
+            Identifier: ' referenceMap'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: '
+            result'
+                    CallExpression
+                      Identifier: 'toFileName'
+                      Identifier: 'fileNamesKey'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' toFileNames'
+                    Identifier: 'fileNamesListKey'
+          ReturnStatement
+            Identifier: ' result'
+      FunctionDeclaration
+        Identifier: ' toReadableIncrementalBuilderInfoFilePendingEmit'
+        Parameter
+          Identifier: '
+        value'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'IncrementalBuildInfoFilePendingEmit'
+        Parameter
+          Identifier: '
+        fullEmitForOptions'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'BuilderFileEmit'
+        TypeReference
+          Identifier: ' ReadableIncrementalBuilderInfoFilePendingEmit'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              ConditionalExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            ts'
+                    Identifier: 'isNumber'
+                  Identifier: 'value'
+                QuestionToken
+                CallExpression
+                  Identifier: '
+                toFileName'
+                  Identifier: 'value'
+                ColonToken
+                ConditionalExpression
+                  PrefixUnaryExpression
+                    ElementAccessExpression
+                      Identifier: 'value'
+                      NumericLiteral
+                  QuestionToken
+                  ArrayLiteralExpression
+                    CallExpression
+                      Identifier: 'toFileName'
+                      ElementAccessExpression
+                        Identifier: 'value'
+                        NumericLiteral
+                  ColonToken
+                  ArrayLiteralExpression
+                    CallExpression
+                      Identifier: 'toFileName'
+                      ElementAccessExpression
+                        Identifier: 'value'
+                        NumericLiteral
+                    ElementAccessExpression
+                      Identifier: ' value'
+                      NumericLiteral
+              CallExpression
+                Identifier: '
+            toReadableBuilderFileEmit'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'toBuilderFileEmit'
+                  Identifier: 'value'
+                  Identifier: ' fullEmitForOptions'
+      FunctionDeclaration
+        Identifier: ' toReadableBuilderFileEmit'
+        Parameter
+          Identifier: 'emit'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'BuilderFileEmit'
+            UndefinedKeyword
+        TypeReference
+          Identifier: ' ReadableBuilderFileEmit'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                StringLiteral
+          IfStatement
+            Identifier: 'emit'
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'emit'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'BuilderFileEmit'
+                    Identifier: 'Js'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' addFlags'
+                    StringLiteral
+              IfStatement
+                BinaryExpression
+                  Identifier: 'emit'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'BuilderFileEmit'
+                    Identifier: 'JsMap'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' addFlags'
+                    StringLiteral
+              IfStatement
+                BinaryExpression
+                  Identifier: 'emit'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'BuilderFileEmit'
+                    Identifier: 'JsInlineMap'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' addFlags'
+                    StringLiteral
+              IfStatement
+                BinaryExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'emit'
+                      AmpersandToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'BuilderFileEmit'
+                        Identifier: 'Dts'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'BuilderFileEmit'
+                    Identifier: 'Dts'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' addFlags'
+                    StringLiteral
+                Block
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'emit'
+                      AmpersandToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'BuilderFileEmit'
+                        Identifier: 'DtsEmit'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' addFlags'
+                        StringLiteral
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'emit'
+                      AmpersandToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'BuilderFileEmit'
+                        Identifier: 'DtsErrors'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' addFlags'
+                        StringLiteral
+              IfStatement
+                BinaryExpression
+                  Identifier: 'emit'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'BuilderFileEmit'
+                    Identifier: 'DtsMap'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' addFlags'
+                    StringLiteral
+          ReturnStatement
+            AsExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'result'
+                  BarBarToken
+                  StringLiteral
+              TypeReference
+                Identifier: ' ReadableBuilderFileEmit'
+          FunctionDeclaration
+            Identifier: ' addFlags'
+            Parameter
+              Identifier: 'flag'
+              StringKeyword
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            result'
+                  EqualsToken
+                  ConditionalExpression
+                    Identifier: ' result'
+                    QuestionToken
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'result'
+                        TemplateMiddle
+                      TemplateSpan
+                        Identifier: 'flag'
+                        TemplateTail
+                    ColonToken
+                    Identifier: ' flag'
+      FunctionDeclaration
+        Identifier: ' toReadableIncrementalBuildInfoDiagnostic'
+        Parameter
+          Identifier: '
+        diagnostics'
+          UnionType
+            ArrayType
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'IncrementalBuildInfoDiagnostic'
+            UndefinedKeyword
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' ReadableIncrementalBuildInfoDiagnostic'
+          UndefinedKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' diagnostics'
+                QuestionDotToken
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'd'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            ts'
+                      Identifier: 'isNumber'
+                    Identifier: 'd'
+                  QuestionToken
+                  ArrayLiteralExpression
+                    CallExpression
+                      Identifier: 'toFileName'
+                      Identifier: 'd'
+                    StringLiteral
+                  ColonToken
+                  ArrayLiteralExpression
+                    CallExpression
+                      Identifier: 'toFileName'
+                      ElementAccessExpression
+                        Identifier: 'd'
+                        NumericLiteral
+                    ElementAccessExpression
+                      Identifier: ' d'
+                      NumericLiteral
+      FunctionDeclaration
+        Identifier: ' toReadableIncrementalBuildInfoEmitDiagnostic'
+        Parameter
+          Identifier: '
+        diagnostics'
+          UnionType
+            ArrayType
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'IncrementalBuildInfoEmitDiagnostic'
+            UndefinedKeyword
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' ReadableIncrementalBuildInfoEmitDiagnostic'
+          UndefinedKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' diagnostics'
+                QuestionDotToken
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'd'
+                EqualsGreaterThanToken
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'toFileName'
+                    ElementAccessExpression
+                      Identifier: 'd'
+                      NumericLiteral
+                  ElementAccessExpression
+                    Identifier: ' d'
+                    NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' toPathWithSystem'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'System'
+    Parameter
+      Identifier: ' fileName'
+      StringKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' ts'
+        Identifier: 'Path'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'toPath'
+          Identifier: 'fileName'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' sys'
+              Identifier: 'getCurrentDirectory'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'createGetCanonicalFileName'
+            PropertyAccessExpression
+              Identifier: 'sys'
+              Identifier: 'useCaseSensitiveFileNames'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' baselineBuildInfo'
+    Parameter
+      Identifier: '
+    options'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'CompilerOptions'
+    Parameter
+      Identifier: '
+    sys'
+      TypeReference
+        Identifier: ' TestServerHost'
+    Parameter
+      Identifier: '
+    originalReadCall'
+      QuestionToken
+      IndexedAccessType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'System'
+        LiteralType
+          StringLiteral
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' buildInfoPath'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'getTsBuildInfoEmitOutputFilePath'
+              Identifier: 'options'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'buildInfoPath'
+          BarBarToken
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                NonNullExpression
+                  PropertyAccessExpression
+                    Identifier: 'sys'
+                    Identifier: 'writtenFiles'
+                Identifier: 'has'
+              CallExpression
+                Identifier: 'toPathWithSystem'
+                Identifier: 'sys'
+                Identifier: ' buildInfoPath'
+        ReturnStatement
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'sys'
+              Identifier: 'fileExists'
+            Identifier: 'buildInfoPath'
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' buildInfo'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'getBuildInfo'
+              Identifier: 'buildInfoPath'
+              CallExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'originalReadCall'
+                      BarBarToken
+                      PropertyAccessExpression
+                        Identifier: ' sys'
+                        Identifier: 'readFile'
+                  Identifier: 'call'
+                Identifier: 'sys'
+                Identifier: ' buildInfoPath'
+                StringLiteral
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'buildInfo'
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' sys'
+              Identifier: 'writeFile'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'buildInfoPath'
+                TemplateTail
+            StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    generateBuildInfoBaseline'
+          Identifier: 'sys'
+          Identifier: ' buildInfoPath'
+          Identifier: ' buildInfo'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' isWatch'
+    Parameter
+      Identifier: 'commandLineArgs'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    UnionType
+      BooleanKeyword
+      UndefinedKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'forEach'
+          Identifier: 'commandLineArgs'
+          ArrowFunction
+            Parameter
+              Identifier: ' arg'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'arg'
+                      Identifier: 'charCodeAt'
+                    NumericLiteral
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'CharacterCodes'
+                    Identifier: 'minus'
+                ReturnStatement
+                  FalseKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' option'
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' arg'
+                            Identifier: 'slice'
+                          ConditionalExpression
+                            BinaryExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'arg'
+                                  Identifier: 'charCodeAt'
+                                NumericLiteral
+                              EqualsEqualsEqualsToken
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'CharacterCodes'
+                                Identifier: 'minus'
+                            QuestionToken
+                            NumericLiteral
+                            ColonToken
+                            NumericLiteral
+                        Identifier: 'toLowerCase'
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' option'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' option'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TscWatchSystem'
+    TypeReference
+      Identifier: ' TestServerHostTrackingWrittenFiles'
+  FunctionDeclaration
+    Identifier: ' changeToTestServerHostWithTimeoutLogging'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' TestServerHostTrackingWrittenFiles'
+    Parameter
+      Identifier: ' baseline'
+      ArrayType
+        StringKeyword
+    TypeReference
+      Identifier: ' TscWatchSystem'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' logger'
+            TypeReference
+              Identifier: ' StateLogger'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        log'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' s'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' baseline'
+                      Identifier: 'push'
+                    Identifier: 's'
+              PropertyAssignment
+                Identifier: '
+        logs'
+                Identifier: ' baseline'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'switchToBaseliningInvoke'
+          Identifier: 'logger'
+          PropertyAccessExpression
+            Identifier: ' SerializeOutputOrder'
+            Identifier: 'BeforeDiff'
+      ReturnStatement
+        Identifier: ' host'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' BaselineBase'
+    PropertySignature
+      Identifier: '
+    baseline'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    sys'
+      TypeReference
+        Identifier: ' TscWatchSystem'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Baseline'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BaselineBase'
+      ExpressionWithTypeArguments
+        Identifier: ' CommandLineCallbacks'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fakeTsVersion'
+        StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' patchHostForBuildInfoReadWrite'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'System'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' originalReadFile'
+            PropertyAccessExpression
+              Identifier: ' sys'
+              Identifier: 'readFile'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'readFile'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: 'path'
+            Parameter
+              Identifier: ' encoding'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' value'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' originalReadFile'
+                        Identifier: 'call'
+                      Identifier: 'sys'
+                      Identifier: ' path'
+                      Identifier: ' encoding'
+              IfStatement
+                BinaryExpression
+                  PrefixUnaryExpression
+                    Identifier: 'value'
+                  BarBarToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'ts'
+                        Identifier: 'isBuildInfoFile'
+                      Identifier: 'path'
+                ReturnStatement
+                  Identifier: ' value'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' buildInfo'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getBuildInfo'
+                      Identifier: 'path'
+                      Identifier: ' value'
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'buildInfo'
+                ReturnStatement
+                  Identifier: ' value'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        ts'
+                      Identifier: 'Debug'
+                    Identifier: 'assert'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'buildInfo'
+                      Identifier: 'version'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' fakeTsVersion'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        buildInfo'
+                    Identifier: 'version'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'version'
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'getBuildInfoText'
+                  Identifier: 'buildInfo'
+      ReturnStatement
+        CallExpression
+          Identifier: ' patchHostForBuildInfoWrite'
+          Identifier: 'sys'
+          Identifier: ' fakeTsVersion'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' patchHostForBuildInfoWrite'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'System'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' version'
+      StringKeyword
+    TypeReference
+      Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' originalWrite'
+            PropertyAccessExpression
+              Identifier: ' sys'
+              Identifier: 'write'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'write'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' msg'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' originalWrite'
+                Identifier: 'call'
+              Identifier: 'sys'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' msg'
+                  Identifier: 'replace'
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'version'
+                Identifier: ' version'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' originalWriteFile'
+            PropertyAccessExpression
+              Identifier: ' sys'
+              Identifier: 'writeFile'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'writeFile'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: 'fileName'
+              StringKeyword
+            Parameter
+              Identifier: ' content'
+              StringKeyword
+            Parameter
+              Identifier: ' writeByteOrderMark'
+              BooleanKeyword
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'isBuildInfoFile'
+                  Identifier: 'fileName'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' buildInfo'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'getBuildInfo'
+                          Identifier: 'fileName'
+                          Identifier: ' content'
+                  IfStatement
+                    Identifier: 'buildInfo'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                buildInfo'
+                            Identifier: 'version'
+                          EqualsToken
+                          Identifier: ' version'
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' originalWriteFile'
+                            Identifier: 'call'
+                          Identifier: 'sys'
+                          Identifier: ' fileName'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'getBuildInfoText'
+                            Identifier: 'buildInfo'
+                          Identifier: ' writeByteOrderMark'
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' originalWriteFile'
+                    Identifier: 'call'
+                  Identifier: 'sys'
+                  Identifier: ' fileName'
+                  Identifier: ' content'
+                  Identifier: ' writeByteOrderMark'
+      ReturnStatement
+        Identifier: ' sys'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createBaseline'
+    Parameter
+      Identifier: '
+    system'
+      TypeReference
+        Identifier: ' TestServerHost'
+    Parameter
+      Identifier: '
+    modifySystem'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'sys'
+          TypeReference
+            Identifier: ' TestServerHost'
+        Parameter
+          Identifier: ' originalRead'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' TestServerHost'
+            LiteralType
+              StringLiteral
+        VoidKeyword
+    TypeReference
+      Identifier: ' Baseline'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' originalRead'
+            PropertyAccessExpression
+              Identifier: ' system'
+              Identifier: 'readFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' initialSys'
+            CallExpression
+              Identifier: ' patchHostForBuildInfoReadWrite'
+              Identifier: 'system'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    modifySystem'
+          QuestionDotToken
+          Identifier: 'initialSys'
+          Identifier: ' originalRead'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' baseline'
+            ArrayType
+              StringKeyword
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sys'
+            CallExpression
+              Identifier: ' changeToTestServerHostWithTimeoutLogging'
+              CallExpression
+                Identifier: 'changeToHostTrackingWrittenFiles'
+                Identifier: 'initialSys'
+              Identifier: ' baseline'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    baseline'
+            Identifier: 'push'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'sys'
+                  Identifier: 'getCurrentDirectory'
+              TemplateMiddle
+            TemplateSpan
+              PropertyAccessExpression
+                Identifier: 'sys'
+                Identifier: 'useCaseSensitiveFileNames'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    baseline'
+            Identifier: 'push'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'serializeState'
+          Identifier: 'baseline'
+          PropertyAccessExpression
+            Identifier: ' SerializeOutputOrder'
+            Identifier: 'None'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' cb'
+              BindingElement
+                Identifier: ' getPrograms'
+            CallExpression
+              Identifier: ' commandLineCallbacks'
+              Identifier: 'sys'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' sys'
+          ShorthandPropertyAssignment
+            Identifier: ' baseline'
+          ShorthandPropertyAssignment
+            Identifier: ' cb'
+          ShorthandPropertyAssignment
+            Identifier: ' getPrograms'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' applyEdit'
+    Parameter
+      Identifier: '
+    sys'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' BaselineBase'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: '
+    baseline'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' BaselineBase'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: '
+    edit'
+      FunctionType
+        Parameter
+          Identifier: 'sys'
+          TypeReference
+            Identifier: ' TscWatchSystem'
+        VoidKeyword
+    Parameter
+      Identifier: '
+    caption'
+      QuestionToken
+      StringKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    baseline'
+            Identifier: 'push'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ConditionalExpression
+                Identifier: 'caption'
+                QuestionToken
+                BinaryExpression
+                  StringLiteral
+                  PlusToken
+                  Identifier: ' caption'
+                ColonToken
+                StringLiteral
+              TemplateTail
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    edit'
+          Identifier: 'sys'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    baseline'
+            Identifier: 'push'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'serializeState'
+          Identifier: 'baseline'
+          PropertyAccessExpression
+            Identifier: ' SerializeOutputOrder'
+            Identifier: 'AfterDiff'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' baselineAfterTscCompile'
+    Parameter
+      Identifier: '
+    sys'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' BaselineBase'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: '
+    baseline'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' BaselineBase'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: '
+    getPrograms'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' CommandLineCallbacks'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: '
+    oldPrograms'
+      TypeOperator
+        ArrayType
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'CommandLineProgram'
+              UndefinedKeyword
+    Parameter
+      Identifier: '
+    baselineSourceMap'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    shouldBaselinePrograms'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    baselineDependencies'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' CommandLineProgram'
+    Block
+      IfStatement
+        Identifier: 'baselineSourceMap'
+        ExpressionStatement
+          CallExpression
+            Identifier: ' generateSourceMapBaselineFiles'
+            Identifier: 'sys'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' programs'
+            CallExpression
+              Identifier: ' getPrograms'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    sys'
+              Identifier: 'writtenFiles'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            Parameter
+              Identifier: ' key'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        // When buildinfo is same for two projects,
+        // it gives error and doesnt write buildinfo but because buildInfo is written for one project,
+        // readable baseline will be written two times for those two projects with same contents and is ok
+        ts'
+                      Identifier: 'Debug'
+                    Identifier: 'assert'
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: 'value'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    BarBarToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'endsWith'
+                      Identifier: 'key'
+                      StringLiteral
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'key'
+                      TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    sys'
+            Identifier: 'serializeState'
+          Identifier: 'baseline'
+          PropertyAccessExpression
+            Identifier: ' SerializeOutputOrder'
+            Identifier: 'BeforeDiff'
+      IfStatement
+        Identifier: 'shouldBaselinePrograms'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        baselinePrograms'
+              Identifier: 'baseline'
+              Identifier: ' programs'
+              Identifier: ' oldPrograms'
+              Identifier: ' baselineDependencies'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    baseline'
+            Identifier: 'push'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              ElementAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'ExitStatus'
+                AsExpression
+                  PropertyAccessExpression
+                    Identifier: 'sys'
+                    Identifier: 'exitCode'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'ExitStatus'
+              TemplateTail
+          StringLiteral
+      ReturnStatement
+        Identifier: ' programs'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' tscBaselineName'
+    Parameter
+      Identifier: 'scenario'
+      StringKeyword
+    Parameter
+      Identifier: ' subScenario'
+      StringKeyword
+    Parameter
+      Identifier: ' commandLineArgs'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: ' suffix'
+      QuestionToken
+      StringKeyword
+    Block
+      ReturnStatement
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            ConditionalExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'ts'
+                  Identifier: 'isBuildCommand'
+                Identifier: 'commandLineArgs'
+              QuestionToken
+              StringLiteral
+              ColonToken
+              StringLiteral
+            TemplateMiddle
+          TemplateSpan
+            ConditionalExpression
+              CallExpression
+                Identifier: 'isWatch'
+                Identifier: 'commandLineArgs'
+              QuestionToken
+              StringLiteral
+              ColonToken
+              StringLiteral
+            TemplateMiddle
+          TemplateSpan
+            Identifier: 'scenario'
+            TemplateMiddle
+          TemplateSpan
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'subScenario'
+                    Identifier: 'split'
+                  StringLiteral
+                Identifier: 'join'
+              StringLiteral
+            TemplateMiddle
+          TemplateSpan
+            ConditionalExpression
+              Identifier: 'suffix'
+              QuestionToken
+              Identifier: ' suffix'
+              ColonToken
+              StringLiteral
+            TemplateTail

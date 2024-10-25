@@ -1,0 +1,90 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' NonEmptyStringArray'
+    TupleType
+      StringKeyword
+      RestType
+        TypeReference
+          Identifier: 'Array'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strings'
+        TypeReference
+          Identifier: ' NonEmptyStringArray'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 's0'
+          BindingElement
+            Identifier: ' s1'
+          BindingElement
+            Identifier: ' s2'
+        Identifier: ' strings'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+s0'
+        Identifier: 'toUpperCase'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+s1'
+        Identifier: 'toUpperCase'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' 
+s2'
+        Identifier: 'toUpperCase'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strings2'
+        TupleType
+          StringKeyword
+          RestType
+            TypeReference
+              Identifier: 'Array'
+              StringKeyword
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 's3'
+          BindingElement
+            Identifier: ' s4'
+          BindingElement
+            Identifier: ' s5'
+        Identifier: ' strings2'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+s3'
+        Identifier: 'toUpperCase'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+s4'
+        Identifier: 'toUpperCase'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' 
+s5'
+        Identifier: 'toUpperCase'

@@ -1,0 +1,24 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @Filename: m1.ts
+////export var foo: number = 1;
+
+// @Filename: m2.ts
+////import * as /**/ from "m1"
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          Identifier: ' undefined'
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword

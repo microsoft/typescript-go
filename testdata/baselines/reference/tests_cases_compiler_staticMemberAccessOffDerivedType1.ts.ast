@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' SomeBase'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' GetNumber'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' P'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SomeBase'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' SomeNumber'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' P'
+          Identifier: 'GetNumber'

@@ -1,0 +1,69 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A2'
+    GetAccessor
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      PrivateIdentifier
+      Parameter
+        Identifier: 'param'
+        StringKeyword
+      Block
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' A2'
+              ThisKeyword
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        a'
+            PrivateIdentifier
+        FunctionDeclaration
+          Identifier: '  foo'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+            a'
+                PrivateIdentifier
+  ExpressionStatement
+    PropertyAccessExpression
+      NewExpression
+        Identifier: ' A2'
+      PrivateIdentifier
+  FunctionDeclaration
+    Identifier: '  foo'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' A2'
+          PrivateIdentifier
+  ClassDeclaration
+    Identifier: ' B2'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' A2'
+            PrivateIdentifier

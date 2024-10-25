@@ -1,0 +1,162 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Results'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    data'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'K'
+        PropertySignature
+          Identifier: '
+    onSuccess'
+          FunctionType
+            Parameter
+              Identifier: 'data'
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' T'
+                TypeReference
+                  Identifier: 'K'
+            VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Errors'
+    TypeParameter
+      Identifier: 'E'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' E'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    error'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' E'
+            TypeReference
+              Identifier: 'K'
+        PropertySignature
+          Identifier: '
+    onError'
+          FunctionType
+            Parameter
+              Identifier: 'data'
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' E'
+                TypeReference
+                  Identifier: 'K'
+            VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' withKeyedObj'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' E'
+    Parameter
+      Identifier: '
+  arg'
+      IntersectionType
+        TypeReference
+          Identifier: ' Results'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' Errors'
+          TypeReference
+            Identifier: 'E'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res'
+        CallExpression
+          Identifier: ' withKeyedObj'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  a'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    data'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    onSuccess'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'dataArg'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        Identifier: '
+      dataArg'
+                PropertyAssignment
+                  Identifier: '
+    error'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+    onError'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'errorArg'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        Identifier: '
+      errorArg'
+            PropertyAssignment
+              Identifier: '
+  b'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    data'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+    onSuccess'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'dataArg'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        Identifier: '
+      dataArg'
+                PropertyAssignment
+                  Identifier: '
+    error'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: '
+    onError'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'errorArg'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        Identifier: '
+      errorArg'

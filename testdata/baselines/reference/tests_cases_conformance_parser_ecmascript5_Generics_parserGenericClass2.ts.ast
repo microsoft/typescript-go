@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'K'
+    TypeParameter
+      Identifier: 'V'

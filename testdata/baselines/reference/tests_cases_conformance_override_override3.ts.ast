@@ -1,0 +1,71 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    bar'
+      VoidKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      VoidKeyword
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' bar'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' DB'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' foo'
+      VoidKeyword
+      Block
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' bar'
+      VoidKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' DD'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' foo'
+      VoidKeyword
+      Block
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' bar'
+      VoidKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' EB'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      VoidKeyword
+      Block
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' bar'
+      VoidKeyword
+      Block

@@ -1,0 +1,35 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxSelfClosingElement
+          Identifier: 'input'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' value'
+              StringLiteral
+            JsxAttribute
+              Identifier: '
+  foo:'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        JsxSelfClosingElement
+          Identifier: 'input'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' value'
+              StringLiteral
+            JsxAttribute
+              Identifier: '
+foo:'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    StringLiteral

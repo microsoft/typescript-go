@@ -1,0 +1,34 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Rule'
+        ImportSpecifier
+          Identifier: ' TokenRange'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RuleSpec'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' leftTokenRange'
+      TypeReference
+        Identifier: ' TokenRange'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' rightTokenRange'
+      TypeReference
+        Identifier: ' TokenRange'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' rule'
+      TypeReference
+        Identifier: ' Rule'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getAllRules'
+    ArrayType
+      TypeReference
+        Identifier: ' RuleSpec'

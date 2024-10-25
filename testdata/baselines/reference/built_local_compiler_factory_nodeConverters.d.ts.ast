@@ -1,0 +1,27 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' NodeConverters'
+        ImportSpecifier
+          Identifier: ' NodeFactory'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createNodeConverters'
+    Parameter
+      Identifier: 'factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    TypeReference
+      Identifier: ' NodeConverters'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullNodeConverters'
+        TypeReference
+          Identifier: ' NodeConverters'

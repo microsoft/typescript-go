@@ -1,0 +1,39 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+/**
+ * @overload
+ * @param {string} a
+ * @return {void}
+ */
+
+/**
+ * @overload
+ * @param {number} a
+ * @param {string} b
+ * @return {void}
+ */
+
+/**
+ * @param {string | number} a
+ * @param {string} [b]
+ * @return {void}
+ */
+Foo'
+          Identifier: 'prototype'
+        Identifier: 'bar'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'a'
+        Parameter
+          Identifier: ' b'
+        Block

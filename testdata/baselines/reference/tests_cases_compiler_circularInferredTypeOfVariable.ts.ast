@@ -1,0 +1,58 @@
+SourceFile
+  ExpressionStatement
+    ParenthesizedExpression
+      ArrowFunction
+        AsyncKeyword
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' foo'
+            Parameter
+              Identifier: 'p'
+              ArrayType
+                StringKeyword
+            ArrayType
+              StringKeyword
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+          FunctionDeclaration
+            Identifier: ' bar'
+            Parameter
+              Identifier: 'p'
+              ArrayType
+                StringKeyword
+            ArrayType
+              StringKeyword
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a1'
+                UnionType
+                  ArrayType
+                    StringKeyword
+                  UndefinedKeyword
+                ArrayLiteralExpression
+          WhileStatement
+            TrueKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' a2'
+                    CallExpression
+                      Identifier: ' foo'
+                      NonNullExpression
+                        Identifier: 'a1'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+        a1'
+                  EqualsToken
+                  AwaitExpression
+                    CallExpression
+                      Identifier: ' bar'
+                      Identifier: 'a2'

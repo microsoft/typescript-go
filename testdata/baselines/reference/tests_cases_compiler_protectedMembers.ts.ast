@@ -1,0 +1,350 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+      NumberKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' sx'
+      NumberKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' f'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' sf'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'sx'
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' f'
+      Block
+        ReturnStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'f'
+            PlusToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' sf'
+      Block
+        ReturnStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'sf'
+            PlusToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'sx'
+  ClassDeclaration
+    Identifier: ' C3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' sx'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    f'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'f'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' sf'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'sf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        TypeReference
+          Identifier: ' C1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        TypeReference
+          Identifier: ' C2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        TypeReference
+          Identifier: ' C3'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// All of these should be errors
+c1'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c1'
+        Identifier: 'f'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+C1'
+      Identifier: 'sx'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+C1'
+        Identifier: 'sf'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// All of these should be errors
+c2'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c2'
+        Identifier: 'f'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+C2'
+      Identifier: 'sx'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+C2'
+        Identifier: 'sf'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// All of these should be ok
+c3'
+      Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c3'
+        Identifier: 'f'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+C3'
+      Identifier: 'sx'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+C3'
+        Identifier: 'sf'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    y'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    z'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      Parameter
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+      Parameter
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+      Parameter
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' D'
+      Parameter
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' E'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        a'
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '  // Error, access must be through C or type derived from C
+        b'
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '  // Error, access must be through C or type derived from C
+        c'
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        d'
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        e'
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    d'
+  InterfaceDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertySignature
+      Identifier: '
+    e'
+  ClassDeclaration
+    Identifier: ' CC'
+    Constructor
+      ProtectedKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' A1'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' B1'
+    PropertyDeclaration
+      Identifier: '
+    x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        TypeReference
+          Identifier: ' A1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        TypeReference
+          Identifier: ' B1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a1'
+      EqualsToken
+      Identifier: ' b1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error, B1 doesn't derive from A1
+b1'
+      EqualsToken
+      Identifier: ' a1'
+  ClassDeclaration
+    Identifier: ' A2'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' B2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A2'
+    PropertyDeclaration
+      Identifier: '
+    x'
+  ClassDeclaration
+    Identifier: ' A3'
+    PropertyDeclaration
+      Identifier: '
+    x'
+  ClassDeclaration
+    Identifier: ' B3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A3'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'

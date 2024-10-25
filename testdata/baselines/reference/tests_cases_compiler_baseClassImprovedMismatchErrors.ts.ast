@@ -1,0 +1,60 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      UnionType
+        TypeReference
+          Identifier: ' Base'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    fn'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      UnionType
+        TypeReference
+          Identifier: ' Derived'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    fn'
+      Block
+        ReturnStatement
+          AsExpression
+            NumericLiteral
+            UnionType
+              NumberKeyword
+              StringKeyword
+  ClassDeclaration
+    Identifier: ' DerivedInterface'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      UnionType
+        TypeReference
+          Identifier: ' DerivedInterface'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    fn'
+      Block
+        ReturnStatement
+          AsExpression
+            NumericLiteral
+            UnionType
+              NumberKeyword
+              StringKeyword

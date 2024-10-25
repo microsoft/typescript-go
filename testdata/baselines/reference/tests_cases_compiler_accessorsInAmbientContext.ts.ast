@@ -1,0 +1,54 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        GetAccessor
+          Identifier: ' X'
+          Block
+            ReturnStatement
+              NumericLiteral
+        SetAccessor
+          Identifier: ' X'
+          Parameter
+            Identifier: 'v'
+          Block
+        GetAccessor
+          StaticKeyword
+          Identifier: ' Y'
+          Block
+            ReturnStatement
+              NumericLiteral
+        SetAccessor
+          StaticKeyword
+          Identifier: ' Y'
+          Parameter
+            Identifier: 'v'
+          Block
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    GetAccessor
+      Identifier: ' X'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' X'
+      Parameter
+        Identifier: 'v'
+      Block
+    GetAccessor
+      StaticKeyword
+      Identifier: ' Y'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      Identifier: ' Y'
+      Parameter
+        Identifier: 'v'
+      Block

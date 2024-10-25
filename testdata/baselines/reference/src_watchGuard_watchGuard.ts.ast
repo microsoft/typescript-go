@@ -1,0 +1,66 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' fs'
+    StringLiteral
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: 'process'
+          Identifier: 'argv'
+        Identifier: 'length'
+      LessThanToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    process'
+            Identifier: 'exit'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' directoryName'
+        ElementAccessExpression
+          PropertyAccessExpression
+            Identifier: ' process'
+            Identifier: 'argv'
+          NumericLiteral
+  TryStatement
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' watcher'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' fs'
+                Identifier: 'watch'
+              Identifier: 'directoryName'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' recursive'
+                  TrueKeyword
+              ArrowFunction
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    watcher'
+            Identifier: 'close'
+    CatchClause
+      Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+process'
+        Identifier: 'exit'
+      NumericLiteral

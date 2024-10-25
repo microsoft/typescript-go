@@ -1,0 +1,164 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' map'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'array'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' func'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    TypeReference
+      Identifier: ' U'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' identity'
+    TypeParameter
+      Identifier: 'V'
+    Parameter
+      Identifier: 'y'
+      TypeReference
+        Identifier: ' V'
+    TypeReference
+      Identifier: ' V'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dottedIdentity'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            Identifier: ' identity'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      EqualsToken
+      CallExpression
+        Identifier: ' map'
+        StringLiteral
+        PropertyAccessExpression
+          Identifier: ' dottedIdentity'
+          Identifier: 'x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// index expression
+s'
+      EqualsToken
+      CallExpression
+        Identifier: ' map'
+        StringLiteral
+        ElementAccessExpression
+          Identifier: ' dottedIdentity'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// function call
+s'
+      EqualsToken
+      CallExpression
+        Identifier: ' map'
+        StringLiteral
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Identifier: ' identity'
+  InterfaceDeclaration
+    Identifier: ' IdentityConstructor'
+    ConstructSignature
+      TypeQuery
+        Identifier: ' identity'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ic'
+        TypeReference
+          Identifier: ' IdentityConstructor'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      EqualsToken
+      CallExpression
+        Identifier: ' map'
+        StringLiteral
+        NewExpression
+          Identifier: ' ic'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      EqualsToken
+      CallExpression
+        Identifier: ' map'
+        StringLiteral
+        BinaryExpression
+          Identifier: ' t'
+          EqualsToken
+          Identifier: ' identity'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// type assertion
+s'
+      EqualsToken
+      CallExpression
+        Identifier: ' map'
+        StringLiteral
+        TypeAssertionExpression
+          TypeQuery
+            Identifier: ' identity'
+          Identifier: 'identity'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// parenthesized expression
+s'
+      EqualsToken
+      CallExpression
+        Identifier: ' map'
+        StringLiteral
+        ParenthesizedExpression
+          Identifier: 'identity'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// comma
+s'
+      EqualsToken
+      CallExpression
+        Identifier: ' map'
+        StringLiteral
+        ParenthesizedExpression
+          BinaryExpression
+            StringLiteral
+            CommaToken
+            Identifier: ' identity'

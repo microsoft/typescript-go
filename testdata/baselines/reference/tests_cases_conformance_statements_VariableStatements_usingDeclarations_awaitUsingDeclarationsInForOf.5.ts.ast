@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayType
+          AnyKeyword
+  ForOfStatement
+    VariableDeclarationList
+    Identifier: ' x'
+    EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' test'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+        Identifier: ' x'
+        EmptyStatement

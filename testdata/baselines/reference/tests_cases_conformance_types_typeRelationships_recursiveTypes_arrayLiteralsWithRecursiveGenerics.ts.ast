@@ -1,0 +1,107 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    next'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'List'
+          TypeReference
+            Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' DerivedList'
+    TypeParameter
+      Identifier: 'U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'U'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' MyList'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    next'
+      TypeReference
+        Identifier: ' MyList'
+        TypeReference
+          Identifier: 'MyList'
+          TypeReference
+            Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' list'
+        TypeReference
+          Identifier: ' List'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' list2'
+        TypeReference
+          Identifier: ' List'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myList'
+        TypeReference
+          Identifier: ' MyList'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xs'
+        ArrayLiteralExpression
+          Identifier: 'list'
+          Identifier: ' myList'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ys'
+        ArrayLiteralExpression
+          Identifier: 'list'
+          Identifier: ' list2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zs'
+        ArrayLiteralExpression
+          Identifier: 'list'
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myDerivedList'
+        TypeReference
+          Identifier: ' DerivedList'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' as'
+        ArrayLiteralExpression
+          Identifier: 'list'
+          Identifier: ' myDerivedList'

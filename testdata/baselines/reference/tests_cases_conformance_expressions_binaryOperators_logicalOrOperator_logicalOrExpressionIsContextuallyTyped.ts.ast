@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+        BinaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              NumericLiteral
+          BarBarToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              TrueKeyword

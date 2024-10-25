@@ -1,0 +1,32 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////let a = <string> "";
+////let b = <number> 1;
+////let c = <any[]> [];
+////let d = <string[]> [];
+////let e = <string[]> ["e"];
+
+format'
+        Identifier: 'setFormatOptions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    insertSpaceAfterTypeAssertion'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+format'
+        Identifier: 'document'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'currentFileContentIs'
+      NoSubstitutionTemplateLiteral

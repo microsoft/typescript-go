@@ -1,0 +1,63 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowJs: true
+
+// @Filename: /a.js
+/////** @template T Parameter doc comment */
+////function f() {}
+////
+/////**
+//// * Doc
+//// * @template T Comment
+//// */
+////function g() {}
+////
+/////**
+//// * Doc
+//// * @template T Comment
+//// * @template U Comment
+//// */
+////function h() {}
+////
+/////**
+//// * Doc
+//// * @template T,U Comment
+//// */
+////function h2() {}
+////
+/////** @template T Comment @return {void} */
+////function i() {}
+////
+/////**
+////Doc
+////@template T comment
+////@template U comment
+////@param {number} x
+////*/
+////function j(x) { return x; }
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixAllDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Delete_all_unused_declarations'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

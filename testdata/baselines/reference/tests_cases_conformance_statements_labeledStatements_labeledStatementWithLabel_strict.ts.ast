@@ -1,0 +1,81 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  LabeledStatement
+    Identifier: '
+label'
+    FunctionDeclaration
+      Identifier: ' fn'
+      Block
+  LabeledStatement
+    Identifier: '
+label'
+    FunctionDeclaration
+      AsteriskToken
+      Identifier: ' gen'
+      Block
+  LabeledStatement
+    Identifier: '
+label'
+    FunctionDeclaration
+      AsyncKeyword
+      Identifier: ' gen1'
+      Block
+  LabeledStatement
+    Identifier: '
+label'
+    EnumDeclaration
+      Identifier: ' E'
+  LabeledStatement
+    Identifier: '
+label'
+    InterfaceDeclaration
+      Identifier: ' I'
+  LabeledStatement
+    Identifier: '
+label'
+    ClassDeclaration
+      Identifier: ' C'
+  LabeledStatement
+    Identifier: '
+label'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'
+          NumericLiteral
+  LabeledStatement
+    Identifier: '
+label'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          NumericLiteral
+  LabeledStatement
+    Identifier: '
+label'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' c'
+          NumericLiteral
+  LabeledStatement
+    Identifier: '
+
+label'
+    ModuleDeclaration
+      Identifier: ' M'
+      ModuleBlock
+  LabeledStatement
+    Identifier: '
+label'
+    ModuleDeclaration
+      Identifier: ' N'
+      ModuleBlock
+  LabeledStatement
+    Identifier: '
+label'
+    TypeAliasDeclaration
+      Identifier: ' T'
+      TypeLiteral

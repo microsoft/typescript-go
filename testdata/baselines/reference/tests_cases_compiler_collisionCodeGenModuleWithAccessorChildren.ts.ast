@@ -1,0 +1,97 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ClassDeclaration
+        Identifier: ' c'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' y'
+        SetAccessor
+          Identifier: ' Z'
+          Parameter
+            Identifier: 'M'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+                EqualsToken
+                Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' d'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' y'
+        SetAccessor
+          Identifier: ' Z'
+          Parameter
+            Identifier: 'p'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' M'
+                  NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+                EqualsToken
+                Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' e'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' y'
+        SetAccessor
+          Identifier: ' M'
+          Parameter
+            Identifier: 'p'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+                EqualsToken
+                Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' f'
+        GetAccessor
+          Identifier: ' Z'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' M'
+                  NumericLiteral
+            ReturnStatement
+              Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' e'
+        GetAccessor
+          Identifier: ' M'
+          Block
+            ReturnStatement
+              Identifier: ' x'

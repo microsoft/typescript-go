@@ -1,0 +1,88 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fn'
+      Block
+        ReturnStatement
+          ThisKeyword
+    GetAccessor
+      StaticKeyword
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      Identifier: ' x'
+      Parameter
+        Identifier: 'v'
+      Block
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        NumberKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' b'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' C'
+            Identifier: 'fn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        PropertyAccessExpression
+          Identifier: ' r'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        PropertyAccessExpression
+          Identifier: ' r'
+          Identifier: 'foo'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' D'
+            Identifier: 'fn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        PropertyAccessExpression
+          Identifier: ' r'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        PropertyAccessExpression
+          Identifier: ' r'
+          Identifier: 'foo'

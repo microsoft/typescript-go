@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    Constructor
+      Block
+        ClassDeclaration
+          Identifier: ' B'
+          PropertyDeclaration
+            PrivateIdentifier
+            NumericLiteral
+          Constructor
+            Block
+              ClassDeclaration
+                Identifier: ' C'
+                Constructor
+                  Block
+                    ExpressionStatement
+                      PropertyAccessExpression
+                        Identifier: '
+                        A'
+                        PrivateIdentifier

@@ -1,0 +1,40 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Symbol'
+            Identifier: 'for'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      AsteriskToken
+      Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      SlashToken
+      Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+s'
+      PercentToken
+      Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+s'
+      AsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      SlashToken
+      Identifier: ' s'

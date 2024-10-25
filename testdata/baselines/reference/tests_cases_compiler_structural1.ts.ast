@@ -1,0 +1,35 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: '
+        salt'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        pepper'
+          NumberKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f'
+        Parameter
+          Identifier: 'i'
+          TypeReference
+            Identifier: 'I'
+        Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    f'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'salt'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: 'pepper'
+              NumericLiteral

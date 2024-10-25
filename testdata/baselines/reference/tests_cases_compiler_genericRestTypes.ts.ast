@@ -1,0 +1,226 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Tail'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    ConditionalType
+      ParenthesizedType
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TypeReference
+              Identifier: ' T'
+          AnyKeyword
+      ParenthesizedType
+        FunctionType
+          Parameter
+            Identifier: 'head'
+            AnyKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'tail'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+          AnyKeyword
+      TypeReference
+        Identifier: ' U'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' MyFunctionType'
+    FunctionType
+      Parameter
+        Identifier: 'foo'
+        NumberKeyword
+      Parameter
+        Identifier: ' bar'
+        StringKeyword
+      BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' Explicit'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' Tail'
+          TypeReference
+            Identifier: 'Parameters'
+            TypeReference
+              Identifier: 'MyFunctionType'
+      TypeReference
+        Identifier: ' ReturnType'
+        TypeReference
+          Identifier: 'MyFunctionType'
+  TypeAliasDeclaration
+    Identifier: ' Bind1'
+    TypeParameter
+      Identifier: 'T'
+      FunctionType
+        Parameter
+          Identifier: 'head'
+          AnyKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'tail'
+          ArrayType
+            AnyKeyword
+        AnyKeyword
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' Tail'
+          TypeReference
+            Identifier: 'Parameters'
+            TypeReference
+              Identifier: 'T'
+      TypeReference
+        Identifier: ' ReturnType'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Generic'
+    TypeReference
+      Identifier: ' Bind1'
+      TypeReference
+        Identifier: 'MyFunctionType'
+  FunctionDeclaration
+    Identifier: ' assignmentWithComplexRest'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn1'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'rest'
+                TypeReference
+                  Identifier: ' T'
+              VoidKeyword
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              Parameter
+                DotDotDotToken
+                Identifier: '_'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn2'
+            FunctionType
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                NeverKeyword
+              VoidKeyword
+            Identifier: ' fn1'
+  FunctionDeclaration
+    Identifier: ' assignmentWithComplexRest2'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn1'
+            FunctionType
+              Parameter
+                Identifier: 'cb'
+                FunctionType
+                  Parameter
+                    Identifier: 'x'
+                    StringKeyword
+                  Parameter
+                    DotDotDotToken
+                    Identifier: 'rest'
+                    TypeReference
+                      Identifier: ' T'
+                  VoidKeyword
+              VoidKeyword
+            ArrowFunction
+              Parameter
+                Identifier: 'cb'
+              EqualsGreaterThanToken
+              Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn2'
+            FunctionType
+              Parameter
+                Identifier: 'cb'
+                FunctionType
+                  Parameter
+                    DotDotDotToken
+                    Identifier: 'args'
+                    NeverKeyword
+                  VoidKeyword
+              VoidKeyword
+            Identifier: ' fn1'
+  FunctionDeclaration
+    Identifier: ' assignmentWithComplexRest3'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn1'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'rest'
+                TypeReference
+                  Identifier: ' T'
+              VoidKeyword
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              Parameter
+                DotDotDotToken
+                Identifier: '_'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn2'
+            FunctionType
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                IntersectionType
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: 'x'
+                      LiteralType
+                        StringLiteral
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: 'x'
+                      LiteralType
+                        StringLiteral
+              VoidKeyword
+            Identifier: ' fn1'

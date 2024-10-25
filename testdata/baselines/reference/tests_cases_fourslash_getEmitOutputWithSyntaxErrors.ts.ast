@@ -1,0 +1,14 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @BaselineFile: getEmitOutputWithSyntaxErrors.baseline
+
+// @Filename: inputFile.ts
+// @emitThisFile: true
+//// var x:
+
+verify'
+        Identifier: 'baselineGetEmitOutput'

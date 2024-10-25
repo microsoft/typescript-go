@@ -1,0 +1,370 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionNumberString'
+        UnionType
+          NumberKeyword
+          StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    MethodDeclaration
+      Identifier: ' foo1'
+      Block
+  ClassDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    MethodDeclaration
+      Identifier: ' foo2'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionDE'
+        UnionType
+          TypeReference
+            Identifier: ' D'
+          TypeReference
+            Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' E'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// A union type U is assignable to a type T if each type in U is assignable to T
+c'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' unionDE'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+d'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+d'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+d'
+      EqualsToken
+      Identifier: ' unionDE'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error e is not assignable to d
+e'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      Identifier: ' unionDE'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error d is not assignable to e
+num'
+      EqualsToken
+      Identifier: ' num'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+num'
+      EqualsToken
+      Identifier: ' str'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+num'
+      EqualsToken
+      Identifier: ' unionNumberString'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error string is not assignable to number
+str'
+      EqualsToken
+      Identifier: ' num'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+str'
+      EqualsToken
+      Identifier: ' str'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+str'
+      EqualsToken
+      Identifier: ' unionNumberString'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error since number is not assignable to string
+
+// A type T is assignable to a union type U if T is assignable to any type in U
+d'
+      EqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+unionDE'
+      EqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error since C is not assinable to either D or E
+d'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+unionDE'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+d'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+e'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+unionDE'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+num'
+      EqualsToken
+      Identifier: ' num'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+str'
+      EqualsToken
+      Identifier: ' num'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+unionNumberString'
+      EqualsToken
+      Identifier: ' num'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok 
+num'
+      EqualsToken
+      Identifier: ' str'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+str'
+      EqualsToken
+      Identifier: ' str'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+unionNumberString'
+      EqualsToken
+      Identifier: ' str'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyVar'
+        AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anyVar'
+      EqualsToken
+      Identifier: ' unionDE'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anyVar'
+      EqualsToken
+      Identifier: ' unionNumberString'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+unionDE'
+      EqualsToken
+      Identifier: ' anyVar'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+unionNumberString'
+      EqualsToken
+      Identifier: ' anyVar'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// null
+unionDE'
+      EqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+unionNumberString'
+      EqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// undefined
+unionDE'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+unionNumberString'
+      EqualsToken
+      Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    u'
+          EqualsToken
+          Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              TypeReference
+                Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    x'
+          EqualsToken
+          Identifier: ' u'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    x'
+          EqualsToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error U not assignable to T
+    u'
+          EqualsToken
+          Identifier: ' x'

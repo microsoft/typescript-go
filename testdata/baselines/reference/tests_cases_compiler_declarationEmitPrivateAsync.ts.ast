@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    MethodDeclaration
+      PrivateKeyword
+      AsyncKeyword
+      Identifier: ' baz'
+      Block
+        ReturnStatement

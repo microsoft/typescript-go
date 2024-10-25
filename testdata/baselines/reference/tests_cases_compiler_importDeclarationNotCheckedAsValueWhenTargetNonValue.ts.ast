@@ -1,0 +1,44 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' dojox'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' charting'
+        ModuleBlock
+          ModuleDeclaration
+            Identifier: ' axis2d'
+            ModuleBlock
+              ClassDeclaration
+                ExportKeyword
+                Identifier: ' Val'
+              InterfaceDeclaration
+                Identifier: ' common'
+                PropertySignature
+                  Identifier: '
+                createText'
+                  ObjectKeyword
+              ModuleDeclaration
+                Identifier: ' common'
+                ModuleBlock
+                  InterfaceDeclaration
+                    Identifier: ' createText'
+                    MethodSignature
+                      Identifier: '
+                    gfx'
+                      StringKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' exp'
+        QualifiedName
+          QualifiedName
+            QualifiedName
+              Identifier: ' dojox'
+              Identifier: 'charting'
+            Identifier: 'axis2d'
+          Identifier: 'common'
+      ExportAssignment
+        Identifier: ' exp'

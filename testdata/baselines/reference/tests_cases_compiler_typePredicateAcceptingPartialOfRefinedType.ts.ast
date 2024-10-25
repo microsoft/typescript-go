@@ -1,0 +1,31 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Test'
+    PropertySignature
+      Identifier: '
+  testy'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Options'
+    PropertySignature
+      Identifier: '
+  test'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' Test'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' includesAllRequiredOptions'
+    Parameter
+      Identifier: 'options'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'Options'
+    TypePredicate
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' Options'

@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' min'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'fn1'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'fn2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' Foo'
+        Identifier: 'min'

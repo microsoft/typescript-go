@@ -1,0 +1,103 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '// If the module target is es2015+ and the file has no existing CommonJS
+// indicators, use `import` declarations.
+
+// @allowJs: true
+// @checkJs: true
+// @module: es2015
+
+// @Filename: a.js
+////export const x = 0;
+
+// @Filename: index.js
+////x
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+  errorCode'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Cannot_find_name_0'
+            Identifier: 'code'
+        PropertyAssignment
+          Identifier: '
+  description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+  applyChanges'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// If the module target is es2015+ but the file already uses `require`
+// (and not `import`), use `require`.
+goTo'
+        Identifier: 'position'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insertLine'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+  errorCode'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Cannot_find_name_0'
+            Identifier: 'code'
+        PropertyAssignment
+          Identifier: '
+  description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+  applyChanges'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

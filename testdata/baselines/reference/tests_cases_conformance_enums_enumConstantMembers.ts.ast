@@ -1,0 +1,132 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E1'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+  EnumDeclaration
+    Identifier: ' E2'
+    EnumMember
+      Identifier: '
+    a'
+      PrefixUnaryExpression
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+  EnumDeclaration
+    Identifier: ' E3'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' E4'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+      PrefixUnaryExpression
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    c'
+      NumericLiteral
+  EnumDeclaration
+    Identifier: ' E5'
+    EnumMember
+      Identifier: '
+    a'
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    c'
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    d'
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    e'
+      Identifier: ' NaN'
+    EnumMember
+      Identifier: '
+    f'
+      Identifier: ' Infinity'
+    EnumMember
+      Identifier: '
+    g'
+      PrefixUnaryExpression
+        Identifier: 'Infinity'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E6'
+    EnumMember
+      Identifier: '
+    a'
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    c'
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    d'
+      BinaryExpression
+        NumericLiteral
+        SlashToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    e'
+      Identifier: ' NaN'
+    EnumMember
+      Identifier: '
+    f'
+      Identifier: ' Infinity'
+    EnumMember
+      Identifier: '
+    g'
+      PrefixUnaryExpression
+        Identifier: 'Infinity'

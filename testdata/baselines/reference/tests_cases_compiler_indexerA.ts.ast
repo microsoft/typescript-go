@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' JQueryElement'
+    PropertyDeclaration
+      Identifier: '
+    id'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' JQuery'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      TypeReference
+        Identifier: 'JQueryElement'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' jq'
+        TypeReference
+          Identifier: 'JQuery'
+        ObjectLiteralExpression
+          PropertyAssignment
+            NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' id'
+                StringLiteral
+          PropertyAssignment
+            NumericLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' id'
+                StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      ElementAccessExpression
+        Identifier: '
+jq'
+        NumericLiteral
+      Identifier: 'id'

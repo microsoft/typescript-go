@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr1'
+        ArrayType
+          ParenthesizedType
+            UnionType
+              StringKeyword
+              ArrayType
+                StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr2'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        ElementAccessExpression
+          Identifier: ' arr2'
+          ElementAccessExpression
+            Identifier: 'arr1'
+            NumericLiteral

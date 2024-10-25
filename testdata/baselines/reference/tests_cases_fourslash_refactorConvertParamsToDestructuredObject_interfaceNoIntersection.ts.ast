@@ -1,0 +1,29 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////interface IFoo {
+////    method(x: string, y: string): void;
+////}
+////interface IBar {
+////    method(x: number): void;
+////}
+////const x: IFoo & IBar = {
+////    method(/*a*/x: string, y: string/*b*/): void {},
+////};
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'refactorAvailable'
+      StringLiteral

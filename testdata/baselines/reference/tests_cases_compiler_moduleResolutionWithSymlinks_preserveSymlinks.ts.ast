@@ -1,0 +1,46 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' real'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' real'
+        StringKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' C'
+          Identifier: ' C1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' C'
+          Identifier: ' C2'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' C1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+// Should fail. We no longer resolve any symlinks.
+x'
+      EqualsToken
+      NewExpression
+        Identifier: ' C2'

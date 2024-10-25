@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @checkJs: true
+// @emitDeclarationOnly: true
+// @declaration: true
+// @filename: file.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' displayName'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' defaultEnabled'
+            TrueKeyword

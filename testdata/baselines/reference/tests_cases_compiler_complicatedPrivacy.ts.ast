@@ -1,0 +1,213 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m2'
+        ModuleBlock
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' f1'
+            Parameter
+              Identifier: 'c1'
+              TypeReference
+                Identifier: ' C1'
+            Block
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' f2'
+            Parameter
+              Identifier: 'c2'
+              TypeReference
+                Identifier: ' C2'
+            Block
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' C2'
+            HeritageClause
+              ExpressionWithTypeArguments
+                PropertyAccessExpression
+                  Identifier: ' m3'
+                  Identifier: 'i3'
+            GetAccessor
+              PublicKeyword
+              Identifier: ' p1'
+              Parameter
+                Identifier: 'arg'
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: ' C1'
+            SetAccessor
+              PublicKeyword
+              Identifier: ' p1'
+              Parameter
+                Identifier: 'arg1'
+                TypeReference
+                  Identifier: ' C1'
+              Block
+            MethodDeclaration
+              PublicKeyword
+              Identifier: ' f55'
+              Block
+                ReturnStatement
+                  StringLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f2'
+        Parameter
+          Identifier: 'arg1'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              QuestionToken
+              TypeReference
+                Identifier: ' C1'
+            PropertySignature
+              Identifier: ' y'
+              NumberKeyword
+        Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f3'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'a'
+              NumberKeyword
+            TypeReference
+              Identifier: ' C1'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f4'
+        Parameter
+          Identifier: 'arg1'
+          TypeLiteral
+            PropertySignature
+              ComputedPropertyName
+                Identifier: 'number'
+              TypeReference
+                Identifier: ' C1'
+        Block
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f5'
+        Parameter
+          Identifier: 'arg2'
+          TypeLiteral
+            ConstructSignature
+              Parameter
+                Identifier: 'arg1'
+                TypeReference
+                  Identifier: ' C1'
+              TypeReference
+                Identifier: ' C1'
+        Block
+      ModuleDeclaration
+        Identifier: ' m3'
+        ModuleBlock
+          FunctionDeclaration
+            Identifier: ' f2'
+            Parameter
+              Identifier: 'f1'
+              TypeReference
+                Identifier: ' C1'
+            Block
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' i3'
+            MethodSignature
+              Identifier: '
+            f55'
+              StringKeyword
+      ClassDeclaration
+        Identifier: ' C1'
+      InterfaceDeclaration
+        Identifier: ' i'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C5'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' i'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' x'
+          NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v2'
+            ArrayType
+              TypeReference
+                Identifier: ' C1'
+  ClassDeclaration
+    Identifier: ' C2'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' m3'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' c_pr'
+            HeritageClause
+              ExpressionWithTypeArguments
+                PropertyAccessExpression
+                  Identifier: ' mglo5'
+                  Identifier: 'i5'
+              ExpressionWithTypeArguments
+                PropertyAccessExpression
+                  Identifier: ' mglo5'
+                  Identifier: 'i6'
+            MethodDeclaration
+              Identifier: '
+            f1'
+              Block
+                ReturnStatement
+                  StringLiteral
+          ModuleDeclaration
+            Identifier: ' m4'
+            ModuleBlock
+              ClassDeclaration
+                Identifier: ' C'
+              ModuleDeclaration
+                Identifier: ' m5'
+                ModuleBlock
+                  ModuleDeclaration
+                    ExportKeyword
+                    Identifier: ' m6'
+                    ModuleBlock
+                      FunctionDeclaration
+                        Identifier: ' f1'
+                        Block
+                          ReturnStatement
+                            NewExpression
+                              Identifier: ' C'
+  ModuleDeclaration
+    Identifier: ' mglo5'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' i5'
+        MethodSignature
+          Identifier: '
+        f1'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' i6'
+        MethodSignature
+          Identifier: '
+        f6'
+          NumberKeyword

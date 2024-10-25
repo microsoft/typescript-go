@@ -1,0 +1,42 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Block
+    MethodDeclaration
+      Identifier: '
+  foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+            EqualsToken
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NewExpression
+          Identifier: ' B'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+i'
+        Identifier: 'foo'

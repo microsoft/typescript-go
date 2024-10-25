@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' C'
+        Identifier: ' D'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  ExportAssignment
+    PropertyAccessExpression
+      Identifier: ' a'
+      Identifier: 'D'

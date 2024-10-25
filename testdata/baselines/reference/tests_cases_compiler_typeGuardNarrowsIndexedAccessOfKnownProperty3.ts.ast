@@ -1,0 +1,52 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    UnionType
+      ArrayType
+        ParenthesizedType
+          UnionType
+            NumberKeyword
+            UndefinedKeyword
+      UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' Foo'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' index'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          Identifier: 'foo'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        AmpersandAmpersandToken
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: ' foo'
+            Identifier: 'index'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+      AmpersandAmpersandToken
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: ' foo'
+          Identifier: 'index'
+        GreaterThanEqualsToken
+        NumericLiteral
+    Block
+      ExpressionStatement
+        ElementAccessExpression
+          Identifier: '
+    foo'
+          Identifier: 'index'

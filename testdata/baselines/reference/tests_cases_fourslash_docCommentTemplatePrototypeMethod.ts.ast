@@ -1,0 +1,19 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' marker'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' test'
+        Identifier: 'markerNames'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'docCommentTemplateAt'
+          Identifier: 'marker'
+          NumericLiteral
+          NoSubstitutionTemplateLiteral

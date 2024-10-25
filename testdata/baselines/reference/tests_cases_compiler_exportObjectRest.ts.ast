@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            StringLiteral

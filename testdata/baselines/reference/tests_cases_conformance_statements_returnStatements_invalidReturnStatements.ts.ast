@@ -1,0 +1,67 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn1'
+    NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' fn2'
+    StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' fn3'
+    BooleanKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' fn4'
+    TypeReference
+      Identifier: ' Date'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn7'
+    AnyKeyword
+    Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: ' id'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    PropertyDeclaration
+      Identifier: '
+    id'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    dispose'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' fn10'
+    TypeReference
+      Identifier: ' D'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' id'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' fn11'
+    TypeReference
+      Identifier: ' D'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' C'

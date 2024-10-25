@@ -1,0 +1,95 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BOOLEAN'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NUMBER'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' STRING'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsNumber'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsString'
+        StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+//Expect errors when the results type is different form the second operand
+resultIsBoolean'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'BOOLEAN'
+          CommaToken
+          Identifier: ' STRING'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+resultIsBoolean'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'BOOLEAN'
+          CommaToken
+          Identifier: ' NUMBER'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+resultIsNumber'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'NUMBER'
+          CommaToken
+          Identifier: ' BOOLEAN'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+resultIsNumber'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'NUMBER'
+          CommaToken
+          Identifier: ' STRING'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+resultIsString'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'STRING'
+          CommaToken
+          Identifier: ' BOOLEAN'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+resultIsString'
+      EqualsToken
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'STRING'
+          CommaToken
+          Identifier: ' NUMBER'

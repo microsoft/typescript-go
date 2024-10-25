@@ -1,0 +1,18 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' /*C*/ F2'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' /*L*/ F1'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' /*L*/ F1'
+      ExportSpecifier
+        Identifier: ' /*C*/ F2'
+    StringLiteral

@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C2'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' p1'
+        StringKeyword
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' p2'
+        NumberKeyword
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' p3'
+        AnyKeyword

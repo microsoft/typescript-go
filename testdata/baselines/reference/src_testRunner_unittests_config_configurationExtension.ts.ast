@@ -1,0 +1,1441 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' fakes'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vfs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineParseConfig'
+        ImportSpecifier
+          Identifier: '
+    baselineParseConfigHost'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' createFileSystem'
+    Parameter
+      Identifier: 'ignoreCase'
+      BooleanKeyword
+    Parameter
+      Identifier: ' cwd'
+      StringKeyword
+    Parameter
+      Identifier: ' root'
+      StringKeyword
+    Block
+      ReturnStatement
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' vfs'
+            Identifier: 'FileSystem'
+          Identifier: 'ignoreCase'
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: '
+        cwd'
+            PropertyAssignment
+              Identifier: '
+        files'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    Identifier: 'root'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    name'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    version'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    exports'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                StringLiteral
+                                StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        strict'
+                                TrueKeyword
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    name'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    version'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    tsconfig'
+                            StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        strict'
+                                TrueKeyword
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        strict'
+                                FalseKeyword
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    name'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    version'
+                            StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        strict'
+                                TrueKeyword
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        strict'
+                                FalseKeyword
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        strictNullChecks'
+                                FalseKeyword
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        allowJs'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                        noImplicitAny'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                        strictNullChecks'
+                                TrueKeyword
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        preserveConstEnums'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                        removeComments'
+                                FalseKeyword
+                              PropertyAssignment
+                                Identifier: '
+                        sourceMap'
+                                TrueKeyword
+                          PropertyAssignment
+                            Identifier: '
+                    exclude'
+                            ArrayLiteralExpression
+                              StringLiteral
+                              StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    include'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        module'
+                                StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        module'
+                                StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        types'
+                                ArrayLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        typeRoots'
+                                ArrayLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    excludes'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        module'
+                                StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        module'
+                                StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    include'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        module'
+                                NullKeyword
+                          PropertyAssignment
+                            Identifier: '
+                    include'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        module'
+                                StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    include'
+                            NullKeyword
+                          PropertyAssignment
+                            Identifier: ' // eslint-disable-line no-restricted-syntax
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    include'
+                            ArrayLiteralExpression
+                              StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' extends'
+                            NumericLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' extends'
+                            StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' extends'
+                            StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' extends'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        allowJs'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                        noImplicitAny'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                        strictNullChecks'
+                                TrueKeyword
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        module'
+                                StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    include'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        module'
+                                NullKeyword
+                              PropertyAssignment
+                                Identifier: ' // eslint-disable-line no-restricted-syntax
+                        noImplicitAny'
+                                FalseKeyword
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    include'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        module'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                        strictNullChecks'
+                                FalseKeyword
+                          PropertyAssignment
+                            Identifier: '
+                    include'
+                            NullKeyword
+                          PropertyAssignment
+                            Identifier: ' // eslint-disable-line no-restricted-syntax
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            ArrayLiteralExpression
+                              StringLiteral
+                              StringLiteral
+                              StringLiteral
+                              StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            ArrayLiteralExpression
+                              StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        types'
+                                ArrayLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' extends'
+                            ArrayLiteralExpression
+                              NumericLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    include'
+                            ArrayLiteralExpression
+                              StringLiteral
+                          PropertyAssignment
+                            Identifier: ' // eslint-disable-line no-template-curly-in-string
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                          PropertyAssignment
+                            Identifier: ' // eslint-disable-line no-template-curly-in-string,
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        declarationDir'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: ' // eslint-disable-line no-template-curly-in-string
+                        rootDirs'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                              PropertyAssignment
+                                Identifier: ' // eslint-disable-line no-template-curly-in-string
+                        paths'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    StringLiteral
+                                    ArrayLiteralExpression
+                                      StringLiteral
+                                  PropertyAssignment
+                                    StringLiteral
+                                    ArrayLiteralExpression
+                                      StringLiteral
+                                  PropertyAssignment
+                                    StringLiteral
+                                    ArrayLiteralExpression
+                                      StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        strict'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                        baseUrl'
+                                StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    extends'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    include'
+                            ArrayLiteralExpression
+                              StringLiteral
+                          PropertyAssignment
+                            Identifier: ' // eslint-disable-line no-template-curly-in-string
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        rootDirs'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    files'
+                            ArrayLiteralExpression
+                              StringLiteral
+                          PropertyAssignment
+                            Identifier: ' // eslint-disable-line no-template-curly-in-string,
+                    compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        outDir'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                        declarationDir'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: ' // eslint-disable-line no-template-curly-in-string
+                        paths'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    StringLiteral
+                                    ArrayLiteralExpression
+                                      StringLiteral
+                                  PropertyAssignment
+                                    StringLiteral
+                                    ArrayLiteralExpression
+                                      StringLiteral
+                                  PropertyAssignment
+                                    StringLiteral
+                                    ArrayLiteralExpression
+                                      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseInsensitiveBasePath'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseInsensitiveHost'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' fakes'
+            Identifier: 'ParseConfigHost'
+          CallExpression
+            Identifier: 'createFileSystem'
+            TrueKeyword
+            Identifier: ' caseInsensitiveBasePath'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseSensitiveBasePath'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' caseSensitiveHost'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' fakes'
+            Identifier: 'ParseConfigHost'
+          CallExpression
+            Identifier: 'createFileSystem'
+            FalseKeyword
+            Identifier: ' caseSensitiveBasePath'
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    ts'
+                Identifier: 'forEach'
+              TupleType
+                StringKeyword
+                StringKeyword
+                TypeReference
+                  QualifiedName
+                    Identifier: ' fakes'
+                    Identifier: 'ParseConfigHost'
+              VoidKeyword
+              ArrayLiteralExpression
+                ArrayLiteralExpression
+                  StringLiteral
+                  Identifier: ' caseInsensitiveBasePath'
+                  Identifier: ' caseInsensitiveHost'
+                ArrayLiteralExpression
+                  StringLiteral
+                  Identifier: ' caseSensitiveBasePath'
+                  Identifier: ' caseSensitiveHost'
+              ArrowFunction
+                Parameter
+                  ArrayBindingPattern
+                    BindingElement
+                      Identifier: 'testName'
+                    BindingElement
+                      Identifier: ' basePath'
+                    BindingElement
+                      Identifier: ' host'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' nameAndEntry'
+                        ArrayType
+                          TupleType
+                            NamedTupleMember
+                              Identifier: 'name'
+                              StringKeyword
+                            NamedTupleMember
+                              Identifier: ' entry'
+                              StringKeyword
+                        ArrayLiteralExpression
+                  FunctionDeclaration
+                    Identifier: ' baselineParsedCommandLine'
+                    Parameter
+                      Identifier: 'name'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' entry'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            nameAndEntry'
+                            Identifier: 'push'
+                          ArrayLiteralExpression
+                            Identifier: 'name'
+                            Identifier: ' entry'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        baselineExtendsSourceFile'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineExtendsSourceFile'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineParsedCommandLine'
+                      StringLiteral
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        baselineParseConfig'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            scenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          Identifier: ' testName'
+                        PropertyAssignment
+                          Identifier: '
+            input'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                nameAndEntry'
+                                Identifier: 'map'
+                              ArrowFunction
+                                Parameter
+                                  ArrayBindingPattern
+                                    BindingElement
+                                      Identifier: 'name'
+                                    BindingElement
+                                      Identifier: ' entry'
+                                EqualsGreaterThanToken
+                                ParenthesizedExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    createHost'
+                                      ArrowFunction
+                                        Parameter
+                                          Identifier: ' baseline'
+                                        EqualsGreaterThanToken
+                                        Block
+                                          ExpressionStatement
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+                        baseline'
+                                                Identifier: 'push'
+                                              Identifier: 'name'
+                                          ReturnStatement
+                                            Identifier: ' host'
+                                    PropertyAssignment
+                                      Identifier: '
+                    jsonText'
+                                      NonNullExpression
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' host'
+                                            Identifier: 'readFile'
+                                          Identifier: 'entry'
+                                    PropertyAssignment
+                                      Identifier: '
+                    configFileName'
+                                      Identifier: ' entry'
+                                    PropertyAssignment
+                                      Identifier: '
+                    baselineParsed'
+                                      ArrowFunction
+                                        Parameter
+                                          Identifier: 'baseline'
+                                        Parameter
+                                          Identifier: ' parsed'
+                                        EqualsGreaterThanToken
+                                        Block
+                                          ExpressionStatement
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+                        baseline'
+                                                Identifier: 'push'
+                                              StringLiteral
+                                          ExpressionStatement
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+                        baseline'
+                                                Identifier: 'push'
+                                              CallExpression
+                                                Identifier: 'jsonToReadableText'
+                                                PropertyAccessExpression
+                                                  Identifier: 'parsed'
+                                                  Identifier: 'options'
+                                          ExpressionStatement
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+                        baseline'
+                                                Identifier: 'push'
+                                              StringLiteral
+                                          ExpressionStatement
+                                            CallExpression
+                                              PropertyAccessExpression
+                                                Identifier: '
+                        baseline'
+                                                Identifier: 'push'
+                                              SpreadElement
+                                                PropertyAccessExpression
+                                                  Identifier: 'parsed'
+                                                  Identifier: 'fileNames'
+                        PropertyAssignment
+                          Identifier: '
+            skipFs'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: '
+            header'
+                          ArrowFunction
+                            Parameter
+                              Identifier: ' baseline'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              Identifier: ' baselineParseConfigHost'
+                              Identifier: 'baseline'
+                              Identifier: ' host'
+                  FunctionDeclaration
+                    Identifier: ' baselineExtendsSourceFile'
+                    Parameter
+                      Identifier: 'name'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' entry'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          Identifier: 'name'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' baseline'
+                                    ArrayType
+                                      StringKeyword
+                                    ArrayLiteralExpression
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                baselineParseConfigHost'
+                                  Identifier: 'baseline'
+                                  Identifier: ' host'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                baseline'
+                                    Identifier: 'push'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'name'
+                                      TemplateTail
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' sourceFile'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'readJsonConfigFile'
+                                      Identifier: 'entry'
+                                      ArrowFunction
+                                        Parameter
+                                          Identifier: ' path'
+                                        EqualsGreaterThanToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' host'
+                                            Identifier: 'readFile'
+                                          Identifier: 'path'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' dir'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'combinePaths'
+                                      Identifier: 'basePath'
+                                      StringLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                ts'
+                                    Identifier: 'parseJsonSourceFileConfigFileContent'
+                                  Identifier: 'sourceFile'
+                                  Identifier: ' host'
+                                  Identifier: ' dir'
+                                  ObjectLiteralExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'getBaseFileName'
+                                    Identifier: 'entry'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                baseline'
+                                    Identifier: 'push'
+                                  StringLiteral
+                                  SpreadElement
+                                    NonNullExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'sourceFile'
+                                        Identifier: 'extendedSourceFiles'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                ts'
+                                    Identifier: 'parseJsonSourceFileConfigFileContent'
+                                  Identifier: 'sourceFile'
+                                  Identifier: ' host'
+                                  Identifier: ' dir'
+                                  ObjectLiteralExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'getBaseFileName'
+                                    Identifier: 'entry'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                baseline'
+                                    Identifier: 'push'
+                                  StringLiteral
+                                  SpreadElement
+                                    NonNullExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'sourceFile'
+                                        Identifier: 'extendedSourceFiles'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                Harness'
+                                      Identifier: 'Baseline'
+                                    Identifier: 'runBaseline'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'name'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'testName'
+                                      TemplateTail
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' baseline'
+                                      Identifier: 'join'
+                                    StringLiteral

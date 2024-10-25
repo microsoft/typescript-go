@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' map'
+        NewExpression
+          Identifier: ' Map'
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              StringLiteral
+              TrueKeyword
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+    Identifier: ' map'
+    Block
+      ExpressionStatement
+        Identifier: '
+    v'

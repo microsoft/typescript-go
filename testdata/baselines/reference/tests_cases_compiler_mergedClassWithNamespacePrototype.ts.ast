@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' prototype'
+        ModuleBlock
+          FunctionDeclaration
+            Identifier: ' f'
+            VoidKeyword

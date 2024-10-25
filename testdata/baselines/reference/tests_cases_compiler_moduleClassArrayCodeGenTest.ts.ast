@@ -1,0 +1,29 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' A'
+      ClassDeclaration
+        Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' M'
+              Identifier: 'A'
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' M'
+              Identifier: 'B'
+        ArrayLiteralExpression

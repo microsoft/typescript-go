@@ -1,0 +1,43 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+        NumericLiteral
+  ExportAssignment
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' d'
+      NamedImports
+        ImportSpecifier
+          Identifier: 'a'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ns'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'd'
+      ExportSpecifier
+        Identifier: ' a'
+      ExportSpecifier
+        Identifier: ' ns'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+d'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+ns'
+        Identifier: 'default'
+      Identifier: 'a'

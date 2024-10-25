@@ -1,0 +1,14 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Error'
+    PropertySignature
+      Identifier: '
+    stack2'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeReference
+      Identifier: ' Error'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'

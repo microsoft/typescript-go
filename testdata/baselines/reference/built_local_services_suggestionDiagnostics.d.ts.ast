@@ -1,0 +1,118 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ArrowFunction'
+        ImportSpecifier
+          Identifier: ' CallExpression'
+        ImportSpecifier
+          Identifier: ' CancellationToken'
+        ImportSpecifier
+          Identifier: ' DiagnosticWithLocation'
+        ImportSpecifier
+          Identifier: ' FunctionDeclaration'
+        ImportSpecifier
+          Identifier: ' FunctionExpression'
+        ImportSpecifier
+          Identifier: ' FunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: ' MethodDeclaration'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' ReturnStatement'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' computeSuggestionDiagnostics'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    ArrayType
+      TypeReference
+        Identifier: ' DiagnosticWithLocation'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' returnsPromise'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' FunctionLikeDeclaration'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isReturnStatementWithFixablePromiseHandler'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    TypePredicate
+      Identifier: ' node'
+      IntersectionType
+        TypeReference
+          Identifier: ' ReturnStatement'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    expression'
+            TypeReference
+              Identifier: ' CallExpression'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isFixablePromiseHandler'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' canBeConvertedToAsync'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' FunctionDeclaration'
+        TypeReference
+          Identifier: ' MethodDeclaration'
+        TypeReference
+          Identifier: ' FunctionExpression'
+        TypeReference
+          Identifier: ' ArrowFunction'

@@ -1,0 +1,30 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' f'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        TypeReference
+          Identifier: ' Iterable'
+          AnyKeyword
+      FunctionDeclaration
+        Identifier: ' f'
+        Parameter
+          Identifier: 's'
+          NumberKeyword
+        TypeReference
+          Identifier: ' Iterable'
+          AnyKeyword
+      FunctionDeclaration
+        AsteriskToken
+        Identifier: ' f'
+        Parameter
+          Identifier: 's'
+          AnyKeyword
+        TypeReference
+          Identifier: ' Iterable'
+          AnyKeyword
+        Block

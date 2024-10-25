@@ -1,0 +1,118 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' logLength'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeParameter
+      Identifier: ' U'
+      StringKeyword
+    Parameter
+      Identifier: 'arg'
+      IndexedAccessType
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeReference
+              Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: 'U'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'arg'
+            Identifier: 'length'
+      ReturnStatement
+        Identifier: ' arg'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+logLength'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+z'
+      EqualsToken
+      CallExpression
+        Identifier: ' logLength'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' logFirstLength'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        StringKeyword
+    TypeParameter
+      Identifier: ' U'
+      StringKeyword
+    Parameter
+      Identifier: 'arg'
+      IndexedAccessType
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeReference
+              Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: 'U'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            ElementAccessExpression
+              Identifier: 'arg'
+              NumericLiteral
+            Identifier: 'length'
+      ReturnStatement
+        Identifier: ' arg'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+logFirstLength'
+      ArrayLiteralExpression
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zz'
+        ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+zz'
+        Identifier: 'push'
+      CallExpression
+        Identifier: 'logLength'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // no error; T is inferred as `any`
+zz'
+      EqualsToken
+      CallExpression
+        Identifier: ' logFirstLength'
+        ArrayLiteralExpression
+          NumericLiteral

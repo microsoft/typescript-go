@@ -1,0 +1,2271 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CharacterCodes'
+        ImportSpecifier
+          Identifier: '
+    compareBooleans'
+        ImportSpecifier
+          Identifier: '
+    compareValues'
+        ImportSpecifier
+          Identifier: '
+    Comparison'
+        ImportSpecifier
+          Identifier: '
+    createTextSpan'
+        ImportSpecifier
+          Identifier: '
+    isUnicodeIdentifierStart'
+        ImportSpecifier
+          Identifier: '
+    last'
+        ImportSpecifier
+          Identifier: '
+    min'
+        ImportSpecifier
+          Identifier: '
+    ScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    startsWith'
+        ImportSpecifier
+          Identifier: '
+    TextSpan'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' PatternMatchKind'
+    EnumMember
+      Identifier: '
+    exact'
+    EnumMember
+      Identifier: '
+    prefix'
+    EnumMember
+      Identifier: '
+    substring'
+    EnumMember
+      Identifier: '
+    camelCase'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PatternMatch'
+    PropertySignature
+      Identifier: '
+    // What kind of match this was.  Exact matches are better than prefix matches which are
+    // better than substring matches which are better than CamelCase matches.
+    kind'
+      TypeReference
+        Identifier: ' PatternMatchKind'
+    PropertySignature
+      Identifier: '
+
+    // If this was a match where all constituent parts of the candidate and search pattern
+    // matched case sensitively or case insensitively.  Case sensitive matches of the kind
+    // are better matches than insensitive matches.
+    isCaseSensitive'
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PatternMatcher'
+    MethodSignature
+      Identifier: '
+    // Used to match a candidate against the last segment of a possibly dotted pattern.  This
+    // is useful as a quick check to prevent having to compute a container before calling
+    // "getMatches".
+    //
+    // For example, if the search pattern is "ts.c.SK" and the candidate is "SyntaxKind", then
+    // this will return a successful match, having only tested "SK" against "SyntaxKind".  At
+    // that point a call can be made to 'getMatches("SyntaxKind", "ts.compiler")', with the
+    // work to create 'ts.compiler' only being done once the first match succeeded.
+    getMatchForLastSegmentOfPattern'
+      Parameter
+        Identifier: 'candidate'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' PatternMatch'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+
+    // Fully checks a candidate, with an dotted container, against the search pattern.
+    // The candidate must match the last part of the search pattern, and the dotted container
+    // must match the preceding segments of the pattern.
+    getFullMatch'
+      Parameter
+        Identifier: 'candidateContainers'
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' candidate'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' PatternMatch'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+
+    // Whether or not the pattern contained dots or not.  Clients can use this to determine
+    // If they should call getMatches, or if getMatchesForLastSegmentOfPattern is sufficient.
+    patternContainsDots'
+      BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' Segment'
+    PropertySignature
+      Identifier: '
+    // Information about the entire piece of text between the dots.  For example, if the
+    // text between the dots is 'GetKeyword', then TotalTextChunk.Text will be 'GetKeyword' and
+    // TotalTextChunk.CharacterSpans will correspond to 'Get', 'Keyword'.
+    totalTextChunk'
+      TypeReference
+        Identifier: ' TextChunk'
+    PropertySignature
+      Identifier: '
+
+    // Information about the subwords compromising the total word.  For example, if the
+    // text between the dots is 'GetFoo KeywordBar', then the subwords will be 'GetFoo'
+    // and 'KeywordBar'.  Those individual words will have CharacterSpans of ('Get' and
+    // 'Foo') and('Keyword' and 'Bar') respectively.
+    subWordTextChunks'
+      ArrayType
+        TypeReference
+          Identifier: ' TextChunk'
+  InterfaceDeclaration
+    Identifier: ' TextChunk'
+    PropertySignature
+      Identifier: '
+    // The text of the chunk.  This should be a contiguous sequence of character that could
+    // occur in a symbol name.
+    text'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+
+    // The text of a chunk in lower case.  Cached because it is needed often to check for
+    // case insensitive matches.
+    textLowerCase'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+
+    // Whether or not this chunk is entirely lowercase. We have different rules when searching
+    // for something entirely lowercase or not.
+    isLowerCase'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+
+    // The spans in this text chunk that we think are of interest and should be matched
+    // independently.  For example, if the chunk is for "UIElement" the the spans of interest
+    // correspond to "U", "I" and "Element".  If "UIElement" isn't found as an exact, prefix.
+    // or substring match, then the character spans will be used to attempt a camel case match.
+    characterSpans'
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+  FunctionDeclaration
+    Identifier: ' createPatternMatch'
+    Parameter
+      Identifier: 'kind'
+      TypeReference
+        Identifier: ' PatternMatchKind'
+    Parameter
+      Identifier: ' isCaseSensitive'
+      BooleanKeyword
+    TypeReference
+      Identifier: ' PatternMatch'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        kind'
+          ShorthandPropertyAssignment
+            Identifier: '
+        isCaseSensitive'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createPatternMatcher'
+    Parameter
+      Identifier: 'pattern'
+      StringKeyword
+    UnionType
+      TypeReference
+        Identifier: ' PatternMatcher'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' stringToWordSpans'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              ArrayType
+                TypeReference
+                  Identifier: ' TextSpan'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' dotSeparatedSegments'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' pattern'
+                        Identifier: 'trim'
+                    Identifier: 'split'
+                  StringLiteral
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'p'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' createSegment'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'p'
+                      Identifier: 'trim'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'dotSeparatedSegments'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: ' dotSeparatedSegments'
+                  NumericLiteral
+                Identifier: 'totalTextChunk'
+              Identifier: 'text'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            getMatchForLastSegmentOfPattern'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' createPatternMatch'
+                    PropertyAccessExpression
+                      Identifier: 'PatternMatchKind'
+                      Identifier: 'substring'
+                    TrueKeyword
+              PropertyAssignment
+                Identifier: '
+            getFullMatch'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' createPatternMatch'
+                    PropertyAccessExpression
+                      Identifier: 'PatternMatchKind'
+                      Identifier: 'substring'
+                    TrueKeyword
+              PropertyAssignment
+                Identifier: '
+            patternContainsDots'
+                FalseKeyword
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'dotSeparatedSegments'
+            Identifier: 'some'
+          ArrowFunction
+            Parameter
+              Identifier: 'segment'
+            EqualsGreaterThanToken
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'segment'
+                  Identifier: 'subWordTextChunks'
+                Identifier: 'length'
+        ReturnStatement
+          Identifier: ' undefined'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        getFullMatch'
+            ArrowFunction
+              Parameter
+                Identifier: 'containers'
+              Parameter
+                Identifier: ' candidate'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' getFullMatch'
+                Identifier: 'containers'
+                Identifier: ' candidate'
+                Identifier: ' dotSeparatedSegments'
+                Identifier: ' stringToWordSpans'
+          PropertyAssignment
+            Identifier: '
+        getMatchForLastSegmentOfPattern'
+            ArrowFunction
+              Parameter
+                Identifier: ' candidate'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' matchSegment'
+                Identifier: 'candidate'
+                CallExpression
+                  Identifier: ' last'
+                  Identifier: 'dotSeparatedSegments'
+                Identifier: ' stringToWordSpans'
+          PropertyAssignment
+            Identifier: '
+        patternContainsDots'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' dotSeparatedSegments'
+                Identifier: 'length'
+              GreaterThanToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' getFullMatch'
+    Parameter
+      Identifier: 'candidateContainers'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: ' candidate'
+      StringKeyword
+    Parameter
+      Identifier: ' dotSeparatedSegments'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Segment'
+    Parameter
+      Identifier: ' stringToWordSpans'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        ArrayType
+          TypeReference
+            Identifier: ' TextSpan'
+    UnionType
+      TypeReference
+        Identifier: ' PatternMatch'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' candidateMatch'
+            CallExpression
+              Identifier: ' matchSegment'
+              Identifier: 'candidate'
+              CallExpression
+                Identifier: ' last'
+                Identifier: 'dotSeparatedSegments'
+              Identifier: ' stringToWordSpans'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'candidateMatch'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'dotSeparatedSegments'
+              Identifier: 'length'
+            MinusToken
+            NumericLiteral
+          GreaterThanToken
+          PropertyAccessExpression
+            Identifier: ' candidateContainers'
+            Identifier: 'length'
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bestMatch'
+            UnionType
+              TypeReference
+                Identifier: ' PatternMatch'
+              UndefinedKeyword
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' dotSeparatedSegments'
+                Identifier: 'length'
+              MinusToken
+              NumericLiteral
+          VariableDeclaration
+            Identifier: ' j'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' candidateContainers'
+                Identifier: 'length'
+              MinusToken
+              NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          GreaterThanEqualsToken
+          NumericLiteral
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' i'
+            MinusEqualsToken
+            NumericLiteral
+          CommaToken
+          BinaryExpression
+            Identifier: ' j'
+            MinusEqualsToken
+            NumericLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        bestMatch'
+              EqualsToken
+              CallExpression
+                Identifier: ' betterMatch'
+                Identifier: 'bestMatch'
+                CallExpression
+                  Identifier: ' matchSegment'
+                  ElementAccessExpression
+                    Identifier: 'candidateContainers'
+                    Identifier: 'j'
+                  ElementAccessExpression
+                    Identifier: ' dotSeparatedSegments'
+                    Identifier: 'i'
+                  Identifier: ' stringToWordSpans'
+      ReturnStatement
+        Identifier: ' bestMatch'
+  FunctionDeclaration
+    Identifier: ' getWordSpans'
+    Parameter
+      Identifier: 'word'
+      StringKeyword
+    Parameter
+      Identifier: ' stringToWordSpans'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        ArrayType
+          TypeReference
+            Identifier: ' TextSpan'
+    ArrayType
+      TypeReference
+        Identifier: ' TextSpan'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' spans'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' stringToWordSpans'
+                Identifier: 'get'
+              Identifier: 'word'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'spans'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        stringToWordSpans'
+                Identifier: 'set'
+              Identifier: 'word'
+              BinaryExpression
+                Identifier: ' spans'
+                EqualsToken
+                CallExpression
+                  Identifier: ' breakIntoWordSpans'
+                  Identifier: 'word'
+      ReturnStatement
+        Identifier: ' spans'
+  FunctionDeclaration
+    Identifier: ' matchTextChunk'
+    Parameter
+      Identifier: 'candidate'
+      StringKeyword
+    Parameter
+      Identifier: ' chunk'
+      TypeReference
+        Identifier: ' TextChunk'
+    Parameter
+      Identifier: ' stringToWordSpans'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        ArrayType
+          TypeReference
+            Identifier: ' TextSpan'
+    UnionType
+      TypeReference
+        Identifier: ' PatternMatch'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' index'
+            CallExpression
+              Identifier: ' indexOfIgnoringCase'
+              Identifier: 'candidate'
+              PropertyAccessExpression
+                Identifier: ' chunk'
+                Identifier: 'textLowerCase'
+      IfStatement
+        BinaryExpression
+          Identifier: 'index'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' createPatternMatch'
+              ConditionalExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'chunk'
+                      Identifier: 'text'
+                    Identifier: 'length'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' candidate'
+                    Identifier: 'length'
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' PatternMatchKind'
+                  Identifier: 'exact'
+                ColonToken
+                PropertyAccessExpression
+                  Identifier: ' PatternMatchKind'
+                  Identifier: 'prefix'
+              CallExpression
+                Identifier: ' /*isCaseSensitive:*/ startsWith'
+                Identifier: 'candidate'
+                PropertyAccessExpression
+                  Identifier: ' chunk'
+                  Identifier: 'text'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'chunk'
+          Identifier: 'isLowerCase'
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'index'
+              EqualsEqualsEqualsToken
+              PrefixUnaryExpression
+                NumericLiteral
+            ReturnStatement
+              Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' wordSpans'
+                CallExpression
+                  Identifier: ' getWordSpans'
+                  Identifier: 'candidate'
+                  Identifier: ' stringToWordSpans'
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' span'
+            Identifier: ' wordSpans'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'partStartsWith'
+                  Identifier: 'candidate'
+                  Identifier: ' span'
+                  PropertyAccessExpression
+                    Identifier: ' chunk'
+                    Identifier: 'text'
+                  TrueKeyword
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' createPatternMatch'
+                      PropertyAccessExpression
+                        Identifier: 'PatternMatchKind'
+                        Identifier: 'substring'
+                      CallExpression
+                        Identifier: ' /*isCaseSensitive:*/ partStartsWith'
+                        Identifier: 'candidate'
+                        Identifier: ' span'
+                        PropertyAccessExpression
+                          Identifier: ' chunk'
+                          Identifier: 'text'
+                        FalseKeyword
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'chunk'
+                    Identifier: 'text'
+                  Identifier: 'length'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' candidate'
+                  Identifier: 'length'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isUpperCaseLetter'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'candidate'
+                    Identifier: 'charCodeAt'
+                  Identifier: 'index'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' createPatternMatch'
+                  PropertyAccessExpression
+                    Identifier: 'PatternMatchKind'
+                    Identifier: 'substring'
+                  FalseKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'candidate'
+                  Identifier: 'indexOf'
+                PropertyAccessExpression
+                  Identifier: 'chunk'
+                  Identifier: 'text'
+              GreaterThanToken
+              NumericLiteral
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' createPatternMatch'
+                  PropertyAccessExpression
+                    Identifier: 'PatternMatchKind'
+                    Identifier: 'substring'
+                  TrueKeyword
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'chunk'
+                  Identifier: 'characterSpans'
+                Identifier: 'length'
+              GreaterThanToken
+              NumericLiteral
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' candidateParts'
+                    CallExpression
+                      Identifier: ' getWordSpans'
+                      Identifier: 'candidate'
+                      Identifier: ' stringToWordSpans'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' isCaseSensitive'
+                    ConditionalExpression
+                      CallExpression
+                        Identifier: ' tryCamelCaseMatch'
+                        Identifier: 'candidate'
+                        Identifier: ' candidateParts'
+                        Identifier: ' chunk'
+                        FalseKeyword
+                      QuestionToken
+                      TrueKeyword
+                      ColonToken
+                      ConditionalExpression
+                        CallExpression
+                          Identifier: ' tryCamelCaseMatch'
+                          Identifier: 'candidate'
+                          Identifier: ' candidateParts'
+                          Identifier: ' chunk'
+                          TrueKeyword
+                        QuestionToken
+                        FalseKeyword
+                        ColonToken
+                        Identifier: ' undefined'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'isCaseSensitive'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' createPatternMatch'
+                      PropertyAccessExpression
+                        Identifier: 'PatternMatchKind'
+                        Identifier: 'camelCase'
+                      Identifier: ' isCaseSensitive'
+  FunctionDeclaration
+    Identifier: ' matchSegment'
+    Parameter
+      Identifier: 'candidate'
+      StringKeyword
+    Parameter
+      Identifier: ' segment'
+      TypeReference
+        Identifier: ' Segment'
+    Parameter
+      Identifier: ' stringToWordSpans'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        ArrayType
+          TypeReference
+            Identifier: ' TextSpan'
+    UnionType
+      TypeReference
+        Identifier: ' PatternMatch'
+      UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'every'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'segment'
+              Identifier: 'totalTextChunk'
+            Identifier: 'text'
+          ArrowFunction
+            Parameter
+              Identifier: ' ch'
+            EqualsGreaterThanToken
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' ch'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' CharacterCodes'
+                  Identifier: 'space'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' ch'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' CharacterCodes'
+                  Identifier: 'asterisk'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' match'
+                CallExpression
+                  Identifier: ' matchTextChunk'
+                  Identifier: 'candidate'
+                  PropertyAccessExpression
+                    Identifier: ' segment'
+                    Identifier: 'totalTextChunk'
+                  Identifier: ' stringToWordSpans'
+          IfStatement
+            Identifier: 'match'
+            ReturnStatement
+              Identifier: ' match'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' subWordTextChunks'
+            PropertyAccessExpression
+              Identifier: ' segment'
+              Identifier: 'subWordTextChunks'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bestMatch'
+            UnionType
+              TypeReference
+                Identifier: ' PatternMatch'
+              UndefinedKeyword
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' subWordTextChunk'
+        Identifier: ' subWordTextChunks'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        bestMatch'
+              EqualsToken
+              CallExpression
+                Identifier: ' betterMatch'
+                Identifier: 'bestMatch'
+                CallExpression
+                  Identifier: ' matchTextChunk'
+                  Identifier: 'candidate'
+                  Identifier: ' subWordTextChunk'
+                  Identifier: ' stringToWordSpans'
+      ReturnStatement
+        Identifier: ' bestMatch'
+  FunctionDeclaration
+    Identifier: ' betterMatch'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        TypeReference
+          Identifier: ' PatternMatch'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' b'
+      UnionType
+        TypeReference
+          Identifier: ' PatternMatch'
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' PatternMatch'
+      UndefinedKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' min'
+          ArrayLiteralExpression
+            Identifier: 'a'
+            Identifier: ' b'
+          Identifier: ' compareMatches'
+  FunctionDeclaration
+    Identifier: ' compareMatches'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        TypeReference
+          Identifier: ' PatternMatch'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' b'
+      UnionType
+        TypeReference
+          Identifier: ' PatternMatch'
+        UndefinedKeyword
+    TypeReference
+      Identifier: ' Comparison'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' a'
+            EqualsEqualsEqualsToken
+            Identifier: ' undefined'
+          QuestionToken
+          PropertyAccessExpression
+            Identifier: ' Comparison'
+            Identifier: 'GreaterThan'
+          ColonToken
+          ConditionalExpression
+            BinaryExpression
+              Identifier: ' b'
+              EqualsEqualsEqualsToken
+              Identifier: ' undefined'
+            QuestionToken
+            PropertyAccessExpression
+              Identifier: ' Comparison'
+              Identifier: 'LessThan'
+            ColonToken
+            BinaryExpression
+              CallExpression
+                Identifier: ' compareValues'
+                PropertyAccessExpression
+                  Identifier: 'a'
+                  Identifier: 'kind'
+                PropertyAccessExpression
+                  Identifier: ' b'
+                  Identifier: 'kind'
+              BarBarToken
+              CallExpression
+                Identifier: ' compareBooleans'
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'a'
+                    Identifier: 'isCaseSensitive'
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'b'
+                    Identifier: 'isCaseSensitive'
+  FunctionDeclaration
+    Identifier: ' partStartsWith'
+    Parameter
+      Identifier: 'candidate'
+      StringKeyword
+    Parameter
+      Identifier: ' candidateSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' pattern'
+      StringKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      BooleanKeyword
+    Parameter
+      Identifier: ' patternSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' start'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' length'
+          PropertyAccessExpression
+            Identifier: ' pattern'
+            Identifier: 'length'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' patternSpan'
+              Identifier: 'length'
+            LessThanEqualsToken
+            PropertyAccessExpression
+              Identifier: ' candidateSpan'
+              Identifier: 'length'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' everyInRange'
+            NumericLiteral
+            PropertyAccessExpression
+              Identifier: ' patternSpan'
+              Identifier: 'length'
+            ArrowFunction
+              Parameter
+                Identifier: ' i'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' equalChars'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'pattern'
+                    Identifier: 'charCodeAt'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'patternSpan'
+                      Identifier: 'start'
+                    PlusToken
+                    Identifier: ' i'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' candidate'
+                    Identifier: 'charCodeAt'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'candidateSpan'
+                      Identifier: 'start'
+                    PlusToken
+                    Identifier: ' i'
+                Identifier: ' ignoreCase'
+  FunctionDeclaration
+    Identifier: ' equalChars'
+    Parameter
+      Identifier: 'ch1'
+      NumberKeyword
+    Parameter
+      Identifier: ' ch2'
+      NumberKeyword
+    Parameter
+      Identifier: ' ignoreCase'
+      BooleanKeyword
+    BooleanKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' ignoreCase'
+          QuestionToken
+          BinaryExpression
+            CallExpression
+              Identifier: ' toLowerCase'
+              Identifier: 'ch1'
+            EqualsEqualsEqualsToken
+            CallExpression
+              Identifier: ' toLowerCase'
+              Identifier: 'ch2'
+          ColonToken
+          BinaryExpression
+            Identifier: ' ch1'
+            EqualsEqualsEqualsToken
+            Identifier: ' ch2'
+  FunctionDeclaration
+    Identifier: ' tryCamelCaseMatch'
+    Parameter
+      Identifier: 'candidate'
+      StringKeyword
+    Parameter
+      Identifier: ' candidateParts'
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' chunk'
+      TypeReference
+        Identifier: ' TextChunk'
+    Parameter
+      Identifier: ' ignoreCase'
+      BooleanKeyword
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' chunkCharacterSpans'
+            PropertyAccessExpression
+              Identifier: ' chunk'
+              Identifier: 'characterSpans'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' currentCandidate'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' currentChunkSpan'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' firstMatch'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' contiguous'
+            UnionType
+              BooleanKeyword
+              UndefinedKeyword
+      WhileStatement
+        TrueKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'currentChunkSpan'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' chunkCharacterSpans'
+                Identifier: 'length'
+            Block
+              ReturnStatement
+                TrueKeyword
+            IfStatement
+              BinaryExpression
+                Identifier: 'currentCandidate'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' candidateParts'
+                  Identifier: 'length'
+              Block
+                ReturnStatement
+                  FalseKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' candidatePart'
+                ElementAccessExpression
+                  Identifier: ' candidateParts'
+                  Identifier: 'currentCandidate'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' gotOneMatchThisCandidate'
+                FalseKeyword
+          ForStatement
+            BinaryExpression
+              Identifier: ' currentChunkSpan'
+              LessThanToken
+              PropertyAccessExpression
+                Identifier: ' chunkCharacterSpans'
+                Identifier: 'length'
+            PostfixUnaryExpression
+              Identifier: ' currentChunkSpan'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' chunkCharacterSpan'
+                    ElementAccessExpression
+                      Identifier: ' chunkCharacterSpans'
+                      Identifier: 'currentChunkSpan'
+              IfStatement
+                Identifier: 'gotOneMatchThisCandidate'
+                Block
+                  IfStatement
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'isUpperCaseLetter'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'chunk'
+                                Identifier: 'text'
+                              Identifier: 'charCodeAt'
+                            PropertyAccessExpression
+                              ElementAccessExpression
+                                Identifier: 'chunkCharacterSpans'
+                                BinaryExpression
+                                  Identifier: 'currentChunkSpan'
+                                  MinusToken
+                                  NumericLiteral
+                              Identifier: 'start'
+                      BarBarToken
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'isUpperCaseLetter'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'chunk'
+                                Identifier: 'text'
+                              Identifier: 'charCodeAt'
+                            PropertyAccessExpression
+                              ElementAccessExpression
+                                Identifier: 'chunkCharacterSpans'
+                                Identifier: 'currentChunkSpan'
+                              Identifier: 'start'
+                    Block
+                      BreakStatement
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'partStartsWith'
+                    Identifier: 'candidate'
+                    Identifier: ' candidatePart'
+                    PropertyAccessExpression
+                      Identifier: ' chunk'
+                      Identifier: 'text'
+                    Identifier: ' ignoreCase'
+                    Identifier: ' chunkCharacterSpan'
+                Block
+                  BreakStatement
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            gotOneMatchThisCandidate'
+                  EqualsToken
+                  TrueKeyword
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            firstMatch'
+                  EqualsToken
+                  ConditionalExpression
+                    BinaryExpression
+                      Identifier: ' firstMatch'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' undefined'
+                    QuestionToken
+                    Identifier: ' currentCandidate'
+                    ColonToken
+                    Identifier: ' firstMatch'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            // If we were contiguous, then keep that value.  If we weren't, then keep that
+            // value.  If we don't know, then set the value to 'true' as an initial match is
+            // obviously contiguous.
+            contiguous'
+                  EqualsToken
+                  ConditionalExpression
+                    BinaryExpression
+                      Identifier: ' contiguous'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' undefined'
+                    QuestionToken
+                    TrueKeyword
+                    ColonToken
+                    Identifier: ' contiguous'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            candidatePart'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' createTextSpan'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'candidatePart'
+                        Identifier: 'start'
+                      PlusToken
+                      PropertyAccessExpression
+                        Identifier: ' chunkCharacterSpan'
+                        Identifier: 'length'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' candidatePart'
+                        Identifier: 'length'
+                      MinusToken
+                      PropertyAccessExpression
+                        Identifier: ' chunkCharacterSpan'
+                        Identifier: 'length'
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'gotOneMatchThisCandidate'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' contiguous'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            contiguous'
+                  EqualsToken
+                  FalseKeyword
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+
+        // Move onto the next candidate.
+        currentCandidate'
+  FunctionDeclaration
+    Identifier: ' createSegment'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    TypeReference
+      Identifier: ' Segment'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        totalTextChunk'
+            CallExpression
+              Identifier: ' createTextChunk'
+              Identifier: 'text'
+          PropertyAssignment
+            Identifier: '
+        subWordTextChunks'
+            CallExpression
+              Identifier: ' breakPatternIntoTextChunks'
+              Identifier: 'text'
+  FunctionDeclaration
+    Identifier: ' isUpperCaseLetter'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'ch'
+            GreaterThanEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'A'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' ch'
+            LessThanEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'Z'
+        Block
+          ReturnStatement
+            TrueKeyword
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'ch'
+            LessThanToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'maxAsciiCharacter'
+          BarBarToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isUnicodeIdentifierStart'
+              Identifier: 'ch'
+              PropertyAccessExpression
+                Identifier: ' ScriptTarget'
+                Identifier: 'Latest'
+        Block
+          ReturnStatement
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' str'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' String'
+                Identifier: 'fromCharCode'
+              Identifier: 'ch'
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' str'
+          EqualsEqualsEqualsToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' str'
+              Identifier: 'toUpperCase'
+  FunctionDeclaration
+    Identifier: ' isLowerCaseLetter'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'ch'
+            GreaterThanEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'a'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' ch'
+            LessThanEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'z'
+        Block
+          ReturnStatement
+            TrueKeyword
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'ch'
+            LessThanToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'maxAsciiCharacter'
+          BarBarToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isUnicodeIdentifierStart'
+              Identifier: 'ch'
+              PropertyAccessExpression
+                Identifier: ' ScriptTarget'
+                Identifier: 'Latest'
+        Block
+          ReturnStatement
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' str'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' String'
+                Identifier: 'fromCharCode'
+              Identifier: 'ch'
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' str'
+          EqualsEqualsEqualsToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' str'
+              Identifier: 'toLowerCase'
+  FunctionDeclaration
+    Identifier: ' indexOfIgnoringCase'
+    Parameter
+      Identifier: 'str'
+      StringKeyword
+    Parameter
+      Identifier: ' value'
+      StringKeyword
+    NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' str'
+                Identifier: 'length'
+              MinusToken
+              PropertyAccessExpression
+                Identifier: ' value'
+                Identifier: 'length'
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' start'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' start'
+          LessThanEqualsToken
+          Identifier: ' n'
+        PostfixUnaryExpression
+          Identifier: ' start'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'every'
+              Identifier: 'value'
+              ArrowFunction
+                Parameter
+                  Identifier: 'valueChar'
+                Parameter
+                  Identifier: ' i'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  CallExpression
+                    Identifier: ' toLowerCase'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'str'
+                        Identifier: 'charCodeAt'
+                      BinaryExpression
+                        Identifier: 'i'
+                        PlusToken
+                        Identifier: ' start'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' valueChar'
+            Block
+              ReturnStatement
+                Identifier: ' start'
+      ReturnStatement
+        PrefixUnaryExpression
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' toLowerCase'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'ch'
+            GreaterThanEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'A'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' ch'
+            LessThanEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'Z'
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' CharacterCodes'
+                Identifier: 'a'
+              PlusToken
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'ch'
+                  MinusToken
+                  PropertyAccessExpression
+                    Identifier: ' CharacterCodes'
+                    Identifier: 'A'
+      IfStatement
+        BinaryExpression
+          Identifier: 'ch'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' CharacterCodes'
+            Identifier: 'maxAsciiCharacter'
+        Block
+          ReturnStatement
+            Identifier: ' ch'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' String'
+                    Identifier: 'fromCharCode'
+                  Identifier: 'ch'
+                Identifier: 'toLowerCase'
+            Identifier: 'charCodeAt'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' isDigit'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: ' ch'
+            GreaterThanEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: '_0'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' ch'
+            LessThanEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: '_9'
+  FunctionDeclaration
+    Identifier: ' isWordChar'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: ' isUpperCaseLetter'
+                  Identifier: 'ch'
+                BarBarToken
+                CallExpression
+                  Identifier: ' isLowerCaseLetter'
+                  Identifier: 'ch'
+              BarBarToken
+              CallExpression
+                Identifier: ' isDigit'
+                Identifier: 'ch'
+            BarBarToken
+            BinaryExpression
+              Identifier: ' ch'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' CharacterCodes'
+                Identifier: '_'
+          BarBarToken
+          BinaryExpression
+            Identifier: ' ch'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: '$'
+  FunctionDeclaration
+    Identifier: ' breakPatternIntoTextChunks'
+    Parameter
+      Identifier: 'pattern'
+      StringKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' TextChunk'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            ArrayType
+              TypeReference
+                Identifier: ' TextChunk'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' wordStart'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' wordLength'
+            NumericLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' pattern'
+            Identifier: 'length'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' ch'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' pattern'
+                    Identifier: 'charCodeAt'
+                  Identifier: 'i'
+          IfStatement
+            CallExpression
+              Identifier: 'isWordChar'
+              Identifier: 'ch'
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'wordLength'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                wordStart'
+                      EqualsToken
+                      Identifier: ' i'
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            wordLength'
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'wordLength'
+                  GreaterThanToken
+                  NumericLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                result'
+                        Identifier: 'push'
+                      CallExpression
+                        Identifier: 'createTextChunk'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'pattern'
+                            Identifier: 'substr'
+                          Identifier: 'wordStart'
+                          Identifier: ' wordLength'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                wordLength'
+                      EqualsToken
+                      NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'wordLength'
+          GreaterThanToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        result'
+                Identifier: 'push'
+              CallExpression
+                Identifier: 'createTextChunk'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'pattern'
+                    Identifier: 'substr'
+                  Identifier: 'wordStart'
+                  Identifier: ' wordLength'
+      ReturnStatement
+        Identifier: ' result'
+  FunctionDeclaration
+    Identifier: ' createTextChunk'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    TypeReference
+      Identifier: ' TextChunk'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' textLowerCase'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' text'
+                Identifier: 'toLowerCase'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        text'
+          ShorthandPropertyAssignment
+            Identifier: '
+        textLowerCase'
+          PropertyAssignment
+            Identifier: '
+        isLowerCase'
+            BinaryExpression
+              Identifier: ' text'
+              EqualsEqualsEqualsToken
+              Identifier: ' textLowerCase'
+          PropertyAssignment
+            Identifier: '
+        characterSpans'
+            CallExpression
+              Identifier: ' breakIntoCharacterSpans'
+              Identifier: 'text'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' breakIntoCharacterSpans'
+    Parameter
+      Identifier: 'identifier'
+      StringKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' TextSpan'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' breakIntoSpans'
+          Identifier: 'identifier'
+          FalseKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' breakIntoWordSpans'
+    Parameter
+      Identifier: 'identifier'
+      StringKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' TextSpan'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' breakIntoSpans'
+          Identifier: 'identifier'
+          TrueKeyword
+  FunctionDeclaration
+    Identifier: ' breakIntoSpans'
+    Parameter
+      Identifier: 'identifier'
+      StringKeyword
+    Parameter
+      Identifier: ' word'
+      BooleanKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' TextSpan'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            ArrayType
+              TypeReference
+                Identifier: ' TextSpan'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' wordStart'
+            NumericLiteral
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' identifier'
+            Identifier: 'length'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lastIsDigit'
+                CallExpression
+                  Identifier: ' isDigit'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'identifier'
+                      Identifier: 'charCodeAt'
+                    BinaryExpression
+                      Identifier: 'i'
+                      MinusToken
+                      NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' currentIsDigit'
+                CallExpression
+                  Identifier: ' isDigit'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'identifier'
+                      Identifier: 'charCodeAt'
+                    Identifier: 'i'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' hasTransitionFromLowerToUpper'
+                CallExpression
+                  Identifier: ' transitionFromLowerToUpper'
+                  Identifier: 'identifier'
+                  Identifier: ' word'
+                  Identifier: ' i'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' hasTransitionFromUpperToLower'
+                BinaryExpression
+                  Identifier: ' word'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' transitionFromUpperToLower'
+                    Identifier: 'identifier'
+                    Identifier: ' i'
+                    Identifier: ' wordStart'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: '
+            charIsPunctuation'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'identifier'
+                          Identifier: 'charCodeAt'
+                        BinaryExpression
+                          Identifier: 'i'
+                          MinusToken
+                          NumericLiteral
+                    BarBarToken
+                    CallExpression
+                      Identifier: '
+            charIsPunctuation'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'identifier'
+                          Identifier: 'charCodeAt'
+                        Identifier: 'i'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: '
+            lastIsDigit'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' currentIsDigit'
+                BarBarToken
+                Identifier: '
+            hasTransitionFromLowerToUpper'
+              BarBarToken
+              Identifier: '
+            hasTransitionFromUpperToLower'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isAllPunctuation'
+                    Identifier: 'identifier'
+                    Identifier: ' wordStart'
+                    Identifier: ' i'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                result'
+                        Identifier: 'push'
+                      CallExpression
+                        Identifier: 'createTextSpan'
+                        Identifier: 'wordStart'
+                        BinaryExpression
+                          Identifier: ' i'
+                          MinusToken
+                          Identifier: ' wordStart'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            wordStart'
+                  EqualsToken
+                  Identifier: ' i'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isAllPunctuation'
+            Identifier: 'identifier'
+            Identifier: ' wordStart'
+            PropertyAccessExpression
+              Identifier: ' identifier'
+              Identifier: 'length'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        result'
+                Identifier: 'push'
+              CallExpression
+                Identifier: 'createTextSpan'
+                Identifier: 'wordStart'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' identifier'
+                    Identifier: 'length'
+                  MinusToken
+                  Identifier: ' wordStart'
+      ReturnStatement
+        Identifier: ' result'
+  FunctionDeclaration
+    Identifier: ' charIsPunctuation'
+    Parameter
+      Identifier: 'ch'
+      NumberKeyword
+    Block
+      SwitchStatement
+        Identifier: 'ch'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'exclamation'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'doubleQuote'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'hash'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'percent'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'ampersand'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'singleQuote'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'openParen'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'closeParen'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'asterisk'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'comma'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'minus'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'dot'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'slash'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'colon'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'semicolon'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'question'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'at'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'openBracket'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'backslash'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'closeBracket'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: '_'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'openBrace'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' CharacterCodes'
+              Identifier: 'closeBrace'
+            ReturnStatement
+              TrueKeyword
+      ReturnStatement
+        FalseKeyword
+  FunctionDeclaration
+    Identifier: ' isAllPunctuation'
+    Parameter
+      Identifier: 'identifier'
+      StringKeyword
+    Parameter
+      Identifier: ' start'
+      NumberKeyword
+    Parameter
+      Identifier: ' end'
+      NumberKeyword
+    BooleanKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' every'
+          Identifier: 'identifier'
+          ArrowFunction
+            Parameter
+              Identifier: ' ch'
+            EqualsGreaterThanToken
+            BinaryExpression
+              CallExpression
+                Identifier: ' charIsPunctuation'
+                Identifier: 'ch'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' ch'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' CharacterCodes'
+                  Identifier: '_'
+          Identifier: ' start'
+          Identifier: ' end'
+  FunctionDeclaration
+    Identifier: ' transitionFromUpperToLower'
+    Parameter
+      Identifier: 'identifier'
+      StringKeyword
+    Parameter
+      Identifier: ' index'
+      NumberKeyword
+    Parameter
+      Identifier: ' wordStart'
+      NumberKeyword
+    BooleanKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  Identifier: ' index'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' wordStart'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' index'
+                    PlusToken
+                    NumericLiteral
+                  LessThanToken
+                  PropertyAccessExpression
+                    Identifier: ' identifier'
+                    Identifier: 'length'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isUpperCaseLetter'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'identifier'
+                    Identifier: 'charCodeAt'
+                  Identifier: 'index'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isLowerCaseLetter'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'identifier'
+                  Identifier: 'charCodeAt'
+                BinaryExpression
+                  Identifier: 'index'
+                  PlusToken
+                  NumericLiteral
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' every'
+            Identifier: 'identifier'
+            Identifier: ' isUpperCaseLetter'
+            Identifier: ' wordStart'
+            Identifier: ' index'
+  FunctionDeclaration
+    Identifier: ' transitionFromLowerToUpper'
+    Parameter
+      Identifier: 'identifier'
+      StringKeyword
+    Parameter
+      Identifier: ' word'
+      BooleanKeyword
+    Parameter
+      Identifier: ' index'
+      NumberKeyword
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lastIsUpper'
+            CallExpression
+              Identifier: ' isUpperCaseLetter'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'identifier'
+                  Identifier: 'charCodeAt'
+                BinaryExpression
+                  Identifier: 'index'
+                  MinusToken
+                  NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' currentIsUpper'
+            CallExpression
+              Identifier: ' isUpperCaseLetter'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'identifier'
+                  Identifier: 'charCodeAt'
+                Identifier: 'index'
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' currentIsUpper'
+          AmpersandAmpersandToken
+          ParenthesizedExpression
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'word'
+              BarBarToken
+              PrefixUnaryExpression
+                Identifier: 'lastIsUpper'
+  FunctionDeclaration
+    Identifier: ' everyInRange'
+    Parameter
+      Identifier: 'start'
+      NumberKeyword
+    Parameter
+      Identifier: ' end'
+      NumberKeyword
+    Parameter
+      Identifier: ' pred'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        BooleanKeyword
+    BooleanKeyword
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            Identifier: ' start'
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          Identifier: ' end'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'pred'
+                Identifier: 'i'
+            Block
+              ReturnStatement
+                FalseKeyword
+      ReturnStatement
+        TrueKeyword
+  FunctionDeclaration
+    Identifier: ' every'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' pred'
+      FunctionType
+        Parameter
+          Identifier: 'ch'
+          NumberKeyword
+        Parameter
+          Identifier: ' index'
+          NumberKeyword
+        BooleanKeyword
+    Parameter
+      Identifier: ' start'
+      NumericLiteral
+    Parameter
+      Identifier: ' end'
+      PropertyAccessExpression
+        Identifier: ' s'
+        Identifier: 'length'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' everyInRange'
+          Identifier: 'start'
+          Identifier: ' end'
+          ArrowFunction
+            Parameter
+              Identifier: ' i'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' pred'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 's'
+                  Identifier: 'charCodeAt'
+                Identifier: 'i'
+              Identifier: ' i'

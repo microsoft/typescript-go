@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' w'
+            NullKeyword
+          PropertyAssignment
+            Identifier: ' x'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+          PropertyAssignment
+            Identifier: ' z'
+            NumericLiteral

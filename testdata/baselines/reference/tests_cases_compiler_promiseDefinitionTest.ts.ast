@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Promise'
+    TypeParameter
+      Identifier: 'T'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' foo'

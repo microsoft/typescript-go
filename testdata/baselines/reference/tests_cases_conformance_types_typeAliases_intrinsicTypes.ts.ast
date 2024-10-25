@@ -1,0 +1,322 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' TU1'
+    TypeReference
+      Identifier: ' Uppercase'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TU2'
+    TypeReference
+      Identifier: ' Uppercase'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TU3'
+    TypeReference
+      Identifier: ' Uppercase'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TU4'
+    TypeReference
+      Identifier: ' Uppercase'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' TU5'
+    TypeReference
+      Identifier: ' Uppercase'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' TU6'
+    TypeReference
+      Identifier: ' Uppercase'
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TL1'
+    TypeReference
+      Identifier: ' Lowercase'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TL2'
+    TypeReference
+      Identifier: ' Lowercase'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TL3'
+    TypeReference
+      Identifier: ' Lowercase'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TL4'
+    TypeReference
+      Identifier: ' Lowercase'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' TL5'
+    TypeReference
+      Identifier: ' Lowercase'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' TL6'
+    TypeReference
+      Identifier: ' Lowercase'
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TC1'
+    TypeReference
+      Identifier: ' Capitalize'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TC2'
+    TypeReference
+      Identifier: ' Capitalize'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TC3'
+    TypeReference
+      Identifier: ' Capitalize'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TC4'
+    TypeReference
+      Identifier: ' Capitalize'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' TC5'
+    TypeReference
+      Identifier: ' Capitalize'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' TC6'
+    TypeReference
+      Identifier: ' Capitalize'
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TN1'
+    TypeReference
+      Identifier: ' Uncapitalize'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TN2'
+    TypeReference
+      Identifier: ' Uncapitalize'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TN3'
+    TypeReference
+      Identifier: ' Uncapitalize'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TN4'
+    TypeReference
+      Identifier: ' Uncapitalize'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' TN5'
+    TypeReference
+      Identifier: ' Uncapitalize'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' TN6'
+    TypeReference
+      Identifier: ' Uncapitalize'
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TX1'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    TypeReference
+      Identifier: ' Uppercase'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'S'
+          TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' TX2'
+    TypeReference
+      Identifier: ' TX1'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TX3'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    TypeReference
+      Identifier: ' Lowercase'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'S'
+          TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' TX4'
+    TypeReference
+      Identifier: ' TX3'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TX5'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Uppercase'
+          LiteralType
+            StringLiteral
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Lowercase'
+          LiteralType
+            StringLiteral
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' MyUppercase'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    IntrinsicKeyword
+  FunctionDeclaration
+    Identifier: ' foo1'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' Uppercase'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Uppercase'
+        TypeReference
+          Identifier: 'U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    s'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' s'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' s'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    y'
+          EqualsToken
+          Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Uppercase'
+        TypeReference
+          Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            UnionType
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+            Identifier: ' x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo3'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Uppercase'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' foo4'
+    TypeParameter
+      Identifier: 'U'
+      StringKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Uppercase'
+        TypeReference
+          Identifier: 'U'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' foo3'
+          Identifier: 'x'

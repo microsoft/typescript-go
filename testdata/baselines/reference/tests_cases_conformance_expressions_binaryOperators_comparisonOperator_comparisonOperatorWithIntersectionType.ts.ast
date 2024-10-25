@@ -1,0 +1,38 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            LiteralType
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      GreaterThanToken
+      NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NumericLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      GreaterThanToken
+      NumericLiteral

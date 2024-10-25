@@ -1,0 +1,529 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0410'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'А'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0411'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Б'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0412'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'В'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0413'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Г'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0414'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Д'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0415'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Е'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0416'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Ж'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0417'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'З'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0418'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'И'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0419'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Й'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u041A'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'К'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u041B'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Л'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u041C'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'М'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u041D'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Н'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u041E'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'О'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u041F'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'П'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0420'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Р'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0421'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'С'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0422'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Т'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0423'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'У'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0424'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Ф'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0425'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Х'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0426'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Ц'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0427'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Ч'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0428'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Ш'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0429'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Щ'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u042A'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Ъ'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u042B'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Ы'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u042C'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Ь'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u042D'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Э'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u042E'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Ю'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u042F'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Я'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' \u0401'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'Ё'
+      ExclamationEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  $ERROR'
+          StringLiteral

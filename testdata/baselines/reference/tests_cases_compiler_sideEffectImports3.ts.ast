@@ -1,0 +1,12 @@
+SourceFile
+  ImportDeclaration
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @filename: not-a-module.ts
+console'
+        Identifier: 'log'
+      StringLiteral

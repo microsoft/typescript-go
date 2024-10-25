@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  WhileStatement
+    BinaryExpression
+      Identifier: 'a'
+      EqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    a'
+  WhileStatement
+    BinaryExpression
+      Identifier: 'a'
+      EqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    a'

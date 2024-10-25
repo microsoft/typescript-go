@@ -1,0 +1,55 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' donkey'
+        ArrowFunction
+          Parameter
+            Identifier: 'ast'
+          EqualsGreaterThanToken
+          Identifier: '  ast'
+  FunctionDeclaration
+    Identifier: ' funky'
+    Parameter
+      Identifier: 'declaration'
+    Block
+      ReturnStatement
+        FalseKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' donkey'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'funky'
+      EqualsToken
+      Identifier: ' funky'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' funky'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' diddy'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' diddy'
+        CallExpression
+          Identifier: ' funky'
+          NumericLiteral

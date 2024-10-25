@@ -1,0 +1,7 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      ComputedPropertyName
+        Identifier: 'e'
+      NumericLiteral

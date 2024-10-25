@@ -1,0 +1,224 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BOOLEAN'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NUMBER'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' STRING'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' OBJECT'
+        TypeReference
+          Identifier: ' Object'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+//The second operand type is boolean
+ANY'
+      CommaToken
+      Identifier: ' BOOLEAN'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+BOOLEAN'
+      CommaToken
+      Identifier: ' BOOLEAN'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+NUMBER'
+      CommaToken
+      Identifier: ' BOOLEAN'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+STRING'
+      CommaToken
+      Identifier: ' BOOLEAN'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+OBJECT'
+      CommaToken
+      Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean1'
+        ParenthesizedExpression
+          BinaryExpression
+            Identifier: 'ANY'
+            CommaToken
+            Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean2'
+        ParenthesizedExpression
+          BinaryExpression
+            Identifier: 'BOOLEAN'
+            CommaToken
+            Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean3'
+        ParenthesizedExpression
+          BinaryExpression
+            Identifier: 'NUMBER'
+            CommaToken
+            Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean4'
+        ParenthesizedExpression
+          BinaryExpression
+            Identifier: 'STRING'
+            CommaToken
+            Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean5'
+        ParenthesizedExpression
+          BinaryExpression
+            Identifier: 'OBJECT'
+            CommaToken
+            Identifier: ' BOOLEAN'
+  ExpressionStatement
+    BinaryExpression
+      NullKeyword
+      CommaToken
+      Identifier: ' BOOLEAN'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: '
+ANY'
+        EqualsToken
+        Identifier: ' undefined'
+      CommaToken
+      Identifier: ' BOOLEAN'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'NUMBER'
+      CommaToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+      CommaToken
+      PrefixUnaryExpression
+        Identifier: 'BOOLEAN'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: '
+OBJECT'
+        EqualsToken
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' BOOLEAN'
+        EqualsToken
+        FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean6'
+        ParenthesizedExpression
+          BinaryExpression
+            NullKeyword
+            CommaToken
+            Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean7'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'ANY'
+              EqualsToken
+              Identifier: ' undefined'
+            CommaToken
+            Identifier: ' BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean8'
+        ParenthesizedExpression
+          BinaryExpression
+            NumericLiteral
+            CommaToken
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean9'
+        ParenthesizedExpression
+          BinaryExpression
+            PrefixUnaryExpression
+              Identifier: 'NUMBER'
+            CommaToken
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean10'
+        ParenthesizedExpression
+          BinaryExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            CommaToken
+            PrefixUnaryExpression
+              Identifier: 'BOOLEAN'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' resultIsBoolean11'
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'OBJECT'
+              EqualsToken
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+            CommaToken
+            BinaryExpression
+              Identifier: ' BOOLEAN'
+              EqualsToken
+              FalseKeyword

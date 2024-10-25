@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    s'
+      Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'C'
+      EqualsToken
+      Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' demo'
+    Parameter
+      Identifier: 'c'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 's'

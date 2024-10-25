@@ -1,0 +1,63 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    ClassExpression
+                      HeritageClause
+                        ExpressionWithTypeArguments
+                          Identifier: ' C'
+                      PropertyDeclaration
+                        StaticKeyword
+                        Identifier: ' x'
+                        NumericLiteral
+                    Identifier: 'x'
+                Identifier: ' b'
+                StringLiteral
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                ComputedPropertyName
+                  PropertyAccessExpression
+                    ClassExpression
+                      HeritageClause
+                        ExpressionWithTypeArguments
+                          Identifier: ' C'
+                      PropertyDeclaration
+                        StaticKeyword
+                        Identifier: ' x'
+                        NumericLiteral
+                    Identifier: 'x'
+                Identifier: ' b'
+                StringLiteral
+          Parameter
+            Identifier: ' d'
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'

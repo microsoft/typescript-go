@@ -1,0 +1,55 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+      Identifier: ' a'
+    EnumMember
+      Identifier: '
+    c'
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'a'
+          PlusToken
+          NumericLiteral
+    EnumMember
+      Identifier: '
+    e'
+    EnumMember
+      Identifier: '
+    d'
+      PrefixUnaryExpression
+        Identifier: 'e'
+    EnumMember
+      Identifier: '
+    f'
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' a'
+          LessThanLessThanToken
+          NumericLiteral
+        GreaterThanGreaterThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    g'
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' a'
+          LessThanLessThanToken
+          NumericLiteral
+        GreaterThanGreaterThanGreaterThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    h'
+      BinaryExpression
+        Identifier: ' a'
+        BarToken
+        Identifier: ' b'

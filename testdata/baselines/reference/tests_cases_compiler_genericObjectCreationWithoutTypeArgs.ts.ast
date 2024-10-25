@@ -1,0 +1,31 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' SS'
+    TypeParameter
+      Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NewExpression
+          Identifier: ' SS'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        NewExpression
+          Identifier: ' SS'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        NewExpression
+          Identifier: ' SS'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        NewExpression
+          Identifier: ' SS'

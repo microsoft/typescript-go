@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorator'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    p1'
+    PropertyDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'decorator'
+      Identifier: '
+    p2'

@@ -1,0 +1,51 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IText'
+    PropertySignature
+      Identifier: '
+    foo'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' TextSpan'
+  ClassDeclaration
+    Identifier: ' SubText'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' TextBase'
+    Constructor
+      Parameter
+        Identifier: 'text'
+        TypeReference
+          Identifier: ' IText'
+      Parameter
+        Identifier: ' span'
+        TypeReference
+          Identifier: ' TextSpan'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' TextBase'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IText'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' subText'
+      Parameter
+        Identifier: 'span'
+        TypeReference
+          Identifier: ' TextSpan'
+      TypeReference
+        Identifier: ' IText'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' SubText'
+            ThisKeyword
+            Identifier: ' span'

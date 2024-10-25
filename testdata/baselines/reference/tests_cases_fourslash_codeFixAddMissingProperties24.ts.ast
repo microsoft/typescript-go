@@ -1,0 +1,43 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////interface A {
+////    a: number;
+////    b: string;
+////}
+////interface B {
+////    c: boolean;
+////}
+////interface C {
+////    a: A;
+////    b: B;
+////}
+////function f<T extends keyof C>(type: T, obj: C[T]): string {
+////    return "";
+////}
+////[|f("a", {});|]
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    description'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_missing_properties'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    newRangeContent'
+          NoSubstitutionTemplateLiteral

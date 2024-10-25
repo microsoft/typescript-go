@@ -1,0 +1,21 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' div'
+        AnyKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'div'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' n'
+          StringLiteral

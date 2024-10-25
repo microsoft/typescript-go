@@ -1,0 +1,17 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeParameter
+      InKeyword
+      Identifier: ''
+    TypeParameter
+      Identifier: ''
+    TypeReference
+      Identifier: ' T1'
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeParameter
+      OutKeyword
+      Identifier: ' out'
+    TypeReference
+      Identifier: ' T2'

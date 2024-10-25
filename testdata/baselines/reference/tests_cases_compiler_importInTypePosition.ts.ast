@@ -1,0 +1,63 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' x'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' y'
+            NumberKeyword
+          Block
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Origin'
+            NewExpression
+              Identifier: ' Point'
+              NumericLiteral
+              NumericLiteral
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' a'
+        Identifier: ' A'
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' a'
+        Identifier: ' A'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' m'
+            TypeQuery
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            TypeReference
+              QualifiedName
+                Identifier: ' a'
+                Identifier: 'Point'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral

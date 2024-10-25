@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Greeter'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block

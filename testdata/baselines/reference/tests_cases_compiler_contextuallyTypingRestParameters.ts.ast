@@ -1,0 +1,48 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'y'
+            ArrayType
+              StringKeyword
+          VoidKeyword
+        FunctionExpression
+          Parameter
+            DotDotDotToken
+            Identifier: '/*3*/y'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' t'
+                  Identifier: ' y'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x2'
+                  StringKeyword
+                  Identifier: ' t'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x3'
+                  ArrayType
+                    StringKeyword
+                  Identifier: ' t'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y2'
+                  StringKeyword
+                  Identifier: ' y'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y3'
+                  ArrayType
+                    StringKeyword
+                  Identifier: ' y'

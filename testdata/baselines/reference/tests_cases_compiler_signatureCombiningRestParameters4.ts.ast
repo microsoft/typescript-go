@@ -1,0 +1,223 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Node'
+    TypeParameter
+      Identifier: 'Options'
+      AnyKeyword
+    PropertyDeclaration
+      Identifier: '
+  type'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+  name'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+  parent'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        LiteralType
+          NullKeyword
+    PropertyDeclaration
+      Identifier: '
+  child'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        LiteralType
+          NullKeyword
+    PropertyDeclaration
+      Identifier: '
+  options'
+      TypeReference
+        Identifier: ' Options'
+  InterfaceDeclaration
+    Identifier: ' NodeConfig'
+    TypeParameter
+      Identifier: 'Options'
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+  extendMarkSchema'
+      QuestionToken
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: '
+        this'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+          name'
+                  StringKeyword
+                PropertySignature
+                  Identifier: '
+          options'
+                  TypeReference
+                    Identifier: ' Options'
+            Parameter
+              Identifier: '
+        extension'
+              TypeReference
+                Identifier: ' Node'
+            TypeReference
+              Identifier: ' Record'
+              StringKeyword
+              AnyKeyword
+        LiteralType
+          NullKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Mark'
+    TypeParameter
+      Identifier: 'Options'
+      AnyKeyword
+    PropertyDeclaration
+      Identifier: '
+  options'
+      TypeReference
+        Identifier: ' Options'
+    PropertyDeclaration
+      Identifier: '
+  config'
+      TypeReference
+        Identifier: ' MarkConfig'
+  InterfaceDeclaration
+    Identifier: ' MarkConfig'
+    TypeParameter
+      Identifier: 'Options'
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+  extendMarkSchema'
+      QuestionToken
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: '
+        this'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+          name'
+                  StringKeyword
+                PropertySignature
+                  Identifier: '
+          options'
+                  TypeReference
+                    Identifier: ' Options'
+            Parameter
+              Identifier: '
+        extension'
+              TypeReference
+                Identifier: ' Mark'
+            TypeReference
+              Identifier: ' Record'
+              StringKeyword
+              AnyKeyword
+        LiteralType
+          NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' AnyConfig'
+    UnionType
+      TypeReference
+        Identifier: ' NodeConfig'
+      TypeReference
+        Identifier: ' MarkConfig'
+  TypeAliasDeclaration
+    Identifier: ' AnyExtension'
+    UnionType
+      TypeReference
+        Identifier: ' Node'
+      TypeReference
+        Identifier: ' Mark'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' AnyExtension'
+  TypeAliasDeclaration
+    Identifier: ' RemoveThis'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          AnyKeyword
+        AnyKeyword
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' Parameters'
+            TypeReference
+              Identifier: 'T'
+        TypeReference
+          Identifier: ' ReturnType'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getExtensionField'
+    TypeParameter
+      Identifier: 'T'
+      AnyKeyword
+    Parameter
+      Identifier: '
+  extension'
+      TypeReference
+        Identifier: ' AnyExtension'
+    Parameter
+      Identifier: '
+  field'
+      StringKeyword
+    TypeReference
+      Identifier: ' RemoveThis'
+      TypeReference
+        Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' extendMarkSchema'
+        CallExpression
+          Identifier: ' getExtensionField'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'AnyConfig'
+            LiteralType
+              StringLiteral
+          Identifier: '
+  e'
+          StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' extension'
+        TypeReference
+          Identifier: ' Mark'
+          AnyKeyword
+  IfStatement
+    Identifier: 'extendMarkSchema'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  extendMarkSchema'
+          Identifier: 'extension'
+  ExportDeclaration
+    NamedExports

@@ -1,0 +1,64 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' forEachLibResolutionScenario'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTsc'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    forEachLibResolutionScenario'
+              FalseKeyword
+              Identifier: '
+        /*withoutConfig*/ undefined'
+              ArrowFunction
+                Parameter
+                  Identifier: 'subScenario'
+                Parameter
+                  Identifier: ' sys'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: '
+            verifyTsc'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                scenario'
+                      StringLiteral
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                subScenario'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                sys'
+                    PropertyAssignment
+                      Identifier: '
+                commandLineArgs'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+                baselinePrograms'
+                      TrueKeyword

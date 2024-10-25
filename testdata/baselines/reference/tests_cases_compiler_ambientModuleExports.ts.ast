@@ -1,0 +1,72 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' a'
+        VoidKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NumberKeyword
+      ClassDeclaration
+        Identifier: ' C'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Foo'
+        Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+Foo'
+      Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Foo'
+            Identifier: 'C'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Foo2'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' a'
+        VoidKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            NumberKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Foo2'
+        Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+Foo2'
+      Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Foo2'
+            Identifier: 'C'

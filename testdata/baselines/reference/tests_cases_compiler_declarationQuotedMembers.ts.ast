@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mapped'
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            LiteralType
+              StringLiteral
+          NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' example'
+        Identifier: ' mapped'

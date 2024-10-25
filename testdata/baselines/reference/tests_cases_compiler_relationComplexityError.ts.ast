@@ -1,0 +1,100 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Digits'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    UnionType
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Digits'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Digits'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Digits'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Digits'
+          TemplateTail
+      UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T1'
+    Parameter
+      Identifier: ' y'
+      IntersectionType
+        TypeReference
+          Identifier: ' T1'
+        TypeReference
+          Identifier: ' T2'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' T1'
+        LiteralType
+          NullKeyword
+    Parameter
+      Identifier: ' y'
+      IntersectionType
+        TypeReference
+          Identifier: ' T1'
+        TypeReference
+          Identifier: ' T2'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'

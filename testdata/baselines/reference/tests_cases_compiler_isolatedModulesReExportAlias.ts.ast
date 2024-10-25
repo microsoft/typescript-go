@@ -1,0 +1,38 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' EventEmitterOptions'
+        PropertySignature
+          Identifier: '
+    captureRejections'
+          QuestionToken
+          BooleanKeyword
+      ClassDeclaration
+        Identifier: ' EventEmitter'
+        Constructor
+          Parameter
+            Identifier: 'options'
+            QuestionToken
+            TypeReference
+              Identifier: ' EventEmitterOptions'
+      ExportAssignment
+        Identifier: ' EventEmitter'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' events'
+        ExternalModuleReference
+          StringLiteral
+      ExportAssignment
+        Identifier: ' events'
+  ImportEqualsDeclaration
+    Identifier: ' events'
+    ExternalModuleReference
+      StringLiteral
+  ExportAssignment
+    Identifier: ' events'

@@ -1,0 +1,149 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+// @noImplicitReferences: true
+
+// @Filename: /node_modules/a/index.d.ts
+////import X from "x";
+////export function a(x: X): void;
+
+// @Filename: /node_modules/a/node_modules/x/index.d.ts
+////export default class /*defAX*/X {
+////    private x: number;
+////}
+
+// @Filename: /node_modules/a/node_modules/x/package.json
+////{ "name": "x", "version": "1.2./*aVersionPatch*/3" }
+
+// @Filename: /node_modules/b/index.d.ts
+////import X from "x";
+////export const b: X;
+
+// @Filename: /node_modules/b/node_modules/x/index.d.ts
+////export default class /*defBX*/X {
+////    private x: number;
+////}
+
+// @Filename: /node_modules/b/node_modules/x/package.json
+////{ "name": "x", "version": "1.2./*bVersionPatch*/3" }
+
+// @Filename: /src/a.ts
+////import { a } from "a";
+////import { b } from "b";
+////a(/*error*/b);
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'numberOfErrorsInCurrentFile'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+testChangeAndChangeBack'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+testChangeAndChangeBack'
+      StringLiteral
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' testChangeAndChangeBack'
+    Parameter
+      Identifier: 'versionPatch'
+      StringKeyword
+    Parameter
+      Identifier: ' def'
+      StringKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'marker'
+          Identifier: 'versionPatch'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    edit'
+            Identifier: 'insert'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'marker'
+          Identifier: 'def'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    edit'
+            Identifier: 'insert'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // No longer have identical packageId, so we get errors.
+    verify'
+            Identifier: 'errorExistsAfterMarker'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // Undo the change.
+    goTo'
+            Identifier: 'marker'
+          Identifier: 'versionPatch'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    edit'
+            Identifier: 'deleteAtCaret'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'marker'
+          Identifier: 'def'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    edit'
+            Identifier: 'deleteAtCaret'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // Back to being identical.
+    goTo'
+            Identifier: 'file'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'numberOfErrorsInCurrentFile'
+          NumericLiteral

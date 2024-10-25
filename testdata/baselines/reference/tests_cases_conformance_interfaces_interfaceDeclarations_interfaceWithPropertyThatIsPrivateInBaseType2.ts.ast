@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      Block
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodSignature
+      Identifier: ' // error
+    x'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' Base2'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      Block
+  InterfaceDeclaration
+    Identifier: ' Foo2'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base2'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: ' // error
+    x'
+      AnyKeyword

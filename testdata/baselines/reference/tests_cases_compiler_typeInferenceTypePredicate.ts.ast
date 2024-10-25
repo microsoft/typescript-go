@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'predicate'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeLiteral
+        TypePredicate
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res'
+        CallExpression
+          Identifier: ' f'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            TypePredicate
+              Identifier: ' n'
+              NumberKeyword
+            EqualsGreaterThanToken
+            TrueKeyword

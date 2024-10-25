@@ -1,0 +1,46 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' Foo'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+foo'
+        Identifier: 'bar'
+      EqualsToken
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' self'
+                TypeReference
+                  Identifier: ' Foo'
+                ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+foo'
+        Identifier: 'zab'
+      EqualsToken
+      ParenthesizedExpression
+        FunctionExpression
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' self'
+                  TypeReference
+                    Identifier: ' Foo'
+                  ThisKeyword

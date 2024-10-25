@@ -1,0 +1,27 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Test'
+    ModuleBlock
+      ClassDeclaration
+        DeclareKeyword
+        Identifier: ' C'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' publicMember'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' privateMember'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' publicFunction'
+          Parameter
+            Identifier: 'x'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' privateFunction'
+          Parameter
+            Identifier: 'privateParam'
+        Constructor
+          PrivateKeyword
+          Parameter
+            Identifier: 'privateParam'

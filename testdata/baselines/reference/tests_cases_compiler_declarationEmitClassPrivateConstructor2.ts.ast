@@ -1,0 +1,24 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' PrivateInterface'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ExportedClass1'
+    Constructor
+      PrivateKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' PrivateInterface'
+      Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ExportedClass2'
+    Constructor
+      ProtectedKeyword
+      Parameter
+        Identifier: 'data'
+        TypeReference
+          Identifier: ' PrivateInterface'
+      Block

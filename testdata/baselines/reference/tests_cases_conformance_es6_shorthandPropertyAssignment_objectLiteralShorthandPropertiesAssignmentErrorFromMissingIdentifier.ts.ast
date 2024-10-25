@@ -1,0 +1,97 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' id'
+        NumberKeyword
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' name'
+        StringKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' person'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+          PropertySignature
+            Identifier: ' id'
+            NumberKeyword
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' name'
+          ShorthandPropertyAssignment
+            Identifier: ' id'
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' id'
+      NumberKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: ' name'
+        NumberKeyword
+      PropertySignature
+        Identifier: ' id'
+        StringKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' name'
+          ShorthandPropertyAssignment
+            Identifier: ' id'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' id'
+      NumberKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: ' name'
+        StringKeyword
+      PropertySignature
+        Identifier: ' id'
+        NumberKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' name'
+          ShorthandPropertyAssignment
+            Identifier: ' id'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' person1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+          PropertySignature
+            Identifier: ' id'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' person2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' name'
+            StringKeyword
+          PropertySignature
+            Identifier: ' id'
+            NumberKeyword
+        CallExpression
+          Identifier: ' bar'
+          StringLiteral
+          NumericLiteral

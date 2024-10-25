@@ -1,0 +1,35 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' R1'
+    Parameter
+      Identifier: 'index'
+      NumberKeyword
+    Block
+      SwitchStatement
+        Identifier: 'index'
+        CaseBlock
+          CaseClause
+            NumericLiteral
+          CaseClause
+            NumericLiteral
+          CaseClause
+            NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' a'
+                  StringLiteral
+            ReturnStatement
+              Identifier: ' a'
+          CaseClause
+            NumericLiteral
+          CaseClause
+            NumericLiteral
+            Block
+              ReturnStatement
+                StringLiteral
+          CaseClause
+            NumericLiteral
+          DefaultClause
+            ReturnStatement
+              StringLiteral

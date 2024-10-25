@@ -1,0 +1,150 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' SyncSequenceFactory'
+    FunctionType
+      TypeReference
+        Identifier: ' Generator'
+        StringKeyword
+        StringKeyword
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' AsyncSequenceFactory'
+    FunctionType
+      TypeReference
+        Identifier: ' AsyncGenerator'
+        StringKeyword
+        StringKeyword
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' SequenceFactory'
+    UnionType
+      TypeReference
+        Identifier: ' SyncSequenceFactory'
+      TypeReference
+        Identifier: ' AsyncSequenceFactory'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' syncFactory'
+        TypeReference
+          Identifier: ' SyncSequenceFactory'
+        FunctionExpression
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' name'
+                  StringLiteral
+            WhileStatement
+              PrefixUnaryExpression
+                Identifier: 'name'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+    name'
+                    EqualsToken
+                    YieldExpression
+                      StringLiteral
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' asyncFactory'
+        TypeReference
+          Identifier: ' AsyncSequenceFactory'
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' name'
+                  StringLiteral
+            WhileStatement
+              PrefixUnaryExpression
+                Identifier: 'name'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+    name'
+                    EqualsToken
+                    YieldExpression
+                      StringLiteral
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' looserSyncFactory'
+        TypeReference
+          Identifier: ' SequenceFactory'
+        FunctionExpression
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' name'
+                  StringLiteral
+            WhileStatement
+              PrefixUnaryExpression
+                Identifier: 'name'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+    name'
+                    EqualsToken
+                    YieldExpression
+                      StringLiteral
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' looserAsyncFactory'
+        TypeReference
+          Identifier: ' SequenceFactory'
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' name'
+                  StringLiteral
+            WhileStatement
+              PrefixUnaryExpression
+                Identifier: 'name'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+    name'
+                    EqualsToken
+                    YieldExpression
+                      StringLiteral
+            ReturnStatement
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateTail

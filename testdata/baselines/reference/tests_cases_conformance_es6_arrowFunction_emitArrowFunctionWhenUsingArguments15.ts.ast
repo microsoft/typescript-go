@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' arguments'
+            StringLiteral
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'Math'
+            Identifier: 'random'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' arguments'
+                NumericLiteral
+          ReturnStatement
+            ArrowFunction
+              EqualsGreaterThanToken
+              Identifier: ' arguments'

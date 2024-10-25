@@ -1,0 +1,59 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ISomething'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    bar'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ObjectBindingPattern
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'foo'
+        BindingElement
+          Identifier: ' bar'
+      TypeReference
+        Identifier: ' ISomething'
+    Block
+  FunctionDeclaration
+    Identifier: ' baz'
+    Parameter
+      ArrayBindingPattern
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'foo'
+        BindingElement
+          Identifier: ' bar'
+      TypeReference
+        Identifier: ' ISomething'
+    Block
+  FunctionDeclaration
+    Identifier: ' one'
+    Parameter
+      ArrayBindingPattern
+    Parameter
+      ObjectBindingPattern
+    Block
+  FunctionDeclaration
+    Identifier: ' two'
+    Parameter
+      ArrayBindingPattern
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'a'
+        BindingElement
+          Identifier: ' b'
+        BindingElement
+          Identifier: ' c'
+      ArrayType
+        NumberKeyword
+    Block

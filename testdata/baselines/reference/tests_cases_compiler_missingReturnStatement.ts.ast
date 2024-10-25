@@ -1,0 +1,12 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Test'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Bug'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' foo'
+          StringKeyword
+          Block

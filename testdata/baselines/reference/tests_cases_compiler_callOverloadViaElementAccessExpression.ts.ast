@@ -1,0 +1,53 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      AnyKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        StringKeyword
+        CallExpression
+          ElementAccessExpression
+            Identifier: ' c'
+            StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        NumberKeyword
+        CallExpression
+          ElementAccessExpression
+            Identifier: ' c'
+            StringLiteral
+          StringLiteral

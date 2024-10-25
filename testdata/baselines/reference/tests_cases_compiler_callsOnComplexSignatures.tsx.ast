@@ -1,0 +1,688 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' test1'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' stringType1'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' stringType2'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      InterfaceDeclaration
+        Identifier: ' Temp1'
+        MethodSignature
+          Identifier: '
+        getValue'
+          Parameter
+            Identifier: 'name'
+            TypeReference
+              Identifier: ' stringType1'
+          NumberKeyword
+      InterfaceDeclaration
+        Identifier: ' Temp2'
+        MethodSignature
+          Identifier: '
+        getValue'
+          Parameter
+            Identifier: 'name'
+            TypeReference
+              Identifier: ' stringType2'
+          StringKeyword
+      FunctionDeclaration
+        Identifier: ' test'
+        Parameter
+          Identifier: 't'
+          UnionType
+            TypeReference
+              Identifier: ' Temp1'
+            TypeReference
+              Identifier: ' Temp2'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' t'
+                    Identifier: 'getValue'
+                  StringLiteral
+  FunctionDeclaration
+    Identifier: ' test2'
+    Block
+      InterfaceDeclaration
+        Identifier: ' Messages'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' foo'
+          FunctionType
+            Parameter
+              Identifier: 'options'
+              TypeLiteral
+                IndexSignature
+                  Parameter
+                    Identifier: 'key'
+                    StringKeyword
+                  AnyKeyword
+                PropertySignature
+                  Identifier: ' b'
+                  NumberKeyword
+            StringKeyword
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' bar'
+          FunctionType
+            Parameter
+              Identifier: 'options'
+              TypeLiteral
+                IndexSignature
+                  Parameter
+                    Identifier: 'key'
+                    StringKeyword
+                  AnyKeyword
+                PropertySignature
+                  Identifier: ' a'
+                  StringKeyword
+            StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' messages'
+            TypeReference
+              Identifier: ' Messages'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        foo'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'options'
+                  EqualsGreaterThanToken
+                  StringLiteral
+              PropertyAssignment
+                Identifier: '
+        bar'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'options'
+                  EqualsGreaterThanToken
+                  StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' test1'
+            ArrowFunction
+              Parameter
+                Identifier: 'type'
+                UnionType
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+              EqualsGreaterThanToken
+              CallExpression
+                ElementAccessExpression
+                  Identifier: '
+        messages'
+                  Identifier: 'type'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' a'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' b'
+                    NumericLiteral
+  FunctionDeclaration
+    Identifier: ' test3'
+    Parameter
+      Identifier: 'items'
+      UnionType
+        ArrayType
+          StringKeyword
+        ArrayType
+          NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    items'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'item'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' console'
+                Identifier: 'log'
+              Identifier: 'item'
+  FunctionDeclaration
+    Identifier: ' test4'
+    Parameter
+      Identifier: '
+    arg1'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              DotDotDotToken
+              Identifier: 'objs'
+              ArrayType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'x'
+                    NumberKeyword
+            NumberKeyword
+        ParenthesizedType
+          FunctionType
+            Parameter
+              DotDotDotToken
+              Identifier: 'objs'
+              ArrayType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'y'
+                    NumberKeyword
+            NumberKeyword
+    Parameter
+      Identifier: '
+    arg2'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'x'
+                  NumberKeyword
+            Parameter
+              Identifier: ' b'
+              ObjectKeyword
+            NumberKeyword
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              ObjectKeyword
+            Parameter
+              Identifier: ' b'
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'x'
+                  NumberKeyword
+            NumberKeyword
+    Parameter
+      Identifier: '
+    arg3'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'x'
+                  NumberKeyword
+            Parameter
+              DotDotDotToken
+              Identifier: 'objs'
+              ArrayType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'y'
+                    NumberKeyword
+            NumberKeyword
+        ParenthesizedType
+          FunctionType
+            Parameter
+              DotDotDotToken
+              Identifier: 'objs'
+              ArrayType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'x'
+                    NumberKeyword
+            NumberKeyword
+    Parameter
+      Identifier: '
+    arg4'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              QuestionToken
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'x'
+                  NumberKeyword
+            Parameter
+              Identifier: ' b'
+              QuestionToken
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'x'
+                  NumberKeyword
+            NumberKeyword
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              QuestionToken
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'y'
+                  NumberKeyword
+            NumberKeyword
+    Parameter
+      Identifier: '
+    arg5'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              QuestionToken
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'x'
+                  NumberKeyword
+            Parameter
+              DotDotDotToken
+              Identifier: 'b'
+              ArrayType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'x'
+                    NumberKeyword
+            NumberKeyword
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              QuestionToken
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'y'
+                  NumberKeyword
+            NumberKeyword
+    Parameter
+      Identifier: '
+    arg6'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'a'
+              QuestionToken
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'x'
+                  NumberKeyword
+            Parameter
+              Identifier: ' b'
+              QuestionToken
+              TypeLiteral
+                PropertySignature
+                  Identifier: 'x'
+                  NumberKeyword
+            NumberKeyword
+        ParenthesizedType
+          FunctionType
+            Parameter
+              DotDotDotToken
+              Identifier: 'a'
+              ArrayType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'y'
+                    NumberKeyword
+            NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg1'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg1'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg1'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    arg2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    arg3'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg3'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg3'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    arg4'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg4'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg4'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    arg5'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg5'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg5'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    arg6'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg6'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg6'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    arg6'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'y'
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' test5'
+    Block
+      FunctionDeclaration
+        Identifier: ' render'
+        Parameter
+          Identifier: 'url'
+          QuestionToken
+          StringKeyword
+        TypeReference
+          QualifiedName
+            Identifier: ' React'
+            Identifier: 'ReactNode'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' Tag'
+                ConditionalExpression
+                  Identifier: ' url'
+                  QuestionToken
+                  StringLiteral
+                  ColonToken
+                  StringLiteral
+          ReturnStatement
+            JsxElement
+              JsxOpeningElement
+                Identifier: 'Tag'
+                JsxAttributes
+              JsxText
+              JsxClosingElement
+                Identifier: 'Tag'
+      FunctionDeclaration
+        Identifier: ' App'
+        Parameter
+          Identifier: 'props'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' component'
+              TypeReference
+                QualifiedName
+                  Identifier: 'React'
+                  Identifier: 'ReactType'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' Comp'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' React'
+                    Identifier: 'ReactType'
+                PropertyAccessExpression
+                  Identifier: ' props'
+                  Identifier: 'component'
+          ReturnStatement
+            ParenthesizedExpression
+              JsxSelfClosingElement
+                Identifier: 'Comp'
+                JsxAttributes
+      FunctionDeclaration
+        Identifier: ' render2'
+        Block
+          InterfaceDeclaration
+            Identifier: ' P1'
+            PropertySignature
+              Identifier: '
+            p'
+              QuestionToken
+              BooleanKeyword
+            PropertySignature
+              Identifier: '
+            c'
+              QuestionToken
+              StringKeyword
+          InterfaceDeclaration
+            Identifier: ' P2'
+            PropertySignature
+              Identifier: '
+            p'
+              QuestionToken
+              BooleanKeyword
+            PropertySignature
+              Identifier: '
+            c'
+              QuestionToken
+              AnyKeyword
+            PropertySignature
+              Identifier: '
+            d'
+              QuestionToken
+              AnyKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' C'
+                UnionType
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' React'
+                      Identifier: 'ComponentType'
+                    TypeReference
+                      Identifier: 'P1'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' React'
+                      Identifier: 'ComponentType'
+                    TypeReference
+                      Identifier: 'P2'
+                AsExpression
+                  NullKeyword
+                  AnyKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                JsxSelfClosingElement
+                  Identifier: 'C'
+                  JsxAttributes
+                    JsxAttribute
+                      Identifier: ' p'
+                      JsxExpression
+                        TrueKeyword

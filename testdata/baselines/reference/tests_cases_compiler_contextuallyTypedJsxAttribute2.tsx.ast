@@ -1,0 +1,128 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ComponentPropsWithRef'
+        ImportSpecifier
+          Identifier: ' ElementType'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' UnwrappedLink'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ElementType'
+      TypeReference
+        Identifier: ' ElementType'
+    Parameter
+      Identifier: '
+  props'
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          Identifier: 'ComponentPropsWithRef'
+          ConditionalType
+            TypeReference
+              Identifier: 'ElementType'
+            TypeReference
+              Identifier: ' T'
+            LiteralType
+              StringLiteral
+            TypeReference
+              Identifier: ' T'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'a'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'a'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'UnwrappedLink'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' onClick'
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'e'
+              EqualsGreaterThanToken
+              Block
+  FunctionDeclaration
+    Identifier: ' UnwrappedLink2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ElementType'
+      TypeReference
+        Identifier: ' ElementType'
+    Parameter
+      Identifier: '
+  props'
+      IntersectionType
+        TypeReference
+          Identifier: ' Omit'
+          TypeReference
+            Identifier: 'ComponentPropsWithRef'
+            ConditionalType
+              TypeReference
+                Identifier: 'ElementType'
+              TypeReference
+                Identifier: ' T'
+              LiteralType
+                StringLiteral
+              TypeReference
+                Identifier: ' T'
+          LiteralType
+            StringLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    as'
+            QuestionToken
+            TypeReference
+              Identifier: ' T'
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'a'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'a'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'UnwrappedLink2'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' onClick'
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'e'
+              EqualsGreaterThanToken
+              Block
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'UnwrappedLink2'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' as'
+          StringLiteral
+        JsxAttribute
+          Identifier: ' onClick'
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'e'
+              EqualsGreaterThanToken
+              Block

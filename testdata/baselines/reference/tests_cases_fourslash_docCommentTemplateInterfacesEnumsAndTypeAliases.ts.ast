@@ -1,0 +1,95 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+/////*interfaceFoo*/
+////interface Foo {
+////    /*propertybar*/
+////    bar: any;
+////
+////    /*methodbaz*/
+////    baz(message: any): void;
+////
+////    /*methodUnit*/
+////    unit(): void;
+////}
+////
+/////*enumStatus*/
+////const enum Status {
+////    /*memberOpen*/
+////    Open,
+////
+////    /*memberClosed*/
+////    Closed
+////}
+////
+/////*aliasBar*/
+////type Bar = Foo & any;
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      StringLiteral

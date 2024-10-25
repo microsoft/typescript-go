@@ -1,0 +1,73 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' b'
+        StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' BB'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' DD'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BB'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' a'
+        StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'a'
+  ClassDeclaration
+    Identifier: ' DDD'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BB'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'a'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+            EqualsToken
+            Identifier: ' a'

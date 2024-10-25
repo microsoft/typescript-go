@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '// Selection is at the start of jsx its still js.
+
+//@Filename: file.tsx
+//// let a = (
+////     [|<div>
+////         some text|]
+////     </div>
+//// );
+
+verify'
+        Identifier: 'toggleLineComment'
+      NoSubstitutionTemplateLiteral

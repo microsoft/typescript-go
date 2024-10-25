@@ -1,0 +1,209 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' MiddlewareArray'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' configureStore'
+    Parameter
+      Identifier: 'options'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' middleware'
+          TypeReference
+            Identifier: ' MiddlewareArray'
+            AnyKeyword
+    VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' defaultMiddleware'
+        TypeReference
+          Identifier: ' MiddlewareArray'
+          AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+configureStore'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  middleware'
+          ArrayLiteralExpression
+            SpreadElement
+              Identifier: 'defaultMiddleware'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' React'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' DetailedHTMLProps'
+        TypeParameter
+          Identifier: 'E'
+          TypeReference
+            Identifier: ' HTMLAttributes'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' E'
+      InterfaceDeclaration
+        Identifier: ' HTMLAttributes'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: '
+    children'
+          QuestionToken
+          TypeReference
+            Identifier: ' ReactNode'
+      TypeAliasDeclaration
+        Identifier: ' ReactNode'
+        UnionType
+          TypeReference
+            Identifier: ' ReactChild'
+          TypeReference
+            Identifier: ' ReactFragment'
+          BooleanKeyword
+          LiteralType
+            NullKeyword
+          UndefinedKeyword
+      TypeAliasDeclaration
+        Identifier: ' ReactText'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      TypeAliasDeclaration
+        Identifier: ' ReactChild'
+        TypeReference
+          Identifier: ' ReactText'
+      TypeAliasDeclaration
+        Identifier: ' ReactFragment'
+        UnionType
+          TypeLiteral
+          TypeReference
+            Identifier: ' ReactNodeArray'
+      InterfaceDeclaration
+        Identifier: ' ReactNodeArray'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Array'
+            TypeReference
+              Identifier: 'ReactNode'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          Identifier: '
+    ul'
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'DetailedHTMLProps'
+            TypeReference
+              QualifiedName
+                Identifier: 'React'
+                Identifier: 'HTMLAttributes'
+              TypeReference
+                Identifier: 'HTMLUListElement'
+            TypeReference
+              Identifier: ' HTMLUListElement'
+        PropertySignature
+          Identifier: '
+    li'
+          TypeReference
+            QualifiedName
+              Identifier: ' React'
+              Identifier: 'DetailedHTMLProps'
+            TypeReference
+              QualifiedName
+                Identifier: 'React'
+                Identifier: 'HTMLAttributes'
+              TypeReference
+                Identifier: 'HTMLLIElement'
+            TypeReference
+              Identifier: ' HTMLLIElement'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Component'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' categories'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+            ReturnStatement
+              ParenthesizedExpression
+                BinaryExpression
+                  TypeAssertionExpression
+                    TypeReference
+                      Identifier: 'ul'
+                    TypeAssertionExpression
+                      TypeReference
+                        Identifier: 'li'
+                      Identifier: 'All'
+                  LessThanToken
+                  RegularExpressionLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'categories'
+                    Identifier: 'map'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'category'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      ParenthesizedExpression
+                        TypeAssertionExpression
+                          TypeReference
+                            Identifier: 'li'
+                          Identifier: ' key'
+                      EqualsToken
+                      BinaryExpression
+                        BinaryExpression
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: 'category'
+                          GreaterThanToken
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: 'category'
+                        LessThanToken
+                        BinaryExpression
+                          RegularExpressionLiteral
+                          SlashToken
+                          Identifier: ' Error'
+                  Identifier: ' about'
+                  StringLiteral
+                  Identifier: ' only'
+            ExpressionStatement
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: ''
+                RegularExpressionLiteral
+  EmptyStatement
+  EmptyStatement

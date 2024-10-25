@@ -1,0 +1,10 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      ComputedPropertyName
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      VoidKeyword

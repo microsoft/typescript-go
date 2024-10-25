@@ -1,0 +1,62 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Greatest'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' day'
+        LiteralType
+          NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Crunch'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    m'
+      NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ex'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' crunch'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' ex'
+            Identifier: 'Crunch'
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+crunch'
+      Identifier: 'n'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'greatest'
+    Parameter
+      Identifier: ' wrap'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    greatest'
+          Identifier: 'day'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    wrap'
+          Identifier: 'n'

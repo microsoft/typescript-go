@@ -1,0 +1,47 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Outer'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'y'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Outer'
+        Identifier: 'Inner'
+      EqualsToken
+      ClassExpression
+        Identifier: ' I'
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+                EqualsToken
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ok'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+ok'
+      Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oc'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+oc'
+      Identifier: 'x'

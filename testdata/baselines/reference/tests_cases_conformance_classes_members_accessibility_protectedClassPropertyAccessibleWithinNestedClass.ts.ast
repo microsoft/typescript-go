@@ -1,0 +1,193 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+      StringKeyword
+    GetAccessor
+      ProtectedKeyword
+      Identifier: ' y'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    SetAccessor
+      ProtectedKeyword
+      Identifier: ' y'
+      Parameter
+        Identifier: 'x'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'foo'
+    PropertyDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' x'
+      StringKeyword
+    GetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' y'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    SetAccessor
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' y'
+      Parameter
+        Identifier: 'x'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'foo'
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' bar'
+      Block
+        ClassDeclaration
+          Identifier: ' C2'
+          MethodDeclaration
+            ProtectedKeyword
+            Identifier: ' foo'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' x'
+                    TypeReference
+                      Identifier: ' C'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' x1'
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'foo'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' x2'
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'bar'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' x3'
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'x'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' x4'
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'y'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sx1'
+                    PropertyAccessExpression
+                      Identifier: ' C'
+                      Identifier: 'x'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sx2'
+                    PropertyAccessExpression
+                      Identifier: ' C'
+                      Identifier: 'y'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sx3'
+                    PropertyAccessExpression
+                      Identifier: ' C'
+                      Identifier: 'bar'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sx4'
+                    PropertyAccessExpression
+                      Identifier: ' C'
+                      Identifier: 'foo'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' y'
+                    NewExpression
+                      Identifier: ' C'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' y1'
+                    PropertyAccessExpression
+                      Identifier: ' y'
+                      Identifier: 'foo'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' y2'
+                    PropertyAccessExpression
+                      Identifier: ' y'
+                      Identifier: 'bar'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' y3'
+                    PropertyAccessExpression
+                      Identifier: ' y'
+                      Identifier: 'x'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' y4'
+                    PropertyAccessExpression
+                      Identifier: ' y'
+                      Identifier: 'y'

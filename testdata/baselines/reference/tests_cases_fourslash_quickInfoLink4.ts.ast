@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+////type A = 1 | 2;
+////
+////switch (0 as A) {
+////	/** {@link /**/A} */
+////	case 1:
+////	case 2:
+////    break;
+////}
+
+verify'
+        Identifier: 'noErrors'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineQuickInfo'

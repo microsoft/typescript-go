@@ -1,0 +1,94 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C0'
+  ClassDeclaration
+    Identifier: ' C1'
+    Constructor
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      Parameter
+        Identifier: ' s'
+        StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' T'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 'n'
+        QuestionToken
+        TypeReference
+          Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyCtor'
+        TypeLiteral
+          ConstructSignature
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyCtor1'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'n'
+            AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' nestedCtor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' nestedCtor'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nestedCtor'
+        TypeReference
+          Identifier: ' nestedCtor'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' C0'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      CommaToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        NewExpression
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        TypeReference
+          Identifier: ' T'
+          TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        NewExpression
+          Identifier: ' T'
+          StringKeyword
+  FunctionDeclaration
+    Identifier: ' fnNumber'
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        NewExpression
+          Identifier: ' fnNumber'

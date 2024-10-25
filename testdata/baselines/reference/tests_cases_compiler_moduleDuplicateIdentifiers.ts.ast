@@ -1,0 +1,92 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: '
+	_brand1'
+      AnyKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: ' // Shouldn't error
+	_brand2'
+      AnyKeyword
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' FooBar'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' member1'
+            NumericLiteral
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' FooBar'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' member2'
+            NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Kettle'
+    PropertyDeclaration
+      Identifier: '
+	member1'
+      NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Kettle'
+    PropertyDeclaration
+      Identifier: ' // Should error
+	member2'
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Pot'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+Pot'
+      EqualsToken
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Utensils'
+    EnumMember
+      Identifier: '
+	Spoon'
+    EnumMember
+      Identifier: '
+	Fork'
+    EnumMember
+      Identifier: '
+	Knife'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Utensils'
+    EnumMember
+      Identifier: ' // Shouldn't error
+	Spork'
+      NumericLiteral

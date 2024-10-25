@@ -1,0 +1,37 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' React'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' El'
+        ConditionalExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Math'
+              Identifier: 'random'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tag'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'El'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' className'
+                StringLiteral
+              JsxAttribute
+                Identifier: ' key'
+                StringLiteral
+          JsxExpression
+            StringLiteral
+          JsxClosingElement
+            Identifier: 'El'

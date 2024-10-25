@@ -1,0 +1,37 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Object'
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' Base2'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Object'
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base2'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      AnyKeyword

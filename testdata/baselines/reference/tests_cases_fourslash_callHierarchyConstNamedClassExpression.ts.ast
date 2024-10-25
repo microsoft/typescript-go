@@ -1,0 +1,27 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// function foo() {
+////     new Bar();
+//// }
+////
+//// const /**/Bar = class {
+////     constructor() {
+////         baz();
+////     }
+//// }
+////
+//// function baz() {
+//// }
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineCallHierarchy'

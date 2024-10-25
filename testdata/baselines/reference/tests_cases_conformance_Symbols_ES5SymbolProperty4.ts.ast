@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Symbol'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' iterator'
+            StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Block
+  ExpressionStatement
+    ElementAccessExpression
+      ParenthesizedExpression
+        NewExpression
+          Identifier: ' C'
+      PropertyAccessExpression
+        Identifier: 'Symbol'
+        Identifier: 'iterator'

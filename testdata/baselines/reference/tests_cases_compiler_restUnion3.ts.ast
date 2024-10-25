@@ -1,0 +1,59 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullAndUndefinedUnion'
+        UnionType
+          LiteralType
+            NullKeyword
+          UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rest4'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest4'
+        Identifier: ' nullAndUndefinedUnion'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionWithIntersection'
+        IntersectionType
+          ParenthesizedType
+            IntersectionType
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' n'
+                  NumberKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' s'
+                  StringKeyword
+          UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rest5'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' n'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' s'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest5'
+        Identifier: ' unionWithIntersection'

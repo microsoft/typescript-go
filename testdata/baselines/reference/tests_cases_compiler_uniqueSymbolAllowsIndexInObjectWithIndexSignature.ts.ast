@@ -1,0 +1,45 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SYM'
+        CallExpression
+          Identifier: ' Symbol'
+          StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I'
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'SYM'
+      LiteralType
+        StringLiteral
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' I'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'SYM'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' I'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'SYM'
+            StringLiteral

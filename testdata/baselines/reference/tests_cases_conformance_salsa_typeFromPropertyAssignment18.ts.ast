@@ -1,0 +1,57 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' GLOBSTAR'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' m'
+            Identifier: 'GLOBSTAR'
+          EqualsToken
+          ObjectLiteralExpression
+  FunctionDeclaration
+    Identifier: ' m'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+GLOBSTAR'
+        Identifier: 'p'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+m'
+          Identifier: 'GLOBSTAR'
+        Identifier: 'q'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+GLOBSTAR'
+      Identifier: 'p'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+GLOBSTAR'
+      Identifier: 'q'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+m'
+        Identifier: 'GLOBSTAR'
+      Identifier: 'p'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+m'
+        Identifier: 'GLOBSTAR'
+      Identifier: 'q'

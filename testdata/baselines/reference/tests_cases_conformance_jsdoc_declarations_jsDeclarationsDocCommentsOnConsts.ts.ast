@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' b'
+    Block
+      ReturnStatement
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: 'x'
+        ShorthandPropertyAssignment
+          Identifier: ' b'

@@ -1,0 +1,37 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x'
+            BinaryExpression
+              StringLiteral
+              InKeyword
+              ObjectLiteralExpression
+    ArrayLiteralExpression
+      ArrayLiteralExpression
+    ExpressionStatement
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' console'
+          Identifier: 'log'
+        Identifier: 'x'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'x'
+            BinaryExpression
+              StringLiteral
+              InKeyword
+              ObjectLiteralExpression
+    ArrayLiteralExpression
+      ObjectLiteralExpression
+    ExpressionStatement
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' console'
+          Identifier: 'log'
+        Identifier: 'x'

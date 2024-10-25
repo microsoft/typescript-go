@@ -1,0 +1,73 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' callb'
+    Parameter
+      Identifier: 'lam'
+      FunctionType
+        Parameter
+          Identifier: 'l'
+          NumberKeyword
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' callb'
+    Parameter
+      Identifier: 'lam'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' callb'
+    Parameter
+      Identifier: 'a'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+callb'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' callb2'
+    Parameter
+      Identifier: 'lam'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' callb2'
+    Parameter
+      Identifier: 'lam'
+      FunctionType
+        Parameter
+          Identifier: 'l'
+          NumberKeyword
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' callb2'
+    Parameter
+      Identifier: 'a'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+callb2'
+      ArrowFunction
+        Parameter
+          Identifier: 'a'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'length'

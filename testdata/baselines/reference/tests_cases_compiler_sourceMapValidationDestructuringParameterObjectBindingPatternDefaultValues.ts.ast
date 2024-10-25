@@ -1,0 +1,155 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Robot'
+    PropertySignature
+      Identifier: '
+    name'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    skill'
+      QuestionToken
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              StringKeyword
+            VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' hello'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' robotA'
+        TypeReference
+          Identifier: ' Robot'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' name'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' skill'
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' nameA'
+          StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+      ObjectLiteralExpression
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameA'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          Identifier: ' nameB'
+          StringLiteral
+        BindingElement
+          Identifier: ' skill'
+          Identifier: ' skillB'
+          StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+      ObjectLiteralExpression
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'nameB'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' name'
+          StringLiteral
+      TypeReference
+        Identifier: ' Robot'
+      ObjectLiteralExpression
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'name'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo1'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skill'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo2'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skill'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo3'
+      Identifier: 'robotA'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' skill'
+          StringLiteral

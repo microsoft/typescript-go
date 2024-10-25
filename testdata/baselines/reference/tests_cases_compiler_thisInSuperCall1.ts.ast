@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        AnyKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ThisKeyword

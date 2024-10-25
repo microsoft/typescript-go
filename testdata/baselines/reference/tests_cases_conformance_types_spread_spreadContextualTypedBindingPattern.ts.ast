@@ -1,0 +1,38 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Person'
+    PropertySignature
+      Identifier: '
+  naam'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  age'
+      NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bob'
+        TypeReference
+          Identifier: ' Person'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' alice'
+        TypeReference
+          Identifier: ' Person'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' naam'
+          BindingElement
+            Identifier: ' age'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'bob'
+          SpreadAssignment
+            Identifier: 'alice'

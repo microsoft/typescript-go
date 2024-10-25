@@ -1,0 +1,42 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' X'
+          PrivateIdentifier
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+      X'
+              PrivateIdentifier
+    MethodDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' X'
+              AnyKeyword
+              ObjectLiteralExpression
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' _a'
+              AnyKeyword
+              ObjectLiteralExpression
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' // shadow the first generated var
+      X'
+              PrivateIdentifier
+        ReturnStatement
+          NumericLiteral

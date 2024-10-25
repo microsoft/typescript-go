@@ -1,0 +1,68 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' K'
+    UnionType
+      NumberKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'K'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' K1'
+        CallExpression
+          Identifier: ' Symbol'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'K1'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' K2'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'K2'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' K3'
+    UnionType
+      NumberKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T3'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'K3'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' K4'
+    UnionType
+      NumberKeyword
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T4'
+    TypeLiteral
+      PropertySignature
+        ComputedPropertyName
+          Identifier: 'K4'
+        NumberKeyword
+      PropertySignature
+        Identifier: '
+    k4'
+        StringKeyword

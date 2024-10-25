@@ -1,0 +1,24 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    GetAccessor
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'v'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    x'
+      Block
+        ReturnStatement
+          NumericLiteral

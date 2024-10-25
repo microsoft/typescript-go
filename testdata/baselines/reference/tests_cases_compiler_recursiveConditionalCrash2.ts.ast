@@ -1,0 +1,63 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' CanBeExpanded'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  value'
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Expand__'
+    TypeParameter
+      Identifier: 'O'
+    TypeParameter
+      Identifier: ' N'
+    TypeParameter
+      Identifier: ' Depth'
+    ConditionalType
+      TypeReference
+        Identifier: '
+  N'
+      TypeReference
+        Identifier: ' Depth'
+      UnknownKeyword
+      ConditionalType
+        TypeReference
+          Identifier: '
+      O'
+        TypeReference
+          Identifier: ' CanBeExpanded'
+          AnyKeyword
+        TypeReference
+          Identifier: '
+          Expand__'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'O'
+            LiteralType
+              StringLiteral
+          TypeReference
+            Identifier: ' N'
+          TypeReference
+            Identifier: ' Depth'
+        TypeReference
+          Identifier: '
+          O'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' UseQueryOptions'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Expand__'
+      TypeReference
+        Identifier: 'T'
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral

@@ -1,0 +1,308 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ApplyCodeActionCommandResult'
+        ImportSpecifier
+          Identifier: ' DirectoryWatcherCallback'
+        ImportSpecifier
+          Identifier: ' FileWatcher'
+        ImportSpecifier
+          Identifier: ' FileWatcherCallback'
+        ImportSpecifier
+          Identifier: ' InstallPackageOptions'
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' SortedReadonlyArray'
+        ImportSpecifier
+          Identifier: ' System'
+        ImportSpecifier
+          Identifier: ' TypeAcquisition'
+        ImportSpecifier
+          Identifier: ' WatchOptions'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Project'
+        ImportSpecifier
+          Identifier: ' ProjectService'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CompressedData'
+    PropertySignature
+      Identifier: '
+    length'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    compressionKind'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    data'
+      AnyKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ModuleImportResult'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    module'
+          TypeLiteral
+        PropertySignature
+          Identifier: '
+    error'
+          UndefinedKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    module'
+          UndefinedKeyword
+        PropertySignature
+          Identifier: '
+    error'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+        stack'
+              QuestionToken
+              StringKeyword
+            PropertySignature
+              Identifier: '
+        message'
+              QuestionToken
+              StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RequireResult'
+    TypeReference
+      Identifier: ' ModuleImportResult'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ServerHost'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' System'
+    MethodSignature
+      Identifier: '
+    watchFile'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' callback'
+        TypeReference
+          Identifier: ' FileWatcherCallback'
+      Parameter
+        Identifier: ' pollingInterval'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' WatchOptions'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodSignature
+      Identifier: '
+    watchDirectory'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' callback'
+        TypeReference
+          Identifier: ' DirectoryWatcherCallback'
+      Parameter
+        Identifier: ' recursive'
+        QuestionToken
+        BooleanKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' WatchOptions'
+      TypeReference
+        Identifier: ' FileWatcher'
+    PropertySignature
+      Identifier: '
+    preferNonRecursiveWatch'
+      QuestionToken
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    setTimeout'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          VoidKeyword
+      Parameter
+        Identifier: ' ms'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    clearTimeout'
+      Parameter
+        Identifier: 'timeoutId'
+        AnyKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    setImmediate'
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          VoidKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    clearImmediate'
+      Parameter
+        Identifier: 'timeoutId'
+        AnyKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    gc'
+      QuestionToken
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    trace'
+      QuestionToken
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    require'
+      QuestionToken
+      Parameter
+        Identifier: 'initialPath'
+        StringKeyword
+      Parameter
+        Identifier: ' moduleName'
+        StringKeyword
+      TypeReference
+        Identifier: ' ModuleImportResult'
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    importPlugin'
+      QuestionToken
+      Parameter
+        Identifier: 'root'
+        StringKeyword
+      Parameter
+        Identifier: ' moduleName'
+        StringKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'ModuleImportResult'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InstallPackageOptionsWithProject'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' InstallPackageOptions'
+    PropertySignature
+      Identifier: '
+    projectName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    projectRootPath'
+      TypeReference
+        Identifier: ' Path'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ITypingsInstaller'
+    MethodSignature
+      Identifier: '
+    isKnownTypesPackageName'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    installPackage'
+      Parameter
+        Identifier: 'options'
+        TypeReference
+          Identifier: ' InstallPackageOptionsWithProject'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'ApplyCodeActionCommandResult'
+    MethodSignature
+      Identifier: '
+    enqueueInstallTypingsRequest'
+      Parameter
+        Identifier: 'p'
+        TypeReference
+          Identifier: ' Project'
+      Parameter
+        Identifier: ' typeAcquisition'
+        TypeReference
+          Identifier: ' TypeAcquisition'
+      Parameter
+        Identifier: ' unresolvedImports'
+        UnionType
+          TypeReference
+            Identifier: ' SortedReadonlyArray'
+            StringKeyword
+          UndefinedKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    attach'
+      Parameter
+        Identifier: 'projectService'
+        TypeReference
+          Identifier: ' ProjectService'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    onProjectClosed'
+      Parameter
+        Identifier: 'p'
+        TypeReference
+          Identifier: ' Project'
+      VoidKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' globalTypingsCacheLocation'
+      UnionType
+        StringKeyword
+        UndefinedKeyword

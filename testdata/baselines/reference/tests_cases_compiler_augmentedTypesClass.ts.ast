@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c1'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' c4'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+  EnumDeclaration
+    Identifier: ' c4'
+    EnumMember
+      Identifier: ' One'

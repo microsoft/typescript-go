@@ -1,0 +1,52 @@
+SourceFile
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: '// @allowjs: true
+// @checkjs: true
+// @outdir: out
+// @target: es6
+
+// @filename: fileJs.js
+x'
+      QuestionToken
+      ArrowFunction
+        Parameter
+          Identifier: ' y'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' y'
+      ColonToken
+      ArrowFunction
+        Parameter
+          Identifier: ' z'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' z'
+  ExpressionStatement
+    ConditionalExpression
+      Identifier: ' // Legal JS
+
+// @filename: fileTs.ts
+x'
+      QuestionToken
+      ArrowFunction
+        Parameter
+          Identifier: ' y'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' y'
+      ColonToken
+      ArrowFunction
+        Parameter
+          Identifier: ' z'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' z'

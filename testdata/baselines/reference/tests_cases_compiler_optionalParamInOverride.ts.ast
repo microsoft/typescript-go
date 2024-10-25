@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Z'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' func'
+      VoidKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Y'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Z'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' func'
+      Parameter
+        Identifier: 'value'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword
+      Block

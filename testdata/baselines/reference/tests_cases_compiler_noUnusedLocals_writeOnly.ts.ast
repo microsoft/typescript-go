@@ -1,0 +1,143 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      NumericLiteral
+    Parameter
+      Identifier: ' b'
+      FalseKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    // None of these statements read from 'x', so it will be marked unused.
+    x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ArrayLiteralExpression
+              Identifier: 'x'
+            EqualsToken
+            ArrayLiteralExpression
+              NumericLiteral
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' x'
+            EqualsToken
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                Identifier: ' x'
+            EqualsToken
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' b'
+                      Identifier: ' x'
+            EqualsToken
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' b'
+                      NumericLiteral
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' x'
+                EqualsToken
+                NumericLiteral
+            EqualsToken
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                ConditionalExpression
+                  Identifier: ' b'
+                  QuestionToken
+                  NumericLiteral
+                  ColonToken
+                  Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' used'
+            NumericLiteral
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' x'
+                EqualsToken
+                Identifier: ' used'
+            EqualsToken
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                ConditionalExpression
+                  Identifier: ' b'
+                  QuestionToken
+                  NumericLiteral
+                  ColonToken
+                  Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    // This is a write access to y, but not a write-*only* access.
+    f'
+          PostfixUnaryExpression
+            Identifier: 'y'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+          BinaryExpression
+            Identifier: 'z'
+            EqualsToken
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: '_'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        NumberKeyword
+    VoidKeyword
+    Block

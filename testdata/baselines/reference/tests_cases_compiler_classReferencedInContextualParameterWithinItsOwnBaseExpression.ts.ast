@@ -1,0 +1,136 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Pretty'
+    TypeParameter
+      Identifier: 'To'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' To'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Schema'
+    TypeParameter
+      Identifier: 'A'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' pretty'
+      QuestionToken
+      TypeReference
+        Identifier: ' Pretty'
+        TypeReference
+          Identifier: 'A'
+  InterfaceDeclaration
+    Identifier: ' Class'
+    TypeParameter
+      Identifier: 'A'
+    ConstructSignature
+      TypeReference
+        Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Class'
+        FunctionType
+          TypeParameter
+            Identifier: 'Self'
+          Parameter
+            Identifier: '
+  identifier'
+            StringKeyword
+          FunctionType
+            TypeParameter
+              Identifier: 'Fields'
+            Parameter
+              Identifier: '
+  fields'
+              TypeReference
+                Identifier: ' Fields'
+            Parameter
+              Identifier: '
+  annotations'
+              QuestionToken
+              TypeReference
+                Identifier: ' Schema'
+                TypeReference
+                  Identifier: 'Self'
+            TypeReference
+              Identifier: ' Class'
+              TypeReference
+                Identifier: 'OutputFrom'
+                TypeReference
+                  Identifier: 'Fields'
+  TypeAliasDeclaration
+    Identifier: ' Type'
+    TypeParameter
+      Identifier: 'TOutput'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  _TOutput'
+        TypeReference
+          Identifier: ' TOutput'
+  TypeAliasDeclaration
+    Identifier: ' OutputFrom'
+    TypeParameter
+      Identifier: 'TFields'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' TFields'
+      ConditionalType
+        LiteralType
+          StringLiteral
+        TypeOperator
+          IndexedAccessType
+            TypeReference
+              Identifier: ' TFields'
+            TypeReference
+              Identifier: 'K'
+        IndexedAccessType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' TFields'
+            TypeReference
+              Identifier: 'K'
+          LiteralType
+            StringLiteral
+        NeverKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' string'
+    TypeReference
+      Identifier: ' Type'
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          CallExpression
+            Identifier: ' Class'
+            TypeReference
+              Identifier: 'A'
+            StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              Identifier: ' string'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    pretty'
+              ArrowFunction
+                Parameter
+                  Identifier: 'a'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' JSON'
+                    Identifier: 'stringify'
+                  Identifier: 'a'

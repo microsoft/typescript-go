@@ -1,0 +1,263 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithParameters'
+    Parameter
+      Identifier: '/** this is comment about a*/a'
+      StringKeyword
+    Parameter
+      Identifier: '
+    /** this is comment for b*/
+    b'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            Identifier: ' a'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithRestParameters'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rests'
+      ArrayType
+        StringKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' rests'
+              Identifier: 'join'
+            StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithOverloads'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithOverloads'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithOverloads'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithSingleOverload'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithSingleOverload'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithTypePredicate'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' a'
+      NumberKeyword
+    Block
+      ReturnStatement
+        TrueKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithTypePredicateAndMulitpleParams'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Parameter
+      Identifier: ' c'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' a'
+      NumberKeyword
+    Block
+      ReturnStatement
+        TrueKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithTypeTypePredicateAndGeneric'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' a'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        TrueKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fooWithTypeTypePredicateAndRestParam'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+    TypePredicate
+      Identifier: ' a'
+      NumberKeyword
+    Block
+      ReturnStatement
+        TrueKeyword
+  FunctionDeclaration
+    Identifier: ' nonExportedFoo'
+    Block
+  FunctionDeclaration
+    Identifier: ' nonExportedFooWithParameters'
+    Parameter
+      Identifier: '/** this is comment about a*/a'
+      StringKeyword
+    Parameter
+      Identifier: '
+    /** this is comment for b*/
+    b'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' nonExportedFooWithRestParameters'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rests'
+      ArrayType
+        StringKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' rests'
+              Identifier: 'join'
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' nonExportedFooWithOverloads'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' nonExportedFooWithOverloads'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' nonExportedFooWithOverloads'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' globalfoo'
+    Block
+  FunctionDeclaration
+    Identifier: ' globalfooWithParameters'
+    Parameter
+      Identifier: '/** this is comment about a*/a'
+      StringKeyword
+    Parameter
+      Identifier: '
+    /** this is comment for b*/
+    b'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' globalfooWithRestParameters'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rests'
+      ArrayType
+        StringKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' rests'
+              Identifier: 'join'
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' globalfooWithOverloads'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' globalfooWithOverloads'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' globalfooWithOverloads'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' a'

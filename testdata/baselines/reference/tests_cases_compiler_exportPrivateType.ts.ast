@@ -1,0 +1,87 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C1'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          StringKeyword
+        PropertyDeclaration
+          Identifier: '
+        y'
+          TypeReference
+            Identifier: ' C1'
+      ClassDeclaration
+        Identifier: ' C2'
+        MethodDeclaration
+          Identifier: '
+        test'
+          Block
+            ReturnStatement
+              TrueKeyword
+      InterfaceDeclaration
+        Identifier: ' I1'
+        CallSignature
+          Parameter
+            Identifier: 'a'
+            StringKeyword
+          Parameter
+            Identifier: ' b'
+            StringKeyword
+          StringKeyword
+        CallSignature
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            NumberKeyword
+          TypeReference
+            Identifier: ' I1'
+      InterfaceDeclaration
+        Identifier: ' I2'
+        PropertySignature
+          Identifier: '
+        x'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            TypeReference
+              Identifier: ' C1'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            TypeReference
+              Identifier: ' I1'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            TypeReference
+              Identifier: ' C2'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' h'
+            TypeReference
+              Identifier: ' I2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        PropertyAccessExpression
+          Identifier: ' foo'
+          Identifier: 'g'

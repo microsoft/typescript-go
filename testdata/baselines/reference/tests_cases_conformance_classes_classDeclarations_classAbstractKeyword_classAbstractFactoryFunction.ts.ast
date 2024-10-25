@@ -1,0 +1,51 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' NewA'
+    Parameter
+      Identifier: 'Factory'
+      TypeQuery
+        Identifier: ' A'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' NewB'
+    Parameter
+      Identifier: 'Factory'
+      TypeQuery
+        Identifier: ' B'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' B'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+NewA'
+      Identifier: 'A'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+NewA'
+      Identifier: 'B'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+NewB'
+      Identifier: 'A'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+NewB'
+      Identifier: 'B'

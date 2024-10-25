@@ -1,0 +1,67 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleDeclaration
+      Identifier: 'B'
+      ModuleDeclaration
+        Identifier: 'C'
+        ModuleBlock
+          ImportEqualsDeclaration
+            Identifier: ' XYZ'
+            QualifiedName
+              QualifiedName
+                Identifier: ' X'
+                Identifier: 'Y'
+              Identifier: 'Z'
+          FunctionDeclaration
+            ExportKeyword
+            Identifier: ' ping'
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'x'
+                  GreaterThanToken
+                  NumericLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' XYZ'
+                      Identifier: 'pong'
+                    BinaryExpression
+                      Identifier: 'x'
+                      MinusToken
+                      NumericLiteral
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' ABC'
+        QualifiedName
+          QualifiedName
+            Identifier: ' A'
+            Identifier: 'B'
+          Identifier: 'C'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' pong'
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'x'
+              GreaterThanToken
+              NumericLiteral
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ABC'
+                  Identifier: 'ping'
+                BinaryExpression
+                  Identifier: 'x'
+                  MinusToken
+                  NumericLiteral

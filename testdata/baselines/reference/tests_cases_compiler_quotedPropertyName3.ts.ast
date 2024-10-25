@@ -1,0 +1,26 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test'
+    PropertyDeclaration
+      StringLiteral
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ElementAccessExpression
+                  ThisKeyword
+                  StringLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              NumberKeyword
+              CallExpression
+                Identifier: ' x'

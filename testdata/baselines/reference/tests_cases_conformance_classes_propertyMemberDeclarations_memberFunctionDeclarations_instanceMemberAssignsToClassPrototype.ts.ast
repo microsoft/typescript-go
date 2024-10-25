@@ -1,0 +1,71 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        C'
+                Identifier: 'prototype'
+              Identifier: 'foo'
+            EqualsToken
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+    MethodDeclaration
+      Identifier: '
+
+    bar'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        C'
+                Identifier: 'prototype'
+              Identifier: 'bar'
+            EqualsToken
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' // error
+        C'
+                Identifier: 'prototype'
+              Identifier: 'bar'
+            EqualsToken
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' // ok
+        C'
+                Identifier: 'prototype'
+              Identifier: 'bar'
+            EqualsToken
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              EqualsGreaterThanToken
+              NumericLiteral
+        ReturnStatement
+          NumericLiteral

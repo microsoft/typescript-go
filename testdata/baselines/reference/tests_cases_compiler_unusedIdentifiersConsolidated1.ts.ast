@@ -1,0 +1,212 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' greeter'
+    Parameter
+      Identifier: 'person'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unused'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' Dummy'
+    TypeParameter
+      Identifier: 'usedtypeparameter'
+    TypeParameter
+      Identifier: ' unusedtypeparameter'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' unusedprivatevariable'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' greeting'
+      StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' unusedpublicvariable'
+      StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' typedvariable'
+      TypeReference
+        Identifier: ' usedtypeparameter'
+    Constructor
+      Parameter
+        Identifier: 'message'
+        StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' unused2'
+              NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'greeting'
+            EqualsToken
+            StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' greeter'
+      Parameter
+        Identifier: 'person'
+        StringKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' unused'
+              NumericLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'usedPrivateFunction'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' usedPrivateFunction'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' unUsedPrivateFunction'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' user'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' user2'
+        StringLiteral
+  ModuleDeclaration
+    Identifier: ' Validation'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' StringValidator'
+        MethodSignature
+          Identifier: '
+        isAcceptable'
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          BooleanKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lettersRegexp'
+            RegularExpressionLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' numberRegexp'
+            RegularExpressionLiteral
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' LettersOnlyValidator'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' StringValidator'
+        MethodDeclaration
+          Identifier: '
+        isAcceptable'
+          Parameter
+            Identifier: 's2'
+            StringKeyword
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' lettersRegexp'
+                  Identifier: 'test'
+                Identifier: 's2'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' unUsedPrivateFunction'
+          Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' ZipCodeValidator'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' StringValidator'
+        MethodDeclaration
+          Identifier: '
+        isAcceptable'
+          Parameter
+            Identifier: 's3'
+            StringKeyword
+          Block
+            ReturnStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' s3'
+                  Identifier: 'length'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+      InterfaceDeclaration
+        Identifier: ' usedLocallyInterface'
+      InterfaceDeclaration
+        Identifier: ' usedLocallyInterface2'
+        MethodSignature
+          Identifier: '
+        someFunction'
+          Parameter
+            Identifier: 's1'
+            StringKeyword
+          VoidKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' exportedInterface'
+      ClassDeclaration
+        Identifier: ' dummy'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' usedLocallyInterface'
+      InterfaceDeclaration
+        Identifier: ' unusedInterface'
+  ModuleDeclaration
+    Identifier: ' Greeter'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' class1'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' class2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' class1'
+      ClassDeclaration
+        Identifier: ' class3'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' class4'
+      InterfaceDeclaration
+        Identifier: ' interface1'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' interface2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' interface1'
+      InterfaceDeclaration
+        Identifier: ' interface3'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' interface4'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' interface3'
+      InterfaceDeclaration
+        Identifier: ' interface5'

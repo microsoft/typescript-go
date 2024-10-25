@@ -1,0 +1,22 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              StringLiteral
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              ComputedPropertyName
+                StringLiteral
+              StringLiteral
+          ObjectLiteralExpression

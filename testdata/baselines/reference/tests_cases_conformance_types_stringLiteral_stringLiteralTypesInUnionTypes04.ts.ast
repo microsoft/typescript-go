@@ -1,0 +1,104 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' T'
+        Identifier: ' undefined'
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            Identifier: ' x'
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            Identifier: ' x'
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      EqualsEqualsToken
+      StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            Identifier: ' x'
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      ExclamationEqualsToken
+      StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            Identifier: ' x'
+  IfStatement
+    Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            Identifier: ' x'
+  IfStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            Identifier: ' x'
+  IfStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            Identifier: ' x'
+  IfStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          Identifier: 'x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' h'
+            Identifier: ' x'

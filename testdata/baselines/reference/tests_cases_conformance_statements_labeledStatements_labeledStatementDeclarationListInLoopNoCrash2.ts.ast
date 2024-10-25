@@ -1,0 +1,28 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ArrayLiteralExpression
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v0'
+            Identifier: ' x'
+      LabeledStatement
+        Identifier: '
+  foo'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+      ExpressionStatement
+        ParenthesizedExpression
+          FunctionExpression
+            Block
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  PlusToken
+                  Identifier: ' v0'

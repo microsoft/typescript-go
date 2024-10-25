@@ -1,0 +1,51 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' hardline'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' type'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+  hardline'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+// @filename: second.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  nested'
+          CallExpression
+            Identifier: ' require'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' hardline'
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' require'
+            StringLiteral
+          Identifier: 'nested'
+  ExpressionStatement
+    Identifier: '
+hardline'

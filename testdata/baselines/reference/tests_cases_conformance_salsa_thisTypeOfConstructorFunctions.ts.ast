@@ -1,0 +1,132 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Cp'
+    Parameter
+      Identifier: 't'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'dit'
+          EqualsToken
+          ThisKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'y'
+          EqualsToken
+          Identifier: ' t'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'm3'
+          EqualsToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ThisKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Cp'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    /** @return {this} */
+    m4'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'z'
+                EqualsToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+            ReturnStatement
+              ThisKeyword
+  FunctionDeclaration
+    Identifier: ' Cpp'
+    Parameter
+      Identifier: 't'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'y'
+          EqualsToken
+          Identifier: ' t'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/** @return {this} */
+Cpp'
+          Identifier: 'prototype'
+        Identifier: 'm2'
+      EqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'z'
+              EqualsToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'y'
+          ReturnStatement
+            ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cp'
+        NewExpression
+          Identifier: ' Cp'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cpp'
+        NewExpression
+          Identifier: ' Cpp'
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+cp'
+      Identifier: 'dit'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cppn'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' cpp'
+            Identifier: 'm2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cpn'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' cp'
+            Identifier: 'm3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cpn'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' cp'
+            Identifier: 'm4'

@@ -1,0 +1,101 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' EventEmitter'
+        ModuleBlock
+          ClassDeclaration
+            Identifier: ' EventEmitter'
+            Constructor
+      ExportAssignment
+        Identifier: ' EventEmitter'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' a1'
+        ModuleDeclaration
+          Identifier: 'a2'
+          ModuleBlock
+            ClassDeclaration
+              Identifier: ' d'
+      ModuleDeclaration
+        Identifier: ' a1'
+        ModuleDeclaration
+          Identifier: 'a2'
+          ModuleDeclaration
+            Identifier: 'n3'
+            ModuleBlock
+              ClassDeclaration
+                Identifier: ' c'
+      ExportAssignment
+        PropertyAccessExpression
+          Identifier: ' a1'
+          Identifier: 'a2'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' a'
+        ModuleDeclaration
+          Identifier: 'b'
+          ModuleBlock
+            ClassDeclaration
+              Identifier: ' c'
+      ImportEqualsDeclaration
+        Identifier: ' d'
+        QualifiedName
+          Identifier: ' a'
+          Identifier: 'b'
+      ExportAssignment
+        Identifier: ' d'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' EventEmitter'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' n3'
+        ImportSpecifier
+          Identifier: ' d'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' c'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' EventEmitter'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' n3'
+          Identifier: 'c'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' d'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' c'

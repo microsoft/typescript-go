@@ -1,0 +1,11 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    Value'
+      NumericLiteral
+    EnumMember
+      Identifier: ' Value2'
+      Identifier: ' Value'

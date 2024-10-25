@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: nodenext
+////import * as react from "react" with { cache: /**/0 };
+////react.Children;
+
+verify'
+        Identifier: 'baselineDocumentHighlights'
+      StringLiteral

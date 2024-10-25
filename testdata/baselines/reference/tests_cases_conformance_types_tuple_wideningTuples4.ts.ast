@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TupleType
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BinaryExpression
+          Identifier: ' a'
+          EqualsToken
+          ArrayLiteralExpression
+            Identifier: 'undefined'
+            NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral

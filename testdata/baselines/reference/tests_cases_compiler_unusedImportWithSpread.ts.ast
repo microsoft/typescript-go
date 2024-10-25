@@ -1,0 +1,44 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' a'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' a'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        AsExpression
+          ObjectLiteralExpression
+          UnknownKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      ObjectLiteralExpression
+        SpreadAssignment
+          Identifier: 'b1'
+        ShorthandPropertyAssignment
+          Identifier: '
+    a'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' a'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        AsExpression
+          ObjectLiteralExpression
+          NeverKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      ObjectLiteralExpression
+        SpreadAssignment
+          Identifier: 'b2'
+        ShorthandPropertyAssignment
+          Identifier: '
+    a'

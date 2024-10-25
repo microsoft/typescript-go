@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////const foo = { [|0|]: true };
+////foo[[|0|]];
+
+verify'
+        Identifier: 'baselineRenameAtRangesWithText'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' quotePreference'
+          StringLiteral

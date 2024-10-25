@@ -1,0 +1,364 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK
+x'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'x'
+      EqualsToken
+      StringLiteral
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'y'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          Identifier: 'M'
+        Identifier: 'y'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'M'
+          Identifier: 'y'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // OK
+M'
+        Identifier: 'y'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          Identifier: 'M'
+        Identifier: 'y'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'M'
+          Identifier: 'y'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // Error
+
+M'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'M'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          NumericLiteral
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' M3'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumberKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    M3'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M2'
+        Identifier: 'M3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          Identifier: 'M2'
+        Identifier: 'M3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'M2'
+          Identifier: 'M3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // OK
+
+M2'
+        Identifier: 'M3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          Identifier: 'M2'
+        Identifier: 'M3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'M2'
+          Identifier: 'M3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' fn'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+fn'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'fn'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' fn2'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Parameter
+      Identifier: ' y'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' t'
+          NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            Identifier: 'x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // OK
+    x'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            Identifier: 'x'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              Identifier: 'y'
+            Identifier: 't'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            PropertyAccessExpression
+              Identifier: 'y'
+              Identifier: 't'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              Identifier: 'y'
+            Identifier: 't'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            PropertyAccessExpression
+              Identifier: 'y'
+              Identifier: 't'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: ' // Error
+
+    y'
+            StringLiteral
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            ParenthesizedExpression
+              Identifier: 'y'
+            StringLiteral
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            ElementAccessExpression
+              Identifier: 'y'
+              StringLiteral
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: ' // OK
+    y'
+            StringLiteral
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            ParenthesizedExpression
+              Identifier: 'y'
+            StringLiteral
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ParenthesizedExpression
+            ElementAccessExpression
+              Identifier: 'y'
+              StringLiteral
+          EqualsToken
+          StringLiteral
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+E'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'E'
+      EqualsToken
+      Identifier: ' undefined'
+  ClassDeclaration
+    Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+C'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'C'
+      EqualsToken
+      Identifier: ' undefined'

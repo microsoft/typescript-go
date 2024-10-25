@@ -1,0 +1,16 @@
+SourceFile
+  ForOfStatement
+    AwaitKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+    ArrayLiteralExpression
+    Block
+  ExpressionStatement
+    AwaitExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' Promise'
+          Identifier: 'resolve'
+  ExportDeclaration
+    NamedExports

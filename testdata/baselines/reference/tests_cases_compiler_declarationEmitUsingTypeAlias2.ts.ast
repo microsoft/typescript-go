@@ -1,0 +1,174 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Other'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' other'
+        StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' SomeType'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' arg'
+        TypeReference
+          Identifier: ' Other'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shouldLookupName'
+        TypeOperator
+          SymbolKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shouldReuseLocalName'
+        TypeOperator
+          SymbolKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' reuseDepName'
+        TypeOperator
+          SymbolKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shouldBeElided'
+        TypeOperator
+          SymbolKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' isNotAccessibleShouldError'
+        TypeOperator
+          SymbolKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Other'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' shouldLookupName'
+        ImportSpecifier
+          Identifier: ' reuseDepName'
+        ImportSpecifier
+          Identifier: ' shouldReuseLocalName'
+        ImportSpecifier
+          Identifier: ' shouldBeElided'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' goodDeclaration'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          FunctionType
+            TypeLiteral
+              PropertySignature
+                Identifier: ' 
+  /** Other Can't be named in index.ts, but the whole conditional type can be resolved  */
+  shouldPrintResult'
+                ConditionalType
+                  TypeReference
+                    Identifier: ' T'
+                  TypeReference
+                    Identifier: ' Other'
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+              PropertySignature
+                Identifier: '
+  /** Symbol shouldBeElided should not be present in index.d.ts, it might be since it's tracked before Other is seen and an error reported */ 
+  shouldPrintResult2'
+                ConditionalType
+                  TypeReference
+                    Identifier: ' T'
+                  TypeQuery
+                    Identifier: ' shouldBeElided'
+                  TypeReference
+                    Identifier: ' Other'
+                  LiteralType
+                    StringLiteral
+              PropertySignature
+                Identifier: ' 
+  /** Specifier should come from module, local path should not be reused */ 
+  shouldLookupName'
+                ImportType
+                  LiteralType
+                    StringLiteral
+                  Identifier: 'shouldLookupName'
+              PropertySignature
+                Identifier: '
+  /** This is imported in index so local name should be reused */ 
+  shouldReuseLocalName'
+                TypeQuery
+                  Identifier: ' shouldReuseLocalName'
+              PropertySignature
+                Identifier: '
+  /** This is NOT imported in index so import should be created */ 
+  reuseDepName'
+                TypeQuery
+                  Identifier: ' reuseDepName'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' shouldLookupName'
+      ExportSpecifier
+        Identifier: ' shouldReuseLocalName'
+      ExportSpecifier
+        Identifier: ' reuseDepName'
+      ExportSpecifier
+        Identifier: ' shouldBeElided'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' goodDeclaration'
+        ImportSpecifier
+          Identifier: ' shouldReuseLocalName'
+        ImportSpecifier
+          Identifier: ' shouldBeElided'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        ExpressionWithTypeArguments
+          Identifier: ' goodDeclaration'
+          TypeLiteral

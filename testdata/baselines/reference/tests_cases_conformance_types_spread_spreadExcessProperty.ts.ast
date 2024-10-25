@@ -1,0 +1,33 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        StringKeyword
+      PropertySignature
+        Identifier: ' b'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' extra1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' extra'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        TypeReference
+          Identifier: ' A'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'extra1'

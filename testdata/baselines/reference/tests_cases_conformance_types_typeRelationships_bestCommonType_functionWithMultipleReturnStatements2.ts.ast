@@ -1,0 +1,159 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+        Block
+          ReturnStatement
+            NullKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+        IfStatement
+          FalseKeyword
+          Block
+            ReturnStatement
+              NullKeyword
+          Block
+            ReturnStatement
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      TryStatement
+        Block
+          ReturnStatement
+            NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ReturnStatement
+              Identifier: ' undefined'
+        Block
+          ReturnStatement
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f5'
+    Block
+      ReturnStatement
+        NumericLiteral
+      ReturnStatement
+        NewExpression
+          Identifier: ' Object'
+  FunctionDeclaration
+    Identifier: ' f6'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            Identifier: ' x'
+        Block
+          ReturnStatement
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' y'
+            QuestionToken
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' z'
+            QuestionToken
+            NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f9'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            Identifier: ' a'
+        Block
+          ReturnStatement
+            Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' f10'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            Identifier: ' b'
+        Block
+          ReturnStatement
+            Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' f11'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              EqualsGreaterThanToken
+              Block
+        Block
+          ReturnStatement
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' Object'
+              EqualsGreaterThanToken
+              Block
+  FunctionDeclaration
+    Identifier: ' f12'
+    Block
+      IfStatement
+        TrueKeyword
+        Block
+          ReturnStatement
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' Object'
+              EqualsGreaterThanToken
+              Block
+        Block
+          ReturnStatement
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              EqualsGreaterThanToken
+              Block

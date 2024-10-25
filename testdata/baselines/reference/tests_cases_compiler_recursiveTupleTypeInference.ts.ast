@@ -1,0 +1,106 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      ArrayType
+        TypeReference
+          Identifier: ' A'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      LiteralType
+        NullKeyword
+      TypeReference
+        Identifier: ' T'
+      TupleType
+        TypeReference
+          Identifier: 'F'
+          TypeReference
+            Identifier: 'NonNullable'
+            TypeReference
+              Identifier: 'T'
+        LiteralType
+          StringLiteral
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        NumberKeyword
+        LiteralType
+          StringLiteral
+        NeverKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' G'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'k'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' F'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'k'
+  InterfaceDeclaration
+    Identifier: ' K'
+    PropertySignature
+      Identifier: '
+    b'
+      UnionType
+        NumberKeyword
+        LiteralType
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' gK'
+        MappedType
+          TypeParameter
+            Identifier: 'key'
+            TypeOperator
+              TypeReference
+                Identifier: ' K'
+          TypeReference
+            Identifier: ' A'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' b'
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'g'
+      TypeReference
+        Identifier: ' G'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          AnyKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      Identifier: 'gK'

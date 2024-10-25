@@ -1,0 +1,82 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts"/>
+
+// @allowNonTsExtensions: true
+// @Filename: a.js
+//// /**
+////  * Modify the parameter
+////  * @param {string} p1
+////  */
+//// var foo = function (p1) { }
+//// module.exports.foo = foo;
+//// fo/*1*/
+
+// @Filename: b.ts
+//// import a = require("./a");
+//// a.fo/*2*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        documentation'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        tags'
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' name'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' text'
+                    StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        documentation'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        tags'
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' name'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' text'
+                    StringLiteral

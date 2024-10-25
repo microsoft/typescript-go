@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Bar'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' Foo'
+          Identifier: ' Bar'

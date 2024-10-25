@@ -1,0 +1,169 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// Exercises relative path completions going up and down 2 directories
+// and the use of forward- and back-slashes and combinations thereof.
+
+// @Filename: f.ts
+//// /*f1*/
+// @Filename: d1/g.ts
+//// /*g1*/
+// @Filename: d1/d2/h.ts
+//// /*h1*/
+// @Filename: d1/d2/d3/i.ts
+//// /*i1*/
+// @Filename: d1/d2/d3/d4/j.ts
+//// /*j1*/
+
+// @Filename: d1/d2/test.ts
+//// /// <reference path="/*0*/
+//// /// <reference path=".//*1*/
+//// /// <reference path="[|./*2*/|]
+//// /// <reference path="[|../*3*/|]
+//// /// <reference path="d3/*4*/
+
+//// /// <reference path="..//*5*/
+//// /// <reference path="..\/*6*/
+
+//// /// <reference path="../..//*7*/
+
+//// /// <reference path="d3//*8*/
+//// /// <reference path="./d3//*9*/
+
+//// /// <reference path="d3/d4//*10*/
+//// /// <reference path="./d3/d4//*11*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' name'
+                  PropertyAssignment
+                    Identifier: ' replacementSpan'
+                    ElementAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' test'
+                          Identifier: 'ranges'
+                      NumericLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' name'
+                  PropertyAssignment
+                    Identifier: ' replacementSpan'
+                    ElementAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' test'
+                          Identifier: 'ranges'
+                      NumericLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword

@@ -1,0 +1,31 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      Block
+    GetAccessor
+      StaticKeyword
+      ComputedPropertyName
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      ComputedPropertyName
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      Parameter
+        Identifier: 'x'
+      Block

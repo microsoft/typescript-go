@@ -1,0 +1,114 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' obj'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    foo'
+        LiteralType
+          NumericLiteral
+      PropertySignature
+        Identifier: '
+    bar'
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' keyContaining1'
+    TypeParameter
+      Identifier: '
+    str'
+      StringKeyword
+    TypeParameter
+      Identifier: '
+    keys'
+      TypeOperator
+        TypeReference
+          Identifier: ' obj'
+      TypeOperator
+        TypeReference
+          Identifier: ' obj'
+    ConditionalType
+      TypeReference
+        Identifier: ' keys'
+      InferType
+        TypeParameter
+          Identifier: ' key'
+          TypeOperator
+            TypeReference
+              Identifier: ' obj'
+      ConditionalType
+        TypeReference
+          Identifier: ' key'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            StringKeyword
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'str'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            StringKeyword
+            TemplateTail
+        IndexedAccessType
+          TypeReference
+            Identifier: ' obj'
+          TypeReference
+            Identifier: 'key'
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' _1'
+    TypeReference
+      Identifier: ' keyContaining1'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' keyContaining2'
+    TypeParameter
+      Identifier: '
+    str'
+      StringKeyword
+    TypeParameter
+      Identifier: '
+    keys'
+      TypeOperator
+        TypeReference
+          Identifier: ' obj'
+      TypeOperator
+        TypeReference
+          Identifier: ' obj'
+    ConditionalType
+      TypeReference
+        Identifier: ' keys'
+      TypeReference
+        Identifier: ' keys'
+      ConditionalType
+        TypeReference
+          Identifier: ' keys'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            StringKeyword
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'str'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            StringKeyword
+            TemplateTail
+        IndexedAccessType
+          TypeReference
+            Identifier: ' obj'
+          TypeReference
+            Identifier: 'keys'
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' _2'
+    TypeReference
+      Identifier: ' keyContaining2'
+      LiteralType
+        StringLiteral

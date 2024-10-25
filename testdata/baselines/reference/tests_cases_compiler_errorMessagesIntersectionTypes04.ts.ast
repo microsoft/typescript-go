@@ -1,0 +1,82 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    a'
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    b'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' A'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' U'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' num'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bool'
+            BooleanKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' str'
+            StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a_and_b'
+            IntersectionType
+              TypeReference
+                Identifier: ' A'
+              TypeReference
+                Identifier: ' B'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' num_and_bool'
+            IntersectionType
+              NumberKeyword
+              BooleanKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    num'
+          EqualsToken
+          Identifier: ' a_and_b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    bool'
+          EqualsToken
+          Identifier: ' a_and_b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    str'
+          EqualsToken
+          Identifier: ' a_and_b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    str'
+          EqualsToken
+          Identifier: ' num_and_bool'

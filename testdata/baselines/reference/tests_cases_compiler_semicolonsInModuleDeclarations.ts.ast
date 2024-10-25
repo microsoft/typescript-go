@@ -1,0 +1,28 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' ambiModule'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' i1'
+      EmptyStatement
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' i2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n1'
+        TypeReference
+          QualifiedName
+            Identifier: ' ambiModule'
+            Identifier: 'i1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n2'
+        TypeReference
+          QualifiedName
+            Identifier: ' ambiModule'
+            Identifier: 'i2'

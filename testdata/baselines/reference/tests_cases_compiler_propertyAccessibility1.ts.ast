@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' privProp'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        NewExpression
+          Identifier: ' Foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+f'
+      Identifier: 'privProp'

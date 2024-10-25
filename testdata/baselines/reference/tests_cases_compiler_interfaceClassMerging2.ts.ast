@@ -1,0 +1,86 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    MethodSignature
+      Identifier: '
+    interfaceFooMethod'
+      ThisType
+    PropertySignature
+      Identifier: '
+    interfaceFooProperty'
+      ThisType
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    classFooProperty'
+      ThisType
+    MethodDeclaration
+      Identifier: '
+
+    classFooMethod'
+      ThisType
+      Block
+        ReturnStatement
+          ThisKeyword
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    MethodSignature
+      Identifier: '
+    interfaceBarMethod'
+      ThisType
+    PropertySignature
+      Identifier: '
+    interfaceBarProperty'
+      ThisType
+  ClassDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    classBarProperty'
+      ThisType
+    MethodDeclaration
+      Identifier: '
+
+    classBarMethod'
+      ThisType
+      Block
+        ReturnStatement
+          ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        NewExpression
+          Identifier: ' Bar'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+bar'
+                    Identifier: 'interfaceBarMethod'
+                Identifier: 'interfaceFooMethod'
+            Identifier: 'classBarMethod'
+        Identifier: 'classFooMethod'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NewExpression
+          Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+foo'
+      EqualsToken
+      Identifier: ' bar'

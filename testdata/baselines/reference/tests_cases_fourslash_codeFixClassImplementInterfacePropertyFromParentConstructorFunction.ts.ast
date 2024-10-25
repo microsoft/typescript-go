@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// class A {
+////     constructor(public x: number) { }
+//// }
+////
+//// class B implements A {[| |]}
+
+verify'
+        Identifier: 'codeFixAvailable'
+      ArrayLiteralExpression

@@ -1,0 +1,50 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' a'
+      Block
+        ReturnStatement
+          ThisKeyword
+    MethodDeclaration
+      Identifier: '
+
+    /**
+     * @template T
+     * @this {T}
+     * @return {T}
+     */
+    b'
+      Block
+        ReturnStatement
+          ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' C'
+            Identifier: 'a'
+  ExpressionStatement
+    Identifier: '
+a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'b'
+  ExpressionStatement
+    Identifier: '
+b'

@@ -1,0 +1,973 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decorate'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        QuestionToken
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    receivesAnything'
+      Parameter
+        Identifier: 'param'
+        QuestionToken
+      Block
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'receivesAnything'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'receivesAnything'
+            ThisKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' Derived3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'receivesAnything'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ThisKeyword
+  ClassDeclaration
+    Identifier: ' Derived4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'receivesAnything'
+            ThisKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ThisKeyword
+  ClassDeclaration
+    Identifier: ' Derived5'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'receivesAnything'
+  ClassDeclaration
+    Identifier: ' Derived6'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ThisKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'receivesAnything'
+  ClassDeclaration
+    Identifier: ' Derived7'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'receivesAnything'
+            ThisKeyword
+  ClassDeclaration
+    Identifier: ' Derived8'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ThisKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'receivesAnything'
+            ThisKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithArrowFunction'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            ParenthesizedExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                ThisKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithArrowFunctionParameter'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lambda'
+              ArrowFunction
+                Parameter
+                  Identifier: 'param'
+                  ThisKeyword
+                EqualsGreaterThanToken
+                Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithDecoratorOnClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ClassDeclaration
+          Decorator
+            CallExpression
+              Identifier: 'decorate'
+              ThisKeyword
+          Identifier: ' InnerClass'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithDecoratorOnClassMethod'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ClassDeclaration
+          Identifier: ' InnerClass'
+          MethodDeclaration
+            Decorator
+              CallExpression
+                Identifier: 'decorate'
+                ThisKeyword
+            Identifier: '
+            innerMethod'
+            Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithDecoratorOnClassProperty'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ClassDeclaration
+          Identifier: ' InnerClass'
+          PropertyDeclaration
+            Decorator
+              CallExpression
+                Identifier: 'decorate'
+                ThisKeyword
+            Identifier: '
+            innerProp'
+            TrueKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithFunctionDeclaration'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        FunctionDeclaration
+          Identifier: ' declaration'
+          Block
+            ReturnStatement
+              ThisKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithFunctionDeclarationAndThisParam'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        FunctionDeclaration
+          Identifier: ' declaration'
+          Parameter
+            Identifier: 'param'
+            ThisKeyword
+          Block
+            ReturnStatement
+              Identifier: ' param'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithFunctionExpression'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            ParenthesizedExpression
+              FunctionExpression
+                Block
+                  ReturnStatement
+                    ThisKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithParenthesis'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            CallExpression
+              SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithParenthesisAfterStatement'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'prop'
+        ExpressionStatement
+          ParenthesizedExpression
+            CallExpression
+              SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithParenthesisBeforeStatement'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            CallExpression
+              SuperKeyword
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'prop'
+  ClassDeclaration
+    Identifier: ' DerivedWithClassDeclaration'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ClassDeclaration
+          Identifier: ' InnerClass'
+          MethodDeclaration
+            PrivateKeyword
+            Identifier: ' method'
+            Block
+              ReturnStatement
+                ThisKeyword
+          PropertyDeclaration
+            PrivateKeyword
+            Identifier: ' property'
+            NumericLiteral
+          Constructor
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'property'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'method'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithClassDeclarationExtendingMember'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    memberClass'
+      ClassExpression
+    Constructor
+      Block
+        ClassDeclaration
+          Identifier: ' InnerClass'
+          HeritageClause
+            ExpressionWithTypeArguments
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'memberClass'
+          MethodDeclaration
+            PrivateKeyword
+            Identifier: ' method'
+            Block
+              ReturnStatement
+                ThisKeyword
+          PropertyDeclaration
+            PrivateKeyword
+            Identifier: ' property'
+            NumericLiteral
+          Constructor
+            Block
+              ExpressionStatement
+                CallExpression
+                  SuperKeyword
+              ExpressionStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'property'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'method'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithClassExpression'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            ClassExpression
+              MethodDeclaration
+                PrivateKeyword
+                Identifier: ' method'
+                Block
+                  ReturnStatement
+                    ThisKeyword
+              PropertyDeclaration
+                PrivateKeyword
+                Identifier: ' property'
+                NumericLiteral
+              Constructor
+                Block
+                  ExpressionStatement
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'property'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'method'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithClassExpressionExtendingMember'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    memberClass'
+      ClassExpression
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            ClassExpression
+              HeritageClause
+                ExpressionWithTypeArguments
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'memberClass'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithDerivedClassExpression'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            ClassExpression
+              HeritageClause
+                ExpressionWithTypeArguments
+                  Identifier: ' Base'
+              Constructor
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      SuperKeyword
+              MethodDeclaration
+                PublicKeyword
+                Identifier: ' foo'
+                Block
+                  ReturnStatement
+                    ThisKeyword
+              PropertyDeclaration
+                PublicKeyword
+                Identifier: ' bar'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  ThisKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithNewDerivedClassExpression'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            NewExpression
+              ClassExpression
+                HeritageClause
+                  ExpressionWithTypeArguments
+                    Identifier: ' Base'
+                Constructor
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        SuperKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithObjectAccessors'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' obj'
+              ObjectLiteralExpression
+                GetAccessor
+                  Identifier: ' prop'
+                  Block
+                    ReturnStatement
+                      TrueKeyword
+                SetAccessor
+                  Identifier: ' prop'
+                  Parameter
+                    Identifier: 'param'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: '_prop'
+                        EqualsToken
+                        Identifier: ' param'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithObjectAccessorsUsingThisInKeys'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    propName'
+      StringLiteral
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' obj'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            _prop'
+                  StringLiteral
+                GetAccessor
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'propName'
+                  Block
+                    ReturnStatement
+                      TrueKeyword
+                SetAccessor
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'propName'
+                  Parameter
+                    Identifier: 'param'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: '_prop'
+                        EqualsToken
+                        Identifier: ' param'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithObjectAccessorsUsingThisInBodies'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    propName'
+      StringLiteral
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' obj'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            _prop'
+                  StringLiteral
+                GetAccessor
+                  Identifier: ' prop'
+                  Block
+                    ReturnStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: '_prop'
+                SetAccessor
+                  Identifier: ' prop'
+                  Parameter
+                    Identifier: 'param'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: '_prop'
+                        EqualsToken
+                        Identifier: ' param'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithObjectComputedPropertyBody'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    propName'
+      StringLiteral
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' obj'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            prop'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'propName'
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithObjectComputedPropertyName'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    propName'
+      StringLiteral
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' obj'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'propName'
+                  TrueKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' DerivedWithObjectMethod'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      TrueKeyword
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' obj'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  Identifier: '
+            getProp'
+                  Block
+                    ReturnStatement
+                      ThisKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' DerivedWithLoops'
+        ArrayLiteralExpression
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Base'
+            PropertyDeclaration
+              Identifier: '
+        prop'
+              TrueKeyword
+            Constructor
+              Block
+                ForStatement
+                  CallExpression
+                    SuperKeyword
+                  Block
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Base'
+            PropertyDeclaration
+              Identifier: '
+        prop'
+              TrueKeyword
+            Constructor
+              Block
+                ForStatement
+                  Identifier: 'a'
+                  CallExpression
+                    SuperKeyword
+                  Block
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Base'
+            PropertyDeclaration
+              Identifier: '
+        prop'
+              TrueKeyword
+            Constructor
+              Block
+                ForStatement
+                  Identifier: 'a'
+                  Identifier: ' b'
+                  CallExpression
+                    SuperKeyword
+                  Block
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Base'
+            PropertyDeclaration
+              Identifier: '
+        prop'
+              TrueKeyword
+            Constructor
+              Block
+                ForStatement
+                  CallExpression
+                    SuperKeyword
+                  Block
+                    BreakStatement
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Base'
+            PropertyDeclaration
+              Identifier: '
+        prop'
+              TrueKeyword
+            Constructor
+              Block
+                ForOfStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' x'
+                  CallExpression
+                    SuperKeyword
+                  Block
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Base'
+            PropertyDeclaration
+              Identifier: '
+        prop'
+              TrueKeyword
+            Constructor
+              Block
+                WhileStatement
+                  CallExpression
+                    SuperKeyword
+                  Block
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Base'
+            PropertyDeclaration
+              Identifier: '
+        prop'
+              TrueKeyword
+            Constructor
+              Block
+                DoStatement
+                  Block
+                  CallExpression
+                    SuperKeyword
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Base'
+            PropertyDeclaration
+              Identifier: '
+        prop'
+              TrueKeyword
+            Constructor
+              Block
+                IfStatement
+                  CallExpression
+                    SuperKeyword
+                  Block
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Base'
+            PropertyDeclaration
+              Identifier: '
+        prop'
+              TrueKeyword
+            Constructor
+              Block
+                SwitchStatement
+                  CallExpression
+                    SuperKeyword
+                  CaseBlock

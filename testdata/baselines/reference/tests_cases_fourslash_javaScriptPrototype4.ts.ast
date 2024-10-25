@@ -1,0 +1,66 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+// Check for any odd symbol leakage
+
+// @allowNonTsExtensions: true
+// @Filename: myMod.js
+//// function myCtor(x) {
+////     this.qua = 10;
+//// }
+//// myCtor.prototype.foo = function() { return 32 };
+//// myCtor.prototype.bar = function() { return '' };
+////
+//// myCtor/*1*/
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Check members of the function
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    includes'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: '
+        name'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' name'
+                  PropertyAssignment
+                    Identifier: ' kind'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' sortText'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' completion'
+                        Identifier: 'SortText'
+                      Identifier: 'JavascriptIdentifiers'

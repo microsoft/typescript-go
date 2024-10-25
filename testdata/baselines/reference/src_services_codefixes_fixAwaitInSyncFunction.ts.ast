@@ -1,0 +1,549 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addToSeen'
+        ImportSpecifier
+          Identifier: '
+    ArrowFunction'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    findChildOfKind'
+        ImportSpecifier
+          Identifier: '
+    first'
+        ImportSpecifier
+          Identifier: '
+    FunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    FunctionExpression'
+        ImportSpecifier
+          Identifier: '
+    getContainingFunction'
+        ImportSpecifier
+          Identifier: '
+    getEntityNameFromTypeNode'
+        ImportSpecifier
+          Identifier: '
+    getNodeId'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isFunctionTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isVariableDeclaration'
+        ImportSpecifier
+          Identifier: '
+    MethodDeclaration'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TypeNode'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'await_expressions_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'await_using_statements_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'for_await_loops_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Cannot_find_name_0_Did_you_mean_to_write_this_in_an_async_function'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                    BindingElement
+                      Identifier: ' span'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' nodes'
+                  CallExpression
+                    Identifier: ' getNodes'
+                    Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      Identifier: ' span'
+                      Identifier: 'start'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'nodes'
+              ReturnStatement
+                Identifier: ' undefined'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' t'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' doChange'
+                        Identifier: 't'
+                        Identifier: ' sourceFile'
+                        Identifier: ' nodes'
+            ReturnStatement
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'createCodeFixAction'
+                  Identifier: 'fixId'
+                  Identifier: ' changes'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_async_modifier_to_containing_function'
+                  Identifier: ' fixId'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_all_missing_async_modifiers'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          FunctionExpression
+            Identifier: ' getAllCodeActionsToFixAwaitInSyncFunction'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' seen'
+                    NewExpression
+                      Identifier: ' Map'
+                      NumberKeyword
+                      LiteralType
+                        TrueKeyword
+              ReturnStatement
+                CallExpression
+                  Identifier: ' codeFixAll'
+                  Identifier: 'context'
+                  Identifier: ' errorCodes'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'changes'
+                    Parameter
+                      Identifier: ' diag'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' nodes'
+                            CallExpression
+                              Identifier: ' getNodes'
+                              PropertyAccessExpression
+                                Identifier: 'diag'
+                                Identifier: 'file'
+                              PropertyAccessExpression
+                                Identifier: ' diag'
+                                Identifier: 'start'
+                      IfStatement
+                        BinaryExpression
+                          PrefixUnaryExpression
+                            Identifier: 'nodes'
+                          BarBarToken
+                          PrefixUnaryExpression
+                            CallExpression
+                              Identifier: 'addToSeen'
+                              Identifier: 'seen'
+                              CallExpression
+                                Identifier: ' getNodeId'
+                                PropertyAccessExpression
+                                  Identifier: 'nodes'
+                                  Identifier: 'insertBefore'
+                        ReturnStatement
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            doChange'
+                          Identifier: 'changes'
+                          PropertyAccessExpression
+                            Identifier: ' context'
+                            Identifier: 'sourceFile'
+                          Identifier: ' nodes'
+  FunctionDeclaration
+    Identifier: ' getReturnType'
+    Parameter
+      Identifier: 'expr'
+      UnionType
+        TypeReference
+          Identifier: ' FunctionDeclaration'
+        TypeReference
+          Identifier: ' MethodDeclaration'
+        TypeReference
+          Identifier: ' FunctionExpression'
+        TypeReference
+          Identifier: ' ArrowFunction'
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'expr'
+          Identifier: 'type'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' expr'
+              Identifier: 'type'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            CallExpression
+              Identifier: '
+        isVariableDeclaration'
+              PropertyAccessExpression
+                Identifier: 'expr'
+                Identifier: 'parent'
+            AmpersandAmpersandToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        expr'
+                Identifier: 'parent'
+              Identifier: 'type'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: '
+        isFunctionTypeNode'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'expr'
+                Identifier: 'parent'
+              Identifier: 'type'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' expr'
+                  Identifier: 'parent'
+                Identifier: 'type'
+              Identifier: 'type'
+  FunctionDeclaration
+    Identifier: ' getNodes'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' start'
+      NumberKeyword
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' insertBefore'
+          TypeReference
+            Identifier: ' Node'
+        PropertySignature
+          Identifier: ' returnType'
+          UnionType
+            TypeReference
+              Identifier: ' TypeNode'
+            UndefinedKeyword
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' start'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' containingFunction'
+            CallExpression
+              Identifier: ' getContainingFunction'
+              Identifier: 'token'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'containingFunction'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' insertBefore'
+            UnionType
+              TypeReference
+                Identifier: ' Node'
+              UndefinedKeyword
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'containingFunction'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'MethodDeclaration'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            insertBefore'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' containingFunction'
+                  Identifier: 'name'
+            BreakStatement
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'FunctionDeclaration'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'FunctionExpression'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            insertBefore'
+                EqualsToken
+                CallExpression
+                  Identifier: ' findChildOfKind'
+                  Identifier: 'containingFunction'
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'FunctionKeyword'
+                  Identifier: ' sourceFile'
+            BreakStatement
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ArrowFunction'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' kind'
+                  ConditionalExpression
+                    PropertyAccessExpression
+                      Identifier: ' containingFunction'
+                      Identifier: 'typeParameters'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'LessThanToken'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'OpenParenToken'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            insertBefore'
+                EqualsToken
+                BinaryExpression
+                  CallExpression
+                    Identifier: ' findChildOfKind'
+                    Identifier: 'containingFunction'
+                    Identifier: ' kind'
+                    Identifier: ' sourceFile'
+                  BarBarToken
+                  CallExpression
+                    Identifier: ' first'
+                    PropertyAccessExpression
+                      Identifier: 'containingFunction'
+                      Identifier: 'parameters'
+            BreakStatement
+          DefaultClause
+            ReturnStatement
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' insertBefore'
+          AmpersandAmpersandToken
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: '
+        insertBefore'
+            PropertyAssignment
+              Identifier: '
+        returnType'
+              CallExpression
+                Identifier: ' getReturnType'
+                Identifier: 'containingFunction'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: '
+    changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' insertBefore'
+        BindingElement
+          Identifier: ' returnType'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' insertBefore'
+          TypeReference
+            Identifier: ' Node'
+        PropertySignature
+          Identifier: ' returnType'
+          UnionType
+            TypeReference
+              Identifier: ' TypeNode'
+            UndefinedKeyword
+    VoidKeyword
+    Block
+      IfStatement
+        Identifier: 'returnType'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' entityName'
+                CallExpression
+                  Identifier: ' getEntityNameFromTypeNode'
+                  Identifier: 'returnType'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PrefixUnaryExpression
+                  Identifier: 'entityName'
+                BarBarToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' entityName'
+                    Identifier: 'kind'
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'Identifier'
+              BarBarToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' entityName'
+                  Identifier: 'text'
+                ExclamationEqualsEqualsToken
+                StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            changes'
+                    Identifier: 'replaceNode'
+                  Identifier: 'sourceFile'
+                  Identifier: ' returnType'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createTypeReferenceNode'
+                    StringLiteral
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createNodeArray'
+                      ArrayLiteralExpression
+                        Identifier: 'returnType'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'insertModifierBefore'
+          Identifier: 'sourceFile'
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'AsyncKeyword'
+          Identifier: ' insertBefore'

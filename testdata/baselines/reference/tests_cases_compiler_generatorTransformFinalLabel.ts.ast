@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' test'
+    Parameter
+      Identifier: 'skip'
+      BooleanKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'skip'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              NumericLiteral
+        Block
+          ThrowStatement
+            CallExpression
+              Identifier: ' Error'
+              StringLiteral

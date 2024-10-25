@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Example'
+    Parameter
+      Identifier: 'x'
+      FunctionExpression
+        Parameter
+          Identifier: 'x'
+          AnyKeyword
+        Block
+          ReturnStatement
+            Identifier: ' x'
+    Block

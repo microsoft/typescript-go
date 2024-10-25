@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' global'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            TrueKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+globals'
+      Identifier: 'x'

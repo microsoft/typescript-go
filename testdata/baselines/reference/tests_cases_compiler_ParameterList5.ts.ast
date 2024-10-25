@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' A'
+    FunctionType
+      Parameter
+        PublicKeyword
+        Identifier: ' B'
+      TypeReference
+        Identifier: ' C'
+    Block

@@ -1,0 +1,55 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' PromisedTuple'
+    TypeParameter
+      Identifier: 'L'
+      ArrayType
+        AnyKeyword
+    TypeParameter
+      Identifier: ' U'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' L'
+        VoidKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    U'
+      FunctionType
+        Parameter
+          Identifier: 'h'
+          InferType
+            TypeParameter
+              Identifier: ' H'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          InferType
+            TypeParameter
+              Identifier: ' R'
+        TupleType
+          TypeReference
+            Identifier: 'Promise'
+            TypeReference
+              Identifier: 'H'
+          RestType
+            TypeReference
+              Identifier: 'PromisedTuple'
+              TypeReference
+                Identifier: 'R'
+      TupleType
+      TupleType
+  TypeAliasDeclaration
+    Identifier: ' Promised'
+    TypeReference
+      Identifier: ' PromisedTuple'
+      TupleType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral

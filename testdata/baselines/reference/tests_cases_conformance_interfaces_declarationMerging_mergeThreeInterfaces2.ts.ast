@@ -1,0 +1,191 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        PropertySignature
+          Identifier: '
+        foo'
+          StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' A'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'foo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'bar'
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        PropertySignature
+          Identifier: '
+        bar'
+          NumberKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        PropertySignature
+          Identifier: '
+        baz'
+          BooleanKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' A'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'foo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'bar'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            PropertyAccessExpression
+              Identifier: ' a'
+              Identifier: 'baz'
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' M3'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            foo'
+              StringKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' A'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r1'
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'foo'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r2'
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'bar'
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' M3'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            bar'
+              NumberKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' A'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r1'
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'foo'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r2'
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'bar'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r3'
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'baz'
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' M3'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' A'
+            PropertySignature
+              Identifier: '
+            baz'
+              BooleanKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                TypeReference
+                  Identifier: ' A'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r1'
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'foo'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r2'
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'bar'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' r3'
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'baz'

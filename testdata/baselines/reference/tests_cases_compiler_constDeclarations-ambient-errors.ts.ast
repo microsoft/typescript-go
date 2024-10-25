@@ -1,0 +1,44 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        BooleanKeyword
+        TrueKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        NumberKeyword
+        NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        NullKeyword
+      VariableDeclaration
+        Identifier: ' c4'
+        StringKeyword
+        StringLiteral
+      VariableDeclaration
+        Identifier: ' c5'
+        AnyKeyword
+        NumericLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c6'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c7'
+            NumberKeyword
+            NumericLiteral

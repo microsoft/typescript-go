@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        ClassExpression
+          SetAccessor
+            PrivateIdentifier
+            Parameter
+              Identifier: 'x'
+            Block
+          MethodDeclaration
+            Identifier: '
+    m'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    PrivateIdentifier
+                  PlusEqualsToken
+                  NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          NewExpression
+            Identifier: ' C'
+          Identifier: 'm'

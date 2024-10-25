@@ -1,0 +1,981 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' AffectedFileResult'
+        ImportSpecifier
+          Identifier: ' BuilderProgram'
+        ImportSpecifier
+          Identifier: ' CancellationToken'
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' CompilerOptionsValue'
+        ImportSpecifier
+          Identifier: ' CreateProgram'
+        ImportSpecifier
+          Identifier: ' CustomTransformers'
+        ImportSpecifier
+          Identifier: ' Diagnostic'
+        ImportSpecifier
+          Identifier: ' DiagnosticReporter'
+        ImportSpecifier
+          Identifier: ' EmitAndSemanticDiagnosticsBuilderProgram'
+        ImportSpecifier
+          Identifier: ' EmitResult'
+        ImportSpecifier
+          Identifier: ' ExitStatus'
+        ImportSpecifier
+          Identifier: ' ParsedCommandLine'
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' ProgramHost'
+        ImportSpecifier
+          Identifier: ' ProgramUpdateLevel'
+        ImportSpecifier
+          Identifier: ' ResolvedConfigFileName'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' System'
+        ImportSpecifier
+          Identifier: ' UpToDateStatus'
+        ImportSpecifier
+          Identifier: ' WatchHost'
+        ImportSpecifier
+          Identifier: ' WatchOptions'
+        ImportSpecifier
+          Identifier: ' WatchStatusReporter'
+        ImportSpecifier
+          Identifier: ' WriteFileCallback'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' BuildOptions'
+    PropertySignature
+      Identifier: '
+    dry'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    force'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    verbose'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    stopBuildOnErrors'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ clean'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ watch'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ help'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ preserveWatchOutput'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ listEmittedFiles'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ listFiles'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ explainFiles'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ pretty'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    incremental'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    assumeChangesOnlyAffectDirectDependencies'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    declaration'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    declarationMap'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    emitDeclarationOnly'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    sourceMap'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    inlineSourceMap'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    traceResolution'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ diagnostics'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ extendedDiagnostics'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ locale'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ generateCpuProfile'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ generateTrace'
+      QuestionToken
+      StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'option'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' CompilerOptionsValue'
+        UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ResolvedConfigFilePath'
+    IntersectionType
+      TypeReference
+        Identifier: ' ResolvedConfigFileName'
+      TypeReference
+        Identifier: ' Path'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ReportEmitErrorSummary'
+    FunctionType
+      Parameter
+        Identifier: 'errorCount'
+        NumberKeyword
+      Parameter
+        Identifier: ' filesInError'
+        ArrayType
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'ReportFileInError'
+              UndefinedKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ReportFileInError'
+    PropertySignature
+      Identifier: '
+    fileName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    line'
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SolutionBuilderHostBase'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ProgramHost'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    createDirectory'
+      QuestionToken
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * Should provide create directory and writeFile if done of invalidatedProjects is not invoked with
+     * writeFileCallback
+     */
+    writeFile'
+      QuestionToken
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' data'
+        StringKeyword
+      Parameter
+        Identifier: ' writeByteOrderMark'
+        QuestionToken
+        BooleanKeyword
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+    getCustomTransformers'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'project'
+          StringKeyword
+        UnionType
+          TypeReference
+            Identifier: ' CustomTransformers'
+          UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getModifiedTime'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' Date'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    setModifiedTime'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' date'
+        TypeReference
+          Identifier: ' Date'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    deleteFile'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getParsedCommandLine'
+      QuestionToken
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' ParsedCommandLine'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    reportDiagnostic'
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    PropertySignature
+      Identifier: '
+    reportSolutionBuilderStatus'
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    MethodSignature
+      Identifier: '
+    afterProgramEmitAndDiagnostics'
+      QuestionToken
+      Parameter
+        Identifier: 'program'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ now'
+      QuestionToken
+      TypeReference
+        Identifier: ' Date'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SolutionBuilderHost'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SolutionBuilderHostBase'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    reportErrorSummary'
+      QuestionToken
+      TypeReference
+        Identifier: ' ReportEmitErrorSummary'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SolutionBuilderWithWatchHost'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SolutionBuilderHostBase'
+        TypeReference
+          Identifier: 'T'
+      ExpressionWithTypeArguments
+        Identifier: ' WatchHost'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' BuildOrder'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' ResolvedConfigFileName'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CircularBuildOrder'
+    PropertySignature
+      Identifier: '
+    buildOrder'
+      TypeReference
+        Identifier: ' BuildOrder'
+    PropertySignature
+      Identifier: '
+    circularDiagnostics'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' AnyBuildOrder'
+    UnionType
+      TypeReference
+        Identifier: ' BuildOrder'
+      TypeReference
+        Identifier: ' CircularBuildOrder'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isCircularBuildOrder'
+    Parameter
+      Identifier: 'buildOrder'
+      TypeReference
+        Identifier: ' AnyBuildOrder'
+    TypePredicate
+      Identifier: ' buildOrder'
+      TypeReference
+        Identifier: ' CircularBuildOrder'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getBuildOrderFromAnyBuildOrder'
+    Parameter
+      Identifier: 'anyBuildOrder'
+      TypeReference
+        Identifier: ' AnyBuildOrder'
+    TypeReference
+      Identifier: ' BuildOrder'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SolutionBuilder'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    MethodSignature
+      Identifier: '
+    build'
+      Parameter
+        Identifier: 'project'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' cancellationToken'
+        QuestionToken
+        TypeReference
+          Identifier: ' CancellationToken'
+      Parameter
+        Identifier: ' writeFile'
+        QuestionToken
+        TypeReference
+          Identifier: ' WriteFileCallback'
+      Parameter
+        Identifier: ' getCustomTransformers'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'project'
+            StringKeyword
+          TypeReference
+            Identifier: ' CustomTransformers'
+      TypeReference
+        Identifier: ' ExitStatus'
+    MethodSignature
+      Identifier: '
+    clean'
+      Parameter
+        Identifier: 'project'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' ExitStatus'
+    MethodSignature
+      Identifier: '
+    buildReferences'
+      Parameter
+        Identifier: 'project'
+        StringKeyword
+      Parameter
+        Identifier: ' cancellationToken'
+        QuestionToken
+        TypeReference
+          Identifier: ' CancellationToken'
+      Parameter
+        Identifier: ' writeFile'
+        QuestionToken
+        TypeReference
+          Identifier: ' WriteFileCallback'
+      Parameter
+        Identifier: ' getCustomTransformers'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'project'
+            StringKeyword
+          TypeReference
+            Identifier: ' CustomTransformers'
+      TypeReference
+        Identifier: ' ExitStatus'
+    MethodSignature
+      Identifier: '
+    cleanReferences'
+      Parameter
+        Identifier: 'project'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' ExitStatus'
+    MethodSignature
+      Identifier: '
+    getNextInvalidatedProject'
+      Parameter
+        Identifier: 'cancellationToken'
+        QuestionToken
+        TypeReference
+          Identifier: ' CancellationToken'
+      UnionType
+        TypeReference
+          Identifier: ' InvalidatedProject'
+          TypeReference
+            Identifier: 'T'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getBuildOrder'
+      TypeReference
+        Identifier: ' AnyBuildOrder'
+    MethodSignature
+      Identifier: '
+    /** @internal */ getUpToDateStatusOfProject'
+      Parameter
+        Identifier: 'project'
+        StringKeyword
+      TypeReference
+        Identifier: ' UpToDateStatus'
+    MethodSignature
+      Identifier: '
+    /** @internal */ invalidateProject'
+      Parameter
+        Identifier: 'configFilePath'
+        TypeReference
+          Identifier: ' ResolvedConfigFilePath'
+      Parameter
+        Identifier: ' updateLevel'
+        QuestionToken
+        TypeReference
+          Identifier: ' ProgramUpdateLevel'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ close'
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createBuilderStatusReporter'
+    Parameter
+      Identifier: 'system'
+      TypeReference
+        Identifier: ' System'
+    Parameter
+      Identifier: ' pretty'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' DiagnosticReporter'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createSolutionBuilderHost'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+      TypeReference
+        Identifier: ' EmitAndSemanticDiagnosticsBuilderProgram'
+    Parameter
+      Identifier: 'system'
+      QuestionToken
+      TypeReference
+        Identifier: ' System'
+    Parameter
+      Identifier: ' createProgram'
+      QuestionToken
+      TypeReference
+        Identifier: ' CreateProgram'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' reportDiagnostic'
+      QuestionToken
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    Parameter
+      Identifier: ' reportSolutionBuilderStatus'
+      QuestionToken
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    Parameter
+      Identifier: ' reportErrorSummary'
+      QuestionToken
+      TypeReference
+        Identifier: ' ReportEmitErrorSummary'
+    TypeReference
+      Identifier: ' SolutionBuilderHost'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createSolutionBuilderWithWatchHost'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+      TypeReference
+        Identifier: ' EmitAndSemanticDiagnosticsBuilderProgram'
+    Parameter
+      Identifier: 'system'
+      QuestionToken
+      TypeReference
+        Identifier: ' System'
+    Parameter
+      Identifier: ' createProgram'
+      QuestionToken
+      TypeReference
+        Identifier: ' CreateProgram'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' reportDiagnostic'
+      QuestionToken
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    Parameter
+      Identifier: ' reportSolutionBuilderStatus'
+      QuestionToken
+      TypeReference
+        Identifier: ' DiagnosticReporter'
+    Parameter
+      Identifier: ' reportWatchStatus'
+      QuestionToken
+      TypeReference
+        Identifier: ' WatchStatusReporter'
+    TypeReference
+      Identifier: ' SolutionBuilderWithWatchHost'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createSolutionBuilder'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' SolutionBuilderHost'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' rootNames'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: ' defaultOptions'
+      TypeReference
+        Identifier: ' BuildOptions'
+    TypeReference
+      Identifier: ' SolutionBuilder'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createSolutionBuilderWithWatch'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' SolutionBuilderWithWatchHost'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' rootNames'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: ' defaultOptions'
+      TypeReference
+        Identifier: ' BuildOptions'
+    Parameter
+      Identifier: ' baseWatchOptions'
+      QuestionToken
+      TypeReference
+        Identifier: ' WatchOptions'
+    TypeReference
+      Identifier: ' SolutionBuilder'
+      TypeReference
+        Identifier: 'T'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' InvalidatedProjectKind'
+    EnumMember
+      Identifier: '
+    Build'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    UpdateOutputFileStamps'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InvalidatedProjectBase'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' InvalidatedProjectKind'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' project'
+      TypeReference
+        Identifier: ' ResolvedConfigFileName'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' projectPath'
+      TypeReference
+        Identifier: ' ResolvedConfigFilePath'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' buildOrder'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ResolvedConfigFileName'
+    MethodSignature
+      Identifier: '
+    /**
+     *  To dispose this project and ensure that all the necessary actions are taken and state is updated accordingly
+     */
+    done'
+      Parameter
+        Identifier: 'cancellationToken'
+        QuestionToken
+        TypeReference
+          Identifier: ' CancellationToken'
+      Parameter
+        Identifier: ' writeFile'
+        QuestionToken
+        TypeReference
+          Identifier: ' WriteFileCallback'
+      Parameter
+        Identifier: ' customTransformers'
+        QuestionToken
+        TypeReference
+          Identifier: ' CustomTransformers'
+      TypeReference
+        Identifier: ' ExitStatus'
+    MethodSignature
+      Identifier: '
+    getCompilerOptions'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    MethodSignature
+      Identifier: '
+    getCurrentDirectory'
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' UpdateOutputFileStampsProject'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' InvalidatedProjectBase'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' InvalidatedProjectKind'
+          Identifier: 'UpdateOutputFileStamps'
+    MethodSignature
+      Identifier: '
+    updateOutputFileStatmps'
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' BuildInvalidedProject'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' InvalidatedProjectBase'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' InvalidatedProjectKind'
+          Identifier: 'Build'
+    MethodSignature
+      Identifier: '
+    getBuilderProgram'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getProgram'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getSourceFile'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getSourceFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SourceFile'
+    MethodSignature
+      Identifier: '
+    getOptionsDiagnostics'
+      Parameter
+        Identifier: 'cancellationToken'
+        QuestionToken
+        TypeReference
+          Identifier: ' CancellationToken'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    MethodSignature
+      Identifier: '
+    getGlobalDiagnostics'
+      Parameter
+        Identifier: 'cancellationToken'
+        QuestionToken
+        TypeReference
+          Identifier: ' CancellationToken'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    MethodSignature
+      Identifier: '
+    getConfigFileParsingDiagnostics'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    MethodSignature
+      Identifier: '
+    getSyntacticDiagnostics'
+      Parameter
+        Identifier: 'sourceFile'
+        QuestionToken
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' cancellationToken'
+        QuestionToken
+        TypeReference
+          Identifier: ' CancellationToken'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    MethodSignature
+      Identifier: '
+    getAllDependencies'
+      Parameter
+        Identifier: 'sourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    MethodSignature
+      Identifier: '
+    getSemanticDiagnostics'
+      Parameter
+        Identifier: 'sourceFile'
+        QuestionToken
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' cancellationToken'
+        QuestionToken
+        TypeReference
+          Identifier: ' CancellationToken'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Diagnostic'
+    MethodSignature
+      Identifier: '
+    getSemanticDiagnosticsOfNextAffectedFile'
+      Parameter
+        Identifier: 'cancellationToken'
+        QuestionToken
+        TypeReference
+          Identifier: ' CancellationToken'
+      Parameter
+        Identifier: ' ignoreSourceFile'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'sourceFile'
+            TypeReference
+              Identifier: ' SourceFile'
+          BooleanKeyword
+      TypeReference
+        Identifier: ' AffectedFileResult'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Diagnostic'
+    MethodSignature
+      Identifier: '
+    emit'
+      Parameter
+        Identifier: 'targetSourceFile'
+        QuestionToken
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' writeFile'
+        QuestionToken
+        TypeReference
+          Identifier: ' WriteFileCallback'
+      Parameter
+        Identifier: ' cancellationToken'
+        QuestionToken
+        TypeReference
+          Identifier: ' CancellationToken'
+      Parameter
+        Identifier: ' emitOnlyDtsFiles'
+        QuestionToken
+        BooleanKeyword
+      Parameter
+        Identifier: ' customTransformers'
+        QuestionToken
+        TypeReference
+          Identifier: ' CustomTransformers'
+      UnionType
+        TypeReference
+          Identifier: ' EmitResult'
+        UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' InvalidatedProject'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' BuilderProgram'
+    UnionType
+      TypeReference
+        Identifier: ' UpdateOutputFileStampsProject'
+      TypeReference
+        Identifier: ' BuildInvalidedProject'
+        TypeReference
+          Identifier: 'T'

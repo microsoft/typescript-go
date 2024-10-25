@@ -1,0 +1,8 @@
+SourceFile
+  ExportAssignment
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' __esModule'
+        NumericLiteral

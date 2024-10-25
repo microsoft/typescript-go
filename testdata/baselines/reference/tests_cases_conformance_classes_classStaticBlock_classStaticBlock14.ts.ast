@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    ClassStaticBlockDeclaration
+      Block
+    ClassStaticBlockDeclaration
+      Block
+    ClassStaticBlockDeclaration
+      Block
+    ClassStaticBlockDeclaration
+      Block
+    ClassStaticBlockDeclaration
+      Block
+    ClassStaticBlockDeclaration
+      Block

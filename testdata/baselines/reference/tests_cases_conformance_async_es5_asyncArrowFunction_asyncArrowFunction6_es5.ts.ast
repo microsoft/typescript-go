@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ArrowFunction
+          AsyncKeyword
+          Parameter
+            Identifier: 'a'
+            AwaitExpression
+              Identifier: ''
+          TypeReference
+            Identifier: ' Promise'
+            VoidKeyword
+          EqualsGreaterThanToken
+          Block

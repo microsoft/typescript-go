@@ -1,0 +1,71 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' foo'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' bar'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' baz'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' biz'
+      Block
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'tagName'
+      LiteralType
+        StringLiteral
+    TypeReference
+      Identifier: ' Derived1'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'tagName'
+      LiteralType
+        StringLiteral
+    TypeReference
+      Identifier: ' Derived2'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'tagName'
+      LiteralType
+        StringLiteral
+    TypeReference
+      Identifier: ' Derived3'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'tagName'
+      StringKeyword
+    TypeReference
+      Identifier: ' Base'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'tagName'
+      AnyKeyword
+    TypeReference
+      Identifier: ' Base'
+    Block
+      ReturnStatement
+        NullKeyword

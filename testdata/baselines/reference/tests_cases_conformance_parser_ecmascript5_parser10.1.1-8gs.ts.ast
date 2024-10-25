@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    StringLiteral
+  ThrowStatement
+    Identifier: ' NotEarlyError'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' public'
+        NumericLiteral

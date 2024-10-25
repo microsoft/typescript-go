@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo1'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Foo2'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' args'
+        ArrayType
+          StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Foo3'
+    Constructor
+      Parameter
+        PublicKeyword
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          StringKeyword
+      Block

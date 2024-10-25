@@ -1,0 +1,67 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: /js.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' json0'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+json0'
+      Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' json1'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // No error (bad)
+json1'
+      Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' js0'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+json0'
+      Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' js1'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // Error (good)
+js1'
+      Identifier: 'b'

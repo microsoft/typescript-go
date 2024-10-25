@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    Constructor
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' x'
+        NumberKeyword
+    MethodDeclaration
+      Identifier: '
+	method'
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' x'
+        NumberKeyword

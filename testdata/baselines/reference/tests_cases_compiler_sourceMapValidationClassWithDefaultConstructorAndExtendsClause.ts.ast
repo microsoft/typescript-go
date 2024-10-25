@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' AbstractGreeter'
+  ClassDeclaration
+    Identifier: ' Greeter'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AbstractGreeter'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      NumericLiteral
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' nameA'
+      StringLiteral

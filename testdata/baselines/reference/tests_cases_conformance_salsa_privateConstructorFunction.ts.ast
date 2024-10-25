@@ -1,0 +1,15 @@
+SourceFile
+  Block
+    FunctionDeclaration
+      Identifier: ' C'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+    ExpressionStatement
+      NewExpression
+        Identifier: ' C'

@@ -1,0 +1,55 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' MyConstEnum'
+    EnumMember
+      Identifier: '
+    Foo'
+    EnumMember
+      Identifier: '
+    Bar'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' MyConstEnum'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' MyConstEnum'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' MyConstEnum'
+        Identifier: ' default'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'MyConstEnum'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' AlsoEnum'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' StillEnum'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+MyConstEnum'
+      Identifier: 'Foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+AlsoEnum'
+      Identifier: 'Foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+StillEnum'
+      Identifier: 'Foo'

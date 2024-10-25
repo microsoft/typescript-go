@@ -1,0 +1,82 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' a0'
+    Block
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumericLiteral
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' a1'
+    Block
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' a2'
+    Block
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumericLiteral
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' a3'
+    Block
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumericLiteral
+      SwitchStatement
+        NumericLiteral
+        CaseBlock
+          CaseClause
+            NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+            BreakStatement
+  FunctionDeclaration
+    Identifier: ' a4'
+    Block
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+      SwitchStatement
+        NumericLiteral
+        CaseBlock
+          CaseClause
+            NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' x'
+                  NumericLiteral
+            BreakStatement

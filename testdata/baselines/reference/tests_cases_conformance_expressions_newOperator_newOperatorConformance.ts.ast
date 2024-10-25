@@ -1,0 +1,181 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C0'
+  ClassDeclaration
+    Identifier: ' C1'
+    Constructor
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      Parameter
+        Identifier: ' s'
+        StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' T'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 'n'
+        QuestionToken
+        TypeReference
+          Identifier: ' T'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyCtor'
+        TypeLiteral
+          ConstructSignature
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyCtor1'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'n'
+            AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' nestedCtor'
+    ConstructSignature
+      TypeReference
+        Identifier: ' nestedCtor'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nestedCtor'
+        TypeReference
+          Identifier: ' nestedCtor'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' C0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' C0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        NewExpression
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        TypeReference
+          Identifier: ' T'
+          TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' anyCtor'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' anyCtor1'
+          Identifier: 'undefined'
+  FunctionDeclaration
+    Identifier: ' newFn1'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        ConstructSignature
+          NumberKeyword
+    Parameter
+      Identifier: 's'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            NewExpression
+              Identifier: ' s'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            NumberKeyword
+  FunctionDeclaration
+    Identifier: ' newFn2'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        ConstructSignature
+          Parameter
+            Identifier: 's'
+            NumberKeyword
+          StringKeyword
+    Parameter
+      Identifier: 's'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            NewExpression
+              Identifier: ' s'
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            StringKeyword
+  FunctionDeclaration
+    Identifier: ' fnVoid'
+    VoidKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        NewExpression
+          Identifier: ' fnVoid'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nested'
+        NewExpression
+          ParenthesizedExpression
+            NewExpression
+              ParenthesizedExpression
+                NewExpression
+                  Identifier: ' nestedCtor'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NewExpression
+          Identifier: ' nested'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NewExpression
+          Identifier: ' nested'

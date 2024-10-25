@@ -1,0 +1,461 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' e'
+    EnumMember
+      Identifier: '
+    e1'
+    EnumMember
+      Identifier: '
+    e2'
+  InterfaceDeclaration
+    Identifier: ' I'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: ' // ok
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    // S is union type and each constituent type of S is a subtype of T
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: ' // error string is not subtype of number
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I3'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: ' // error numer is not subtype of string
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I4'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I5'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Date'
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I6'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' RegExp'
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I7'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' bar'
+          NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I8'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      ArrayType
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I9'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' I8'
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' foo'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I10'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  ClassDeclaration
+    Identifier: ' A2'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: ' foo'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' I11'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' A2'
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I12'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      FunctionType
+        Parameter
+          Identifier: 'x'
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I13'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  EnumDeclaration
+    Identifier: ' E2'
+    EnumMember
+      Identifier: ' A'
+  InterfaceDeclaration
+    Identifier: ' I14'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' E2'
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+  ModuleDeclaration
+    Identifier: ' f'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I15'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeQuery
+        Identifier: ' f'
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  ClassDeclaration
+    Identifier: ' c'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' c'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I16'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeQuery
+        Identifier: ' c'
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I17'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I19'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Object'
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I20'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeLiteral
+    PropertySignature
+      Identifier: '
+    foo'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    foo2'
+      UnionType
+        TypeReference
+          Identifier: ' e'
+        NumberKeyword

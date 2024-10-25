@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            PrefixUnaryExpression
+              Identifier: 'Infinity'
+            TemplateTail

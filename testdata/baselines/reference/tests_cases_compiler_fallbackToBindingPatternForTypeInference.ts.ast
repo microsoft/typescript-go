@@ -1,0 +1,86 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' trans'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        StringKeyword
+    NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+trans'
+      ArrowFunction
+        Parameter
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'a'
+        EqualsGreaterThanToken
+        Identifier: ' a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+trans'
+      ArrowFunction
+        Parameter
+          ArrayBindingPattern
+            BindingElement
+              Identifier: 'b'
+            BindingElement
+              Identifier: 'c'
+        EqualsGreaterThanToken
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+trans'
+      ArrowFunction
+        Parameter
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'd'
+              ArrayBindingPattern
+                BindingElement
+                  Identifier: 'e'
+                BindingElement
+                  Identifier: 'f'
+        EqualsGreaterThanToken
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+trans'
+      ArrowFunction
+        Parameter
+          ArrayBindingPattern
+            BindingElement
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: 'g'
+            BindingElement
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: 'h'
+        EqualsGreaterThanToken
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+trans'
+      ArrowFunction
+        Parameter
+          ObjectBindingPattern
+            BindingElement
+              Identifier: 'a'
+            BindingElement
+              Identifier: ' b'
+              NumericLiteral
+        EqualsGreaterThanToken
+        Identifier: ' a'

@@ -1,0 +1,3455 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    getRangeOfEnclosingComment'
+        ImportSpecifier
+          Identifier: '
+    TextRangeWithKind'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ArrayBindingPattern'
+        ImportSpecifier
+          Identifier: '
+    ArrayLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    CallExpression'
+        ImportSpecifier
+          Identifier: '
+    CharacterCodes'
+        ImportSpecifier
+          Identifier: '
+    ClassDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ClassExpression'
+        ImportSpecifier
+          Identifier: '
+    CommentRange'
+        ImportSpecifier
+          Identifier: '
+    contains'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    EditorSettings'
+        ImportSpecifier
+          Identifier: '
+    find'
+        ImportSpecifier
+          Identifier: '
+    findChildOfKind'
+        ImportSpecifier
+          Identifier: '
+    findListItemInfo'
+        ImportSpecifier
+          Identifier: '
+    findNextToken'
+        ImportSpecifier
+          Identifier: '
+    findPrecedingToken'
+        ImportSpecifier
+          Identifier: '
+    FormatCodeSettings'
+        ImportSpecifier
+          Identifier: '
+    GetAccessorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    getLineAndCharacterOfPosition'
+        ImportSpecifier
+          Identifier: '
+    getLineStartPositionForPosition'
+        ImportSpecifier
+          Identifier: '
+    getStartPositionOfLine'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    IfStatement'
+        ImportSpecifier
+          Identifier: '
+    ImportClause'
+        ImportSpecifier
+          Identifier: '
+    IndentStyle'
+        ImportSpecifier
+          Identifier: '
+    InterfaceDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isCallExpression'
+        ImportSpecifier
+          Identifier: '
+    isCallOrNewExpression'
+        ImportSpecifier
+          Identifier: '
+    isConditionalExpression'
+        ImportSpecifier
+          Identifier: '
+    isDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isStatementButNotDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isStringOrRegularExpressionOrTemplateLiteral'
+        ImportSpecifier
+          Identifier: '
+    isWhiteSpaceLike'
+        ImportSpecifier
+          Identifier: '
+    isWhiteSpaceSingleLine'
+        ImportSpecifier
+          Identifier: '
+    JSDocTemplateTag'
+        ImportSpecifier
+          Identifier: '
+    LineAndCharacter'
+        ImportSpecifier
+          Identifier: '
+    NamedImportsOrExports'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeArray'
+        ImportSpecifier
+          Identifier: '
+    ObjectBindingPattern'
+        ImportSpecifier
+          Identifier: '
+    ObjectLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    positionBelongsToNode'
+        ImportSpecifier
+          Identifier: '
+    rangeContainsRange'
+        ImportSpecifier
+          Identifier: '
+    rangeContainsStartEnd'
+        ImportSpecifier
+          Identifier: '
+    SignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    skipTrivia'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SourceFileLike'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    TextRange'
+        ImportSpecifier
+          Identifier: '
+    TypeAliasDeclaration'
+        ImportSpecifier
+          Identifier: '
+    TypeLiteralNode'
+        ImportSpecifier
+          Identifier: '
+    TypeReferenceNode'
+        ImportSpecifier
+          Identifier: '
+    VariableDeclarationList'
+    StringLiteral
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' SmartIndenter'
+    ModuleBlock
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' Value'
+        EnumMember
+          Identifier: '
+        Unknown'
+          PrefixUnaryExpression
+            NumericLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' getIndentation'
+        Parameter
+          Identifier: 'position'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        Parameter
+          Identifier: ' assumeNewLineBeforeCloseBrace'
+          FalseKeyword
+        NumberKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'position'
+              GreaterThanToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' sourceFile'
+                  Identifier: 'text'
+                Identifier: 'length'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' getBaseIndentation'
+                  Identifier: 'options'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'options'
+                Identifier: 'indentStyle'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' IndentStyle'
+                Identifier: 'None'
+            Block
+              ReturnStatement
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' precedingToken'
+                CallExpression
+                  Identifier: ' findPrecedingToken'
+                  Identifier: 'position'
+                  Identifier: ' sourceFile'
+                  Identifier: ' /*startNode*/ undefined'
+                  TrueKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' enclosingCommentRange'
+                CallExpression
+                  Identifier: ' getRangeOfEnclosingComment'
+                  Identifier: 'sourceFile'
+                  Identifier: ' position'
+                  BinaryExpression
+                    Identifier: ' precedingToken'
+                    BarBarToken
+                    NullKeyword
+          IfStatement
+            BinaryExpression
+              Identifier: 'enclosingCommentRange'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' enclosingCommentRange'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MultiLineCommentTrivia'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' getCommentIndent'
+                  Identifier: 'sourceFile'
+                  Identifier: ' position'
+                  Identifier: ' options'
+                  Identifier: ' enclosingCommentRange'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'precedingToken'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' getBaseIndentation'
+                  Identifier: 'options'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' precedingTokenIsLiteral'
+                CallExpression
+                  Identifier: ' isStringOrRegularExpressionOrTemplateLiteral'
+                  PropertyAccessExpression
+                    Identifier: 'precedingToken'
+                    Identifier: 'kind'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'precedingTokenIsLiteral'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' precedingToken'
+                      Identifier: 'getStart'
+                    Identifier: 'sourceFile'
+                  LessThanEqualsToken
+                  Identifier: ' position'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' position'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' precedingToken'
+                  Identifier: 'end'
+            Block
+              ReturnStatement
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineAtPosition'
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' sourceFile'
+                      Identifier: 'getLineAndCharacterOfPosition'
+                    Identifier: 'position'
+                  Identifier: 'line'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' currentToken'
+                CallExpression
+                  Identifier: ' getTokenAtPosition'
+                  Identifier: 'sourceFile'
+                  Identifier: ' position'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' isObjectLiteral'
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' currentToken'
+                      Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'OpenBraceToken'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' currentToken'
+                        Identifier: 'parent'
+                      Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'ObjectLiteralExpression'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'options'
+                  Identifier: 'indentStyle'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' IndentStyle'
+                  Identifier: 'Block'
+              BarBarToken
+              Identifier: ' isObjectLiteral'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' getBlockIndent'
+                  Identifier: 'sourceFile'
+                  Identifier: ' position'
+                  Identifier: ' options'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'precedingToken'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CommaToken'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' precedingToken'
+                    Identifier: 'parent'
+                  Identifier: 'kind'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'BinaryExpression'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' actualIndentation'
+                    CallExpression
+                      Identifier: ' getActualIndentationForListItemBeforeComma'
+                      Identifier: 'precedingToken'
+                      Identifier: ' sourceFile'
+                      Identifier: ' options'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'actualIndentation'
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' Value'
+                    Identifier: 'Unknown'
+                Block
+                  ReturnStatement
+                    Identifier: ' actualIndentation'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' containerList'
+                CallExpression
+                  Identifier: ' getListByPosition'
+                  Identifier: 'position'
+                  PropertyAccessExpression
+                    Identifier: ' precedingToken'
+                    Identifier: 'parent'
+                  Identifier: ' sourceFile'
+          IfStatement
+            BinaryExpression
+              Identifier: 'containerList'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'rangeContainsRange'
+                  Identifier: 'containerList'
+                  Identifier: ' precedingToken'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' useTheSameBaseIndentation'
+                    CallExpression
+                      PropertyAccessExpression
+                        ArrayLiteralExpression
+                          PropertyAccessExpression
+                            Identifier: 'SyntaxKind'
+                            Identifier: 'FunctionExpression'
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'ArrowFunction'
+                        Identifier: 'includes'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'currentToken'
+                          Identifier: 'parent'
+                        Identifier: 'kind'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' indentSize'
+                    ConditionalExpression
+                      Identifier: ' useTheSameBaseIndentation'
+                      QuestionToken
+                      NumericLiteral
+                      ColonToken
+                      NonNullExpression
+                        PropertyAccessExpression
+                          Identifier: ' options'
+                          Identifier: 'indentSize'
+              ReturnStatement
+                BinaryExpression
+                  CallExpression
+                    Identifier: ' getActualIndentationForListStartLine'
+                    Identifier: 'containerList'
+                    Identifier: ' sourceFile'
+                    Identifier: ' options'
+                  PlusToken
+                  Identifier: ' indentSize'
+          ReturnStatement
+            CallExpression
+              Identifier: ' getSmartIndent'
+              Identifier: 'sourceFile'
+              Identifier: ' position'
+              Identifier: ' precedingToken'
+              Identifier: ' lineAtPosition'
+              Identifier: ' assumeNewLineBeforeCloseBrace'
+              Identifier: ' options'
+      FunctionDeclaration
+        Identifier: ' getCommentIndent'
+        Parameter
+          Identifier: 'sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' position'
+          NumberKeyword
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        Parameter
+          Identifier: ' enclosingCommentRange'
+          TypeReference
+            Identifier: ' CommentRange'
+        NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' previousLine'
+                BinaryExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      Identifier: ' getLineAndCharacterOfPosition'
+                      Identifier: 'sourceFile'
+                      Identifier: ' position'
+                    Identifier: 'line'
+                  MinusToken
+                  NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' commentStartLine'
+                PropertyAccessExpression
+                  CallExpression
+                    Identifier: ' getLineAndCharacterOfPosition'
+                    Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      Identifier: ' enclosingCommentRange'
+                      Identifier: 'pos'
+                  Identifier: 'line'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'commentStartLine'
+                GreaterThanEqualsToken
+                NumericLiteral
+          IfStatement
+            BinaryExpression
+              Identifier: 'previousLine'
+              LessThanEqualsToken
+              Identifier: ' commentStartLine'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' findFirstNonWhitespaceColumn'
+                  CallExpression
+                    Identifier: 'getStartPositionOfLine'
+                    Identifier: 'commentStartLine'
+                    Identifier: ' sourceFile'
+                  Identifier: ' position'
+                  Identifier: ' sourceFile'
+                  Identifier: ' options'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' startPositionOfLine'
+                CallExpression
+                  Identifier: ' getStartPositionOfLine'
+                  Identifier: 'previousLine'
+                  Identifier: ' sourceFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' column'
+                  BindingElement
+                    Identifier: ' character'
+                CallExpression
+                  Identifier: ' findFirstNonWhitespaceCharacterAndColumn'
+                  Identifier: 'startPositionOfLine'
+                  Identifier: ' position'
+                  Identifier: ' sourceFile'
+                  Identifier: ' options'
+          IfStatement
+            BinaryExpression
+              Identifier: 'column'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ReturnStatement
+                Identifier: ' column'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' firstNonWhitespaceCharacterCode'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' sourceFile'
+                      Identifier: 'text'
+                    Identifier: 'charCodeAt'
+                  BinaryExpression
+                    Identifier: 'startPositionOfLine'
+                    PlusToken
+                    Identifier: ' character'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' firstNonWhitespaceCharacterCode'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' CharacterCodes'
+                  Identifier: 'asterisk'
+              QuestionToken
+              BinaryExpression
+                Identifier: ' column'
+                MinusToken
+                NumericLiteral
+              ColonToken
+              Identifier: ' column'
+      FunctionDeclaration
+        Identifier: ' getBlockIndent'
+        Parameter
+          Identifier: 'sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' position'
+          NumberKeyword
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' current'
+                Identifier: ' position'
+          WhileStatement
+            BinaryExpression
+              Identifier: 'current'
+              GreaterThanToken
+              NumericLiteral
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' char'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' sourceFile'
+                          Identifier: 'text'
+                        Identifier: 'charCodeAt'
+                      Identifier: 'current'
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isWhiteSpaceLike'
+                    Identifier: 'char'
+                Block
+                  BreakStatement
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            current'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineStart'
+                CallExpression
+                  Identifier: ' getLineStartPositionForPosition'
+                  Identifier: 'current'
+                  Identifier: ' sourceFile'
+          ReturnStatement
+            CallExpression
+              Identifier: ' findFirstNonWhitespaceColumn'
+              Identifier: 'lineStart'
+              Identifier: ' current'
+              Identifier: ' sourceFile'
+              Identifier: ' options'
+      FunctionDeclaration
+        Identifier: ' getSmartIndent'
+        Parameter
+          Identifier: 'sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' position'
+          NumberKeyword
+        Parameter
+          Identifier: ' precedingToken'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' lineAtPosition'
+          NumberKeyword
+        Parameter
+          Identifier: ' assumeNewLineBeforeCloseBrace'
+          BooleanKeyword
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' previous'
+                UnionType
+                  TypeReference
+                    Identifier: ' Node'
+                  UndefinedKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' current'
+                Identifier: ' precedingToken'
+          WhileStatement
+            Identifier: 'current'
+            Block
+              IfStatement
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'positionBelongsToNode'
+                    Identifier: 'current'
+                    Identifier: ' position'
+                    Identifier: ' sourceFile'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' shouldIndentChildNode'
+                    Identifier: 'options'
+                    Identifier: ' current'
+                    Identifier: ' previous'
+                    Identifier: ' sourceFile'
+                    TrueKeyword
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' currentStart'
+                        CallExpression
+                          Identifier: ' getStartLineAndCharacterForNode'
+                          Identifier: 'current'
+                          Identifier: ' sourceFile'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' nextTokenKind'
+                        CallExpression
+                          Identifier: ' nextTokenIsCurlyBraceOnSameLineAsCursor'
+                          Identifier: 'precedingToken'
+                          Identifier: ' current'
+                          Identifier: ' lineAtPosition'
+                          Identifier: ' sourceFile'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' indentationDelta'
+                        ConditionalExpression
+                          BinaryExpression
+                            Identifier: ' nextTokenKind'
+                            ExclamationEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' NextTokenKind'
+                              Identifier: 'Unknown'
+                          QuestionToken
+                          ConditionalExpression
+                            BinaryExpression
+                              Identifier: ' assumeNewLineBeforeCloseBrace'
+                              AmpersandAmpersandToken
+                              BinaryExpression
+                                Identifier: ' nextTokenKind'
+                                EqualsEqualsEqualsToken
+                                PropertyAccessExpression
+                                  Identifier: ' NextTokenKind'
+                                  Identifier: 'CloseBrace'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: ' options'
+                              Identifier: 'indentSize'
+                            ColonToken
+                            NumericLiteral
+                          ColonToken
+                          ConditionalExpression
+                            BinaryExpression
+                              Identifier: ' lineAtPosition'
+                              ExclamationEqualsEqualsToken
+                              PropertyAccessExpression
+                                Identifier: ' currentStart'
+                                Identifier: 'line'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: ' options'
+                              Identifier: 'indentSize'
+                            ColonToken
+                            NumericLiteral
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' getIndentationForNodeWorker'
+                      Identifier: 'current'
+                      Identifier: ' currentStart'
+                      Identifier: ' /*ignoreActualIndentationRange*/ undefined'
+                      NonNullExpression
+                        Identifier: ' indentationDelta'
+                      Identifier: ' sourceFile'
+                      TrueKeyword
+                      Identifier: ' options'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' actualIndentation'
+                    CallExpression
+                      Identifier: ' getActualIndentationForListItem'
+                      Identifier: 'current'
+                      Identifier: ' sourceFile'
+                      Identifier: ' options'
+                      TrueKeyword
+              IfStatement
+                BinaryExpression
+                  Identifier: 'actualIndentation'
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' Value'
+                    Identifier: 'Unknown'
+                Block
+                  ReturnStatement
+                    Identifier: ' actualIndentation'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            previous'
+                  EqualsToken
+                  Identifier: ' current'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            current'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' current'
+                    Identifier: 'parent'
+          ReturnStatement
+            CallExpression
+              Identifier: ' getBaseIndentation'
+              Identifier: 'options'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' getIndentationForNode'
+        Parameter
+          Identifier: 'n'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' ignoreActualIndentationRange'
+          TypeReference
+            Identifier: ' TextRange'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' start'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' sourceFile'
+                    Identifier: 'getLineAndCharacterOfPosition'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'n'
+                      Identifier: 'getStart'
+                    Identifier: 'sourceFile'
+          ReturnStatement
+            CallExpression
+              Identifier: ' getIndentationForNodeWorker'
+              Identifier: 'n'
+              Identifier: ' start'
+              Identifier: ' ignoreActualIndentationRange'
+              NumericLiteral
+              Identifier: ' sourceFile'
+              FalseKeyword
+              Identifier: ' options'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' getBaseIndentation'
+        Parameter
+          Identifier: 'options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' options'
+                Identifier: 'baseIndentSize'
+              BarBarToken
+              NumericLiteral
+      FunctionDeclaration
+        Identifier: ' getIndentationForNodeWorker'
+        Parameter
+          Identifier: '
+        current'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: '
+        currentStart'
+          TypeReference
+            Identifier: ' LineAndCharacter'
+        Parameter
+          Identifier: '
+        ignoreActualIndentationRange'
+          UnionType
+            TypeReference
+              Identifier: ' TextRange'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        indentationDelta'
+          NumberKeyword
+        Parameter
+          Identifier: '
+        sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: '
+        isNextChild'
+          BooleanKeyword
+        Parameter
+          Identifier: '
+        options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' parent'
+                PropertyAccessExpression
+                  Identifier: ' current'
+                  Identifier: 'parent'
+          WhileStatement
+            Identifier: 'parent'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' useActualIndentation'
+                    TrueKeyword
+              IfStatement
+                Identifier: 'ignoreActualIndentationRange'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' start'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' current'
+                            Identifier: 'getStart'
+                          Identifier: 'sourceFile'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                useActualIndentation'
+                      EqualsToken
+                      BinaryExpression
+                        BinaryExpression
+                          Identifier: ' start'
+                          LessThanToken
+                          PropertyAccessExpression
+                            Identifier: ' ignoreActualIndentationRange'
+                            Identifier: 'pos'
+                        BarBarToken
+                        BinaryExpression
+                          Identifier: ' start'
+                          GreaterThanToken
+                          PropertyAccessExpression
+                            Identifier: ' ignoreActualIndentationRange'
+                            Identifier: 'end'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' containingListOrParentStart'
+                    CallExpression
+                      Identifier: ' getContainingListOrParentStart'
+                      Identifier: 'parent'
+                      Identifier: ' current'
+                      Identifier: ' sourceFile'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' parentAndChildShareLine'
+                    BinaryExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' containingListOrParentStart'
+                          Identifier: 'line'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' currentStart'
+                          Identifier: 'line'
+                      BarBarToken
+                      CallExpression
+                        Identifier: '
+                childStartsOnTheSameLineWithElseInIfStatement'
+                        Identifier: 'parent'
+                        Identifier: ' current'
+                        PropertyAccessExpression
+                          Identifier: ' currentStart'
+                          Identifier: 'line'
+                        Identifier: ' sourceFile'
+              IfStatement
+                Identifier: 'useActualIndentation'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' firstListChild'
+                        ElementAccessExpression
+                          CallExpression
+                            Identifier: ' getContainingList'
+                            Identifier: 'current'
+                            Identifier: ' sourceFile'
+                          QuestionDotToken
+                          NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' listIndentsChild'
+                        BinaryExpression
+                          PrefixUnaryExpression
+                            PrefixUnaryExpression
+                              Identifier: 'firstListChild'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              CallExpression
+                                Identifier: ' getStartLineAndCharacterForNode'
+                                Identifier: 'firstListChild'
+                                Identifier: ' sourceFile'
+                              Identifier: 'line'
+                            GreaterThanToken
+                            PropertyAccessExpression
+                              Identifier: ' containingListOrParentStart'
+                              Identifier: 'line'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' actualIndentation'
+                        CallExpression
+                          Identifier: ' getActualIndentationForListItem'
+                          Identifier: 'current'
+                          Identifier: ' sourceFile'
+                          Identifier: ' options'
+                          Identifier: ' listIndentsChild'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'actualIndentation'
+                      ExclamationEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' Value'
+                        Identifier: 'Unknown'
+                    Block
+                      ReturnStatement
+                        BinaryExpression
+                          Identifier: ' actualIndentation'
+                          PlusToken
+                          Identifier: ' indentationDelta'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+                // try to fetch actual indentation for current node from source text
+                actualIndentation'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' getActualIndentationForNode'
+                        Identifier: 'current'
+                        Identifier: ' parent'
+                        Identifier: ' currentStart'
+                        Identifier: ' parentAndChildShareLine'
+                        Identifier: ' sourceFile'
+                        Identifier: ' options'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'actualIndentation'
+                      ExclamationEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' Value'
+                        Identifier: 'Unknown'
+                    Block
+                      ReturnStatement
+                        BinaryExpression
+                          Identifier: ' actualIndentation'
+                          PlusToken
+                          Identifier: ' indentationDelta'
+              IfStatement
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'shouldIndentChildNode'
+                    Identifier: 'options'
+                    Identifier: ' parent'
+                    Identifier: ' current'
+                    Identifier: ' sourceFile'
+                    Identifier: ' isNextChild'
+                  AmpersandAmpersandToken
+                  PrefixUnaryExpression
+                    Identifier: 'parentAndChildShareLine'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                indentationDelta'
+                      PlusEqualsToken
+                      NonNullExpression
+                        PropertyAccessExpression
+                          Identifier: ' options'
+                          Identifier: 'indentSize'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' useTrueStart'
+                    CallExpression
+                      Identifier: ' isArgumentAndStartLineOverlapsExpressionBeingCalled'
+                      Identifier: 'parent'
+                      Identifier: ' current'
+                      PropertyAccessExpression
+                        Identifier: ' currentStart'
+                        Identifier: 'line'
+                      Identifier: ' sourceFile'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            current'
+                  EqualsToken
+                  Identifier: ' parent'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            parent'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' current'
+                    Identifier: 'parent'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            currentStart'
+                  EqualsToken
+                  ConditionalExpression
+                    Identifier: ' useTrueStart'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' sourceFile'
+                        Identifier: 'getLineAndCharacterOfPosition'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'current'
+                          Identifier: 'getStart'
+                        Identifier: 'sourceFile'
+                    ColonToken
+                    Identifier: ' containingListOrParentStart'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' indentationDelta'
+              PlusToken
+              CallExpression
+                Identifier: ' getBaseIndentation'
+                Identifier: 'options'
+      FunctionDeclaration
+        Identifier: ' getContainingListOrParentStart'
+        Parameter
+          Identifier: 'parent'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' child'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' LineAndCharacter'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' containingList'
+                CallExpression
+                  Identifier: ' getContainingList'
+                  Identifier: 'child'
+                  Identifier: ' sourceFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' startPos'
+                ConditionalExpression
+                  Identifier: ' containingList'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' containingList'
+                    Identifier: 'pos'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' parent'
+                      Identifier: 'getStart'
+                    Identifier: 'sourceFile'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' sourceFile'
+                Identifier: 'getLineAndCharacterOfPosition'
+              Identifier: 'startPos'
+      FunctionDeclaration
+        Identifier: ' getActualIndentationForListItemBeforeComma'
+        Parameter
+          Identifier: 'commaToken'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' commaItemInfo'
+                CallExpression
+                  Identifier: ' findListItemInfo'
+                  Identifier: 'commaToken'
+          IfStatement
+            BinaryExpression
+              Identifier: 'commaItemInfo'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' commaItemInfo'
+                  Identifier: 'listItemIndex'
+                GreaterThanToken
+                NumericLiteral
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' deriveActualIndentationFromList'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'commaItemInfo'
+                        Identifier: 'list'
+                      Identifier: 'getChildren'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' commaItemInfo'
+                      Identifier: 'listItemIndex'
+                    MinusToken
+                    NumericLiteral
+                  Identifier: ' sourceFile'
+                  Identifier: ' options'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' Value'
+                  Identifier: 'Unknown'
+      FunctionDeclaration
+        Identifier: ' getActualIndentationForNode'
+        Parameter
+          Identifier: 'current'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' currentLineAndChar'
+          TypeReference
+            Identifier: ' LineAndCharacter'
+        Parameter
+          Identifier: ' parentAndChildShareLine'
+          BooleanKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' useActualIndentation'
+                BinaryExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      CallExpression
+                        Identifier: 'isDeclaration'
+                        Identifier: 'current'
+                      BarBarToken
+                      CallExpression
+                        Identifier: ' isStatementButNotDeclaration'
+                        Identifier: 'current'
+                  AmpersandAmpersandToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'parent'
+                          Identifier: 'kind'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'SourceFile'
+                      BarBarToken
+                      PrefixUnaryExpression
+                        Identifier: 'parentAndChildShareLine'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'useActualIndentation'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' Value'
+                  Identifier: 'Unknown'
+          ReturnStatement
+            CallExpression
+              Identifier: ' findColumnForFirstNonWhitespaceCharacterInLine'
+              Identifier: 'currentLineAndChar'
+              Identifier: ' sourceFile'
+              Identifier: ' options'
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' NextTokenKind'
+        EnumMember
+          Identifier: '
+        Unknown'
+        EnumMember
+          Identifier: '
+        OpenBrace'
+        EnumMember
+          Identifier: '
+        CloseBrace'
+      FunctionDeclaration
+        Identifier: ' nextTokenIsCurlyBraceOnSameLineAsCursor'
+        Parameter
+          Identifier: 'precedingToken'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' current'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' lineAtPosition'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' NextTokenKind'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' nextToken'
+                CallExpression
+                  Identifier: ' findNextToken'
+                  Identifier: 'precedingToken'
+                  Identifier: ' current'
+                  Identifier: ' sourceFile'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'nextToken'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' NextTokenKind'
+                  Identifier: 'Unknown'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'nextToken'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'OpenBraceToken'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' NextTokenKind'
+                  Identifier: 'OpenBrace'
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'nextToken'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CloseBraceToken'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' nextTokenStartLine'
+                      PropertyAccessExpression
+                        CallExpression
+                          Identifier: ' getStartLineAndCharacterForNode'
+                          Identifier: 'nextToken'
+                          Identifier: ' sourceFile'
+                        Identifier: 'line'
+                ReturnStatement
+                  ConditionalExpression
+                    BinaryExpression
+                      Identifier: ' lineAtPosition'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' nextTokenStartLine'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: ' NextTokenKind'
+                      Identifier: 'CloseBrace'
+                    ColonToken
+                    PropertyAccessExpression
+                      Identifier: ' NextTokenKind'
+                      Identifier: 'Unknown'
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' NextTokenKind'
+              Identifier: 'Unknown'
+      FunctionDeclaration
+        Identifier: ' getStartLineAndCharacterForNode'
+        Parameter
+          Identifier: 'n'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        TypeReference
+          Identifier: ' LineAndCharacter'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' sourceFile'
+                Identifier: 'getLineAndCharacterOfPosition'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'n'
+                  Identifier: 'getStart'
+                Identifier: 'sourceFile'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' isArgumentAndStartLineOverlapsExpressionBeingCalled'
+        Parameter
+          Identifier: 'parent'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' child'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' childStartLine'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        BooleanKeyword
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'isCallExpression'
+                    Identifier: 'parent'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' contains'
+                    PropertyAccessExpression
+                      Identifier: 'parent'
+                      Identifier: 'arguments'
+                    Identifier: ' child'
+            Block
+              ReturnStatement
+                FalseKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' expressionOfCallExpressionEnd'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' parent'
+                      Identifier: 'expression'
+                    Identifier: 'getEnd'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' expressionOfCallExpressionEndLine'
+                PropertyAccessExpression
+                  CallExpression
+                    Identifier: ' getLineAndCharacterOfPosition'
+                    Identifier: 'sourceFile'
+                    Identifier: ' expressionOfCallExpressionEnd'
+                  Identifier: 'line'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' expressionOfCallExpressionEndLine'
+              EqualsEqualsEqualsToken
+              Identifier: ' childStartLine'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' childStartsOnTheSameLineWithElseInIfStatement'
+        Parameter
+          Identifier: 'parent'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' child'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Parameter
+          Identifier: ' childStartLine'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        BooleanKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'parent'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'IfStatement'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      Identifier: 'parent'
+                      TypeReference
+                        Identifier: ' IfStatement'
+                  Identifier: 'elseStatement'
+                EqualsEqualsEqualsToken
+                Identifier: ' child'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' elseKeyword'
+                    NonNullExpression
+                      CallExpression
+                        Identifier: ' findChildOfKind'
+                        Identifier: 'parent'
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'ElseKeyword'
+                        Identifier: ' sourceFile'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            Debug'
+                    Identifier: 'assert'
+                  BinaryExpression
+                    Identifier: 'elseKeyword'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' undefined'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' elseKeywordStartLine'
+                    PropertyAccessExpression
+                      CallExpression
+                        Identifier: ' getStartLineAndCharacterForNode'
+                        Identifier: 'elseKeyword'
+                        Identifier: ' sourceFile'
+                      Identifier: 'line'
+              ReturnStatement
+                BinaryExpression
+                  Identifier: ' elseKeywordStartLine'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' childStartLine'
+          ReturnStatement
+            FalseKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' childIsUnindentedBranchOfConditionalExpression'
+        Parameter
+          Identifier: 'parent'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' child'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Parameter
+          Identifier: ' childStartLine'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        BooleanKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isConditionalExpression'
+                Identifier: 'parent'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: 'child'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' parent'
+                      Identifier: 'whenTrue'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' child'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' parent'
+                      Identifier: 'whenFalse'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' conditionEndLine'
+                    PropertyAccessExpression
+                      CallExpression
+                        Identifier: ' getLineAndCharacterOfPosition'
+                        Identifier: 'sourceFile'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' parent'
+                            Identifier: 'condition'
+                          Identifier: 'end'
+                      Identifier: 'line'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'child'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' parent'
+                    Identifier: 'whenTrue'
+                Block
+                  ReturnStatement
+                    BinaryExpression
+                      Identifier: ' childStartLine'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' conditionEndLine'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' trueStartLine'
+                        PropertyAccessExpression
+                          CallExpression
+                            Identifier: ' getStartLineAndCharacterForNode'
+                            PropertyAccessExpression
+                              Identifier: 'parent'
+                              Identifier: 'whenTrue'
+                            Identifier: ' sourceFile'
+                          Identifier: 'line'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' trueEndLine'
+                        PropertyAccessExpression
+                          CallExpression
+                            Identifier: ' getLineAndCharacterOfPosition'
+                            Identifier: 'sourceFile'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' parent'
+                                Identifier: 'whenTrue'
+                              Identifier: 'end'
+                          Identifier: 'line'
+                  ReturnStatement
+                    BinaryExpression
+                      BinaryExpression
+                        Identifier: ' conditionEndLine'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' trueStartLine'
+                      AmpersandAmpersandToken
+                      BinaryExpression
+                        Identifier: ' trueEndLine'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' childStartLine'
+          ReturnStatement
+            FalseKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' argumentStartsOnSameLineAsPreviousArgument'
+        Parameter
+          Identifier: 'parent'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' child'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Parameter
+          Identifier: ' childStartLine'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        BooleanKeyword
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isCallOrNewExpression'
+              Identifier: 'parent'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'parent'
+                    Identifier: 'arguments'
+                ReturnStatement
+                  FalseKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' currentNode'
+                    CallExpression
+                      Identifier: ' find'
+                      PropertyAccessExpression
+                        Identifier: 'parent'
+                        Identifier: 'arguments'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' arg'
+                        EqualsGreaterThanToken
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' arg'
+                            Identifier: 'pos'
+                          EqualsEqualsEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' child'
+                            Identifier: 'pos'
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'currentNode'
+                ReturnStatement
+                  FalseKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' currentIndex'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' parent'
+                          Identifier: 'arguments'
+                        Identifier: 'indexOf'
+                      Identifier: 'currentNode'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'currentIndex'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                ReturnStatement
+                  FalseKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' previousNode'
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' parent'
+                        Identifier: 'arguments'
+                      BinaryExpression
+                        Identifier: 'currentIndex'
+                        MinusToken
+                        NumericLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' lineOfPreviousNode'
+                    PropertyAccessExpression
+                      CallExpression
+                        Identifier: ' getLineAndCharacterOfPosition'
+                        Identifier: 'sourceFile'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' previousNode'
+                            Identifier: 'getEnd'
+                      Identifier: 'line'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'childStartLine'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' lineOfPreviousNode'
+                Block
+                  ReturnStatement
+                    TrueKeyword
+          ReturnStatement
+            FalseKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' getContainingList'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        UnionType
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+          UndefinedKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'parent'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' getListByRange'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'getStart'
+                  Identifier: 'sourceFile'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'getEnd'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'parent'
+                Identifier: ' sourceFile'
+      FunctionDeclaration
+        Identifier: ' getListByPosition'
+        Parameter
+          Identifier: 'pos'
+          NumberKeyword
+        Parameter
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        UnionType
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+          UndefinedKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' node'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' getListByRange'
+                Identifier: 'pos'
+                Identifier: ' pos'
+                Identifier: ' node'
+                Identifier: ' sourceFile'
+      FunctionDeclaration
+        Identifier: ' getListByRange'
+        Parameter
+          Identifier: 'start'
+          NumberKeyword
+        Parameter
+          Identifier: ' end'
+          NumberKeyword
+        Parameter
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        UnionType
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+          UndefinedKeyword
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TypeReference'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getList'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node'
+                          TypeReference
+                            Identifier: ' TypeReferenceNode'
+                      Identifier: 'typeArguments'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ObjectLiteralExpression'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getList'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node'
+                          TypeReference
+                            Identifier: ' ObjectLiteralExpression'
+                      Identifier: 'properties'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ArrayLiteralExpression'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getList'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node'
+                          TypeReference
+                            Identifier: ' ArrayLiteralExpression'
+                      Identifier: 'elements'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TypeLiteral'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getList'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node'
+                          TypeReference
+                            Identifier: ' TypeLiteralNode'
+                      Identifier: 'members'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ArrowFunction'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodSignature'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CallSignature'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'Constructor'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructorType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructSignature'
+                ReturnStatement
+                  BinaryExpression
+                    CallExpression
+                      Identifier: ' getList'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'node'
+                            TypeReference
+                              Identifier: ' SignatureDeclaration'
+                        Identifier: 'typeParameters'
+                    BarBarToken
+                    CallExpression
+                      Identifier: ' getList'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'node'
+                            TypeReference
+                              Identifier: ' SignatureDeclaration'
+                        Identifier: 'parameters'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'GetAccessor'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getList'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node'
+                          TypeReference
+                            Identifier: ' GetAccessorDeclaration'
+                      Identifier: 'parameters'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ClassDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ClassExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'InterfaceDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TypeAliasDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'JSDocTemplateTag'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getList'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node'
+                          UnionType
+                            TypeReference
+                              Identifier: ' ClassDeclaration'
+                            TypeReference
+                              Identifier: ' ClassExpression'
+                            TypeReference
+                              Identifier: ' InterfaceDeclaration'
+                            TypeReference
+                              Identifier: ' TypeAliasDeclaration'
+                            TypeReference
+                              Identifier: ' JSDocTemplateTag'
+                      Identifier: 'typeParameters'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'NewExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CallExpression'
+                ReturnStatement
+                  BinaryExpression
+                    CallExpression
+                      Identifier: ' getList'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'node'
+                            TypeReference
+                              Identifier: ' CallExpression'
+                        Identifier: 'typeArguments'
+                    BarBarToken
+                    CallExpression
+                      Identifier: ' getList'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'node'
+                            TypeReference
+                              Identifier: ' CallExpression'
+                        Identifier: 'arguments'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'VariableDeclarationList'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getList'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node'
+                          TypeReference
+                            Identifier: ' VariableDeclarationList'
+                      Identifier: 'declarations'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'NamedImports'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'NamedExports'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getList'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node'
+                          TypeReference
+                            Identifier: ' NamedImportsOrExports'
+                      Identifier: 'elements'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ObjectBindingPattern'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ArrayBindingPattern'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getList'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'node'
+                          UnionType
+                            TypeReference
+                              Identifier: ' ObjectBindingPattern'
+                            TypeReference
+                              Identifier: ' ArrayBindingPattern'
+                      Identifier: 'elements'
+          FunctionDeclaration
+            Identifier: ' getList'
+            Parameter
+              Identifier: 'list'
+              UnionType
+                TypeReference
+                  Identifier: ' NodeArray'
+                  TypeReference
+                    Identifier: 'Node'
+                UndefinedKeyword
+            UnionType
+              TypeReference
+                Identifier: ' NodeArray'
+                TypeReference
+                  Identifier: 'Node'
+              UndefinedKeyword
+            Block
+              ReturnStatement
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' list'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: ' rangeContainsStartEnd'
+                      CallExpression
+                        Identifier: 'getVisualListRange'
+                        Identifier: 'node'
+                        Identifier: ' list'
+                        Identifier: ' sourceFile'
+                      Identifier: ' start'
+                      Identifier: ' end'
+                  QuestionToken
+                  Identifier: ' list'
+                  ColonToken
+                  Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' getVisualListRange'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' list'
+          TypeReference
+            Identifier: ' TextRange'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' TextRange'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' children'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'getChildren'
+                  Identifier: 'sourceFile'
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                NumericLiteral
+            BinaryExpression
+              Identifier: ' i'
+              LessThanToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' children'
+                  Identifier: 'length'
+                MinusToken
+                NumericLiteral
+            PostfixUnaryExpression
+              Identifier: ' i'
+            Block
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ElementAccessExpression
+                        Identifier: 'children'
+                        Identifier: 'i'
+                      Identifier: 'pos'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' list'
+                      Identifier: 'pos'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ElementAccessExpression
+                        Identifier: ' children'
+                        Identifier: 'i'
+                      Identifier: 'end'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' list'
+                      Identifier: 'end'
+                Block
+                  ReturnStatement
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' pos'
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: ' children'
+                            BinaryExpression
+                              Identifier: 'i'
+                              MinusToken
+                              NumericLiteral
+                          Identifier: 'end'
+                      PropertyAssignment
+                        Identifier: ' end'
+                        CallExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              Identifier: ' children'
+                              BinaryExpression
+                                Identifier: 'i'
+                                PlusToken
+                                NumericLiteral
+                            Identifier: 'getStart'
+                          Identifier: 'sourceFile'
+          ReturnStatement
+            Identifier: ' list'
+      FunctionDeclaration
+        Identifier: ' getActualIndentationForListStartLine'
+        Parameter
+          Identifier: 'list'
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'list'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' Value'
+                  Identifier: 'Unknown'
+          ReturnStatement
+            CallExpression
+              Identifier: ' findColumnForFirstNonWhitespaceCharacterInLine'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'sourceFile'
+                  Identifier: 'getLineAndCharacterOfPosition'
+                PropertyAccessExpression
+                  Identifier: 'list'
+                  Identifier: 'pos'
+              Identifier: ' sourceFile'
+              Identifier: ' options'
+      FunctionDeclaration
+        Identifier: ' getActualIndentationForListItem'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        Parameter
+          Identifier: ' listIndentsChild'
+          BooleanKeyword
+        NumberKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'parent'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'parent'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'VariableDeclarationList'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  Identifier: ' Value'
+                  Identifier: 'Unknown'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' containingList'
+                CallExpression
+                  Identifier: ' getContainingList'
+                  Identifier: 'node'
+                  Identifier: ' sourceFile'
+          IfStatement
+            Identifier: 'containingList'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' index'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' containingList'
+                        Identifier: 'indexOf'
+                      Identifier: 'node'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'index'
+                  ExclamationEqualsEqualsToken
+                  PrefixUnaryExpression
+                    NumericLiteral
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          Identifier: ' deriveActualIndentationFromList'
+                          Identifier: 'containingList'
+                          Identifier: ' index'
+                          Identifier: ' sourceFile'
+                          Identifier: ' options'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'result'
+                      ExclamationEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' Value'
+                        Identifier: 'Unknown'
+                    Block
+                      ReturnStatement
+                        Identifier: ' result'
+              ReturnStatement
+                BinaryExpression
+                  CallExpression
+                    Identifier: ' getActualIndentationForListStartLine'
+                    Identifier: 'containingList'
+                    Identifier: ' sourceFile'
+                    Identifier: ' options'
+                  PlusToken
+                  ParenthesizedExpression
+                    ConditionalExpression
+                      Identifier: 'listIndentsChild'
+                      QuestionToken
+                      NonNullExpression
+                        PropertyAccessExpression
+                          Identifier: ' options'
+                          Identifier: 'indentSize'
+                      ColonToken
+                      NumericLiteral
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' Value'
+              Identifier: 'Unknown'
+      FunctionDeclaration
+        Identifier: ' deriveActualIndentationFromList'
+        Parameter
+          Identifier: 'list'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Node'
+        Parameter
+          Identifier: ' index'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                BinaryExpression
+                  Identifier: 'index'
+                  GreaterThanEqualsToken
+                  NumericLiteral
+                AmpersandAmpersandToken
+                BinaryExpression
+                  Identifier: ' index'
+                  LessThanToken
+                  PropertyAccessExpression
+                    Identifier: ' list'
+                    Identifier: 'length'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' node'
+                ElementAccessExpression
+                  Identifier: ' list'
+                  Identifier: 'index'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineAndCharacter'
+                CallExpression
+                  Identifier: ' getStartLineAndCharacterForNode'
+                  Identifier: 'node'
+                  Identifier: ' sourceFile'
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                BinaryExpression
+                  Identifier: ' index'
+                  MinusToken
+                  NumericLiteral
+            BinaryExpression
+              Identifier: ' i'
+              GreaterThanEqualsToken
+              NumericLiteral
+            PostfixUnaryExpression
+              Identifier: ' i'
+            Block
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: 'list'
+                      Identifier: 'i'
+                    Identifier: 'kind'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'CommaToken'
+                Block
+                  ContinueStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' prevEndLine'
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' sourceFile'
+                          Identifier: 'getLineAndCharacterOfPosition'
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: 'list'
+                            Identifier: 'i'
+                          Identifier: 'end'
+                      Identifier: 'line'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'prevEndLine'
+                  ExclamationEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' lineAndCharacter'
+                    Identifier: 'line'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' findColumnForFirstNonWhitespaceCharacterInLine'
+                      Identifier: 'lineAndCharacter'
+                      Identifier: ' sourceFile'
+                      Identifier: ' options'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            lineAndCharacter'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' getStartLineAndCharacterForNode'
+                    ElementAccessExpression
+                      Identifier: 'list'
+                      Identifier: 'i'
+                    Identifier: ' sourceFile'
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' Value'
+              Identifier: 'Unknown'
+      FunctionDeclaration
+        Identifier: ' findColumnForFirstNonWhitespaceCharacterInLine'
+        Parameter
+          Identifier: 'lineAndCharacter'
+          TypeReference
+            Identifier: ' LineAndCharacter'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lineStart'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' sourceFile'
+                    Identifier: 'getPositionOfLineAndCharacter'
+                  PropertyAccessExpression
+                    Identifier: 'lineAndCharacter'
+                    Identifier: 'line'
+                  NumericLiteral
+          ReturnStatement
+            CallExpression
+              Identifier: ' findFirstNonWhitespaceColumn'
+              Identifier: 'lineStart'
+              BinaryExpression
+                Identifier: ' lineStart'
+                PlusToken
+                PropertyAccessExpression
+                  Identifier: ' lineAndCharacter'
+                  Identifier: 'character'
+              Identifier: ' sourceFile'
+              Identifier: ' options'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' findFirstNonWhitespaceCharacterAndColumn'
+        Parameter
+          Identifier: 'startPos'
+          NumberKeyword
+        Parameter
+          Identifier: ' endPos'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        column'
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+        character'
+            NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' character'
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' column'
+                NumericLiteral
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' pos'
+                Identifier: ' startPos'
+            BinaryExpression
+              Identifier: ' pos'
+              LessThanToken
+              Identifier: ' endPos'
+            PostfixUnaryExpression
+              Identifier: ' pos'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' ch'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' sourceFile'
+                          Identifier: 'text'
+                        Identifier: 'charCodeAt'
+                      Identifier: 'pos'
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isWhiteSpaceSingleLine'
+                    Identifier: 'ch'
+                Block
+                  BreakStatement
+              IfStatement
+                BinaryExpression
+                  Identifier: 'ch'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' CharacterCodes'
+                    Identifier: 'tab'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                column'
+                      PlusEqualsToken
+                      BinaryExpression
+                        NonNullExpression
+                          PropertyAccessExpression
+                            Identifier: ' options'
+                            Identifier: 'tabSize'
+                        PlusToken
+                        ParenthesizedExpression
+                          BinaryExpression
+                            Identifier: 'column'
+                            PercentToken
+                            NonNullExpression
+                              PropertyAccessExpression
+                                Identifier: ' options'
+                                Identifier: 'tabSize'
+                Block
+                  ExpressionStatement
+                    PostfixUnaryExpression
+                      Identifier: '
+                column'
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+
+            character'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' column'
+              ShorthandPropertyAssignment
+                Identifier: ' character'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' findFirstNonWhitespaceColumn'
+        Parameter
+          Identifier: 'startPos'
+          NumberKeyword
+        Parameter
+          Identifier: ' endPos'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              CallExpression
+                Identifier: ' findFirstNonWhitespaceCharacterAndColumn'
+                Identifier: 'startPos'
+                Identifier: ' endPos'
+                Identifier: ' sourceFile'
+                Identifier: ' options'
+              Identifier: 'column'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' nodeWillIndentChild'
+        Parameter
+          Identifier: 'settings'
+          TypeReference
+            Identifier: ' FormatCodeSettings'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Parameter
+          Identifier: ' child'
+          UnionType
+            TypeReference
+              Identifier: ' TextRangeWithKind'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          UnionType
+            TypeReference
+              Identifier: ' SourceFileLike'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' indentByDefault'
+          BooleanKeyword
+        BooleanKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' childKind'
+                ConditionalExpression
+                  Identifier: ' child'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' child'
+                    Identifier: 'kind'
+                  ColonToken
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'Unknown'
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'parent'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ExpressionStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ClassDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ClassExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'InterfaceDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'EnumDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TypeAliasDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ArrayLiteralExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'Block'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ModuleBlock'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ObjectLiteralExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TypeLiteral'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MappedType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TupleType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ParenthesizedExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'PropertyAccessExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CallExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'NewExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'VariableStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ExportAssignment'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ReturnStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConditionalExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ArrayBindingPattern'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ObjectBindingPattern'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'JsxOpeningElement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'JsxOpeningFragment'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'JsxSelfClosingElement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'JsxExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodSignature'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CallSignature'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructSignature'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'Parameter'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ConstructorType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ParenthesizedType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TaggedTemplateExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'AwaitExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'NamedExports'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'NamedImports'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ExportSpecifier'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ImportSpecifier'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'PropertyDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CaseClause'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'DefaultClause'
+                ReturnStatement
+                  TrueKeyword
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'CaseBlock'
+                ReturnStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' settings'
+                      Identifier: 'indentSwitchCase'
+                    QuestionQuestionToken
+                    TrueKeyword
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'VariableDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'PropertyAssignment'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'BinaryExpression'
+                IfStatement
+                  BinaryExpression
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'settings'
+                          Identifier: 'indentMultiLineObjectLiteralBeginningOnBlankLine'
+                      AmpersandAmpersandToken
+                      Identifier: ' sourceFile'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      Identifier: ' childKind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'ObjectLiteralExpression'
+                  Block
+                    ReturnStatement
+                      CallExpression
+                        Identifier: ' rangeIsOnOneLine'
+                        Identifier: 'sourceFile'
+                        NonNullExpression
+                          Identifier: ' child'
+                IfStatement
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'parent'
+                            Identifier: 'kind'
+                          EqualsEqualsEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'BinaryExpression'
+                        AmpersandAmpersandToken
+                        Identifier: ' sourceFile'
+                      AmpersandAmpersandToken
+                      Identifier: ' child'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      Identifier: ' childKind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'JsxElement'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' parentStartLine'
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' sourceFile'
+                                Identifier: 'getLineAndCharacterOfPosition'
+                              CallExpression
+                                Identifier: 'skipTrivia'
+                                PropertyAccessExpression
+                                  Identifier: 'sourceFile'
+                                  Identifier: 'text'
+                                PropertyAccessExpression
+                                  Identifier: ' parent'
+                                  Identifier: 'pos'
+                            Identifier: 'line'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' childStartLine'
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' sourceFile'
+                                Identifier: 'getLineAndCharacterOfPosition'
+                              CallExpression
+                                Identifier: 'skipTrivia'
+                                PropertyAccessExpression
+                                  Identifier: 'sourceFile'
+                                  Identifier: 'text'
+                                PropertyAccessExpression
+                                  Identifier: ' child'
+                                  Identifier: 'pos'
+                            Identifier: 'line'
+                    ReturnStatement
+                      BinaryExpression
+                        Identifier: ' parentStartLine'
+                        ExclamationEqualsEqualsToken
+                        Identifier: ' childStartLine'
+                IfStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'parent'
+                      Identifier: 'kind'
+                    ExclamationEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'BinaryExpression'
+                  Block
+                    ReturnStatement
+                      TrueKeyword
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'DoStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'WhileStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ForInStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ForOfStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ForStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'IfStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'FunctionExpression'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'MethodDeclaration'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'Constructor'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'GetAccessor'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SetAccessor'
+                ReturnStatement
+                  BinaryExpression
+                    Identifier: ' childKind'
+                    ExclamationEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'Block'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ArrowFunction'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'sourceFile'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      Identifier: ' childKind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'ParenthesizedExpression'
+                  Block
+                    ReturnStatement
+                      CallExpression
+                        Identifier: ' rangeIsOnOneLine'
+                        Identifier: 'sourceFile'
+                        NonNullExpression
+                          Identifier: ' child'
+                ReturnStatement
+                  BinaryExpression
+                    Identifier: ' childKind'
+                    ExclamationEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'Block'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ExportDeclaration'
+                ReturnStatement
+                  BinaryExpression
+                    Identifier: ' childKind'
+                    ExclamationEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'NamedExports'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ImportDeclaration'
+                ReturnStatement
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: ' childKind'
+                      ExclamationEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'ImportClause'
+                    BarBarToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        PrefixUnaryExpression
+                          PrefixUnaryExpression
+                            PropertyAccessExpression
+                              ParenthesizedExpression
+                                AsExpression
+                                  Identifier: 'child'
+                                  TypeReference
+                                    Identifier: ' ImportClause'
+                              Identifier: 'namedBindings'
+                        AmpersandAmpersandToken
+                        BinaryExpression
+                          PropertyAccessExpression
+                            NonNullExpression
+                              PropertyAccessExpression
+                                ParenthesizedExpression
+                                  AsExpression
+                                    Identifier: 'child'
+                                    TypeReference
+                                      Identifier: ' ImportClause'
+                                Identifier: 'namedBindings'
+                            Identifier: 'kind'
+                          ExclamationEqualsEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'NamedImports'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'JsxElement'
+                ReturnStatement
+                  BinaryExpression
+                    Identifier: ' childKind'
+                    ExclamationEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'JsxClosingElement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'JsxFragment'
+                ReturnStatement
+                  BinaryExpression
+                    Identifier: ' childKind'
+                    ExclamationEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'JsxClosingFragment'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'IntersectionType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'UnionType'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SatisfiesExpression'
+                IfStatement
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        Identifier: 'childKind'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'TypeLiteral'
+                      BarBarToken
+                      BinaryExpression
+                        Identifier: ' childKind'
+                        EqualsEqualsEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' SyntaxKind'
+                          Identifier: 'TupleType'
+                    BarBarToken
+                    BinaryExpression
+                      Identifier: ' childKind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'MappedType'
+                  Block
+                    ReturnStatement
+                      FalseKeyword
+                BreakStatement
+          ReturnStatement
+            Identifier: ' indentByDefault'
+      FunctionDeclaration
+        Identifier: ' isControlFlowEndingStatement'
+        Parameter
+          Identifier: 'kind'
+          TypeReference
+            Identifier: ' SyntaxKind'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        BooleanKeyword
+        Block
+          SwitchStatement
+            Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ReturnStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ThrowStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ContinueStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'BreakStatement'
+                ReturnStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' parent'
+                      Identifier: 'kind'
+                    ExclamationEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'Block'
+              DefaultClause
+                ReturnStatement
+                  FalseKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' shouldIndentChildNode'
+        Parameter
+          Identifier: 'settings'
+          TypeReference
+            Identifier: ' FormatCodeSettings'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Parameter
+          Identifier: ' child'
+          QuestionToken
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          QuestionToken
+          TypeReference
+            Identifier: ' SourceFileLike'
+        Parameter
+          Identifier: ' isNextChild'
+          FalseKeyword
+        BooleanKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                Identifier: ' nodeWillIndentChild'
+                Identifier: 'settings'
+                Identifier: ' parent'
+                Identifier: ' child'
+                Identifier: ' sourceFile'
+                FalseKeyword
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: 'isNextChild'
+                      AmpersandAmpersandToken
+                      Identifier: ' child'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: ' isControlFlowEndingStatement'
+                      PropertyAccessExpression
+                        Identifier: 'child'
+                        Identifier: 'kind'
+                      Identifier: ' parent'
+      FunctionDeclaration
+        Identifier: ' rangeIsOnOneLine'
+        Parameter
+          Identifier: 'sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        Parameter
+          Identifier: ' range'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' rangeStart'
+                CallExpression
+                  Identifier: ' skipTrivia'
+                  PropertyAccessExpression
+                    Identifier: 'sourceFile'
+                    Identifier: 'text'
+                  PropertyAccessExpression
+                    Identifier: ' range'
+                    Identifier: 'pos'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' startLine'
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' sourceFile'
+                      Identifier: 'getLineAndCharacterOfPosition'
+                    Identifier: 'rangeStart'
+                  Identifier: 'line'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' endLine'
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' sourceFile'
+                      Identifier: 'getLineAndCharacterOfPosition'
+                    PropertyAccessExpression
+                      Identifier: 'range'
+                      Identifier: 'end'
+                  Identifier: 'line'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' startLine'
+              EqualsEqualsEqualsToken
+              Identifier: ' endLine'

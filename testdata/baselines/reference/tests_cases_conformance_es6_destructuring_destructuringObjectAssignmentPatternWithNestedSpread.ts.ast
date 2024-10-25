@@ -1,0 +1,41 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' b'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' c'
+        AnyKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'x'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      VariableDeclaration
+        Identifier: ' d'
+        AnyKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'x'
+            BinaryExpression
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: 'a'
+                SpreadAssignment
+                  Identifier: 'b'
+              EqualsToken
+              Identifier: ' d'
+        EqualsToken
+        Identifier: ' c'

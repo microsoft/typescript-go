@@ -1,0 +1,238 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wordPattern'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' linkedCursors1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    ranges'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' start'
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' test'
+                        Identifier: 'markerByName'
+                      StringLiteral
+                    Identifier: 'position'
+                PropertyAssignment
+                  Identifier: ' length'
+                  NumericLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' start'
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' test'
+                        Identifier: 'markerByName'
+                      StringLiteral
+                    Identifier: 'position'
+                PropertyAssignment
+                  Identifier: ' length'
+                  NumericLiteral
+          ShorthandPropertyAssignment
+            Identifier: '
+    wordPattern'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' linkedCursors2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    ranges'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' start'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' test'
+                          Identifier: 'markerByName'
+                        StringLiteral
+                      Identifier: 'position'
+                    MinusToken
+                    NumericLiteral
+                PropertyAssignment
+                  Identifier: ' length'
+                  NumericLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' start'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' test'
+                          Identifier: 'markerByName'
+                        StringLiteral
+                      Identifier: 'position'
+                    MinusToken
+                    NumericLiteral
+                PropertyAssignment
+                  Identifier: ' length'
+                  NumericLiteral
+          ShorthandPropertyAssignment
+            Identifier: '
+    wordPattern'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' linkedCursors3'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    ranges'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' start'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' test'
+                          Identifier: 'markerByName'
+                        StringLiteral
+                      Identifier: 'position'
+                    MinusToken
+                    NumericLiteral
+                PropertyAssignment
+                  Identifier: ' length'
+                  NumericLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' start'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' test'
+                          Identifier: 'markerByName'
+                        StringLiteral
+                      Identifier: 'position'
+                    MinusToken
+                    NumericLiteral
+                PropertyAssignment
+                  Identifier: ' length'
+                  NumericLiteral
+          ShorthandPropertyAssignment
+            Identifier: '
+    wordPattern'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' linkedCursors4'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    ranges'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' start'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' test'
+                          Identifier: 'markerByName'
+                        StringLiteral
+                      Identifier: 'position'
+                    MinusToken
+                    NumericLiteral
+                PropertyAssignment
+                  Identifier: ' length'
+                  NumericLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' start'
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' test'
+                        Identifier: 'markerByName'
+                      StringLiteral
+                    Identifier: 'position'
+                PropertyAssignment
+                  Identifier: ' length'
+                  NumericLiteral
+          ShorthandPropertyAssignment
+            Identifier: '
+    wordPattern'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'linkedEditing'
+      ObjectLiteralExpression
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors1'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors1'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors1'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors1'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors1'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors1'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors2'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors3'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors4'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors4'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors3'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' linkedCursors2'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'
+        PropertyAssignment
+          StringLiteral
+          Identifier: ' undefined'

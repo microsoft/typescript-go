@@ -1,0 +1,37 @@
+SourceFile
+  ExpressionStatement
+    Identifier: '// @noImplicitReferences: true
+// @currentDirectory: /
+// This tests that an ambient module declaration overrides an untyped import.
+
+// @filename: /node_modules/foo/index.js
+This'
+  ExpressionStatement
+    Identifier: ' file'
+  ExpressionStatement
+    Identifier: ' is'
+  ExpressionStatement
+    Identifier: ' not'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' processed'
+      Identifier: ''
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' x'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+x'

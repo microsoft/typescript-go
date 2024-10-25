@@ -1,0 +1,6 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' c'
+  ClassDeclaration
+    Identifier: ' d'

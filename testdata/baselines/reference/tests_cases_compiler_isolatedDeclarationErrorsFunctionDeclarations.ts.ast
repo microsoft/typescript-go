@@ -1,0 +1,64 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' noReturn'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' noParamAnnotation'
+    Parameter
+      Identifier: 'p'
+    VoidKeyword
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' noParamAnnotationDefault'
+    Parameter
+      Identifier: 'p'
+      NumericLiteral
+    VoidKeyword
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' noParamAnnotationBadDefault'
+    Parameter
+      Identifier: 'p'
+      BinaryExpression
+        NumericLiteral
+        PlusToken
+        NumericLiteral
+    Parameter
+      Identifier: ' p2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            NumericLiteral
+    Parameter
+      Identifier: ' p3'
+      AsExpression
+        ArrayLiteralExpression
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            NumericLiteral
+        TypeReference
+          Identifier: ' const'
+    VoidKeyword
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' noParamAnnotationBadDefault2'
+    Parameter
+      Identifier: 'p'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            NumericLiteral
+    VoidKeyword
+    Block

@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' A'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral

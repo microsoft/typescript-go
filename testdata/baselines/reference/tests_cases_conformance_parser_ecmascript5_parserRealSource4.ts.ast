@@ -1,0 +1,1372 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' TypeScript'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' BlockIntrinsics'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' prototype'
+          Identifier: ' undefined'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' toString'
+          Identifier: ' undefined'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' toLocaleString'
+          Identifier: ' undefined'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' valueOf'
+          Identifier: ' undefined'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' hasOwnProperty'
+          Identifier: ' undefined'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' propertyIsEnumerable'
+          Identifier: ' undefined'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' isPrototypeOf'
+          Identifier: ' undefined'
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  ThisKeyword
+                  StringLiteral
+                EqualsToken
+                Identifier: ' undefined'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IHashTable'
+        MethodSignature
+          Identifier: '
+        getAllKeys'
+          ArrayType
+            StringKeyword
+        MethodSignature
+          Identifier: '
+        add'
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          Parameter
+            Identifier: ' data'
+          BooleanKeyword
+        MethodSignature
+          Identifier: '
+        addOrUpdate'
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          Parameter
+            Identifier: ' data'
+          BooleanKeyword
+        MethodSignature
+          Identifier: '
+        map'
+          Parameter
+            Identifier: 'fn'
+            FunctionType
+              Parameter
+                Identifier: 'k'
+                StringKeyword
+              Parameter
+                Identifier: ' v'
+              Parameter
+                Identifier: ' c'
+              VoidKeyword
+          Parameter
+            Identifier: ' context'
+          VoidKeyword
+        MethodSignature
+          Identifier: '
+        every'
+          Parameter
+            Identifier: 'fn'
+            FunctionType
+              Parameter
+                Identifier: 'k'
+                StringKeyword
+              Parameter
+                Identifier: ' v'
+              Parameter
+                Identifier: ' c'
+              BooleanKeyword
+          Parameter
+            Identifier: ' context'
+          BooleanKeyword
+        MethodSignature
+          Identifier: '
+        some'
+          Parameter
+            Identifier: 'fn'
+            FunctionType
+              Parameter
+                Identifier: 'k'
+                StringKeyword
+              Parameter
+                Identifier: ' v'
+              Parameter
+                Identifier: ' c'
+              BooleanKeyword
+          Parameter
+            Identifier: ' context'
+          BooleanKeyword
+        MethodSignature
+          Identifier: '
+        count'
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        lookup'
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          AnyKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' StringHashTable'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' IHashTable'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' itemCount'
+          NumericLiteral
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' table'
+          TypeAssertionExpression
+            AnyKeyword
+            ParenthesizedExpression
+              TypeAssertionExpression
+                AnyKeyword
+                NewExpression
+                  Identifier: ' BlockIntrinsics'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getAllKeys'
+          ArrayType
+            StringKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' result'
+                  ArrayType
+                    StringKeyword
+                  ArrayLiteralExpression
+            ForInStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' k'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'table'
+              Block
+                IfStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'table'
+                      Identifier: 'k'
+                    ExclamationEqualsToken
+                    Identifier: ' undefined'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        ElementAccessExpression
+                          Identifier: '
+                    result'
+                          PropertyAccessExpression
+                            Identifier: 'result'
+                            Identifier: 'length'
+                        EqualsToken
+                        Identifier: ' k'
+            ReturnStatement
+              Identifier: ' result'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' add'
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          Parameter
+            Identifier: ' data'
+          BooleanKeyword
+          Block
+            IfStatement
+              BinaryExpression
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'table'
+                  Identifier: 'key'
+                ExclamationEqualsToken
+                Identifier: ' undefined'
+              Block
+                ReturnStatement
+                  FalseKeyword
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'table'
+                  Identifier: 'key'
+                EqualsToken
+                Identifier: ' data'
+            ExpressionStatement
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'itemCount'
+            ReturnStatement
+              TrueKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' addOrUpdate'
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          Parameter
+            Identifier: ' data'
+          BooleanKeyword
+          Block
+            IfStatement
+              BinaryExpression
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'table'
+                  Identifier: 'key'
+                ExclamationEqualsToken
+                Identifier: ' undefined'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'table'
+                      Identifier: 'key'
+                    EqualsToken
+                    Identifier: ' data'
+                ReturnStatement
+                  FalseKeyword
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'table'
+                  Identifier: 'key'
+                EqualsToken
+                Identifier: ' data'
+            ExpressionStatement
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'itemCount'
+            ReturnStatement
+              TrueKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' map'
+          Parameter
+            Identifier: 'fn'
+            FunctionType
+              Parameter
+                Identifier: 'k'
+                StringKeyword
+              Parameter
+                Identifier: ' v'
+              Parameter
+                Identifier: ' c'
+              VoidKeyword
+          Parameter
+            Identifier: ' context'
+          Block
+            ForInStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' k'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'table'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' data'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'table'
+                        Identifier: 'k'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'data'
+                    ExclamationEqualsToken
+                    Identifier: ' undefined'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                    fn'
+                        Identifier: 'k'
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'table'
+                          Identifier: 'k'
+                        Identifier: ' context'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' every'
+          Parameter
+            Identifier: 'fn'
+            FunctionType
+              Parameter
+                Identifier: 'k'
+                StringKeyword
+              Parameter
+                Identifier: ' v'
+              Parameter
+                Identifier: ' c'
+              BooleanKeyword
+          Parameter
+            Identifier: ' context'
+          Block
+            ForInStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' k'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'table'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' data'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'table'
+                        Identifier: 'k'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'data'
+                    ExclamationEqualsToken
+                    Identifier: ' undefined'
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'fn'
+                          Identifier: 'k'
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'table'
+                            Identifier: 'k'
+                          Identifier: ' context'
+                      Block
+                        ReturnStatement
+                          FalseKeyword
+            ReturnStatement
+              TrueKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' some'
+          Parameter
+            Identifier: 'fn'
+            FunctionType
+              Parameter
+                Identifier: 'k'
+                StringKeyword
+              Parameter
+                Identifier: ' v'
+              Parameter
+                Identifier: ' c'
+              BooleanKeyword
+          Parameter
+            Identifier: ' context'
+          Block
+            ForInStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' k'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'table'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' data'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'table'
+                        Identifier: 'k'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'data'
+                    ExclamationEqualsToken
+                    Identifier: ' undefined'
+                  Block
+                    IfStatement
+                      CallExpression
+                        Identifier: 'fn'
+                        Identifier: 'k'
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'table'
+                          Identifier: 'k'
+                        Identifier: ' context'
+                      Block
+                        ReturnStatement
+                          TrueKeyword
+            ReturnStatement
+              FalseKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' count'
+          NumberKeyword
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'itemCount'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' lookup'
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' data'
+                  ElementAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'table'
+                    Identifier: 'key'
+            IfStatement
+              BinaryExpression
+                Identifier: 'data'
+                ExclamationEqualsToken
+                Identifier: ' undefined'
+              Block
+                ReturnStatement
+                  Identifier: ' data'
+              Block
+                ReturnStatement
+                  ParenthesizedExpression
+                    NullKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' DualStringHashTable'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' IHashTable'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' insertPrimary'
+          TrueKeyword
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' primaryTable'
+            TypeReference
+              Identifier: ' IHashTable'
+          Parameter
+            PublicKeyword
+            Identifier: ' secondaryTable'
+            TypeReference
+              Identifier: ' IHashTable'
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getAllKeys'
+          ArrayType
+            StringKeyword
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'primaryTable'
+                      Identifier: 'getAllKeys'
+                  Identifier: 'concat'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'secondaryTable'
+                    Identifier: 'getAllKeys'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' add'
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          Parameter
+            Identifier: ' data'
+          BooleanKeyword
+          Block
+            IfStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'insertPrimary'
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'primaryTable'
+                      Identifier: 'add'
+                    Identifier: 'key'
+                    Identifier: ' data'
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'secondaryTable'
+                      Identifier: 'add'
+                    Identifier: 'key'
+                    Identifier: ' data'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' addOrUpdate'
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          Parameter
+            Identifier: ' data'
+          BooleanKeyword
+          Block
+            IfStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'insertPrimary'
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'primaryTable'
+                      Identifier: 'addOrUpdate'
+                    Identifier: 'key'
+                    Identifier: ' data'
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'secondaryTable'
+                      Identifier: 'addOrUpdate'
+                    Identifier: 'key'
+                    Identifier: ' data'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' map'
+          Parameter
+            Identifier: 'fn'
+            FunctionType
+              Parameter
+                Identifier: 'k'
+                StringKeyword
+              Parameter
+                Identifier: ' v'
+              Parameter
+                Identifier: ' c'
+              VoidKeyword
+          Parameter
+            Identifier: ' context'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'primaryTable'
+                  Identifier: 'map'
+                Identifier: 'fn'
+                Identifier: ' context'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'secondaryTable'
+                  Identifier: 'map'
+                Identifier: 'fn'
+                Identifier: ' context'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' every'
+          Parameter
+            Identifier: 'fn'
+            FunctionType
+              Parameter
+                Identifier: 'k'
+                StringKeyword
+              Parameter
+                Identifier: ' v'
+              Parameter
+                Identifier: ' c'
+              BooleanKeyword
+          Parameter
+            Identifier: ' context'
+          Block
+            ReturnStatement
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'primaryTable'
+                    Identifier: 'every'
+                  Identifier: 'fn'
+                  Identifier: ' context'
+                AmpersandAmpersandToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'secondaryTable'
+                    Identifier: 'every'
+                  Identifier: 'fn'
+                  Identifier: ' context'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' some'
+          Parameter
+            Identifier: 'fn'
+            FunctionType
+              Parameter
+                Identifier: 'k'
+                StringKeyword
+              Parameter
+                Identifier: ' v'
+              Parameter
+                Identifier: ' c'
+              BooleanKeyword
+          Parameter
+            Identifier: ' context'
+          Block
+            ReturnStatement
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'primaryTable'
+                    Identifier: 'some'
+                  Identifier: 'fn'
+                  Identifier: ' context'
+                BarBarToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'secondaryTable'
+                    Identifier: 'some'
+                  Identifier: 'fn'
+                  Identifier: ' context'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' count'
+          Block
+            ReturnStatement
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'primaryTable'
+                    Identifier: 'count'
+                PlusToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'secondaryTable'
+                    Identifier: 'count'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' lookup'
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' data'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'primaryTable'
+                      Identifier: 'lookup'
+                    Identifier: 'key'
+            IfStatement
+              BinaryExpression
+                Identifier: 'data'
+                ExclamationEqualsToken
+                Identifier: ' undefined'
+              Block
+                ReturnStatement
+                  Identifier: ' data'
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'secondaryTable'
+                      Identifier: 'lookup'
+                    Identifier: 'key'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' numberHashFn'
+        Parameter
+          Identifier: 'key'
+          NumberKeyword
+        NumberKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' c2'
+                NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: ' // a prime or an odd constant
+        key'
+              EqualsToken
+              BinaryExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'key'
+                    CaretToken
+                    NumericLiteral
+                CaretToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'key'
+                    GreaterThanGreaterThanGreaterThanToken
+                    NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        key'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' key'
+                PlusToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'key'
+                    LessThanLessThanToken
+                    NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        key'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' key'
+                CaretToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'key'
+                    GreaterThanGreaterThanGreaterThanToken
+                    NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        key'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' key'
+                AsteriskToken
+                Identifier: ' c2'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        key'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' key'
+                CaretToken
+                ParenthesizedExpression
+                  BinaryExpression
+                    Identifier: 'key'
+                    GreaterThanGreaterThanGreaterThanToken
+                    NumericLiteral
+          ReturnStatement
+            Identifier: ' key'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' combineHashes'
+        Parameter
+          Identifier: 'key1'
+          NumberKeyword
+        Parameter
+          Identifier: ' key2'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' key2'
+              CaretToken
+              ParenthesizedExpression
+                BinaryExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'key1'
+                      GreaterThanGreaterThanToken
+                      NumericLiteral
+                  PlusToken
+                  Identifier: ' key1'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' HashEntry'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' next'
+          TypeReference
+            Identifier: ' HashEntry'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' key'
+          Parameter
+            PublicKeyword
+            Identifier: ' data'
+          Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' HashTable'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' itemCount'
+          NumberKeyword
+          NumericLiteral
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' table'
+          NewExpression
+            ElementAccessExpression
+              Identifier: ' HashEntry'
+              Identifier: ''
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' size'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' hashFn'
+            FunctionType
+              Parameter
+                Identifier: 'key'
+              NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' equalsFn'
+            FunctionType
+              Parameter
+                Identifier: 'key1'
+              Parameter
+                Identifier: ' key2'
+              BooleanKeyword
+          Block
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumberKeyword
+                  NumericLiteral
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'size'
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'table'
+                      Identifier: 'i'
+                    EqualsToken
+                    NullKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' add'
+          Parameter
+            Identifier: 'key'
+          Parameter
+            Identifier: ' data'
+          BooleanKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' current'
+                  TypeReference
+                    Identifier: ' HashEntry'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' entry'
+                  TypeReference
+                    Identifier: ' HashEntry'
+                  NewExpression
+                    Identifier: ' HashEntry'
+                    Identifier: 'key'
+                    Identifier: ' data'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' val'
+                  NumberKeyword
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'hashFn'
+                    Identifier: 'key'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            val'
+                EqualsToken
+                BinaryExpression
+                  Identifier: ' val'
+                  PercentToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'size'
+            ForStatement
+              BinaryExpression
+                Identifier: 'current'
+                EqualsToken
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'table'
+                  Identifier: 'val'
+              BinaryExpression
+                Identifier: ' current'
+                ExclamationEqualsToken
+                NullKeyword
+              BinaryExpression
+                Identifier: ' current'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' current'
+                  Identifier: 'next'
+              Block
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'equalsFn'
+                    Identifier: 'key'
+                    PropertyAccessExpression
+                      Identifier: ' current'
+                      Identifier: 'key'
+                  Block
+                    ReturnStatement
+                      FalseKeyword
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            entry'
+                  Identifier: 'next'
+                EqualsToken
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'table'
+                  Identifier: 'val'
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'table'
+                  Identifier: 'val'
+                EqualsToken
+                Identifier: ' entry'
+            ExpressionStatement
+              PostfixUnaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'itemCount'
+            ReturnStatement
+              TrueKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' remove'
+          Parameter
+            Identifier: 'key'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' current'
+                  TypeReference
+                    Identifier: ' HashEntry'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' val'
+                  NumberKeyword
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'hashFn'
+                    Identifier: 'key'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            val'
+                EqualsToken
+                BinaryExpression
+                  Identifier: ' val'
+                  PercentToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'size'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' result'
+                  NullKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' prevEntry'
+                  TypeReference
+                    Identifier: ' HashEntry'
+                  NullKeyword
+            ForStatement
+              BinaryExpression
+                Identifier: 'current'
+                EqualsToken
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'table'
+                  Identifier: 'val'
+              BinaryExpression
+                Identifier: ' current'
+                ExclamationEqualsToken
+                NullKeyword
+              BinaryExpression
+                Identifier: ' current'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' current'
+                  Identifier: 'next'
+              Block
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'equalsFn'
+                    Identifier: 'key'
+                    PropertyAccessExpression
+                      Identifier: ' current'
+                      Identifier: 'key'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    result'
+                        EqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' current'
+                          Identifier: 'data'
+                    ExpressionStatement
+                      PostfixUnaryExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'itemCount'
+                    IfStatement
+                      Identifier: 'prevEntry'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        prevEntry'
+                              Identifier: 'next'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' current'
+                              Identifier: 'next'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            ElementAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'table'
+                              Identifier: 'val'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' current'
+                              Identifier: 'next'
+                    BreakStatement
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                prevEntry'
+                    EqualsToken
+                    Identifier: ' current'
+            ReturnStatement
+              Identifier: ' result'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' count'
+          NumberKeyword
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'itemCount'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' lookup'
+          Parameter
+            Identifier: 'key'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' current'
+                  TypeReference
+                    Identifier: ' HashEntry'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' val'
+                  NumberKeyword
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'hashFn'
+                    Identifier: 'key'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            val'
+                EqualsToken
+                BinaryExpression
+                  Identifier: ' val'
+                  PercentToken
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'size'
+            ForStatement
+              BinaryExpression
+                Identifier: 'current'
+                EqualsToken
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'table'
+                  Identifier: 'val'
+              BinaryExpression
+                Identifier: ' current'
+                ExclamationEqualsToken
+                NullKeyword
+              BinaryExpression
+                Identifier: ' current'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' current'
+                  Identifier: 'next'
+              Block
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'equalsFn'
+                    Identifier: 'key'
+                    PropertyAccessExpression
+                      Identifier: ' current'
+                      Identifier: 'key'
+                  Block
+                    ReturnStatement
+                      ParenthesizedExpression
+                        PropertyAccessExpression
+                          Identifier: 'current'
+                          Identifier: 'data'
+            ReturnStatement
+              ParenthesizedExpression
+                NullKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' SimpleHashTable'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' keys'
+          ArrayLiteralExpression
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' values'
+          ArrayLiteralExpression
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' lookup'
+          Parameter
+            Identifier: 'key'
+          Parameter
+            Identifier: ' findValue'
+            QuestionToken
+            BooleanKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' searchArray'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'keys'
+            IfStatement
+              Identifier: 'findValue'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                searchArray'
+                    EqualsToken
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'values'
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                PropertyAccessExpression
+                  Identifier: ' searchArray'
+                  Identifier: 'length'
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                IfStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: 'searchArray'
+                      Identifier: 'i'
+                    EqualsEqualsToken
+                    Identifier: ' key'
+                  Block
+                    ReturnStatement
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                        key'
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'keys'
+                            Identifier: 'i'
+                        PropertyAssignment
+                          Identifier: '
+                        data'
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'values'
+                            Identifier: 'i'
+            ReturnStatement
+              NullKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' add'
+          Parameter
+            Identifier: 'key'
+          Parameter
+            Identifier: ' data'
+          BooleanKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' lookupData'
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'lookup'
+                    Identifier: 'key'
+            IfStatement
+              Identifier: 'lookupData'
+              Block
+                ReturnStatement
+                  FalseKeyword
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'keys'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'keys'
+                    Identifier: 'length'
+                EqualsToken
+                Identifier: ' key'
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'values'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'values'
+                    Identifier: 'length'
+                EqualsToken
+                Identifier: ' data'
+            ReturnStatement
+              TrueKeyword

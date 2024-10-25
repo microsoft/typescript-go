@@ -1,0 +1,56 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Abstract'
+    Constructor
+      ProtectedKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Concrete'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Abstract'
+  TypeAliasDeclaration
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    ConstructorType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' Mixin'
+    TypeParameter
+      Identifier: 'TBase'
+      TypeReference
+        Identifier: ' Constructor'
+    Parameter
+      Identifier: 'Base'
+      TypeReference
+        Identifier: ' TBase'
+    Block
+      ReturnStatement
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' Base'
+  ClassDeclaration
+    Identifier: ' Empty'
+  ClassDeclaration
+    Identifier: ' CrashTrigger'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' Mixin'
+          Identifier: 'Empty'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' trigger'
+      Block
+        ExpressionStatement
+          NewExpression
+            Identifier: ' Concrete'

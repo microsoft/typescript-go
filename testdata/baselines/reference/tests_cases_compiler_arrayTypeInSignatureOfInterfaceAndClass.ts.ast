@@ -1,0 +1,147 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' WinJS'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Promise'
+        TypeParameter
+          Identifier: 'T'
+        MethodDeclaration
+          Identifier: '
+        then'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'success'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' Promise'
+                TypeReference
+                  Identifier: 'U'
+          Parameter
+            Identifier: ' error'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'error'
+                AnyKeyword
+              TypeReference
+                Identifier: ' Promise'
+                TypeReference
+                  Identifier: 'U'
+          Parameter
+            Identifier: ' progress'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'progress'
+                AnyKeyword
+              VoidKeyword
+          TypeReference
+            Identifier: ' Promise'
+            TypeReference
+              Identifier: 'U'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Data'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IListItem'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        itemIndex'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        key'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        data'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        group'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+        isHeader'
+          BooleanKeyword
+        PropertySignature
+          Identifier: '
+        cached'
+          BooleanKeyword
+        PropertySignature
+          Identifier: '
+        isNonSourceData'
+          BooleanKeyword
+        PropertySignature
+          Identifier: '
+        preventAugmentation'
+          BooleanKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IVirtualList'
+        TypeParameter
+          Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        //removeIndices: WinJS.Promise<IListItem<T>[]>;
+        removeIndices'
+          Parameter
+            Identifier: 'indices'
+            ArrayType
+              NumberKeyword
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            AnyKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' WinJS'
+              Identifier: 'Promise'
+            ArrayType
+              TypeReference
+                Identifier: 'IListItem'
+                TypeReference
+                  Identifier: 'T'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' VirtualList'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' IVirtualList'
+            TypeReference
+              Identifier: 'T'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' removeIndices'
+          Parameter
+            Identifier: 'indices'
+            ArrayType
+              NumberKeyword
+          Parameter
+            Identifier: ' options'
+            QuestionToken
+            AnyKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' WinJS'
+              Identifier: 'Promise'
+            ArrayType
+              TypeReference
+                Identifier: 'IListItem'
+                TypeReference
+                  Identifier: 'T'

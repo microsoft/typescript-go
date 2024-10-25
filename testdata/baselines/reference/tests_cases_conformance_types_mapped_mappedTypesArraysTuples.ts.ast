@@ -1,0 +1,689 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Box'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Boxified'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' Box'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T00'
+    TypeReference
+      Identifier: ' Boxified'
+      TupleType
+        NumberKeyword
+        OptionalType
+          StringKeyword
+        RestType
+          ArrayType
+            BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' T01'
+    TypeReference
+      Identifier: ' Partial'
+      TupleType
+        NumberKeyword
+        OptionalType
+          StringKeyword
+        RestType
+          ArrayType
+            BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' T02'
+    TypeReference
+      Identifier: ' Required'
+      TupleType
+        NumberKeyword
+        OptionalType
+          StringKeyword
+        RestType
+          ArrayType
+            BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' T10'
+    TypeReference
+      Identifier: ' Boxified'
+      ArrayType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T11'
+    TypeReference
+      Identifier: ' Partial'
+      ArrayType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T12'
+    TypeReference
+      Identifier: ' Required'
+      ArrayType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T13'
+    TypeReference
+      Identifier: ' Boxified'
+      TypeReference
+        Identifier: 'ReadonlyArray'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T14'
+    TypeReference
+      Identifier: ' Partial'
+      TypeReference
+        Identifier: 'ReadonlyArray'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T15'
+    TypeReference
+      Identifier: ' Required'
+      TypeReference
+        Identifier: 'ReadonlyArray'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T20'
+    TypeReference
+      Identifier: ' Boxified'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' T21'
+    TypeReference
+      Identifier: ' Partial'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' T22'
+    TypeReference
+      Identifier: ' Required'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' T23'
+    TypeReference
+      Identifier: ' Boxified'
+      TypeReference
+        Identifier: 'ReadonlyArray'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' T24'
+    TypeReference
+      Identifier: ' Partial'
+      TypeReference
+        Identifier: 'ReadonlyArray'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' T25'
+    TypeReference
+      Identifier: ' Required'
+      TypeReference
+        Identifier: 'ReadonlyArray'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' T30'
+    TypeReference
+      Identifier: ' Boxified'
+      TypeReference
+        Identifier: 'Partial'
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T31'
+    TypeReference
+      Identifier: ' Partial'
+      TypeReference
+        Identifier: 'Boxified'
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' b'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T40'
+    TypeReference
+      Identifier: ' Boxified'
+      UnionType
+        TypeReference
+          Identifier: 'A'
+        ArrayType
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            Identifier: 'A'
+        TupleType
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' B'
+        StringKeyword
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' ReadWrite'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      MinusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T50'
+    TypeReference
+      Identifier: ' Readonly'
+      ArrayType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T51'
+    TypeReference
+      Identifier: ' Readonly'
+      TupleType
+        NumberKeyword
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' T52'
+    TypeReference
+      Identifier: ' Partial'
+      TypeReference
+        Identifier: 'Readonly'
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T53'
+    TypeReference
+      Identifier: ' Readonly'
+      TypeReference
+        Identifier: 'Partial'
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T54'
+    TypeReference
+      Identifier: ' ReadWrite'
+      TypeReference
+        Identifier: 'Required'
+        TypeReference
+          Identifier: 'T53'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' unboxify'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Boxified'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x10'
+        TupleType
+          TypeReference
+            Identifier: 'Box'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Box'
+            StringKeyword
+          RestType
+            ArrayType
+              TypeReference
+                Identifier: 'Box'
+                BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y10'
+        CallExpression
+          Identifier: ' unboxify'
+          Identifier: 'x10'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+        ArrayType
+          TypeReference
+            Identifier: ' Box'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y11'
+        CallExpression
+          Identifier: ' unboxify'
+          Identifier: 'x11'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x12'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' Box'
+              NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            TypeReference
+              Identifier: ' Box'
+              ArrayType
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y12'
+        CallExpression
+          Identifier: ' unboxify'
+          Identifier: 'x12'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' nonpartial'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x20'
+        TupleType
+          UnionType
+            NumberKeyword
+            UndefinedKeyword
+          OptionalType
+            StringKeyword
+          RestType
+            ArrayType
+              BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y20'
+        CallExpression
+          Identifier: ' nonpartial'
+          Identifier: 'x20'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x21'
+        ArrayType
+          ParenthesizedType
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y21'
+        CallExpression
+          Identifier: ' nonpartial'
+          Identifier: 'x21'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x22'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            ArrayType
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y22'
+        CallExpression
+          Identifier: ' nonpartial'
+          Identifier: 'x22'
+  TypeAliasDeclaration
+    Identifier: ' __Awaited'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' PromiseLike'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Awaitified'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' __Awaited'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'P'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' all'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'values'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'Awaitified'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' Promise'
+        NumberKeyword
+    Parameter
+      Identifier: ' c'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' d'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            CallExpression
+              Identifier: ' all'
+              Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            CallExpression
+              Identifier: ' all'
+              Identifier: 'a'
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            CallExpression
+              Identifier: ' all'
+              Identifier: 'a'
+              Identifier: ' b'
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x4'
+            CallExpression
+              Identifier: ' all'
+              Identifier: 'a'
+              Identifier: ' b'
+              Identifier: ' c'
+              Identifier: ' d'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' Boxified'
+        TypeReference
+          Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              TypeReference
+                Identifier: ' Box'
+                AnyKeyword
+              UndefinedKeyword
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'pop'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            ArrayType
+              TypeReference
+                Identifier: ' Box'
+                AnyKeyword
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'concat'
+              Identifier: 'a'
+  TypeAliasDeclaration
+    Identifier: ' ElementType'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' Array'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' Mapped'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' F'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' ElementType'
+      TypeReference
+        Identifier: 'Mapped'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' R1'
+    TypeReference
+      Identifier: ' F'
+      TupleType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' R2'
+    TypeReference
+      Identifier: ' ElementType'
+      TypeReference
+        Identifier: 'Mapped'
+        TupleType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' acceptArray'
+    Parameter
+      Identifier: 'arr'
+      ArrayType
+        AnyKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' mapArray'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    Parameter
+      Identifier: 'arr'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Mapped'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' acceptMappedArray'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    Parameter
+      Identifier: 'arr'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    acceptArray'
+          CallExpression
+            Identifier: 'mapArray'
+            Identifier: 'arr'
+  TypeAliasDeclaration
+    Identifier: ' Unconstrained'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' ElementType'
+      TypeReference
+        Identifier: 'Mapped'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeReference
+      Identifier: ' Unconstrained'
+      TupleType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' Constrained'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    TypeReference
+      Identifier: ' ElementType'
+      TypeReference
+        Identifier: 'Mapped'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeReference
+      Identifier: ' Constrained'
+      TupleType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword

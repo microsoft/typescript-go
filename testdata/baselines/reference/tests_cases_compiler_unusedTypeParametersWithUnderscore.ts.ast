@@ -1,0 +1,48 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: '_T'
+    TypeParameter
+      Identifier: ' U'
+    Block
+  TypeAliasDeclaration
+    Identifier: ' T'
+    TypeParameter
+      Identifier: '_T'
+    TypeParameter
+      Identifier: ' U'
+    TypeLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: '_T'
+    TypeParameter
+      Identifier: ' U'
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: '_T'
+    TypeParameter
+      Identifier: ' U'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' m'
+      TypeParameter
+        Identifier: '_V'
+      TypeParameter
+        Identifier: ' W'
+      Block
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        ArrowFunction
+          TypeParameter
+            Identifier: '_T'
+          TypeParameter
+            Identifier: ' U'
+          EqualsGreaterThanToken
+          Block

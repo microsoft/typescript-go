@@ -1,0 +1,150 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      NumberKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'bar'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' bar'
+      NumberKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BB'
+        TypeQuery
+          Identifier: ' B'
+        Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' AA'
+        TypeQuery
+          Identifier: ' A'
+        Identifier: ' BB'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' AA'
+  FunctionDeclaration
+    Identifier: ' constructB'
+    Parameter
+      Identifier: 'Factory'
+      TypeQuery
+        Identifier: ' B'
+    Block
+      ExpressionStatement
+        NewExpression
+          Identifier: ' Factory'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BB'
+        Identifier: ' B'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' BB'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+        Identifier: ' C'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+  ClassDeclaration
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodDeclaration
+      Identifier: ' // okay -- implements abstract method
+    bar'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' F'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' G'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' qux'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' qux'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    y'
+      NumberKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' quz'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+      BooleanKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' nom'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    nom'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      BooleanKeyword
+  ClassDeclaration
+    Identifier: ' H'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' baz'
+      NumberKeyword

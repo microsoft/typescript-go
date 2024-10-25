@@ -1,0 +1,25 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Generator'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' Generate'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'func'
+      TypeReference
+        Identifier: ' Generator'
+        TypeReference
+          Identifier: 'U'
+    TypeReference
+      Identifier: ' U'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' Generate'
+          Identifier: 'func'

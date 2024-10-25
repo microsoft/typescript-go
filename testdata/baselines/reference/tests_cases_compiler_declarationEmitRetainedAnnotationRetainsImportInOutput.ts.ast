@@ -1,0 +1,62 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Whatever'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' something'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        TypeReference
+          Identifier: ' Whatever'
+          TypeReference
+            Identifier: 'T'
+    TypeReference
+      Identifier: ' Whatever'
+      TypeReference
+        Identifier: 'T'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' E'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' run'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'E'
+          Parameter
+            Identifier: 'i'
+            FunctionType
+              TypeReference
+                QualifiedName
+                  Identifier: ' E'
+                  Identifier: 'Whatever'
+                TypeReference
+                  Identifier: 'E'
+          TypeReference
+            QualifiedName
+              Identifier: ' E'
+              Identifier: 'Whatever'
+            TypeReference
+              Identifier: 'E'
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' E'
+              Identifier: 'something'
+            Identifier: 'i'

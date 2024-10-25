@@ -1,0 +1,23 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' foo'
+  InterfaceDeclaration
+    Identifier: ' bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        UnionType
+          TypeReference
+            Identifier: ' bar'
+          TypeReference
+            Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        UnionType
+          TypeReference
+            Identifier: ' bar'
+          TypeReference
+            Identifier: ' foo'

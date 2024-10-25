@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' map'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            NumberKeyword
+          StringKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        NumberKeyword
+        StringKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ArrowFunction
+              Parameter
+                Identifier: 'value'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' String'
+                Identifier: 'value'

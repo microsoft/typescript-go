@@ -1,0 +1,69 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Action'
+    FunctionType
+      ParenthesizedType
+        UnionType
+          TypeReference
+            Identifier: 'Generator'
+            StringKeyword
+            StringKeyword
+            ArrayType
+              StringKeyword
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test1'
+        TypeReference
+          Identifier: ' Action'
+        FunctionExpression
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' next'
+                  YieldExpression
+                    StringLiteral
+            ReturnStatement
+              ElementAccessExpression
+                Identifier: ' next'
+                NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Action2'
+    FunctionType
+      ParenthesizedType
+        UnionType
+          TypeReference
+            Identifier: 'AsyncGenerator'
+            StringKeyword
+            StringKeyword
+            ArrayType
+              StringKeyword
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test2'
+        TypeReference
+          Identifier: ' Action2'
+        FunctionExpression
+          AsyncKeyword
+          AsteriskToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' next'
+                  YieldExpression
+                    AwaitExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' Promise'
+                          Identifier: 'resolve'
+                        StringLiteral
+            ReturnStatement
+              ElementAccessExpression
+                Identifier: ' next'
+                NumericLiteral

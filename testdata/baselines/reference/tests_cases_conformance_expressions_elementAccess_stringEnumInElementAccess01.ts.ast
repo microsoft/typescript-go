@@ -1,0 +1,54 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    B'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    C'
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Item'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    c'
+      BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' item'
+        TypeReference
+          Identifier: ' Item'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' snb'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+        ElementAccessExpression
+          Identifier: ' item'
+          Identifier: 'e'

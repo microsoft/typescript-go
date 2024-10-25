@@ -1,0 +1,67 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' z'
+      Block
+    PropertyDeclaration
+      Identifier: '
+  a'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Y'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' z'
+      Block
+    PropertyDeclaration
+      Identifier: '
+  a'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+  b'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Z'
+    PropertyDeclaration
+      Identifier: '
+  z'
+      AnyKeyword
+    PropertyDeclaration
+      Identifier: '
+  c'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        NewExpression
+          Identifier: ' X'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        NewExpression
+          Identifier: ' Y'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        NewExpression
+          Identifier: ' Z'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+c1'
+      EqualsToken
+      BinaryExpression
+        Identifier: ' c2'
+        EqualsToken
+        Identifier: ' c3'

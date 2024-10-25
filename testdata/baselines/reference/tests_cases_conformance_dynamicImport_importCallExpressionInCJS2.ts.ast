@@ -1,0 +1,59 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' backup'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' compute'
+    Parameter
+      Identifier: 'promise'
+      TypeReference
+        Identifier: ' Promise'
+        AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            AwaitExpression
+              Identifier: ' promise'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'j'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        j'
+              EqualsToken
+              AwaitExpression
+                CallExpression
+                  ImportKeyword
+                  StringLiteral
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' j'
+                Identifier: 'backup'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' j'
+            Identifier: 'foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+compute'
+      CallExpression
+        ImportKeyword
+        StringLiteral

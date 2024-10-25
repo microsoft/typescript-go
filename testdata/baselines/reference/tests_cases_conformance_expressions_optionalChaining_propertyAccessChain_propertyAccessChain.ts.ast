@@ -1,0 +1,186 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        UnionType
+          UndefinedKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+o1'
+      QuestionDotToken
+      Identifier: 'b'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        UnionType
+          UndefinedKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' c'
+                  StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+o2'
+        QuestionDotToken
+        Identifier: 'b'
+      Identifier: 'c'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            UnionType
+              UndefinedKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' c'
+                  StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+o3'
+        Identifier: 'b'
+      QuestionDotToken
+      Identifier: 'c'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o4'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            TypeLiteral
+              PropertySignature
+                Identifier: ' c'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' d'
+                    QuestionToken
+                    TypeLiteral
+                      PropertySignature
+                        Identifier: ' e'
+                        StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+o4'
+            Identifier: 'b'
+          QuestionDotToken
+          Identifier: 'c'
+        Identifier: 'd'
+      QuestionDotToken
+      Identifier: 'e'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o5'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' b'
+            QuestionToken
+            TypeLiteral
+              PropertySignature
+                Identifier: ' c'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' d'
+                    QuestionToken
+                    TypeLiteral
+                      PropertySignature
+                        Identifier: ' e'
+                        StringKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+o5'
+              Identifier: 'b'
+            QuestionDotToken
+          Identifier: 'c'
+        Identifier: 'd'
+      QuestionDotToken
+      Identifier: 'e'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o6'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          UnionType
+            UndefinedKeyword
+            ParenthesizedType
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  NumberKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        Identifier: '
+o6'
+        NumberKeyword
+      QuestionDotToken
+      Identifier: 'x'
+  ExpressionStatement
+    ConditionalExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// GH#34109
+o1'
+        QuestionDotToken
+        Identifier: 'b'
+      QuestionToken
+      NumericLiteral
+      ColonToken
+      NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      NonNullExpression
+        PropertyAccessExpression
+          Identifier: '
+
+// GH#36031
+o2'
+          QuestionDotToken
+          Identifier: 'b'
+      Identifier: 'c'
+  ExpressionStatement
+    NonNullExpression
+      PropertyAccessExpression
+        NonNullExpression
+          PropertyAccessExpression
+            Identifier: '
+o2'
+            QuestionDotToken
+            Identifier: 'b'
+        Identifier: 'c'

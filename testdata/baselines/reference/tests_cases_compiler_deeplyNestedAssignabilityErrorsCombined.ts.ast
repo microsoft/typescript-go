@@ -1,0 +1,127 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' b'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' c'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' d'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' e'
+                            ObjectLiteralExpression
+                              MethodDeclaration
+                                Identifier: ' f'
+                                Block
+                                  ReturnStatement
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' g'
+                                        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' b'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' c'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' d'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' e'
+                            ObjectLiteralExpression
+                              MethodDeclaration
+                                Identifier: ' f'
+                                Block
+                                  ReturnStatement
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' g'
+                                        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' y'
+  ClassDeclaration
+    Identifier: ' Ctor1'
+    PropertyDeclaration
+      Identifier: '
+    g'
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' Ctor2'
+    PropertyDeclaration
+      Identifier: '
+    g'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' b'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' c'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' d'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' e'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' f'
+                                Identifier: ' Ctor1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' b'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' c'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' d'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' e'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' f'
+                                Identifier: ' Ctor2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      EqualsToken
+      Identifier: ' y2'

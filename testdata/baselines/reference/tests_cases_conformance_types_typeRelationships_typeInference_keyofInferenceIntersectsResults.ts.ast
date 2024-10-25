@@ -1,0 +1,73 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' X'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' X'
+    Parameter
+      Identifier: 'x'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' foo'
+          TypeReference
+            Identifier: 'X'
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' foo'
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' bar'
+          StringLiteral
+          StringLiteral

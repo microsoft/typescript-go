@@ -1,0 +1,34 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' makePoint'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          GetAccessor
+            Identifier: ' x'
+            Block
+              ReturnStatement
+                Identifier: ' x'
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' makePoint'
+            NumericLiteral
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumberKeyword
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' makePoint'
+            NumericLiteral
+          Identifier: 'x'

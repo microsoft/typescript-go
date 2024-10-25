@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C65'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' aaaaa'
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' aaaaa'
+      Block
+        ReturnStatement
+          NumericLiteral

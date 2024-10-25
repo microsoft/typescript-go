@@ -1,0 +1,8 @@
+SourceFile
+  IfStatement
+    NumericLiteral
+    ExpressionStatement
+      CallExpression
+        PropertyAccessExpression
+          RegularExpressionLiteral
+          Identifier: 'foo'

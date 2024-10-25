@@ -1,0 +1,6 @@
+SourceFile
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' a'

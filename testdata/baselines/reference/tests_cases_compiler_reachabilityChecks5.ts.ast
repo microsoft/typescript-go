@@ -1,0 +1,232 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f0'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      WhileStatement
+        TrueKeyword
+        EmptyStatement
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ReturnStatement
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+  FunctionDeclaration
+    Identifier: ' f3_1'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      TryStatement
+        Block
+          IfStatement
+            Identifier: 'x'
+            Block
+              ReturnStatement
+                NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      TryStatement
+        Block
+          IfStatement
+            Identifier: 'x'
+            Block
+              ReturnStatement
+                NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ReturnStatement
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      TryStatement
+        Block
+          IfStatement
+            Identifier: 'x'
+            Block
+              ReturnStatement
+                NumericLiteral
+            Block
+              ThrowStatement
+                NewExpression
+                  Identifier: ' Error'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+  FunctionDeclaration
+    Identifier: ' f7'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      TryStatement
+        Block
+          IfStatement
+            Identifier: 'x'
+            Block
+              ReturnStatement
+                NumericLiteral
+            Block
+              ThrowStatement
+                NewExpression
+                  Identifier: ' Error'
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ReturnStatement
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f8'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      TryStatement
+        Block
+          IfStatement
+            TrueKeyword
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            x'
+            Block
+              ReturnStatement
+                NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ReturnStatement
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f9'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      TryStatement
+        Block
+          WhileStatement
+            FalseKeyword
+            Block
+              ReturnStatement
+                NumericLiteral
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ReturnStatement
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f10'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      TryStatement
+        Block
+          DoStatement
+            Block
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            x'
+            TrueKeyword
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            ReturnStatement
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f11'
+    Parameter
+      Identifier: 'x'
+    NumberKeyword
+    Block
+      LabeledStatement
+        Identifier: '
+    test'
+        TryStatement
+          Block
+            DoStatement
+              Block
+                DoStatement
+                  Block
+                    BreakStatement
+                      Identifier: ' test'
+                  TrueKeyword
+                ExpressionStatement
+                  PostfixUnaryExpression
+                    Identifier: '
+            x'
+              TrueKeyword
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ReturnStatement
+                NumericLiteral

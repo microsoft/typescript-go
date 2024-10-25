@@ -1,0 +1,56 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'CDef'
+          BindingElement
+            Identifier: ' C'
+          BindingElement
+            Identifier: ' B0Def'
+          BindingElement
+            Identifier: ' B0'
+          BindingElement
+            Identifier: ' B1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bRanges'
+        ArrayLiteralExpression
+          Identifier: 'B0'
+          Identifier: ' B1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      Identifier: 'C'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      Identifier: 'bRanges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineDocumentHighlights'
+      StringLiteral

@@ -1,0 +1,15 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Test'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      InferType
+        TypeParameter
+          Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+      NumberKeyword
+      StringKeyword

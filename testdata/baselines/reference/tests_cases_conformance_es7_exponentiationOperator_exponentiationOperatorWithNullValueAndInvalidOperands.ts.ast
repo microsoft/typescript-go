@@ -1,0 +1,113 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a1'
+        BinaryExpression
+          NullKeyword
+          AsteriskAsteriskToken
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a2'
+        BinaryExpression
+          NullKeyword
+          AsteriskAsteriskToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1a3'
+        BinaryExpression
+          NullKeyword
+          AsteriskAsteriskToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b1'
+        BinaryExpression
+          Identifier: ' a'
+          AsteriskAsteriskToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b2'
+        BinaryExpression
+          Identifier: ' b'
+          AsteriskAsteriskToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1b3'
+        BinaryExpression
+          Identifier: ' c'
+          AsteriskAsteriskToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1c1'
+        BinaryExpression
+          NullKeyword
+          AsteriskAsteriskToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1c2'
+        BinaryExpression
+          NullKeyword
+          AsteriskAsteriskToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1c3'
+        BinaryExpression
+          NullKeyword
+          AsteriskAsteriskToken
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1d1'
+        BinaryExpression
+          TrueKeyword
+          AsteriskAsteriskToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1d2'
+        BinaryExpression
+          StringLiteral
+          AsteriskAsteriskToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1d3'
+        BinaryExpression
+          ObjectLiteralExpression
+          AsteriskAsteriskToken
+          NullKeyword

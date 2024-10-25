@@ -1,0 +1,6 @@
+SourceFile
+  ForInStatement
+    CallExpression
+      Identifier: 'foo'
+    Identifier: ' b'
+    Block

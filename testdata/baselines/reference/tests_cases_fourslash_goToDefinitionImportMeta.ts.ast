@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @module: esnext
+// @Filename: foo.ts
+/////// <reference no-default-lib="true"/>
+/////// <reference path='./bar.d.ts' />
+////import.me/*reference*/ta;
+
+//@Filename: bar.d.ts
+////interface ImportMeta {
+////}
+
+verify'
+        Identifier: 'baselineGoToDefinition'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'noErrors'

@@ -1,0 +1,241 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          Identifier: ''
+  ExportDeclaration
+    NamedExports
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' bar'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' __awaiter'
+    Parameter
+      Identifier: 'thisArg'
+      AnyKeyword
+    Parameter
+      Identifier: ' _arguments'
+      AnyKeyword
+    Parameter
+      Identifier: ' P'
+      TypeReference
+        Identifier: ' Function'
+    Parameter
+      Identifier: ' generator'
+      TypeReference
+        Identifier: ' Function'
+    AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+// @filename: /package1/node_modules/tslib/tslib.js
+module'
+          Identifier: 'exports'
+        Identifier: '__awaiter'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'thisArg'
+        Parameter
+          Identifier: ' _arguments'
+        Parameter
+          Identifier: ' P'
+        Parameter
+          Identifier: ' generator'
+        Block
+          FunctionDeclaration
+            Identifier: ' adopt'
+            Parameter
+              Identifier: 'value'
+            Block
+              ReturnStatement
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' value'
+                    InstanceOfKeyword
+                    Identifier: ' P'
+                  QuestionToken
+                  Identifier: ' value'
+                  ColonToken
+                  NewExpression
+                    Identifier: ' P'
+                    FunctionExpression
+                      Parameter
+                        Identifier: 'resolve'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: ' resolve'
+                            Identifier: 'value'
+          ReturnStatement
+            NewExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'P'
+                  BarBarToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      Identifier: 'P'
+                      EqualsToken
+                      Identifier: ' Promise'
+              FunctionExpression
+                Parameter
+                  Identifier: 'resolve'
+                Parameter
+                  Identifier: ' reject'
+                Block
+                  FunctionDeclaration
+                    Identifier: ' fulfilled'
+                    Parameter
+                      Identifier: 'value'
+                    Block
+                      TryStatement
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: ' step'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'generator'
+                                  Identifier: 'next'
+                                Identifier: 'value'
+                        CatchClause
+                          VariableDeclaration
+                            Identifier: 'e'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: ' reject'
+                                Identifier: 'e'
+                  FunctionDeclaration
+                    Identifier: ' rejected'
+                    Parameter
+                      Identifier: 'value'
+                    Block
+                      TryStatement
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: ' step'
+                              CallExpression
+                                ElementAccessExpression
+                                  Identifier: 'generator'
+                                  StringLiteral
+                                Identifier: 'value'
+                        CatchClause
+                          VariableDeclaration
+                            Identifier: 'e'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: ' reject'
+                                Identifier: 'e'
+                  FunctionDeclaration
+                    Identifier: ' step'
+                    Parameter
+                      Identifier: 'result'
+                    Block
+                      ExpressionStatement
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            Identifier: ' result'
+                            Identifier: 'done'
+                          QuestionToken
+                          CallExpression
+                            Identifier: ' resolve'
+                            PropertyAccessExpression
+                              Identifier: 'result'
+                              Identifier: 'value'
+                          ColonToken
+                          CallExpression
+                            PropertyAccessExpression
+                              CallExpression
+                                Identifier: ' adopt'
+                                PropertyAccessExpression
+                                  Identifier: 'result'
+                                  Identifier: 'value'
+                              Identifier: 'then'
+                            Identifier: 'fulfilled'
+                            Identifier: ' rejected'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        step'
+                      CallExpression
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            BinaryExpression
+                              Identifier: 'generator'
+                              EqualsToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' generator'
+                                  Identifier: 'apply'
+                                Identifier: 'thisArg'
+                                BinaryExpression
+                                  Identifier: ' _arguments'
+                                  BarBarToken
+                                  ArrayLiteralExpression
+                          Identifier: 'next'
+  ExportDeclaration
+    NamedExports
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block

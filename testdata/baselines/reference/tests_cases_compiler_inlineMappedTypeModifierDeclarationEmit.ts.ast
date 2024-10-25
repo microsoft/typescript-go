@@ -1,0 +1,187 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' test1'
+        ImportSpecifier
+          Identifier: ' test2'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' wrappedTest1'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' test1'
+          Identifier: 'obj'
+          Identifier: ' k'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' wrappedTest2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' test2'
+          Identifier: 'obj'
+          Identifier: ' k'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Obj'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  a'
+        NumberKeyword
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' foo'
+        StringKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' processedInternally1'
+        CallExpression
+          Identifier: ' wrappedTest1'
+          AsExpression
+            ObjectLiteralExpression
+            TypeReference
+              Identifier: ' Obj'
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' processedInternally2'
+        CallExpression
+          Identifier: ' wrappedTest2'
+          AsExpression
+            ObjectLiteralExpression
+            TypeReference
+              Identifier: ' Obj'
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' OmitReal'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        AnyKeyword
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' Exclude'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' OmitUnveiled'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        SymbolKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' Exclude'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' K'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' test1'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    TypeReference
+      Identifier: ' OmitReal'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' test2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    TypeReference
+      Identifier: ' OmitUnveiled'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          AnyKeyword

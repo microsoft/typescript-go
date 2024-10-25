@@ -1,0 +1,9 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' P'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral

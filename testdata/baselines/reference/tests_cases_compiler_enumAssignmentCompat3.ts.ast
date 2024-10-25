@@ -1,0 +1,344 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' First'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        a'
+        EnumMember
+          Identifier: ' b'
+        EnumMember
+          Identifier: ' c'
+  ModuleDeclaration
+    Identifier: ' Abc'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        a'
+        EnumMember
+          Identifier: ' b'
+        EnumMember
+          Identifier: ' c'
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' Nope'
+        EnumMember
+          Identifier: '
+        a'
+        EnumMember
+          Identifier: ' b'
+        EnumMember
+          Identifier: ' c'
+  ModuleDeclaration
+    Identifier: ' Abcd'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        a'
+        EnumMember
+          Identifier: ' b'
+        EnumMember
+          Identifier: ' c'
+        EnumMember
+          Identifier: ' d'
+  ModuleDeclaration
+    Identifier: ' Ab'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        a'
+        EnumMember
+          Identifier: ' b'
+  ModuleDeclaration
+    Identifier: ' Cd'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        c'
+        EnumMember
+          Identifier: ' d'
+  ModuleDeclaration
+    Identifier: ' Const'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        ConstKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        a'
+        EnumMember
+          Identifier: ' b'
+        EnumMember
+          Identifier: ' c'
+  ModuleDeclaration
+    Identifier: ' Decl'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        a'
+        EnumMember
+          Identifier: ' b'
+        EnumMember
+          Identifier: ' c'
+          NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Merged'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        a'
+        EnumMember
+          Identifier: ' b'
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        c'
+          NumericLiteral
+        EnumMember
+          Identifier: ' d'
+  ModuleDeclaration
+    Identifier: ' Merged2'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        a'
+        EnumMember
+          Identifier: ' b'
+        EnumMember
+          Identifier: ' c'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' d'
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' abc'
+        TypeReference
+          QualifiedName
+            Identifier: ' First'
+            Identifier: 'E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' secondAbc'
+        TypeReference
+          QualifiedName
+            Identifier: ' Abc'
+            Identifier: 'E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' secondAbcd'
+        TypeReference
+          QualifiedName
+            Identifier: ' Abcd'
+            Identifier: 'E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' secondAb'
+        TypeReference
+          QualifiedName
+            Identifier: ' Ab'
+            Identifier: 'E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' secondCd'
+        TypeReference
+          QualifiedName
+            Identifier: ' Cd'
+            Identifier: 'E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nope'
+        TypeReference
+          QualifiedName
+            Identifier: ' Abc'
+            Identifier: 'Nope'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        TypeReference
+          QualifiedName
+            Identifier: ' Const'
+            Identifier: 'E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' decl'
+        TypeReference
+          QualifiedName
+            Identifier: ' Decl'
+            Identifier: 'E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' merged'
+        TypeReference
+          QualifiedName
+            Identifier: ' Merged'
+            Identifier: 'E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' merged2'
+        TypeReference
+          QualifiedName
+            Identifier: ' Merged2'
+            Identifier: 'E'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+abc'
+      EqualsToken
+      Identifier: ' secondAbc'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+abc'
+      EqualsToken
+      Identifier: ' secondAbcd'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // missing 'd'
+abc'
+      EqualsToken
+      Identifier: ' secondAb'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+abc'
+      EqualsToken
+      Identifier: ' secondCd'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // missing 'd'
+abc'
+      EqualsToken
+      Identifier: ' nope'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // nope!
+abc'
+      EqualsToken
+      Identifier: ' decl'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // bad - value of 'c' differs between these enums
+secondAbc'
+      EqualsToken
+      Identifier: ' abc'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+secondAbcd'
+      EqualsToken
+      Identifier: ' abc'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+secondAb'
+      EqualsToken
+      Identifier: ' abc'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // missing 'c'
+secondCd'
+      EqualsToken
+      Identifier: ' abc'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // missing 'a' and 'b'
+nope'
+      EqualsToken
+      Identifier: ' abc'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // nope!
+decl'
+      EqualsToken
+      Identifier: ' abc'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // bad - value of 'c' differs between these enums
+
+// const is only assignable to itself
+k'
+      EqualsToken
+      Identifier: ' k'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+abc'
+      EqualsToken
+      Identifier: ' k'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+k'
+      EqualsToken
+      Identifier: ' abc'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// merged enums compare all their members
+abc'
+      EqualsToken
+      Identifier: ' merged'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // missing 'd'
+merged'
+      EqualsToken
+      Identifier: ' abc'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // bad - value of 'c' differs between these enums
+abc'
+      EqualsToken
+      Identifier: ' merged2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+merged2'
+      EqualsToken
+      Identifier: ' abc'

@@ -1,0 +1,43 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' commands'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' RM'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getName'
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getDescription'
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' run'
+      Parameter
+        Identifier: 'configuration'
+        TypeReference
+          QualifiedName
+            Identifier: ' commands'
+            Identifier: 'IConfiguration'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' absoluteWorkspacePath'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' configuration'
+                    Identifier: 'workspace'
+                  Identifier: 'toAbsolutePath'
+                PropertyAccessExpression
+                  Identifier: 'configuration'
+                  Identifier: 'server'

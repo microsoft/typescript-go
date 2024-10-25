@@ -1,0 +1,45 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' RenameInfo'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' UserPreferences'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getRenameInfo'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    TypeReference
+      Identifier: ' RenameInfo'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' nodeIsEligibleForRename'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword

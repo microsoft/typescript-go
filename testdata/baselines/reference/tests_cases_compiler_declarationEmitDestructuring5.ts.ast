@@ -1,0 +1,57 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' baz'
+    Parameter
+      ArrayBindingPattern
+        OmittedExpression
+        BindingElement
+          Identifier: ' z'
+        OmittedExpression
+    Block
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      ArrayBindingPattern
+        OmittedExpression
+        BindingElement
+          Identifier: ' b'
+      TupleType
+        AnyKeyword
+        AnyKeyword
+    VoidKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'z'
+        OmittedExpression
+        OmittedExpression
+    Block
+  FunctionDeclaration
+    Identifier: ' bar1'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'z'
+        OmittedExpression
+        OmittedExpression
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' bar2'
+    Parameter
+      ArrayBindingPattern
+        OmittedExpression
+        OmittedExpression
+        BindingElement
+          Identifier: 'z'
+        OmittedExpression
+        OmittedExpression
+    Block

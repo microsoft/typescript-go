@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+   foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'bar'
+        NumericLiteral
+      Block

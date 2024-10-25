@@ -1,0 +1,502 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addToSeen'
+        ImportSpecifier
+          Identifier: '
+    CodeFixContextBase'
+        ImportSpecifier
+          Identifier: '
+    contains'
+        ImportSpecifier
+          Identifier: '
+    createTextSpanFromNode'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    ExportSpecifier'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    filter'
+        ImportSpecifier
+          Identifier: '
+    findDiagnosticForNode'
+        ImportSpecifier
+          Identifier: '
+    getDiagnosticsWithinSpan'
+        ImportSpecifier
+          Identifier: '
+    getNodeId'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isExportSpecifier'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TextSpan'
+        ImportSpecifier
+          Identifier: '
+    tryCast'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Re_exporting_a_type_when_0_is_enabled_requires_using_export_type'
+            Identifier: 'code'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToConvertToTypeOnlyExport'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' changes'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'ChangeTracker'
+                        Identifier: 'with'
+                      Identifier: 'context'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' t'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' fixSingleExportDeclaration'
+                          Identifier: 't'
+                          CallExpression
+                            Identifier: ' getExportSpecifierForDiagnosticSpan'
+                            PropertyAccessExpression
+                              Identifier: 'context'
+                              Identifier: 'span'
+                            PropertyAccessExpression
+                              Identifier: ' context'
+                              Identifier: 'sourceFile'
+                          Identifier: ' context'
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'changes'
+                  Identifier: 'length'
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      CallExpression
+                        Identifier: 'createCodeFixAction'
+                        Identifier: 'fixId'
+                        Identifier: ' changes'
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'Convert_to_type_only_export'
+                        Identifier: ' fixId'
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'Convert_all_re_exported_types_to_type_only_exports'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          FunctionExpression
+            Identifier: ' getAllCodeActionsToConvertToTypeOnlyExport'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' fixedExportDeclarations'
+                    NewExpression
+                      Identifier: ' Map'
+                      NumberKeyword
+                      LiteralType
+                        TrueKeyword
+              ReturnStatement
+                CallExpression
+                  Identifier: ' codeFixAll'
+                  Identifier: 'context'
+                  Identifier: ' errorCodes'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'changes'
+                    Parameter
+                      Identifier: ' diag'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' exportSpecifier'
+                            CallExpression
+                              Identifier: ' getExportSpecifierForDiagnosticSpan'
+                              Identifier: 'diag'
+                              PropertyAccessExpression
+                                Identifier: ' context'
+                                Identifier: 'sourceFile'
+                      IfStatement
+                        BinaryExpression
+                          Identifier: 'exportSpecifier'
+                          AmpersandAmpersandToken
+                          CallExpression
+                            Identifier: ' addToSeen'
+                            Identifier: 'fixedExportDeclarations'
+                            CallExpression
+                              Identifier: ' getNodeId'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'exportSpecifier'
+                                  Identifier: 'parent'
+                                Identifier: 'parent'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                fixSingleExportDeclaration'
+                              Identifier: 'changes'
+                              Identifier: ' exportSpecifier'
+                              Identifier: ' context'
+  FunctionDeclaration
+    Identifier: ' getExportSpecifierForDiagnosticSpan'
+    Parameter
+      Identifier: 'span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' tryCast'
+          PropertyAccessExpression
+            CallExpression
+              Identifier: 'getTokenAtPosition'
+              Identifier: 'sourceFile'
+              PropertyAccessExpression
+                Identifier: ' span'
+                Identifier: 'start'
+            Identifier: 'parent'
+          Identifier: ' isExportSpecifier'
+  FunctionDeclaration
+    Identifier: ' fixSingleExportDeclaration'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' exportSpecifier'
+      UnionType
+        TypeReference
+          Identifier: ' ExportSpecifier'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' context'
+      TypeReference
+        Identifier: ' CodeFixContextBase'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'exportSpecifier'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exportClause'
+            PropertyAccessExpression
+              Identifier: ' exportSpecifier'
+              Identifier: 'parent'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exportDeclaration'
+            PropertyAccessExpression
+              Identifier: ' exportClause'
+              Identifier: 'parent'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' typeExportSpecifiers'
+            CallExpression
+              Identifier: ' getTypeExportSpecifiers'
+              Identifier: 'exportSpecifier'
+              Identifier: ' context'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'typeExportSpecifiers'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' exportClause'
+              Identifier: 'elements'
+            Identifier: 'length'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changes'
+                Identifier: 'insertModifierBefore'
+              PropertyAccessExpression
+                Identifier: 'context'
+                Identifier: 'sourceFile'
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'TypeKeyword'
+              Identifier: ' exportClause'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' valueExportDeclaration'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'updateExportDeclaration'
+                  Identifier: '
+            exportDeclaration'
+                  PropertyAccessExpression
+                    Identifier: '
+            exportDeclaration'
+                    Identifier: 'modifiers'
+                  FalseKeyword
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'updateNamedExports'
+                    Identifier: 'exportClause'
+                    CallExpression
+                      Identifier: ' filter'
+                      PropertyAccessExpression
+                        Identifier: 'exportClause'
+                        Identifier: 'elements'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' e'
+                        EqualsGreaterThanToken
+                        PrefixUnaryExpression
+                          CallExpression
+                            Identifier: 'contains'
+                            Identifier: 'typeExportSpecifiers'
+                            Identifier: ' e'
+                  PropertyAccessExpression
+                    Identifier: '
+            exportDeclaration'
+                    Identifier: 'moduleSpecifier'
+                  Identifier: '
+            /*attributes*/ undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' typeExportDeclaration'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createExportDeclaration'
+                  Identifier: '
+            /*modifiers*/ undefined'
+                  TrueKeyword
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createNamedExports'
+                    Identifier: 'typeExportSpecifiers'
+                  PropertyAccessExpression
+                    Identifier: '
+            exportDeclaration'
+                    Identifier: 'moduleSpecifier'
+                  Identifier: '
+            /*attributes*/ undefined'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        changes'
+                Identifier: 'replaceNode'
+              PropertyAccessExpression
+                Identifier: 'context'
+                Identifier: 'sourceFile'
+              Identifier: ' exportDeclaration'
+              Identifier: ' valueExportDeclaration'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+            leadingTriviaOption'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' textChanges'
+                      Identifier: 'LeadingTriviaOption'
+                    Identifier: 'IncludeAll'
+                PropertyAssignment
+                  Identifier: '
+            trailingTriviaOption'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' textChanges'
+                      Identifier: 'TrailingTriviaOption'
+                    Identifier: 'Exclude'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changes'
+                Identifier: 'insertNodeAfter'
+              PropertyAccessExpression
+                Identifier: 'context'
+                Identifier: 'sourceFile'
+              Identifier: ' exportDeclaration'
+              Identifier: ' typeExportDeclaration'
+  FunctionDeclaration
+    Identifier: ' getTypeExportSpecifiers'
+    Parameter
+      Identifier: 'originExportSpecifier'
+      TypeReference
+        Identifier: ' ExportSpecifier'
+    Parameter
+      Identifier: ' context'
+      TypeReference
+        Identifier: ' CodeFixContextBase'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' ExportSpecifier'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exportClause'
+            PropertyAccessExpression
+              Identifier: ' originExportSpecifier'
+              Identifier: 'parent'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'exportClause'
+              Identifier: 'elements'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' exportClause'
+              Identifier: 'elements'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' diagnostics'
+            CallExpression
+              Identifier: ' getDiagnosticsWithinSpan'
+              CallExpression
+                Identifier: '
+        createTextSpanFromNode'
+                Identifier: 'exportClause'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        context'
+                    Identifier: 'program'
+                  Identifier: 'getSemanticDiagnostics'
+                PropertyAccessExpression
+                  Identifier: 'context'
+                  Identifier: 'sourceFile'
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'cancellationToken'
+      ReturnStatement
+        CallExpression
+          Identifier: ' filter'
+          PropertyAccessExpression
+            Identifier: 'exportClause'
+            Identifier: 'elements'
+          ArrowFunction
+            Parameter
+              Identifier: ' element'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' element'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' originExportSpecifier'
+                  BarBarToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        Identifier: ' findDiagnosticForNode'
+                        Identifier: 'element'
+                        Identifier: ' diagnostics'
+                      QuestionDotToken
+                      Identifier: 'code'
+                    EqualsEqualsEqualsToken
+                    ElementAccessExpression
+                      Identifier: ' errorCodes'
+                      NumericLiteral

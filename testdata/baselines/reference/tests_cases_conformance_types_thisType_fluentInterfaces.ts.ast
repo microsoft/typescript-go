@@ -1,0 +1,45 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    MethodSignature
+      Identifier: '
+    foo'
+      ThisType
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodSignature
+      Identifier: '
+    bar'
+      ThisType
+  InterfaceDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    MethodSignature
+      Identifier: '
+    baz'
+      ThisType
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' c'
+                    Identifier: 'foo'
+                Identifier: 'bar'
+            Identifier: 'baz'

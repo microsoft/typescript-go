@@ -1,0 +1,111 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oneA'
+        TypeReference
+          Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Block
+        ReturnStatement
+          Identifier: ' oneA'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        IfStatement
+          BinaryExpression
+            Identifier: 'x'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            ReturnStatement
+        WhileStatement
+          BinaryExpression
+            Identifier: 'x'
+            LessThanToken
+            NumericLiteral
+          Block
+            ReturnStatement
+        TryStatement
+          Block
+            ReturnStatement
+          CatchClause
+            VariableDeclaration
+              Identifier: 'e'
+            Block
+              ReturnStatement
+          Block
+            ReturnStatement
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ForStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' i'
+              NumericLiteral
+          BinaryExpression
+            Identifier: ' i'
+            LessThanToken
+            NumericLiteral
+          PrefixUnaryExpression
+            Identifier: 'i'
+          Block
+            ExpressionStatement
+              ArrowFunction
+                EqualsGreaterThanToken
+                BinaryExpression
+                  Identifier: ' i'
+                  PlusToken
+                  Identifier: ' x'
+            IfStatement
+              BinaryExpression
+                Identifier: 'x'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              Block
+                ReturnStatement
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+        FunctionDeclaration
+          Identifier: ' foo'
+          Block
+            ReturnStatement

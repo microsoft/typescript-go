@@ -1,0 +1,208 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' define'
+    Parameter
+      Identifier: 'constructor'
+    Parameter
+      Identifier: ' instanceMembers'
+    Parameter
+      Identifier: ' staticMembers'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+            constructor'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' constructor'
+            BarBarToken
+            FunctionExpression
+              Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+            PluginUtilities'
+              Identifier: 'Utilities'
+            Identifier: 'markSupportedForProcessing'
+          Identifier: 'constructor'
+      IfStatement
+        Identifier: 'instanceMembers'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+                initializeProperties'
+              PropertyAccessExpression
+                Identifier: 'constructor'
+                Identifier: 'prototype'
+              Identifier: ' instanceMembers'
+      IfStatement
+        Identifier: 'staticMembers'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+                initializeProperties'
+              Identifier: 'constructor'
+              Identifier: ' staticMembers'
+      ReturnStatement
+        Identifier: ' constructor'
+  FunctionDeclaration
+    Identifier: ' derive'
+    Parameter
+      Identifier: 'baseClass'
+    Parameter
+      Identifier: ' constructor'
+    Parameter
+      Identifier: ' instanceMembers'
+    Parameter
+      Identifier: ' staticMembers'
+    Block
+      IfStatement
+        Identifier: 'baseClass'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+                constructor'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' constructor'
+                BarBarToken
+                FunctionExpression
+                  Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' basePrototype'
+                PropertyAccessExpression
+                  Identifier: ' baseClass'
+                  Identifier: 'prototype'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+                constructor'
+                Identifier: 'prototype'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Object'
+                  Identifier: 'create'
+                Identifier: 'basePrototype'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+                PluginUtilities'
+                  Identifier: 'Utilities'
+                Identifier: 'markSupportedForProcessing'
+              Identifier: 'constructor'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+                Object'
+                Identifier: 'defineProperty'
+              PropertyAccessExpression
+                Identifier: 'constructor'
+                Identifier: 'prototype'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' value'
+                  Identifier: ' constructor'
+                PropertyAssignment
+                  Identifier: ' writable'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: ' configurable'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: ' enumerable'
+                  TrueKeyword
+          IfStatement
+            Identifier: 'instanceMembers'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+                    initializeProperties'
+                  PropertyAccessExpression
+                    Identifier: 'constructor'
+                    Identifier: 'prototype'
+                  Identifier: ' instanceMembers'
+          IfStatement
+            Identifier: 'staticMembers'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+                    initializeProperties'
+                  Identifier: 'constructor'
+                  Identifier: ' staticMembers'
+          ReturnStatement
+            Identifier: ' constructor'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' define'
+              Identifier: 'constructor'
+              Identifier: ' instanceMembers'
+              Identifier: ' staticMembers'
+  FunctionDeclaration
+    Identifier: ' mix'
+    Parameter
+      Identifier: 'constructor'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+            constructor'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' constructor'
+            BarBarToken
+            FunctionExpression
+              Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+          VariableDeclaration
+            Identifier: ' len'
+      ForStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'i'
+            EqualsToken
+            NumericLiteral
+          CommaToken
+          BinaryExpression
+            Identifier: ' len'
+            EqualsToken
+            PropertyAccessExpression
+              Identifier: ' arguments'
+              Identifier: 'length'
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          Identifier: ' len'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+                initializeProperties'
+              PropertyAccessExpression
+                Identifier: 'constructor'
+                Identifier: 'prototype'
+              ElementAccessExpression
+                Identifier: ' arguments'
+                Identifier: 'i'
+      ReturnStatement
+        Identifier: ' constructor'

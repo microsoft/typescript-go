@@ -1,0 +1,66 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' func'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            NumberKeyword
+          CallSignature
+            Parameter
+              Identifier: 'lambda'
+              FunctionType
+                Parameter
+                  Identifier: 's'
+                  StringKeyword
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' a'
+                    NumberKeyword
+                  PropertySignature
+                    Identifier: ' b'
+                    NumberKeyword
+            StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+func'
+      ArrowFunction
+        Parameter
+          Identifier: 's'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // Error for no applicable overload (object type is missing a and b)
+func'
+      ArrowFunction
+        Parameter
+          Identifier: 's'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              Identifier: ' blah'
+            PropertyAssignment
+              Identifier: ' b'
+              NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // Only error inside the function, but not outside (since it would be applicable if not for the provisional error)
+func'
+      ArrowFunction
+        Parameter
+          Identifier: 's'
+        EqualsGreaterThanToken
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              Identifier: ' blah'

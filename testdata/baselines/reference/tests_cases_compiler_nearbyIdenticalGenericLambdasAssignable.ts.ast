@@ -1,0 +1,163 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fA'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' v'
+              TypeReference
+                Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fB'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' v'
+                  AsExpression
+                    AsExpression
+                      StringLiteral
+                      AnyKeyword
+                    TypeReference
+                      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fC'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              AsExpression
+                AsExpression
+                  ObjectLiteralExpression
+                  AnyKeyword
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' v'
+                    TypeReference
+                      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' TA'
+    TypeQuery
+      Identifier: ' fA'
+  TypeAliasDeclaration
+    Identifier: ' TB'
+    TypeQuery
+      Identifier: ' fB'
+  TypeAliasDeclaration
+    Identifier: ' TC'
+    TypeQuery
+      Identifier: ' fC'
+  TypeAliasDeclaration
+    Identifier: ' TL'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' v'
+          TypeReference
+            Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' accA'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' TA'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' accB'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' TB'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' accC'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' TC'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' accL'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' TL'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// These should all be OK, every type is identical
+accA'
+      Identifier: 'fA'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' accA'
+      Identifier: 'fB'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' accA'
+      Identifier: 'fC'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+//             ~~ previously an error
+accB'
+      Identifier: 'fA'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' accB'
+      Identifier: 'fB'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' accB'
+      Identifier: 'fC'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+//             OK
+accC'
+      Identifier: 'fA'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' accC'
+      Identifier: 'fB'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' accC'
+      Identifier: 'fC'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+//             ~~ previously an error
+accL'
+      Identifier: 'fA'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' accL'
+      Identifier: 'fB'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' accL'
+      Identifier: 'fC'

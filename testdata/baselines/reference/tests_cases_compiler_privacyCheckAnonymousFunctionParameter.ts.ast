@@ -1,0 +1,49 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' Iterator'
+    TypeParameter
+      Identifier: 'T'
+  ModuleDeclaration
+    Identifier: ' Query'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fromDoWhile'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'doWhile'
+          FunctionType
+            Parameter
+              Identifier: 'test'
+              TypeReference
+                Identifier: ' Iterator'
+                TypeReference
+                  Identifier: 'T'
+            BooleanKeyword
+        TypeReference
+          Identifier: ' Iterator'
+          TypeReference
+            Identifier: 'T'
+        Block
+          ReturnStatement
+            NullKeyword
+      FunctionDeclaration
+        Identifier: ' fromOrderBy'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' fromDoWhile'
+              ArrowFunction
+                Parameter
+                  Identifier: 'test'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    TrueKeyword

@@ -1,0 +1,22 @@
+SourceFile
+  IfStatement
+    NumericLiteral
+    EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  IfStatement
+    BinaryExpression
+      TrueKeyword
+      EqualsEqualsEqualsToken
+      TrueKeyword
+    EmptyStatement
+  Block
+    ExpressionStatement
+      BinaryExpression
+        Identifier: '  
+    x'
+        EqualsToken
+        NumericLiteral

@@ -1,0 +1,7 @@
+SourceFile
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: 'foo'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''

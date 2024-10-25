@@ -1,0 +1,8 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+yield'
+      Identifier: 'foo'

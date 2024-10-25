@@ -1,0 +1,125 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////declare function foo<T>(x: T, y: T): T;
+////declare function bar<U>(x: U, y: U): U;
+////
+////foo(bar/*1*/)
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    triggerReason'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        triggerCharacter'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'backspace'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    triggerReason'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        triggerCharacter'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'backspace'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    triggerReason'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        triggerCharacter'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'backspace'

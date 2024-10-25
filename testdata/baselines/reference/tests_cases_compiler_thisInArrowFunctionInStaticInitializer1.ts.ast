@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' log'
+    Parameter
+      Identifier: 'a'
+    Block
+  ClassDeclaration
+    Identifier: ' Vector'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+  // 'this' should be allowed in a static initializer.
+  log'
+              ThisKeyword

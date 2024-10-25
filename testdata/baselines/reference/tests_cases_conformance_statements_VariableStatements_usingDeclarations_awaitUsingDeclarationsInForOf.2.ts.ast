@@ -1,0 +1,11 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' main'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' of'
+        ArrayLiteralExpression
+        Block

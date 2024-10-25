@@ -1,0 +1,25 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Something'
+        PropertySignature
+          Identifier: 'x'
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Something'
+        PropertySignature
+          Identifier: 'y'
+  ExportDeclaration
+    NamedExports
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral

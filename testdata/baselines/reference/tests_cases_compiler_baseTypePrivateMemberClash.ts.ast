@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' m'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Y'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' m'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Z'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' X'
+      ExpressionWithTypeArguments
+        Identifier: ' Y'

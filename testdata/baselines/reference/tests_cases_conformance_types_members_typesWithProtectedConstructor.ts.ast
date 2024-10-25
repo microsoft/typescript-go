@@ -1,0 +1,52 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      ProtectedKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        FunctionType
+          VoidKeyword
+        PropertyAccessExpression
+          Identifier: ' c'
+          Identifier: 'constructor'
+  ClassDeclaration
+    Identifier: ' C2'
+    Constructor
+      ProtectedKeyword
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+    Constructor
+      ProtectedKeyword
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        NewExpression
+          Identifier: ' C2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          VoidKeyword
+        PropertyAccessExpression
+          Identifier: ' c2'
+          Identifier: 'constructor'

@@ -1,0 +1,84 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Person'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' name'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' getName1'
+        ArrowFunction
+          Parameter
+            Identifier: 'person'
+            QuestionToken
+            TypeReference
+              Identifier: ' Person'
+          StringKeyword
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ConditionalExpression
+                BinaryExpression
+                  TypeOfExpression
+                    PropertyAccessExpression
+                      Identifier: ' person'
+                      QuestionDotToken
+                      Identifier: 'name'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' person'
+                  QuestionDotToken
+                  Identifier: 'name'
+                ColonToken
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' isString'
+        ArrowFunction
+          Parameter
+            Identifier: 'value'
+            AnyKeyword
+          TypePredicate
+            Identifier: ' value'
+            StringKeyword
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              BinaryExpression
+                TypeOfExpression
+                  Identifier: ' value'
+                EqualsEqualsEqualsToken
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' getName2'
+        ArrowFunction
+          Parameter
+            Identifier: 'person'
+            QuestionToken
+            TypeReference
+              Identifier: ' Person'
+          StringKeyword
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ConditionalExpression
+                CallExpression
+                  Identifier: ' isString'
+                  PropertyAccessExpression
+                    Identifier: 'person'
+                    QuestionDotToken
+                    Identifier: 'name'
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' person'
+                  QuestionDotToken
+                  Identifier: 'name'
+                ColonToken
+                StringLiteral

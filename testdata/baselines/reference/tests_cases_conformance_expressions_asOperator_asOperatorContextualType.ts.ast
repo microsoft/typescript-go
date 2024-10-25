@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AsExpression
+          ParenthesizedExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'v'
+              EqualsGreaterThanToken
+              Identifier: ' v'
+          FunctionType
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            StringKeyword

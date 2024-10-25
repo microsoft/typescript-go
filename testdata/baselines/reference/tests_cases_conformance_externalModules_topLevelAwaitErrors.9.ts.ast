@@ -1,0 +1,18 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' await'
+    StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _await'
+        AnyKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' _await'
+        Identifier: ' await'

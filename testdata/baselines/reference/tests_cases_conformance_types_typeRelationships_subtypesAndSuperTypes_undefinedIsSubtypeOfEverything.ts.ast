@@ -1,0 +1,267 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeQuery
+        Identifier: ' undefined'
+  ClassDeclaration
+    Identifier: ' D0'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' DA'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeQuery
+        Identifier: ' undefined'
+  ClassDeclaration
+    Identifier: ' D1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' D1A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' String'
+  ClassDeclaration
+    Identifier: ' D2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' D2A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Number'
+  ClassDeclaration
+    Identifier: ' D3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      BooleanKeyword
+  ClassDeclaration
+    Identifier: ' D3A'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Boolean'
+  ClassDeclaration
+    Identifier: ' D4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' RegExp'
+  ClassDeclaration
+    Identifier: ' D5'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Date'
+  ClassDeclaration
+    Identifier: ' D6'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      ArrayType
+        NumberKeyword
+  ClassDeclaration
+    Identifier: ' D7'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' bar'
+          NumberKeyword
+  ClassDeclaration
+    Identifier: ' D8'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' D7'
+  InterfaceDeclaration
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' D9'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' I1'
+  ClassDeclaration
+    Identifier: ' D10'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      FunctionType
+        NumberKeyword
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' D11'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' E'
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+  ModuleDeclaration
+    Identifier: ' f'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' D12'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeQuery
+        Identifier: ' f'
+  ClassDeclaration
+    Identifier: ' c'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' c'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bar'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' D13'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeQuery
+        Identifier: ' c'
+  ClassDeclaration
+    Identifier: ' D14'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D15'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' U'
+  ClassDeclaration
+    Identifier: ' D16'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' Object'
+  ClassDeclaration
+    Identifier: ' D17'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeLiteral

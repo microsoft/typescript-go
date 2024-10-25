@@ -1,0 +1,6 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      PlusToken
+      NumericLiteral

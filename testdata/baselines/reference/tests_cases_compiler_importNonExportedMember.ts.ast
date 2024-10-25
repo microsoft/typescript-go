@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    AnyKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' bar'
+    AnyKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' foo'
+      ExportSpecifier
+        Identifier: ' bar'
+        Identifier: ' baz'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' foo'
+        ImportSpecifier
+          Identifier: ' bar'
+    StringLiteral

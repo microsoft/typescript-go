@@ -1,0 +1,300 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNum'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' var1'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    // global vars in function declaration
+    num'
+          EqualsToken
+          BinaryExpression
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' var1'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            AmpersandAmpersandToken
+            PropertyAccessExpression
+              Identifier: ' var1'
+              Identifier: 'length'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' var2'
+            UnionType
+              StringKeyword
+              NumberKeyword
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' var2'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        num'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' var2'
+                Identifier: 'length'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        num'
+              EqualsToken
+              Identifier: ' var2'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' var3'
+            UnionType
+              StringKeyword
+              NumberKeyword
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' var3'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        strOrNum'
+              EqualsToken
+              Identifier: ' var3'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        strOrNum'
+              EqualsToken
+              Identifier: ' var3'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' var2'
+            UnionType
+              StringKeyword
+              NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' var3'
+            UnionType
+              StringKeyword
+              NumberKeyword
+      ModuleDeclaration
+        Identifier: ' m3'
+        ModuleBlock
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        // global vars in function declaration
+        num'
+              EqualsToken
+              BinaryExpression
+                BinaryExpression
+                  TypeOfExpression
+                    Identifier: ' var1'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                AmpersandAmpersandToken
+                PropertyAccessExpression
+                  Identifier: ' var1'
+                  Identifier: 'length'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: ' // string
+
+        // local variables from outer module declaration
+        num'
+              EqualsToken
+              BinaryExpression
+                BinaryExpression
+                  TypeOfExpression
+                    Identifier: ' var2'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                AmpersandAmpersandToken
+                PropertyAccessExpression
+                  Identifier: ' var2'
+                  Identifier: 'length'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: ' // string
+
+        // exported variable from outer the module
+        strOrNum'
+              EqualsToken
+              BinaryExpression
+                BinaryExpression
+                  TypeOfExpression
+                    Identifier: ' var3'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                AmpersandAmpersandToken
+                Identifier: ' var3'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' var4'
+                UnionType
+                  StringKeyword
+                  NumberKeyword
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' var4'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            num'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' var4'
+                    Identifier: 'length'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            num'
+                  EqualsToken
+                  Identifier: ' var4'
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' var5'
+                UnionType
+                  StringKeyword
+                  NumberKeyword
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' var5'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            strOrNum'
+                  EqualsToken
+                  Identifier: ' var5'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            strOrNum'
+                  EqualsToken
+                  Identifier: ' var5'
+  ModuleDeclaration
+    Identifier: ' m3'
+    ModuleDeclaration
+      Identifier: 'm4'
+      ModuleBlock
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+    // global vars in function declaration
+    num'
+            EqualsToken
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  Identifier: ' var1'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                Identifier: ' var1'
+                Identifier: 'length'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' var2'
+              UnionType
+                StringKeyword
+                NumberKeyword
+        IfStatement
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' var2'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        num'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' var2'
+                  Identifier: 'length'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        num'
+                EqualsToken
+                Identifier: ' var2'
+        VariableStatement
+          ExportKeyword
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' var3'
+              UnionType
+                StringKeyword
+                NumberKeyword
+        IfStatement
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' var3'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        strOrNum'
+                EqualsToken
+                Identifier: ' var3'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        strOrNum'
+                EqualsToken
+                Identifier: ' var3'

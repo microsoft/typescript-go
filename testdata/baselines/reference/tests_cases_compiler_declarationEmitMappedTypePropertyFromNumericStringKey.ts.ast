@@ -1,0 +1,32 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        CallExpression
+          ParenthesizedExpression
+            ArrowFunction
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'arg'
+                MappedType
+                  TypeParameter
+                    Identifier: 'K'
+                    TypeOperator
+                      TypeReference
+                        Identifier: ' T'
+                  UnionType
+                    IndexedAccessType
+                      TypeReference
+                        Identifier: ' T'
+                      TypeReference
+                        Identifier: 'K'
+                    StringKeyword
+              EqualsGreaterThanToken
+              Identifier: ' arg'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NumericLiteral

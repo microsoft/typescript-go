@@ -1,0 +1,71 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            BinaryExpression
+              Identifier: ' /*[#|*/j'
+              AsteriskToken
+              Identifier: ' j'
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            CallExpression
+              Identifier: ' /*RENAME*/newFunction'
+      FunctionDeclaration
+        Identifier: ' newFunction'
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' j'
+              AsteriskToken
+              Identifier: ' j'
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' j'
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            CallExpression
+              Identifier: ' /*RENAME*/newFunction'
+  FunctionDeclaration
+    Identifier: ' newFunction'
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' X'
+            Identifier: 'j'
+          AsteriskToken
+          PropertyAccessExpression
+            Identifier: ' X'
+            Identifier: 'j'

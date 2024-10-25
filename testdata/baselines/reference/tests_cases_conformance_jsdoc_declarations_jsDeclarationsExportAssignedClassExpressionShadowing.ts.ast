@@ -1,0 +1,43 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    member'
+      NewExpression
+        Identifier: ' Q'
+  ClassDeclaration
+    Identifier: ' Q'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ClassExpression
+        Identifier: ' Q'
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+                EqualsToken
+                NewExpression
+                  Identifier: ' A'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'Another'
+      EqualsToken
+      Identifier: ' Q'

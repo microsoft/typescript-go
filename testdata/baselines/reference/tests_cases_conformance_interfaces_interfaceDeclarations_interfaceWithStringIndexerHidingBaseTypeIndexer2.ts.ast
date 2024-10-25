@@ -1,0 +1,55 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+    PropertySignature
+      Identifier: '
+    x'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        a'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        a'
+          NumberKeyword
+    PropertySignature
+      Identifier: '
+
+    y'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        a'
+          NumberKeyword
+    PropertySignature
+      NumericLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        a'
+          NumberKeyword

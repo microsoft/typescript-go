@@ -1,0 +1,279 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    propA'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    propB'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    propC'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isA'
+    Parameter
+      Identifier: 'p1'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' p1'
+      TypeReference
+        Identifier: ' A'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isB'
+    Parameter
+      Identifier: 'p1'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' p1'
+      TypeReference
+        Identifier: ' B'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isC'
+    Parameter
+      Identifier: 'p1'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' p1'
+      TypeReference
+        Identifier: ' C'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' retC'
+    TypeReference
+      Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  IfStatement
+    CallExpression
+      Identifier: 'isC'
+      Identifier: 'a'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    a'
+          Identifier: 'propC'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' subType'
+        TypeReference
+          Identifier: ' C'
+  IfStatement
+    CallExpression
+      Identifier: 'isA'
+      Identifier: 'subType'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    subType'
+          Identifier: 'propC'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' union'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+  IfStatement
+    CallExpression
+      Identifier: 'isA'
+      Identifier: 'union'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    union'
+          Identifier: 'propA'
+  InterfaceDeclaration
+    Identifier: ' I1'
+    CallSignature
+      Parameter
+        Identifier: 'p1'
+        TypeReference
+          Identifier: ' A'
+      TypePredicate
+        Identifier: ' p1'
+        TypeReference
+          Identifier: ' C'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isC_multipleParams'
+    Parameter
+      Identifier: 'p1'
+    Parameter
+      Identifier: ' p2'
+    TypePredicate
+      Identifier: ' p1'
+      TypeReference
+        Identifier: ' C'
+  IfStatement
+    CallExpression
+      Identifier: 'isC_multipleParams'
+      Identifier: 'a'
+      NumericLiteral
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    a'
+          Identifier: 'propC'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    func1'
+            Parameter
+              Identifier: 'p1'
+              TypeReference
+                Identifier: ' A'
+            TypePredicate
+              Identifier: ' p1'
+              TypeReference
+                Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' D'
+    MethodDeclaration
+      Identifier: '
+    method1'
+      Parameter
+        Identifier: 'p1'
+        TypeReference
+          Identifier: ' A'
+      TypePredicate
+        Identifier: ' p1'
+        TypeReference
+          Identifier: ' C'
+      Block
+        ReturnStatement
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        ArrowFunction
+          Parameter
+            Identifier: 'p1'
+            TypeReference
+              Identifier: ' A'
+          TypePredicate
+            Identifier: ' p1'
+            TypeReference
+              Identifier: ' C'
+          EqualsGreaterThanToken
+          FalseKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'p1'
+      FunctionType
+        Parameter
+          Identifier: 'p1'
+          TypeReference
+            Identifier: ' A'
+        TypePredicate
+          Identifier: ' p1'
+          TypeReference
+            Identifier: ' C'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Function expressions
+f2'
+      FunctionExpression
+        Parameter
+          Identifier: 'p1'
+          TypeReference
+            Identifier: ' A'
+        TypePredicate
+          Identifier: ' p1'
+          TypeReference
+            Identifier: ' C'
+        Block
+          ReturnStatement
+            TrueKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' acceptingBoolean'
+    Parameter
+      Identifier: 'a'
+      BooleanKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+acceptingBoolean'
+      CallExpression
+        Identifier: 'isA'
+        Identifier: 'a'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' acceptingTypeGuardFunction'
+    Parameter
+      Identifier: 'p1'
+      FunctionType
+        Parameter
+          Identifier: 'item'
+        TypePredicate
+          Identifier: ' item'
+          TypeReference
+            Identifier: ' A'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+acceptingTypeGuardFunction'
+      Identifier: 'isA'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' union2'
+        UnionType
+          TypeReference
+            Identifier: ' C'
+          TypeReference
+            Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' union3'
+        UnionType
+          BooleanKeyword
+          TypeReference
+            Identifier: ' B'
+        BinaryExpression
+          CallExpression
+            Identifier: ' isA'
+            Identifier: 'union2'
+          BarBarToken
+          Identifier: ' union2'

@@ -1,0 +1,50 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      PropertyAccessExpression
+        ThisKeyword
+        PrivateIdentifier
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' A2'
+    PropertyDeclaration
+      PrivateIdentifier
+      CallExpression
+        PropertyAccessExpression
+          ThisKeyword
+          PrivateIdentifier
+    MethodDeclaration
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    SemicolonClassElement
+  ClassDeclaration
+    Identifier: ' A3'
+    PropertyDeclaration
+      PrivateIdentifier
+      PropertyAccessExpression
+        ThisKeyword
+        PrivateIdentifier
+    GetAccessor
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    SemicolonClassElement
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      PrivateIdentifier
+      PropertyAccessExpression
+        ThisKeyword
+        PrivateIdentifier
+    PropertyDeclaration
+      PrivateIdentifier
+      PropertyAccessExpression
+        ThisKeyword
+        PrivateIdentifier

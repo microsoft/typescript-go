@@ -1,0 +1,39 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _C__1'
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    ClassStaticBlockDeclaration
+      Block
+    ClassStaticBlockDeclaration
+      Block
+    ClassStaticBlockDeclaration
+      Block
+    ClassStaticBlockDeclaration
+      Block
+    ClassStaticBlockDeclaration
+      Block
+    ClassStaticBlockDeclaration
+      Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      Identifier: '_C__1'

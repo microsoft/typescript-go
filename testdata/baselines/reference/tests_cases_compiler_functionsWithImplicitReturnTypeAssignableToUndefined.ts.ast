@@ -1,0 +1,106 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          LessThanToken
+          NumericLiteral
+        ReturnStatement
+          TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' MyUnknown'
+    UnknownKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    UnknownKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          LessThanToken
+          NumericLiteral
+        ReturnStatement
+          TrueKeyword
+  FunctionDeclaration
+    Identifier: ' f3'
+    AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f4'
+    VoidKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f5'
+    TypeLiteral
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          LessThanToken
+          NumericLiteral
+        ReturnStatement
+          ObjectLiteralExpression
+  FunctionDeclaration
+    Identifier: ' f6'
+    TypeReference
+      Identifier: ' Record'
+      StringKeyword
+      AnyKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          LessThanToken
+          NumericLiteral
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              TrueKeyword
+  FunctionDeclaration
+    Identifier: ' f7'
+    LiteralType
+      NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          LessThanToken
+          NumericLiteral
+        ReturnStatement
+          NullKeyword
+  FunctionDeclaration
+    Identifier: ' f8'
+    UnionType
+      StringKeyword
+      LiteralType
+        NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          LessThanToken
+          NumericLiteral
+        ReturnStatement
+          StringLiteral

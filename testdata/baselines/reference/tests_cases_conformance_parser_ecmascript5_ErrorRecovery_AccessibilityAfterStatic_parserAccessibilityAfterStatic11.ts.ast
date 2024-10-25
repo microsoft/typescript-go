@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Outer'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' public'
+      Block

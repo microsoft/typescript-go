@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+// @allowNonTsExtensions: true
+// @Filename: Foo.js
+
+//// /** @type {function(string, boolean=): number} */
+//// var f6;
+////
+//// f6('', /**/false)
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' text'
+          StringLiteral

@@ -1,0 +1,87 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            Parameter
+              Identifier: ' y'
+              NumberKeyword
+            StringKeyword
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            TypeParameter
+              Identifier: ' U'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' U'
+            TypeReference
+              Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+f2'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+        Parameter
+          Identifier: ' y'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            TypeParameter
+              Identifier: ' U'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            Parameter
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' U'
+            TypeReference
+              Identifier: ' T'
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            Parameter
+              Identifier: ' y'
+              NumberKeyword
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+f3'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+        Parameter
+          Identifier: ' y'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            Identifier: ' x'

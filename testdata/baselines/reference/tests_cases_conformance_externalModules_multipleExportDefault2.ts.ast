@@ -1,0 +1,12 @@
+SourceFile
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: '
+    uhoh'
+        StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+    Block

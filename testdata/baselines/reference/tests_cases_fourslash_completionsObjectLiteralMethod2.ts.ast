@@ -1,0 +1,126 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @newline: LF
+// @Filename: a.ts
+////export interface IFoo {
+////    bar(x: number): void;
+////}
+
+// @Filename: b.ts
+////import { IFoo } from "./a";
+////export interface IBar {
+////    foo(f: IFoo): void;
+////}
+
+// @Filename: c.ts
+////import { IBar } from "./b";
+////const obj: IBar = {
+////    /*a*/
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithInsertText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithSnippetText'
+              FalseKeyword
+            PropertyAssignment
+              Identifier: '
+        includeCompletionsWithObjectLiteralMethodSnippets'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        useLabelDetailsInCompletionEntries'
+              TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'ObjectLiteralProperty'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'completion'
+                      Identifier: 'SortText'
+                    Identifier: 'LocationPriority'
+                  StringLiteral
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                Identifier: ' undefined'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            sortText'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'SortBelow'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                completion'
+                        Identifier: 'SortText'
+                      Identifier: 'ObjectLiteralProperty'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'completion'
+                        Identifier: 'SortText'
+                      Identifier: 'LocationPriority'
+                    StringLiteral
+              PropertyAssignment
+                Identifier: '
+            source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'ObjectLiteralMethodSnippet'
+              PropertyAssignment
+                Identifier: '
+            insertText'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+            labelDetails'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+                detail'
+                    StringLiteral

@@ -1,0 +1,1829 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' pipe'
+    TypeParameter
+      Identifier: 'A'
+      ArrayType
+        AnyKeyword
+    TypeParameter
+      Identifier: ' B'
+    Parameter
+      Identifier: 'ab'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' pipe'
+    TypeParameter
+      Identifier: 'A'
+      ArrayType
+        AnyKeyword
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    Parameter
+      Identifier: 'ab'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Parameter
+      Identifier: ' bc'
+      FunctionType
+        Parameter
+          Identifier: 'b'
+          TypeReference
+            Identifier: ' B'
+        TypeReference
+          Identifier: ' C'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' C'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' pipe'
+    TypeParameter
+      Identifier: 'A'
+      ArrayType
+        AnyKeyword
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    TypeParameter
+      Identifier: ' D'
+    Parameter
+      Identifier: 'ab'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Parameter
+      Identifier: ' bc'
+      FunctionType
+        Parameter
+          Identifier: 'b'
+          TypeReference
+            Identifier: ' B'
+        TypeReference
+          Identifier: ' C'
+    Parameter
+      Identifier: ' cd'
+      FunctionType
+        Parameter
+          Identifier: 'c'
+          TypeReference
+            Identifier: ' C'
+        TypeReference
+          Identifier: ' D'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' D'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' list'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    ArrayType
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' box'
+    TypeParameter
+      Identifier: 'V'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' V'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' V'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f00'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f01'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list'
+          Identifier: ' box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f02'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'box'
+          Identifier: ' list'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f03'
+        CallExpression
+          Identifier: ' pipe'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' list'
+              Identifier: 'x'
+          Identifier: ' box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f04'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' box'
+              Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f05'
+        CallExpression
+          Identifier: ' pipe'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' list'
+              Identifier: 'x'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' box'
+              Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f06'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list'
+          CallExpression
+            Identifier: ' pipe'
+            Identifier: 'box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f07'
+        CallExpression
+          Identifier: ' pipe'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' list'
+              Identifier: 'x'
+          CallExpression
+            Identifier: ' pipe'
+            Identifier: 'box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f08'
+        CallExpression
+          Identifier: ' pipe'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' list'
+              Identifier: 'x'
+          CallExpression
+            Identifier: ' pipe'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' box'
+                Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f09'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f10'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f11'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'foo'
+          Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g00'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g01'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list'
+          Identifier: ' box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g02'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          ArrayType
+            TypeLiteral
+              PropertySignature
+                Identifier: ' value'
+                TypeReference
+                  Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'box'
+          Identifier: ' list'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g03'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' list'
+              Identifier: 'x'
+          Identifier: ' box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g04'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' box'
+              Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g05'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' list'
+              Identifier: 'x'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' box'
+              Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g06'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list'
+          CallExpression
+            Identifier: ' pipe'
+            Identifier: 'box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g07'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' list'
+              Identifier: 'x'
+          CallExpression
+            Identifier: ' pipe'
+            Identifier: 'box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g08'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' list'
+              Identifier: 'x'
+          CallExpression
+            Identifier: ' pipe'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' box'
+                Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g09'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          NumberKeyword
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list'
+          ArrowFunction
+            Parameter
+              Identifier: ' x'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g10'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' value'
+                TypeReference
+                  Identifier: ' T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g12'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' value'
+                TypeReference
+                  Identifier: ' T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'foo'
+          Identifier: ' foo'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' pipe2'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    TypeParameter
+      Identifier: ' D'
+    Parameter
+      Identifier: 'ab'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Parameter
+      Identifier: ' cd'
+      FunctionType
+        Parameter
+          Identifier: 'c'
+          TypeReference
+            Identifier: ' C'
+        TypeReference
+          Identifier: ' D'
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        TupleType
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' C'
+      TupleType
+        TypeReference
+          Identifier: 'B'
+        TypeReference
+          Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f20'
+        CallExpression
+          Identifier: ' pipe2'
+          Identifier: 'list'
+          Identifier: ' box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f21'
+        CallExpression
+          Identifier: ' pipe2'
+          Identifier: 'box'
+          Identifier: ' list'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f22'
+        CallExpression
+          Identifier: ' pipe2'
+          Identifier: 'list'
+          Identifier: ' list'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f23'
+        CallExpression
+          Identifier: ' pipe2'
+          Identifier: 'box'
+          Identifier: ' box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f24'
+        CallExpression
+          Identifier: ' pipe2'
+          Identifier: 'f20'
+          Identifier: ' f20'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f25'
+        CallExpression
+          Identifier: ' pipe2'
+          Identifier: 'foo'
+          Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f26'
+        CallExpression
+          Identifier: ' pipe2'
+          Identifier: 'f25'
+          Identifier: ' f25'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' pipe3'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    Parameter
+      Identifier: 'ab'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Parameter
+      Identifier: ' ac'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' C'
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      TupleType
+        TypeReference
+          Identifier: 'B'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f30'
+        CallExpression
+          Identifier: ' pipe3'
+          Identifier: 'list'
+          Identifier: ' box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f31'
+        CallExpression
+          Identifier: ' pipe3'
+          Identifier: 'box'
+          Identifier: ' list'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f32'
+        CallExpression
+          Identifier: ' pipe3'
+          Identifier: 'list'
+          Identifier: ' list'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' pipe4'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    Parameter
+      Identifier: 'funcs'
+      TupleType
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+        FunctionType
+          Parameter
+            Identifier: 'b'
+            TypeReference
+              Identifier: ' B'
+          TypeReference
+            Identifier: ' C'
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f40'
+        CallExpression
+          Identifier: ' pipe4'
+          ArrayLiteralExpression
+            Identifier: 'list'
+            Identifier: ' box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f41'
+        CallExpression
+          Identifier: ' pipe4'
+          ArrayLiteralExpression
+            Identifier: 'box'
+            Identifier: ' list'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' pipe5'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' f'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f50'
+        CallExpression
+          Identifier: ' pipe5'
+          Identifier: 'list'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' wrap3'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        Parameter
+          Identifier: ' b1'
+          TypeReference
+            Identifier: ' B'
+        Parameter
+          Identifier: ' b2'
+          TypeReference
+            Identifier: ' B'
+        TypeReference
+          Identifier: ' C'
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      Parameter
+        Identifier: ' b1'
+        TypeReference
+          Identifier: ' B'
+      Parameter
+        Identifier: ' b2'
+        TypeReference
+          Identifier: ' B'
+      TypeReference
+        Identifier: ' C'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' baz'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 't1'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' t2'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f60'
+        CallExpression
+          Identifier: ' wrap3'
+          Identifier: 'baz'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' list2'
+        TypeLiteral
+          CallSignature
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'a'
+              TypeReference
+                Identifier: ' T'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          PropertySignature
+            Identifier: '
+    foo'
+            StringKeyword
+          MethodSignature
+            Identifier: '
+    bar'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f70'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'list2'
+          Identifier: ' box'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f71'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: 'box'
+          Identifier: ' list2'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Point'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        NumberKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' x'
+      NumberKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' y'
+      NumberKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Bag'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    MethodDeclaration
+      Identifier: '
+    contains'
+      Parameter
+        Identifier: 'value'
+        TypeReference
+          Identifier: ' T'
+      BooleanKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' asFunction'
+    TypeParameter
+      Identifier: 'A'
+      ArrayType
+        AnyKeyword
+    TypeParameter
+      Identifier: ' B'
+    Parameter
+      Identifier: 'cf'
+      ConstructorType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TypeReference
+              Identifier: ' A'
+          EqualsGreaterThanToken
+          NewExpression
+            Identifier: ' cf'
+            SpreadElement
+              Identifier: 'args'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newPoint'
+        CallExpression
+          Identifier: ' asFunction'
+          Identifier: 'Point'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newBag'
+        CallExpression
+          Identifier: ' asFunction'
+          Identifier: 'Bag'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        NewExpression
+          Identifier: ' Point'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        CallExpression
+          Identifier: ' newPoint'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bag1'
+        NewExpression
+          Identifier: ' Bag'
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bag2'
+        CallExpression
+          Identifier: ' newBag'
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Comp'
+    TypeParameter
+      Identifier: 'P'
+    PropertyDeclaration
+      Identifier: '
+    props'
+      TypeReference
+        Identifier: ' P'
+    Constructor
+      Parameter
+        Identifier: 'props'
+        TypeReference
+          Identifier: ' P'
+  TypeAliasDeclaration
+    Identifier: ' CompClass'
+    TypeParameter
+      Identifier: 'P'
+    ConstructorType
+      Parameter
+        Identifier: 'props'
+        TypeReference
+          Identifier: ' P'
+      TypeReference
+        Identifier: ' Comp'
+        TypeReference
+          Identifier: 'P'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' myHoc'
+    TypeParameter
+      Identifier: 'P'
+    Parameter
+      Identifier: 'C'
+      TypeReference
+        Identifier: ' CompClass'
+        TypeReference
+          Identifier: 'P'
+    TypeReference
+      Identifier: ' CompClass'
+      TypeReference
+        Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' GenericProps'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' foo'
+        NumberKeyword
+      PropertySignature
+        Identifier: ' stuff'
+        TypeReference
+          Identifier: ' T'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' GenericComp'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Comp'
+        TypeReference
+          Identifier: 'GenericProps'
+          TypeReference
+            Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' GenericComp2'
+        CallExpression
+          Identifier: ' myHoc'
+          Identifier: 'GenericComp'
+  FunctionDeclaration
+    Identifier: ' mirror'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    FunctionType
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+    Block
+      ReturnStatement
+        Identifier: ' f'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' identityM'
+        CallExpression
+          Identifier: ' mirror'
+          Identifier: 'identity'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          Identifier: ' identity'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        CallExpression
+          Identifier: ' identityM'
+          Identifier: 'x'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' keyOf'
+    TypeParameter
+      Identifier: 'a'
+    Parameter
+      Identifier: 'value'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' key'
+          TypeReference
+            Identifier: ' a'
+    TypeReference
+      Identifier: ' a'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' value'
+          Identifier: 'key'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Data'
+    PropertySignature
+      Identifier: '
+    key'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    value'
+      TypeReference
+        Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' data'
+        ArrayType
+          TypeReference
+            Identifier: ' Data'
+        ArrayLiteralExpression
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' toKeys'
+    TypeParameter
+      Identifier: 'a'
+    Parameter
+      Identifier: 'values'
+      ArrayType
+        TypeReference
+          Identifier: ' a'
+    Parameter
+      Identifier: ' toKey'
+      FunctionType
+        Parameter
+          Identifier: 'value'
+          TypeReference
+            Identifier: ' a'
+        StringKeyword
+    ArrayType
+      StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+toKeys'
+      Identifier: 'data'
+      Identifier: ' keyOf'
+  FunctionDeclaration
+    Identifier: ' flip'
+    TypeParameter
+      Identifier: 'a'
+    TypeParameter
+      Identifier: ' b'
+    TypeParameter
+      Identifier: ' c'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' a'
+        Parameter
+          Identifier: ' b'
+          TypeReference
+            Identifier: ' b'
+        TypeReference
+          Identifier: ' c'
+    FunctionType
+      Parameter
+        Identifier: 'b'
+        TypeReference
+          Identifier: ' b'
+      Parameter
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' a'
+      TypeReference
+        Identifier: ' c'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'b'
+            TypeReference
+              Identifier: ' b'
+          Parameter
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' a'
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' f'
+            Identifier: 'a'
+            Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' zip'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'x'
+          Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' expected'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'y'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+          TupleType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' U'
+        CallExpression
+          Identifier: ' flip'
+          Identifier: 'zip'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' actual'
+        CallExpression
+          Identifier: ' flip'
+          Identifier: 'zip'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' map'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          Parameter
+            Identifier: 'transform'
+            FunctionType
+              Parameter
+                Identifier: 't'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: 'arr'
+              ArrayType
+                TypeReference
+                  Identifier: ' T'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' arr'
+                Identifier: 'map'
+              Identifier: 'transform'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' identityStr'
+        ArrowFunction
+          Parameter
+            Identifier: 't'
+            StringKeyword
+          EqualsGreaterThanToken
+          Identifier: ' t'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          StringKeyword
+        CallExpression
+          CallExpression
+            Identifier: ' map'
+            Identifier: 'identityStr'
+          ArrayLiteralExpression
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr1'
+        ArrayType
+          StringKeyword
+        CallExpression
+          CallExpression
+            Identifier: ' map'
+            Identifier: 'identity'
+          ArrayLiteralExpression
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' of2'
+    TypeParameter
+      Identifier: 'a'
+    TypeParameter
+      Identifier: ' b'
+    Parameter
+      Identifier: 'one'
+      TypeReference
+        Identifier: ' a'
+    Parameter
+      Identifier: ' two'
+      TypeReference
+        Identifier: ' b'
+    TupleType
+      TypeReference
+        Identifier: 'a'
+      TypeReference
+        Identifier: ' b'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          Identifier: 'one'
+          Identifier: ' two'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' flipped'
+        CallExpression
+          Identifier: ' flip'
+          Identifier: 'of2'
+  TypeAliasDeclaration
+    Identifier: ' Component'
+    TypeParameter
+      Identifier: 'P'
+    FunctionType
+      Parameter
+        Identifier: 'props'
+        TypeReference
+          Identifier: ' P'
+      TypeLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myHoc1'
+        FunctionType
+          TypeParameter
+            Identifier: 'P'
+          Parameter
+            Identifier: 'C'
+            TypeReference
+              Identifier: ' Component'
+              TypeReference
+                Identifier: 'P'
+          TypeReference
+            Identifier: ' Component'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myHoc2'
+        FunctionType
+          TypeParameter
+            Identifier: 'P'
+          Parameter
+            Identifier: 'C'
+            TypeReference
+              Identifier: ' Component'
+              TypeReference
+                Identifier: 'P'
+          TypeReference
+            Identifier: ' Component'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MyComponent1'
+        TypeReference
+          Identifier: ' Component'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' foo'
+              LiteralType
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' enhance'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: '
+    myHoc1'
+          Identifier: '
+    myHoc2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MyComponent2'
+        CallExpression
+          Identifier: ' enhance'
+          Identifier: 'MyComponent1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn20'
+        CallExpression
+          Identifier: ' pipe'
+          ArrowFunction
+            Parameter
+              Identifier: '_a'
+              QuestionToken
+              TypeLiteral
+            EqualsGreaterThanToken
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Fn'
+    FunctionType
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn30'
+        TypeReference
+          Identifier: ' Fn'
+        CallExpression
+          Identifier: ' pipe'
+          ArrowFunction
+            Parameter
+              Identifier: '
+    x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              NumericLiteral
+          ArrowFunction
+            Parameter
+              Identifier: '
+    x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              AsteriskToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' promise'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Promise'
+            Identifier: 'resolve'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+promise'
+        Identifier: 'then'
+      CallExpression
+        Identifier: '
+    pipe'
+        ArrowFunction
+          Parameter
+            Identifier: '
+        x'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' x'
+            PlusToken
+            NumericLiteral
+        ArrowFunction
+          Parameter
+            Identifier: '
+        x'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' x'
+            AsteriskToken
+            NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' getString'
+        FunctionType
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' orUndefined'
+        FunctionType
+          Parameter
+            Identifier: 'name'
+            StringKeyword
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' identity'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn40'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: '
+    getString'
+          ArrowFunction
+            Parameter
+              Identifier: '
+    string'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' orUndefined'
+              Identifier: 'string'
+          Identifier: '
+    identity'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' getArray'
+        FunctionType
+          ArrayType
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' first'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'ts'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn60'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: '
+    getArray'
+          ArrowFunction
+            Parameter
+              Identifier: '
+    x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+          Identifier: '
+    first'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn61'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: '
+    getArray'
+          Identifier: '
+    identity'
+          Identifier: '
+    first'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn62'
+        CallExpression
+          Identifier: ' pipe'
+          Identifier: '
+    getArray'
+          ArrowFunction
+            Parameter
+              Identifier: '
+    x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+          ArrowFunction
+            Parameter
+              Identifier: '
+    x'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' first'
+              Identifier: 'x'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 'fn'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' a'
+      QuestionToken
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      TypeReference
+        Identifier: ' U'
+    TupleType
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo2'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo2'
+      Identifier: 'identity'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo2'
+      Identifier: 'identity'
+      NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' times'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'fn'
+      FunctionType
+        Parameter
+          Identifier: 'i'
+          NumberKeyword
+        TypeReference
+          Identifier: ' T'
+    FunctionType
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        CallExpression
+          CallExpression
+            Identifier: ' times'
+            Identifier: 'identity'
+          NumericLiteral

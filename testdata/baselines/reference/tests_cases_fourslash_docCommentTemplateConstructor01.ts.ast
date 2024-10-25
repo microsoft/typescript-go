@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' newTextOffset'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      Identifier: ' /*newTextOffset*/ newTextOffset'
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      Identifier: ' /*newTextOffset*/ newTextOffset'
+      NoSubstitutionTemplateLiteral

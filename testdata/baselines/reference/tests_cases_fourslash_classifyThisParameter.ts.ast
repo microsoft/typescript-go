@@ -1,0 +1,56 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' classification'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'syntacticClassificationsAre'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'keyword'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'identifier'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'keyword'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral

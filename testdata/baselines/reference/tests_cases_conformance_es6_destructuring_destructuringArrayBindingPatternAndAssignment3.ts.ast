@@ -1,0 +1,94 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'a'
+          BindingElement
+            Identifier: ' b'
+            Identifier: ' a'
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'c'
+          BindingElement
+            Identifier: ' d'
+            Identifier: ' c'
+          BindingElement
+            Identifier: ' e'
+            Identifier: ' e'
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'f'
+          BindingElement
+            Identifier: ' g'
+            Identifier: ' f'
+          BindingElement
+            Identifier: ' h'
+            Identifier: ' i'
+          BindingElement
+            Identifier: ' i'
+            Identifier: ' f'
+        ArrayLiteralExpression
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Parameter
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'a'
+              BindingElement
+                Identifier: ' b'
+                Identifier: ' a'
+          Block
+      ArrayLiteralExpression
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Parameter
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'c'
+              BindingElement
+                Identifier: ' d'
+                Identifier: ' c'
+              BindingElement
+                Identifier: ' e'
+                Identifier: ' e'
+          Block
+      ArrayLiteralExpression
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Parameter
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'f'
+              BindingElement
+                Identifier: ' g'
+                Identifier: ' f'
+              BindingElement
+                Identifier: ' h'
+                Identifier: ' i'
+              BindingElement
+                Identifier: ' i'
+                Identifier: ' f'
+          Block
+      ArrayLiteralExpression
+        NumericLiteral

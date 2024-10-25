@@ -1,0 +1,23 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      PublicKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

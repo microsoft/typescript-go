@@ -1,0 +1,9 @@
+SourceFile
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        Identifier: 'e'
+        TypeReference
+          Identifier: ' Error'
+      Block

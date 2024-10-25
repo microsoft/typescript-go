@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'props'
+      AnyKeyword
+    AnyKeyword
+  ExportAssignment
+    Identifier: ' foo'
+  NamespaceExportDeclaration
+    Identifier: ' foo'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    AnyKeyword

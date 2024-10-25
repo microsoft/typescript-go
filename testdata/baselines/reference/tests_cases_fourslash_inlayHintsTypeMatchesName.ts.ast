@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// type Client = {};
+//// function getClient(): Client { return {}; };
+//// const client = getClient();
+
+verify'
+        Identifier: 'baselineInlayHints'
+      Identifier: 'undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    includeInlayVariableTypeHints'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: '
+    includeInlayVariableTypeHintsWhenTypeMatchesName'
+          FalseKeyword

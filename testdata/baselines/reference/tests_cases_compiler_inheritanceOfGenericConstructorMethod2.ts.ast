@@ -1,0 +1,69 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C1'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C2'
+        TypeParameter
+          Identifier: 'T'
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' D1'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' M'
+              Identifier: 'C1'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' D2'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' M'
+              Identifier: 'C2'
+            TypeReference
+              Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'C2'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' N'
+            Identifier: 'D1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n2'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' N'
+            Identifier: 'D2'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n3'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' N'
+            Identifier: 'D2'

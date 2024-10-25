@@ -1,0 +1,41 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' field3'
+        StringLiteral
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      AbstractKeyword
+      Identifier: ' field1'
+      NumberKeyword
+    PropertyDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      AbstractKeyword
+      ComputedPropertyName
+        StringLiteral
+      NumberKeyword
+    PropertyDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      AbstractKeyword
+      ComputedPropertyName
+        Identifier: 'field3'
+      NumberKeyword

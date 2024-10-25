@@ -1,0 +1,80 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' /*[#|*/bar'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' foo'
+              Identifier: 'x'
+            Identifier: 'then'
+          Identifier: 'foo'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x_1'
+            AwaitExpression
+              CallExpression
+                Identifier: ' foo'
+                Identifier: 'x'
+      ReturnStatement
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'x_1'

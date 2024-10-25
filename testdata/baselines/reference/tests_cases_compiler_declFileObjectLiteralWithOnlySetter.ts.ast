@@ -1,0 +1,42 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' /*1*/makePoint'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        b'
+            NumericLiteral
+          SetAccessor
+            Identifier: ' x'
+            Parameter
+              Identifier: 'a'
+              NumberKeyword
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'b'
+                  EqualsToken
+                  Identifier: ' a'
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' /*3*/point'
+        CallExpression
+          Identifier: ' makePoint'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+point'
+        Identifier: '/*2*/x'
+      EqualsToken
+      NumericLiteral

@@ -1,0 +1,413 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' SubTup2FixedLength'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TupleType
+        RestType
+          InferType
+            TypeParameter
+              Identifier: ' B'
+              TupleType
+                AnyKeyword
+                AnyKeyword
+        AnyKeyword
+      TypeReference
+        Identifier: ' B'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' SubTup2FixedLengthTest'
+    TypeReference
+      Identifier: ' SubTup2FixedLength'
+      TupleType
+        NamedTupleMember
+          Identifier: 'a'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SubTup2Variadic'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TupleType
+        RestType
+          InferType
+            TypeParameter
+              Identifier: ' B'
+              TupleType
+                AnyKeyword
+                AnyKeyword
+        RestType
+          AnyKeyword
+      TypeReference
+        Identifier: ' B'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' SubTup2VariadicTest'
+    TypeReference
+      Identifier: ' SubTup2Variadic'
+      TupleType
+        NamedTupleMember
+          Identifier: 'a'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'c'
+          ArrayType
+            LiteralType
+              NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SubTup2VariadicTest2'
+    TypeReference
+      Identifier: ' SubTup2Variadic'
+      TupleType
+        NamedTupleMember
+          Identifier: 'a'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'd'
+          ArrayType
+            LiteralType
+              NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SubTup2VariadicAndRest'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TupleType
+        RestType
+          InferType
+            TypeParameter
+              Identifier: ' B'
+              TupleType
+                AnyKeyword
+                AnyKeyword
+        RestType
+          ArrayType
+            ParenthesizedType
+              InferType
+                TypeParameter
+                  Identifier: ' C'
+      TupleType
+        RestType
+          TypeReference
+            Identifier: 'B'
+        RestType
+          TupleType
+            TypeReference
+              Identifier: 'C'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' SubTup2VariadicAndRestTest'
+    TypeReference
+      Identifier: ' SubTup2VariadicAndRest'
+      TupleType
+        NamedTupleMember
+          Identifier: 'a'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'c'
+          ArrayType
+            LiteralType
+              NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SubTup2TrailingVariadic'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TupleType
+        RestType
+          AnyKeyword
+        RestType
+          InferType
+            TypeParameter
+              Identifier: ' B'
+              TupleType
+                AnyKeyword
+                AnyKeyword
+      TypeReference
+        Identifier: ' B'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' SubTup2TrailingVariadicTest'
+    TypeReference
+      Identifier: ' SubTup2TrailingVariadic'
+      TupleType
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'a'
+          ArrayType
+            LiteralType
+              NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SubTup2TrailingVariadicTest2'
+    TypeReference
+      Identifier: ' SubTup2TrailingVariadic'
+      TupleType
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'a'
+          ArrayType
+            LiteralType
+              NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' d'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SubTup2RestAndTrailingVariadic2'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TupleType
+        RestType
+          ArrayType
+            ParenthesizedType
+              InferType
+                TypeParameter
+                  Identifier: ' C'
+        RestType
+          InferType
+            TypeParameter
+              Identifier: ' B'
+              TupleType
+                AnyKeyword
+                AnyKeyword
+      TupleType
+        TypeReference
+          Identifier: 'C'
+        RestType
+          TypeReference
+            Identifier: 'B'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' SubTup2RestAndTrailingVariadic2Test'
+    TypeReference
+      Identifier: ' SubTup2RestAndTrailingVariadic2'
+      TupleType
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'a'
+          ArrayType
+            LiteralType
+              NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SubTup2VariadicWithLeadingFixedElements'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TupleType
+        AnyKeyword
+        RestType
+          InferType
+            TypeParameter
+              Identifier: ' B'
+              TupleType
+                AnyKeyword
+                AnyKeyword
+        RestType
+          AnyKeyword
+      TypeReference
+        Identifier: ' B'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' SubTup2VariadicWithLeadingFixedElementsTest'
+    TypeReference
+      Identifier: ' SubTup2VariadicWithLeadingFixedElements'
+      TupleType
+        NamedTupleMember
+          Identifier: 'a'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'd'
+          ArrayType
+            LiteralType
+              NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SubTup2VariadicWithLeadingFixedElementsTest2'
+    TypeReference
+      Identifier: ' SubTup2VariadicWithLeadingFixedElements'
+      TupleType
+        NamedTupleMember
+          Identifier: 'a'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' d'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'e'
+          ArrayType
+            LiteralType
+              NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SubTup2TrailingVariadicWithTrailingFixedElements'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TupleType
+        RestType
+          AnyKeyword
+        RestType
+          InferType
+            TypeParameter
+              Identifier: ' B'
+              TupleType
+                AnyKeyword
+                AnyKeyword
+        AnyKeyword
+      TypeReference
+        Identifier: ' B'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' SubTup2TrailingVariadicWithTrailingFixedElementsTest'
+    TypeReference
+      Identifier: ' SubTup2TrailingVariadicWithTrailingFixedElements'
+      TupleType
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'a'
+          ArrayType
+            LiteralType
+              NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' d'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' SubTup2TrailingVariadicWithTrailingFixedElementsTest2'
+    TypeReference
+      Identifier: ' SubTup2TrailingVariadicWithTrailingFixedElements'
+      TupleType
+        NamedTupleMember
+          DotDotDotToken
+          Identifier: 'a'
+          ArrayType
+            LiteralType
+              NumericLiteral
+        NamedTupleMember
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' c'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' d'
+          LiteralType
+            NumericLiteral
+        NamedTupleMember
+          Identifier: ' e'
+          LiteralType
+            NumericLiteral

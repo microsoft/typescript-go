@@ -1,0 +1,13 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' mi_string'
+      ModuleDeclaration
+        Identifier: ' mi_string'
+        ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' string'
+        Identifier: ' mi_string'

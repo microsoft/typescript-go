@@ -1,0 +1,40 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' method3'
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      StaticKeyword
+      Identifier: ' method1'
+      Block
+    MethodDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      StaticKeyword
+      ComputedPropertyName
+        StringLiteral
+      Block
+    MethodDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+          NumericLiteral
+      StaticKeyword
+      ComputedPropertyName
+        Identifier: 'method3'
+      Block

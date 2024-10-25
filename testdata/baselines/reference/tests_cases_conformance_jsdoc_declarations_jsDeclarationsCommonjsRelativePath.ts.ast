@@ -1,0 +1,36 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' Thing'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: ' Thing'
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Thing'
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' require'
+            StringLiteral
+          Identifier: 'Thing'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: ' Thing'

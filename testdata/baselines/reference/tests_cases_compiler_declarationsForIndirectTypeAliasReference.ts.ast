@@ -1,0 +1,81 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: '
+    Hash'
+      ExportSpecifier
+        Identifier: '
+    StringHash'
+      ExportSpecifier
+        Identifier: ' StringHash2'
+  InterfaceDeclaration
+    Identifier: ' Hash'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' StringHash'
+    TypeReference
+      Identifier: ' Hash'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' StringHash2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Hash'
+        StringKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'StringHash'
+        ImportSpecifier
+          Identifier: ' StringHash2'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: '
+    doSome'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MAP'
+        TypeReference
+          Identifier: ' StringHash'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MAP2'
+        TypeReference
+          Identifier: ' StringHash2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' doSome'
+    Parameter
+      Identifier: 'arg1'
+      StringKeyword
+    Parameter
+      Identifier: '
+                arg2'
+      Identifier: ' MAP'
+    Parameter
+      Identifier: '
+                arg3'
+      Identifier: ' MAP2'
+    Block

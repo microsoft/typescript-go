@@ -1,0 +1,49 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////interface I1 {
+////    a: number;
+////    b: string;
+////    c: 1;
+////    d: "d";
+////    e: "e1" | "e2";
+////    f(x: number, y: number): void;
+////    g: (x: number, y: number) => void;
+////}
+////interface I2 {
+////    a: unknown;
+////    b: any;
+////}
+////const a: I1 = {};
+////const b: I2 = {};
+////class C {
+////     public c: I1 = {};
+////}
+////function fn1(foo: I2 = {}) {}
+////function fn2(a: I1) {}
+////fn2({});
+
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixAllDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_all_missing_properties'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

@@ -1,0 +1,200 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' One'
+    GetAccessor
+      Identifier: ' prop1'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop2'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      Block
+    PropertyDeclaration
+      Identifier: '
+
+  prop3'
+      NumberKeyword
+    GetAccessor
+      Identifier: ' prop4'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop4'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Two'
+    GetAccessor
+      Identifier: ' prop1'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          NumberKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop2'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop2'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop3'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop3'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          BooleanKeyword
+      Block
+    GetAccessor
+      Identifier: ' prop4'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      Identifier: ' prop4'
+      Parameter
+        Identifier: 's'
+        UnionType
+          StringKeyword
+          BooleanKeyword
+      Block
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u1'
+        UnionType
+          TypeReference
+            Identifier: ' One'
+          TypeReference
+            Identifier: 'Two'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+u1'
+        Identifier: 'prop1'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+u1'
+        Identifier: 'prop1'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+u1'
+        Identifier: 'prop2'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+u1'
+        Identifier: 'prop2'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+u1'
+        Identifier: 'prop3'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+u1'
+        Identifier: 'prop3'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+u1'
+        Identifier: 'prop3'
+      EqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+u1'
+        Identifier: 'prop4'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+u1'
+        Identifier: 'prop4'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+u1'
+        Identifier: 'prop4'
+      EqualsToken
+      TrueKeyword

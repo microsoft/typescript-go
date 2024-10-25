@@ -1,0 +1,212 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /file1.ts
+////declare function log(s: string | number): void;
+////[|const /*q0*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 0 |}q|] = 1;|]
+////[|export { /*q1*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 2 |}q|] };|]
+////const x = {
+////    [|/*z0*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 4 |}z|]: 'value'|]
+////}
+////[|const { /*z1*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 6 |}z|] } = x;|]
+////log(/*z2*/[|z|]);
+
+// @Filename: /file2.ts
+////declare function log(s: string | number): void;
+////[|import { /*q2*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 9 |}q|] } from "./file1";|]
+////log(/*q3*/[|q|] + 1);
+
+verify'
+        Identifier: 'noErrors'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'q0Def'
+          BindingElement
+            Identifier: ' q0'
+          BindingElement
+            Identifier: ' q1Def'
+          BindingElement
+            Identifier: ' q1'
+          BindingElement
+            Identifier: ' z0Def'
+          BindingElement
+            Identifier: ' z0'
+          BindingElement
+            Identifier: ' z1Def'
+          BindingElement
+            Identifier: ' z1'
+          BindingElement
+            Identifier: ' z2'
+          BindingElement
+            Identifier: ' q2Def'
+          BindingElement
+            Identifier: ' q2'
+          BindingElement
+            Identifier: ' q3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qFile1Ranges'
+        ArrayLiteralExpression
+          Identifier: 'q0'
+          Identifier: ' q1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qFile2Ranges'
+        ArrayLiteralExpression
+          Identifier: 'q2'
+          Identifier: ' q3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qFile1ReferenceGroup'
+        TypeReference
+          QualifiedName
+            Identifier: ' FourSlashInterface'
+            Identifier: 'ReferenceGroup'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    definition'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    ranges'
+            Identifier: ' qFile1Ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qFile2ReferenceGroup'
+        TypeReference
+          QualifiedName
+            Identifier: ' FourSlashInterface'
+            Identifier: 'ReferenceGroup'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    definition'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    ranges'
+            Identifier: ' qFile2Ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zReferenceGroup1'
+        TypeReference
+          QualifiedName
+            Identifier: ' FourSlashInterface'
+            Identifier: 'ReferenceGroup'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    definition'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    ranges'
+            ArrayLiteralExpression
+              Identifier: 'z0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' zReferenceGroup2'
+        TypeReference
+          QualifiedName
+            Identifier: ' FourSlashInterface'
+            Identifier: 'ReferenceGroup'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    definition'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    ranges'
+            ArrayLiteralExpression
+              Identifier: 'z1'
+              Identifier: ' z2'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      ArrayLiteralExpression
+        Identifier: 'q0'
+        Identifier: ' q1'
+        Identifier: ' q2'
+        Identifier: ' q3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' providePrefixAndSuffixTextForRename'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      ArrayLiteralExpression
+        Identifier: 'q0'
+        Identifier: ' q1'
+        Identifier: ' q2'
+        Identifier: ' q3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' providePrefixAndSuffixTextForRename'
+          FalseKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      ArrayLiteralExpression
+        Identifier: 'z0'
+        Identifier: ' z1'
+        Identifier: ' z2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' providePrefixAndSuffixTextForRename'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      ArrayLiteralExpression
+        Identifier: 'z0'
+        Identifier: ' z1'
+        Identifier: ' z2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' providePrefixAndSuffixTextForRename'
+          FalseKeyword

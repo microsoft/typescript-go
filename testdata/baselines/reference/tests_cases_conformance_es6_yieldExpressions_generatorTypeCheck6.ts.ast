@@ -1,0 +1,6 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g1'
+    NumberKeyword
+    Block

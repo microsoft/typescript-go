@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @allowJs: true
+// @Filename: /a.js
+
+// Both uses of T should be referenced.
+
+/////** @template /*1*/T */
+////class C {
+////    constructor() {
+////        /** @type {/*2*/T} */
+////        this.x = null;
+////    }
+////}
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral

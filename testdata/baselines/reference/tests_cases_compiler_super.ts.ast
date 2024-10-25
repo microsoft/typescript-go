@@ -1,0 +1,96 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' Sub1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          BinaryExpression
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'foo'
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'bar'
+  ClassDeclaration
+    Identifier: ' SubSub1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Sub1'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            CallExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'foo'
+  ClassDeclaration
+    Identifier: ' Base2'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        NewExpression
+          Identifier: ' Sub1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ss'
+        NewExpression
+          Identifier: ' SubSub1'
+  ExpressionStatement
+    BinaryExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+s'
+          Identifier: 'foo'
+      PlusToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' ss'
+          Identifier: 'foo'

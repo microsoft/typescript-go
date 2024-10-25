@@ -1,0 +1,49 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'classMap'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' classMap'
+  ClassDeclaration
+    Identifier: ' ClassMapDirective'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'ClassMapDirective'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' directive'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'C'
+          Parameter
+            Identifier: 'class_'
+            TypeReference
+              Identifier: ' C'
+          EqualsGreaterThanToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    directive'
+                  Identifier: ' class_'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' classMap'
+        CallExpression
+          Identifier: ' directive'
+          Identifier: 'ClassMapDirective'

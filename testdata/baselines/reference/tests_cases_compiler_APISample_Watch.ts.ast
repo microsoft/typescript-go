@@ -1,0 +1,257 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' process'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' os'
+        AnyKeyword
+  ImportEqualsDeclaration
+    Identifier: ' ts'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' formatHost'
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'FormatDiagnosticsHost'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    getCanonicalFileName'
+            ArrowFunction
+              Parameter
+                Identifier: ' path'
+              EqualsGreaterThanToken
+              Identifier: ' path'
+          PropertyAssignment
+            Identifier: '
+    getCurrentDirectory'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'sys'
+              Identifier: 'getCurrentDirectory'
+          PropertyAssignment
+            Identifier: '
+    getNewLine'
+            ArrowFunction
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'sys'
+                Identifier: 'newLine'
+  FunctionDeclaration
+    Identifier: ' watchMain'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' configPath'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'findConfigFile'
+              StringLiteral
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'sys'
+                Identifier: 'fileExists'
+              StringLiteral
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'configPath'
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createWatchCompilerHost'
+              Identifier: 'configPath'
+              ObjectLiteralExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'sys'
+              PropertyAccessExpression
+                Identifier: '
+        ts'
+                Identifier: 'createSemanticDiagnosticsBuilderProgram'
+              Identifier: '
+        reportDiagnostic'
+              Identifier: '
+        reportWatchStatusChanged'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' origCreateProgram'
+            PropertyAccessExpression
+              Identifier: ' host'
+              Identifier: 'createProgram'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'createProgram'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: 'rootNames'
+              TypeReference
+                Identifier: ' ReadonlyArray'
+                StringKeyword
+            Parameter
+              Identifier: ' options'
+            Parameter
+              Identifier: ' host'
+            Parameter
+              Identifier: ' oldProgram'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        console'
+                    Identifier: 'log'
+                  StringLiteral
+              ReturnStatement
+                CallExpression
+                  Identifier: ' origCreateProgram'
+                  Identifier: 'rootNames'
+                  Identifier: ' options'
+                  Identifier: ' host'
+                  Identifier: ' oldProgram'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' origPostProgramCreate'
+            PropertyAccessExpression
+              Identifier: ' host'
+              Identifier: 'afterProgramCreate'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    host'
+            Identifier: 'afterProgramCreate'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' program'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        console'
+                    Identifier: 'log'
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  NonNullExpression
+                    Identifier: '
+        origPostProgramCreate'
+                  Identifier: 'program'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // `createWatchProgram` creates an initial program, watches files, and updates the program over time.
+    ts'
+            Identifier: 'createWatchProgram'
+          Identifier: 'host'
+  FunctionDeclaration
+    Identifier: ' reportDiagnostic'
+    Parameter
+      Identifier: 'diagnostic'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Diagnostic'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'error'
+          StringLiteral
+          PropertyAccessExpression
+            Identifier: ' diagnostic'
+            Identifier: 'code'
+          StringLiteral
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        ts'
+              Identifier: 'flattenDiagnosticMessageText'
+            PropertyAccessExpression
+              Identifier: 'diagnostic'
+              Identifier: 'messageText'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' formatHost'
+                Identifier: 'getNewLine'
+  FunctionDeclaration
+    Identifier: ' reportWatchStatusChanged'
+    Parameter
+      Identifier: 'diagnostic'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Diagnostic'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'info'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'ts'
+              Identifier: 'formatDiagnostic'
+            Identifier: 'diagnostic'
+            Identifier: ' formatHost'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+watchMain'

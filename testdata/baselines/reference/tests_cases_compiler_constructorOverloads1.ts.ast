@@ -1,0 +1,73 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    Constructor
+      Parameter
+        Identifier: 's'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Block
+    Constructor
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    bar1'
+      Block
+    MethodDeclaration
+      Identifier: '
+    bar2'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        NewExpression
+          Identifier: ' Foo'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        NewExpression
+          Identifier: ' Foo'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        NewExpression
+          Identifier: ' Foo'
+          Identifier: 'f1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        NewExpression
+          Identifier: ' Foo'
+          ArrayLiteralExpression
+            Identifier: 'f1'
+            Identifier: 'f2'
+            Identifier: 'f3'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+f1'
+        Identifier: 'bar1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+f1'
+        Identifier: 'bar2'

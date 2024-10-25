@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' a'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' b'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      NumberKeyword

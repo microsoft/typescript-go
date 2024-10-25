@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @noEmit: true
+// @allowJs: true
+// @checkJs: true
+// @Filename: mod.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      FunctionExpression
+        Identifier: ' x'
+        Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mod'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+mod'

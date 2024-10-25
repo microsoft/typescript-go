@@ -1,0 +1,320 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' OneThing'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' OneThing'
+    Parameter
+      Identifier: 'l'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'yy'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' yy1'
+          StringKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    yy'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    yy1'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c0'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' extraProp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' yy'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj'
+            JsxAttribute
+              Identifier: ' yy1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj'
+            JsxAttribute
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'extra'
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj'
+            JsxAttribute
+              Identifier: ' y1'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj'
+            JsxAttribute
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'yy'
+                  TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c6'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj2'
+            JsxAttribute
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'extra'
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c7'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj2'
+            JsxAttribute
+              Identifier: ' yy'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' TestingOneThing'
+    Parameter
+      Identifier: 'j'
+      TypeLiteral
+        PropertySignature
+          StringLiteral
+          StringKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' TestingOneThing'
+    Parameter
+      Identifier: 'n'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'yy'
+          StringKeyword
+        PropertySignature
+          Identifier: ' direction'
+          QuestionToken
+          NumberKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        JsxSelfClosingElement
+          Identifier: 'TestingOneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' extra-data'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        JsxSelfClosingElement
+          Identifier: 'TestingOneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' yy'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' direction'
+              StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' TestingOptional'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'y1'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: ' y2'
+          QuestionToken
+          NumberKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' TestingOptional'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'y1'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: ' y2'
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' children'
+          TypeReference
+            QualifiedName
+              Identifier: ' JSX'
+              Identifier: 'Element'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' TestingOptional'
+    Parameter
+      Identifier: 'a'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'y1'
+          BooleanKeyword
+        PropertySignature
+          Identifier: ' y2'
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' y3'
+          BooleanKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        JsxSelfClosingElement
+          Identifier: 'TestingOptional'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' y1'
+            JsxAttribute
+              Identifier: ' y3'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        JsxSelfClosingElement
+          Identifier: 'TestingOptional'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' y1'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' y2'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' y3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e3'
+        JsxSelfClosingElement
+          Identifier: 'TestingOptional'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' y1'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' y2'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' children'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e4'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'TestingOptional'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' y1'
+                StringLiteral
+              JsxAttribute
+                Identifier: ' y2'
+                JsxExpression
+                  NumericLiteral
+          JsxText
+          JsxClosingElement
+            Identifier: 'TestingOptional'

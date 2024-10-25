@@ -1,0 +1,208 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' simpleVar'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exportedSimpleVar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anotherVar'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' varWithSimpleType'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' varWithArrayType'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' varWithInitialValue'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exportedVarWithInitialValue'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' withComplicatedValue'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' desc'
+            StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exportedWithComplicatedValue'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' y'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' desc'
+            StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' declaredVar'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' declareVar2'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' declaredVar'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' deckareVarWithType'
+        NumberKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exportedDeclaredVar'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrayVar'
+        ArrayType
+          StringKeyword
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exportedArrayVar'
+        ArrayType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' y'
+              StringKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+exportedArrayVar'
+        Identifier: 'push'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' y'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' simpleFunction'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        x'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+        y'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+        n'
+            NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' exportedFunction'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' simpleFunction'
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            StringLiteral
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' m2'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumberKeyword
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m3'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' m1'
+                Identifier: 'foo'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' eVar1'
+      VariableDeclaration
+        Identifier: ' eVar2'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' eVar22'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' eVar3'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' eVar4'
+      VariableDeclaration
+        Identifier: ' eVar5'

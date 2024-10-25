@@ -1,0 +1,35 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' i1'
+    PropertySignature
+      Identifier: ' foo'
+      NumberKeyword
+  EmptyStatement
+  InterfaceDeclaration
+    Identifier: ' i2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' i1'
+    PropertySignature
+      Identifier: ' foo'
+      NumberKeyword
+  EmptyStatement
+  InterfaceDeclaration
+    Identifier: ' i3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' i1'
+    PropertySignature
+      Identifier: ' foo'
+      StringKeyword
+  EmptyStatement
+  InterfaceDeclaration
+    Identifier: ' i4'
+    MethodSignature
+      Identifier: '
+ bar'
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+ bar'
+      AnyKeyword

@@ -1,0 +1,36 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' sum'
+    TypeParameter
+      Identifier: 'T'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeReference
+            Identifier: ' T'
+        NumberKeyword
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          PlusEqualsToken
+          ElementAccessExpression
+            Identifier: ' v'
+            Identifier: 'k'

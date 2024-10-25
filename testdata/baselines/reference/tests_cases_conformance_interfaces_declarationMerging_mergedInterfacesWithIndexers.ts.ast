@@ -1,0 +1,45 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' length'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ElementAccessExpression
+          Identifier: ' a'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        ElementAccessExpression
+          Identifier: ' a'
+          StringLiteral

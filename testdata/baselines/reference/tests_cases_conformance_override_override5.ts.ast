@@ -1,0 +1,140 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    p1'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    p2'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    p3'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    p4'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    oop'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    pp'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    op'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertyDeclaration
+      DeclareKeyword
+      Identifier: ' p1'
+      NumberKeyword
+    PropertyDeclaration
+      OverrideKeyword
+      DeclareKeyword
+      Identifier: ' p2'
+      NumberKeyword
+    PropertyDeclaration
+      ReadonlyKeyword
+      OverrideKeyword
+      Identifier: ' p3'
+      NumberKeyword
+    PropertyDeclaration
+      OverrideKeyword
+      ReadonlyKeyword
+      Identifier: ' p4'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      OverrideKeyword
+      Identifier: ' sp'
+      NumberKeyword
+    PropertyDeclaration
+      OverrideKeyword
+      OverrideKeyword
+      Identifier: ' oop'
+      NumberKeyword
+    PropertyDeclaration
+      PublicKeyword
+      OverrideKeyword
+      Identifier: ' pp'
+      NumberKeyword
+    PropertyDeclaration
+      OverrideKeyword
+      PublicKeyword
+      Identifier: ' op'
+      NumberKeyword
+    Constructor
+      OverrideKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AB'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' f'
+      VoidKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' b'
+      VoidKeyword
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AD'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AB'
+    MethodDeclaration
+      OverrideKeyword
+      AbstractKeyword
+      Identifier: ' f'
+      VoidKeyword
+    MethodDeclaration
+      AbstractKeyword
+      OverrideKeyword
+      Identifier: ' b'
+      VoidKeyword
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AND'
+    MethodDeclaration
+      OverrideKeyword
+      AbstractKeyword
+      Identifier: ' f'
+      VoidKeyword
+    MethodDeclaration
+      AbstractKeyword
+      OverrideKeyword
+      Identifier: ' b'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' ADD'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AD'
+    MethodDeclaration
+      Identifier: '
+    f'
+      VoidKeyword
+      Block
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' b'
+      VoidKeyword
+      Block

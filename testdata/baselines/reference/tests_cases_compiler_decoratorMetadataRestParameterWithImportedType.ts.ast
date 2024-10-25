@@ -1,0 +1,100 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' SomeClass'
+    PropertyDeclaration
+      Identifier: '
+    field'
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' SomeClass1'
+    PropertyDeclaration
+      Identifier: '
+    field'
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' SomeClass2'
+    PropertyDeclaration
+      Identifier: '
+    field'
+      StringKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' SomeClass'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' SomeClass1'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' ClassDecorator'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'target'
+            AnyKeyword
+          VoidKeyword
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    Identifier: ' annotation1'
+    TypeReference
+      Identifier: ' MethodDecorator'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'target'
+            AnyKeyword
+          VoidKeyword
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Decorator
+      CallExpression
+        Identifier: 'annotation'
+    ExportKeyword
+    Identifier: ' ClassA'
+    PropertyDeclaration
+      Identifier: '
+    array'
+      ArrayType
+        TypeReference
+          Identifier: ' SomeClass'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'init'
+        ArrayType
+          TypeReference
+            Identifier: ' SomeClass'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'array'
+            EqualsToken
+            Identifier: ' init'
+    MethodDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'annotation1'
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: ' args'
+        ArrayType
+          TypeReference
+            Identifier: ' SomeClass1'
+      Block

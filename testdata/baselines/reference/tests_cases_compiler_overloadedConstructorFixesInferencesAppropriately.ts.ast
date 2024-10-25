@@ -1,0 +1,106 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Box'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    v'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' ErrorResult'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' error'
+      LiteralType
+        TrueKeyword
+  InterfaceDeclaration
+    Identifier: ' AsyncLoaderProps'
+    TypeParameter
+      Identifier: 'TResult'
+      TypeLiteral
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' asyncLoad'
+      FunctionType
+        TypeReference
+          Identifier: ' Box'
+          TypeReference
+            Identifier: 'TResult'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' children'
+      FunctionType
+        Parameter
+          Identifier: 'result'
+          TypeReference
+            Identifier: ' Exclude'
+            TypeReference
+              Identifier: 'TResult'
+            TypeReference
+              Identifier: ' ErrorResult'
+        StringKeyword
+  ClassDeclaration
+    Identifier: ' AsyncLoader'
+    TypeParameter
+      Identifier: 'TResult'
+      TypeLiteral
+    Constructor
+      Parameter
+        Identifier: 'props'
+        StringKeyword
+      Parameter
+        Identifier: ' context'
+        AnyKeyword
+    Constructor
+      Parameter
+        Identifier: 'props'
+        TypeReference
+          Identifier: ' AsyncLoaderProps'
+          TypeReference
+            Identifier: 'TResult'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      Block
+  FunctionDeclaration
+    Identifier: ' load'
+    TypeReference
+      Identifier: ' Box'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' success'
+            LiteralType
+              TrueKeyword
+        TypeReference
+          Identifier: ' ErrorResult'
+    Block
+      ReturnStatement
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' AsyncLoader'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    asyncLoad'
+          Identifier: ' load'
+        PropertyAssignment
+          Identifier: '
+    children'
+          ArrowFunction
+            Parameter
+              Identifier: ' result'
+            EqualsGreaterThanToken
+            AsExpression
+              PropertyAccessExpression
+                Identifier: ' result'
+                Identifier: 'success'
+              AnyKeyword

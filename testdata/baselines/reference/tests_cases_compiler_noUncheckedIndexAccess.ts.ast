@@ -1,0 +1,106 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Meat'
+    EnumMember
+      Identifier: '
+    Sausage'
+    EnumMember
+      Identifier: '
+    Bacon'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sausage'
+        PropertyAccessExpression
+          Identifier: ' Meat'
+          Identifier: 'Sausage'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' valueSausage'
+        ElementAccessExpression
+          Identifier: ' Meat'
+          Identifier: 'sausage'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bacon'
+        PropertyAccessExpression
+          Identifier: ' Meat'
+          Identifier: 'Bacon'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' valueBacon'
+        ElementAccessExpression
+          Identifier: ' Meat'
+          Identifier: 'bacon'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' union'
+        UnionType
+          TypeReference
+            QualifiedName
+              Identifier: ' Meat'
+              Identifier: 'Bacon'
+          TypeReference
+            QualifiedName
+              Identifier: ' Meat'
+              Identifier: 'Sausage'
+        PropertyAccessExpression
+          Identifier: ' Meat'
+          Identifier: 'Bacon'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' valueUnion'
+        ElementAccessExpression
+          Identifier: ' Meat'
+          Identifier: 'union'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        ElementAccessExpression
+          Identifier: ' Meat'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' valueUndefined'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value2'
+        ElementAccessExpression
+          Identifier: ' Meat'
+          Identifier: 'valueUndefined'
+  EnumDeclaration
+    Identifier: ' A'
+    EnumMember
+      Identifier: '
+    a'
+    EnumMember
+      Identifier: ' b'
+    EnumMember
+      Identifier: ' c'
+  EnumDeclaration
+    Identifier: ' B'
+    EnumMember
+      Identifier: '
+    x'
+    EnumMember
+      Identifier: ' y'
+    EnumMember
+      Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value3'
+        ElementAccessExpression
+          Identifier: ' A'
+          PropertyAccessExpression
+            Identifier: 'B'
+            Identifier: 'x'

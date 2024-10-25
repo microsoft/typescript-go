@@ -1,0 +1,228 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' bar'
+              AnyKeyword
+              ParenthesizedExpression
+                FunctionExpression
+                  Block
+                    ReturnStatement
+                      Identifier: ' bar'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              CallExpression
+                Identifier: ' f1'
+                CallExpression
+                  Identifier: 'f1'
+                  Identifier: 'bar'
+  ClassDeclaration
+    Identifier: ' Vector'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' norm'
+      Parameter
+        Identifier: 'v'
+        TypeReference
+          Identifier: 'Vector'
+      TypeReference
+        Identifier: 'Vector'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' minus'
+      Parameter
+        Identifier: 'v1'
+        TypeReference
+          Identifier: 'Vector'
+      Parameter
+        Identifier: ' v2'
+        TypeReference
+          Identifier: 'Vector'
+      TypeReference
+        Identifier: 'Vector'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' times'
+      Parameter
+        Identifier: 'v1'
+        TypeReference
+          Identifier: 'Vector'
+      Parameter
+        Identifier: ' v2'
+        TypeReference
+          Identifier: 'Vector'
+      TypeReference
+        Identifier: 'Vector'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' cross'
+      Parameter
+        Identifier: 'v1'
+        TypeReference
+          Identifier: 'Vector'
+      Parameter
+        Identifier: ' v2'
+        TypeReference
+          Identifier: 'Vector'
+      TypeReference
+        Identifier: 'Vector'
+      Block
+        ReturnStatement
+          NullKeyword
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' y'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' z'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' dot'
+      Parameter
+        Identifier: 'v1'
+        TypeReference
+          Identifier: 'Vector'
+      Parameter
+        Identifier: ' v2'
+        TypeReference
+          Identifier: 'Vector'
+      TypeReference
+        Identifier: 'Vector'
+      Block
+        ReturnStatement
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' Camera'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' forward'
+      TypeReference
+        Identifier: ' Vector'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' right'
+      TypeReference
+        Identifier: ' Vector'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' up'
+      TypeReference
+        Identifier: ' Vector'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' pos'
+        TypeReference
+          Identifier: ' Vector'
+      Parameter
+        Identifier: ' lookAt'
+        TypeReference
+          Identifier: ' Vector'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' down'
+              NewExpression
+                Identifier: ' Vector'
+                NumericLiteral
+                PrefixUnaryExpression
+                  NumericLiteral
+                NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'forward'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Vector'
+                Identifier: 'norm'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'Vector'
+                  Identifier: 'minus'
+                Identifier: 'lookAt'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'pos'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'right'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Vector'
+                Identifier: 'times'
+              Identifier: 'down'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Vector'
+                  Identifier: 'norm'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Vector'
+                    Identifier: 'cross'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'forward'
+                  Identifier: ' down'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'up'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Vector'
+                Identifier: 'times'
+              Identifier: 'down'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Vector'
+                  Identifier: 'norm'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Vector'
+                    Identifier: 'cross'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'forward'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'right'

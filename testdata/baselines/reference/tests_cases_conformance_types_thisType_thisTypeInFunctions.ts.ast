@@ -1,0 +1,1342 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    explicitThis'
+      Parameter
+        Identifier: 'this'
+        ThisType
+      Parameter
+        Identifier: ' m'
+        NumberKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'n'
+            PlusToken
+            Identifier: ' m'
+    MethodDeclaration
+      Identifier: '
+    explicitC'
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' C'
+      Parameter
+        Identifier: ' m'
+        NumberKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'n'
+            PlusToken
+            Identifier: ' m'
+    MethodDeclaration
+      Identifier: '
+    explicitProperty'
+      Parameter
+        Identifier: 'this'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'n'
+            NumberKeyword
+      Parameter
+        Identifier: ' m'
+        NumberKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'n'
+            PlusToken
+            Identifier: ' m'
+    MethodDeclaration
+      Identifier: '
+    explicitVoid'
+      Parameter
+        Identifier: 'this'
+        VoidKeyword
+      Parameter
+        Identifier: ' m'
+        NumberKeyword
+      NumberKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            Identifier: ' m'
+            PlusToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    explicitVoid1'
+      Parameter
+        Identifier: 'this'
+        VoidKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    explicitVoid2'
+      Parameter
+        Identifier: 'this'
+        VoidKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    explicitStructural'
+      Parameter
+        Identifier: 'this'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    explicitInterface'
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' I'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    explicitThis'
+      Parameter
+        Identifier: 'this'
+        ThisType
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' explicitStructural'
+    Parameter
+      Identifier: 'this'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+    Parameter
+      Identifier: ' x'
+      NumberKeyword
+    NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' x'
+          PlusToken
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'y'
+  FunctionDeclaration
+    Identifier: ' justThis'
+    Parameter
+      Identifier: 'this'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' y'
+          NumberKeyword
+    NumberKeyword
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'y'
+  FunctionDeclaration
+    Identifier: ' implicitThis'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'm'
+            PlusToken
+            Identifier: ' n'
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' impl'
+        TypeReference
+          Identifier: ' I'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    explicitVoid2'
+            ArrowFunction
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'a'
+          MethodDeclaration
+            Identifier: ' // ok, this: any because it refers to some outer object (window?)
+    explicitVoid1'
+            Block
+              ReturnStatement
+                NumericLiteral
+          MethodDeclaration
+            Identifier: '
+    explicitStructural'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'a'
+          MethodDeclaration
+            Identifier: '
+    explicitInterface'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'a'
+          MethodDeclaration
+            Identifier: '
+    explicitThis'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+impl'
+        Identifier: 'explicitVoid1'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+impl'
+        Identifier: 'explicitVoid2'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+impl'
+        Identifier: 'explicitStructural'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+impl'
+        Identifier: 'explicitInterface'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+impl'
+        Identifier: 'explicitStructural'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+impl'
+        Identifier: 'explicitInterface'
+      EqualsToken
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+impl'
+        Identifier: 'explicitThis'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ok'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'y'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' f'
+            FunctionType
+              Parameter
+                Identifier: 'this'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' y'
+                    NumberKeyword
+              Parameter
+                Identifier: ' x'
+                NumberKeyword
+              NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' y'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' f'
+            Identifier: ' explicitStructural'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' implicitAnyOk'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'notSpecified'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' f'
+            FunctionType
+              Parameter
+                Identifier: 'x'
+                NumberKeyword
+              NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' notSpecified'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' f'
+            Identifier: ' implicitThis'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+ok'
+        Identifier: 'f'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+implicitThis'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+implicitAnyOk'
+        Identifier: 'f'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ripped'
+        PropertyAccessExpression
+          Identifier: ' c'
+          Identifier: 'explicitC'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitC'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitProperty'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitThis'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+d'
+        Identifier: 'explicitC'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+d'
+        Identifier: 'explicitProperty'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+d'
+        Identifier: 'explicitThis'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' reconstructed'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' 
+    n'
+            NumberKeyword
+          MethodSignature
+            Identifier: '
+    explicitThis'
+            Parameter
+              Identifier: 'this'
+              TypeReference
+                Identifier: ' C'
+            Parameter
+              Identifier: ' m'
+              NumberKeyword
+            NumberKeyword
+          MethodSignature
+            Identifier: ' // note: this: this is not allowed in an object literal type.
+    explicitC'
+            Parameter
+              Identifier: 'this'
+              TypeReference
+                Identifier: ' C'
+            Parameter
+              Identifier: ' m'
+              NumberKeyword
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+    explicitProperty'
+            FunctionType
+              Parameter
+                Identifier: 'this'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'n'
+                    NumberKeyword
+              Parameter
+                Identifier: ' m'
+                NumberKeyword
+              NumberKeyword
+          MethodSignature
+            Identifier: '
+    explicitVoid'
+            Parameter
+              Identifier: 'this'
+              VoidKeyword
+            Parameter
+              Identifier: ' m'
+              NumberKeyword
+            NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' 
+    n'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    explicitThis'
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'explicitThis'
+          PropertyAssignment
+            Identifier: '
+    explicitC'
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'explicitC'
+          PropertyAssignment
+            Identifier: '
+    explicitProperty'
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'explicitProperty'
+          PropertyAssignment
+            Identifier: '
+    explicitVoid'
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'explicitVoid'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+reconstructed'
+        Identifier: 'explicitThis'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+reconstructed'
+        Identifier: 'explicitProperty'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' explicitVoid'
+        PropertyAccessExpression
+          Identifier: ' reconstructed'
+          Identifier: 'explicitVoid'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+explicitVoid'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unboundToSpecified'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' y'
+                NumberKeyword
+          Parameter
+            Identifier: ' x'
+            NumberKeyword
+          NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' x'
+            PlusToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' specifiedToSpecified'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'y'
+                NumberKeyword
+          Parameter
+            Identifier: ' x'
+            NumberKeyword
+          NumberKeyword
+        Identifier: ' explicitStructural'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyToSpecified'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' y'
+                NumberKeyword
+          Parameter
+            Identifier: ' x'
+            NumberKeyword
+          NumberKeyword
+        FunctionExpression
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          NumberKeyword
+          Block
+            ReturnStatement
+              BinaryExpression
+                Identifier: ' x'
+                PlusToken
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unspecifiedLambda'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' x'
+            PlusToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' specifiedLambda'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            VoidKeyword
+          Parameter
+            Identifier: ' x'
+            NumberKeyword
+          NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' x'
+            PlusToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unspecifiedLambdaToSpecified'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'y'
+                NumberKeyword
+          Parameter
+            Identifier: ' x'
+            NumberKeyword
+          NumberKeyword
+        Identifier: ' unspecifiedLambda'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' specifiedLambdaToSpecified'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'y'
+                NumberKeyword
+          Parameter
+            Identifier: ' x'
+            NumberKeyword
+          NumberKeyword
+        Identifier: ' specifiedLambda'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' explicitCFunction'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            TypeReference
+              Identifier: ' C'
+          Parameter
+            Identifier: ' m'
+            NumberKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' explicitPropertyFunction'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'n'
+                NumberKeyword
+          Parameter
+            Identifier: ' m'
+            NumberKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitC'
+      EqualsToken
+      Identifier: ' explicitCFunction'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitC'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'this'
+          TypeReference
+            Identifier: ' C'
+        Parameter
+          Identifier: ' m'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'n'
+              PlusToken
+              Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitProperty'
+      EqualsToken
+      Identifier: ' explicitPropertyFunction'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitProperty'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'this'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'n'
+              NumberKeyword
+        Parameter
+          Identifier: ' m'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'n'
+              PlusToken
+              Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitProperty'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' reconstructed'
+        Identifier: 'explicitProperty'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// lambdas are assignable to anything
+c'
+        Identifier: 'explicitC'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: ' m'
+        EqualsGreaterThanToken
+        Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitThis'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: ' m'
+        EqualsGreaterThanToken
+        Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitProperty'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: ' m'
+        EqualsGreaterThanToken
+        Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// this inside lambdas refer to outer scope
+// the outer-scoped lambda at top-level is still just `any`
+c'
+        Identifier: 'explicitC'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: ' m'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' m'
+          PlusToken
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'n'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitThis'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: ' m'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' m'
+          PlusToken
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'n'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitProperty'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: ' m'
+        EqualsGreaterThanToken
+        BinaryExpression
+          Identifier: ' m'
+          PlusToken
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'n'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+//NOTE: this=C here, I guess?
+c'
+        Identifier: 'explicitThis'
+      EqualsToken
+      Identifier: ' explicitCFunction'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitThis'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'this'
+          TypeReference
+            Identifier: ' C'
+        Parameter
+          Identifier: ' m'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'n'
+              PlusToken
+              Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// this:any compatibility
+c'
+        Identifier: 'explicitC'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'm'
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'n'
+              PlusToken
+              Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitProperty'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'm'
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'n'
+              PlusToken
+              Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'explicitThis'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'm'
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'n'
+              PlusToken
+              Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// this: contextual typing
+c'
+        Identifier: 'explicitThis'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'this'
+        Parameter
+          Identifier: ' m'
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'n'
+              PlusToken
+              Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// this: superclass compatibility
+c'
+        Identifier: 'explicitC'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'this'
+          TypeReference
+            Identifier: ' B'
+        Parameter
+          Identifier: ' m'
+          NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'n'
+              PlusToken
+              Identifier: ' m'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// this:void compatibility
+c'
+        Identifier: 'explicitVoid'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  ClassDeclaration
+    Identifier: ' Base1'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' polymorphic'
+      Parameter
+        Identifier: 'this'
+        ThisType
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    MethodDeclaration
+      Identifier: '
+    explicit'
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' Base1'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' explicitStatic'
+      Parameter
+        Identifier: 'this'
+        TypeQuery
+          Identifier: ' Base1'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'y'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base1'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Base2'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    polymorphic'
+      Parameter
+        Identifier: 'this'
+        ThisType
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'y'
+    MethodDeclaration
+      Identifier: '
+    explicit'
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' Base1'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base2'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        NewExpression
+          Identifier: ' Base1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        NewExpression
+          Identifier: ' Base2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        NewExpression
+          Identifier: ' Derived1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        NewExpression
+          Identifier: ' Derived2'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+d2'
+        Identifier: 'polymorphic'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' d1'
+        Identifier: 'polymorphic'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // ok, 'x' and 'y' in { x, y }
+d1'
+        Identifier: 'polymorphic'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' d2'
+        Identifier: 'polymorphic'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // ok, 'x' and 'y' in { x, y }
+
+// bivariance-allowed cases
+d1'
+        Identifier: 'polymorphic'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b2'
+        Identifier: 'polymorphic'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // ok, 'y' in D: { x, y }
+d2'
+        Identifier: 'polymorphic'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' d1'
+        Identifier: 'explicit'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // ok, 'y' in { x, y }
+b1'
+        Identifier: 'polymorphic'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' d2'
+        Identifier: 'polymorphic'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // ok, 'x' and 'y' not in Base1: { x }
+b1'
+        Identifier: 'explicit'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' d2'
+        Identifier: 'polymorphic'
+  FunctionDeclaration
+    Identifier: ' InterfaceThis'
+    Parameter
+      Identifier: 'this'
+      TypeReference
+        Identifier: ' I'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+          EqualsToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' LiteralTypeThis'
+    Parameter
+      Identifier: 'this'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'x'
+          StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+          EqualsToken
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' AnyThis'
+    Parameter
+      Identifier: 'this'
+      AnyKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+          EqualsToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' interfaceThis'
+        NewExpression
+          Identifier: ' InterfaceThis'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' literalTypeThis'
+        NewExpression
+          Identifier: ' LiteralTypeThis'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyThis'
+        NewExpression
+          Identifier: ' AnyThis'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'this'
+              VoidKeyword
+            Parameter
+              Identifier: ' x'
+              NumberKeyword
+            NumberKeyword
+          MethodSignature
+            Identifier: ' 
+    call'
+            TypeParameter
+              Identifier: 'U'
+            Parameter
+              Identifier: 'this'
+              FunctionType
+                Parameter
+                  DotDotDotToken
+                  Identifier: 'argArray'
+                  ArrayType
+                    AnyKeyword
+                TypeReference
+                  Identifier: ' U'
+            Parameter
+              DotDotDotToken
+              Identifier: 'argArray'
+              ArrayType
+                AnyKeyword
+            TypeReference
+              Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' f'
+            Identifier: 'call'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' missingTypeIsImplicitAny'
+    Parameter
+      Identifier: 'this'
+    Parameter
+      Identifier: ' a'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'anything'
+          PlusToken
+          Identifier: ' a'

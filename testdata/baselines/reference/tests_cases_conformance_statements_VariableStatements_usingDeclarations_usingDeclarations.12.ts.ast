@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    Constructor
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    y'
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' d17'
+              ObjectLiteralExpression
+                MethodDeclaration
+                  ComputedPropertyName
+                    PropertyAccessExpression
+                      Identifier: 'Symbol'
+                      Identifier: 'dispose'
+                  Block

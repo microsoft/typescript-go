@@ -1,0 +1,1755 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Baseline'
+        ImportSpecifier
+          Identifier: '
+    Compiler'
+        ImportSpecifier
+          Identifier: '
+    FileBasedTest'
+        ImportSpecifier
+          Identifier: '
+    FileBasedTestConfiguration'
+        ImportSpecifier
+          Identifier: '
+    getFileBasedTestConfigurationDescription'
+        ImportSpecifier
+          Identifier: '
+    getFileBasedTestConfigurations'
+        ImportSpecifier
+          Identifier: '
+    IO'
+        ImportSpecifier
+          Identifier: '
+    RunnerBase'
+        ImportSpecifier
+          Identifier: '
+    TestCaseParser'
+        ImportSpecifier
+          Identifier: '
+    TestRunnerKind'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Utils'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vfs'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vpath'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' CompilerTestType'
+    EnumMember
+      Identifier: '
+    Conformance'
+    EnumMember
+      Identifier: '
+    Regressions'
+  InterfaceDeclaration
+    Identifier: ' CompilerFileBasedTest'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' FileBasedTest'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' content'
+      QuestionToken
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' CompilerBaselineRunner'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' RunnerBase'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' basePath'
+      StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' testSuiteName'
+      TypeReference
+        Identifier: ' TestRunnerKind'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' emit'
+      BooleanKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' options'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' testType'
+        TypeReference
+          Identifier: ' CompilerTestType'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'emit'
+            EqualsToken
+            TrueKeyword
+        IfStatement
+          BinaryExpression
+            Identifier: 'testType'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              Identifier: ' CompilerTestType'
+              Identifier: 'Conformance'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'testSuiteName'
+                EqualsToken
+                StringLiteral
+          IfStatement
+            BinaryExpression
+              Identifier: 'testType'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' CompilerTestType'
+                Identifier: 'Regressions'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'testSuiteName'
+                  EqualsToken
+                  StringLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'testSuiteName'
+                  EqualsToken
+                  StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'basePath'
+            PlusEqualsToken
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'testSuiteName'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' TestRunnerKind'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'testSuiteName'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' testFiles'
+      UnionType
+        ArrayType
+          StringKeyword
+        UndefinedKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' enumerateTestFiles'
+      ArrayType
+        StringKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'testFiles'
+            QuestionQuestionEqualsToken
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'enumerateFiles'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'basePath'
+              RegularExpressionLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' recursive'
+                  TrueKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' initializeTests'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        describe'
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'testSuiteName'
+              PlusToken
+              StringLiteral
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+            describe'
+                    StringLiteral
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'parseOptions'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' files'
+                      ConditionalExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'tests'
+                            Identifier: 'length'
+                          GreaterThanToken
+                          NumericLiteral
+                        QuestionToken
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'tests'
+                        ColonToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' IO'
+                            Identifier: 'enumerateTestFiles'
+                          ThisKeyword
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            files'
+                      Identifier: 'forEach'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'file'
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'checkTestCodeOutput'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'vpath'
+                                Identifier: 'normalizeSeparators'
+                              Identifier: 'file'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' CompilerTest'
+                                Identifier: 'getConfigurations'
+                              Identifier: 'file'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' checkTestCodeOutput'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' test'
+        QuestionToken
+        TypeReference
+          Identifier: ' CompilerFileBasedTest'
+      VoidKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'test'
+            AmpersandAmpersandToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'some'
+              PropertyAccessExpression
+                Identifier: 'test'
+                Identifier: 'configurations'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            test'
+                    Identifier: 'configurations'
+                  Identifier: 'forEach'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'configuration'
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+                describe'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'testSuiteName'
+                            TemplateMiddle
+                          TemplateSpan
+                            Identifier: 'fileName'
+                            TemplateMiddle
+                          TemplateSpan
+                            ConditionalExpression
+                              Identifier: 'configuration'
+                              QuestionToken
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  CallExpression
+                                    Identifier: 'getFileBasedTestConfigurationDescription'
+                                    Identifier: 'configuration'
+                                  TemplateTail
+                              ColonToken
+                              NoSubstitutionTemplateLiteral
+                            TemplateTail
+                        ArrowFunction
+                          EqualsGreaterThanToken
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'runSuite'
+                                Identifier: 'fileName'
+                                Identifier: ' test'
+                                Identifier: ' configuration'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+            describe'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'testSuiteName'
+                    TemplateMiddle
+                  TemplateSpan
+                    Identifier: 'fileName'
+                    TemplateTail
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'runSuite'
+                        Identifier: 'fileName'
+                        Identifier: ' test'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' runSuite'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' test'
+        QuestionToken
+        TypeReference
+          Identifier: ' CompilerFileBasedTest'
+      Parameter
+        Identifier: ' configuration'
+        QuestionToken
+        TypeReference
+          Identifier: ' FileBasedTestConfiguration'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' compilerTest'
+              ExclamationToken
+              TypeReference
+                Identifier: ' CompilerTest'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        before'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' payload'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'test'
+                    AmpersandAmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' test'
+                      Identifier: 'content'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                payload'
+                        EqualsToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestCaseParser'
+                            Identifier: 'makeUnitsFromTest'
+                          PropertyAccessExpression
+                            Identifier: 'test'
+                            Identifier: 'content'
+                          PropertyAccessExpression
+                            Identifier: ' test'
+                            Identifier: 'file'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            compilerTest'
+                    EqualsToken
+                    NewExpression
+                      Identifier: ' CompilerTest'
+                      Identifier: 'fileName'
+                      Identifier: ' payload'
+                      Identifier: ' configuration'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        it'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'fileName'
+                TemplateTail
+            ArrowFunction
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' compilerTest'
+                  Identifier: 'verifyDiagnostics'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        it'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'fileName'
+                TemplateTail
+            ArrowFunction
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' compilerTest'
+                  Identifier: 'verifyModuleResolution'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        it'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'fileName'
+                TemplateTail
+            ArrowFunction
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' compilerTest'
+                  Identifier: 'verifySourceMapRecord'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        it'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'fileName'
+                TemplateTail
+            ArrowFunction
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'emit'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' compilerTest'
+                      Identifier: 'verifyJavaScriptOutput'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        it'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'fileName'
+                TemplateTail
+            ArrowFunction
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' compilerTest'
+                  Identifier: 'verifySourceMapOutput'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        it'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'fileName'
+                TemplateTail
+            ArrowFunction
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' compilerTest'
+                  Identifier: 'verifyTypesAndSymbols'
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        after'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            compilerTest'
+                    EqualsToken
+                    NonNullExpression
+                      Identifier: ' undefined'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' parseOptions'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'options'
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'options'
+                Identifier: 'length'
+              GreaterThanToken
+              NumericLiteral
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'emit'
+                EqualsToken
+                FalseKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' opts'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'options'
+                      Identifier: 'split'
+                    StringLiteral
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' opt'
+              Identifier: ' opts'
+              Block
+                SwitchStatement
+                  Identifier: 'opt'
+                  CaseBlock
+                    CaseClause
+                      StringLiteral
+                      ExpressionStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'emit'
+                          EqualsToken
+                          TrueKeyword
+                      BreakStatement
+                    DefaultClause
+                      ThrowStatement
+                        NewExpression
+                          Identifier: ' Error'
+                          StringLiteral
+  ClassDeclaration
+    Identifier: ' CompilerTest'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' varyBy'
+      TypeOperator
+        ArrayType
+          StringKeyword
+      ArrayLiteralExpression
+        SpreadElement
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'optionDeclarations'
+                  Identifier: 'filter'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'option'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'option'
+                          Identifier: 'isCommandLineOnly'
+                      AmpersandAmpersandToken
+                      ParenthesizedExpression
+                        BinaryExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    option'
+                              Identifier: 'type'
+                            EqualsEqualsEqualsToken
+                            StringLiteral
+                          BarBarToken
+                          BinaryExpression
+                            TypeOfExpression
+                              PropertyAccessExpression
+                                Identifier: ' option'
+                                Identifier: 'type'
+                            EqualsEqualsEqualsToken
+                            StringLiteral
+                    AmpersandAmpersandToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            BinaryExpression
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                    option'
+                                      Identifier: 'affectsProgramStructure'
+                                    BarBarToken
+                                    PropertyAccessExpression
+                                      Identifier: ' option'
+                                      Identifier: 'affectsEmit'
+                                  BarBarToken
+                                  PropertyAccessExpression
+                                    Identifier: ' option'
+                                    Identifier: 'affectsModuleResolution'
+                                BarBarToken
+                                PropertyAccessExpression
+                                  Identifier: ' option'
+                                  Identifier: 'affectsBindDiagnostics'
+                              BarBarToken
+                              PropertyAccessExpression
+                                Identifier: ' option'
+                                Identifier: 'affectsSemanticDiagnostics'
+                            BarBarToken
+                            PropertyAccessExpression
+                              Identifier: ' option'
+                              Identifier: 'affectsSourceFile'
+                          BarBarToken
+                          PropertyAccessExpression
+                            Identifier: ' option'
+                            Identifier: 'affectsDeclarationPath'
+                        BarBarToken
+                        PropertyAccessExpression
+                          Identifier: ' option'
+                          Identifier: 'affectsBuildInfo'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'option'
+              EqualsGreaterThanToken
+              PropertyAccessExpression
+                Identifier: ' option'
+                Identifier: 'name'
+        StringLiteral
+        StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' fileName'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' justName'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' configuredName'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' harnessSettings'
+      TypeReference
+        QualifiedName
+          Identifier: ' TestCaseParser'
+          Identifier: 'CompilerSettings'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' hasNonDtsFiles'
+      BooleanKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' result'
+      TypeReference
+        QualifiedName
+          Identifier: ' Compiler'
+          Identifier: 'CompileFilesResult'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' options'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'CompilerOptions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' tsConfigFiles'
+      ArrayType
+        TypeReference
+          QualifiedName
+            Identifier: ' Compiler'
+            Identifier: 'TestFile'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' toBeCompiled'
+      ArrayType
+        TypeReference
+          QualifiedName
+            Identifier: ' Compiler'
+            Identifier: 'TestFile'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' otherFiles'
+      ArrayType
+        TypeReference
+          QualifiedName
+            Identifier: ' Compiler'
+            Identifier: 'TestFile'
+    Constructor
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' testCaseContent'
+        QuestionToken
+        TypeReference
+          QualifiedName
+            Identifier: ' TestCaseParser'
+            Identifier: 'TestCaseContent'
+      Parameter
+        Identifier: ' configurationOverrides'
+        QuestionToken
+        TypeReference
+          QualifiedName
+            Identifier: ' TestCaseParser'
+            Identifier: 'CompilerSettings'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' absoluteRootDir'
+              PropertyAccessExpression
+                Identifier: ' vfs'
+                Identifier: 'srcFolder'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fileName'
+            EqualsToken
+            Identifier: ' fileName'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'justName'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' vpath'
+                Identifier: 'basename'
+              Identifier: 'fileName'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'configuredName'
+            EqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'justName'
+        IfStatement
+          Identifier: 'configurationOverrides'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' configuredName'
+                  StringLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' keys'
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' Object'
+                          Identifier: 'keys'
+                        Identifier: 'configurationOverrides'
+                      Identifier: 'sort'
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' key'
+              Identifier: ' keys'
+              Block
+                IfStatement
+                  Identifier: 'configuredName'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    configuredName'
+                        PlusEqualsToken
+                        StringLiteral
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                configuredName'
+                    PlusEqualsToken
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'key'
+                            Identifier: 'toLowerCase'
+                        TemplateMiddle
+                      TemplateSpan
+                        CallExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              Identifier: 'configurationOverrides'
+                              Identifier: 'key'
+                            Identifier: 'toLowerCase'
+                        TemplateTail
+            IfStatement
+              Identifier: 'configuredName'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' extname'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' vpath'
+                          Identifier: 'extname'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'justName'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' basename'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' vpath'
+                          Identifier: 'basename'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'justName'
+                        Identifier: ' extname'
+                        TrueKeyword
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'configuredName'
+                    EqualsToken
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'basename'
+                        TemplateMiddle
+                      TemplateSpan
+                        Identifier: 'configuredName'
+                        TemplateMiddle
+                      TemplateSpan
+                        Identifier: 'extname'
+                        TemplateTail
+        IfStatement
+          BinaryExpression
+            Identifier: 'testCaseContent'
+            EqualsEqualsEqualsToken
+            Identifier: ' undefined'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            testCaseContent'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' TestCaseParser'
+                    Identifier: 'makeUnitsFromTest'
+                  NonNullExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'IO'
+                        Identifier: 'readFile'
+                      Identifier: 'fileName'
+                  Identifier: ' fileName'
+        IfStatement
+          Identifier: 'configurationOverrides'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            testCaseContent'
+                EqualsToken
+                ObjectLiteralExpression
+                  SpreadAssignment
+                    Identifier: 'testCaseContent'
+                  PropertyAssignment
+                    Identifier: ' settings'
+                    ObjectLiteralExpression
+                      SpreadAssignment
+                        PropertyAccessExpression
+                          Identifier: 'testCaseContent'
+                          Identifier: 'settings'
+                      SpreadAssignment
+                        Identifier: 'configurationOverrides'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' units'
+              PropertyAccessExpression
+                Identifier: ' testCaseContent'
+                Identifier: 'testUnitData'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'toBeCompiled'
+            EqualsToken
+            ArrayLiteralExpression
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'otherFiles'
+            EqualsToken
+            ArrayLiteralExpression
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'hasNonDtsFiles'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' units'
+                Identifier: 'some'
+              ArrowFunction
+                Parameter
+                  Identifier: 'unit'
+                EqualsGreaterThanToken
+                PrefixUnaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'ts'
+                      Identifier: 'fileExtensionIs'
+                    PropertyAccessExpression
+                      Identifier: 'unit'
+                      Identifier: 'name'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'Extension'
+                      Identifier: 'Dts'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'harnessSettings'
+            EqualsToken
+            PropertyAccessExpression
+              Identifier: ' testCaseContent'
+              Identifier: 'settings'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' tsConfigOptions'
+              UnionType
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'CompilerOptions'
+                UndefinedKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'tsConfigFiles'
+            EqualsToken
+            ArrayLiteralExpression
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'testCaseContent'
+            Identifier: 'tsConfig'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            tsConfigOptions'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'cloneCompilerOptions'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'testCaseContent'
+                      Identifier: 'tsConfig'
+                    Identifier: 'options'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'tsConfigFiles'
+                  Identifier: 'push'
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'createHarnessTestFile'
+                  NonNullExpression
+                    PropertyAccessExpression
+                      Identifier: 'testCaseContent'
+                      Identifier: 'tsConfigFileUnitData'
+            ForOfStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' unit'
+              Identifier: ' units'
+              Block
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'testCaseContent'
+                          Identifier: 'tsConfig'
+                        Identifier: 'fileNames'
+                      Identifier: 'includes'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'ts'
+                        Identifier: 'getNormalizedAbsolutePath'
+                      PropertyAccessExpression
+                        Identifier: 'unit'
+                        Identifier: 'name'
+                      Identifier: ' absoluteRootDir'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'toBeCompiled'
+                          Identifier: 'push'
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'createHarnessTestFile'
+                          Identifier: 'unit'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'otherFiles'
+                          Identifier: 'push'
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'createHarnessTestFile'
+                          Identifier: 'unit'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' baseUrl'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'harnessSettings'
+                    Identifier: 'baseUrl'
+            IfStatement
+              BinaryExpression
+                BinaryExpression
+                  Identifier: 'baseUrl'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+                AmpersandAmpersandToken
+                PrefixUnaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'ts'
+                      Identifier: 'isRootedDiskPath'
+                    Identifier: 'baseUrl'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'harnessSettings'
+                      Identifier: 'baseUrl'
+                    EqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getNormalizedAbsolutePath'
+                      Identifier: 'baseUrl'
+                      Identifier: ' absoluteRootDir'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' lastUnit'
+                  ElementAccessExpression
+                    Identifier: ' units'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'units'
+                        Identifier: 'length'
+                      MinusToken
+                      NumericLiteral
+            IfStatement
+              BinaryExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'testCaseContent'
+                      Identifier: 'settings'
+                    Identifier: 'noImplicitReferences'
+                  BarBarToken
+                  CallExpression
+                    PropertyAccessExpression
+                      RegularExpressionLiteral
+                      Identifier: 'test'
+                    PropertyAccessExpression
+                      Identifier: 'lastUnit'
+                      Identifier: 'content'
+                BarBarToken
+                CallExpression
+                  PropertyAccessExpression
+                    RegularExpressionLiteral
+                    Identifier: 'test'
+                  PropertyAccessExpression
+                    Identifier: 'lastUnit'
+                    Identifier: 'content'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'toBeCompiled'
+                      Identifier: 'push'
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'createHarnessTestFile'
+                      Identifier: 'lastUnit'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                units'
+                      Identifier: 'forEach'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'unit'
+                      EqualsGreaterThanToken
+                      Block
+                        IfStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'unit'
+                              Identifier: 'name'
+                            ExclamationEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' lastUnit'
+                              Identifier: 'name'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    ThisKeyword
+                                    Identifier: 'otherFiles'
+                                  Identifier: 'push'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    ThisKeyword
+                                    Identifier: 'createHarnessTestFile'
+                                  Identifier: 'unit'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'toBeCompiled'
+                    EqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' units'
+                        Identifier: 'map'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'unit'
+                        EqualsGreaterThanToken
+                        Block
+                          ReturnStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'createHarnessTestFile'
+                              Identifier: 'unit'
+        IfStatement
+          BinaryExpression
+            Identifier: 'tsConfigOptions'
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' tsConfigOptions'
+                Identifier: 'configFilePath'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  NonNullExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            tsConfigOptions'
+                      Identifier: 'configFile'
+                  Identifier: 'fileName'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' tsConfigOptions'
+                  Identifier: 'configFilePath'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'result'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Compiler'
+                Identifier: 'compileFiles'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'toBeCompiled'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'otherFiles'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'harnessSettings'
+              Identifier: '
+            /*options*/ tsConfigOptions'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'harnessSettings'
+                Identifier: 'currentDirectory'
+              PropertyAccessExpression
+                Identifier: '
+            testCaseContent'
+                Identifier: 'symlinks'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'options'
+            EqualsToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'result'
+              Identifier: 'options'
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' getConfigurations'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      TypeReference
+        Identifier: ' CompilerFileBasedTest'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' content'
+              NonNullExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' IO'
+                    Identifier: 'readFile'
+                  Identifier: 'file'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' settings'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' TestCaseParser'
+                  Identifier: 'extractCompilerSettings'
+                Identifier: 'content'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' configurations'
+              CallExpression
+                Identifier: ' getFileBasedTestConfigurations'
+                Identifier: 'settings'
+                PropertyAccessExpression
+                  Identifier: ' CompilerTest'
+                  Identifier: 'varyBy'
+        ReturnStatement
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' file'
+            ShorthandPropertyAssignment
+              Identifier: ' configurations'
+            ShorthandPropertyAssignment
+              Identifier: ' content'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifyDiagnostics'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        // check errors
+        Compiler'
+              Identifier: 'doErrorBaseline'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'configuredName'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'tsConfigFiles'
+                Identifier: 'concat'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'toBeCompiled'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'otherFiles'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'result'
+              Identifier: 'diagnostics'
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'options'
+                  Identifier: 'pretty'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifyModuleResolution'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'options'
+            Identifier: 'traceResolution'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            Baseline'
+                  Identifier: 'runBaseline'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'configuredName'
+                    Identifier: 'replace'
+                  RegularExpressionLiteral
+                  StringLiteral
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' JSON'
+                    Identifier: 'stringify'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'result'
+                        Identifier: 'traces'
+                      Identifier: 'map'
+                    PropertyAccessExpression
+                      Identifier: 'Utils'
+                      Identifier: 'sanitizeTraceResolutionLogEntry'
+                  Identifier: ' undefined'
+                  NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifySourceMapRecord'
+      Block
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'options'
+                Identifier: 'sourceMap'
+              BarBarToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'options'
+                Identifier: 'inlineSourceMap'
+            BarBarToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'options'
+              Identifier: 'declarationMap'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' record'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Utils'
+                      Identifier: 'removeTestPathPrefixes'
+                    NonNullExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'result'
+                          Identifier: 'getSourceMapRecord'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' baseline'
+                  ConditionalExpression
+                    BinaryExpression
+                      ParenthesizedExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'options'
+                            Identifier: 'noEmitOnError'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'result'
+                                Identifier: 'diagnostics'
+                              Identifier: 'length'
+                            ExclamationEqualsEqualsToken
+                            NumericLiteral
+                      BarBarToken
+                      BinaryExpression
+                        Identifier: ' record'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' undefined'
+                    QuestionToken
+                    NullKeyword
+                    ColonToken
+                    Identifier: ' record'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            Baseline'
+                  Identifier: 'runBaseline'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'configuredName'
+                    Identifier: 'replace'
+                  RegularExpressionLiteral
+                  StringLiteral
+                Identifier: ' baseline'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifyJavaScriptOutput'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'hasNonDtsFiles'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            Compiler'
+                  Identifier: 'doJsEmitBaseline'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'configuredName'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'fileName'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'options'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'result'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'tsConfigFiles'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'toBeCompiled'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'otherFiles'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'harnessSettings'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifySourceMapOutput'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        Compiler'
+              Identifier: 'doSourcemapBaseline'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'configuredName'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'options'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'result'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'harnessSettings'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' verifyTypesAndSymbols'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' noTypesAndSymbols'
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'harnessSettings'
+                  Identifier: 'noTypesAndSymbols'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'harnessSettings'
+                        Identifier: 'noTypesAndSymbols'
+                      Identifier: 'toLowerCase'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+        IfStatement
+          Identifier: 'noTypesAndSymbols'
+          Block
+            ReturnStatement
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+
+        Compiler'
+              Identifier: 'doTypeAndSymbolBaseline'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'configuredName'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fileName'
+            NonNullExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'result'
+                Identifier: 'program'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'toBeCompiled'
+                    Identifier: 'concat'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'otherFiles'
+                Identifier: 'filter'
+              ArrowFunction
+                Parameter
+                  Identifier: 'file'
+                EqualsGreaterThanToken
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'result'
+                            Identifier: 'program'
+                        Identifier: 'getSourceFile'
+                      PropertyAccessExpression
+                        Identifier: 'file'
+                        Identifier: 'unitName'
+            Identifier: '
+            /*opts*/ undefined'
+            Identifier: '
+            /*multifile*/ undefined'
+            Identifier: '
+            /*skipTypeBaselines*/ undefined'
+            Identifier: '
+            /*skipSymbolBaselines*/ undefined'
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'length'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'result'
+                    Identifier: 'diagnostics'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' createHarnessTestFile'
+      Parameter
+        Identifier: 'unit'
+        TypeReference
+          QualifiedName
+            Identifier: ' TestCaseParser'
+            Identifier: 'TestUnitData'
+      TypeReference
+        QualifiedName
+          Identifier: ' Compiler'
+          Identifier: 'TestFile'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            unitName'
+              PropertyAccessExpression
+                Identifier: ' unit'
+                Identifier: 'name'
+            PropertyAssignment
+              Identifier: '
+            content'
+              PropertyAccessExpression
+                Identifier: ' unit'
+                Identifier: 'content'
+            PropertyAssignment
+              Identifier: '
+            fileOptions'
+              PropertyAccessExpression
+                Identifier: ' unit'
+                Identifier: 'fileOptions'

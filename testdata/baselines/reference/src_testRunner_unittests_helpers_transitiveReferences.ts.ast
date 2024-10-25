@@ -1,0 +1,203 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' getProjectConfigWithNodeNext'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFsContentsForTransitiveReferencesRefsAdts'
+    StringKeyword
+    Block
+      ReturnStatement
+        TaggedTemplateExpression
+          Identifier: ' dedent'
+          NoSubstitutionTemplateLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFsContentsForTransitiveReferencesBConfig'
+    Parameter
+      Identifier: 'withNodeNext'
+      BooleanKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' jsonToReadableText'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        compilerOptions'
+              ObjectLiteralExpression
+                SpreadAssignment
+                  CallExpression
+                    Identifier: 'getProjectConfigWithNodeNext'
+                    Identifier: 'withNodeNext'
+                PropertyAssignment
+                  Identifier: '
+            composite'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            baseUrl'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+            paths'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+            PropertyAssignment
+              Identifier: '
+        files'
+              ArrayLiteralExpression
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        references'
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' path'
+                    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFsContentsForTransitiveReferencesAConfig'
+    Parameter
+      Identifier: 'withNodeNext'
+      BooleanKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' jsonToReadableText'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        compilerOptions'
+              ObjectLiteralExpression
+                SpreadAssignment
+                  CallExpression
+                    Identifier: 'getProjectConfigWithNodeNext'
+                    Identifier: 'withNodeNext'
+                PropertyAssignment
+                  Identifier: '
+            composite'
+                  TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        files'
+              ArrayLiteralExpression
+                StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getSysForTransitiveReferences'
+    Parameter
+      Identifier: 'withNodeNext'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' TestServerHost'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' TestServerHost'
+            Identifier: 'createWatchedSystem'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' getFsContentsForTransitiveReferencesRefsAdts'
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' getFsContentsForTransitiveReferencesAConfig'
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    Identifier: 'withNodeNext'
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' getFsContentsForTransitiveReferencesBConfig'
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    Identifier: 'withNodeNext'
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            files'
+                    ArrayLiteralExpression
+                      StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      SpreadAssignment
+                        CallExpression
+                          Identifier: 'getProjectConfigWithNodeNext'
+                          Identifier: 'withNodeNext'
+                      PropertyAssignment
+                        Identifier: '
+                baseUrl'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                paths'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            StringLiteral
+                            ArrayLiteralExpression
+                              StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            references'
+                    ArrayLiteralExpression
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' path'
+                          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' currentDirectory'
+              StringLiteral

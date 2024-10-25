@@ -1,0 +1,79 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooProp'
+        TypeOperator
+          SymbolKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' barProp'
+        TypeOperator
+          SymbolKeyword
+  TypeAliasDeclaration
+    Identifier: ' BothProps'
+    UnionType
+      TypeQuery
+        Identifier: ' fooProp'
+      TypeQuery
+        Identifier: ' barProp'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'fooProp'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      ComputedPropertyName
+        Identifier: 'barProp'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Foo'
+        NumberKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' abc'
+            ElementAccessExpression
+              Identifier: ' x'
+              Identifier: 'fooProp'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' def'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeQuery
+                Identifier: ' fooProp'
+            ElementAccessExpression
+              Identifier: ' x'
+              Identifier: 'fooProp'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' def2'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeQuery
+                Identifier: ' barProp'
+            ElementAccessExpression
+              Identifier: ' x'
+              Identifier: 'barProp'

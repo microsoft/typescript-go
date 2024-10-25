@@ -1,0 +1,36 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' runTests'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' outfile'
+            NewExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' Harness'
+                  Identifier: 'Compiler'
+                Identifier: 'WriterAggregator'
+          VariableDeclaration
+            Identifier: ' outerr'
+            NewExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' Harness'
+                  Identifier: 'Compiler'
+                Identifier: 'WriterAggregator'
+          VariableDeclaration
+            Identifier: ' compiler'
+            TypeAssertionExpression
+              TypeReference
+                QualifiedName
+                  Identifier: 'TypeScript'
+                  Identifier: 'TypeScriptCompiler'
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' TypeScript'
+                  Identifier: 'TypeScriptCompiler'
+                Identifier: 'outerr'
+          VariableDeclaration
+            Identifier: ' code'

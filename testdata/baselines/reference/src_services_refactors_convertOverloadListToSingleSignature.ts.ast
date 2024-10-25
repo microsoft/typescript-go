@@ -1,0 +1,1208 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ApplicableRefactorInfo'
+        ImportSpecifier
+          Identifier: '
+    CallSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ConstructorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    ConstructSignatureDeclaration'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    displayPartsToString'
+        ImportSpecifier
+          Identifier: '
+    EmitFlags'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    every'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    FunctionDeclaration'
+        ImportSpecifier
+          Identifier: '
+    getLocaleSpecificMessage'
+        ImportSpecifier
+          Identifier: '
+    getSourceFileOfNode'
+        ImportSpecifier
+          Identifier: '
+    getSyntheticLeadingComments'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isFunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    length'
+        ImportSpecifier
+          Identifier: '
+    map'
+        ImportSpecifier
+          Identifier: '
+    mapDefined'
+        ImportSpecifier
+          Identifier: '
+    MethodDeclaration'
+        ImportSpecifier
+          Identifier: '
+    MethodSignature'
+        ImportSpecifier
+          Identifier: '
+    NamedTupleMember'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeArray'
+        ImportSpecifier
+          Identifier: '
+    ParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    rangeContainsPosition'
+        ImportSpecifier
+          Identifier: '
+    RefactorContext'
+        ImportSpecifier
+          Identifier: '
+    RefactorEditInfo'
+        ImportSpecifier
+          Identifier: '
+    setEmitFlags'
+        ImportSpecifier
+          Identifier: '
+    setSyntheticLeadingComments'
+        ImportSpecifier
+          Identifier: '
+    setTextRange'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TupleTypeNode'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' registerRefactor'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' refactorName'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' refactorDescription'
+        CallExpression
+          Identifier: ' getLocaleSpecificMessage'
+          PropertyAccessExpression
+            Identifier: 'Diagnostics'
+            Identifier: 'Convert_overload_list_to_single_signature'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' functionOverloadAction'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    name'
+            Identifier: ' refactorName'
+          PropertyAssignment
+            Identifier: '
+    description'
+            Identifier: ' refactorDescription'
+          PropertyAssignment
+            Identifier: '
+    kind'
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerRefactor'
+      Identifier: 'refactorName'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    kinds'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              Identifier: 'functionOverloadAction'
+              Identifier: 'kind'
+        PropertyAssignment
+          Identifier: '
+    getEditsForAction'
+          Identifier: ' getRefactorEditsToConvertOverloadsToOneSignature'
+        PropertyAssignment
+          Identifier: '
+    getAvailableActions'
+          Identifier: ' getRefactorActionsToConvertOverloadsToOneSignature'
+  FunctionDeclaration
+    Identifier: ' getRefactorActionsToConvertOverloadsToOneSignature'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' RefactorContext'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' ApplicableRefactorInfo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' file'
+              BindingElement
+                Identifier: ' startPosition'
+              BindingElement
+                Identifier: ' program'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' info'
+            CallExpression
+              Identifier: ' getConvertableOverloadListAtPosition'
+              Identifier: 'file'
+              Identifier: ' startPosition'
+              Identifier: ' program'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'info'
+        ReturnStatement
+          Identifier: ' emptyArray'
+      ReturnStatement
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        name'
+              Identifier: ' refactorName'
+            PropertyAssignment
+              Identifier: '
+        description'
+              Identifier: ' refactorDescription'
+            PropertyAssignment
+              Identifier: '
+        actions'
+              ArrayLiteralExpression
+                Identifier: 'functionOverloadAction'
+  FunctionDeclaration
+    Identifier: ' getRefactorEditsToConvertOverloadsToOneSignature'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' RefactorContext'
+    UnionType
+      TypeReference
+        Identifier: ' RefactorEditInfo'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' file'
+              BindingElement
+                Identifier: ' startPosition'
+              BindingElement
+                Identifier: ' program'
+            Identifier: ' context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' signatureDecls'
+            CallExpression
+              Identifier: ' getConvertableOverloadListAtPosition'
+              Identifier: 'file'
+              Identifier: ' startPosition'
+              Identifier: ' program'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'signatureDecls'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' checker'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getTypeChecker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lastDeclaration'
+            ElementAccessExpression
+              Identifier: ' signatureDecls'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'signatureDecls'
+                  Identifier: 'length'
+                MinusToken
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' updated'
+            Identifier: ' lastDeclaration'
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'lastDeclaration'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'MethodSignature'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            updated'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'updateMethodSignature'
+                    Identifier: '
+                lastDeclaration'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'modifiers'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'name'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'questionToken'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'typeParameters'
+                    CallExpression
+                      Identifier: '
+                getNewParametersForCombinedSignature'
+                      Identifier: 'signatureDecls'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'type'
+              BreakStatement
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'MethodDeclaration'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            updated'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'updateMethodDeclaration'
+                    Identifier: '
+                lastDeclaration'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'modifiers'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'asteriskToken'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'name'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'questionToken'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'typeParameters'
+                    CallExpression
+                      Identifier: '
+                getNewParametersForCombinedSignature'
+                      Identifier: 'signatureDecls'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'type'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'body'
+              BreakStatement
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CallSignature'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            updated'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'updateCallSignature'
+                    Identifier: '
+                lastDeclaration'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'typeParameters'
+                    CallExpression
+                      Identifier: '
+                getNewParametersForCombinedSignature'
+                      Identifier: 'signatureDecls'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'type'
+              BreakStatement
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Constructor'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            updated'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'updateConstructorDeclaration'
+                    Identifier: '
+                lastDeclaration'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'modifiers'
+                    CallExpression
+                      Identifier: '
+                getNewParametersForCombinedSignature'
+                      Identifier: 'signatureDecls'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'body'
+              BreakStatement
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ConstructSignature'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            updated'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'updateConstructSignature'
+                    Identifier: '
+                lastDeclaration'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'typeParameters'
+                    CallExpression
+                      Identifier: '
+                getNewParametersForCombinedSignature'
+                      Identifier: 'signatureDecls'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'type'
+              BreakStatement
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'FunctionDeclaration'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            updated'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'updateFunctionDeclaration'
+                    Identifier: '
+                lastDeclaration'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'modifiers'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'asteriskToken'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'name'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'typeParameters'
+                    CallExpression
+                      Identifier: '
+                getNewParametersForCombinedSignature'
+                      Identifier: 'signatureDecls'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'type'
+                    PropertyAccessExpression
+                      Identifier: '
+                lastDeclaration'
+                      Identifier: 'body'
+              BreakStatement
+          DefaultClause
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Debug'
+                  Identifier: 'failBadSyntaxKind'
+                Identifier: 'lastDeclaration'
+                StringLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'updated'
+          EqualsEqualsEqualsToken
+          Identifier: ' lastDeclaration'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' edits'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' textChanges'
+                  Identifier: 'ChangeTracker'
+                Identifier: 'with'
+              Identifier: 'context'
+              ArrowFunction
+                Parameter
+                  Identifier: ' t'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        t'
+                        Identifier: 'replaceNodeRange'
+                      Identifier: 'file'
+                      ElementAccessExpression
+                        Identifier: ' signatureDecls'
+                        NumericLiteral
+                      ElementAccessExpression
+                        Identifier: ' signatureDecls'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'signatureDecls'
+                            Identifier: 'length'
+                          MinusToken
+                          NumericLiteral
+                      Identifier: ' updated'
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' renameFilename'
+            Identifier: ' undefined'
+          PropertyAssignment
+            Identifier: ' renameLocation'
+            Identifier: ' undefined'
+          ShorthandPropertyAssignment
+            Identifier: ' edits'
+      FunctionDeclaration
+        Identifier: ' getNewParametersForCombinedSignature'
+        Parameter
+          Identifier: 'signatureDeclarations'
+          ArrayType
+            ParenthesizedType
+              UnionType
+                TypeReference
+                  Identifier: 'MethodSignature'
+                TypeReference
+                  Identifier: ' MethodDeclaration'
+                TypeReference
+                  Identifier: ' CallSignatureDeclaration'
+                TypeReference
+                  Identifier: ' ConstructorDeclaration'
+                TypeReference
+                  Identifier: ' ConstructSignatureDeclaration'
+                TypeReference
+                  Identifier: ' FunctionDeclaration'
+        TypeReference
+          Identifier: ' NodeArray'
+          TypeReference
+            Identifier: 'ParameterDeclaration'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lastSig'
+                ElementAccessExpression
+                  Identifier: ' signatureDeclarations'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'signatureDeclarations'
+                      Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isFunctionLikeDeclaration'
+                Identifier: 'lastSig'
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                Identifier: ' lastSig'
+                Identifier: 'body'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            // Trim away implementation signature arguments (they should already be compatible with overloads, but are likely less precise to guarantee compatability with the overloads)
+            signatureDeclarations'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' signatureDeclarations'
+                      Identifier: 'slice'
+                    NumericLiteral
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' signatureDeclarations'
+                        Identifier: 'length'
+                      MinusToken
+                      NumericLiteral
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createNodeArray'
+              ArrayLiteralExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            factory'
+                    Identifier: 'createParameterDeclaration'
+                  Identifier: '
+                /*modifiers*/ undefined'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                factory'
+                      Identifier: 'createToken'
+                    PropertyAccessExpression
+                      Identifier: 'SyntaxKind'
+                      Identifier: 'DotDotDotToken'
+                  StringLiteral
+                  Identifier: '
+                /*questionToken*/ undefined'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                factory'
+                      Identifier: 'createUnionTypeNode'
+                    CallExpression
+                      Identifier: 'map'
+                      Identifier: 'signatureDeclarations'
+                      Identifier: ' convertSignatureParametersToTuple'
+      FunctionDeclaration
+        Identifier: ' convertSignatureParametersToTuple'
+        Parameter
+          Identifier: 'decl'
+          UnionType
+            TypeReference
+              Identifier: ' MethodSignature'
+            TypeReference
+              Identifier: ' MethodDeclaration'
+            TypeReference
+              Identifier: ' CallSignatureDeclaration'
+            TypeReference
+              Identifier: ' ConstructorDeclaration'
+            TypeReference
+              Identifier: ' ConstructSignatureDeclaration'
+            TypeReference
+              Identifier: ' FunctionDeclaration'
+        TypeReference
+          Identifier: ' TupleTypeNode'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' members'
+                CallExpression
+                  Identifier: ' map'
+                  PropertyAccessExpression
+                    Identifier: 'decl'
+                    Identifier: 'parameters'
+                  Identifier: ' convertParameterToNamedTupleMember'
+          ReturnStatement
+            CallExpression
+              Identifier: ' setEmitFlags'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createTupleTypeNode'
+                Identifier: 'members'
+              ConditionalExpression
+                CallExpression
+                  Identifier: ' some'
+                  Identifier: 'members'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' m'
+                    EqualsGreaterThanToken
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'length'
+                          CallExpression
+                            Identifier: 'getSyntheticLeadingComments'
+                            Identifier: 'm'
+                QuestionToken
+                PropertyAccessExpression
+                  Identifier: ' EmitFlags'
+                  Identifier: 'None'
+                ColonToken
+                PropertyAccessExpression
+                  Identifier: ' EmitFlags'
+                  Identifier: 'SingleLine'
+      FunctionDeclaration
+        Identifier: ' convertParameterToNamedTupleMember'
+        Parameter
+          Identifier: 'p'
+          TypeReference
+            Identifier: ' ParameterDeclaration'
+        TypeReference
+          Identifier: ' NamedTupleMember'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              CallExpression
+                Identifier: 'isIdentifier'
+                PropertyAccessExpression
+                  Identifier: 'p'
+                  Identifier: 'name'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  Identifier: ' setTextRange'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            factory'
+                      Identifier: 'createNamedTupleMember'
+                    PropertyAccessExpression
+                      Identifier: '
+                p'
+                      Identifier: 'dotDotDotToken'
+                    PropertyAccessExpression
+                      Identifier: '
+                p'
+                      Identifier: 'name'
+                    PropertyAccessExpression
+                      Identifier: '
+                p'
+                      Identifier: 'questionToken'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                p'
+                        Identifier: 'type'
+                      BarBarToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createKeywordTypeNode'
+                        PropertyAccessExpression
+                          Identifier: 'SyntaxKind'
+                          Identifier: 'AnyKeyword'
+                  Identifier: '
+            p'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' parameterDocComment'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' p'
+                    Identifier: 'symbol'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' p'
+                        Identifier: 'symbol'
+                      Identifier: 'getDocumentationComment'
+                    Identifier: 'checker'
+          IfStatement
+            Identifier: 'parameterDocComment'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' newComment'
+                    CallExpression
+                      Identifier: ' displayPartsToString'
+                      Identifier: 'parameterDocComment'
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'newComment'
+                  Identifier: 'length'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                setSyntheticLeadingComments'
+                      Identifier: 'result'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    text'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                CallExpression
+                                  PropertyAccessExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'newComment'
+                                            Identifier: 'split'
+                                          StringLiteral
+                                        Identifier: 'map'
+                                      ArrowFunction
+                                        Parameter
+                                          Identifier: 'c'
+                                        EqualsGreaterThanToken
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            Identifier: 'c'
+                                            TemplateTail
+                                    Identifier: 'join'
+                                  StringLiteral
+                                TemplateTail
+                          PropertyAssignment
+                            Identifier: '
+                    kind'
+                            PropertyAccessExpression
+                              Identifier: ' SyntaxKind'
+                              Identifier: 'MultiLineCommentTrivia'
+                          PropertyAssignment
+                            Identifier: '
+                    pos'
+                            PrefixUnaryExpression
+                              NumericLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    end'
+                            PrefixUnaryExpression
+                              NumericLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    hasTrailingNewLine'
+                            TrueKeyword
+                          PropertyAssignment
+                            Identifier: '
+                    hasLeadingNewline'
+                            TrueKeyword
+          ReturnStatement
+            Identifier: ' result'
+  FunctionDeclaration
+    Identifier: ' isConvertableSignatureDeclaration'
+    Parameter
+      Identifier: 'd'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' d'
+      UnionType
+        TypeReference
+          Identifier: ' MethodSignature'
+        TypeReference
+          Identifier: ' MethodDeclaration'
+        TypeReference
+          Identifier: ' CallSignatureDeclaration'
+        TypeReference
+          Identifier: ' ConstructorDeclaration'
+        TypeReference
+          Identifier: ' ConstructSignatureDeclaration'
+        TypeReference
+          Identifier: ' FunctionDeclaration'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'd'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'MethodSignature'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'MethodDeclaration'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'CallSignature'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Constructor'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ConstructSignature'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'FunctionDeclaration'
+            ReturnStatement
+              TrueKeyword
+      ReturnStatement
+        FalseKeyword
+  FunctionDeclaration
+    Identifier: ' getConvertableOverloadListAtPosition'
+    Parameter
+      Identifier: 'file'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' startPosition'
+      NumberKeyword
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'file'
+              Identifier: ' startPosition'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' containingDecl'
+            CallExpression
+              Identifier: ' findAncestor'
+              Identifier: 'node'
+              Identifier: ' isConvertableSignatureDeclaration'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'containingDecl'
+        Block
+          ReturnStatement
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            CallExpression
+              Identifier: 'isFunctionLikeDeclaration'
+              Identifier: 'containingDecl'
+            AmpersandAmpersandToken
+            PropertyAccessExpression
+              Identifier: ' containingDecl'
+              Identifier: 'body'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' rangeContainsPosition'
+            PropertyAccessExpression
+              Identifier: 'containingDecl'
+              Identifier: 'body'
+            Identifier: ' startPosition'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' checker'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getTypeChecker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' signatureSymbol'
+            PropertyAccessExpression
+              Identifier: ' containingDecl'
+              Identifier: 'symbol'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'signatureSymbol'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' decls'
+            PropertyAccessExpression
+              Identifier: ' signatureSymbol'
+              Identifier: 'declarations'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'length'
+            Identifier: 'decls'
+          LessThanEqualsToken
+          NumericLiteral
+        Block
+          ReturnStatement
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'every'
+            Identifier: 'decls'
+            ArrowFunction
+              Parameter
+                Identifier: ' d'
+              EqualsGreaterThanToken
+              BinaryExpression
+                CallExpression
+                  Identifier: ' getSourceFileOfNode'
+                  Identifier: 'd'
+                EqualsEqualsEqualsToken
+                Identifier: ' file'
+        Block
+          ReturnStatement
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isConvertableSignatureDeclaration'
+            ElementAccessExpression
+              NonNullExpression
+                Identifier: 'decls'
+              NumericLiteral
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' kindOne'
+            PropertyAccessExpression
+              ElementAccessExpression
+                NonNullExpression
+                  Identifier: ' decls'
+                NumericLiteral
+              Identifier: 'kind'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'every'
+            Identifier: 'decls'
+            ArrowFunction
+              Parameter
+                Identifier: ' d'
+              EqualsGreaterThanToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' d'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                Identifier: ' kindOne'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' signatureDecls'
+            AsExpression
+              Identifier: ' decls'
+              ArrayType
+                ParenthesizedType
+                  UnionType
+                    TypeReference
+                      Identifier: 'MethodSignature'
+                    TypeReference
+                      Identifier: ' MethodDeclaration'
+                    TypeReference
+                      Identifier: ' CallSignatureDeclaration'
+                    TypeReference
+                      Identifier: ' ConstructorDeclaration'
+                    TypeReference
+                      Identifier: ' ConstructSignatureDeclaration'
+                    TypeReference
+                      Identifier: ' FunctionDeclaration'
+      IfStatement
+        CallExpression
+          Identifier: 'some'
+          Identifier: 'signatureDecls'
+          ArrowFunction
+            Parameter
+              Identifier: ' d'
+            EqualsGreaterThanToken
+            BinaryExpression
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'd'
+                    Identifier: 'typeParameters'
+              BarBarToken
+              CallExpression
+                Identifier: ' some'
+                PropertyAccessExpression
+                  Identifier: 'd'
+                  Identifier: 'parameters'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' p'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'p'
+                          Identifier: 'modifiers'
+                    BarBarToken
+                    PrefixUnaryExpression
+                      CallExpression
+                        Identifier: 'isIdentifier'
+                        PropertyAccessExpression
+                          Identifier: 'p'
+                          Identifier: 'name'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' signatures'
+            CallExpression
+              Identifier: ' mapDefined'
+              Identifier: 'signatureDecls'
+              ArrowFunction
+                Parameter
+                  Identifier: ' d'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' checker'
+                    Identifier: 'getSignatureFromDeclaration'
+                  Identifier: 'd'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'length'
+            Identifier: 'signatures'
+          ExclamationEqualsEqualsToken
+          CallExpression
+            Identifier: ' length'
+            Identifier: 'decls'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' returnOne'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getReturnTypeOfSignature'
+              ElementAccessExpression
+                Identifier: 'signatures'
+                NumericLiteral
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'every'
+            Identifier: 'signatures'
+            ArrowFunction
+              Parameter
+                Identifier: ' s'
+              EqualsGreaterThanToken
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' checker'
+                    Identifier: 'getReturnTypeOfSignature'
+                  Identifier: 's'
+                EqualsEqualsEqualsToken
+                Identifier: ' returnOne'
+        Block
+          ReturnStatement
+      ReturnStatement
+        Identifier: ' signatureDecls'

@@ -1,0 +1,175 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    PropertySignature
+      Identifier: '
+    tuple1'
+      TupleType
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i1'
+        TypeReference
+          Identifier: ' I'
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        TypeReference
+          Identifier: ' I'
+          TypeLiteral
+          TypeLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// no error
+i1'
+        Identifier: 'tuple1'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        ElementAccessExpression
+          PropertyAccessExpression
+            Identifier: ' i1'
+            Identifier: 'tuple1'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        ElementAccessExpression
+          PropertyAccessExpression
+            Identifier: ' i1'
+            Identifier: 'tuple1'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '  // number
+i1'
+        Identifier: 'tuple1'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+        NumericLiteral
+        FalseKeyword
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e3'
+        ElementAccessExpression
+          PropertyAccessExpression
+            Identifier: ' i1'
+            Identifier: 'tuple1'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        PropertyAccessExpression
+          Identifier: '  // {}
+i1'
+          Identifier: 'tuple1'
+        NumericLiteral
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e4'
+        ElementAccessExpression
+          PropertyAccessExpression
+            Identifier: ' i1'
+            Identifier: 'tuple1'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '  // {}
+i2'
+        Identifier: 'tuple1'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+i2'
+        Identifier: 'tuple1'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+i2'
+        Identifier: 'tuple1'
+      EqualsToken
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+i2'
+        Identifier: 'tuple1'
+      EqualsToken
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// error
+i1'
+        Identifier: 'tuple1'
+      EqualsToken
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+i1'
+        Identifier: 'tuple1'
+      EqualsToken
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+i2'
+        Identifier: 'tuple1'
+      EqualsToken
+      ArrayLiteralExpression
+        ObjectLiteralExpression

@@ -1,0 +1,223 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      StringKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' a'
+    EnumMember
+      Identifier: ' b'
+    EnumMember
+      Identifier: ' c'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' Number'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        BinaryExpression
+          Identifier: ' b'
+          PlusToken
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        BinaryExpression
+          Identifier: ' b'
+          PlusToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        BinaryExpression
+          Identifier: ' b'
+          PlusToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        BinaryExpression
+          Identifier: ' c'
+          PlusToken
+          Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        BinaryExpression
+          Identifier: ' c'
+          PlusToken
+          Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        BinaryExpression
+          Identifier: ' c'
+          PlusToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        BinaryExpression
+          TrueKeyword
+          PlusToken
+          FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r12'
+        BinaryExpression
+          TrueKeyword
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r13'
+        BinaryExpression
+          ObjectLiteralExpression
+          PlusToken
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r14'
+        BinaryExpression
+          Identifier: ' b'
+          PlusToken
+          Identifier: ' d'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r15'
+        BinaryExpression
+          Identifier: ' b'
+          PlusToken
+          Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r16'
+        BinaryExpression
+          Identifier: ' b'
+          PlusToken
+          CallExpression
+            Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r17'
+        BinaryExpression
+          Identifier: ' b'
+          PlusToken
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r18'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'a'
+          PlusToken
+          NewExpression
+            Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r19'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'a'
+          PlusToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' C'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r20'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'a'
+          PlusToken
+          Identifier: ' M'

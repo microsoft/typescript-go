@@ -1,0 +1,199 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' x'
+      StringKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' f'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' y'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    g'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' t1'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' t2'
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'f'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' t3'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'y'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' t4'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'z'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' s1'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' s2'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'f'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' s3'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'y'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' s4'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'z'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              TypeReference
+                Identifier: ' A'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a1'
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a2'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'f'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a3'
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'y'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a4'
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'z'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              TypeReference
+                Identifier: ' B'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b1'
+              PropertyAccessExpression
+                Identifier: ' b'
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b2'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' b'
+                  Identifier: 'f'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b3'
+              PropertyAccessExpression
+                Identifier: ' b'
+                Identifier: 'y'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b4'
+              PropertyAccessExpression
+                Identifier: ' b'
+                Identifier: 'z'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c'
+              TypeReference
+                Identifier: ' C'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c1'
+              PropertyAccessExpression
+                Identifier: ' c'
+                Identifier: 'x'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c2'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' c'
+                  Identifier: 'f'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c3'
+              PropertyAccessExpression
+                Identifier: ' c'
+                Identifier: 'y'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' c4'
+              PropertyAccessExpression
+                Identifier: ' c'
+                Identifier: 'z'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' z'
+      StringKeyword

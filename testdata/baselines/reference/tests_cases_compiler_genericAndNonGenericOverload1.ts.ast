@@ -1,0 +1,34 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' callable2'
+    TypeParameter
+      Identifier: 'T'
+    CallSignature
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+    CallSignature
+      TypeParameter
+        Identifier: 'Z'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' Z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        TypeReference
+          Identifier: ' callable2'
+          NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+c2'
+      StringKeyword
+      NumericLiteral

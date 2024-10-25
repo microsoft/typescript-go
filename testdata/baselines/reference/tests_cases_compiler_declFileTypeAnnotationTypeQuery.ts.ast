@@ -1,0 +1,78 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' g'
+        TypeParameter
+          Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' g'
+    TypeParameter
+      Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeQuery
+      Identifier: ' c'
+    Block
+      ReturnStatement
+        Identifier: ' c'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Block
+      ReturnStatement
+        Identifier: ' c'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    TypeQuery
+      QualifiedName
+        Identifier: ' m'
+        Identifier: 'c'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' m'
+          Identifier: 'c'
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' m'
+          Identifier: 'c'
+  FunctionDeclaration
+    Identifier: ' foo5'
+    TypeQuery
+      Identifier: ' g'
+    Block
+      ReturnStatement
+        Identifier: ' g'
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Block
+      ReturnStatement
+        Identifier: ' g'
+  FunctionDeclaration
+    Identifier: ' foo7'
+    TypeQuery
+      QualifiedName
+        Identifier: ' m'
+        Identifier: 'g'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' m'
+          Identifier: 'g'
+  FunctionDeclaration
+    Identifier: ' foo8'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' m'
+          Identifier: 'g'

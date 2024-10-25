@@ -1,0 +1,646 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' host'
+                UnionType
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'SolutionBuilderHost'
+                    TypeReference
+                      QualifiedName
+                        Identifier: 'ts'
+                        Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+                  UndefinedKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' deps'
+                ArrayType
+                  TupleType
+                    StringKeyword
+                    StringKeyword
+                ArrayLiteralExpression
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    before'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' sys'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createWatchedSystem'
+                          PropertyAccessExpression
+                            Identifier: 'ts'
+                            Identifier: 'emptyArray'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' useCaseSensitiveFileNames'
+                              TrueKeyword
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        host'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'createSolutionBuilderHost'
+                        Identifier: 'sys'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        writeProjects'
+                      Identifier: 'sys'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                      Identifier: ' deps'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    after'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        host'
+                      EqualsToken
+                      Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkGraphOrdering'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkGraphOrdering'
+                      ArrayLiteralExpression
+                        StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkGraphOrdering'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkGraphOrdering'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkGraphOrdering'
+                      ArrayLiteralExpression
+                        StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkGraphOrdering'
+                      ArrayLiteralExpression
+                        StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkGraphOrdering'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkGraphOrdering'
+                      ArrayLiteralExpression
+                        StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        checkGraphOrdering'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                      TrueKeyword
+          FunctionDeclaration
+            Identifier: ' checkGraphOrdering'
+            Parameter
+              Identifier: 'rootNames'
+              ArrayType
+                StringKeyword
+            Parameter
+              Identifier: ' expectedBuildSet'
+              ArrayType
+                StringKeyword
+            Parameter
+              Identifier: ' circular'
+              QuestionToken
+              LiteralType
+                TrueKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' builder'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'createSolutionBuilder'
+                      NonNullExpression
+                        Identifier: 'host'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' rootNames'
+                          Identifier: 'map'
+                        Identifier: 'getProjectFileName'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' dry'
+                          TrueKeyword
+                        PropertyAssignment
+                          Identifier: ' force'
+                          FalseKeyword
+                        PropertyAssignment
+                          Identifier: ' verbose'
+                          FalseKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' buildOrder'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' builder'
+                        Identifier: 'getBuildOrder'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        assert'
+                    Identifier: 'equal'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'ts'
+                      Identifier: 'isCircularBuildOrder'
+                    Identifier: 'buildOrder'
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      Identifier: 'circular'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' buildQueue'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getBuildOrderFromAnyBuildOrder'
+                      Identifier: 'buildOrder'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        assert'
+                    Identifier: 'deepEqual'
+                  Identifier: 'buildQueue'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' expectedBuildSet'
+                      Identifier: 'map'
+                    Identifier: 'getProjectFileName'
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'circular'
+                Block
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' dep'
+                    Identifier: ' deps'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' child'
+                            CallExpression
+                              Identifier: ' getProjectFileName'
+                              ElementAccessExpression
+                                Identifier: 'dep'
+                                NumericLiteral
+                      IfStatement
+                        PrefixUnaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'buildQueue'
+                              Identifier: 'includes'
+                            Identifier: 'child'
+                        ContinueStatement
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' parent'
+                            CallExpression
+                              Identifier: ' getProjectFileName'
+                              ElementAccessExpression
+                                Identifier: 'dep'
+                                NumericLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                assert'
+                            Identifier: 'isAbove'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'buildQueue'
+                              Identifier: 'indexOf'
+                            Identifier: 'child'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' buildQueue'
+                              Identifier: 'indexOf'
+                            Identifier: 'parent'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'child'
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'parent'
+                              TemplateTail
+          FunctionDeclaration
+            Identifier: ' getProjectFileName'
+            Parameter
+              Identifier: 'proj'
+              StringKeyword
+            Block
+              ReturnStatement
+                AsExpression
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'proj'
+                      TemplateTail
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'ResolvedConfigFileName'
+          FunctionDeclaration
+            Identifier: ' writeProjects'
+            Parameter
+              Identifier: 'sys'
+              TypeReference
+                Identifier: ' TestServerHost'
+            Parameter
+              Identifier: ' projectNames'
+              ArrayType
+                StringKeyword
+            Parameter
+              Identifier: ' deps'
+              ArrayType
+                TupleType
+                  StringKeyword
+                  StringKeyword
+            ArrayType
+              StringKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' projFileNames'
+                    ArrayType
+                      StringKeyword
+                    ArrayLiteralExpression
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' dep'
+                Identifier: ' deps'
+                Block
+                  IfStatement
+                    PrefixUnaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'projectNames'
+                          Identifier: 'includes'
+                        ElementAccessExpression
+                          Identifier: 'dep'
+                          NumericLiteral
+                    ThrowStatement
+                      NewExpression
+                        Identifier: ' Error'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            ElementAccessExpression
+                              Identifier: 'dep'
+                              NumericLiteral
+                            TemplateTail
+                  IfStatement
+                    PrefixUnaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'projectNames'
+                          Identifier: 'includes'
+                        ElementAccessExpression
+                          Identifier: 'dep'
+                          NumericLiteral
+                    ThrowStatement
+                      NewExpression
+                        Identifier: ' Error'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            ElementAccessExpression
+                              Identifier: 'dep'
+                              NumericLiteral
+                            TemplateTail
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' proj'
+                Identifier: ' projectNames'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            sys'
+                        Identifier: 'ensureFileOrFolder'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' path'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'proj'
+                              TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            sys'
+                        Identifier: 'writeFile'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'proj'
+                          TemplateMiddle
+                        TemplateSpan
+                          Identifier: 'proj'
+                          TemplateTail
+                      StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' configFileName'
+                        CallExpression
+                          Identifier: ' getProjectFileName'
+                          Identifier: 'proj'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' configContent'
+                        CallExpression
+                          Identifier: ' jsonToReadableText'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                compilerOptions'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' composite'
+                                  TrueKeyword
+                            PropertyAssignment
+                              Identifier: '
+                files'
+                              ArrayLiteralExpression
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'proj'
+                                    TemplateTail
+                            PropertyAssignment
+                              Identifier: '
+                references'
+                              CallExpression
+                                PropertyAccessExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' deps'
+                                      Identifier: 'filter'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: 'd'
+                                      EqualsGreaterThanToken
+                                      BinaryExpression
+                                        ElementAccessExpression
+                                          Identifier: ' d'
+                                          NumericLiteral
+                                        EqualsEqualsEqualsToken
+                                        Identifier: ' proj'
+                                  Identifier: 'map'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: 'd'
+                                  EqualsGreaterThanToken
+                                  ParenthesizedExpression
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' path'
+                                        TemplateExpression
+                                          TemplateHead
+                                          TemplateSpan
+                                            ElementAccessExpression
+                                              Identifier: 'd'
+                                              NumericLiteral
+                                            TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            sys'
+                        Identifier: 'writeFile'
+                      Identifier: 'configFileName'
+                      Identifier: ' configContent'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            projFileNames'
+                        Identifier: 'push'
+                      Identifier: 'configFileName'
+              ReturnStatement
+                Identifier: ' projFileNames'

@@ -1,0 +1,55 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// Exercises completions for hidden files (ie: those beginning with '.')
+
+// @Filename: f.ts
+//// /*f*/
+// @Filename: .hidden.ts
+//// /*hidden*/
+
+// @Filename: test.ts
+//// /// <reference path="/*0*/
+//// /// <reference path="[|./*1*/|]
+//// /// <reference path=".//*2*/
+//// /// <reference path=".\/*3*/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' replacementSpan'
+              ElementAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' test'
+                    Identifier: 'ranges'
+                NumericLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword

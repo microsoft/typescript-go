@@ -1,0 +1,38 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts" />
+
+// @Filename: /home/src/workspaces/project/a.ts
+//// [||]
+
+// @Filename: /home/src/workspaces/project/b.ts
+//// export const b = 10;
+
+// @Filename: /home/src/workspaces/project/tsconfig.json
+////{ "files": ["a.ts", "b.ts"] }
+
+verify'
+        Identifier: 'pasteEdits'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    args'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        pastedText'
+              ArrayLiteralExpression
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              Identifier: '
+        pasteLocations'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' test'
+                  Identifier: 'ranges'
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression

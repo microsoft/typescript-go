@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' Base'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+      UnknownKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' bar'
+      VoidKeyword
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' Sub'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      AbstractKeyword
+      OverrideKeyword
+      Identifier: ' foo'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block

@@ -1,0 +1,315 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Chain'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' T'
+      Block
+    MethodDeclaration
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'S'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: 'cb'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' S'
+      TypeReference
+        Identifier: ' Chain'
+        TypeReference
+          Identifier: 'S'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' t'
+              TypeReference
+                Identifier: ' T'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' s'
+              TypeReference
+                Identifier: ' S'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    NewExpression
+                      Identifier: ' Chain'
+                      Identifier: 't'
+                  Identifier: 'then'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'tt'
+                  EqualsGreaterThanToken
+                  Identifier: ' s'
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'ss'
+              EqualsGreaterThanToken
+              Identifier: ' t'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ParenthesizedExpression
+                NewExpression
+                  Identifier: ' Chain'
+                  Identifier: 's'
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'ss'
+              EqualsGreaterThanToken
+              Identifier: ' t'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        NewExpression
+                          Identifier: ' Chain'
+                          Identifier: 't'
+                      Identifier: 'then'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'tt'
+                      EqualsGreaterThanToken
+                      Identifier: ' t'
+                  Identifier: 'then'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'tt'
+                  EqualsGreaterThanToken
+                  Identifier: ' t'
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'tt'
+              EqualsGreaterThanToken
+              Identifier: ' t'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        NewExpression
+                          Identifier: ' Chain'
+                          Identifier: 's'
+                      Identifier: 'then'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'ss'
+                      EqualsGreaterThanToken
+                      Identifier: ' s'
+                  Identifier: 'then'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'ss'
+                  EqualsGreaterThanToken
+                  Identifier: ' s'
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'ss'
+              EqualsGreaterThanToken
+              Identifier: ' s'
+        ReturnStatement
+          NullKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Chain2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' I'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' T'
+      Block
+    MethodDeclaration
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'S'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: 'cb'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' S'
+      TypeReference
+        Identifier: ' Chain2'
+        TypeReference
+          Identifier: 'S'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' i'
+              TypeReference
+                Identifier: ' I'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' t'
+              TypeReference
+                Identifier: ' T'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' s'
+              TypeReference
+                Identifier: ' S'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          NewExpression
+                            Identifier: ' Chain2'
+                            Identifier: 'i'
+                        Identifier: 'then'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'ii'
+                        EqualsGreaterThanToken
+                        Identifier: ' t'
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'tt'
+                    EqualsGreaterThanToken
+                    Identifier: ' s'
+                Identifier: 'value'
+              Identifier: 'x'
+            EqualsToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                ParenthesizedExpression
+                                  NewExpression
+                                    Identifier: ' Chain2'
+                                    Identifier: 'i'
+                                Identifier: 'then'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: 'ii'
+                                EqualsGreaterThanToken
+                                Identifier: ' t'
+                            Identifier: 'then'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'tt'
+                            EqualsGreaterThanToken
+                            Identifier: ' t'
+                        Identifier: 'then'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'tt'
+                        EqualsGreaterThanToken
+                        Identifier: ' t'
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'tt'
+                    EqualsGreaterThanToken
+                    Identifier: ' t'
+                Identifier: 'value'
+              Identifier: 'x'
+            EqualsToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                ParenthesizedExpression
+                                  NewExpression
+                                    Identifier: ' Chain2'
+                                    Identifier: 'i'
+                                Identifier: 'then'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: 'ii'
+                                EqualsGreaterThanToken
+                                Identifier: ' s'
+                            Identifier: 'then'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'ss'
+                            EqualsGreaterThanToken
+                            Identifier: ' s'
+                        Identifier: 'then'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'ss'
+                        EqualsGreaterThanToken
+                        Identifier: ' s'
+                    Identifier: 'then'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'ss'
+                    EqualsGreaterThanToken
+                    Identifier: ' s'
+                Identifier: 'value'
+              Identifier: 'x'
+            EqualsToken
+            StringLiteral
+        ReturnStatement
+          NullKeyword

@@ -1,0 +1,145 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    inAll'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    notInB'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    notInC'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    inAll'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    onlyInB'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    notInC'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    PropertySignature
+      Identifier: '
+    inAll'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    notInB'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' AB'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' ABC'
+    UnionType
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        Identifier: ' AB'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab'
+        TypeReference
+          Identifier: ' AB'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' abc'
+        TypeReference
+          Identifier: ' ABC'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bFoo'
+        UnionType
+          TypeReference
+            Identifier: ' B'
+          LiteralType
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+x'
+        Identifier: 'nope'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+bFoo'
+      Identifier: 'onlyInB'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'length'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // Ok
+bFoo'
+      Identifier: 'length'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+ab'
+      Identifier: 'onlyInB'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+ab'
+      Identifier: 'notInC'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // Ok
+abc'
+      Identifier: 'notInC'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+ab'
+      Identifier: 'notInB'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+abc'
+      Identifier: 'notInB'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+abc'
+      Identifier: 'inAll'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // Ok
+abc'
+      Identifier: 'inNone'

@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Bar'
+  ClassDeclaration
+    Identifier: ' Foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Bar'
+        NumericLiteral

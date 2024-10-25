@@ -1,0 +1,74 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' foo'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: ' bar'
+      Block
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'tagName'
+      LiteralType
+        StringLiteral
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+    TypeReference
+      Identifier: ' Derived1'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'tagName'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+    TypeReference
+      Identifier: ' Base'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'tagName'
+      AnyKeyword
+    TypeReference
+      Identifier: ' Base'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 'tagName'
+      LiteralType
+        StringLiteral
+    Parameter
+      Identifier: ' arg'
+    TypeReference
+      Identifier: ' Derived1'
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 'tagName'
+      NumberKeyword
+    Parameter
+      Identifier: ' arg'
+    TypeReference
+      Identifier: ' Base'
+  FunctionDeclaration
+    Identifier: ' g'
+    Parameter
+      Identifier: 'tagName'
+      AnyKeyword
+    TypeReference
+      Identifier: ' Base'
+    Block
+      ReturnStatement
+        NullKeyword

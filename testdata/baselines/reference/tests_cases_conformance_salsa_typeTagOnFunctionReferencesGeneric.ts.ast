@@ -1,0 +1,30 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' inJs'
+    Parameter
+      Identifier: 'l'
+    Block
+      ReturnStatement
+        Identifier: ' l'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+inJs'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' inJsArrow'
+        ArrowFunction
+          Parameter
+            Identifier: 'j'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              Identifier: ' j'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+inJsArrow'
+      NumericLiteral

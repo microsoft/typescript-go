@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+  ClassDeclaration
+    Identifier: ' Foo2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+    x'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lambda'
+              ArrowFunction
+                Parameter
+                  Identifier: '_super'
+                  NumberKeyword
+                EqualsGreaterThanToken
+                Block

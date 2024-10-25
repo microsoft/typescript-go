@@ -1,0 +1,8 @@
+SourceFile
+  ExpressionStatement
+    DeleteExpression
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          NumericLiteral
+          TemplateTail

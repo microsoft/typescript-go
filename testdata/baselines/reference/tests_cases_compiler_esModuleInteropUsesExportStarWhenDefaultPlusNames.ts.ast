@@ -1,0 +1,14 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Deps'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' var2'
+    StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' Deps'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' var2'

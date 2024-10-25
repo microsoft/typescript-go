@@ -1,0 +1,85 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          Identifier: ''
+  ExportDeclaration
+    NamedExports
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' bar'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+  ExportDeclaration
+    NamedExports
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' notAHelper'
+        AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+// @filename: /node_modules/tslib/tslib.js
+module'
+          Identifier: 'exports'
+        Identifier: 'notAHelper'
+      EqualsToken
+      NumericLiteral

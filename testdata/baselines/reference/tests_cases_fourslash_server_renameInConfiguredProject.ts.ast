@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'rDef'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'ranges'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      Identifier: 'ranges'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' findInStrings'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: ' findInComments'
+          TrueKeyword

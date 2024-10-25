@@ -1,0 +1,126 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Bar'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' goo'
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop1'
+      Parameter
+        Identifier: 'x'
+      Block
+        ReturnStatement
+          Identifier: ' x'
+    Constructor
+      Parameter
+        Identifier: 'n'
+      Block
+  ClassDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Bar'
+    PropertyDeclaration
+      Identifier: '
+	foo'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+	gar'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+	zoo'
+      StringKeyword
+      StringLiteral
+    PropertyDeclaration
+      Identifier: '
+	x'
+      AnyKeyword
+    MethodDeclaration
+      Identifier: '
+
+	bar'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' boo'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' boo'
+      Parameter
+        Identifier: 'x'
+        QuestionToken
+      Block
+        ReturnStatement
+          Identifier: ' x'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' statVal'
+      NumericLiteral
+    Constructor
+    Constructor
+      Parameter
+        Identifier: 'x'
+        QuestionToken
+      Parameter
+        PrivateKeyword
+        Identifier: ' y'
+        QuestionToken
+        StringKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' z'
+        QuestionToken
+        NumericLiteral
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            Identifier: ' x'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'gar'
+            EqualsToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        NewExpression
+          Identifier: ' Foo'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' AmbientMod'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Provide'
+        PropertyDeclaration
+          Identifier: '
+		foo'
+          NumberKeyword
+        PropertyDeclaration
+          Identifier: '
+		zoo'
+          StringKeyword
+        Constructor
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' boo'
+        MethodDeclaration
+          Identifier: '
+		bar'

@@ -1,0 +1,8 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' ambiModule'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' i1'
+      EmptyStatement

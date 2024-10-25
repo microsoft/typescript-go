@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' foo2'
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            NumericLiteral
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+            NumericLiteral

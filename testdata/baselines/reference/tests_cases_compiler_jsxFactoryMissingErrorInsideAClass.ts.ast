@@ -1,0 +1,16 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    factory'
+      Block
+        ReturnStatement
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'div'
+            TypeAssertionExpression
+              TypeReference
+                Identifier: ''
+              RegularExpressionLiteral

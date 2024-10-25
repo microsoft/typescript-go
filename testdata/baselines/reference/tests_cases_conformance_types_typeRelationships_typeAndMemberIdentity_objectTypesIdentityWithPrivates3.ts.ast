@@ -1,0 +1,69 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' T1'
+  InterfaceDeclaration
+    Identifier: ' T2'
+    PropertySignature
+      Identifier: ' z'
+  ClassDeclaration
+    Identifier: ' C1'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C1'
+        TypeReference
+          Identifier: 'T1'
+    PropertyDeclaration
+      Identifier: '
+    y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        TypeReference
+          Identifier: ' C1'
+          TypeReference
+            Identifier: 'T2'
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: 'C2'
+      Identifier: 'c1'
+  ClassDeclaration
+    Identifier: ' C3'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        TypeReference
+          Identifier: 'T1'
+    PropertyDeclaration
+      Identifier: '
+    y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        TypeReference
+          Identifier: ' C3'
+          TypeReference
+            Identifier: 'T2'
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: 'C4'
+      Identifier: 'c3'

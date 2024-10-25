@@ -1,0 +1,9 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock

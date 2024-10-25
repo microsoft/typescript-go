@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' stringOrNumber'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' stringOrNumber'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' stringOrNumber'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        stringOrNumber'
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        TypeOfExpression
+          Identifier: ' stringOrNumber'
+        EqualsEqualsEqualsToken
+        StringLiteral
+      AmpersandAmpersandToken
+      BinaryExpression
+        TypeOfExpression
+          Identifier: ' stringOrNumber'
+        ExclamationEqualsEqualsToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        Identifier: '
+    stringOrNumber'

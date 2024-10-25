@@ -1,0 +1,342 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  type'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: '
+  name'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  type'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' funcTwo'
+    Parameter
+      Identifier: 'arg'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'arg'
+            QuestionDotToken
+            Identifier: 'type'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+    arg'
+          ReturnStatement
+      ExpressionStatement
+        Identifier: '
+
+  arg'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+  arg'
+          QuestionDotToken
+          Identifier: 'name'
+  FunctionDeclaration
+    Identifier: ' funcThree'
+    Parameter
+      Identifier: 'arg'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'arg'
+            QuestionDotToken
+            Identifier: 'type'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+    arg'
+          ReturnStatement
+      ExpressionStatement
+        Identifier: '
+
+  arg'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+  arg'
+          QuestionDotToken
+          Identifier: 'name'
+  TypeAliasDeclaration
+    Identifier: ' U'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        UndefinedKeyword
+      PropertySignature
+        Identifier: ' u'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' N'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          NullKeyword
+      PropertySignature
+        Identifier: ' n'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' x'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' U'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            QuestionDotToken
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' N'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            QuestionDotToken
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' U'
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            QuestionDotToken
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' N'
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            QuestionDotToken
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' U'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            QuestionDotToken
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' N'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            QuestionDotToken
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f7'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' U'
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            QuestionDotToken
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f8'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' N'
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            QuestionDotToken
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'

@@ -1,0 +1,48 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////class ConstructorCall {
+////    constructor(str: string, num: number) {
+////    }
+////}
+////var x = new ConstructorCall(/*constructorCall1*/1,/*constructorCall2*/2);
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        parameterSpan'
+          StringLiteral

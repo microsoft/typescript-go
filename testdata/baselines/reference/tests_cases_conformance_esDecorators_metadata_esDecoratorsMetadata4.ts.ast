@@ -1,0 +1,107 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' PRIVATE_METADATA'
+        NewExpression
+          Identifier: ' WeakMap'
+  FunctionDeclaration
+    Identifier: ' meta'
+    Parameter
+      Identifier: 'key'
+      StringKeyword
+    Parameter
+      Identifier: ' value'
+      StringKeyword
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: '_'
+          Parameter
+            Identifier: ' context'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' metadata'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' PRIVATE_METADATA'
+                      Identifier: 'get'
+                    PropertyAccessExpression
+                      Identifier: 'context'
+                      Identifier: 'metadata'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'metadata'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            metadata'
+                    EqualsToken
+                    ObjectLiteralExpression
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            PRIVATE_METADATA'
+                      Identifier: 'set'
+                    PropertyAccessExpression
+                      Identifier: 'context'
+                      Identifier: 'metadata'
+                    Identifier: ' metadata'
+            ExpressionStatement
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: '
+
+        metadata'
+                  Identifier: 'key'
+                EqualsToken
+                Identifier: ' value'
+  ClassDeclaration
+    Decorator
+      CallExpression
+        Identifier: 'meta'
+        StringLiteral
+        StringLiteral
+    Identifier: ' C'
+    MethodDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'meta'
+          StringLiteral
+          StringLiteral
+      Identifier: '
+    m'
+      Block
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+
+PRIVATE_METADATA'
+          Identifier: 'get'
+        ElementAccessExpression
+          Identifier: 'C'
+          PropertyAccessExpression
+            Identifier: 'Symbol'
+            Identifier: 'metadata'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' // 'x'
+PRIVATE_METADATA'
+          Identifier: 'get'
+        ElementAccessExpression
+          Identifier: 'C'
+          PropertyAccessExpression
+            Identifier: 'Symbol'
+            Identifier: 'metadata'
+      Identifier: 'b'

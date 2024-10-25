@@ -1,0 +1,95 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' S'
+    CallSignature
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          FunctionType
+            Parameter
+              Identifier: 'y'
+              TypeReference
+                Identifier: ' S'
+            TypeReference
+              Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          FunctionType
+            TypeParameter
+              Identifier: 'S'
+            Parameter
+              Identifier: 'y'
+              TypeReference
+                Identifier: ' S'
+            TypeReference
+              Identifier: ' I'
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' S'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          FunctionType
+            TypeParameter
+              Identifier: 'S'
+            Parameter
+              Identifier: 'y'
+              TypeReference
+                Identifier: ' S'
+            TypeLiteral
+              CallSignature
+                TypeParameter
+                  Identifier: 'U'
+                Parameter
+                  Identifier: 'f'
+                  FunctionType
+                    Parameter
+                      Identifier: 'x'
+                      TypeReference
+                        Identifier: ' T'
+                    FunctionType
+                      Parameter
+                        Identifier: 'y'
+                        TypeReference
+                          Identifier: ' S'
+                      TypeReference
+                        Identifier: ' U'
+                TypeReference
+                  Identifier: ' U'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+g'
+      EqualsToken
+      Identifier: ' h'

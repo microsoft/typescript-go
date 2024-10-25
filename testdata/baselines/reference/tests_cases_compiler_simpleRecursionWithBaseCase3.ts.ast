@@ -1,0 +1,22 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn1'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Math'
+                    Identifier: 'random'
+                GreaterThanToken
+                NumericLiteral
+              Block
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' fn1'
+            ReturnStatement
+              NumericLiteral

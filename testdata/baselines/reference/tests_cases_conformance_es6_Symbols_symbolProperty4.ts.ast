@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'Symbol'
+            NumericLiteral
+          MethodDeclaration
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'Symbol'
+            Block
+          GetAccessor
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'Symbol'
+            Block
+              ReturnStatement
+                NumericLiteral

@@ -1,0 +1,65 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    MethodDeclaration
+      Identifier: ' foo'
+      Block
+  ExpressionStatement
+    AsExpression
+      NewExpression
+        Identifier: ' C1'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        UnknownKeyword
+  ClassDeclaration
+    Identifier: ' C2'
+    MethodDeclaration
+      Identifier: ' foo'
+      Block
+  ModuleDeclaration
+    Identifier: ' C2'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unrelated'
+            NumericLiteral
+  ExpressionStatement
+    AsExpression
+      NewExpression
+        Identifier: ' C2'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        UnknownKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+C2'
+      Identifier: 'unrelated'
+  ExpressionStatement
+    PropertyAccessExpression
+      NewExpression
+        Identifier: ' C2'
+      Identifier: 'unrelated'
+  ModuleDeclaration
+    Identifier: ' C3'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unrelated'
+            NumericLiteral
+  ExpressionStatement
+    AsExpression
+      Identifier: '
+
+C3'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        UnknownKeyword

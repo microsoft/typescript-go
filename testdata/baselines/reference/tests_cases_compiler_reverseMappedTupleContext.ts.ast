@@ -1,0 +1,242 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'arg'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result1'
+        CallExpression
+          Identifier: ' test1'
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test2'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        ArrayType
+          UnknownKeyword
+    Parameter
+      Identifier: 'arg'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result2'
+        CallExpression
+          Identifier: ' test2'
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Schema'
+    UnionType
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        UnknownKeyword
+      TypeOperator
+        ArrayType
+          UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' Definition'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeReference
+                Identifier: 'K'
+        TypeReference
+          Identifier: ' Definition'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: 'K'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' create'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Schema'
+    Parameter
+      Identifier: 'definition'
+      TypeReference
+        Identifier: ' Definition'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' created1'
+        CallExpression
+          Identifier: ' create'
+          ArrayLiteralExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+            ArrayLiteralExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' created2'
+        CallExpression
+          Identifier: ' create'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  a'
+              ArrowFunction
+                EqualsGreaterThanToken
+                NumericLiteral
+            PropertyAssignment
+              Identifier: '
+  b'
+              ArrayLiteralExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  StringLiteral
+  InterfaceDeclaration
+    Identifier: ' CompilerOptions'
+    PropertySignature
+      Identifier: '
+  allowUnreachableCode'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+  allowUnusedLabels'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+  alwaysStrict'
+      QuestionToken
+      BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' KeepLiteralStrings'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: 'obj'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          IntersectionType
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+            TypeOperator
+              TypeReference
+                Identifier: ' CompilerOptions'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    dependencies'
+            TypeReference
+              Identifier: ' KeepLiteralStrings'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: 'K'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result4'
+        CallExpression
+          Identifier: ' test4'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  alwaysStrict'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    dependencies'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+            PropertyAssignment
+              Identifier: '
+  allowUnusedLabels'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    dependencies'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral

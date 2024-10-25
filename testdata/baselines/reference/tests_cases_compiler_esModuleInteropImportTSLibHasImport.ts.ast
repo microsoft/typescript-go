@@ -1,0 +1,69 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' __exportStar'
+            AnyKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' __importDefault'
+            AnyKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' __importStar'
+            AnyKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' username'
+        ArrowFunction
+          EqualsGreaterThanToken
+          StringLiteral
+  ExportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sayHello'
+        ArrowFunction
+          Parameter
+            Identifier: 'name'
+            QuestionToken
+            StringKeyword
+          EqualsGreaterThanToken
+          VoidExpression
+            ParenthesizedExpression
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'name'
+                  TemplateTail
+  ExportAssignment
+    Identifier: ' sayHello'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' sayHello'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' username'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+sayHello'
+      CallExpression
+        Identifier: 'username'

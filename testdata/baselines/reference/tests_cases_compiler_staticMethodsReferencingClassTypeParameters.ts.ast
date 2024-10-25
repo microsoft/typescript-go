@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' s'
+      Parameter
+        Identifier: 'p'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' p'

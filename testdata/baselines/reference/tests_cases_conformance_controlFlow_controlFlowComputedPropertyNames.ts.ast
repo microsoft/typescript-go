@@ -1,0 +1,209 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        UnknownKeyword
+    Parameter
+      Identifier: ' key'
+      StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            ElementAccessExpression
+              Identifier: ' obj'
+              Identifier: 'key'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: '
+        obj'
+                  Identifier: 'key'
+                Identifier: 'toUpperCase'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+    Parameter
+      Identifier: ' key'
+      StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'obj'
+            Identifier: 'key'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: '
+        obj'
+                  Identifier: 'key'
+                Identifier: 'toUpperCase'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' key2'
+            BinaryExpression
+              Identifier: ' key'
+              PlusToken
+              Identifier: ' key'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'obj'
+            Identifier: 'key2'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: '
+        obj'
+                  Identifier: 'key2'
+                Identifier: 'toUpperCase'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' key3'
+            BinaryExpression
+              Identifier: ' key'
+              PlusToken
+              Identifier: ' key'
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'obj'
+            Identifier: 'key3'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: '
+        obj'
+                  Identifier: 'key3'
+                Identifier: 'toUpperCase'
+  TypeAliasDeclaration
+    Identifier: ' Thing'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        QuestionToken
+        StringKeyword
+      PropertySignature
+        Identifier: ' b'
+        QuestionToken
+        NumberKeyword
+      PropertySignature
+        Identifier: ' c'
+        QuestionToken
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Thing'
+    Parameter
+      Identifier: ' key'
+      TypeOperator
+        TypeReference
+          Identifier: ' Thing'
+    Block
+      IfStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: 'obj'
+            Identifier: 'key'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  Identifier: 'key'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: '
+            obj'
+                      Identifier: 'key'
+                    Identifier: 'toUpperCase'
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  Identifier: 'key'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: '
+            obj'
+                      Identifier: 'key'
+                    Identifier: 'toFixed'
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'K'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' K'
+    Block
+      IfStatement
+        ElementAccessExpression
+          Identifier: 'obj'
+          Identifier: 'key'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ElementAccessExpression
+                  Identifier: '
+        obj'
+                  Identifier: 'key'
+                Identifier: 'toUpperCase'

@@ -1,0 +1,23 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    ConditionalType
+      TypeReference
+        Identifier: ' Array'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Array'
+        AnyKeyword
+      ConditionalType
+        TypeReference
+          Identifier: ' Array'
+          NumberKeyword
+        TypeReference
+          Identifier: ' Array'
+          InferType
+            TypeParameter
+              Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+        NeverKeyword
+      NeverKeyword

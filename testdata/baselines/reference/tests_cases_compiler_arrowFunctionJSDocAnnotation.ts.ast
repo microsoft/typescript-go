@@ -1,0 +1,24 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' identity'
+    Parameter
+      Identifier: 'v'
+    Block
+      ReturnStatement
+        Identifier: ' v'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' identity'
+          ArrowFunction
+            Parameter
+              Identifier: '
+    /**
+     * @param {number} param
+     * @returns {number=}
+     */
+    param'
+            EqualsGreaterThanToken
+            Identifier: ' param'

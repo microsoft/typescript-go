@@ -1,0 +1,70 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Base'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived2'
+    PropertySignature
+      Identifier: ' // error
+    x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertySignature
+      Identifier: '
+    y'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertySignature
+      Identifier: '
+    z'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' Generic'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Base'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Derived2'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: ' // error
+        x'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' Derived'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        y'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' Derived2'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Derived'
+            TypeReference
+              Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        z'
+          StringKeyword

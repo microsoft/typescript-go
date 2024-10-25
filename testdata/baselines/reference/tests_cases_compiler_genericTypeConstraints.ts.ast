@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+    fooMethod'
+      Block
+  ClassDeclaration
+    Identifier: ' FooExtended'
+  ClassDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Foo'
+  ClassDeclaration
+    Identifier: ' BarExtended'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Bar'
+        TypeReference
+          Identifier: 'FooExtended'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

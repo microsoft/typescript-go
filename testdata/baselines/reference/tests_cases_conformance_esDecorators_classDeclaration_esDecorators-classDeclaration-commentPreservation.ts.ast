@@ -1,0 +1,134 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C'
+    MethodDeclaration
+      Decorator
+        Identifier: 'dec'
+      Decorator
+        Identifier: 'dec'
+      Identifier: '
+    /*6*/
+    method'
+      Block
+    GetAccessor
+      Decorator
+        Identifier: 'dec'
+      Decorator
+        Identifier: 'dec'
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Decorator
+        Identifier: 'dec'
+      Decorator
+        Identifier: 'dec'
+      Identifier: ' x'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      Decorator
+        Identifier: 'dec'
+      Identifier: '
+    /*15*/
+    y'
+      NumericLiteral
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      Decorator
+        Identifier: 'dec'
+      AccessorKeyword
+      Identifier: ' z'
+      NumericLiteral
+    MethodDeclaration
+      Decorator
+        Identifier: 'dec'
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      PrivateIdentifier
+      Block
+    GetAccessor
+      Decorator
+        Identifier: 'dec'
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      PrivateIdentifier
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Decorator
+        Identifier: 'dec'
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      PrivateIdentifier
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      Decorator
+        Identifier: 'dec'
+      StaticKeyword
+      AccessorKeyword
+      PrivateIdentifier
+      NumericLiteral
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Decorator
+      Identifier: 'dec'
+    ExportKeyword
+    Identifier: ' D'
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Decorator
+      Identifier: 'dec'
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' E'
+  ClassDeclaration
+    ExportKeyword
+    Decorator
+      Identifier: 'dec'
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' F'
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Decorator
+      Identifier: 'dec'
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' G'

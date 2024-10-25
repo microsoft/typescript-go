@@ -1,0 +1,169 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test1'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          StringKeyword
+    Parameter
+      Identifier: '
+  a'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+  b'
+      UnionType
+        TypeReference
+          Identifier: ' NoInfer'
+          TypeReference
+            Identifier: 'T'
+        ParenthesizedType
+          FunctionType
+            TypeReference
+              Identifier: ' NoInfer'
+              TypeReference
+                Identifier: 'T'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // no error
+test1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' y'
+          NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test2'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          StringKeyword
+    Parameter
+      Identifier: '
+  a'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+  b'
+      UnionType
+        TypeReference
+          Identifier: ' NoInfer'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' NoInfer'
+          FunctionType
+            TypeReference
+              Identifier: ' T'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // no error
+test2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' y'
+          NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test3'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          StringKeyword
+    Parameter
+      Identifier: '
+  a'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+  b'
+      TypeReference
+        Identifier: ' NoInfer'
+        UnionType
+          TypeReference
+            Identifier: 'T'
+          ParenthesizedType
+            FunctionType
+              TypeReference
+                Identifier: ' T'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // no error
+test3'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' y'
+          NumericLiteral

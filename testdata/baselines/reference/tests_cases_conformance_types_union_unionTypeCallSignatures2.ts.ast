@@ -1,0 +1,197 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        StringKeyword
+      BooleanKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' Date'
+      VoidKeyword
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' B'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' Date'
+      VoidKeyword
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' C'
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'y'
+        ArrayType
+          StringKeyword
+      NumberKeyword
+    CallSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' s'
+        QuestionToken
+        StringKeyword
+      NumberKeyword
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+          TypeReference
+            Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n1'
+        CallExpression
+          Identifier: ' f1'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s1'
+        CallExpression
+          Identifier: ' f1'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        CallExpression
+          Identifier: ' f1'
+          ArrayLiteralExpression
+            TrueKeyword
+            FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        UnionType
+          TypeReference
+            Identifier: ' C'
+          TypeReference
+            Identifier: ' B'
+          TypeReference
+            Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n2'
+        CallExpression
+          Identifier: ' f2'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2'
+        CallExpression
+          Identifier: ' f2'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        CallExpression
+          Identifier: ' f2'
+          ArrayLiteralExpression
+            TrueKeyword
+            FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        UnionType
+          TypeReference
+            Identifier: ' B'
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n3'
+        CallExpression
+          Identifier: ' f3'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s3'
+        CallExpression
+          Identifier: ' f3'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        CallExpression
+          Identifier: ' f3'
+          ArrayLiteralExpression
+            TrueKeyword
+            FalseKeyword

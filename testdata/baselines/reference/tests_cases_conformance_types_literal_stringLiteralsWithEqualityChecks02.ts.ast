@@ -1,0 +1,166 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BooleanKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        Identifier: ' x'
+        EqualsEqualsToken
+        Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        StringLiteral
+        EqualsEqualsToken
+        Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        Identifier: ' y'
+        EqualsEqualsToken
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        StringLiteral
+        EqualsEqualsToken
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        StringLiteral
+        EqualsEqualsToken
+        Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        Identifier: ' x'
+        EqualsEqualsToken
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        Identifier: ' y'
+        EqualsEqualsToken
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        StringLiteral
+        EqualsEqualsToken
+        Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+b'
+      EqualsToken
+      BinaryExpression
+        Identifier: ' x'
+        ExclamationEqualsToken
+        Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        StringLiteral
+        ExclamationEqualsToken
+        Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        Identifier: ' y'
+        ExclamationEqualsToken
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        StringLiteral
+        ExclamationEqualsToken
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        StringLiteral
+        ExclamationEqualsToken
+        Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        Identifier: ' x'
+        ExclamationEqualsToken
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        Identifier: ' y'
+        ExclamationEqualsToken
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      BinaryExpression
+        StringLiteral
+        ExclamationEqualsToken
+        Identifier: ' y'

@@ -1,0 +1,102 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' C'
+    Parameter
+      Identifier: 'x'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+          EqualsToken
+          Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+C'
+          Identifier: 'prototype'
+        Identifier: 'm'
+      EqualsToken
+      FunctionExpression
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'y'
+              EqualsToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'x'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // should error
+c'
+        Identifier: 'y'
+      EqualsToken
+      Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' A'
+    Parameter
+      Identifier: 'x'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              ThisKeyword
+              InstanceOfKeyword
+              Identifier: ' A'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' A'
+              Identifier: 'x'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+          EqualsToken
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        CallExpression
+          Identifier: ' A'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        NewExpression
+          Identifier: ' A'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+k'
+        Identifier: 'x'
+      EqualsEqualsEqualsToken
+      PropertyAccessExpression
+        Identifier: ' j'
+        Identifier: 'x'

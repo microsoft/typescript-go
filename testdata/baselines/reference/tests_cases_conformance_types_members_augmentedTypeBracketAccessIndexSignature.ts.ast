@@ -1,0 +1,42 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: ' a'
+  InterfaceDeclaration
+    Identifier: ' Bar'
+    PropertySignature
+      Identifier: ' b'
+  InterfaceDeclaration
+    Identifier: ' Object'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Foo'
+  InterfaceDeclaration
+    Identifier: ' Function'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ElementAccessExpression
+          ObjectLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ElementAccessExpression
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+          NumericLiteral

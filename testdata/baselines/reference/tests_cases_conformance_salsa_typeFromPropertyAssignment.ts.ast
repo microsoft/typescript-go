@@ -1,0 +1,50 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Outer'
+        ClassExpression
+          Identifier: ' O'
+          MethodDeclaration
+            Identifier: '
+    m'
+            Parameter
+              Identifier: 'x'
+            Parameter
+              Identifier: ' y'
+            Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Outer'
+        Identifier: 'Inner'
+      EqualsToken
+      ClassExpression
+        Identifier: ' I'
+        MethodDeclaration
+          Identifier: '
+    n'
+          Parameter
+            Identifier: 'a'
+          Parameter
+            Identifier: ' b'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' si'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+si'
+      Identifier: 'm'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' oi'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+oi'
+      Identifier: 'n'

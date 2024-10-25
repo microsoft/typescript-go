@@ -1,0 +1,128 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f10'
+    UndefinedKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f11'
+    UnionType
+      UndefinedKeyword
+      NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f12'
+    NumberKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f20'
+        FunctionType
+          UndefinedKeyword
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f21'
+        FunctionType
+          UnionType
+            UndefinedKeyword
+            NumberKeyword
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f22'
+        FunctionType
+          NumberKeyword
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f30'
+    TypeReference
+      Identifier: ' Promise'
+      UndefinedKeyword
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f31'
+    TypeReference
+      Identifier: ' Promise'
+      UnionType
+        UndefinedKeyword
+        NumberKeyword
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' f32'
+    TypeReference
+      Identifier: ' Promise'
+      NumberKeyword
+    Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        UndefinedKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ArrowFunction
+        UndefinedKeyword
+        EqualsGreaterThanToken
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g1'
+        FunctionType
+          UndefinedKeyword
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g2'
+        ArrowFunction
+          UndefinedKeyword
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    Identifier: ' h1'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      Identifier: 'h1'
+  FunctionDeclaration
+    Identifier: ' h2'
+    UndefinedKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      Identifier: 'h2'

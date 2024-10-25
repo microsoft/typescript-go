@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' S0'
+    TypeParameter
+      Identifier: 'B'
+    TypeParameter
+      Identifier: ' A'
+    SetAccessor
+      Identifier: ' S1'
+      Parameter
+        Identifier: 'S2'
+        TypeReference
+          Identifier: ' S0'
+          AnyKeyword
+          AnyKeyword
+      Block
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' S17'
+        TypeReference
+          Identifier: ' S0'
+          AnyKeyword
+          FunctionType
+            Parameter
+              Identifier: 'S18'
+            TypeReference
+              Identifier: ' A'
+      Block

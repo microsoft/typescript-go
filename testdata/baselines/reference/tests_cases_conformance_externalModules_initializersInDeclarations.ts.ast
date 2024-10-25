@@ -1,0 +1,45 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+	name'
+      StringLiteral
+    PropertyDeclaration
+      StringLiteral
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+	fn'
+      BooleanKeyword
+      Block
+        ReturnStatement
+          FalseKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayLiteralExpression
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ObjectLiteralExpression
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M1'
+    ModuleBlock
+      WhileStatement
+        TrueKeyword
+        EmptyStatement
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v1'
+            ArrowFunction
+              EqualsGreaterThanToken
+              FalseKeyword

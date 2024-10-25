@@ -1,0 +1,7 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+    StringLiteral
+    Block

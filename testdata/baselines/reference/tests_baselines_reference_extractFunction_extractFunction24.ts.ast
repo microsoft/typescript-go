@@ -1,0 +1,75 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' Outer'
+    Block
+      FunctionDeclaration
+        Identifier: ' M1'
+        Block
+      FunctionDeclaration
+        Identifier: ' M2'
+        Block
+          ReturnStatement
+            NumericLiteral
+      FunctionDeclaration
+        Identifier: ' M3'
+        Block
+  FunctionDeclaration
+    Identifier: ' Outer'
+    Block
+      FunctionDeclaration
+        Identifier: ' M1'
+        Block
+      FunctionDeclaration
+        Identifier: ' M2'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' /*RENAME*/newFunction'
+          FunctionDeclaration
+            Identifier: ' newFunction'
+            Block
+              ReturnStatement
+                NumericLiteral
+      FunctionDeclaration
+        Identifier: ' M3'
+        Block
+  FunctionDeclaration
+    Identifier: ' Outer'
+    Block
+      FunctionDeclaration
+        Identifier: ' M1'
+        Block
+      FunctionDeclaration
+        Identifier: ' M2'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' /*RENAME*/newFunction'
+      FunctionDeclaration
+        Identifier: ' newFunction'
+        Block
+          ReturnStatement
+            NumericLiteral
+      FunctionDeclaration
+        Identifier: ' M3'
+        Block
+  FunctionDeclaration
+    Identifier: ' Outer'
+    Block
+      FunctionDeclaration
+        Identifier: ' M1'
+        Block
+      FunctionDeclaration
+        Identifier: ' M2'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' /*RENAME*/newFunction'
+      FunctionDeclaration
+        Identifier: ' M3'
+        Block
+  FunctionDeclaration
+    Identifier: ' newFunction'
+    Block
+      ReturnStatement
+        NumericLiteral

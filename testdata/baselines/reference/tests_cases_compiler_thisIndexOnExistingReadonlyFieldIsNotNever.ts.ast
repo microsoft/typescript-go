@@ -1,0 +1,110 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Component'
+    TypeParameter
+      Identifier: 'P'
+    TypeParameter
+      Identifier: ' S'
+      TypeLiteral
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' props'
+      IntersectionType
+        TypeReference
+          Identifier: ' Readonly'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' children'
+              QuestionToken
+              UnknownKeyword
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'P'
+    PropertyDeclaration
+      Identifier: '
+    state'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'S'
+  InterfaceDeclaration
+    Identifier: ' CoachMarkAnchorProps'
+    TypeParameter
+      Identifier: 'C'
+    PropertySignature
+      Identifier: '
+    anchorRef'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'anchor'
+          TypeReference
+            Identifier: ' C'
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' AnchorType'
+    TypeParameter
+      Identifier: 'P'
+    TypeReference
+      Identifier: ' Component'
+      TypeReference
+        Identifier: 'P'
+  ClassDeclaration
+    Identifier: ' CoachMarkAnchorDecorator'
+    MethodDeclaration
+      Identifier: '
+    decorateComponent'
+      TypeParameter
+        Identifier: 'P'
+      Parameter
+        Identifier: 'anchor'
+        TypeReference
+          Identifier: ' P'
+      Block
+        ReturnStatement
+          ClassExpression
+            Identifier: ' CoachMarkAnchor'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Component'
+                IntersectionType
+                  TypeReference
+                    Identifier: 'CoachMarkAnchorProps'
+                    TypeReference
+                      Identifier: 'AnchorType'
+                      TypeReference
+                        Identifier: 'P'
+                  TypeReference
+                    Identifier: ' P'
+                TypeLiteral
+            PropertyDeclaration
+              PrivateKeyword
+              Identifier: ' _onAnchorRef'
+              ArrowFunction
+                Parameter
+                  Identifier: 'anchor'
+                  TypeReference
+                    Identifier: ' AnchorType'
+                    TypeReference
+                      Identifier: 'P'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' anchorRef'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'props'
+                          Identifier: 'anchorRef'
+                  IfStatement
+                    Identifier: 'anchorRef'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                    anchorRef'
+                          Identifier: 'anchor'

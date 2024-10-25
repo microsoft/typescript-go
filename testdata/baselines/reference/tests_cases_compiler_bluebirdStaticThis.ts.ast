@@ -1,0 +1,2288 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Promise'
+    TypeParameter
+      Identifier: 'R'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' Promise'
+          Identifier: 'Thenable'
+        TypeReference
+          Identifier: 'R'
+    Constructor
+      Parameter
+        Identifier: 'callback'
+        FunctionType
+          Parameter
+            Identifier: 'resolve'
+            FunctionType
+              Parameter
+                Identifier: 'thenableOrResult'
+                UnionType
+                  TypeReference
+                    Identifier: ' R'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' Promise'
+                      Identifier: 'Thenable'
+                    TypeReference
+                      Identifier: 'R'
+              VoidKeyword
+          Parameter
+            Identifier: ' reject'
+            FunctionType
+              Parameter
+                Identifier: 'error'
+                AnyKeyword
+              VoidKeyword
+          VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' try'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' fn'
+        FunctionType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' args'
+        QuestionToken
+        ArrayType
+          AnyKeyword
+      Parameter
+        Identifier: ' ctx'
+        QuestionToken
+        AnyKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' try'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' fn'
+        FunctionType
+          TypeReference
+            Identifier: ' R'
+      Parameter
+        Identifier: ' args'
+        QuestionToken
+        ArrayType
+          AnyKeyword
+      Parameter
+        Identifier: ' ctx'
+        QuestionToken
+        AnyKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' attempt'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' fn'
+        FunctionType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' args'
+        QuestionToken
+        ArrayType
+          AnyKeyword
+      Parameter
+        Identifier: ' ctx'
+        QuestionToken
+        AnyKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' attempt'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' fn'
+        FunctionType
+          TypeReference
+            Identifier: ' R'
+      Parameter
+        Identifier: ' args'
+        QuestionToken
+        ArrayType
+          AnyKeyword
+      Parameter
+        Identifier: ' ctx'
+        QuestionToken
+        AnyKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' method'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' fn'
+        TypeReference
+          Identifier: ' Function'
+      TypeReference
+        Identifier: ' Function'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' resolve'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      TypeReference
+        Identifier: ' Promise'
+        VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' resolve'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          TypeReference
+            Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' resolve'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' reject'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' reason'
+        AnyKeyword
+      TypeReference
+        Identifier: ' Promise'
+        AnyKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' reject'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' reason'
+        AnyKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' defer'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      TypeReference
+        QualifiedName
+          Identifier: ' Promise'
+          Identifier: 'Resolver'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' cast'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          TypeReference
+            Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' cast'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' bind'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' thisArg'
+        AnyKeyword
+      TypeReference
+        Identifier: ' Promise'
+        VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' is'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' value'
+        AnyKeyword
+      BooleanKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' longStackTraces'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' delay'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          TypeReference
+            Identifier: 'R'
+      Parameter
+        Identifier: ' ms'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' delay'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' R'
+      Parameter
+        Identifier: ' ms'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' delay'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' ms'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Promise'
+        VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' promisify'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' nodeFunction'
+        TypeReference
+          Identifier: ' Function'
+      Parameter
+        Identifier: ' receiver'
+        QuestionToken
+        AnyKeyword
+      TypeReference
+        Identifier: ' Function'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' promisifyAll'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' target'
+        TypeReference
+          Identifier: ' Object'
+      TypeReference
+        Identifier: ' Object'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' coroutine'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' generatorFunction'
+        TypeReference
+          Identifier: ' Function'
+      TypeReference
+        Identifier: ' Function'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' spawn'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' generatorFunction'
+        TypeReference
+          Identifier: ' Function'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' noConflict'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      TypeQuery
+        Identifier: ' Promise'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' onPossiblyUnhandledRejection'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' handler'
+        FunctionType
+          Parameter
+            Identifier: 'reason'
+            AnyKeyword
+          AnyKeyword
+      VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' all'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' all'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' all'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' all'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' props'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' object'
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'Object'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'Object'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' props'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' object'
+        TypeReference
+          Identifier: ' Object'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'Object'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' settle'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: 'Promise'
+              Identifier: 'Inspection'
+            TypeReference
+              Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' settle'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: 'Promise'
+              Identifier: 'Inspection'
+            TypeReference
+              Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' settle'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: 'Promise'
+              Identifier: 'Inspection'
+            TypeReference
+              Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' settle'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: 'Promise'
+              Identifier: 'Inspection'
+            TypeReference
+              Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' any'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' any'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' any'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' any'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' race'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' race'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' race'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' race'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' some'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      Parameter
+        Identifier: ' count'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' some'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' count'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' some'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' count'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' some'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      Parameter
+        Identifier: ' count'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' join'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        DotDotDotToken
+        Identifier: 'values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' join'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        DotDotDotToken
+        Identifier: 'values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' map'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      Parameter
+        Identifier: ' mapper'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'U'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' map'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      Parameter
+        Identifier: ' mapper'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' map'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' mapper'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'U'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' map'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' mapper'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' map'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' mapper'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'U'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' map'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' mapper'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' map'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      Parameter
+        Identifier: ' mapper'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'U'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' map'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      Parameter
+        Identifier: ' mapper'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' reduce'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      Parameter
+        Identifier: ' reducer'
+        FunctionType
+          Parameter
+            Identifier: 'total'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' current'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' reduce'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      Parameter
+        Identifier: ' reducer'
+        FunctionType
+          Parameter
+            Identifier: 'total'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' current'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' reduce'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' reducer'
+        FunctionType
+          Parameter
+            Identifier: 'total'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' current'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' reduce'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' reducer'
+        FunctionType
+          Parameter
+            Identifier: 'total'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' current'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' reduce'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' reducer'
+        FunctionType
+          Parameter
+            Identifier: 'total'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' current'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' reduce'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' reducer'
+        FunctionType
+          Parameter
+            Identifier: 'total'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' current'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' reduce'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      Parameter
+        Identifier: ' reducer'
+        FunctionType
+          Parameter
+            Identifier: 'total'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' current'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'U'
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' reduce'
+      TypeParameter
+        Identifier: 'R'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      Parameter
+        Identifier: ' reducer'
+        FunctionType
+          Parameter
+            Identifier: 'total'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' current'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            Identifier: ' U'
+      Parameter
+        Identifier: ' initialValue'
+        QuestionToken
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'U'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' filter'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      Parameter
+        Identifier: ' filterer'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            BooleanKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' filter'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              QualifiedName
+                Identifier: 'Promise'
+                Identifier: 'Thenable'
+              TypeReference
+                Identifier: 'R'
+      Parameter
+        Identifier: ' filterer'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          BooleanKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' filter'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' filterer'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            BooleanKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' filter'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        TypeReference
+          QualifiedName
+            Identifier: ' Promise'
+            Identifier: 'Thenable'
+          ArrayType
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' filterer'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          BooleanKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' filter'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' filterer'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            BooleanKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' filter'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            TypeReference
+              Identifier: 'R'
+      Parameter
+        Identifier: ' filterer'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          BooleanKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' filter'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      Parameter
+        Identifier: ' filterer'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' Promise'
+              Identifier: 'Thenable'
+            BooleanKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' filter'
+      TypeParameter
+        Identifier: 'R'
+      Parameter
+        Identifier: 'dit'
+        TypeQuery
+          Identifier: ' Promise'
+      Parameter
+        Identifier: ' values'
+        ArrayType
+          TypeReference
+            Identifier: ' R'
+      Parameter
+        Identifier: ' filterer'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' R'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          Parameter
+            Identifier: ' arrayLength'
+            NumberKeyword
+          BooleanKeyword
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'R'
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Promise'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Thenable'
+        TypeParameter
+          Identifier: 'R'
+        MethodSignature
+          Identifier: '
+		then'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'onFulfilled'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' R'
+              TypeReference
+                Identifier: ' Thenable'
+                TypeReference
+                  Identifier: 'U'
+          Parameter
+            Identifier: ' onRejected'
+            FunctionType
+              Parameter
+                Identifier: 'error'
+                AnyKeyword
+              TypeReference
+                Identifier: ' Thenable'
+                TypeReference
+                  Identifier: 'U'
+          TypeReference
+            Identifier: ' Thenable'
+            TypeReference
+              Identifier: 'U'
+        MethodSignature
+          Identifier: '
+		then'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'onFulfilled'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' R'
+              TypeReference
+                Identifier: ' Thenable'
+                TypeReference
+                  Identifier: 'U'
+          Parameter
+            Identifier: ' onRejected'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'error'
+                AnyKeyword
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' Thenable'
+            TypeReference
+              Identifier: 'U'
+        MethodSignature
+          Identifier: '
+		then'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'onFulfilled'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' R'
+              TypeReference
+                Identifier: ' U'
+          Parameter
+            Identifier: ' onRejected'
+            FunctionType
+              Parameter
+                Identifier: 'error'
+                AnyKeyword
+              TypeReference
+                Identifier: ' Thenable'
+                TypeReference
+                  Identifier: 'U'
+          TypeReference
+            Identifier: ' Thenable'
+            TypeReference
+              Identifier: 'U'
+        MethodSignature
+          Identifier: '
+		then'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'onFulfilled'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' R'
+              TypeReference
+                Identifier: ' U'
+          Parameter
+            Identifier: ' onRejected'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'error'
+                AnyKeyword
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' Thenable'
+            TypeReference
+              Identifier: 'U'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' Foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooProm'
+        TypeReference
+          Identifier: ' Promise'
+          TypeReference
+            Identifier: 'Foo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+fooProm'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' Promise'
+          Identifier: 'try'
+        Identifier: 'Promise'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              Identifier: ' foo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+fooProm'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' Promise'
+          Identifier: 'try'
+        Identifier: 'Promise'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              Identifier: ' foo'
+        Identifier: ' arr'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+fooProm'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' Promise'
+          Identifier: 'try'
+        Identifier: 'Promise'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              Identifier: ' foo'
+        Identifier: ' arr'
+        Identifier: ' x'

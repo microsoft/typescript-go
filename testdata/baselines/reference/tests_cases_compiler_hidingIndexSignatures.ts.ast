@@ -1,0 +1,40 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      TypeLiteral
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+b'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+a'
+      StringLiteral

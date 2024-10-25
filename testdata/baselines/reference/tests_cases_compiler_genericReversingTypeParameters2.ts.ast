@@ -1,0 +1,65 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' BiMap'
+    TypeParameter
+      Identifier: 'K'
+    TypeParameter
+      Identifier: ' V'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' inverseBiMap'
+      TypeReference
+        Identifier: ' BiMap'
+        TypeReference
+          Identifier: 'V'
+        TypeReference
+          Identifier: ' K'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' get'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      TypeReference
+        Identifier: ' V'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' inverse'
+      TypeReference
+        Identifier: ' BiMap'
+        TypeReference
+          Identifier: 'V'
+        TypeReference
+          Identifier: ' K'
+      Block
+        ReturnStatement
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' BiMap'
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' b'
+            Identifier: 'inverse'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'get'
+          NumericLiteral

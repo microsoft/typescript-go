@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' getThing'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' return'
+          Identifier: ''
+        BindingElement
+          StringLiteral
+          Identifier: ''

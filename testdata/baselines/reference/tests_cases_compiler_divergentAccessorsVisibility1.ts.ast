@@ -1,0 +1,865 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    GetAccessor
+      Identifier: ' PublicPublic'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' PublicPublic'
+      Parameter
+        Identifier: 'v'
+      Block
+        ReturnStatement
+    GetAccessor
+      Identifier: ' PublicProtected'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      ProtectedKeyword
+      Identifier: ' PublicProtected'
+      Parameter
+        Identifier: 'v'
+      Block
+        ReturnStatement
+    GetAccessor
+      Identifier: ' PublicPrivate'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' PublicPrivate'
+      Parameter
+        Identifier: 'v'
+      Block
+        ReturnStatement
+    GetAccessor
+      ProtectedKeyword
+      Identifier: ' ProtectedPublic'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' ProtectedPublic'
+      Parameter
+        Identifier: 'v'
+      Block
+        ReturnStatement
+    GetAccessor
+      ProtectedKeyword
+      Identifier: ' ProtectedProtected'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      ProtectedKeyword
+      Identifier: ' ProtectedProtected'
+      Parameter
+        Identifier: 'v'
+      Block
+        ReturnStatement
+    GetAccessor
+      ProtectedKeyword
+      Identifier: ' ProtectedPrivate'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' ProtectedPrivate'
+      Parameter
+        Identifier: 'v'
+      Block
+        ReturnStatement
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' PrivatePublic'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' PrivatePublic'
+      Parameter
+        Identifier: 'v'
+      Block
+        ReturnStatement
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' PrivateProtected'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      ProtectedKeyword
+      Identifier: ' PrivateProtected'
+      Parameter
+        Identifier: 'v'
+      Block
+        ReturnStatement
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' PrivatePrivate'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' PrivatePrivate'
+      Parameter
+        Identifier: 'v'
+      Block
+        ReturnStatement
+    MethodDeclaration
+      Identifier: '
+
+    test'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPublic'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicProtected'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPrivate'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPublic'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedProtected'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPrivate'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePublic'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivateProtected'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePrivate'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPublic'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicProtected'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPrivate'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPublic'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedProtected'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPrivate'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePublic'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivateProtected'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePrivate'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPublic'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicProtected'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPrivate'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPublic'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedProtected'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPrivate'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePublic'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivateProtected'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePrivate'
+            PlusEqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      Identifier: '
+    test2'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPublic'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicProtected'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPrivate'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPublic'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedProtected'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPrivate'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePublic'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivateProtected'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePrivate'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPublic'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicProtected'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPrivate'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPublic'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedProtected'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPrivate'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePublic'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivateProtected'
+        ExpressionStatement
+          VoidExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePrivate'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPublic'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicProtected'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PublicPrivate'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPublic'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedProtected'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'ProtectedPrivate'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePublic'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivateProtected'
+            PlusEqualsToken
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'PrivatePrivate'
+            PlusEqualsToken
+            NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' base'
+        TypeReference
+          Identifier: ' Base'
+      VariableDeclaration
+        Identifier: ' deriv'
+        TypeReference
+          Identifier: ' Derived'
+  FunctionDeclaration
+    Identifier: ' fn'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PublicPublic'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PublicProtected'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PublicPrivate'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'ProtectedPublic'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'ProtectedProtected'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'ProtectedPrivate'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PrivatePublic'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PrivateProtected'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PrivatePrivate'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' base'
+            Identifier: 'PublicPublic'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' base'
+            Identifier: 'PublicProtected'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' base'
+            Identifier: 'PublicPrivate'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' base'
+            Identifier: 'ProtectedPublic'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' base'
+            Identifier: 'ProtectedProtected'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' base'
+            Identifier: 'ProtectedPrivate'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' base'
+            Identifier: 'PrivatePublic'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' base'
+            Identifier: 'PrivateProtected'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' base'
+            Identifier: 'PrivatePrivate'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    base'
+            Identifier: 'PublicPublic'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PublicProtected'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PublicPrivate'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'ProtectedPublic'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'ProtectedProtected'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'ProtectedPrivate'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PrivatePublic'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PrivateProtected'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    base'
+            Identifier: 'PrivatePrivate'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    deriv'
+            Identifier: 'PublicPublic'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'PublicProtected'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'PublicPrivate'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'ProtectedPublic'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'ProtectedProtected'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'ProtectedPrivate'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'PrivatePublic'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'PrivateProtected'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'PrivatePrivate'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' deriv'
+            Identifier: 'PublicPublic'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' deriv'
+            Identifier: 'PublicProtected'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' deriv'
+            Identifier: 'PublicPrivate'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' deriv'
+            Identifier: 'ProtectedPublic'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' deriv'
+            Identifier: 'ProtectedProtected'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' deriv'
+            Identifier: 'ProtectedPrivate'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' deriv'
+            Identifier: 'PrivatePublic'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' deriv'
+            Identifier: 'PrivateProtected'
+      ExpressionStatement
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' deriv'
+            Identifier: 'PrivatePrivate'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    deriv'
+            Identifier: 'PublicPublic'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'PublicProtected'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'PublicPrivate'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'ProtectedPublic'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'ProtectedProtected'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'ProtectedPrivate'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'PrivatePublic'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'PrivateProtected'
+          PlusEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    deriv'
+            Identifier: 'PrivatePrivate'
+          PlusEqualsToken
+          NumericLiteral

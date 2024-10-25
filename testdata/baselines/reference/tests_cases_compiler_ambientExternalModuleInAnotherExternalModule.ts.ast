@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' D'
+  ExportAssignment
+    Identifier: ' D'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+  ImportEqualsDeclaration
+    Identifier: ' ext'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        Identifier: ' ext'

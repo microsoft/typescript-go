@@ -1,0 +1,27 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'i'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ContinueStatement
+          ExpressionStatement
+            CallExpression
+              ParenthesizedExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ReturnStatement
+                      Identifier: ' i'

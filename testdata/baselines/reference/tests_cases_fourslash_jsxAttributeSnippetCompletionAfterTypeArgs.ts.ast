@@ -1,0 +1,96 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+//@Filename: file.tsx
+
+////declare const React: any;
+////
+////namespace JSX {
+////    export interface IntrinsicElements {
+////        div: any;
+////    }
+////}
+////
+////function GenericElement<T>(props: {xyz?: T}) {
+////    return <></>
+////}
+////
+////function fn1() {
+////    return <div>
+////        <GenericElement<number> /*1*/ />
+////    </div>
+////}
+////
+////function fn2() {
+////    return <>
+////        <GenericElement<number> /*2*/ />
+////    </>
+////}
+////function fn3() {
+////    return <div>
+////        <GenericElement<number> /*3*/ ></GenericElement>
+////    </div>
+////}
+////
+////function fn4() {
+////    return <>
+////        <GenericElement<number> /*4*/ ></GenericElement>
+////    </>
+////}
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'markers'
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            insertText'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            isSnippet'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+            sortText'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'SortText'
+                Identifier: 'OptionalMember'
+        PropertyAssignment
+          Identifier: '
+        preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            jsxAttributeCompletionStyle'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithSnippetText'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+            includeCompletionsWithInsertText'
+              TrueKeyword

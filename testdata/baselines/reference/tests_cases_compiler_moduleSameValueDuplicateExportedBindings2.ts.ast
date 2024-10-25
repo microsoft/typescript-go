@@ -1,0 +1,20 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'Animals'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Animals'
+    EnumMember
+      Identifier: '
+	Cat'
+    EnumMember
+      Identifier: '
+	Dog'
+  EmptyStatement

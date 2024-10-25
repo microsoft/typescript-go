@@ -1,0 +1,90 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+
+////class Foo {
+////    #x;
+////    y;
+////}
+////
+////class Bar extends Foo {
+////    #z;
+////    t;
+////    constructor() {
+////        this./*1*/
+////        class Baz {
+////            #z;
+////            #u;
+////            v;
+////            constructor() {
+////                this./*2*/
+////                new Bar()./*3*/
+////            }
+////        }
+////    }
+////}
+////
+////new Foo()./*4*/
+
+
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' unsorted'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' unsorted'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' unsorted'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral

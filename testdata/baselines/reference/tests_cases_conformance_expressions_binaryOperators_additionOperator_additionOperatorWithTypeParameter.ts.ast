@@ -1,0 +1,223 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' a'
+    EnumMember
+      Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            AnyKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            BooleanKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            TypeReference
+              Identifier: ' Object'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            TypeReference
+              Identifier: ' E'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            VoidKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            AnyKeyword
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r4'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r5'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r6'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              Identifier: ' g'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r7'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              Identifier: ' f'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r8'
+            BinaryExpression
+              Identifier: ' a'
+              PlusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r9'
+            BinaryExpression
+              Identifier: ' b'
+              PlusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r10'
+            BinaryExpression
+              Identifier: ' c'
+              PlusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r11'
+            BinaryExpression
+              Identifier: ' d'
+              PlusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r12'
+            BinaryExpression
+              Identifier: ' e'
+              PlusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r13'
+            BinaryExpression
+              Identifier: ' g'
+              PlusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r14'
+            BinaryExpression
+              Identifier: ' f'
+              PlusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r15'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r16'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r17'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r18'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r19'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              ParenthesizedExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r20'
+            BinaryExpression
+              Identifier: ' t'
+              PlusToken
+              ArrayLiteralExpression

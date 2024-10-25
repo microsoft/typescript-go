@@ -1,0 +1,188 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Object'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'Object'
+        TypeReference
+          Identifier: ' Object'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' A'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' B'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        TypeReference
+          Identifier: ' A'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeReference
+          Identifier: ' A'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeReference
+          Identifier: ' B'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        TypeReference
+          Identifier: ' B'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        TypeReference
+          Identifier: ' A'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        TypeReference
+          Identifier: ' B'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              NumberKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x7'
+        TypeReference
+          Identifier: ' A'
+          TypeReference
+            Identifier: 'I2'
+          TypeReference
+            Identifier: ' I1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x8'
+        TypeReference
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'I2'
+          TypeReference
+            Identifier: ' I1'

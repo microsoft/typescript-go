@@ -1,0 +1,109 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' code'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' otherCodes'
+            ArrayType
+              ParenthesizedType
+                UnionType
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+                  LiteralType
+                    NumericLiteral
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' code2'
+        Identifier: ' otherCodes'
+        Block
+          IfStatement
+            BinaryExpression
+              Identifier: 'code2'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '        
+            code'
+                  EqualsToken
+                  ConditionalExpression
+                    BinaryExpression
+                      Identifier: ' code'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    QuestionToken
+                    NumericLiteral
+                    ColonToken
+                    NumericLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            code'
+                  EqualsToken
+                  NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' code'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            NumericLiteral
+      WhileStatement
+        TrueKeyword
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        code'
+              EqualsToken
+              ConditionalExpression
+                BinaryExpression
+                  Identifier: ' code'
+                  EqualsEqualsEqualsToken
+                  NumericLiteral
+                QuestionToken
+                NumericLiteral
+                ColonToken
+                NumericLiteral

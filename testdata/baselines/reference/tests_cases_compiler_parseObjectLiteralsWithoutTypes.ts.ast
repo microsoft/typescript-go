@@ -1,0 +1,30 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+          PropertySignature
+            Identifier: ' bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+          PropertySignature
+            Identifier: ' bar'
+            NumberKeyword

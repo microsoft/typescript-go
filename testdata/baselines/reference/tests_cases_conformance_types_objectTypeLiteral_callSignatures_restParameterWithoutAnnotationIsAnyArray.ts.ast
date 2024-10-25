@@ -1,0 +1,102 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      DotDotDotToken
+      Identifier: 'x'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionExpression
+          Identifier: ' foo'
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'x'
+          Parameter
+            DotDotDotToken
+            Identifier: 'y'
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+      Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    CallSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        DotDotDotToken
+        Identifier: 'x'
+      Parameter
+        DotDotDotToken
+        Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          CallSignature
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+          MethodSignature
+            Identifier: '
+    foo'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    foo'
+            Parameter
+              DotDotDotToken
+              Identifier: 'x'
+            Block
+          PropertyAssignment
+            Identifier: '
+    a'
+            FunctionExpression
+              Identifier: ' foo'
+              Parameter
+                DotDotDotToken
+                Identifier: 'x'
+              Parameter
+                DotDotDotToken
+                Identifier: 'y'
+              Block
+          PropertyAssignment
+            Identifier: '
+    b'
+            ArrowFunction
+              Parameter
+                DotDotDotToken
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Block

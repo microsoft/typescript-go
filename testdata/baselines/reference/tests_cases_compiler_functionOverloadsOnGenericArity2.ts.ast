@@ -1,0 +1,31 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    then'
+      Parameter
+        Identifier: 'p'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      Parameter
+        Identifier: 'p'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    then'
+      TypeParameter
+        Identifier: 'U'
+      TypeParameter
+        Identifier: ' T'
+      Parameter
+        Identifier: 'p'
+        StringKeyword
+      TypeReference
+        Identifier: ' Date'

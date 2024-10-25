@@ -1,0 +1,233 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    y'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    PropertyDeclaration
+      Identifier: ' // ok
+    y'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Bar2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    PropertyDeclaration
+      Identifier: ' // error
+    x'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    y'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Bar3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    y'
+      NumberKeyword
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Foo'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' x'
+          StringKeyword
+      ClassDeclaration
+        Identifier: ' Baz'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Foo'
+        PropertyDeclaration
+          Identifier: '
+        z'
+          NumberKeyword
+      InterfaceDeclaration
+        Identifier: ' I'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Baz'
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+      ClassDeclaration
+        Identifier: ' Bar'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Foo'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' I'
+        PropertyDeclaration
+          Identifier: ' // ok
+        y'
+          NumberKeyword
+        PropertyDeclaration
+          Identifier: '
+        z'
+          NumberKeyword
+      ClassDeclaration
+        Identifier: ' Bar2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Foo'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' I'
+        PropertyDeclaration
+          Identifier: ' // error
+        x'
+          StringKeyword
+        PropertyDeclaration
+          Identifier: '
+        y'
+          NumberKeyword
+      ClassDeclaration
+        Identifier: ' Bar3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Foo'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' I'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' x'
+          StringKeyword
+        PropertyDeclaration
+          Identifier: '
+        y'
+          NumberKeyword
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Foo'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' x'
+          StringKeyword
+      ClassDeclaration
+        Identifier: ' Baz'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Foo'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' y'
+          NumberKeyword
+      InterfaceDeclaration
+        Identifier: ' I'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Baz'
+        PropertySignature
+          Identifier: '
+        z'
+          NumberKeyword
+      ClassDeclaration
+        Identifier: ' Bar'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Foo'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' I'
+        PropertyDeclaration
+          Identifier: ' // error
+        z'
+          NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            TypeReference
+              Identifier: ' Bar'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            PropertyAccessExpression
+              Identifier: ' b'
+              Identifier: 'z'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            PropertyAccessExpression
+              Identifier: ' b'
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            PropertyAccessExpression
+              Identifier: ' b'
+              Identifier: 'y'
+      ClassDeclaration
+        Identifier: ' Bar2'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Foo'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' I'
+        PropertyDeclaration
+          Identifier: ' // error
+        x'
+          StringKeyword
+        PropertyDeclaration
+          Identifier: '
+        z'
+          NumberKeyword
+      ClassDeclaration
+        Identifier: ' Bar3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Foo'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' I'
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' x'
+          StringKeyword
+        PropertyDeclaration
+          Identifier: '
+        z'
+          NumberKeyword

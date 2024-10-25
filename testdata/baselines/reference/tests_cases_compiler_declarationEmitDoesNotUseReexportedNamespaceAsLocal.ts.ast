@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' a'
+    Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' add'
+          CallExpression
+            ImportKeyword
+            StringLiteral
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' Q'
+    StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' add'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'

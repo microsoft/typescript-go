@@ -1,0 +1,138 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    x'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T1'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeParameter
+      Identifier: 'K'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    x'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T2'
+            TypeReference
+              Identifier: 'K'
+          TypeReference
+            Identifier: 'K'
+      PropertySignature
+        Identifier: '  // Error
+    y'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeReference
+          Identifier: ' T2'
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2x'
+        PropertyAccessExpression
+          Identifier: ' x2'
+          Identifier: 'x'
+  InterfaceDeclaration
+    Identifier: ' T3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' T3'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    x'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        LiteralType
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' T4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' T4'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    x'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T4'
+          TypeReference
+            Identifier: 'T'
+        LiteralType
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' C1'
+        LiteralType
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      IndexedAccessType
+        ThisType
+        LiteralType
+          StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    y'
+      IndexedAccessType
+        ThisType
+        LiteralType
+          StringLiteral
+    PropertyDeclaration
+      Identifier: '
+    z'
+      IndexedAccessType
+        ThisType
+        LiteralType
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    hello'
+      BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' Foo'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            StringLiteral
+    Block

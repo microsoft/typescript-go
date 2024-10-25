@@ -1,0 +1,92 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' INode'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' create'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      TypeReference
+        Identifier: ' INode'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' G'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' T'
+      StringKeyword
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    B'
+      StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' T'
+    TypeReference
+      Identifier: ' G'
+      TypeReference
+        Identifier: 'E'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Q'
+    TypeReference
+      Identifier: ' G'
+      TypeReference
+        QualifiedName
+          Identifier: 'E'
+          Identifier: 'A'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' T'
+        ImportSpecifier
+          Identifier: ' Q'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' create'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fun'
+        CallExpression
+          Identifier: ' create'
+          TypeReference
+            Identifier: 'T'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fun2'
+        CallExpression
+          Identifier: ' create'
+          TypeReference
+            Identifier: 'Q'

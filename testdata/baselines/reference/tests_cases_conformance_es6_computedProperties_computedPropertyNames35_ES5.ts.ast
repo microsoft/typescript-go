@@ -1,0 +1,23 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Block
+      ReturnStatement
+        StringLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    bar'
+      StringKeyword
+    MethodSignature
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+          TypeReference
+            Identifier: 'T'
+      VoidKeyword

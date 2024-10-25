@@ -1,0 +1,312 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' setup'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' host'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' TestServerHost'
+                        Identifier: 'createServerHost'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' typingsInstallerTypesRegistry'
+                          ArrayLiteralExpression
+                            StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' session'
+                    NewExpression
+                      Identifier: ' TestSession'
+                      Identifier: 'host'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        openFilesForSession'
+                  ArrayLiteralExpression
+                    StringLiteral
+                  Identifier: ' session'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' actions'
+                    AsExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'GetCombinedCodeFixRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+            command'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'CommandTypes'
+                                Identifier: 'GetCombinedCodeFix'
+                            PropertyAssignment
+                              Identifier: '
+            arguments'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                scope'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' type'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: ' args'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' file'
+                                          StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                fixId'
+                                  StringLiteral
+                        Identifier: 'response'
+                      TypeReference
+                        QualifiedName
+                          QualifiedName
+                            QualifiedName
+                              Identifier: ' ts'
+                              Identifier: 'server'
+                            Identifier: 'protocol'
+                          Identifier: 'CombinedCodeActions'
+              ReturnStatement
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' host'
+                  ShorthandPropertyAssignment
+                    Identifier: ' session'
+                  ShorthandPropertyAssignment
+                    Identifier: ' actions'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' host'
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' actions'
+                        CallExpression
+                          Identifier: ' setup'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        actions'
+                          Identifier: 'commands'
+                        QuestionDotToken
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'command'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'ApplyCodeActionCommandRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'CommandTypes'
+                                Identifier: 'ApplyCodeActionCommand'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              ObjectLiteralExpression
+                                ShorthandPropertyAssignment
+                                  Identifier: '
+                    command'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        host'
+                        Identifier: 'runPendingInstalls'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' host'
+                          BindingElement
+                            Identifier: ' session'
+                          BindingElement
+                            Identifier: ' actions'
+                        CallExpression
+                          Identifier: ' setup'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        actions'
+                          Identifier: 'commands'
+                        QuestionDotToken
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'command'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            session'
+                                Identifier: 'executeCommandSeq'
+                              TypeReference
+                                QualifiedName
+                                  QualifiedName
+                                    QualifiedName
+                                      Identifier: 'ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'ApplyCodeActionCommandRequest'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                command'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'server'
+                                        Identifier: 'protocol'
+                                      Identifier: 'CommandTypes'
+                                    Identifier: 'ApplyCodeActionCommand'
+                                PropertyAssignment
+                                  Identifier: '
+                arguments'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    command'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            host'
+                                Identifier: 'runPendingInstalls'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        baselineTsserverLogs'
+                      StringLiteral
+                      StringLiteral
+                      Identifier: ' session'

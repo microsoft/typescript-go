@@ -1,0 +1,81 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @checkJs: true
+// @strict: true
+// @declaration: true
+// @filename: moduleExportAliasDuplicateAlias.js
+// @outdir: out
+exports'
+        Identifier: 'apply'
+      EqualsToken
+      Identifier: ' undefined'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'apply'
+      EqualsToken
+      Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' a'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'apply'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'apply'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'apply'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' OK'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' exports'
+              Identifier: 'apply'
+            Identifier: 'toUpperCase'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'apply'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' apply'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' apply'
+            Identifier: 'toFixed'

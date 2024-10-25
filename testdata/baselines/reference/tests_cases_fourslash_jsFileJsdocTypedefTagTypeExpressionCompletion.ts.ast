@@ -1,0 +1,216 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' types'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' values'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typeMembers'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' warnings'
+    Parameter
+      Identifier: 'entries'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        TypeReference
+          QualifiedName
+            Identifier: 'FourSlashInterface'
+            Identifier: 'ExpectedCompletionEntryObject'
+    TypeReference
+      Identifier: ' ReadonlyArray'
+      TypeReference
+        QualifiedName
+          Identifier: 'FourSlashInterface'
+          Identifier: 'ExpectedCompletionEntry'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' entries'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'e'
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                SpreadAssignment
+                  Identifier: 'e'
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' kindModifiers'
+                  Identifier: ' undefined'
+                PropertyAssignment
+                  Identifier: ' sortText'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' completion'
+                      Identifier: 'SortText'
+                    Identifier: 'JavascriptIdentifiers'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            SpreadElement
+              Identifier: 'types'
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                Identifier: 'values'
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                Identifier: 'typeMembers'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            SpreadElement
+              Identifier: 'values'
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                Identifier: 'types'
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                Identifier: 'typeMembers'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'i'
+              EqualsGreaterThanToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'i'
+                  TemplateTail
+        PropertyAssignment
+          Identifier: '
+        includes'
+          ArrayLiteralExpression
+            SpreadElement
+              Identifier: 'typeMembers'
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                Identifier: 'types'
+            SpreadElement
+              CallExpression
+                Identifier: 'warnings'
+                Identifier: 'values'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        exact'
+          Identifier: ' undefined'

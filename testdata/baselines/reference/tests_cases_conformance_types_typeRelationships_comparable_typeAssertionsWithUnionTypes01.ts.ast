@@ -1,0 +1,76 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    p1'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    p2'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' p1'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' p2'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        UnionType
+          NumberKeyword
+          TypeReference
+            Identifier: ' I2'
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' I1'
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeAssertionExpression
+          UnionType
+            NumberKeyword
+            TypeReference
+              Identifier: ' I2'
+          Identifier: 'z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeAssertionExpression
+          NumberKeyword
+          Identifier: 'z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'I2'
+          Identifier: 'z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'I1'
+          Identifier: 'y'

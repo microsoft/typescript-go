@@ -1,0 +1,2330 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' evaluator'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' FakeSuppressedError'
+    Parameter
+      Identifier: 'error'
+      AnyKeyword
+    Parameter
+      Identifier: ' suppressed'
+      AnyKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' error'
+          ShorthandPropertyAssignment
+            Identifier: ' suppressed'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' SuppressedError'
+                              Identifier: ' FakeSuppressedError'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                error'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                suppressed'
+                            StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' SuppressedError'
+                              Identifier: ' FakeSuppressedError'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                error'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                suppressed'
+                            StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' SuppressedError'
+                              Identifier: ' FakeSuppressedError'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                error'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                suppressed'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    error'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    suppressed'
+                                StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'output'
+                          Identifier: 'slice'
+                        NumericLiteral
+                        NumericLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'instanceOf'
+                      ElementAccessExpression
+                        Identifier: 'output'
+                        NumericLiteral
+                      Identifier: ' Error'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: 'output'
+                          NumericLiteral
+                        Identifier: 'name'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            ElementAccessExpression
+                              Identifier: 'output'
+                              NumericLiteral
+                            AnyKeyword
+                        Identifier: 'error'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            ElementAccessExpression
+                              Identifier: 'output'
+                              NumericLiteral
+                            AnyKeyword
+                        Identifier: 'suppressed'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'deepEqual'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'output'
+                          Identifier: 'slice'
+                        NumericLiteral
+                      ArrayLiteralExpression
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' SuppressedError'
+                              Identifier: ' FakeSuppressedError'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                error'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                suppressed'
+                            StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' SuppressedError'
+                              Identifier: ' FakeSuppressedError'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                error'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                suppressed'
+                            StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    AwaitExpression
+                      CallExpression
+                        Identifier: ' main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    AwaitExpression
+                      CallExpression
+                        Identifier: ' main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    AwaitExpression
+                      CallExpression
+                        Identifier: ' main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' SuppressedError'
+                              Identifier: ' FakeSuppressedError'
+                  ExpressionStatement
+                    AwaitExpression
+                      CallExpression
+                        Identifier: ' main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                error'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                suppressed'
+                            StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    AwaitExpression
+                      CallExpression
+                        Identifier: ' main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    AwaitExpression
+                      CallExpression
+                        Identifier: ' main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    AwaitExpression
+                      CallExpression
+                        Identifier: ' main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' output'
+                          BindingElement
+                            Identifier: ' x'
+                          BindingElement
+                            Identifier: ' y'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                            PropertyAssignment
+                              Identifier: ' module'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ModuleKind'
+                                Identifier: 'CommonJS'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'x'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'y'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' output'
+                          BindingElement
+                            Identifier: ' x'
+                          BindingElement
+                            Identifier: ' y'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                            PropertyAssignment
+                              Identifier: ' module'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ModuleKind'
+                                Identifier: 'AMD'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'x'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'y'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' output'
+                          BindingElement
+                            Identifier: ' x'
+                          BindingElement
+                            Identifier: ' y'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                            PropertyAssignment
+                              Identifier: ' module'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ModuleKind'
+                                Identifier: 'System'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'x'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'strictEqual'
+                      Identifier: 'y'
+                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'throws'
+                      Identifier: 'main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                          BindingElement
+                            Identifier: ' output'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES2018'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+
+        assert'
+                        Identifier: 'deepEqual'
+                      Identifier: 'output'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ClassDeclaration
+                    AbstractKeyword
+                    Identifier: ' Iterator'
+                    MethodDeclaration
+                      Identifier: '
+            return'
+                      QuestionToken
+                      VoidKeyword
+                    MethodDeclaration
+                      ComputedPropertyName
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'evaluator'
+                            Identifier: 'FakeSymbol'
+                          Identifier: 'iterator'
+                      Block
+                        ReturnStatement
+                          ThisKeyword
+                    MethodDeclaration
+                      ComputedPropertyName
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'evaluator'
+                            Identifier: 'FakeSymbol'
+                          Identifier: 'dispose'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'return'
+                            QuestionDotToken
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' main'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          NoSubstitutionTemplateLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                target'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'ScriptTarget'
+                                Identifier: 'ES5'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                Iterator'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' exited'
+                        CallExpression
+                          Identifier: ' main'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'isTrue'
+                      Identifier: 'exited'
+                      StringLiteral

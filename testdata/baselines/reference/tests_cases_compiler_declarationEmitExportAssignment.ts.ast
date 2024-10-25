@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' bar'
+    Block
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Buzz'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'foo'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' foo'

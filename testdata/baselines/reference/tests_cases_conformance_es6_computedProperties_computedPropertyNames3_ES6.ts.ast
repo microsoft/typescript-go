@@ -1,0 +1,52 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' id'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+      Block
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+      Block
+    GetAccessor
+      ComputedPropertyName
+        DeleteExpression
+          Identifier: ' id'
+      Block
+    SetAccessor
+      ComputedPropertyName
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+      Parameter
+        Identifier: 'v'
+      Block
+    GetAccessor
+      StaticKeyword
+      ComputedPropertyName
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'String'
+          StringLiteral
+      Block
+    SetAccessor
+      StaticKeyword
+      ComputedPropertyName
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'id'
+            Identifier: 'toString'
+      Parameter
+        Identifier: 'v'
+      Block

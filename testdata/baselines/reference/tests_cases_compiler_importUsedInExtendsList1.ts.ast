@@ -1,0 +1,32 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Super'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ImportEqualsDeclaration
+    Identifier: ' foo'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' Sub'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' foo'
+          Identifier: 'Super'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        TypeReference
+          Identifier: ' Sub'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        StringKeyword
+        PropertyAccessExpression
+          Identifier: ' s'
+          Identifier: 'foo'

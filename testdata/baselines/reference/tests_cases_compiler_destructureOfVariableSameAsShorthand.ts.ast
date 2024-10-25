@@ -1,0 +1,99 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' AxiosResponse'
+    TypeParameter
+      Identifier: 'T'
+      NeverKeyword
+    PropertySignature
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' get'
+    TypeParameter
+      Identifier: 'T'
+      NeverKeyword
+    TypeParameter
+      Identifier: ' R'
+      TypeReference
+        Identifier: ' AxiosResponse'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'R'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' main'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: '
+    // These work examples as expected
+    get'
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              Identifier: 'response'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' body'
+                    PropertyAccessExpression
+                      Identifier: ' response'
+                      Identifier: 'data'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: '
+    get'
+            Identifier: 'then'
+          ArrowFunction
+            Parameter
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' data'
+            EqualsGreaterThanToken
+            Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' response'
+            AwaitExpression
+              CallExpression
+                Identifier: ' get'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' body'
+            PropertyAccessExpression
+              Identifier: ' response'
+              Identifier: 'data'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' data'
+            AwaitExpression
+              CallExpression
+                Identifier: ' get'
+                NeverKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' data'
+                Identifier: ' shouldBeNever'
+            AwaitExpression
+              CallExpression
+                Identifier: ' get'

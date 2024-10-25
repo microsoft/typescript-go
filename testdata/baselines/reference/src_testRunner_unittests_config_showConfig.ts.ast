@@ -1,0 +1,962 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' showTSConfigCorrectly'
+            Parameter
+              Identifier: 'name'
+              StringKeyword
+            Parameter
+              Identifier: ' commandLinesArgs'
+              ArrayType
+                StringKeyword
+            Parameter
+              Identifier: ' configJson'
+              QuestionToken
+              ObjectKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        describe'
+                  Identifier: 'name'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' outputFileName'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'name'
+                                    Identifier: 'replace'
+                                  RegularExpressionLiteral
+                                  StringLiteral
+                                TemplateTail
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+
+            it'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'outputFileName'
+                              TemplateTail
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' cwd'
+                                    TemplateExpression
+                                      TemplateHead
+                                      TemplateSpan
+                                        Identifier: 'name'
+                                        TemplateTail
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configPath'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'combinePaths'
+                                      Identifier: 'cwd'
+                                      StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configContents'
+                                    ConditionalExpression
+                                      Identifier: ' configJson'
+                                      QuestionToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' JSON'
+                                          Identifier: 'stringify'
+                                        Identifier: 'configJson'
+                                      ColonToken
+                                      Identifier: ' undefined'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configParseHost'
+                                    TypeReference
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'ParseConfigFileHost'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    fileExists'
+                                        ArrowFunction
+                                          Parameter
+                                            Identifier: ' path'
+                                          EqualsGreaterThanToken
+                                          ConditionalExpression
+                                            BinaryExpression
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' ts'
+                                                  Identifier: 'comparePaths'
+                                                CallExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: 'ts'
+                                                    Identifier: 'getNormalizedAbsolutePath'
+                                                  Identifier: 'path'
+                                                  Identifier: ' cwd'
+                                                Identifier: ' configPath'
+                                              EqualsEqualsEqualsToken
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' ts'
+                                                  Identifier: 'Comparison'
+                                                Identifier: 'EqualTo'
+                                            QuestionToken
+                                            TrueKeyword
+                                            ColonToken
+                                            FalseKeyword
+                                      MethodDeclaration
+                                        Identifier: '
+                    getCurrentDirectory'
+                                        Block
+                                          ReturnStatement
+                                            Identifier: ' cwd'
+                                      PropertyAssignment
+                                        Identifier: '
+                    useCaseSensitiveFileNames'
+                                        TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                    onUnRecoverableConfigFileDiagnostic'
+                                        ArrowFunction
+                                          Parameter
+                                            Identifier: ' d'
+                                          EqualsGreaterThanToken
+                                          Block
+                                            ThrowStatement
+                                              NewExpression
+                                                Identifier: ' Error'
+                                                CallExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: 'ts'
+                                                    Identifier: 'flattenDiagnosticMessageText'
+                                                  PropertyAccessExpression
+                                                    Identifier: 'd'
+                                                    Identifier: 'messageText'
+                                                  StringLiteral
+                                      MethodDeclaration
+                                        Identifier: '
+                    readDirectory'
+                                        Block
+                                          ReturnStatement
+                                            ArrayLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    readFile'
+                                        ArrowFunction
+                                          Parameter
+                                            Identifier: ' path'
+                                          EqualsGreaterThanToken
+                                          ConditionalExpression
+                                            BinaryExpression
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' ts'
+                                                  Identifier: 'comparePaths'
+                                                CallExpression
+                                                  PropertyAccessExpression
+                                                    Identifier: 'ts'
+                                                    Identifier: 'getNormalizedAbsolutePath'
+                                                  Identifier: 'path'
+                                                  Identifier: ' cwd'
+                                                Identifier: ' configPath'
+                                              EqualsEqualsEqualsToken
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' ts'
+                                                  Identifier: 'Comparison'
+                                                Identifier: 'EqualTo'
+                                            QuestionToken
+                                            Identifier: ' configContents'
+                                            ColonToken
+                                            Identifier: ' undefined'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' commandLine'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'parseCommandLine'
+                                      Identifier: 'commandLinesArgs'
+                              IfStatement
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'commandLine'
+                                    Identifier: 'options'
+                                  Identifier: 'project'
+                                Block
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' result'
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'getParsedCommandLineOfConfigFile'
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'commandLine'
+                                              Identifier: 'options'
+                                            Identifier: 'project'
+                                          PropertyAccessExpression
+                                            Identifier: ' commandLine'
+                                            Identifier: 'options'
+                                          Identifier: ' configParseHost'
+                                  IfStatement
+                                    Identifier: 'result'
+                                    Block
+                                      ExpressionStatement
+                                        BinaryExpression
+                                          Identifier: '
+                        commandLine'
+                                          EqualsToken
+                                          Identifier: ' result'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' initResult'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'convertToTSConfig'
+                                      Identifier: 'commandLine'
+                                      Identifier: ' configPath'
+                                      Identifier: ' configParseHost'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+
+                // eslint-disable-next-line no-restricted-syntax
+                Harness'
+                                      Identifier: 'Baseline'
+                                    Identifier: 'runBaseline'
+                                  Identifier: 'outputFileName'
+                                  BinaryExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' JSON'
+                                        Identifier: 'stringify'
+                                      Identifier: 'initResult'
+                                      NullKeyword
+                                      NumericLiteral
+                                    PlusToken
+                                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        compilerOptions'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            esModuleInterop'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+            target'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            module'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            strict'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        compileOnSave'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        exclude'
+                  ArrayLiteralExpression
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        files'
+                  ArrayLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        include'
+                  ArrayLiteralExpression
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        references'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' path'
+                        StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    // Regression test for https://github.com/Microsoft/TypeScript/issues/28836
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        compilerOptions'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            allowJs'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+            outDir'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            esModuleInterop'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+            module'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            moduleResolution'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            target'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            sourceMap'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+            baseUrl'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            paths'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            experimentalDecorators'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+            emitDecoratorMetadata'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+            resolveJsonModule'
+                      TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+        include'
+                  ArrayLiteralExpression
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        watchOptions'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            watchFile'
+                      StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        include'
+                  ArrayLiteralExpression
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    showTSConfigCorrectly'
+              StringLiteral
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        compilerOptions'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            outDir'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' // eslint-disable-line no-template-curly-in-string
+            typeRoots'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                        StringLiteral
+                    PropertyAssignment
+                      Identifier: ' // eslint-disable-line no-template-curly-in-string
+            paths'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ArrayLiteralExpression
+                            StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        include'
+                  ArrayLiteralExpression
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        files'
+                  ArrayLiteralExpression
+                    StringLiteral
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' option'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'optionDeclarations'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        baselineOption'
+                  Identifier: 'option'
+                  TrueKeyword
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' option'
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'optionsForWatch'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        baselineOption'
+                  Identifier: 'option'
+                  FalseKeyword
+          FunctionDeclaration
+            Identifier: ' baselineOption'
+            Parameter
+              Identifier: 'option'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'CommandLineOption'
+            Parameter
+              Identifier: ' isCompilerOptions'
+              BooleanKeyword
+            Block
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'option'
+                    Identifier: 'name'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                ReturnStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' args'
+                    ArrayType
+                      StringKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' optionValue'
+                    UnionType
+                      ObjectKeyword
+                      UndefinedKeyword
+              SwitchStatement
+                PropertyAccessExpression
+                  Identifier: 'option'
+                  Identifier: 'type'
+                CaseBlock
+                  CaseClause
+                    StringLiteral
+                    Block
+                      IfStatement
+                        PropertyAccessExpression
+                          Identifier: 'option'
+                          Identifier: 'isTSConfigOnly'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    args'
+                              EqualsToken
+                              ArrayLiteralExpression
+                                StringLiteral
+                                StringLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    optionValue'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'name'
+                                  TrueKeyword
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    args'
+                              EqualsToken
+                              ArrayLiteralExpression
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'name'
+                                    TemplateTail
+                      BreakStatement
+                  CaseClause
+                    StringLiteral
+                    Block
+                      IfStatement
+                        PropertyAccessExpression
+                          Identifier: 'option'
+                          Identifier: 'isTSConfigOnly'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    args'
+                              EqualsToken
+                              ArrayLiteralExpression
+                                StringLiteral
+                                StringLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    optionValue'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'name'
+                                  ArrayLiteralExpression
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    args'
+                              EqualsToken
+                              ArrayLiteralExpression
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'name'
+                                    TemplateTail
+                      BreakStatement
+                  CaseClause
+                    StringLiteral
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                ts'
+                              Identifier: 'Debug'
+                            Identifier: 'fail'
+                      BreakStatement
+                  CaseClause
+                    StringLiteral
+                    Block
+                      IfStatement
+                        PropertyAccessExpression
+                          Identifier: 'option'
+                          Identifier: 'isTSConfigOnly'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    args'
+                              EqualsToken
+                              ArrayLiteralExpression
+                                StringLiteral
+                                StringLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    optionValue'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'name'
+                                  StringLiteral
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    args'
+                              EqualsToken
+                              ArrayLiteralExpression
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'name'
+                                    TemplateTail
+                                StringLiteral
+                      BreakStatement
+                  CaseClause
+                    StringLiteral
+                    Block
+                      IfStatement
+                        PropertyAccessExpression
+                          Identifier: 'option'
+                          Identifier: 'isTSConfigOnly'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    args'
+                              EqualsToken
+                              ArrayLiteralExpression
+                                StringLiteral
+                                StringLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    optionValue'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'name'
+                                  NumericLiteral
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    args'
+                              EqualsToken
+                              ArrayLiteralExpression
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'name'
+                                    TemplateTail
+                                StringLiteral
+                      BreakStatement
+                  CaseClause
+                    StringLiteral
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                args'
+                          EqualsToken
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                optionValue'
+                          EqualsToken
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              ComputedPropertyName
+                                PropertyAccessExpression
+                                  Identifier: 'option'
+                                  Identifier: 'name'
+                              ObjectLiteralExpression
+                      BreakStatement
+                  DefaultClause
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' val'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'firstOrUndefinedIterator'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'option'
+                                    Identifier: 'type'
+                                  Identifier: 'keys'
+                      IfStatement
+                        BinaryExpression
+                          Identifier: 'val'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' undefined'
+                        ReturnStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'Debug'
+                              Identifier: 'fail'
+                            StringLiteral
+                      IfStatement
+                        PropertyAccessExpression
+                          Identifier: 'option'
+                          Identifier: 'isTSConfigOnly'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    args'
+                              EqualsToken
+                              ArrayLiteralExpression
+                                StringLiteral
+                                StringLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    optionValue'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'name'
+                                  Identifier: ' val'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                    args'
+                              EqualsToken
+                              ArrayLiteralExpression
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    PropertyAccessExpression
+                                      Identifier: 'option'
+                                      Identifier: 'name'
+                                    TemplateTail
+                                Identifier: ' val'
+                      BreakStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' configObject'
+                    BinaryExpression
+                      Identifier: ' optionValue'
+                      AmpersandAmpersandToken
+                      ParenthesizedExpression
+                        ConditionalExpression
+                          Identifier: 'isCompilerOptions'
+                          QuestionToken
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' compilerOptions'
+                              Identifier: ' optionValue'
+                          ColonToken
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' watchOptions'
+                              Identifier: ' optionValue'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        showTSConfigCorrectly'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'option'
+                        Identifier: 'name'
+                      TemplateTail
+                  Identifier: ' args'
+                  Identifier: ' configObject'

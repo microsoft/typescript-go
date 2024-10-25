@@ -1,0 +1,64 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' MouseButton'
+    EnumMember
+      Identifier: '
+	LEFT_BUTTON'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+	RIGHT_BUTTON'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+	MIDDLE_BUTTON'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+	XBUTTON1_BUTTON'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+	XBUTTON2_BUTTON'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+	NO_BUTTON'
+      NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' DOMMouseButton'
+        ObjectLiteralExpression
+          PropertyAssignment
+            StringLiteral
+            PropertyAccessExpression
+              Identifier: ' MouseButton'
+              Identifier: 'NO_BUTTON'
+          PropertyAssignment
+            StringLiteral
+            PropertyAccessExpression
+              Identifier: ' MouseButton'
+              Identifier: 'LEFT_BUTTON'
+          PropertyAssignment
+            StringLiteral
+            PropertyAccessExpression
+              Identifier: ' MouseButton'
+              Identifier: 'MIDDLE_BUTTON'
+          PropertyAssignment
+            StringLiteral
+            PropertyAccessExpression
+              Identifier: ' MouseButton'
+              Identifier: 'RIGHT_BUTTON'
+          PropertyAssignment
+            StringLiteral
+            PropertyAccessExpression
+              Identifier: ' MouseButton'
+              Identifier: 'XBUTTON1_BUTTON'
+          PropertyAssignment
+            StringLiteral
+            PropertyAccessExpression
+              Identifier: ' MouseButton'
+              Identifier: 'XBUTTON2_BUTTON'

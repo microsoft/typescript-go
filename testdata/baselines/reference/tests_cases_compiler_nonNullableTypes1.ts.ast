@@ -1,0 +1,119 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            BinaryExpression
+              Identifier: ' x'
+              BarBarToken
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' error'
+    NeverKeyword
+    Block
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' x'
+          BarBarToken
+          CallExpression
+            Identifier: ' error'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NonNullExpression
+              Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'obj'
+            QuestionDotToken
+            Identifier: 'x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'obj'
+          QuestionDotToken
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            PropertyAccessExpression
+              Identifier: ' obj'
+              QuestionDotToken
+              Identifier: 'x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        obj'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      StringLiteral
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' zz'
+              PropertyAccessExpression
+                ThisKeyword
+                QuestionDotToken
+                Identifier: 'x'

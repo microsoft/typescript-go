@@ -1,0 +1,173 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      Identifier: '
+    print'
+      Block
+        ReturnStatement
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' backup'
+    Block
+      ReturnStatement
+        StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' myModule'
+      CallExpression
+        ImportKeyword
+        StringLiteral
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' loadAsync'
+              CallExpression
+                ImportKeyword
+                StringLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'myModule'
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'Zero'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            console'
+                      Identifier: 'log'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'Zero'
+                        Identifier: 'foo'
+            ArrowFunction
+              AsyncKeyword
+              Parameter
+                Identifier: ' err'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            console'
+                      Identifier: 'log'
+                    Identifier: 'err'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' one'
+                      AwaitExpression
+                        CallExpression
+                          ImportKeyword
+                          StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            console'
+                      Identifier: 'log'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'one'
+                        Identifier: 'backup'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' D'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' myModule'
+      CallExpression
+        ImportKeyword
+        StringLiteral
+    MethodDeclaration
+      Identifier: '
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' loadAsync'
+              CallExpression
+                ImportKeyword
+                StringLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'myModule'
+              Identifier: 'then'
+            ArrowFunction
+              Parameter
+                Identifier: 'Zero'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            console'
+                      Identifier: 'log'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'Zero'
+                        Identifier: 'foo'
+            ArrowFunction
+              AsyncKeyword
+              Parameter
+                Identifier: ' err'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            console'
+                      Identifier: 'log'
+                    Identifier: 'err'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' one'
+                      AwaitExpression
+                        CallExpression
+                          ImportKeyword
+                          StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            console'
+                      Identifier: 'log'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'one'
+                        Identifier: 'backup'

@@ -1,0 +1,9 @@
+SourceFile
+  ExportAssignment
+    Identifier: ' a'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword

@@ -1,0 +1,1075 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' RequiresLeadingSlash'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        StringKeyword
+        TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' RequiresLeadingSlash'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' RequiresLeadingSlash'
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Protocol'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeParameter
+      Identifier: ' U'
+      StringKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'T'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'U'
+        TemplateTail
+  FunctionDeclaration
+    Identifier: ' download'
+    Parameter
+      Identifier: 'hostSpec'
+      TypeReference
+        Identifier: ' Protocol'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+        StringKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// ok, has protocol
+download'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// issues error - no protocol
+download'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// issues error, incorrect protocol
+download'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q'
+        ConditionalType
+          TypeReference
+            Identifier: ' RequiresLeadingSlash'
+          StringKeyword
+          LiteralType
+            TrueKeyword
+          LiteralType
+            FalseKeyword
+        TrueKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' bools'
+    Parameter
+      Identifier: 'x'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          BooleanKeyword
+          TemplateTail
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// ok
+bools'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bools'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// not ok
+bools'
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Pat'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        LiteralType
+          NullKeyword
+        UndefinedKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'T'
+        TemplateTail
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' nullishes'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Pat'
+        UnionType
+          LiteralType
+            NullKeyword
+          UndefinedKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// ok
+nullishes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+nullishes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// not ok
+nullishes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+nullishes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+nullishes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+nullishes'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+nullishes'
+      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' numbers'
+    Parameter
+      Identifier: 'x'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          NumberKeyword
+          TemplateTail
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// the following should work
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// the following should be errors since they're not numbers
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// the following should be errors since they don't match the pattern
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// whitespace and comments aren't part of numbers
+numbers'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+numbers'
+      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' bigints'
+    Parameter
+      Identifier: 'x'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          BigIntKeyword
+          TemplateTail
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// the following should work
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// bigints do not allow scientific notation in their parsing/scanning, so these are all errors
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// these are all errors because they're not big_int_s
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// the following should be errors since they're not numbers
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// whitespace and comments aren't part of numbers
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// the following should be errors since they don't match the pattern
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// the following should all be errors because the `BigInt` constructor (and thus bigint parsing) doesn't take the trailing `n` used in literals
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bigints'
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' AStr'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        StringKeyword
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' ANum'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        NumberKeyword
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' AAny'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        AnyKeyword
+        TemplateTail
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        TypeReference
+          Identifier: ' AStr'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        TypeReference
+          Identifier: ' ANum'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyish'
+        TypeReference
+          Identifier: ' AAny'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// not ok
+num'
+      EqualsToken
+      Identifier: ' str'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anyish'
+      EqualsToken
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+// ok
+str'
+      EqualsToken
+      Identifier: ' num'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anyish'
+      EqualsToken
+      Identifier: ' str'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+str'
+      EqualsToken
+      Identifier: ' anyish'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anyish'
+      EqualsToken
+      Identifier: ' num'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+num'
+      EqualsToken
+      Identifier: ' anyish'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anyish'
+      EqualsToken
+      NoSubstitutionTemplateLiteral
+  TypeAliasDeclaration
+    Identifier: ' AGen'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: 'field'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'T'
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shouldWork1'
+        TypeReference
+          Identifier: ' AGen'
+          StringKeyword
+        AsExpression
+          AsExpression
+            NullKeyword
+            AnyKeyword
+          TypeReference
+            Identifier: ' AGen'
+            LiteralType
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shouldWork2'
+        TypeReference
+          Identifier: ' AGen'
+          StringKeyword
+        AsExpression
+          AsExpression
+            NullKeyword
+            AnyKeyword
+          TypeReference
+            Identifier: ' AGen'
+            NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        NumberKeyword
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'A'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'A'
+        TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exampleBad'
+        TypeReference
+          Identifier: ' B'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exampleGood'
+        TypeReference
+          Identifier: ' B'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa'
+        IntersectionType
+          LiteralType
+            StringLiteral
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              NumberKeyword
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        UnionType
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              StringKeyword
+              TemplateTail
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        UnionType
+          LiteralType
+            NoSubstitutionTemplateLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              StringKeyword
+              TemplateTail
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        UnionType
+          LiteralType
+            NoSubstitutionTemplateLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              StringKeyword
+              TemplateTail
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              NumberKeyword
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bb'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            NumberKeyword
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bb'
+        UnionType
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              NumberKeyword
+              TemplateTail
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T2S'
+    TypeParameter
+      Identifier: 'A'
+      StringKeyword
+    TypeParameter
+      Identifier: ' B'
+      StringKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'A'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'B'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' S10'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        StringKeyword
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' S11'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        StringKeyword
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        StringKeyword
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        StringKeyword
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' S12'
+    TypeReference
+      Identifier: ' T2S'
+      StringKeyword
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' ff1'
+    Parameter
+      Identifier: 'x'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          StringKeyword
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          StringKeyword
+          TemplateTail
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s1'
+            BinaryExpression
+              Identifier: ' x'
+              AmpersandAmpersandToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s2'
+            BinaryExpression
+              Identifier: ' x'
+              BarBarToken
+              NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Id'
+    TypeParameter
+      Identifier: 'TA'
+    TypeParameter
+      Identifier: ' TId'
+      StringKeyword
+      StringKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'TId'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'TId'
+        TemplateTail
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' AA'
+  ClassDeclaration
+    ExportKeyword
+    AbstractKeyword
+    Identifier: ' BB'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' get'
+      Parameter
+        Identifier: 'id'
+        TypeReference
+          Identifier: ' Id'
+          TypeReference
+            Identifier: 'AA'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    update'
+      Parameter
+        Identifier: 'id'
+        TypeReference
+          Identifier: ' Id'
+          TypeReference
+            Identifier: 'AA'
+      VoidKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'get'
+            NonNullExpression
+              Identifier: 'id'
+  FunctionDeclaration
+    Identifier: ' conversionTest'
+    Parameter
+      Identifier: 'groupName'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        IntersectionType
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              StringKeyword
+              TemplateTail
+          TypeLiteral
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+conversionTest'
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' conversionTest2'
+    Parameter
+      Identifier: 'groupName'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        IntersectionType
+          TypeLiteral
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              StringKeyword
+              TemplateTail
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+conversionTest2'
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' conversionTest3'
+    Parameter
+      Identifier: 'groupName'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            IntersectionType
+              StringKeyword
+              TypeLiteral
+            TemplateTail
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+conversionTest3'
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' conversionTest4'
+    Parameter
+      Identifier: 'groupName'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            IntersectionType
+              TypeLiteral
+              StringKeyword
+            TemplateTail
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+conversionTest4'
+      StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'str'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          IntersectionType
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+          TemplateTail
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // ok
+foo'
+      StringLiteral

@@ -1,0 +1,106 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              QuestionToken
+              AnyKeyword
+            VoidKeyword
+  ClassDeclaration
+    Identifier: ' Test'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' field'
+        StringKeyword
+      Block
+    PropertyDeclaration
+      Identifier: '
+    messageHandler'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' field'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'field'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'field'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' field'
+      NumberKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' staticMessageHandler'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' field'
+                PropertyAccessExpression
+                  Identifier: ' Test'
+                  Identifier: 'field'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'field'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' field1'
+        StringKeyword
+  ClassDeclaration
+    Identifier: ' Test1'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' field1'
+        StringKeyword
+      Block
+    PropertyDeclaration
+      Identifier: '
+    messageHandler'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'field1'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' staticMessageHandler'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'field1'

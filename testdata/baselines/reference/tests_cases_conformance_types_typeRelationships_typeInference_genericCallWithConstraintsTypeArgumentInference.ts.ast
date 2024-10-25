@@ -1,0 +1,654 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        TypeReference
+          Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        TypeReference
+          Identifier: ' Derived2'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' t'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'd1'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Derived'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ReturnStatement
+        Identifier: ' u'
+  FunctionDeclaration
+    Identifier: ' foo2b'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Derived'
+    Parameter
+      Identifier: 'u'
+      TypeReference
+        Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' foo2c'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Derived'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+      ReturnStatement
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          Identifier: ' foo2b'
+          Identifier: 'd1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3b'
+        CallExpression
+          Identifier: ' foo2c'
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Derived'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' t'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        PublicKeyword
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    foo'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' t'
+    MethodDeclaration
+      Identifier: '
+
+    foo2'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' u'
+    MethodDeclaration
+      Identifier: '
+
+    foo3'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Derived'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' t'
+    MethodDeclaration
+      Identifier: '
+
+    foo4'
+      TypeParameter
+        Identifier: 'U'
+        TypeReference
+          Identifier: ' Derived2'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' t'
+    MethodDeclaration
+      Identifier: '
+
+    foo5'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Derived'
+      TypeParameter
+        Identifier: ' U'
+        TypeReference
+          Identifier: ' Derived2'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        ReturnStatement
+          Identifier: ' t'
+    MethodDeclaration
+      Identifier: '
+
+    foo6'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Derived'
+      TypeParameter
+        Identifier: ' U'
+        TypeReference
+          Identifier: ' Derived2'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' T'
+        ReturnStatement
+          Identifier: ' x'
+    MethodDeclaration
+      Identifier: '
+
+    foo7'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Base'
+      TypeParameter
+        Identifier: ' U'
+        TypeReference
+          Identifier: ' Derived'
+      Parameter
+        Identifier: 'u'
+        TypeReference
+          Identifier: ' U'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' T'
+        ReturnStatement
+          Identifier: ' x'
+    MethodDeclaration
+      Identifier: '
+
+    foo8'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Base'
+      TypeParameter
+        Identifier: ' U'
+        TypeReference
+          Identifier: ' Derived'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' T'
+        ReturnStatement
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+          Identifier: 'b'
+          Identifier: ' d1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo'
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo2'
+          Identifier: 'b'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo3'
+          Identifier: 'd1'
+          Identifier: ' d1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo4'
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo5'
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo5'
+          Identifier: 'd2'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo7'
+          Identifier: 'd1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo8'
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Derived'
+    ConstructSignature
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo2'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+    MethodSignature
+      Identifier: '
+    foo3'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Derived'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo4'
+      TypeParameter
+        Identifier: 'U'
+        TypeReference
+          Identifier: ' Derived2'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo5'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Derived'
+      TypeParameter
+        Identifier: ' U'
+        TypeReference
+          Identifier: ' Derived2'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo6'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Derived'
+      TypeParameter
+        Identifier: ' U'
+        TypeReference
+          Identifier: ' Derived2'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo7'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Base'
+      TypeParameter
+        Identifier: ' U'
+        TypeReference
+          Identifier: ' Derived'
+      Parameter
+        Identifier: 'u'
+        TypeReference
+          Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    foo8'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Base'
+      TypeParameter
+        Identifier: ' U'
+        TypeReference
+          Identifier: ' Derived'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+          TypeReference
+            Identifier: 'Base'
+          TypeReference
+            Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo'
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo2'
+          Identifier: 'b'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo3'
+          Identifier: 'd1'
+          Identifier: ' d1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo4'
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo5'
+          Identifier: 'd1'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8b'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo5'
+          Identifier: 'd2'
+          Identifier: ' d2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r10'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo7'
+          Identifier: 'd1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r11'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' i'
+            Identifier: 'foo8'

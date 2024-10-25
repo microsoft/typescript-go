@@ -1,0 +1,81 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Accessor'
+  FunctionDeclaration
+    Identifier: ' attr'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' attr'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' value'
+      StringKeyword
+    TypeReference
+      Identifier: ' Accessor'
+  FunctionDeclaration
+    Identifier: ' attr'
+    Parameter
+      Identifier: 'map'
+      AnyKeyword
+    TypeReference
+      Identifier: ' Accessor'
+  FunctionDeclaration
+    Identifier: ' attr'
+    Parameter
+      Identifier: 'nameOrMap'
+      AnyKeyword
+    Parameter
+      Identifier: ' value'
+      QuestionToken
+      StringKeyword
+    AnyKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'nameOrMap'
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' nameOrMap'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' Accessor'
+        Block
+          ReturnStatement
+            StringLiteral
+  InterfaceDeclaration
+    Identifier: ' IFace'
+    MethodSignature
+      Identifier: '
+	attr'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+	attr'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Parameter
+        Identifier: ' value'
+        StringKeyword
+      TypeReference
+        Identifier: ' Accessor'
+    MethodSignature
+      Identifier: '
+	attr'
+      Parameter
+        Identifier: 'map'
+        AnyKeyword
+      TypeReference
+        Identifier: ' Accessor'

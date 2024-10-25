@@ -1,0 +1,115 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sleep'
+        ArrowFunction
+          Parameter
+            Identifier: 'tm'
+            NumberKeyword
+          EqualsGreaterThanToken
+          NewExpression
+            Identifier: ' Promise'
+            ArrowFunction
+              Parameter
+                Identifier: 'resolve'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' setTimeout'
+                Identifier: 'resolve'
+                Identifier: ' tm'
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' gen'
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+      ExpressionStatement
+        AwaitExpression
+          CallExpression
+            Identifier: ' sleep'
+            NumericLiteral
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' log'
+        PropertyAccessExpression
+          Identifier: ' console'
+          Identifier: 'log'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          Block
+            ForOfStatement
+              AwaitKeyword
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' outer'
+              CallExpression
+                Identifier: ' gen'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+        log'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'outer'
+                        TemplateTail
+                ExpressionStatement
+                  CallExpression
+                    ParenthesizedExpression
+                      ArrowFunction
+                        AsyncKeyword
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' inner'
+                                Identifier: ' outer'
+                          ExpressionStatement
+                            AwaitExpression
+                              CallExpression
+                                Identifier: ' sleep'
+                                NumericLiteral
+                          IfStatement
+                            BinaryExpression
+                              Identifier: 'inner'
+                              EqualsEqualsEqualsToken
+                              Identifier: ' outer'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                log'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'inner'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'outer'
+                                      TemplateTail
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                log'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'inner'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'outer'
+                                      TemplateTail

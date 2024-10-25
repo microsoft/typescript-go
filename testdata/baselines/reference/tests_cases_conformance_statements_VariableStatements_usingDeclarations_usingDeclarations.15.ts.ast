@@ -1,0 +1,14 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _'
+        ObjectLiteralExpression
+          MethodDeclaration
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'dispose'
+            Block

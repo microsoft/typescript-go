@@ -1,0 +1,115 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aIndex'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' key'
+            QuestionToken
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                QuestionToken
+                NumberKeyword
+        ObjectLiteralExpression
+  IfStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: 'a'
+        Identifier: 'aIndex'
+      AmpersandAmpersandToken
+      PropertyAccessExpression
+        ElementAccessExpression
+          Identifier: ' a'
+          Identifier: 'aIndex'
+        Identifier: 'x'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          ElementAccessExpression
+            Identifier: '
+    a'
+            Identifier: 'aIndex'
+          Identifier: 'x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bIndex'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' key'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                QuestionToken
+                NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' key'
+            ObjectLiteralExpression
+  IfStatement
+    PropertyAccessExpression
+      ElementAccessExpression
+        Identifier: 'b'
+        Identifier: 'bIndex'
+      Identifier: 'x'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          ElementAccessExpression
+            Identifier: '
+    b'
+            Identifier: 'bIndex'
+          Identifier: 'x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cIndex'
+        LiteralType
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    x'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ArrayType
+          TypeReference
+            Identifier: ' Foo'
+        ArrayLiteralExpression
+  IfStatement
+    PropertyAccessExpression
+      ElementAccessExpression
+        Identifier: 'c'
+        Identifier: 'cIndex'
+      Identifier: 'x'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          ElementAccessExpression
+            Identifier: '
+    c'
+            Identifier: 'cIndex'
+          Identifier: 'x'

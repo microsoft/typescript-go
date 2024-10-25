@@ -1,0 +1,785 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' collection'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticCollection'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' file'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  StringLiteral
+                                  StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ESNext'
+                                  TrueKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' node'
+                                ElementAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' file'
+                                    Identifier: 'statements'
+                                  NumericLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dy'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNode'
+                                  Identifier: 'node'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' da'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNode'
+                                  Identifier: 'node'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'dy'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'da'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' chain'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'chainDiagnosticMessages'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'chainDiagnosticMessages'
+                                    Identifier: '/*details*/ undefined'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'Diagnostics'
+                                      Identifier: 'Did_you_mean_0'
+                                    StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dyBetter'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNodeFromMessageChain'
+                                  Identifier: 'file'
+                                  Identifier: ' node'
+                                  Identifier: ' chain'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'dyBetter'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' result'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' collection'
+                                    Identifier: 'getDiagnostics'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'deepEqual'
+                              Identifier: 'result'
+                              ArrayLiteralExpression
+                                Identifier: 'da'
+                                Identifier: ' dyBetter'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' collection'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticCollection'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' file'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  StringLiteral
+                                  StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ESNext'
+                                  TrueKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' node'
+                                ElementAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' file'
+                                    Identifier: 'statements'
+                                  NumericLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' da'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNode'
+                                  Identifier: 'node'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'da'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' chain'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'chainDiagnosticMessages'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'chainDiagnosticMessages'
+                                    Identifier: '/*details*/ undefined'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'Diagnostics'
+                                      Identifier: 'Did_you_mean_0'
+                                    StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dy'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNodeFromMessageChain'
+                                  Identifier: 'file'
+                                  Identifier: ' node'
+                                  Identifier: ' chain'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'dy'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' chainBetter'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'chainDiagnosticMessages'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'chainDiagnosticMessages'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    ts'
+                                        Identifier: 'chainDiagnosticMessages'
+                                      Identifier: '/*details*/ undefined'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'Diagnostics'
+                                        Identifier: 'Did_you_mean_0'
+                                      StringLiteral
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    ts'
+                                        Identifier: 'Diagnostics'
+                                      Identifier: 'Did_you_mean_0'
+                                    StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dyBetter'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNodeFromMessageChain'
+                                  Identifier: 'file'
+                                  Identifier: ' node'
+                                  Identifier: ' chainBetter'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'dyBetter'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' result'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' collection'
+                                    Identifier: 'getDiagnostics'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'deepEqual'
+                              Identifier: 'result'
+                              ArrayLiteralExpression
+                                Identifier: 'da'
+                                Identifier: ' dyBetter'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' collection'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticCollection'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' file'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  StringLiteral
+                                  StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ESNext'
+                                  TrueKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' node'
+                                ElementAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' file'
+                                    Identifier: 'statements'
+                                  NumericLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' chain'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'chainDiagnosticMessages'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'chainDiagnosticMessages'
+                                    Identifier: '/*details*/ undefined'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'Diagnostics'
+                                      Identifier: 'Did_you_mean_0'
+                                    StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dyBetter'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNodeFromMessageChain'
+                                  Identifier: 'file'
+                                  Identifier: ' node'
+                                  Identifier: ' chain'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' da'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNode'
+                                  Identifier: 'node'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'da'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'dyBetter'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dy'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNode'
+                                  Identifier: 'node'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'dy'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' result'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' collection'
+                                    Identifier: 'getDiagnostics'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'deepEqual'
+                              Identifier: 'result'
+                              ArrayLiteralExpression
+                                Identifier: 'da'
+                                Identifier: ' dyBetter'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' collection'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticCollection'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' file'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  StringLiteral
+                                  StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ESNext'
+                                  TrueKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' node'
+                                ElementAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' file'
+                                    Identifier: 'statements'
+                                  NumericLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' da'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNode'
+                                  Identifier: 'node'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'da'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' chain'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'chainDiagnosticMessages'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'chainDiagnosticMessages'
+                                    Identifier: '/*details*/ undefined'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'Diagnostics'
+                                      Identifier: 'Did_you_mean_0'
+                                    StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dyBetter'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNodeFromMessageChain'
+                                  Identifier: 'file'
+                                  Identifier: ' node'
+                                  Identifier: ' chain'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'dyBetter'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dy'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNode'
+                                  Identifier: 'node'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'equal'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'collection'
+                                  Identifier: 'lookup'
+                                Identifier: 'dy'
+                              Identifier: ' dyBetter'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' collection'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticCollection'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' file'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  StringLiteral
+                                  StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ESNext'
+                                  TrueKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' node'
+                                ElementAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' file'
+                                    Identifier: 'statements'
+                                  NumericLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' da'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNode'
+                                  Identifier: 'node'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'da'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dy'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNode'
+                                  Identifier: 'node'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            collection'
+                                Identifier: 'add'
+                              Identifier: 'dy'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' chain'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'chainDiagnosticMessages'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'chainDiagnosticMessages'
+                                    Identifier: '/*details*/ undefined'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'Diagnostics'
+                                      Identifier: 'Did_you_mean_0'
+                                    StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                ts'
+                                      Identifier: 'Diagnostics'
+                                    Identifier: 'Cannot_find_name_0'
+                                  StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' dyBetter'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createDiagnosticForNodeFromMessageChain'
+                                  Identifier: 'file'
+                                  Identifier: ' node'
+                                  Identifier: ' chain'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'equal'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'collection'
+                                  Identifier: 'lookup'
+                                Identifier: 'dyBetter'
+                              Identifier: ' undefined'

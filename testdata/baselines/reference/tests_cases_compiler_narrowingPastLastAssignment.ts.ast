@@ -1,0 +1,640 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' action'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' Function'
+    Block
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            FunctionExpression
+              Block
+                ExpressionStatement
+                  Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' C'
+            ClassExpression
+              MethodDeclaration
+                Identifier: '
+        foo'
+                Block
+                  ExpressionStatement
+                    Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' o'
+            ObjectLiteralExpression
+              MethodDeclaration
+                Identifier: '
+        foo'
+                Block
+                  ExpressionStatement
+                    Identifier: ' x'
+      FunctionDeclaration
+        Identifier: ' g'
+        Block
+          ExpressionStatement
+            Identifier: ' x'
+      ClassDeclaration
+        Identifier: ' A'
+        MethodDeclaration
+          Identifier: '
+        foo'
+          Block
+            ExpressionStatement
+              Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: ' x'
+                  EqualsToken
+                  StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'cond'
+      FunctionType
+        BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+            NumericLiteral
+      WhileStatement
+        CallExpression
+          Identifier: 'cond'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        action'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    Identifier: ' x'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        action'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    Identifier: ' x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Parameter
+      Identifier: ' cond'
+      FunctionType
+        BooleanKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'cond'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        action'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    Identifier: ' x'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        action'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    Identifier: ' x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f5a'
+    Parameter
+      Identifier: 'cond'
+      BooleanKeyword
+    Block
+      IfStatement
+        Identifier: 'cond'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                UnionType
+                  NumberKeyword
+                  UndefinedKeyword
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        action'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    Identifier: ' x'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                UnionType
+                  NumberKeyword
+                  UndefinedKeyword
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        x'
+              EqualsToken
+              NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        action'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f5b'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' x'
+          LessThanToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' x'
+        Block
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'x'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              BarBarToken
+              BinaryExpression
+                Identifier: ' x'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            action'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    x'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f7'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+            IfStatement
+              BinaryExpression
+                Identifier: 'e'
+                InstanceOfKeyword
+                Identifier: ' Error'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' f'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            Identifier: ' e'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+g'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+action'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            Identifier: ' g'
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              NumberKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            UnionType
+              StringKeyword
+              NumberKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    action'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' f10'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    i'
+          EqualsToken
+          NumericLiteral
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'k'
+            NumberKeyword
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' k'
+            EqualsEqualsEqualsToken
+            BinaryExpression
+              Identifier: ' i'
+              PlusToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' makeAdder'
+    Parameter
+      Identifier: 'n'
+      QuestionToken
+      NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          QuestionQuestionEqualsToken
+          NumericLiteral
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: 'm'
+            NumberKeyword
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' n'
+            PlusToken
+            Identifier: ' m'
+  FunctionDeclaration
+    Identifier: ' f11'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    r'
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          Identifier: ' r'
+  FunctionDeclaration
+    Identifier: ' f12'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fooMap'
+            TypeReference
+              Identifier: ' Map'
+              StringKeyword
+              TypeReference
+                Identifier: 'Array'
+                NumberKeyword
+            NewExpression
+              Identifier: ' Map'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' values'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' fooMap'
+                Identifier: 'get'
+              StringLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'foo'
+          EqualsEqualsToken
+          NullKeyword
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        foo'
+              EqualsToken
+              ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    values'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'v'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' foo'
+                Identifier: 'push'
+              Identifier: 'v'
+  FunctionDeclaration
+    Identifier: ' f13'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    foo'
+          EqualsToken
+          StringLiteral
+      ReturnStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        foo'
+                  Identifier: 'toLocaleLowerCase'

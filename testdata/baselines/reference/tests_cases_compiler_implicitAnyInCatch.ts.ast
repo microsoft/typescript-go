@@ -1,0 +1,34 @@
+SourceFile
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        Identifier: 'error'
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'error'
+              Identifier: 'number'
+            EqualsEqualsEqualsToken
+            PrefixUnaryExpression
+              NumericLiteral
+          Block
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' key'
+    ThisKeyword
+    Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' temp'
+      Block
+        ForInStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+          ThisKeyword
+          Block

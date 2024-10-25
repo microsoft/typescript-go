@@ -1,0 +1,105 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' test'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' smth'
+                NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Field'
+    TypeParameter
+      Identifier: 'A'
+      StringKeyword
+    TypeParameter
+      Identifier: ' R'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeReference
+          Identifier: ' A'
+      TypeReference
+        Identifier: ' R'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'A'
+            StringKeyword
+          TypeParameter
+            Identifier: ' B'
+            StringKeyword
+          TypeParameter
+            Identifier: ' R'
+          Parameter
+            Identifier: 'x'
+            MappedType
+              TypeParameter
+                Identifier: 'K'
+                TypeReference
+                  Identifier: ' A'
+              TypeReference
+                Identifier: ' Field'
+                TypeReference
+                  Identifier: 'B'
+                TypeReference
+                  Identifier: ' R'
+          TypeReference
+            Identifier: ' R'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            AsExpression
+              ObjectLiteralExpression
+              AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        CallExpression
+          Identifier: ' f'
+          Identifier: 'v'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'A'
+            StringKeyword
+          TypeParameter
+            Identifier: ' B'
+            StringKeyword
+          TypeParameter
+            Identifier: ' R'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' Field'
+              TypeReference
+                Identifier: 'A'
+              TypeReference
+                Identifier: ' Field'
+                TypeReference
+                  Identifier: 'B'
+                TypeReference
+                  Identifier: ' R'
+          TypeReference
+            Identifier: ' R'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            AsExpression
+              ObjectLiteralExpression
+              AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' g'
+          Identifier: 'v'

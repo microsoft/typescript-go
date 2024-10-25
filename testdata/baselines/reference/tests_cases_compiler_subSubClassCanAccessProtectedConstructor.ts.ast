@@ -1,0 +1,46 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      ProtectedKeyword
+      Block
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' instance1'
+      NewExpression
+        Identifier: ' Base'
+  ClassDeclaration
+    Identifier: ' Subclass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' instance1_1'
+      NewExpression
+        Identifier: ' Base'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' instance1_2'
+      NewExpression
+        Identifier: ' Subclass'
+  ClassDeclaration
+    Identifier: ' SubclassOfSubclass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Subclass'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' instance2_1'
+      NewExpression
+        Identifier: ' Base'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' instance2_2'
+      NewExpression
+        Identifier: ' Subclass'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' instance2_3'
+      NewExpression
+        Identifier: ' SubclassOfSubclass'

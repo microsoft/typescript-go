@@ -1,0 +1,44 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          Identifier: '
+	    div'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' n'
+              StringKeyword
+        PropertySignature
+          Identifier: '
+	    span'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' m'
+              StringKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'div'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' n'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'span'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' m'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'span'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' q'
+          StringLiteral

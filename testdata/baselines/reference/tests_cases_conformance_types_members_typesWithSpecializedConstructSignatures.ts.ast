@@ -1,0 +1,156 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    Constructor
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+      Block
+        ReturnStatement
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' I'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived1'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Derived2'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      TypeReference
+        Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          ConstructSignature
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+            TypeReference
+              Identifier: ' Derived1'
+          ConstructSignature
+            Parameter
+              Identifier: 'x'
+              LiteralType
+                StringLiteral
+            TypeReference
+              Identifier: ' Derived2'
+          ConstructSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            TypeReference
+              Identifier: ' Base'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+c'
+      EqualsToken
+      Identifier: ' i'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+i'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        NewExpression
+          Identifier: ' C'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        TypeReference
+          Identifier: ' Derived2'
+        NewExpression
+          Identifier: ' i'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        TypeReference
+          Identifier: ' Base'
+        NewExpression
+          Identifier: ' a'
+          StringLiteral

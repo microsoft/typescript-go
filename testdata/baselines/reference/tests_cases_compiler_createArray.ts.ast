@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' na'
+        NewExpression
+          ElementAccessExpression
+            Identifier: ' number'
+            Identifier: ''
+  ClassDeclaration
+    Identifier: ' C'
+  ExpressionStatement
+    NewExpression
+      ElementAccessExpression
+        Identifier: ' C'
+        Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ba'
+        NewExpression
+          ElementAccessExpression
+            Identifier: ' boolean'
+            Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sa'
+        NewExpression
+          ElementAccessExpression
+            Identifier: ' string'
+            Identifier: ''
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  IfStatement
+    ElementAccessExpression
+      Identifier: 'ba'
+      NumericLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    na'
+            NumericLiteral
+          EqualsToken
+          CallExpression
+            Identifier: 'f'
+            ElementAccessExpression
+              Identifier: 'sa'
+              NumericLiteral
+  ExpressionStatement
+    NewExpression
+      ElementAccessExpression
+        Identifier: ' C'
+        NumericLiteral

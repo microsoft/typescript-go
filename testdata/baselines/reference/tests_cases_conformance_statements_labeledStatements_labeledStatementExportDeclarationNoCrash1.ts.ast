@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' box'
+        StringKeyword
+  LabeledStatement
+    Identifier: '
+subTitle'
+    VariableStatement
+      ExportKeyword
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' title'
+          StringKeyword

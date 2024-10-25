@@ -1,0 +1,54 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    StringKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Block
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo3'
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo5'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        TrueKeyword
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Block
+      ReturnStatement
+        FalseKeyword
+  FunctionDeclaration
+    Identifier: ' foo7'
+    VoidKeyword
+    Block
+      ReturnStatement
+  FunctionDeclaration
+    Identifier: ' foo8'
+    Block
+      ReturnStatement
+  FunctionDeclaration
+    Identifier: ' foo9'
+    AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' foo10'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'

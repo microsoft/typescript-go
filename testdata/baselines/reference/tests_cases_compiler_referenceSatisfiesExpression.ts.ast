@@ -1,0 +1,124 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        SatisfiesExpression
+          Identifier: 'a'
+          NumberKeyword
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        SatisfiesExpression
+          Identifier: 'a'
+          NumberKeyword
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        SatisfiesExpression
+          Identifier: 'a'
+          NumberKeyword
+  ExpressionStatement
+    PostfixUnaryExpression
+      ParenthesizedExpression
+        SatisfiesExpression
+          Identifier: 'a'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        SatisfiesExpression
+          Identifier: 'b'
+          NumberKeyword
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        ParenthesizedExpression
+          SatisfiesExpression
+            Identifier: 'c'
+            NumberKeyword
+      EqualsToken
+      ArrayLiteralExpression
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NumberKeyword
+      VariableDeclaration
+        Identifier: ' e'
+        NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' d'
+            ParenthesizedExpression
+              SatisfiesExpression
+                Identifier: 'e'
+                NumberKeyword
+        EqualsToken
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' d'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        NumericLiteral
+  ForOfStatement
+    ParenthesizedExpression
+      SatisfiesExpression
+        Identifier: 'g'
+        NumberKeyword
+    ArrayLiteralExpression
+      NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  console'
+            Identifier: 'log'
+          Identifier: 'g'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringKeyword
+        StringLiteral
+  ForInStatement
+    ParenthesizedExpression
+      SatisfiesExpression
+        Identifier: 'x'
+        StringKeyword
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' a'
+        NumericLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  console'
+            Identifier: 'log'
+          Identifier: 'x'

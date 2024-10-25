@@ -1,0 +1,27 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' MyModule'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' inject'
+        Parameter
+          Identifier: 'target'
+          AnyKeyword
+        Parameter
+          Identifier: ' key'
+          StringKeyword
+        VoidKeyword
+        Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Leg'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Person'
+        PropertyDeclaration
+          Decorator
+            Identifier: 'inject'
+          Identifier: ' leftLeg'
+          TypeReference
+            Identifier: ' Leg'

@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////var x =  0x1,y;
+
+format'
+        Identifier: 'document'

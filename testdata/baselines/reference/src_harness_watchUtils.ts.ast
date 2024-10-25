@@ -1,0 +1,1415 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    arrayFrom'
+        ImportSpecifier
+          Identifier: '
+    canWatchDirectoryOrFilePath'
+        ImportSpecifier
+          Identifier: '
+    compareStringsCaseSensitive'
+        ImportSpecifier
+          Identifier: '
+    contains'
+        ImportSpecifier
+          Identifier: '
+    createMultiMap'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    FileWatcher'
+        ImportSpecifier
+          Identifier: '
+    FileWatcherCallback'
+        ImportSpecifier
+          Identifier: '
+    GetCanonicalFileName'
+        ImportSpecifier
+          Identifier: '
+    MultiMap'
+        ImportSpecifier
+          Identifier: '
+    Path'
+        ImportSpecifier
+          Identifier: '
+    PollingInterval'
+        ImportSpecifier
+          Identifier: '
+    System'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' ensureWatchablePath'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' locationType'
+      StringKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assert'
+          CallExpression
+            Identifier: '
+        canWatchDirectoryOrFilePath'
+            AsExpression
+              Identifier: 'path'
+              TypeReference
+                Identifier: ' Path'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'locationType'
+              TemplateTail
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TestFileWatcher'
+    PropertySignature
+      Identifier: '
+    cb'
+      TypeReference
+        Identifier: ' FileWatcherCallback'
+    PropertySignature
+      Identifier: '
+    pollingInterval'
+      TypeReference
+        Identifier: ' PollingInterval'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TestFsWatcher'
+    TypeParameter
+      Identifier: 'DirCallback'
+    PropertySignature
+      Identifier: '
+    cb'
+      TypeReference
+        Identifier: ' DirCallback'
+    PropertySignature
+      Identifier: '
+    inode'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Watches'
+    TypeParameter
+      Identifier: 'Data'
+    MethodSignature
+      Identifier: '
+    add'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' Data'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    remove'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' Data'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    forEach'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' cb'
+        FunctionType
+          Parameter
+            Identifier: 'data'
+            TypeReference
+              Identifier: ' Data'
+          Parameter
+            Identifier: ' path'
+            StringKeyword
+          VoidKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    serialize'
+      Parameter
+        Identifier: 'baseline'
+        ArrayType
+          StringKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' WatchUtils'
+    TypeParameter
+      Identifier: 'PollingWatcherData'
+    TypeParameter
+      Identifier: ' FsWatcherData'
+    PropertySignature
+      Identifier: '
+    pollingWatches'
+      TypeReference
+        Identifier: ' Watches'
+        TypeReference
+          Identifier: 'PollingWatcherData'
+    PropertySignature
+      Identifier: '
+    fsWatches'
+      TypeReference
+        Identifier: ' Watches'
+        TypeReference
+          Identifier: 'FsWatcherData'
+    PropertySignature
+      Identifier: '
+    fsWatchesRecursive'
+      TypeReference
+        Identifier: ' Watches'
+        TypeReference
+          Identifier: 'FsWatcherData'
+    MethodSignature
+      Identifier: '
+    pollingWatch'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' PollingWatcherData'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodSignature
+      Identifier: '
+    fsWatch'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' recursive'
+        BooleanKeyword
+      Parameter
+        Identifier: ' data'
+        TypeReference
+          Identifier: ' FsWatcherData'
+      TypeReference
+        Identifier: ' FileWatcher'
+    MethodSignature
+      Identifier: '
+    serializeWatches'
+      Parameter
+        Identifier: 'baseline'
+        QuestionToken
+        ArrayType
+          StringKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    getHasWatchChanges'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    setHasWatchChanges'
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createWatchUtils'
+    TypeParameter
+      Identifier: 'PollingWatcherData'
+    TypeParameter
+      Identifier: ' FsWatcherData'
+    Parameter
+      Identifier: '
+    pollingWatchesName'
+      StringKeyword
+    Parameter
+      Identifier: '
+    fsWatchesName'
+      StringKeyword
+    Parameter
+      Identifier: '
+    getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    Parameter
+      Identifier: '
+    system'
+      TypeReference
+        Identifier: ' Required'
+        TypeReference
+          Identifier: 'Pick'
+          TypeReference
+            Identifier: 'System'
+          LiteralType
+            StringLiteral
+    TypeReference
+      Identifier: ' WatchUtils'
+      TypeReference
+        Identifier: 'PollingWatcherData'
+      TypeReference
+        Identifier: ' FsWatcherData'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' pollingWatches'
+            CallExpression
+              Identifier: ' initializeWatches'
+              TypeReference
+                Identifier: 'PollingWatcherData'
+              Identifier: 'pollingWatchesName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fsWatches'
+            CallExpression
+              Identifier: ' initializeWatches'
+              TypeReference
+                Identifier: 'FsWatcherData'
+              Identifier: 'fsWatchesName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fsWatchesRecursive'
+            CallExpression
+              Identifier: ' initializeWatches'
+              TypeReference
+                Identifier: 'FsWatcherData'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'fsWatchesName'
+                  TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' hasWatchChanges'
+            FalseKeyword
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        pollingWatches'
+          ShorthandPropertyAssignment
+            Identifier: '
+        fsWatches'
+          ShorthandPropertyAssignment
+            Identifier: '
+        fsWatchesRecursive'
+          ShorthandPropertyAssignment
+            Identifier: '
+        pollingWatch'
+          ShorthandPropertyAssignment
+            Identifier: '
+        fsWatch'
+          ShorthandPropertyAssignment
+            Identifier: '
+        serializeWatches'
+          PropertyAssignment
+            Identifier: '
+        getHasWatchChanges'
+            ArrowFunction
+              EqualsGreaterThanToken
+              Identifier: ' hasWatchChanges'
+          PropertyAssignment
+            Identifier: '
+        setHasWatchChanges'
+            ArrowFunction
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' hasWatchChanges'
+                EqualsToken
+                TrueKeyword
+      FunctionDeclaration
+        Identifier: ' initializeWatches'
+        TypeParameter
+          Identifier: 'Data'
+        Parameter
+          Identifier: 'name'
+          StringKeyword
+        TypeReference
+          Identifier: ' Watches'
+          TypeReference
+            Identifier: 'Data'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' actuals'
+                CallExpression
+                  Identifier: ' createMultiMap'
+                  StringKeyword
+                  TypeReference
+                    Identifier: ' Data'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' serialized'
+                UnionType
+                  TypeReference
+                    Identifier: ' Map'
+                    StringKeyword
+                    ArrayType
+                      TypeReference
+                        Identifier: ' Data'
+                  UndefinedKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' canonicalPathsToStrings'
+                UnionType
+                  TypeReference
+                    Identifier: ' Map'
+                    StringKeyword
+                    TypeReference
+                      Identifier: ' Set'
+                      StringKeyword
+                  UndefinedKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' realToLinked'
+                UnionType
+                  TypeReference
+                    Identifier: ' MultiMap'
+                    StringKeyword
+                    StringKeyword
+                  UndefinedKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' pathToReal'
+                UnionType
+                  TypeReference
+                    Identifier: ' Map'
+                    StringKeyword
+                    StringKeyword
+                  UndefinedKeyword
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+            add'
+              ShorthandPropertyAssignment
+                Identifier: '
+            remove'
+              ShorthandPropertyAssignment
+                Identifier: '
+            forEach'
+              ShorthandPropertyAssignment
+                Identifier: '
+            serialize'
+          FunctionDeclaration
+            Identifier: ' add'
+            Parameter
+              Identifier: 'path'
+              StringKeyword
+            Parameter
+              Identifier: ' data'
+              TypeReference
+                Identifier: ' Data'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            actuals'
+                    Identifier: 'add'
+                  Identifier: 'path'
+                  Identifier: ' data'
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'actuals'
+                          Identifier: 'get'
+                        Identifier: 'path'
+                    Identifier: 'length'
+                  ExclamationEqualsEqualsToken
+                  NumericLiteral
+                ReturnStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' canonicalPath'
+                    CallExpression
+                      Identifier: ' getCanonicalFileName'
+                      Identifier: 'path'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'canonicalPath'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' path'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            Identifier: 'canonicalPathsToStrings'
+                            QuestionQuestionEqualsToken
+                            NewExpression
+                              Identifier: ' Map'
+                        Identifier: 'set'
+                      Identifier: '
+                    canonicalPath'
+                      CallExpression
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            BinaryExpression
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'canonicalPathsToStrings'
+                                  QuestionDotToken
+                                  Identifier: 'get'
+                                Identifier: 'canonicalPath'
+                              QuestionQuestionToken
+                              NewExpression
+                                Identifier: ' Set'
+                          Identifier: 'add'
+                        Identifier: 'path'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' real'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' system'
+                        Identifier: 'realpath'
+                      Identifier: 'path'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      BinaryExpression
+                        Identifier: 'pathToReal'
+                        QuestionQuestionEqualsToken
+                        NewExpression
+                          Identifier: ' Map'
+                    Identifier: 'set'
+                  Identifier: 'path'
+                  Identifier: ' real'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'real'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' path'
+                ReturnStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' canonicalReal'
+                    CallExpression
+                      Identifier: ' getCanonicalFileName'
+                      Identifier: 'real'
+              IfStatement
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'getCanonicalFileName'
+                    Identifier: 'path'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' canonicalReal'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            Identifier: 'realToLinked'
+                            QuestionQuestionEqualsToken
+                            CallExpression
+                              Identifier: ' createMultiMap'
+                        Identifier: 'add'
+                      Identifier: 'canonicalReal'
+                      Identifier: ' path'
+          FunctionDeclaration
+            Identifier: ' remove'
+            Parameter
+              Identifier: 'path'
+              StringKeyword
+            Parameter
+              Identifier: ' data'
+              TypeReference
+                Identifier: ' Data'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            actuals'
+                    Identifier: 'remove'
+                  Identifier: 'path'
+                  Identifier: ' data'
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'actuals'
+                    Identifier: 'has'
+                  Identifier: 'path'
+                ReturnStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' canonicalPath'
+                    CallExpression
+                      Identifier: ' getCanonicalFileName'
+                      Identifier: 'path'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'canonicalPath'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' path'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' existing'
+                        CallExpression
+                          PropertyAccessExpression
+                            NonNullExpression
+                              Identifier: ' canonicalPathsToStrings'
+                            Identifier: 'get'
+                          Identifier: 'canonicalPath'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          Identifier: 'existing'
+                        Identifier: 'size'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          NonNullExpression
+                            Identifier: ' canonicalPathsToStrings'
+                          Identifier: 'delete'
+                        Identifier: 'canonicalPath'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          NonNullExpression
+                            Identifier: ' existing'
+                          Identifier: 'delete'
+                        Identifier: 'path'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' real'
+                    NonNullExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' pathToReal'
+                          QuestionDotToken
+                          Identifier: 'get'
+                        Identifier: 'path'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      Identifier: '
+            pathToReal'
+                    Identifier: 'delete'
+                  Identifier: 'path'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'real'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' path'
+                ReturnStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' canonicalReal'
+                    CallExpression
+                      Identifier: ' getCanonicalFileName'
+                      Identifier: 'real'
+              IfStatement
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'getCanonicalFileName'
+                    Identifier: 'path'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' canonicalReal'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          Identifier: '
+                realToLinked'
+                        Identifier: 'remove'
+                      Identifier: 'canonicalReal'
+                      Identifier: ' path'
+          FunctionDeclaration
+            Identifier: ' getAllData'
+            Parameter
+              Identifier: 'path'
+              StringKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' allData'
+                    UnionType
+                      TypeReference
+                        Identifier: ' Map'
+                        StringKeyword
+                        ArrayType
+                          TypeReference
+                            Identifier: ' Data'
+                      UndefinedKeyword
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addData'
+                  Identifier: 'path'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' canonicalPath'
+                    CallExpression
+                      Identifier: ' getCanonicalFileName'
+                      Identifier: 'path'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'canonicalPath'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' path'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: ' addData'
+                    Identifier: 'canonicalPath'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            canonicalPathsToStrings'
+                        QuestionDotToken
+                        Identifier: 'get'
+                      Identifier: 'canonicalPath'
+                    QuestionDotToken
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'canonicalSamePath'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        BinaryExpression
+                          BinaryExpression
+                            Identifier: 'canonicalSamePath'
+                            ExclamationEqualsEqualsToken
+                            Identifier: ' path'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            Identifier: ' canonicalSamePath'
+                            ExclamationEqualsEqualsToken
+                            Identifier: ' canonicalPath'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                    addData'
+                              Identifier: 'canonicalSamePath'
+              ReturnStatement
+                Identifier: ' allData'
+              FunctionDeclaration
+                Identifier: ' addData'
+                Parameter
+                  Identifier: 'path'
+                  StringKeyword
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' data'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' actuals'
+                            Identifier: 'get'
+                          Identifier: 'path'
+                  IfStatement
+                    Identifier: 'data'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ParenthesizedExpression
+                            BinaryExpression
+                              Identifier: 'allData'
+                              QuestionQuestionEqualsToken
+                              NewExpression
+                                Identifier: ' Map'
+                          Identifier: 'set'
+                        Identifier: 'path'
+                        Identifier: ' data'
+          FunctionDeclaration
+            Identifier: ' forEach'
+            Parameter
+              Identifier: 'path'
+              StringKeyword
+            Parameter
+              Identifier: ' cb'
+              FunctionType
+                Parameter
+                  Identifier: 'data'
+                  TypeReference
+                    Identifier: ' Data'
+                Parameter
+                  Identifier: ' path'
+                  StringKeyword
+                VoidKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' real'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' system'
+                        Identifier: 'realpath'
+                      Identifier: 'path'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' canonicalPath'
+                    CallExpression
+                      Identifier: ' getCanonicalFileName'
+                      Identifier: 'path'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' canonicalReal'
+                    CallExpression
+                      Identifier: ' getCanonicalFileName'
+                      Identifier: 'real'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' allData'
+                    ConditionalExpression
+                      BinaryExpression
+                        Identifier: ' canonicalPath'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' canonicalReal'
+                      QuestionToken
+                      CallExpression
+                        Identifier: ' getAllData'
+                        Identifier: 'path'
+                      ColonToken
+                      CallExpression
+                        Identifier: ' getAllData'
+                        Identifier: 'real'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            realToLinked'
+                        QuestionDotToken
+                        Identifier: 'get'
+                      Identifier: 'canonicalReal'
+                    QuestionDotToken
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'linked'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'allData'
+                            QuestionDotToken
+                            Identifier: 'has'
+                          Identifier: 'linked'
+                        ReturnStatement
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' data'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' actuals'
+                                Identifier: 'get'
+                              Identifier: 'linked'
+                      IfStatement
+                        Identifier: 'data'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              ParenthesizedExpression
+                                BinaryExpression
+                                  Identifier: 'allData'
+                                  QuestionQuestionEqualsToken
+                                  NewExpression
+                                    Identifier: ' Map'
+                              Identifier: 'set'
+                            Identifier: 'linked'
+                            Identifier: ' data'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            allData'
+                    QuestionDotToken
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'data'
+                    Parameter
+                      Identifier: ' path'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' data'
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'd'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' cb'
+                          Identifier: 'd'
+                          Identifier: ' path'
+          FunctionDeclaration
+            Identifier: ' serialize'
+            Parameter
+              Identifier: 'baseline'
+              ArrayType
+                StringKeyword
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            serialized'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' serializeMultiMap'
+                    Identifier: 'baseline'
+                    Identifier: ' name'
+                    Identifier: ' actuals'
+                    Identifier: ' serialized'
+      FunctionDeclaration
+        Identifier: ' createWatcher'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'watches'
+          TypeReference
+            Identifier: ' Watches'
+            TypeReference
+              Identifier: 'T'
+        Parameter
+          Identifier: ' path'
+          StringKeyword
+        Parameter
+          Identifier: ' callback'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' FileWatcher'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        hasWatchChanges'
+              EqualsToken
+              TrueKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        watches'
+                Identifier: 'add'
+              Identifier: 'path'
+              Identifier: ' callback'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' closed'
+                FalseKeyword
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            close'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                Debug'
+                          Identifier: 'assert'
+                        PrefixUnaryExpression
+                          Identifier: 'closed'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                watches'
+                          Identifier: 'remove'
+                        Identifier: 'path'
+                        Identifier: ' callback'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                hasWatchChanges'
+                        EqualsToken
+                        TrueKeyword
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                closed'
+                        EqualsToken
+                        TrueKeyword
+      FunctionDeclaration
+        Identifier: ' pollingWatch'
+        Parameter
+          Identifier: 'path'
+          StringKeyword
+        Parameter
+          Identifier: ' data'
+          TypeReference
+            Identifier: ' PollingWatcherData'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' createWatcher'
+              Identifier: '
+            pollingWatches'
+              Identifier: '
+            path'
+              Identifier: '
+            data'
+      FunctionDeclaration
+        Identifier: ' fsWatch'
+        Parameter
+          Identifier: 'path'
+          StringKeyword
+        Parameter
+          Identifier: ' recursive'
+          BooleanKeyword
+        Parameter
+          Identifier: ' data'
+          TypeReference
+            Identifier: ' FsWatcherData'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' createWatcher'
+              ConditionalExpression
+                Identifier: '
+            recursive'
+                QuestionToken
+                Identifier: ' fsWatchesRecursive'
+                ColonToken
+                Identifier: ' fsWatches'
+              Identifier: '
+            path'
+              Identifier: '
+            data'
+      FunctionDeclaration
+        Identifier: ' serializeWatches'
+        Parameter
+          Identifier: 'baseline'
+          ArrayType
+            StringKeyword
+          ArrayLiteralExpression
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'hasWatchChanges'
+            ReturnStatement
+              Identifier: ' baseline'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        pollingWatches'
+                Identifier: 'serialize'
+              Identifier: 'baseline'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        fsWatches'
+                Identifier: 'serialize'
+              Identifier: 'baseline'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        fsWatchesRecursive'
+                Identifier: 'serialize'
+              Identifier: 'baseline'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        hasWatchChanges'
+              EqualsToken
+              FalseKeyword
+          ReturnStatement
+            Identifier: ' baseline'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' serializeMultiMap'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'baseline'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' caption'
+      StringKeyword
+    Parameter
+      Identifier: ' multiMap'
+      TypeReference
+        Identifier: ' MultiMap'
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' serialized'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          StringKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' hasChange'
+            CallExpression
+              Identifier: ' diffMap'
+              Identifier: 'baseline'
+              Identifier: ' caption'
+              Identifier: ' multiMap'
+              Identifier: ' serialized'
+              FalseKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    hasChange'
+          EqualsToken
+          BinaryExpression
+            CallExpression
+              Identifier: ' diffMap'
+              Identifier: 'baseline'
+              Identifier: ' caption'
+              Identifier: ' serialized'
+              Identifier: ' multiMap'
+              TrueKeyword
+            BarBarToken
+            Identifier: ' hasChange'
+      IfStatement
+        Identifier: 'hasChange'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        serialized'
+              EqualsToken
+              NewExpression
+                Identifier: ' Map'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        multiMap'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'value'
+                Parameter
+                  Identifier: ' key'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    NonNullExpression
+                      Identifier: ' serialized'
+                    Identifier: 'set'
+                  Identifier: 'key'
+                  NewExpression
+                    Identifier: ' Array'
+                    SpreadElement
+                      Identifier: 'value'
+      ReturnStatement
+        Identifier: ' serialized'
+  FunctionDeclaration
+    Identifier: ' diffMap'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: '
+    baseline'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: '
+    caption'
+      StringKeyword
+    Parameter
+      Identifier: '
+    map'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          StringKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    old'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          StringKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    deleted'
+      BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' captionAdded'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' baselineChanged'
+            FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' hasChange'
+            FalseKeyword
+      IfStatement
+        Identifier: 'map'
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' key'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' arrayFrom'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'map'
+                      Identifier: 'keys'
+                Identifier: 'sort'
+              Identifier: 'compareStringsCaseSensitive'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' existing'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' old'
+                        QuestionDotToken
+                        Identifier: 'get'
+                      Identifier: 'key'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' addedKey'
+                    FalseKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' values'
+                    NonNullExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' map'
+                          Identifier: 'get'
+                        Identifier: 'key'
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' value'
+                Identifier: ' values'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' hasExisting'
+                        CallExpression
+                          Identifier: ' contains'
+                          Identifier: 'existing'
+                          Identifier: ' value'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'deleted'
+                      AmpersandAmpersandToken
+                      Identifier: ' hasExisting'
+                    ContinueStatement
+                  IfStatement
+                    PrefixUnaryExpression
+                      Identifier: 'hasExisting'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: ' hasChange'
+                        EqualsToken
+                        TrueKeyword
+                  IfStatement
+                    PrefixUnaryExpression
+                      Identifier: 'addedKey'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                    addBaseline'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'key'
+                              TemplateMiddle
+                            TemplateSpan
+                              ConditionalExpression
+                                BinaryExpression
+                                  Identifier: 'deleted'
+                                  BarBarToken
+                                  Identifier: ' existing'
+                                QuestionToken
+                                StringLiteral
+                                ColonToken
+                                StringLiteral
+                              TemplateTail
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    addedKey'
+                          EqualsToken
+                          TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                addBaseline'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'JSON'
+                              Identifier: 'stringify'
+                            Identifier: 'value'
+                          TemplateMiddle
+                        TemplateSpan
+                          ConditionalExpression
+                            BinaryExpression
+                              BinaryExpression
+                                Identifier: 'deleted'
+                                BarBarToken
+                                Identifier: ' hasExisting'
+                              BarBarToken
+                              PrefixUnaryExpression
+                                Identifier: 'existing'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            StringLiteral
+                          TemplateTail
+      IfStatement
+        Identifier: 'baselineChanged'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' baseline'
+              Identifier: 'push'
+            StringLiteral
+      ReturnStatement
+        Identifier: ' hasChange'
+      FunctionDeclaration
+        Identifier: ' addBaseline'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'captionAdded'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            baseline'
+                    Identifier: 'push'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'caption'
+                      TemplateMiddle
+                    TemplateSpan
+                      ConditionalExpression
+                        Identifier: 'deleted'
+                        QuestionToken
+                        StringLiteral
+                        ColonToken
+                        StringLiteral
+                      TemplateTail
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            captionAdded'
+                  EqualsToken
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        baseline'
+                Identifier: 'push'
+              Identifier: 's'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        baselineChanged'
+              EqualsToken
+              TrueKeyword

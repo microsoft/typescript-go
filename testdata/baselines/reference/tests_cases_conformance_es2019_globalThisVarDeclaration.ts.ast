@@ -1,0 +1,111 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      ThisKeyword
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      ThisKeyword
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+globalThis'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+globalThis'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// DOM access is not supported until the index signature is handled more strictly
+self'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+self'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+window'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+window'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+top'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+top'
+      Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      ThisKeyword
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      ThisKeyword
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+globalThis'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+globalThis'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+// same here -- no DOM access to globalThis yet
+self'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+self'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+window'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+window'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+top'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+top'
+      Identifier: 'b'

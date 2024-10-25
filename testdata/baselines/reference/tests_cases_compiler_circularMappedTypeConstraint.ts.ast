@@ -1,0 +1,40 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          IntersectionType
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+            StringKeyword
+        TypeReference
+          Identifier: ' Capitalize'
+          TypeReference
+            Identifier: 'P'
+        TypeReference
+          Identifier: ' V'
+    TypeParameter
+      Identifier: ' V'
+      StringKeyword
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          Identifier: ' foo2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'A'
+              StringLiteral

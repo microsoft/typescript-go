@@ -1,0 +1,578 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    hasProperty'
+        ImportSpecifier
+          Identifier: '
+    UnionToIntersection'
+        ImportSpecifier
+          Identifier: '
+    Version'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' deprecate'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DeprecationOptions'
+    PropertySignature
+      Identifier: '
+    message'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    error'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    since'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    warnAfter'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    errorAfter'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    typeScriptVersion'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    name'
+      QuestionToken
+      StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' OverloadDefinitions'
+    MappedType
+      ReadonlyKeyword
+      TypeParameter
+        Identifier: 'P'
+        NumberKeyword
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' OverloadBinder'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    FunctionType
+      Parameter
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' OverloadParameters'
+          TypeReference
+            Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' OverloadKeys'
+          TypeReference
+            Identifier: 'T'
+        UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' OverloadKeys'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    TypeReference
+      Identifier: ' Extract'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' OverloadParameters'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    TypeReference
+      Identifier: ' Parameters'
+      IndexedAccessType
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeReference
+              Identifier: ' OverloadKeys'
+              TypeReference
+                Identifier: 'T'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P'
+        TypeReference
+          Identifier: 'OverloadKeys'
+          TypeReference
+            Identifier: 'T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' OverloadFunction'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    TypeReference
+      Identifier: ' UnionToIntersection'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'T'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' OverloadBinders'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' OverloadKeys'
+          TypeReference
+            Identifier: 'T'
+      FunctionType
+        Parameter
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' OverloadParameters'
+            TypeReference
+              Identifier: 'T'
+        UnionType
+          BooleanKeyword
+          UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' OverloadDeprecations'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' OverloadKeys'
+          TypeReference
+            Identifier: 'T'
+      QuestionToken
+      TypeReference
+        Identifier: ' DeprecationOptions'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createOverload'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' overloads'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' binder'
+      TypeReference
+        Identifier: ' OverloadBinders'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' deprecations'
+      QuestionToken
+      TypeReference
+        Identifier: ' OverloadDeprecations'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Object'
+            Identifier: 'defineProperty'
+          Identifier: 'call'
+          StringLiteral
+          ObjectLiteralExpression
+            SpreadAssignment
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'Object'
+                  Identifier: 'getOwnPropertyDescriptor'
+                Identifier: 'call'
+                StringLiteral
+            PropertyAssignment
+              Identifier: ' value'
+              Identifier: ' name'
+      IfStatement
+        Identifier: 'deprecations'
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' key'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Object'
+                Identifier: 'keys'
+              Identifier: 'deprecations'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' index'
+                    AsExpression
+                      PrefixUnaryExpression
+                        Identifier: 'key'
+                      ParenthesizedType
+                        IntersectionType
+                          TypeOperator
+                            TypeReference
+                              Identifier: ' T'
+                          NumberKeyword
+              IfStatement
+                BinaryExpression
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isNaN'
+                      Identifier: 'index'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' hasProperty'
+                    Identifier: 'overloads'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        Identifier: 'index'
+                        TemplateTail
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: '
+                overloads'
+                        Identifier: 'index'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' deprecate'
+                        ElementAccessExpression
+                          Identifier: 'overloads'
+                          Identifier: 'index'
+                        ObjectLiteralExpression
+                          SpreadAssignment
+                            ElementAccessExpression
+                              Identifier: 'deprecations'
+                              Identifier: 'index'
+                          ShorthandPropertyAssignment
+                            Identifier: ' name'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bind'
+            CallExpression
+              Identifier: ' createBinder'
+              Identifier: 'overloads'
+              Identifier: ' binder'
+      ReturnStatement
+        AsExpression
+          Identifier: ' call'
+          TypeReference
+            Identifier: ' OverloadFunction'
+            TypeReference
+              Identifier: 'T'
+      FunctionDeclaration
+        Identifier: ' call'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' OverloadParameters'
+            TypeReference
+              Identifier: 'T'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' index'
+                CallExpression
+                  Identifier: ' bind'
+                  Identifier: 'args'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' fn'
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' index'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' undefined'
+                  QuestionToken
+                  ElementAccessExpression
+                    Identifier: ' overloads'
+                    Identifier: 'index'
+                  ColonToken
+                  Identifier: ' undefined'
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' fn'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' fn'
+                  SpreadElement
+                    Identifier: 'args'
+          ThrowStatement
+            NewExpression
+              Identifier: ' TypeError'
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' createBinder'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    Parameter
+      Identifier: 'overloads'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' binder'
+      TypeReference
+        Identifier: ' OverloadBinders'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' OverloadBinder'
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            Identifier: ' args'
+          EqualsGreaterThanToken
+          Block
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+              BinaryExpression
+                CallExpression
+                  Identifier: ' hasProperty'
+                  Identifier: 'overloads'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'i'
+                      TemplateTail
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' hasProperty'
+                  Identifier: 'binder'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'i'
+                      TemplateTail
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' fn'
+                      ElementAccessExpression
+                        Identifier: ' binder'
+                        Identifier: 'i'
+                IfStatement
+                  CallExpression
+                    Identifier: 'fn'
+                    Identifier: 'args'
+                  Block
+                    ReturnStatement
+                      AsExpression
+                        Identifier: ' i'
+                        TypeReference
+                          Identifier: ' OverloadKeys'
+                          TypeReference
+                            Identifier: 'T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' OverloadBuilder'
+    MethodSignature
+      Identifier: '
+    overload'
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' OverloadDefinitions'
+      Parameter
+        Identifier: 'overloads'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' BindableOverloadBuilder'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' BindableOverloadBuilder'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    MethodSignature
+      Identifier: '
+    bind'
+      Parameter
+        Identifier: 'binder'
+        TypeReference
+          Identifier: ' OverloadBinders'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' BoundOverloadBuilder'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FinishableOverloadBuilder'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    MethodSignature
+      Identifier: '
+    finish'
+      TypeReference
+        Identifier: ' OverloadFunction'
+        TypeReference
+          Identifier: 'T'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' BoundOverloadBuilder'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' OverloadDefinitions'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' FinishableOverloadBuilder'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    deprecate'
+      Parameter
+        Identifier: 'deprecations'
+        TypeReference
+          Identifier: ' OverloadDeprecations'
+          TypeReference
+            Identifier: 'T'
+      TypeReference
+        Identifier: ' FinishableOverloadBuilder'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' buildOverload'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    TypeReference
+      Identifier: ' OverloadBuilder'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+        overload'
+            ArrowFunction
+              Parameter
+                Identifier: ' overloads'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            bind'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' binder'
+                      EqualsGreaterThanToken
+                      ParenthesizedExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                finish'
+                            ArrowFunction
+                              EqualsGreaterThanToken
+                              CallExpression
+                                Identifier: ' createOverload'
+                                Identifier: 'name'
+                                Identifier: ' overloads'
+                                Identifier: ' binder'
+                          PropertyAssignment
+                            Identifier: '
+                deprecate'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' deprecations'
+                              EqualsGreaterThanToken
+                              ParenthesizedExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    finish'
+                                    ArrowFunction
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        Identifier: ' createOverload'
+                                        Identifier: 'name'
+                                        Identifier: ' overloads'
+                                        Identifier: ' binder'
+                                        Identifier: ' deprecations'

@@ -1,0 +1,111 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateIdentifier
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      PrivateIdentifier
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+    Constructor
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            Identifier: ' t'
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+      t'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                PrivateIdentifier
+    SetAccessor
+      Identifier: ' baz'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' T'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            Identifier: ' t'
+    GetAccessor
+      Identifier: ' baz'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' C'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' C'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+a'
+        Identifier: 'baz'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'baz'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '                   // OK
+a'
+      PrivateIdentifier
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '                                   // Error
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '                                    // Error
+b'
+      EqualsToken
+      Identifier: ' a'

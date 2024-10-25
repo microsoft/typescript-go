@@ -1,0 +1,8 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' unreachable'
+    Block
+      ReturnStatement
+        NumericLiteral
+      ReturnStatement
+        NumericLiteral

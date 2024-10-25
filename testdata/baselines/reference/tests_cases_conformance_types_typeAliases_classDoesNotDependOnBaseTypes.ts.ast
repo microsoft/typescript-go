@@ -1,0 +1,50 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' StringTree'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' StringTreeCollection'
+  ClassDeclaration
+    Identifier: ' StringTreeCollectionBase'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      TypeReference
+        Identifier: ' StringTree'
+  ClassDeclaration
+    Identifier: ' StringTreeCollection'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' StringTreeCollectionBase'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' StringTree'
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' x'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    x'
+            NumericLiteral
+          EqualsToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    x'
+            NumericLiteral
+          EqualsToken
+          NewExpression
+            Identifier: ' StringTreeCollection'

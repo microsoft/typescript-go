@@ -1,0 +1,15 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' foo'
+    EnumMember
+      Identifier: ' A'
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: ' X'
+  ExportAssignment
+    Identifier: ' foo'

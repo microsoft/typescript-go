@@ -1,0 +1,55 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+  ClassDeclaration
+    Identifier: ' Sub'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' p'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            StringLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    PropertyDeclaration
+      Identifier: '
+    field'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' Test'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    prop'
+      NumberKeyword
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' p'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          NumericLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'prop'
+            EqualsToken
+            NumericLiteral

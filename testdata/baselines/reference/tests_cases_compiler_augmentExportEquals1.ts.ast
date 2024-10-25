@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportAssignment
+    Identifier: ' x'
+  ImportEqualsDeclaration
+    Identifier: ' x'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        PropertySignature
+          Identifier: ' a'
+  ImportEqualsDeclaration
+    Identifier: ' x'
+    ExternalModuleReference
+      StringLiteral
+  ImportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          QualifiedName
+            Identifier: ' x'
+            Identifier: 'A'

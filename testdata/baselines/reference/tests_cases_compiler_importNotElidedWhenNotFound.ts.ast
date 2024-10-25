@@ -1,0 +1,40 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' X'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Z'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' Y'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Z'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'X'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' X2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' X3'
+    StringLiteral
+  ClassDeclaration
+    Identifier: ' Q'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Z'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'X2'
+            Identifier: ' X3'

@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' autoToken'
+        ArrayType
+          NumberKeyword
+        NewExpression
+          Identifier: ' Array'
+          ArrayType
+            NumberKeyword
+          NumericLiteral

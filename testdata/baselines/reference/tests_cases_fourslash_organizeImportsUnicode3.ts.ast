@@ -1,0 +1,53 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// import {
+////     B,
+////     À,
+////     A,
+//// } from './foo';
+////
+//// console.log(A, À, B);
+
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      Identifier: ' /*mode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    organizeImportsIgnoreCase'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: '
+    organizeImportsCollation'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    organizeImportsAccentCollation'
+          FalseKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'organizeImports'
+      NoSubstitutionTemplateLiteral
+      Identifier: ' /*mode*/ undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    organizeImportsIgnoreCase'
+          FalseKeyword
+        PropertyAssignment
+          Identifier: '
+    organizeImportsCollation'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    organizeImportsAccentCollation'
+          TrueKeyword

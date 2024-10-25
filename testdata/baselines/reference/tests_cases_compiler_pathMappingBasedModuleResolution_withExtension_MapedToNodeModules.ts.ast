@@ -1,0 +1,49 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @noImplicitReferences: true
+// @traceResolution: true
+// @allowJs: true
+// @esModuleInterop: true
+// @fullEmitPaths: true
+
+// @Filename: /node_modules/foo/bar/foobar.js
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' foobar'
+    StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        StringLiteral

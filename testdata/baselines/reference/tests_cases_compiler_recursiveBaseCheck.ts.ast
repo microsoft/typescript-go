@@ -1,0 +1,56 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Module'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' D'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' Module'
+              Identifier: 'C'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' Module'
+              Identifier: 'B'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' AmChart'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' Module'
+              Identifier: 'A'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' D'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' AmChart'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' Module'
+              Identifier: 'D'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' F'
+        HeritageClause
+          ExpressionWithTypeArguments
+            PropertyAccessExpression
+              Identifier: ' Module'
+              Identifier: 'E'

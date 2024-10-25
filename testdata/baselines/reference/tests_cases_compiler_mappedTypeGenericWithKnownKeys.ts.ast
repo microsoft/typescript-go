@@ -1,0 +1,70 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'Shape'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        StringKeyword
+    Parameter
+      Identifier: 'shape'
+      TypeReference
+        Identifier: ' Shape'
+    Parameter
+      Identifier: ' key'
+      TypeOperator
+        TypeReference
+          Identifier: ' Shape'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            AsExpression
+              ObjectLiteralExpression
+              TypeReference
+                Identifier: ' Record'
+                UnionType
+                  TypeOperator
+                    TypeReference
+                      Identifier: ' Shape'
+                  LiteralType
+                    StringLiteral
+                NumberKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    obj'
+            Identifier: 'knownLiteralKey'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    obj'
+            Identifier: 'key'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    obj'
+            Identifier: 'unknownLiteralKey'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: ' // error
+    obj'
+            AsExpression
+              StringLiteral
+              StringKeyword
+          EqualsToken
+          NumericLiteral

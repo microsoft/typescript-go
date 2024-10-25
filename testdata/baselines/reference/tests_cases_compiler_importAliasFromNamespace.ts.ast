@@ -1,0 +1,62 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' My'
+    ModuleDeclaration
+      Identifier: 'Internal'
+      ModuleBlock
+        FunctionDeclaration
+          ExportKeyword
+          Identifier: ' getThing'
+          VoidKeyword
+          Block
+        EnumDeclaration
+          ExportKeyword
+          ConstKeyword
+          Identifier: ' WhichThing'
+          EnumMember
+            Identifier: '
+        A'
+          EnumMember
+            Identifier: ' B'
+          EnumMember
+            Identifier: ' C'
+  ModuleDeclaration
+    Identifier: ' SomeOther'
+    ModuleDeclaration
+      Identifier: 'Thing'
+      ModuleBlock
+        ImportEqualsDeclaration
+          Identifier: ' Internal'
+          QualifiedName
+            Identifier: ' My'
+            Identifier: 'Internal'
+        ClassDeclaration
+          ExportKeyword
+          Identifier: ' Foo'
+          PropertyDeclaration
+            PrivateKeyword
+            Identifier: ' _which'
+            TypeReference
+              QualifiedName
+                Identifier: ' Internal'
+                Identifier: 'WhichThing'
+          Constructor
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            Internal'
+                    Identifier: 'getThing'
+              ExpressionStatement
+                ConditionalExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            Internal'
+                      Identifier: 'WhichThing'
+                    Identifier: 'A'
+                  QuestionToken
+                  StringLiteral
+                  ColonToken
+                  StringLiteral

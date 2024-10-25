@@ -1,0 +1,64 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+	a'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' Foo'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        TypeReference
+          Identifier: ' C'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        PropertyAccessExpression
+          Identifier: ' v1'
+          Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' w'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' v1'
+            Identifier: 'y'
+          Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' v1'
+            Identifier: 'z'
+          Identifier: 'a'

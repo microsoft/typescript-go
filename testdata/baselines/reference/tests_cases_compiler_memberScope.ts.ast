@@ -1,0 +1,18 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Salt'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Pepper'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Basil'
+        ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            PropertyAccessExpression
+              Identifier: ' Basil'
+              Identifier: 'Pepper'

@@ -1,0 +1,24 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * {@linkcode this.a}
+     * {@linkcode this.#c}
+     *
+     * {@link this.a}
+     * {@link this.#c}
+     *
+     * {@linkplain this.a}
+     * {@linkplain this.#c}
+     */
+    a'
+      Block
+    MethodDeclaration
+      Identifier: '
+    b'
+      Block
+    MethodDeclaration
+      PrivateIdentifier
+      Block

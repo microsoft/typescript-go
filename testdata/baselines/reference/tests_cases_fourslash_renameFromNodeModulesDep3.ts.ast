@@ -1,0 +1,115 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: ' okRange'
+          BindingElement
+            Identifier: ' ok2Range'
+          BindingElement
+            Identifier: ' ok3Range'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'renameInfoSucceeded'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    okRange'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' providePrefixAndSuffixTextForRename'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'renameInfoSucceeded'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    okRange'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' providePrefixAndSuffixTextForRename'
+          FalseKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'renameInfoSucceeded'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    ok2Range'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'renameInfoSucceeded'
+      Identifier: 'undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    undefined'
+      Identifier: '
+    ok3Range'

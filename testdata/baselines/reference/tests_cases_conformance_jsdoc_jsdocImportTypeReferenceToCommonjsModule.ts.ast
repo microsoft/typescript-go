@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' config'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    fix'
+            BooleanKeyword
+  ExportAssignment
+    Identifier: ' config'
+  FunctionDeclaration
+    Identifier: ' demo'
+    Parameter
+      Identifier: 'a'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    a'
+          Identifier: 'fix'

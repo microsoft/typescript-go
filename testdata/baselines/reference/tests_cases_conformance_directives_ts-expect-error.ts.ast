@@ -1,0 +1,139 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidCommentedFancySingle'
+        NumberKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidCommentedFancyMulti'
+        NumberKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validCommentedFancySingle'
+        StringKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validCommentedFancyMulti'
+        StringKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidCommentedPlainSingle'
+        NumberKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidCommentedPlainMulti'
+        NumberKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validCommentedPlainSingle'
+        StringKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validCommentedPlainMulti1'
+        StringKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validCommentedPlainMulti2'
+        StringKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidPlain'
+        NumberKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validPlain'
+        StringKeyword
+        StringLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            AsExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' a'
+                  TrueKeyword
+              TypeReference
+                Identifier: ' const'
+          Identifier: 'a'
+        EqualsEqualsEqualsToken
+        FalseKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            AsExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' a'
+                  TrueKeyword
+              TypeReference
+                Identifier: ' const'
+          Identifier: 'a'
+        EqualsEqualsEqualsToken
+        FalseKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            AsExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' a'
+                  TrueKeyword
+              TypeReference
+                Identifier: ' const'
+          Identifier: 'a'
+        EqualsEqualsEqualsToken
+        FalseKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            AsExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' a'
+                  TrueKeyword
+              TypeReference
+                Identifier: ' const'
+          Identifier: 'a'
+        EqualsEqualsEqualsToken
+        FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidCommentedFancySingle'
+        NumberKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidCommentedFancyMulti'
+        NumberKeyword
+        StringLiteral

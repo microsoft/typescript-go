@@ -1,0 +1,48 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' test'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Object'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            TypeReference
+              Identifier: ' Object'
+      ExpressionStatement
+        BinaryExpression
+          NumericLiteral
+          InstanceOfKeyword
+          NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    // Error and should be error
+    obj'
+          InstanceOfKeyword
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    Object'
+          InstanceOfKeyword
+          Identifier: ' obj'
+      ExpressionStatement
+        BinaryExpression
+          NullKeyword
+          InstanceOfKeyword
+          NullKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    obj'
+          InstanceOfKeyword
+          Identifier: ' Object'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    undefined'
+          InstanceOfKeyword
+          Identifier: ' undefined'

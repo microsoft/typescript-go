@@ -1,0 +1,24 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'TFirstArgs'
+            ArrayType
+              AnyKeyword
+          TypeParameter
+            Identifier: ' TLastArg'
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TupleType
+              RestType
+                TypeReference
+                  Identifier: 'TFirstArgs'
+              TypeReference
+                Identifier: ' TLastArg'
+          VoidKeyword
+          EqualsGreaterThanToken
+          Block

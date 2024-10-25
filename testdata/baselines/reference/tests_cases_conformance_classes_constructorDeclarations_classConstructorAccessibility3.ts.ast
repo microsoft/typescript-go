@@ -1,0 +1,105 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Bar'
+    Constructor
+      PublicKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Baz'
+    Constructor
+      ProtectedKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Qux'
+    Constructor
+      PrivateKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' Bar'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' Baz'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error Baz is protected
+a'
+      EqualsToken
+      Identifier: ' Qux'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        Identifier: ' Baz'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' Bar'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' Qux'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        Identifier: ' Qux'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' Bar'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' Baz'

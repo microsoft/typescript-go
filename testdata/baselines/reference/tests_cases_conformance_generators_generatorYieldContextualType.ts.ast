@@ -1,0 +1,540 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' R'
+    TypeParameter
+      Identifier: ' S'
+    Parameter
+      Identifier: 'gen'
+      FunctionType
+        TypeReference
+          Identifier: ' Generator'
+          TypeReference
+            Identifier: 'R'
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' S'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      FunctionExpression
+        AsteriskToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                YieldExpression
+                  NumericLiteral
+          ReturnStatement
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' R'
+    TypeParameter
+      Identifier: ' S'
+    Parameter
+      Identifier: 'gen'
+      FunctionType
+        UnionType
+          TypeReference
+            Identifier: ' Generator'
+            TypeReference
+              Identifier: 'R'
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: ' S'
+          TypeReference
+            Identifier: ' AsyncGenerator'
+            TypeReference
+              Identifier: 'R'
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: ' S'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      FunctionExpression
+        AsyncKeyword
+        AsteriskToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' a'
+                YieldExpression
+                  NumericLiteral
+          ReturnStatement
+            NumericLiteral
+  EnumDeclaration
+    Identifier: ' Directive'
+    EnumMember
+      Identifier: '
+  Back'
+    EnumMember
+      Identifier: '
+  Cancel'
+    EnumMember
+      Identifier: '
+  LoadMore'
+    EnumMember
+      Identifier: '
+  Noop'
+  ModuleDeclaration
+    Identifier: ' Directive'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' is'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'value'
+          UnionType
+            TypeReference
+              Identifier: ' Directive'
+            TypeReference
+              Identifier: ' T'
+        TypePredicate
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' Directive'
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  Identifier: ' value'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              AmpersandAmpersandToken
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: ' Directive'
+                  Identifier: 'value'
+                ExclamationEqualsToken
+                NullKeyword
+  InterfaceDeclaration
+    Identifier: ' QuickPickItem'
+    PropertySignature
+      Identifier: '
+  label'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  description'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  detail'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  picked'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+  alwaysShow'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' QuickInputStep'
+    PropertySignature
+      Identifier: '
+  placeholder'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  prompt'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  title'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' QuickPickStep'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' QuickPickItem'
+      TypeReference
+        Identifier: ' QuickPickItem'
+    PropertySignature
+      Identifier: '
+  placeholder'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  title'
+      QuestionToken
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' StepGenerator'
+    UnionType
+      TypeReference
+        Identifier: ' Generator'
+        UnionType
+          TypeReference
+            Identifier: '
+      QuickPickStep'
+          TypeReference
+            Identifier: ' QuickInputStep'
+        TypeReference
+          Identifier: '
+      StepResult'
+          UnionType
+            VoidKeyword
+            UndefinedKeyword
+        UnionType
+          AnyKeyword
+          UndefinedKeyword
+      TypeReference
+        Identifier: ' AsyncGenerator'
+        UnionType
+          TypeReference
+            Identifier: '
+      QuickPickStep'
+          TypeReference
+            Identifier: ' QuickInputStep'
+        TypeReference
+          Identifier: '
+      StepResult'
+          UnionType
+            VoidKeyword
+            UndefinedKeyword
+        UnionType
+          AnyKeyword
+          UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' StepItemType'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' QuickPickStep'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+      ArrayType
+        TypeReference
+          Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' QuickInputStep'
+        StringKeyword
+        NeverKeyword
+  ModuleDeclaration
+    Identifier: ' StepResult'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Break'
+            CallExpression
+              Identifier: ' Symbol'
+              StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' StepResult'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeQuery
+        QualifiedName
+          Identifier: ' StepResult'
+          Identifier: 'Break'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' StepResultGenerator'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' Generator'
+        UnionType
+          TypeReference
+            Identifier: 'QuickPickStep'
+          TypeReference
+            Identifier: ' QuickInputStep'
+        TypeReference
+          Identifier: ' StepResult'
+          TypeReference
+            Identifier: 'T'
+        UnionType
+          AnyKeyword
+          UndefinedKeyword
+      TypeReference
+        Identifier: ' AsyncGenerator'
+        UnionType
+          TypeReference
+            Identifier: '
+      QuickPickStep'
+          TypeReference
+            Identifier: ' QuickInputStep'
+        TypeReference
+          Identifier: '
+      StepResult'
+          TypeReference
+            Identifier: 'T'
+        UnionType
+          AnyKeyword
+          UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' StepSelection'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' QuickPickStep'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' U'
+        TypeReference
+          Identifier: ' Directive'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' QuickInputStep'
+        UnionType
+          StringKeyword
+          TypeReference
+            Identifier: ' Directive'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' PartialStepState'
+    TypeParameter
+      Identifier: 'T'
+      UnknownKeyword
+    IntersectionType
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  counter'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+  confirm'
+          QuestionToken
+          BooleanKeyword
+        PropertySignature
+          Identifier: '
+  startingStep'
+          QuestionToken
+          NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' StepState'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        UnknownKeyword
+    IntersectionType
+      TypeReference
+        Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  counter'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+  confirm'
+          QuestionToken
+          BooleanKeyword
+        PropertySignature
+          Identifier: '
+  startingStep'
+          QuestionToken
+          NumberKeyword
+  FunctionDeclaration
+    Identifier: ' canPickStepContinue'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' QuickPickStep'
+    Parameter
+      Identifier: '
+  _step'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+  _state'
+      TypeReference
+        Identifier: ' PartialStepState'
+    Parameter
+      Identifier: '
+  _selection'
+      UnionType
+        TypeReference
+          Identifier: ' StepItemType'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' Directive'
+    TypePredicate
+      Identifier: ' _selection'
+      TypeReference
+        Identifier: ' StepItemType'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ReturnStatement
+        FalseKeyword
+  FunctionDeclaration
+    Identifier: ' createPickStep'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' QuickPickItem'
+    Parameter
+      Identifier: '
+  step'
+      TypeReference
+        Identifier: ' QuickPickStep'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' QuickPickStep'
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        Identifier: ' step'
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' showStep'
+    TypeParameter
+      Identifier: '
+  State'
+      IntersectionType
+        TypeReference
+          Identifier: ' PartialStepState'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' repo'
+            AnyKeyword
+    TypeParameter
+      Identifier: '
+  Context'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' repos'
+          ArrayType
+            AnyKeyword
+        PropertySignature
+          Identifier: ' title'
+          StringKeyword
+        PropertySignature
+          Identifier: ' status'
+          AnyKeyword
+    Parameter
+      Identifier: 'state'
+      TypeReference
+        Identifier: ' State'
+    Parameter
+      Identifier: ' _context'
+      TypeReference
+        Identifier: ' Context'
+    TypeReference
+      Identifier: ' StepResultGenerator'
+      TypeReference
+        Identifier: 'QuickPickItem'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' step'
+            TypeReference
+              Identifier: ' QuickPickStep'
+              TypeReference
+                Identifier: 'QuickPickItem'
+            CallExpression
+              Identifier: ' createPickStep'
+              TypeReference
+                Identifier: 'QuickPickItem'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    title'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    placeholder'
+                  StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' selection'
+            TypeReference
+              Identifier: ' StepSelection'
+              TypeQuery
+                Identifier: ' step'
+            YieldExpression
+              Identifier: ' step'
+      ReturnStatement
+        ConditionalExpression
+          CallExpression
+            Identifier: ' canPickStepContinue'
+            Identifier: 'step'
+            Identifier: ' state'
+            Identifier: ' selection'
+          QuestionToken
+          ElementAccessExpression
+            Identifier: ' selection'
+            NumericLiteral
+          ColonToken
+          PropertyAccessExpression
+            Identifier: ' StepResult'
+            Identifier: 'Break'

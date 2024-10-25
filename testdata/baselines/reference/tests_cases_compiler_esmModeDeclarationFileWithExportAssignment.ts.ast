@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' example'
+    LiteralType
+      NumericLiteral
+  ExportAssignment
+    Identifier: ' example'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' example'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+example'

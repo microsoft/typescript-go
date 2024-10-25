@@ -1,0 +1,62 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' getTypeName'
+    Parameter
+      Identifier: 'x'
+    Block
+      ReturnStatement
+        TypeOfExpression
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' identity'
+        ArrowFunction
+          Parameter
+            Identifier: ' x'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' flatMap'
+    Parameter
+      Identifier: 'array'
+    Parameter
+      Identifier: ' iterable'
+      Identifier: ' identity'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            ArrayLiteralExpression
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' array'
+            Identifier: 'length'
+        BinaryExpression
+          Identifier: ' i'
+          PlusEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    result'
+                Identifier: 'push'
+              SpreadElement
+                ParenthesizedExpression
+                  CallExpression
+                    Identifier: 'iterable'
+                    ElementAccessExpression
+                      Identifier: 'array'
+                      Identifier: 'i'
+      ReturnStatement
+        Identifier: ' result'

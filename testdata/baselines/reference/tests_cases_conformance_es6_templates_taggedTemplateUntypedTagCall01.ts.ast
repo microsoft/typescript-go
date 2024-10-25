@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tag'
+        TypeReference
+          Identifier: ' Function'
+  ExpressionStatement
+    TaggedTemplateExpression
+      Identifier: '
+tag'
+      NoSubstitutionTemplateLiteral

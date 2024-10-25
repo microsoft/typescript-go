@@ -1,0 +1,71 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'a'
+      QuestionToken
+      BooleanKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          QuestionQuestionEqualsToken
+          TrueKeyword
+      IfStatement
+        BinaryExpression
+          Identifier: 'a'
+          EqualsEqualsEqualsToken
+          FalseKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      FalseKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+            AsExpression
+              NumericLiteral
+              AnyKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          QuestionQuestionEqualsToken
+          NumericLiteral
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              Identifier: 'x'

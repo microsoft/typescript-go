@@ -1,0 +1,22 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' a'
+    Block
+      ExpressionStatement
+        YieldExpression
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' b'
+    TypeReference
+      Identifier: ' IterableIterator'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        YieldExpression
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral

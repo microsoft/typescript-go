@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Outer'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// @Filename: a.js
+Outer'
+        Identifier: 'Inner'
+      EqualsToken
+      ClassExpression
+        Identifier: ' I'
+        MethodDeclaration
+          Identifier: '
+    messages'
+          Block
+            ReturnStatement
+              ArrayLiteralExpression
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+/** @type {!Outer.Inner} */
+Outer'
+      Identifier: 'i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' msgs'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' Outer'
+              Identifier: 'i'
+            Identifier: 'messages'
+  FunctionDeclaration
+    Identifier: ' x'
+    Parameter
+      Identifier: 'inner'
+    Block

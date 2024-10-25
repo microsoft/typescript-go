@@ -1,0 +1,219 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      Identifier: ' C'
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' w'
+        Identifier: ' window'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+
+// Assign to expression++
+x'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: ' // Error
+
+// Assign to expression--
+x'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: ' // Error
+
+// Pre and postfix++ on number
+x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: ' // Error
+
+// Pre and postfix++ on enum
+e'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+e'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'e'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'e'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'e'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'e'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'e'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'e'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: ' // Error
+
+// Pre and postfix++ on value of type 'any'
+a'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+a'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'a'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'a'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'a'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'a'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'a'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'a'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: ' // Error
+
+
+// Pre and postfix++ on other types
+w'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: ' // Error
+w'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'w'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'w'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'w'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'w'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'w'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'w'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''

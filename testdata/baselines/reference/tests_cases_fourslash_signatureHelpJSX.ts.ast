@@ -1,0 +1,27 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//@Filename: test.tsx
+//@jsx: react
+////declare var React: any;
+////const z = <div>{[].map(x => </**/
+
+// This test exists because it used to crash: #31347
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'noSignatureHelpForTriggerReason'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' kind'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' triggerCharacter'
+          StringLiteral

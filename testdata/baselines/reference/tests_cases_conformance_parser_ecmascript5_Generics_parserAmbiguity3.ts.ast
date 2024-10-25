@@ -1,0 +1,14 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: 'f'
+      BinaryExpression
+        Identifier: 'g'
+        LessThanToken
+        Identifier: ' A'
+      BinaryExpression
+        Identifier: ' B'
+        GreaterThanToken
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            NumericLiteral

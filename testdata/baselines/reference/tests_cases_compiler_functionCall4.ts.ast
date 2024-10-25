@@ -1,0 +1,22 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    AnyKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+  EmptyStatement
+  FunctionDeclaration
+    Identifier: ' bar'
+    FunctionType
+      AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' foo'
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' bar'

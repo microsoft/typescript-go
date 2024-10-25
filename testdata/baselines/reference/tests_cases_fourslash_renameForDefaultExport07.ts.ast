@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @Filename: foo.ts
+////export default function /**/[|DefaultExportedFunction|]() {
+////    return DefaultExportedFunction
+////}
+/////**
+//// *  Commenting DefaultExportedFunction
+//// */
+////
+////var x: typeof DefaultExportedFunction;
+////
+////var y = DefaultExportedFunction();
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'renameInfoSucceeded'
+      StringLiteral
+      StringLiteral

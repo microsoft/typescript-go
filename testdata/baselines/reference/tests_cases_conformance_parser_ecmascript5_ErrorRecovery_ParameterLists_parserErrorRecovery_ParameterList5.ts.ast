@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    ArrowFunction
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Parameter
+        ObjectBindingPattern
+      EqualsGreaterThanToken
+      Identifier: ''

@@ -1,0 +1,114 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myNull'
+        LiteralType
+          NullKeyword
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objWithValMaybeNull'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' val'
+            UnionType
+              NumberKeyword
+              LiteralType
+                NullKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' val'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' addOne'
+        FunctionExpression
+          Parameter
+            Identifier: 'num'
+            NumberKeyword
+          Block
+            ReturnStatement
+              BinaryExpression
+                Identifier: ' num'
+                PlusToken
+                NumericLiteral
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'objWithValMaybeNull'
+        Identifier: 'val'
+      ExclamationEqualsEqualsToken
+      NullKeyword
+    ExpressionStatement
+      CallExpression
+        Identifier: '
+    addOne'
+        PropertyAccessExpression
+          Identifier: 'objWithValMaybeNull'
+          Identifier: 'val'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'objWithValMaybeNull'
+        Identifier: 'val'
+      ExclamationEqualsEqualsToken
+      Identifier: ' myNull'
+    ExpressionStatement
+      CallExpression
+        Identifier: '
+    addOne'
+        PropertyAccessExpression
+          Identifier: 'objWithValMaybeNull'
+          Identifier: 'val'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'objWithValMaybeNull'
+        Identifier: 'val'
+      EqualsEqualsEqualsToken
+      NullKeyword
+    ExpressionStatement
+      CallExpression
+        Identifier: '
+    addOne'
+        PropertyAccessExpression
+          Identifier: 'objWithValMaybeNull'
+          Identifier: 'val'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'objWithValMaybeNull'
+        Identifier: 'val'
+      EqualsEqualsEqualsToken
+      Identifier: ' myNull'
+    ExpressionStatement
+      CallExpression
+        Identifier: '
+    addOne'
+        PropertyAccessExpression
+          Identifier: 'objWithValMaybeNull'
+          Identifier: 'val'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          Identifier: ' myNull'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' s'
+                StringKeyword
+                Identifier: ' x'

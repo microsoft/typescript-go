@@ -1,0 +1,27 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+	p1'
+      NumberKeyword
+  ExportAssignment
+    Identifier: ' A'
+  ImportEqualsDeclaration
+    Identifier: ' I1'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'p1'

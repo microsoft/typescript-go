@@ -1,0 +1,35 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' before'
+            TypeReference
+              Identifier: ' C'
+      ClassDeclaration
+        ExportKeyword
+        DefaultKeyword
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: '
+        method'
+          TypeReference
+            Identifier: ' C'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' after'
+            TypeReference
+              Identifier: ' C'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            TypeQuery
+              Identifier: ' C'

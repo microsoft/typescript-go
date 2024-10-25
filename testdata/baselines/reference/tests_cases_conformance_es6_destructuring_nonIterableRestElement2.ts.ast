@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        SpreadElement
+          Identifier: 'c'
+      EqualsToken
+      ArrayLiteralExpression
+        StringLiteral
+        NumericLiteral

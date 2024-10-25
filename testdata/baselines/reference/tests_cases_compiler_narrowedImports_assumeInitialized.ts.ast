@@ -1,0 +1,22 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' a'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumberKeyword
+  ExportAssignment
+    Identifier: ' a'
+  ImportEqualsDeclaration
+    Identifier: ' a'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+a'
+      Identifier: 'x'

@@ -1,0 +1,203 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn1'
+    Parameter
+      ObjectBindingPattern
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' x'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn3'
+    Parameter
+      ArrayBindingPattern
+      QuestionToken
+      TupleType
+        NamedTupleMember
+          Identifier: ' x'
+          StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn4'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: ' x'
+      QuestionToken
+      TupleType
+        NamedTupleMember
+          Identifier: ' x'
+          StringKeyword
+    VoidKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C1'
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        ObjectBindingPattern
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' method2'
+      Parameter
+        ObjectBindingPattern
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+      VoidKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' field'
+      FunctionType
+        Parameter
+          ObjectBindingPattern
+          QuestionToken
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              StringKeyword
+        VoidKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' field2'
+      FunctionType
+        Parameter
+          ObjectBindingPattern
+          QuestionToken
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              StringKeyword
+        VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' I1'
+    MethodSignature
+      Identifier: '
+    method'
+      Parameter
+        ObjectBindingPattern
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+    method2'
+      FunctionType
+        Parameter
+          ObjectBindingPattern
+          QuestionToken
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              StringKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    FunctionType
+      Parameter
+        ObjectBindingPattern
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+    method'
+        Parameter
+          ObjectBindingPattern
+          QuestionToken
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              StringKeyword
+        VoidKeyword
+      PropertySignature
+        Identifier: '
+    method2'
+        FunctionType
+          Parameter
+            ObjectBindingPattern
+            QuestionToken
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                StringKeyword
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' val1'
+        FunctionType
+          Parameter
+            ObjectBindingPattern
+            QuestionToken
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                StringKeyword
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' val2'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    method'
+            Parameter
+              ObjectBindingPattern
+              QuestionToken
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  StringKeyword
+            VoidKeyword
+          PropertySignature
+            Identifier: '
+    method2'
+            FunctionType
+              Parameter
+                ObjectBindingPattern
+                QuestionToken
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' x'
+                    StringKeyword
+              VoidKeyword

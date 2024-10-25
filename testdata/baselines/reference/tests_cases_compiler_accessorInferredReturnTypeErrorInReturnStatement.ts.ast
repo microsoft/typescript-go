@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' basePrototype'
+        ObjectLiteralExpression
+          GetAccessor
+            Identifier: ' primaryPath'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' _this'
+                    ThisKeyword
+              ReturnStatement
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' _this'
+                      Identifier: 'collection'
+                    Identifier: 'schema'
+                  Identifier: 'primaryPath'

@@ -1,0 +1,56 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' a'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' b'
+      BinaryExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'a'
+        PlusToken
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' c'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' d'
+      BinaryExpression
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'c'
+        PlusToken
+        NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' e'
+      BinaryExpression
+        BinaryExpression
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            ParenthesizedExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'a'
+          PlusToken
+          ParenthesizedExpression
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'c'
+              PlusToken
+              NumericLiteral
+        PlusToken
+        NumericLiteral

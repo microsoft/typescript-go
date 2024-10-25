@@ -1,0 +1,43 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @allowJs: true
+// @checkJs: true
+
+// @Filename: /a.js
+//// var x
+//// x.foo(1, 2);
+
+//// /**
+////  * @type {{foo: (a: number, b: number) => void}}
+////  */
+//// var y
+//// y.foo(1, 2)
+
+//// /**
+////  * @type {string}
+////  */
+//// var z = ""
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineInlayHints'
+      Identifier: 'undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    includeInlayParameterNameHints'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    interactiveInlayHints'
+          TrueKeyword

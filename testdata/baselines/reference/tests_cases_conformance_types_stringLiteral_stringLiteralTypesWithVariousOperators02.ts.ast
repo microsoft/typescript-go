@@ -1,0 +1,134 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' abc'
+        LiteralType
+          StringLiteral
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xyz'
+        LiteralType
+          StringLiteral
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' abcOrXyz'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+        BinaryExpression
+          Identifier: ' abc'
+          BarBarToken
+          Identifier: ' xyz'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' abcOrXyzOrNumber'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          NumberKeyword
+        BinaryExpression
+          Identifier: ' abcOrXyz'
+          BarBarToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BinaryExpression
+          Identifier: ' abcOrXyzOrNumber'
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          Identifier: ' abcOrXyzOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        BinaryExpression
+          Identifier: ' abcOrXyzOrNumber'
+          PlusToken
+          Identifier: ' abcOrXyzOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        BinaryExpression
+          Identifier: ' abcOrXyzOrNumber'
+          PlusToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        BinaryExpression
+          FalseKeyword
+          PlusToken
+          Identifier: ' abcOrXyzOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        PostfixUnaryExpression
+          Identifier: ' abcOrXyzOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        PrefixUnaryExpression
+          Identifier: 'abcOrXyzOrNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        BinaryExpression
+          Identifier: ' abcOrXyzOrNumber'
+          CaretToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        BinaryExpression
+          Identifier: ' abcOrXyzOrNumber'
+          BarToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        BinaryExpression
+          Identifier: ' abc'
+          LessThanToken
+          Identifier: ' xyz'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        BinaryExpression
+          Identifier: ' abc'
+          EqualsEqualsEqualsToken
+          Identifier: ' xyz'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        BinaryExpression
+          Identifier: ' abc'
+          ExclamationEqualsToken
+          Identifier: ' xyz'

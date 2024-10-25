@@ -1,0 +1,484 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+  ClassDeclaration
+    Identifier: ' PrivateOptionalX'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      QuestionToken
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' PublicX'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+      NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' publicX'
+        TypeReference
+          Identifier: ' PublicX'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' privateOptionalX'
+        TypeReference
+          Identifier: ' PrivateOptionalX'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'publicX'
+          SpreadAssignment
+            Identifier: 'privateOptionalX'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sn'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' o2'
+          Identifier: 'x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' optionalString'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' sn'
+            QuestionToken
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' optionalNumber'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' sn'
+            QuestionToken
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' allOptional'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' sn'
+            UnionType
+              StringKeyword
+              NumberKeyword
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'optionalString'
+          SpreadAssignment
+            Identifier: 'optionalNumber'
+  InterfaceDeclaration
+    Identifier: ' Bool'
+    PropertySignature
+      Identifier: ' b'
+      BooleanKeyword
+  EmptyStatement
+  InterfaceDeclaration
+    Identifier: ' Str'
+    PropertySignature
+      Identifier: ' s'
+      StringKeyword
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spread'
+        ObjectLiteralExpression
+          SpreadAssignment
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' b'
+                TrueKeyword
+          SpreadAssignment
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 's'
+                StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+spread'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' s'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' b'
+            FalseKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+spread'
+      EqualsToken
+      Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' duplicated'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+          SpreadAssignment
+            Identifier: 'o'
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+          SpreadAssignment
+            Identifier: 'o2'
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' duplicatedSpread'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'o'
+          SpreadAssignment
+            Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ignore'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+          SpreadAssignment
+            Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o4'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' c'
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' combinedBefore'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+          PropertySignature
+            Identifier: ' c'
+            BooleanKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+          SpreadAssignment
+            Identifier: 'o3'
+          SpreadAssignment
+            Identifier: 'o4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' combinedMid'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+          PropertySignature
+            Identifier: ' c'
+            BooleanKeyword
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'o3'
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+          SpreadAssignment
+            Identifier: 'o4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' combinedNested'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            BooleanKeyword
+          PropertySignature
+            Identifier: ' c'
+            StringKeyword
+          PropertySignature
+            Identifier: ' d'
+            StringKeyword
+        ObjectLiteralExpression
+          SpreadAssignment
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              SpreadAssignment
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' b'
+                    FalseKeyword
+                  PropertyAssignment
+                    Identifier: ' c'
+                    StringLiteral
+          PropertyAssignment
+            Identifier: ' d'
+            StringLiteral
+          SpreadAssignment
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' d'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' changeTypeBefore'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral
+          SpreadAssignment
+            Identifier: 'o3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' computedMiddle'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+          PropertySignature
+            Identifier: ' c'
+            BooleanKeyword
+          PropertySignature
+            StringLiteral
+            NumberKeyword
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'o3'
+          PropertyAssignment
+            ComputedPropertyName
+              StringLiteral
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+          SpreadAssignment
+            Identifier: 'o4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spreadNum'
+        ObjectLiteralExpression
+          SpreadAssignment
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spreadSum'
+        ObjectLiteralExpression
+          SpreadAssignment
+            BinaryExpression
+              NumericLiteral
+              PlusToken
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spreadZero'
+        ObjectLiteralExpression
+          SpreadAssignment
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+spreadZero'
+        Identifier: 'toFixed'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spreadBool'
+        ObjectLiteralExpression
+          SpreadAssignment
+            TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+spreadBool'
+        Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spreadStr'
+        ObjectLiteralExpression
+          SpreadAssignment
+            StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+spreadStr'
+      Identifier: 'length'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // error, no 'length'
+spreadStr'
+        Identifier: 'charAt'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spreadFunc'
+        ObjectLiteralExpression
+          SpreadAssignment
+            FunctionExpression
+              Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+spreadFunc'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' setterOnly'
+        ObjectLiteralExpression
+          SpreadAssignment
+            ObjectLiteralExpression
+              SetAccessor
+                Identifier: ' b'
+                Parameter
+                  Identifier: 'bad'
+                  NumberKeyword
+                Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+setterOnly'
+        Identifier: 'b'
+      EqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: ' p'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: ' m'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+        NewExpression
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spreadC'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'c'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+spreadC'
+        Identifier: 'm'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spreadObj'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'obj'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+spreadObj'
+      Identifier: 'a'

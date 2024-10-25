@@ -1,0 +1,35 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    bar'
+      Block
+        ReturnStatement
+          ClassExpression
+            MethodDeclaration
+              ComputedPropertyName
+                CallExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'foo'
+              Block
+                ReturnStatement
+                  NumericLiteral

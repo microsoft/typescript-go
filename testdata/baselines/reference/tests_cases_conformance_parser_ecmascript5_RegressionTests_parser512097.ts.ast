@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tt'
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' aa'
+  IfStatement
+    TrueKeyword
+    Block

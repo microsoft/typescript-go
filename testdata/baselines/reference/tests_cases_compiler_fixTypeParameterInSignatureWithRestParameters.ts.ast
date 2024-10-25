@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'item1'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' item2'
+      TypeReference
+        Identifier: ' T'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+bar'
+      NumericLiteral
+      StringLiteral

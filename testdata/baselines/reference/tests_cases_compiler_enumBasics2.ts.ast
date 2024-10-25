@@ -1,0 +1,67 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Foo'
+    EnumMember
+      Identifier: '
+  a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+  b'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+  x'
+      PropertyAccessExpression
+        Identifier: ' a'
+        Identifier: 'b'
+    EnumMember
+      Identifier: '       // should error
+  y'
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a'
+    EnumMember
+      Identifier: '       // should error
+  z'
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' y'
+          Identifier: 'x'
+        AsteriskToken
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'x'
+  EnumDeclaration
+    Identifier: ' Bar'
+    EnumMember
+      Identifier: '
+  a'
+      CallExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            NumericLiteral
+          Identifier: 'valueOf'
+    EnumMember
+      Identifier: '   // ok
+  b'
+      PropertyAccessExpression
+        Identifier: ' Foo'
+        Identifier: 'a'
+    EnumMember
+      Identifier: '           // ok
+  c'
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' Foo'
+            Identifier: 'a'
+          Identifier: 'valueOf'
+    EnumMember
+      Identifier: ' // ok
+  d'
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' Foo'
+          Identifier: 'a'
+        Identifier: 'a'

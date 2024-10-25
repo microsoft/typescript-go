@@ -1,0 +1,34 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '// @noLib: true
+
+/// <reference path='fourslash.ts'/>
+
+// fix crash from #38407
+
+//// /**
+////  * @returns {modu/*1*/le:ControlFlow}
+////  */
+//// export function cargo() {
+//// }
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' excludes'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral

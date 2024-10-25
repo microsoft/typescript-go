@@ -1,0 +1,81 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'o'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  o'
+            Identifier: 'toString'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+    Parameter
+      Identifier: 'o'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  o'
+            Identifier: 'toString'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+    Parameter
+      Identifier: 'o'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  o'
+            Identifier: 'toString'
+  FunctionDeclaration
+    Identifier: ' user'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f1'
+          Identifier: 't'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  f2'
+          Identifier: 't'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // error in strict, unbounded T doesn't satisfy the constraint
+  f3'
+          Identifier: 't'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' // error in strict, unbounded T doesn't satisfy the constraint
+  t'
+            Identifier: 'toString'

@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          MethodDeclaration
+            NumericLiteral
+            TypeParameter
+              Identifier: 'T'
+            Block

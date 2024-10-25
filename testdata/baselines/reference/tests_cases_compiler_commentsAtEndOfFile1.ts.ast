@@ -1,0 +1,6 @@
+SourceFile
+  LabeledStatement
+    Identifier: '// @allowUnusedLabels: true
+
+Input'
+    EmptyStatement

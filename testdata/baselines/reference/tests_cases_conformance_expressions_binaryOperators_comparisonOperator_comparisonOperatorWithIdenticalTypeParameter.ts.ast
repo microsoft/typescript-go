@@ -1,0 +1,74 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            BinaryExpression
+              Identifier: ' t'
+              LessThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            BinaryExpression
+              Identifier: ' t'
+              LessThanEqualsToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r4'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanEqualsToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r5'
+            BinaryExpression
+              Identifier: ' t'
+              EqualsEqualsToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r6'
+            BinaryExpression
+              Identifier: ' t'
+              ExclamationEqualsToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r7'
+            BinaryExpression
+              Identifier: ' t'
+              EqualsEqualsEqualsToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r8'
+            BinaryExpression
+              Identifier: ' t'
+              ExclamationEqualsEqualsToken
+              Identifier: ' t'

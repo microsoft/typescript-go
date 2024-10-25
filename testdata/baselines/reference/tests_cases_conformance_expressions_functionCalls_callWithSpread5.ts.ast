@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nnnu'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+          OptionalType
+            NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nntnnnt'
+        UnionType
+          TupleType
+            NumberKeyword
+            NumberKeyword
+          TupleType
+            NumberKeyword
+            NumberKeyword
+            NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    Parameter
+      Identifier: ' bb'
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'c'
+      ArrayType
+        NumberKeyword
+    NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+fn'
+      SpreadElement
+        Identifier: 'nnnu'
+      Identifier: ' x'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      SpreadElement
+        Identifier: 'nntnnnt'
+      Identifier: ' x'

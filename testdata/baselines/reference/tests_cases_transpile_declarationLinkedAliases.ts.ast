@@ -1,0 +1,16 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' B'
+    QualifiedName
+      Identifier: ' A'
+      Identifier: 'C'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' B'

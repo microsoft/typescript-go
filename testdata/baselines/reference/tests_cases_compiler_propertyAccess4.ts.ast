@@ -1,0 +1,6 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NullKeyword
+        Identifier: 'toBAZ'

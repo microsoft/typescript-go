@@ -1,0 +1,220 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T10'
+    ArrayType
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T11'
+    TypeReference
+      Identifier: ' Array'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T12'
+    TypeOperator
+      ArrayType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T13'
+    TypeReference
+      Identifier: ' ReadonlyArray'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T20'
+    TupleType
+      NumberKeyword
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' T21'
+    TypeOperator
+      TupleType
+        NumberKeyword
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' T30'
+    TypeOperator
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T31'
+    TypeParameter
+      Identifier: 'T'
+    TypeOperator
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T32'
+    TypeOperator
+      TypeOperator
+        ArrayType
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T33'
+    TypeOperator
+      TypeReference
+        Identifier: ' Array'
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'ma'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' ra'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: ' mt'
+      TupleType
+        StringKeyword
+        StringKeyword
+    Parameter
+      Identifier: ' rt'
+      TypeOperator
+        TupleType
+          StringKeyword
+          StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    ma'
+          EqualsToken
+          Identifier: ' ra'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    ma'
+          EqualsToken
+          Identifier: ' mt'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    ma'
+          EqualsToken
+          Identifier: ' rt'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    ra'
+          EqualsToken
+          Identifier: ' ma'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    ra'
+          EqualsToken
+          Identifier: ' mt'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    ra'
+          EqualsToken
+          Identifier: ' rt'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    mt'
+          EqualsToken
+          Identifier: ' ma'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    mt'
+          EqualsToken
+          Identifier: ' ra'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    mt'
+          EqualsToken
+          Identifier: ' rt'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    rt'
+          EqualsToken
+          Identifier: ' ma'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    rt'
+          EqualsToken
+          Identifier: ' ra'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    rt'
+          EqualsToken
+          Identifier: ' mt'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeOperator
+          TupleType
+            NumberKeyword
+            NumberKeyword
+            RestType
+              ArrayType
+                NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+v'
+        NumericLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '        // Error
+v'
+        NumericLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '        // Error
+v'
+        NumericLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    DeleteExpression
+      ElementAccessExpression
+        Identifier: ' v'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '     // Error
+v'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '    // Error
+v'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    DeleteExpression
+      ElementAccessExpression
+        Identifier: ' v'
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          NumericLiteral

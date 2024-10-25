@@ -1,0 +1,55 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' db'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' doSomething'
+      Block
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'db'
+          Identifier: ' Database'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' someDecorator'
+    Parameter
+      Identifier: 'target'
+    Block
+      ReturnStatement
+        Identifier: ' target'
+  ClassDeclaration
+    Decorator
+      Identifier: 'someDecorator'
+    Identifier: ' MyClass'
+    PropertyDeclaration
+      Identifier: '
+    db'
+      TypeReference
+        Identifier: ' Database'
+    Constructor
+      Parameter
+        Identifier: 'db'
+        TypeReference
+          Identifier: ' Database'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'db'
+            EqualsToken
+            Identifier: ' db'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'db'
+              Identifier: 'doSomething'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'MyClass'

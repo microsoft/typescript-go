@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pairs'
+        AsExpression
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+              NumericLiteral
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+              NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Map'
+      Identifier: 'pairs'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' WeakMap'
+      Identifier: 'pairs'

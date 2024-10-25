@@ -1,0 +1,85 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+  optionalProp'
+      QuestionToken
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' func'
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' A'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' optionalProp'
+            Identifier: ' arg'
+      SwitchStatement
+        Identifier: 'optionalProp'
+        CaseBlock
+          CaseClause
+            Identifier: ' undefined'
+            ReturnStatement
+              Identifier: ' undefined'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              StringLiteral
+          DefaultClause
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+      assertUnreachable'
+                Identifier: 'optionalProp'
+  FunctionDeclaration
+    Identifier: ' func2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' optionalProp'
+            ElementAccessExpression
+              ArrayLiteralExpression
+                AsExpression
+                  StringLiteral
+                  TypeReference
+                    Identifier: ' const'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'Math'
+                  Identifier: 'random'
+      SwitchStatement
+        Identifier: 'optionalProp'
+        CaseBlock
+          CaseClause
+            Identifier: ' undefined'
+            ReturnStatement
+              Identifier: ' undefined'
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              StringLiteral
+          DefaultClause
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+      assertUnreachable'
+                Identifier: 'optionalProp'
+  FunctionDeclaration
+    Identifier: ' assertUnreachable'
+    Parameter
+      Identifier: '_'
+      NeverKeyword
+    NeverKeyword
+    Block
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+          StringLiteral

@@ -1,0 +1,14 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' moduleB'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IUseModuleA'
+        PropertySignature
+          Identifier: '
+        a'
+          TypeReference
+            QualifiedName
+              Identifier: ' moduleA'
+              Identifier: 'A'

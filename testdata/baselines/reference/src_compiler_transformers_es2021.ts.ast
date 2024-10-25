@@ -1,0 +1,406 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    AssignmentExpression'
+        ImportSpecifier
+          Identifier: '
+    Bundle'
+        ImportSpecifier
+          Identifier: '
+    chainBundle'
+        ImportSpecifier
+          Identifier: '
+    getNonAssignmentOperatorForCompoundAssignment'
+        ImportSpecifier
+          Identifier: '
+    isAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    isExpression'
+        ImportSpecifier
+          Identifier: '
+    isLeftHandSideExpression'
+        ImportSpecifier
+          Identifier: '
+    isLogicalOrCoalescingAssignmentExpression'
+        ImportSpecifier
+          Identifier: '
+    isPropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    isSimpleCopiableExpression'
+        ImportSpecifier
+          Identifier: '
+    LogicalOrCoalescingAssignmentOperator'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    skipParentheses'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    Token'
+        ImportSpecifier
+          Identifier: '
+    TransformationContext'
+        ImportSpecifier
+          Identifier: '
+    TransformFlags'
+        ImportSpecifier
+          Identifier: '
+    visitEachChild'
+        ImportSpecifier
+          Identifier: '
+    visitNode'
+        ImportSpecifier
+          Identifier: '
+    VisitResult'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' transformES2021'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    FunctionType
+      Parameter
+        Identifier: 'x'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          TypeReference
+            Identifier: ' Bundle'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' Bundle'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: '
+        hoistVariableDeclaration'
+              BindingElement
+                Identifier: '
+        factory'
+            Identifier: ' context'
+      ReturnStatement
+        CallExpression
+          Identifier: ' chainBundle'
+          Identifier: 'context'
+          Identifier: ' transformSourceFile'
+      FunctionDeclaration
+        Identifier: ' transformSourceFile'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' SourceFile'
+        Block
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'isDeclarationFile'
+            Block
+              ReturnStatement
+                Identifier: ' node'
+          ReturnStatement
+            CallExpression
+              Identifier: ' visitEachChild'
+              Identifier: 'node'
+              Identifier: ' visitor'
+              Identifier: ' context'
+      FunctionDeclaration
+        Identifier: ' visitor'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypeReference
+          Identifier: ' VisitResult'
+          TypeReference
+            Identifier: 'Node'
+        Block
+          IfStatement
+            BinaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'transformFlags'
+                  AmpersandToken
+                  PropertyAccessExpression
+                    Identifier: ' TransformFlags'
+                    Identifier: 'ContainsES2021'
+              EqualsEqualsEqualsToken
+              NumericLiteral
+            Block
+              ReturnStatement
+                Identifier: ' node'
+          IfStatement
+            CallExpression
+              Identifier: 'isLogicalOrCoalescingAssignmentExpression'
+              Identifier: 'node'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' transformLogicalAssignment'
+                  Identifier: 'node'
+          ReturnStatement
+            CallExpression
+              Identifier: ' visitEachChild'
+              Identifier: 'node'
+              Identifier: ' visitor'
+              Identifier: ' context'
+      FunctionDeclaration
+        Identifier: ' transformLogicalAssignment'
+        Parameter
+          Identifier: 'binaryExpression'
+          TypeReference
+            Identifier: ' AssignmentExpression'
+            TypeReference
+              Identifier: 'Token'
+              TypeReference
+                Identifier: 'LogicalOrCoalescingAssignmentOperator'
+        TypeReference
+          Identifier: ' VisitResult'
+          TypeReference
+            Identifier: 'Node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' operator'
+                PropertyAccessExpression
+                  Identifier: ' binaryExpression'
+                  Identifier: 'operatorToken'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' nonAssignmentOperator'
+                CallExpression
+                  Identifier: ' getNonAssignmentOperatorForCompoundAssignment'
+                  PropertyAccessExpression
+                    Identifier: 'operator'
+                    Identifier: 'kind'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' left'
+                CallExpression
+                  Identifier: ' skipParentheses'
+                  CallExpression
+                    Identifier: 'visitNode'
+                    PropertyAccessExpression
+                      Identifier: 'binaryExpression'
+                      Identifier: 'left'
+                    Identifier: ' visitor'
+                    Identifier: ' isLeftHandSideExpression'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' assignmentTarget'
+                Identifier: ' left'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' right'
+                CallExpression
+                  Identifier: ' skipParentheses'
+                  CallExpression
+                    Identifier: 'visitNode'
+                    PropertyAccessExpression
+                      Identifier: 'binaryExpression'
+                      Identifier: 'right'
+                    Identifier: ' visitor'
+                    Identifier: ' isExpression'
+          IfStatement
+            CallExpression
+              Identifier: 'isAccessExpression'
+              Identifier: 'left'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' propertyAccessTargetSimpleCopiable'
+                    CallExpression
+                      Identifier: ' isSimpleCopiableExpression'
+                      PropertyAccessExpression
+                        Identifier: 'left'
+                        Identifier: 'expression'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' propertyAccessTarget'
+                    ConditionalExpression
+                      Identifier: ' propertyAccessTargetSimpleCopiable'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' left'
+                        Identifier: 'expression'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                factory'
+                          Identifier: 'createTempVariable'
+                        Identifier: 'hoistVariableDeclaration'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' propertyAccessTargetAssignment'
+                    ConditionalExpression
+                      Identifier: ' propertyAccessTargetSimpleCopiable'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' left'
+                        Identifier: 'expression'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createAssignment'
+                        Identifier: '
+                propertyAccessTarget'
+                        PropertyAccessExpression
+                          Identifier: '
+                left'
+                          Identifier: 'expression'
+              IfStatement
+                CallExpression
+                  Identifier: 'isPropertyAccessExpression'
+                  Identifier: 'left'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                assignmentTarget'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createPropertyAccessExpression'
+                        Identifier: '
+                    propertyAccessTarget'
+                        PropertyAccessExpression
+                          Identifier: '
+                    left'
+                          Identifier: 'name'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                left'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createPropertyAccessExpression'
+                        Identifier: '
+                    propertyAccessTargetAssignment'
+                        PropertyAccessExpression
+                          Identifier: '
+                    left'
+                          Identifier: 'name'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' elementAccessArgumentSimpleCopiable'
+                        CallExpression
+                          Identifier: ' isSimpleCopiableExpression'
+                          PropertyAccessExpression
+                            Identifier: 'left'
+                            Identifier: 'argumentExpression'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' elementAccessArgument'
+                        ConditionalExpression
+                          Identifier: ' elementAccessArgumentSimpleCopiable'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: ' left'
+                            Identifier: 'argumentExpression'
+                          ColonToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    factory'
+                              Identifier: 'createTempVariable'
+                            Identifier: 'hoistVariableDeclaration'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+                assignmentTarget'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createElementAccessExpression'
+                        Identifier: '
+                    propertyAccessTarget'
+                        Identifier: '
+                    elementAccessArgument'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                left'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createElementAccessExpression'
+                        Identifier: '
+                    propertyAccessTargetAssignment'
+                        ConditionalExpression
+                          Identifier: '
+                    elementAccessArgumentSimpleCopiable'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: ' left'
+                            Identifier: 'argumentExpression'
+                          ColonToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' factory'
+                              Identifier: 'createAssignment'
+                            Identifier: '
+                        elementAccessArgument'
+                            PropertyAccessExpression
+                              Identifier: '
+                        left'
+                              Identifier: 'argumentExpression'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createBinaryExpression'
+              Identifier: '
+            left'
+              Identifier: '
+            nonAssignmentOperator'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            factory'
+                  Identifier: 'createParenthesizedExpression'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                factory'
+                    Identifier: 'createAssignment'
+                  Identifier: '
+                    assignmentTarget'
+                  Identifier: '
+                    right'

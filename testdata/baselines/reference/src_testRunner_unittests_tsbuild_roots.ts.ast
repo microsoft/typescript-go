@@ -1,0 +1,503 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' forEachScenarioForRootsFromReferencedProject'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' composite'
+                                    TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    include'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' composite'
+                                    TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    include'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' composite'
+                                    TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    include'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' composite'
+                                    TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    include'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+            caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+            edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                sys'
+                                  Identifier: 'rimrafSync'
+                                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        forEachScenarioForRootsFromReferencedProject'
+                      FalseKeyword
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'subScenario'
+                        Parameter
+                          Identifier: ' sys'
+                        Parameter
+                          Identifier: ' edits'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                verifyTsc'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                    scenario'
+                                  StringLiteral
+                                ShorthandPropertyAssignment
+                                  Identifier: '
+                    subScenario'
+                                PropertyAssignment
+                                  Identifier: '
+                    commandLineArgs'
+                                  ArrayLiteralExpression
+                                    StringLiteral
+                                    StringLiteral
+                                    StringLiteral
+                                    StringLiteral
+                                    StringLiteral
+                                ShorthandPropertyAssignment
+                                  Identifier: '
+                    sys'
+                                PropertyAssignment
+                                  Identifier: '
+                    edits'
+                                  CallExpression
+                                    Identifier: ' edits'

@@ -1,0 +1,410 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' T'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' T'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        LiteralType
+          StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        StringKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      StaticKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Parameter
+        Identifier: ' y'
+        QuestionToken
+        AnyKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'foo'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' D'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' d'
+            Identifier: 'foo'
+          NumericLiteral

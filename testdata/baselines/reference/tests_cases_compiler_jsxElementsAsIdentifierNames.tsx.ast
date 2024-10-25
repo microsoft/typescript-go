@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+  FunctionDeclaration
+    Identifier: ' A'
+    Block
+      ReturnStatement
+        JsxSelfClosingElement
+          Identifier: 'package'
+          JsxAttributes
+  FunctionDeclaration
+    Identifier: ' B'
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'package'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'package'

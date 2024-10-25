@@ -1,0 +1,35 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' recursive'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ArrowFunction
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'subkey'
+                TypeReference
+                  Identifier: ' T'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' recursive'
+      ReturnStatement
+        AsExpression
+          Identifier: ' x'
+          IntersectionType
+            TypeQuery
+              Identifier: ' x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' p'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        CallExpression
+          CallExpression
+            Identifier: ' recursive'
+          NumericLiteral

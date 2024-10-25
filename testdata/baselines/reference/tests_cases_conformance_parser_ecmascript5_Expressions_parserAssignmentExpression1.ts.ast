@@ -1,0 +1,8 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        CallExpression
+          Identifier: 'foo'
+      EqualsToken
+      Identifier: ' bar'

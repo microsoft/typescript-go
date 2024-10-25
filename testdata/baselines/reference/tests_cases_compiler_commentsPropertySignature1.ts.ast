@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    /** own x*/
+    x'
+            NumericLiteral

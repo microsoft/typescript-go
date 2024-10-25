@@ -1,0 +1,4393 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ArrowFunction'
+        ImportSpecifier
+          Identifier: '
+    AwaitExpression'
+        ImportSpecifier
+          Identifier: '
+    BindingName'
+        ImportSpecifier
+          Identifier: '
+    BindingPattern'
+        ImportSpecifier
+          Identifier: '
+    Block'
+        ImportSpecifier
+          Identifier: '
+    CallExpression'
+        ImportSpecifier
+          Identifier: '
+    canBeConvertedToAsync'
+        ImportSpecifier
+          Identifier: '
+    canHaveSymbol'
+        ImportSpecifier
+          Identifier: '
+    CodeFixContext'
+        ImportSpecifier
+          Identifier: '
+    concatenate'
+        ImportSpecifier
+          Identifier: '
+    createMultiMap'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    elementAt'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    every'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    firstOrUndefined'
+        ImportSpecifier
+          Identifier: '
+    flatMap'
+        ImportSpecifier
+          Identifier: '
+    forEach'
+        ImportSpecifier
+          Identifier: '
+    forEachChild'
+        ImportSpecifier
+          Identifier: '
+    forEachReturnStatement'
+        ImportSpecifier
+          Identifier: '
+    FunctionExpression'
+        ImportSpecifier
+          Identifier: '
+    FunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    GeneratedIdentifierFlags'
+        ImportSpecifier
+          Identifier: '
+    getContainingFunction'
+        ImportSpecifier
+          Identifier: '
+    getNodeId'
+        ImportSpecifier
+          Identifier: '
+    getObjectFlags'
+        ImportSpecifier
+          Identifier: '
+    getOriginalNode'
+        ImportSpecifier
+          Identifier: '
+    getSymbolId'
+        ImportSpecifier
+          Identifier: '
+    getSynthesizedDeepClone'
+        ImportSpecifier
+          Identifier: '
+    getSynthesizedDeepCloneWithReplacements'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    hasPropertyAccessExpressionWithName'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    idText'
+        ImportSpecifier
+          Identifier: '
+    isBindingElement'
+        ImportSpecifier
+          Identifier: '
+    isBlock'
+        ImportSpecifier
+          Identifier: '
+    isCallExpression'
+        ImportSpecifier
+          Identifier: '
+    isExpression'
+        ImportSpecifier
+          Identifier: '
+    isFixablePromiseHandler'
+        ImportSpecifier
+          Identifier: '
+    isFunctionLike'
+        ImportSpecifier
+          Identifier: '
+    isFunctionLikeDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isGeneratedIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isInJSFile'
+        ImportSpecifier
+          Identifier: '
+    isObjectBindingPattern'
+        ImportSpecifier
+          Identifier: '
+    isOmittedExpression'
+        ImportSpecifier
+          Identifier: '
+    isParameter'
+        ImportSpecifier
+          Identifier: '
+    isPropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    isReturnStatement'
+        ImportSpecifier
+          Identifier: '
+    isReturnStatementWithFixablePromiseHandler'
+        ImportSpecifier
+          Identifier: '
+    isVariableDeclaration'
+        ImportSpecifier
+          Identifier: '
+    lastOrUndefined'
+        ImportSpecifier
+          Identifier: '
+    moveRangePastModifiers'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeFlags'
+        ImportSpecifier
+          Identifier: '
+    ObjectFlags'
+        ImportSpecifier
+          Identifier: '
+    PropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    returnsPromise'
+        ImportSpecifier
+          Identifier: '
+    ReturnStatement'
+        ImportSpecifier
+          Identifier: '
+    returnTrue'
+        ImportSpecifier
+          Identifier: '
+    Signature'
+        ImportSpecifier
+          Identifier: '
+    SignatureKind'
+        ImportSpecifier
+          Identifier: '
+    skipTrivia'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    Statement'
+        ImportSpecifier
+          Identifier: '
+    Symbol'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    tryCast'
+        ImportSpecifier
+          Identifier: '
+    TryStatement'
+        ImportSpecifier
+          Identifier: '
+    Type'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+        ImportSpecifier
+          Identifier: '
+    TypeNode'
+        ImportSpecifier
+          Identifier: '
+    TypeReference'
+        ImportSpecifier
+          Identifier: '
+    UnionReduction'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'This_may_be_converted_to_an_async_function'
+            Identifier: 'code'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' codeActionSucceeded'
+        TrueKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+            TypeReference
+              Identifier: ' CodeFixContext'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        codeActionSucceeded'
+                EqualsToken
+                TrueKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' t'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' convertToAsyncFunction'
+                        Identifier: 't'
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'sourceFile'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' context'
+                            Identifier: 'span'
+                          Identifier: 'start'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' context'
+                              Identifier: 'program'
+                            Identifier: 'getTypeChecker'
+            ReturnStatement
+              ConditionalExpression
+                Identifier: ' codeActionSucceeded'
+                QuestionToken
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'createCodeFixAction'
+                    Identifier: 'fixId'
+                    Identifier: ' changes'
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Convert_to_async_function'
+                    Identifier: ' fixId'
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Convert_all_to_async_functions'
+                ColonToken
+                ArrayLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' err'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' convertToAsyncFunction'
+                  Identifier: 'changes'
+                  PropertyAccessExpression
+                    Identifier: ' err'
+                    Identifier: 'file'
+                  PropertyAccessExpression
+                    Identifier: ' err'
+                    Identifier: 'start'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'program'
+                      Identifier: 'getTypeChecker'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' SynthBindingNameKind'
+    EnumMember
+      Identifier: '
+    Identifier'
+    EnumMember
+      Identifier: '
+    BindingPattern'
+  TypeAliasDeclaration
+    Identifier: ' SynthBindingName'
+    UnionType
+      TypeReference
+        Identifier: ' SynthBindingPattern'
+      TypeReference
+        Identifier: ' SynthIdentifier'
+  InterfaceDeclaration
+    Identifier: ' SynthBindingPattern'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' SynthBindingNameKind'
+          Identifier: 'BindingPattern'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' elements'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SynthBindingName'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' bindingPattern'
+      TypeReference
+        Identifier: ' BindingPattern'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' types'
+      ArrayType
+        TypeReference
+          Identifier: ' Type'
+  InterfaceDeclaration
+    Identifier: ' SynthIdentifier'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' SynthBindingNameKind'
+          Identifier: 'Identifier'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' identifier'
+      TypeReference
+        Identifier: ' Identifier'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' types'
+      ArrayType
+        TypeReference
+          Identifier: ' Type'
+    PropertySignature
+      Identifier: '
+    /** A declaration for this identifier has already been generated */
+    hasBeenDeclared'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    hasBeenReferenced'
+      BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' Transformer'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' synthNamesMap'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' SynthIdentifier'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' setOfExpressionsToReturn'
+      TypeReference
+        Identifier: ' ReadonlySet'
+        NumberKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' isInJSFile'
+      BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' PromiseReturningCallExpression'
+    TypeParameter
+      Identifier: 'Name'
+      StringKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CallExpression'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' expression'
+      IntersectionType
+        TypeReference
+          Identifier: ' PropertyAccessExpression'
+        TypeLiteral
+          PropertySignature
+            ReadonlyKeyword
+            Identifier: ' escapedText'
+            TypeReference
+              Identifier: ' Name'
+  FunctionDeclaration
+    Identifier: ' convertToAsyncFunction'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tokenAtPosition'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' position'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' functionToConvert'
+            UnionType
+              TypeReference
+                Identifier: ' FunctionLikeDeclaration'
+              UndefinedKeyword
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              CallExpression
+                Identifier: '
+        isIdentifier'
+                Identifier: 'tokenAtPosition'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isVariableDeclaration'
+                PropertyAccessExpression
+                  Identifier: 'tokenAtPosition'
+                  Identifier: 'parent'
+            AmpersandAmpersandToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: '
+        tokenAtPosition'
+                Identifier: 'parent'
+              Identifier: 'initializer'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isFunctionLikeDeclaration'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'tokenAtPosition'
+                Identifier: 'parent'
+              Identifier: 'initializer'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        functionToConvert'
+              EqualsToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' tokenAtPosition'
+                  Identifier: 'parent'
+                Identifier: 'initializer'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        functionToConvert'
+              EqualsToken
+              CallExpression
+                Identifier: ' tryCast'
+                CallExpression
+                  Identifier: 'getContainingFunction'
+                  CallExpression
+                    Identifier: 'getTokenAtPosition'
+                    Identifier: 'sourceFile'
+                    Identifier: ' position'
+                Identifier: ' canBeConvertedToAsync'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'functionToConvert'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' synthNamesMap'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              TypeReference
+                Identifier: ' SynthIdentifier'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isInJavascript'
+            CallExpression
+              Identifier: ' isInJSFile'
+              Identifier: 'functionToConvert'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' setOfExpressionsToReturn'
+            CallExpression
+              Identifier: ' getAllPromiseExpressionsToReturn'
+              Identifier: 'functionToConvert'
+              Identifier: ' checker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' functionToConvertRenamed'
+            CallExpression
+              Identifier: ' renameCollidingVarNames'
+              Identifier: 'functionToConvert'
+              Identifier: ' checker'
+              Identifier: ' synthNamesMap'
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'returnsPromise'
+            Identifier: 'functionToConvertRenamed'
+            Identifier: ' checker'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' returnStatements'
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' functionToConvertRenamed'
+                  Identifier: 'body'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' isBlock'
+                  PropertyAccessExpression
+                    Identifier: 'functionToConvertRenamed'
+                    Identifier: 'body'
+              QuestionToken
+              CallExpression
+                Identifier: ' getReturnStatementsWithPromiseHandlers'
+                PropertyAccessExpression
+                  Identifier: 'functionToConvertRenamed'
+                  Identifier: 'body'
+                Identifier: ' checker'
+              ColonToken
+              Identifier: ' emptyArray'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' transformer'
+            TypeReference
+              Identifier: ' Transformer'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' checker'
+              ShorthandPropertyAssignment
+                Identifier: ' synthNamesMap'
+              ShorthandPropertyAssignment
+                Identifier: ' setOfExpressionsToReturn'
+              PropertyAssignment
+                Identifier: ' isInJSFile'
+                Identifier: ' isInJavascript'
+      IfStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'returnStatements'
+            Identifier: 'length'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' pos'
+            CallExpression
+              Identifier: ' skipTrivia'
+              PropertyAccessExpression
+                Identifier: 'sourceFile'
+                Identifier: 'text'
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' moveRangePastModifiers'
+                  Identifier: 'functionToConvert'
+                Identifier: 'pos'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'insertModifierAt'
+          Identifier: 'sourceFile'
+          Identifier: ' pos'
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'AsyncKeyword'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' suffix'
+              StringLiteral
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' returnStatement'
+        Identifier: ' returnStatements'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        forEachChild'
+              Identifier: 'returnStatement'
+              FunctionExpression
+                Identifier: ' visit'
+                Parameter
+                  Identifier: 'node'
+                Block
+                  IfStatement
+                    CallExpression
+                      Identifier: 'isCallExpression'
+                      Identifier: 'node'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' newNodes'
+                            CallExpression
+                              Identifier: ' transformExpression'
+                              Identifier: 'node'
+                              Identifier: ' node'
+                              Identifier: ' transformer'
+                              FalseKeyword
+                      IfStatement
+                        CallExpression
+                          Identifier: 'hasFailed'
+                        Block
+                          ReturnStatement
+                            TrueKeyword
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                changes'
+                            Identifier: 'replaceNodeWithNodes'
+                          Identifier: 'sourceFile'
+                          Identifier: ' returnStatement'
+                          Identifier: ' newNodes'
+                    IfStatement
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'isFunctionLike'
+                          Identifier: 'node'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                forEachChild'
+                            Identifier: 'node'
+                            Identifier: ' visit'
+                        IfStatement
+                          CallExpression
+                            Identifier: 'hasFailed'
+                          Block
+                            ReturnStatement
+                              TrueKeyword
+          IfStatement
+            CallExpression
+              Identifier: 'hasFailed'
+            Block
+              ReturnStatement
+  FunctionDeclaration
+    Identifier: ' getReturnStatementsWithPromiseHandlers'
+    Parameter
+      Identifier: 'body'
+      TypeReference
+        Identifier: ' Block'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' ReturnStatement'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' res'
+            ArrayType
+              TypeReference
+                Identifier: ' ReturnStatement'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachReturnStatement'
+          Identifier: 'body'
+          ArrowFunction
+            Parameter
+              Identifier: ' ret'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'isReturnStatementWithFixablePromiseHandler'
+                  Identifier: 'ret'
+                  Identifier: ' checker'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' res'
+                      Identifier: 'push'
+                    Identifier: 'ret'
+      ReturnStatement
+        Identifier: ' res'
+  FunctionDeclaration
+    Identifier: ' getAllPromiseExpressionsToReturn'
+    Parameter
+      Identifier: 'func'
+      TypeReference
+        Identifier: ' FunctionLikeDeclaration'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    TypeReference
+      Identifier: ' Set'
+      NumberKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'func'
+            Identifier: 'body'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' Set'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' setOfExpressionsToReturn'
+            NewExpression
+              Identifier: ' Set'
+              NumberKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachChild'
+          PropertyAccessExpression
+            Identifier: 'func'
+            Identifier: 'body'
+          FunctionExpression
+            Identifier: ' visit'
+            Parameter
+              Identifier: 'node'
+              TypeReference
+                Identifier: ' Node'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'isPromiseReturningCallExpression'
+                  Identifier: 'node'
+                  Identifier: ' checker'
+                  StringLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            setOfExpressionsToReturn'
+                        Identifier: 'add'
+                      CallExpression
+                        Identifier: 'getNodeId'
+                        Identifier: 'node'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            forEach'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'arguments'
+                      Identifier: ' visit'
+                IfStatement
+                  BinaryExpression
+                    CallExpression
+                      Identifier: '
+            isPromiseReturningCallExpression'
+                      Identifier: 'node'
+                      Identifier: ' checker'
+                      StringLiteral
+                    BarBarToken
+                    CallExpression
+                      Identifier: '
+            isPromiseReturningCallExpression'
+                      Identifier: 'node'
+                      Identifier: ' checker'
+                      StringLiteral
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            setOfExpressionsToReturn'
+                          Identifier: 'add'
+                        CallExpression
+                          Identifier: 'getNodeId'
+                          Identifier: 'node'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+            // if .catch() or .finally() is the last call in the chain, move leftward in the chain until we hit something else that should be returned
+            forEachChild'
+                        Identifier: 'node'
+                        Identifier: ' visit'
+                  IfStatement
+                    CallExpression
+                      Identifier: 'isPromiseTypedExpression'
+                      Identifier: 'node'
+                      Identifier: ' checker'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            setOfExpressionsToReturn'
+                            Identifier: 'add'
+                          CallExpression
+                            Identifier: 'getNodeId'
+                            Identifier: 'node'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            forEachChild'
+                          Identifier: 'node'
+                          Identifier: ' visit'
+      ReturnStatement
+        Identifier: ' setOfExpressionsToReturn'
+  FunctionDeclaration
+    Identifier: ' isPromiseReturningCallExpression'
+    TypeParameter
+      Identifier: 'Name'
+      StringKeyword
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' name'
+      TypeReference
+        Identifier: ' Name'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' PromiseReturningCallExpression'
+        TypeReference
+          Identifier: 'Name'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isCallExpression'
+            Identifier: 'node'
+        ReturnStatement
+          FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isExpressionOfName'
+            CallExpression
+              Identifier: ' hasPropertyAccessExpressionWithName'
+              Identifier: 'node'
+              Identifier: ' name'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nodeType'
+            BinaryExpression
+              Identifier: ' isExpressionOfName'
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' checker'
+                  Identifier: 'getTypeAtLocation'
+                Identifier: 'node'
+      ReturnStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'nodeType'
+                AmpersandAmpersandToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' checker'
+                    Identifier: 'getPromisedTypeOfPromise'
+                  Identifier: 'nodeType'
+  FunctionDeclaration
+    Identifier: ' isReferenceToType'
+    Parameter
+      Identifier: 'type'
+      TypeReference
+        Identifier: ' Type'
+    Parameter
+      Identifier: ' target'
+      TypeReference
+        Identifier: ' Type'
+    Block
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            ParenthesizedExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: 'getObjectFlags'
+                  Identifier: 'type'
+                AmpersandToken
+                PropertyAccessExpression
+                  Identifier: ' ObjectFlags'
+                  Identifier: 'Reference'
+            ExclamationEqualsEqualsToken
+            NumericLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            PropertyAccessExpression
+              ParenthesizedExpression
+                AsExpression
+                  Identifier: 'type'
+                  TypeReference
+                    Identifier: ' TypeReference'
+              Identifier: 'target'
+            EqualsEqualsEqualsToken
+            Identifier: ' target'
+  FunctionDeclaration
+    Identifier: ' getExplicitPromisedTypeOfPromiseReturningCallExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' PromiseReturningCallExpression'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+    Parameter
+      Identifier: ' callback'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'expression'
+              Identifier: 'name'
+            Identifier: 'escapedText'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' promiseType'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getTypeAtLocation'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'expression'
+                Identifier: 'expression'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: '
+        isReferenceToType'
+            Identifier: 'promiseType'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getPromiseType'
+          BarBarToken
+          CallExpression
+            Identifier: '
+        isReferenceToType'
+            Identifier: 'promiseType'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getPromiseLikeType'
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'expression'
+                  Identifier: 'name'
+                Identifier: 'escapedText'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'callback'
+                  EqualsEqualsEqualsToken
+                  CallExpression
+                    Identifier: ' elementAt'
+                    PropertyAccessExpression
+                      Identifier: 'node'
+                      Identifier: 'arguments'
+                    NumericLiteral
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' elementAt'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'typeArguments'
+                      NumericLiteral
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'callback'
+                    EqualsEqualsEqualsToken
+                    CallExpression
+                      Identifier: ' elementAt'
+                      PropertyAccessExpression
+                        Identifier: 'node'
+                        Identifier: 'arguments'
+                      NumericLiteral
+                  Block
+                    ReturnStatement
+                      CallExpression
+                        Identifier: ' elementAt'
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'typeArguments'
+                        NumericLiteral
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' elementAt'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'typeArguments'
+                  NumericLiteral
+  FunctionDeclaration
+    Identifier: ' isPromiseTypedExpression'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Expression'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'isExpression'
+            Identifier: 'node'
+        ReturnStatement
+          FalseKeyword
+      ReturnStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'checker'
+                Identifier: 'getPromisedTypeOfPromise'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'checker'
+                  Identifier: 'getTypeAtLocation'
+                Identifier: 'node'
+  FunctionDeclaration
+    Identifier: ' renameCollidingVarNames'
+    Parameter
+      Identifier: 'nodeToRename'
+      TypeReference
+        Identifier: ' FunctionLikeDeclaration'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' synthNamesMap'
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        TypeReference
+          Identifier: ' SynthIdentifier'
+    TypeReference
+      Identifier: ' FunctionLikeDeclaration'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' identsToRenameMap'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              TypeReference
+                Identifier: ' Identifier'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' collidingSymbolMap'
+            CallExpression
+              Identifier: ' createMultiMap'
+              StringKeyword
+              TypeReference
+                Identifier: ' Symbol'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachChild'
+          Identifier: 'nodeToRename'
+          FunctionExpression
+            Identifier: ' visit'
+            Parameter
+              Identifier: 'node'
+              TypeReference
+                Identifier: ' Node'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isIdentifier'
+                    Identifier: 'node'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            forEachChild'
+                      Identifier: 'node'
+                      Identifier: ' visit'
+                  ReturnStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' symbol'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' checker'
+                        Identifier: 'getSymbolAtLocation'
+                      Identifier: 'node'
+              IfStatement
+                Identifier: 'symbol'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' type'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' checker'
+                            Identifier: 'getTypeAtLocation'
+                          Identifier: 'node'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' lastCallSignature'
+                        CallExpression
+                          Identifier: ' getLastCallSignature'
+                          Identifier: 'type'
+                          Identifier: ' checker'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' symbolIdString'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              Identifier: ' getSymbolId'
+                              Identifier: 'symbol'
+                            Identifier: 'toString'
+                  IfStatement
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          Identifier: 'lastCallSignature'
+                          AmpersandAmpersandToken
+                          PrefixUnaryExpression
+                            CallExpression
+                              Identifier: 'isParameter'
+                              PropertyAccessExpression
+                                Identifier: 'node'
+                                Identifier: 'parent'
+                        AmpersandAmpersandToken
+                        PrefixUnaryExpression
+                          CallExpression
+                            Identifier: 'isFunctionLikeDeclaration'
+                            PropertyAccessExpression
+                              Identifier: 'node'
+                              Identifier: 'parent'
+                      AmpersandAmpersandToken
+                      PrefixUnaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'synthNamesMap'
+                            Identifier: 'has'
+                          Identifier: 'symbolIdString'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' firstParameter'
+                            CallExpression
+                              Identifier: ' firstOrUndefined'
+                              PropertyAccessExpression
+                                Identifier: 'lastCallSignature'
+                                Identifier: 'parameters'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' ident'
+                            BinaryExpression
+                              BinaryExpression
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' firstParameter'
+                                    QuestionDotToken
+                                    Identifier: 'valueDeclaration'
+                                  AmpersandAmpersandToken
+                                  CallExpression
+                                    Identifier: ' isParameter'
+                                    PropertyAccessExpression
+                                      Identifier: 'firstParameter'
+                                      Identifier: 'valueDeclaration'
+                                AmpersandAmpersandToken
+                                CallExpression
+                                  Identifier: ' tryCast'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'firstParameter'
+                                      Identifier: 'valueDeclaration'
+                                    Identifier: 'name'
+                                  Identifier: ' isIdentifier'
+                              BarBarToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' factory'
+                                  Identifier: 'createUniqueName'
+                                StringLiteral
+                                PropertyAccessExpression
+                                  Identifier: ' GeneratedIdentifierFlags'
+                                  Identifier: 'Optimistic'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' synthName'
+                            CallExpression
+                              Identifier: ' getNewNameIfConflict'
+                              Identifier: 'ident'
+                              Identifier: ' collidingSymbolMap'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                synthNamesMap'
+                            Identifier: 'set'
+                          Identifier: 'symbolIdString'
+                          Identifier: ' synthName'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                collidingSymbolMap'
+                            Identifier: 'add'
+                          PropertyAccessExpression
+                            Identifier: 'ident'
+                            Identifier: 'text'
+                          Identifier: ' symbol'
+                    IfStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'node'
+                          Identifier: 'parent'
+                        AmpersandAmpersandToken
+                        ParenthesizedExpression
+                          BinaryExpression
+                            BinaryExpression
+                              CallExpression
+                                Identifier: 'isParameter'
+                                PropertyAccessExpression
+                                  Identifier: 'node'
+                                  Identifier: 'parent'
+                              BarBarToken
+                              CallExpression
+                                Identifier: ' isVariableDeclaration'
+                                PropertyAccessExpression
+                                  Identifier: 'node'
+                                  Identifier: 'parent'
+                            BarBarToken
+                            CallExpression
+                              Identifier: ' isBindingElement'
+                              PropertyAccessExpression
+                                Identifier: 'node'
+                                Identifier: 'parent'
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' originalName'
+                              PropertyAccessExpression
+                                Identifier: ' node'
+                                Identifier: 'text'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' collidingSymbols'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' collidingSymbolMap'
+                                  Identifier: 'get'
+                                Identifier: 'originalName'
+                        IfStatement
+                          BinaryExpression
+                            Identifier: 'collidingSymbols'
+                            AmpersandAmpersandToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' collidingSymbols'
+                                Identifier: 'some'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: 'prevSymbol'
+                                EqualsGreaterThanToken
+                                BinaryExpression
+                                  Identifier: ' prevSymbol'
+                                  ExclamationEqualsEqualsToken
+                                  Identifier: ' symbol'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' newName'
+                                  CallExpression
+                                    Identifier: ' getNewNameIfConflict'
+                                    Identifier: 'node'
+                                    Identifier: ' collidingSymbolMap'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    identsToRenameMap'
+                                  Identifier: 'set'
+                                Identifier: 'symbolIdString'
+                                PropertyAccessExpression
+                                  Identifier: ' newName'
+                                  Identifier: 'identifier'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    synthNamesMap'
+                                  Identifier: 'set'
+                                Identifier: 'symbolIdString'
+                                Identifier: ' newName'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    collidingSymbolMap'
+                                  Identifier: 'add'
+                                Identifier: 'originalName'
+                                Identifier: ' symbol'
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' identifier'
+                                  CallExpression
+                                    Identifier: ' getSynthesizedDeepClone'
+                                    Identifier: 'node'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    synthNamesMap'
+                                  Identifier: 'set'
+                                Identifier: 'symbolIdString'
+                                CallExpression
+                                  Identifier: ' createSynthIdentifier'
+                                  Identifier: 'identifier'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    collidingSymbolMap'
+                                  Identifier: 'add'
+                                Identifier: 'originalName'
+                                Identifier: ' symbol'
+      ReturnStatement
+        CallExpression
+          Identifier: ' getSynthesizedDeepCloneWithReplacements'
+          Identifier: 'nodeToRename'
+          TrueKeyword
+          ArrowFunction
+            Parameter
+              Identifier: ' original'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'isBindingElement'
+                      Identifier: 'original'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: ' isIdentifier'
+                      PropertyAccessExpression
+                        Identifier: 'original'
+                        Identifier: 'name'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    Identifier: ' isObjectBindingPattern'
+                    PropertyAccessExpression
+                      Identifier: 'original'
+                      Identifier: 'parent'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' symbol'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' checker'
+                            Identifier: 'getSymbolAtLocation'
+                          PropertyAccessExpression
+                            Identifier: 'original'
+                            Identifier: 'name'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' renameInfo'
+                        BinaryExpression
+                          Identifier: ' symbol'
+                          AmpersandAmpersandToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' identsToRenameMap'
+                              Identifier: 'get'
+                            CallExpression
+                              Identifier: 'String'
+                              CallExpression
+                                Identifier: 'getSymbolId'
+                                Identifier: 'symbol'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'renameInfo'
+                      AmpersandAmpersandToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' renameInfo'
+                          Identifier: 'text'
+                        ExclamationEqualsEqualsToken
+                        CallExpression
+                          PropertyAccessExpression
+                            ParenthesizedExpression
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'original'
+                                  Identifier: 'name'
+                                BarBarToken
+                                PropertyAccessExpression
+                                  Identifier: ' original'
+                                  Identifier: 'propertyName'
+                            Identifier: 'getText'
+                    Block
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' factory'
+                            Identifier: 'createBindingElement'
+                          PropertyAccessExpression
+                            Identifier: '
+                    original'
+                            Identifier: 'dotDotDotToken'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    original'
+                              Identifier: 'propertyName'
+                            BarBarToken
+                            PropertyAccessExpression
+                              Identifier: ' original'
+                              Identifier: 'name'
+                          Identifier: '
+                    renameInfo'
+                          PropertyAccessExpression
+                            Identifier: '
+                    original'
+                            Identifier: 'initializer'
+                IfStatement
+                  CallExpression
+                    Identifier: 'isIdentifier'
+                    Identifier: 'original'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' symbol'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' checker'
+                              Identifier: 'getSymbolAtLocation'
+                            Identifier: 'original'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' renameInfo'
+                          BinaryExpression
+                            Identifier: ' symbol'
+                            AmpersandAmpersandToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' identsToRenameMap'
+                                Identifier: 'get'
+                              CallExpression
+                                Identifier: 'String'
+                                CallExpression
+                                  Identifier: 'getSymbolId'
+                                  Identifier: 'symbol'
+                    IfStatement
+                      Identifier: 'renameInfo'
+                      Block
+                        ReturnStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' factory'
+                              Identifier: 'createIdentifier'
+                            PropertyAccessExpression
+                              Identifier: 'renameInfo'
+                              Identifier: 'text'
+  FunctionDeclaration
+    Identifier: ' getNewNameIfConflict'
+    Parameter
+      Identifier: 'name'
+      TypeReference
+        Identifier: ' Identifier'
+    Parameter
+      Identifier: ' originalNames'
+      TypeReference
+        Identifier: ' ReadonlyMap'
+        StringKeyword
+        ArrayType
+          TypeReference
+            Identifier: ' Symbol'
+    TypeReference
+      Identifier: ' SynthIdentifier'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' numVarsSameName'
+            PropertyAccessExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'originalNames'
+                      Identifier: 'get'
+                    PropertyAccessExpression
+                      Identifier: 'name'
+                      Identifier: 'text'
+                  BarBarToken
+                  Identifier: ' emptyArray'
+              Identifier: 'length'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' identifier'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' numVarsSameName'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              QuestionToken
+              Identifier: ' name'
+              ColonToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createIdentifier'
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'name'
+                      Identifier: 'text'
+                    PlusToken
+                    StringLiteral
+                  PlusToken
+                  Identifier: ' numVarsSameName'
+      ReturnStatement
+        CallExpression
+          Identifier: ' createSynthIdentifier'
+          Identifier: 'identifier'
+  FunctionDeclaration
+    Identifier: ' hasFailed'
+    Block
+      ReturnStatement
+        PrefixUnaryExpression
+          Identifier: 'codeActionSucceeded'
+  FunctionDeclaration
+    Identifier: ' silentFail'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    codeActionSucceeded'
+          EqualsToken
+          FalseKeyword
+      ReturnStatement
+        Identifier: ' emptyArray'
+  FunctionDeclaration
+    Identifier: ' transformExpression'
+    Parameter
+      Identifier: 'returnContextNode'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    Parameter
+      Identifier: ' hasContinuation'
+      BooleanKeyword
+    Parameter
+      Identifier: ' continuationArgName'
+      QuestionToken
+      TypeReference
+        Identifier: ' SynthBindingName'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' Statement'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isPromiseReturningCallExpression'
+          Identifier: 'node'
+          PropertyAccessExpression
+            Identifier: ' transformer'
+            Identifier: 'checker'
+          StringLiteral
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' transformThen'
+              Identifier: 'node'
+              CallExpression
+                Identifier: ' elementAt'
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'arguments'
+                NumericLiteral
+              CallExpression
+                Identifier: ' elementAt'
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'arguments'
+                NumericLiteral
+              Identifier: ' transformer'
+              Identifier: ' hasContinuation'
+              Identifier: ' continuationArgName'
+      IfStatement
+        CallExpression
+          Identifier: 'isPromiseReturningCallExpression'
+          Identifier: 'node'
+          PropertyAccessExpression
+            Identifier: ' transformer'
+            Identifier: 'checker'
+          StringLiteral
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' transformCatch'
+              Identifier: 'node'
+              CallExpression
+                Identifier: ' elementAt'
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'arguments'
+                NumericLiteral
+              Identifier: ' transformer'
+              Identifier: ' hasContinuation'
+              Identifier: ' continuationArgName'
+      IfStatement
+        CallExpression
+          Identifier: 'isPromiseReturningCallExpression'
+          Identifier: 'node'
+          PropertyAccessExpression
+            Identifier: ' transformer'
+            Identifier: 'checker'
+          StringLiteral
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' transformFinally'
+              Identifier: 'node'
+              CallExpression
+                Identifier: ' elementAt'
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'arguments'
+                NumericLiteral
+              Identifier: ' transformer'
+              Identifier: ' hasContinuation'
+              Identifier: ' continuationArgName'
+      IfStatement
+        CallExpression
+          Identifier: 'isPropertyAccessExpression'
+          Identifier: 'node'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' transformExpression'
+              Identifier: 'returnContextNode'
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'expression'
+              Identifier: ' transformer'
+              Identifier: ' hasContinuation'
+              Identifier: ' continuationArgName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nodeType'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' transformer'
+                  Identifier: 'checker'
+                Identifier: 'getTypeAtLocation'
+              Identifier: 'node'
+      IfStatement
+        BinaryExpression
+          Identifier: 'nodeType'
+          AmpersandAmpersandToken
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' transformer'
+                Identifier: 'checker'
+              Identifier: 'getPromisedTypeOfPromise'
+            Identifier: 'nodeType'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assertNode'
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: 'getOriginalNode'
+                  Identifier: 'node'
+                Identifier: 'parent'
+              Identifier: ' isPropertyAccessExpression'
+          ReturnStatement
+            CallExpression
+              Identifier: ' transformPromiseExpressionOfPropertyAccess'
+              Identifier: 'returnContextNode'
+              Identifier: ' node'
+              Identifier: ' transformer'
+              Identifier: ' hasContinuation'
+              Identifier: ' continuationArgName'
+      ReturnStatement
+        CallExpression
+          Identifier: ' silentFail'
+  FunctionDeclaration
+    Identifier: ' isNullOrUndefined'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' checker'
+      TypeReference
+        Identifier: ' Transformer'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Expression'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'node'
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'NullKeyword'
+        ReturnStatement
+          TrueKeyword
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            CallExpression
+              Identifier: 'isIdentifier'
+              Identifier: 'node'
+            AmpersandAmpersandToken
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'isGeneratedIdentifier'
+                Identifier: 'node'
+          AmpersandAmpersandToken
+          BinaryExpression
+            CallExpression
+              Identifier: ' idText'
+              Identifier: 'node'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' symbol'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' checker'
+                    Identifier: 'getSymbolAtLocation'
+                  Identifier: 'node'
+          ReturnStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'symbol'
+              BarBarToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' checker'
+                  Identifier: 'isUndefinedSymbol'
+                Identifier: 'symbol'
+      ReturnStatement
+        FalseKeyword
+  FunctionDeclaration
+    Identifier: ' createUniqueSynthName'
+    Parameter
+      Identifier: 'prevArgName'
+      TypeReference
+        Identifier: ' SynthIdentifier'
+    TypeReference
+      Identifier: ' SynthIdentifier'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' renamedPrevArg'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createUniqueName'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'prevArgName'
+                  Identifier: 'identifier'
+                Identifier: 'text'
+              PropertyAccessExpression
+                Identifier: ' GeneratedIdentifierFlags'
+                Identifier: 'Optimistic'
+      ReturnStatement
+        CallExpression
+          Identifier: ' createSynthIdentifier'
+          Identifier: 'renamedPrevArg'
+  FunctionDeclaration
+    Identifier: ' getPossibleNameForVarDecl'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' PromiseReturningCallExpression'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    Parameter
+      Identifier: ' continuationArgName'
+      QuestionToken
+      TypeReference
+        Identifier: ' SynthBindingName'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' possibleNameForVarDecl'
+            UnionType
+              TypeReference
+                Identifier: ' SynthIdentifier'
+              UndefinedKeyword
+      IfStatement
+        BinaryExpression
+          Identifier: 'continuationArgName'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'shouldReturn'
+              Identifier: 'node'
+              Identifier: ' transformer'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isSynthIdentifier'
+              Identifier: 'continuationArgName'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            possibleNameForVarDecl'
+                  EqualsToken
+                  Identifier: ' continuationArgName'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            transformer'
+                      Identifier: 'synthNamesMap'
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'val'
+                    Parameter
+                      Identifier: ' key'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'val'
+                              Identifier: 'identifier'
+                            Identifier: 'text'
+                          EqualsEqualsEqualsToken
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' continuationArgName'
+                              Identifier: 'identifier'
+                            Identifier: 'text'
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' newSynthName'
+                                CallExpression
+                                  Identifier: ' createUniqueSynthName'
+                                  Identifier: 'continuationArgName'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    transformer'
+                                  Identifier: 'synthNamesMap'
+                                Identifier: 'set'
+                              Identifier: 'key'
+                              Identifier: ' newSynthName'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            possibleNameForVarDecl'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' createSynthIdentifier'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createUniqueName'
+                      StringLiteral
+                      PropertyAccessExpression
+                        Identifier: ' GeneratedIdentifierFlags'
+                        Identifier: 'Optimistic'
+                    PropertyAccessExpression
+                      Identifier: ' continuationArgName'
+                      Identifier: 'types'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        // We are about to write a 'let' variable declaration, but `transformExpression` for both
+        // the try block and catch/finally block will assign to this name. Setting this flag indicates
+        // that future assignments should be written as `name = value` instead of `const name = value`.
+        declareSynthIdentifier'
+              Identifier: 'possibleNameForVarDecl'
+      ReturnStatement
+        Identifier: ' possibleNameForVarDecl'
+  FunctionDeclaration
+    Identifier: ' finishCatchOrFinallyTransform'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' PromiseReturningCallExpression'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    Parameter
+      Identifier: ' tryStatement'
+      TypeReference
+        Identifier: ' TryStatement'
+    Parameter
+      Identifier: ' possibleNameForVarDecl'
+      UnionType
+        TypeReference
+          Identifier: ' SynthIdentifier'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' continuationArgName'
+      QuestionToken
+      TypeReference
+        Identifier: ' SynthBindingName'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statements'
+            ArrayType
+              TypeReference
+                Identifier: ' Statement'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' varDeclIdentifier'
+            UnionType
+              TypeReference
+                Identifier: ' Identifier'
+              UndefinedKeyword
+      IfStatement
+        BinaryExpression
+          Identifier: 'possibleNameForVarDecl'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'shouldReturn'
+              Identifier: 'node'
+              Identifier: ' transformer'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        varDeclIdentifier'
+              EqualsToken
+              CallExpression
+                Identifier: ' getSynthesizedDeepClone'
+                CallExpression
+                  Identifier: 'declareSynthIdentifier'
+                  Identifier: 'possibleNameForVarDecl'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' typeArray'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Type'
+                PropertyAccessExpression
+                  Identifier: ' possibleNameForVarDecl'
+                  Identifier: 'types'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' unionType'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' transformer'
+                      Identifier: 'checker'
+                    Identifier: 'getUnionType'
+                  Identifier: 'typeArray'
+                  PropertyAccessExpression
+                    Identifier: ' UnionReduction'
+                    Identifier: 'Subtype'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' unionTypeNode'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' transformer'
+                    Identifier: 'isInJSFile'
+                  QuestionToken
+                  Identifier: ' undefined'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' transformer'
+                        Identifier: 'checker'
+                      Identifier: 'typeToTypeNode'
+                    Identifier: 'unionType'
+                    Identifier: ' /*enclosingDeclaration*/ undefined'
+                    Identifier: ' /*flags*/ undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' varDecl'
+                ArrayLiteralExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'factory'
+                      Identifier: 'createVariableDeclaration'
+                    Identifier: 'varDeclIdentifier'
+                    Identifier: ' /*exclamationToken*/ undefined'
+                    Identifier: ' unionTypeNode'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' varDeclList'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createVariableStatement'
+                  Identifier: '/*modifiers*/ undefined'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createVariableDeclarationList'
+                    Identifier: 'varDecl'
+                    PropertyAccessExpression
+                      Identifier: ' NodeFlags'
+                      Identifier: 'Let'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        statements'
+                Identifier: 'push'
+              Identifier: 'varDeclList'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    statements'
+            Identifier: 'push'
+          Identifier: 'tryStatement'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'continuationArgName'
+            AmpersandAmpersandToken
+            Identifier: ' varDeclIdentifier'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isSynthBindingPattern'
+            Identifier: 'continuationArgName'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        statements'
+                Identifier: 'push'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createVariableStatement'
+                Identifier: '
+            /*modifiers*/ undefined'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            factory'
+                    Identifier: 'createVariableDeclarationList'
+                  ArrayLiteralExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                factory'
+                        Identifier: 'createVariableDeclaration'
+                      CallExpression
+                        Identifier: '
+                    getSynthesizedDeepClone'
+                        CallExpression
+                          Identifier: 'declareSynthBindingPattern'
+                          Identifier: 'continuationArgName'
+                      Identifier: '
+                    /*exclamationToken*/ undefined'
+                      Identifier: '
+                    /*type*/ undefined'
+                      Identifier: '
+                    varDeclIdentifier'
+                  PropertyAccessExpression
+                    Identifier: ' NodeFlags'
+                    Identifier: 'Const'
+      ReturnStatement
+        Identifier: ' statements'
+  FunctionDeclaration
+    Identifier: ' transformFinally'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' PromiseReturningCallExpression'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: ' onFinally'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    Parameter
+      Identifier: ' hasContinuation'
+      BooleanKeyword
+    Parameter
+      Identifier: ' continuationArgName'
+      QuestionToken
+      TypeReference
+        Identifier: ' SynthBindingName'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' Statement'
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'onFinally'
+          BarBarToken
+          CallExpression
+            Identifier: ' isNullOrUndefined'
+            Identifier: 'transformer'
+            Identifier: ' onFinally'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' transformExpression'
+              Identifier: '/* returnContextNode */ node'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'expression'
+                Identifier: 'expression'
+              Identifier: ' transformer'
+              Identifier: ' hasContinuation'
+              Identifier: ' continuationArgName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' possibleNameForVarDecl'
+            CallExpression
+              Identifier: ' getPossibleNameForVarDecl'
+              Identifier: 'node'
+              Identifier: ' transformer'
+              Identifier: ' continuationArgName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inlinedLeftHandSide'
+            CallExpression
+              Identifier: ' transformExpression'
+              Identifier: '/*returnContextNode*/ node'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'expression'
+                Identifier: 'expression'
+              Identifier: ' transformer'
+              TrueKeyword
+              Identifier: ' possibleNameForVarDecl'
+      IfStatement
+        CallExpression
+          Identifier: 'hasFailed'
+        ReturnStatement
+          CallExpression
+            Identifier: ' silentFail'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inlinedCallback'
+            CallExpression
+              Identifier: ' transformCallbackArgument'
+              Identifier: 'onFinally'
+              Identifier: ' hasContinuation'
+              Identifier: ' /*continuationArgName*/ undefined'
+              Identifier: ' /*inputArgName*/ undefined'
+              Identifier: ' node'
+              Identifier: ' transformer'
+      IfStatement
+        CallExpression
+          Identifier: 'hasFailed'
+        ReturnStatement
+          CallExpression
+            Identifier: ' silentFail'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tryBlock'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createBlock'
+              Identifier: 'inlinedLeftHandSide'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' finallyBlock'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createBlock'
+              Identifier: 'inlinedCallback'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tryStatement'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createTryStatement'
+              Identifier: 'tryBlock'
+              Identifier: ' /*catchClause*/ undefined'
+              Identifier: ' finallyBlock'
+      ReturnStatement
+        CallExpression
+          Identifier: ' finishCatchOrFinallyTransform'
+          Identifier: 'node'
+          Identifier: ' transformer'
+          Identifier: ' tryStatement'
+          Identifier: ' possibleNameForVarDecl'
+          Identifier: ' continuationArgName'
+  FunctionDeclaration
+    Identifier: ' transformCatch'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' PromiseReturningCallExpression'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+    Parameter
+      Identifier: ' onRejected'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    Parameter
+      Identifier: ' hasContinuation'
+      BooleanKeyword
+    Parameter
+      Identifier: ' continuationArgName'
+      QuestionToken
+      TypeReference
+        Identifier: ' SynthBindingName'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' Statement'
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'onRejected'
+          BarBarToken
+          CallExpression
+            Identifier: ' isNullOrUndefined'
+            Identifier: 'transformer'
+            Identifier: ' onRejected'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' transformExpression'
+              Identifier: '/* returnContextNode */ node'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'expression'
+                Identifier: 'expression'
+              Identifier: ' transformer'
+              Identifier: ' hasContinuation'
+              Identifier: ' continuationArgName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inputArgName'
+            CallExpression
+              Identifier: ' getArgBindingName'
+              Identifier: 'onRejected'
+              Identifier: ' transformer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' possibleNameForVarDecl'
+            CallExpression
+              Identifier: ' getPossibleNameForVarDecl'
+              Identifier: 'node'
+              Identifier: ' transformer'
+              Identifier: ' continuationArgName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inlinedLeftHandSide'
+            CallExpression
+              Identifier: ' transformExpression'
+              Identifier: '/*returnContextNode*/ node'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'expression'
+                Identifier: 'expression'
+              Identifier: ' transformer'
+              TrueKeyword
+              Identifier: ' possibleNameForVarDecl'
+      IfStatement
+        CallExpression
+          Identifier: 'hasFailed'
+        ReturnStatement
+          CallExpression
+            Identifier: ' silentFail'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inlinedCallback'
+            CallExpression
+              Identifier: ' transformCallbackArgument'
+              Identifier: 'onRejected'
+              Identifier: ' hasContinuation'
+              Identifier: ' possibleNameForVarDecl'
+              Identifier: ' inputArgName'
+              Identifier: ' node'
+              Identifier: ' transformer'
+      IfStatement
+        CallExpression
+          Identifier: 'hasFailed'
+        ReturnStatement
+          CallExpression
+            Identifier: ' silentFail'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tryBlock'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createBlock'
+              Identifier: 'inlinedLeftHandSide'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' catchClause'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createCatchClause'
+              BinaryExpression
+                Identifier: 'inputArgName'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' getSynthesizedDeepClone'
+                  CallExpression
+                    Identifier: 'declareSynthBindingName'
+                    Identifier: 'inputArgName'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createBlock'
+                Identifier: 'inlinedCallback'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tryStatement'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createTryStatement'
+              Identifier: 'tryBlock'
+              Identifier: ' catchClause'
+              Identifier: ' /*finallyBlock*/ undefined'
+      ReturnStatement
+        CallExpression
+          Identifier: ' finishCatchOrFinallyTransform'
+          Identifier: 'node'
+          Identifier: ' transformer'
+          Identifier: ' tryStatement'
+          Identifier: ' possibleNameForVarDecl'
+          Identifier: ' continuationArgName'
+  FunctionDeclaration
+    Identifier: ' transformThen'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' PromiseReturningCallExpression'
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: ' onFulfilled'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' onRejected'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    Parameter
+      Identifier: ' hasContinuation'
+      BooleanKeyword
+    Parameter
+      Identifier: ' continuationArgName'
+      QuestionToken
+      TypeReference
+        Identifier: ' SynthBindingName'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' Statement'
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'onFulfilled'
+          BarBarToken
+          CallExpression
+            Identifier: ' isNullOrUndefined'
+            Identifier: 'transformer'
+            Identifier: ' onFulfilled'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' transformCatch'
+              Identifier: 'node'
+              Identifier: ' onRejected'
+              Identifier: ' transformer'
+              Identifier: ' hasContinuation'
+              Identifier: ' continuationArgName'
+      IfStatement
+        BinaryExpression
+          Identifier: 'onRejected'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isNullOrUndefined'
+              Identifier: 'transformer'
+              Identifier: ' onRejected'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' silentFail'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inputArgName'
+            CallExpression
+              Identifier: ' getArgBindingName'
+              Identifier: 'onFulfilled'
+              Identifier: ' transformer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inlinedLeftHandSide'
+            CallExpression
+              Identifier: ' transformExpression'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'expression'
+                Identifier: 'expression'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'expression'
+                Identifier: 'expression'
+              Identifier: ' transformer'
+              TrueKeyword
+              Identifier: ' inputArgName'
+      IfStatement
+        CallExpression
+          Identifier: 'hasFailed'
+        ReturnStatement
+          CallExpression
+            Identifier: ' silentFail'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' inlinedCallback'
+            CallExpression
+              Identifier: ' transformCallbackArgument'
+              Identifier: 'onFulfilled'
+              Identifier: ' hasContinuation'
+              Identifier: ' continuationArgName'
+              Identifier: ' inputArgName'
+              Identifier: ' node'
+              Identifier: ' transformer'
+      IfStatement
+        CallExpression
+          Identifier: 'hasFailed'
+        ReturnStatement
+          CallExpression
+            Identifier: ' silentFail'
+      ReturnStatement
+        CallExpression
+          Identifier: ' concatenate'
+          Identifier: 'inlinedLeftHandSide'
+          Identifier: ' inlinedCallback'
+  FunctionDeclaration
+    Identifier: ' transformPromiseExpressionOfPropertyAccess'
+    Parameter
+      Identifier: 'returnContextNode'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    Parameter
+      Identifier: ' hasContinuation'
+      BooleanKeyword
+    Parameter
+      Identifier: ' continuationArgName'
+      QuestionToken
+      TypeReference
+        Identifier: ' SynthBindingName'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' Statement'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'shouldReturn'
+          Identifier: 'returnContextNode'
+          Identifier: ' transformer'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' returnValue'
+                CallExpression
+                  Identifier: ' getSynthesizedDeepClone'
+                  Identifier: 'node'
+          IfStatement
+            Identifier: 'hasContinuation'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            returnValue'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createAwaitExpression'
+                    Identifier: 'returnValue'
+          ReturnStatement
+            ArrayLiteralExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createReturnStatement'
+                Identifier: 'returnValue'
+      ReturnStatement
+        CallExpression
+          Identifier: ' createVariableOrAssignmentOrExpressionStatement'
+          Identifier: 'continuationArgName'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' factory'
+              Identifier: 'createAwaitExpression'
+            Identifier: 'node'
+          Identifier: ' /*typeAnnotation*/ undefined'
+  FunctionDeclaration
+    Identifier: ' createVariableOrAssignmentOrExpressionStatement'
+    Parameter
+      Identifier: 'variableName'
+      UnionType
+        TypeReference
+          Identifier: ' SynthBindingName'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' rightHandSide'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' typeAnnotation'
+      UnionType
+        TypeReference
+          Identifier: ' TypeNode'
+        UndefinedKeyword
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' Statement'
+    Block
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'variableName'
+          BarBarToken
+          CallExpression
+            Identifier: ' isEmptyBindingName'
+            Identifier: 'variableName'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createExpressionStatement'
+                Identifier: 'rightHandSide'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isSynthIdentifier'
+            Identifier: 'variableName'
+          AmpersandAmpersandToken
+          PropertyAccessExpression
+            Identifier: ' variableName'
+            Identifier: 'hasBeenDeclared'
+        Block
+          ReturnStatement
+            ArrayLiteralExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createExpressionStatement'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'factory'
+                    Identifier: 'createAssignment'
+                  CallExpression
+                    Identifier: 'getSynthesizedDeepClone'
+                    CallExpression
+                      Identifier: 'referenceSynthIdentifier'
+                      Identifier: 'variableName'
+                  Identifier: ' rightHandSide'
+      ReturnStatement
+        ArrayLiteralExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        factory'
+              Identifier: 'createVariableStatement'
+            Identifier: '
+            /*modifiers*/ undefined'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+            factory'
+                Identifier: 'createVariableDeclarationList'
+              ArrayLiteralExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                factory'
+                    Identifier: 'createVariableDeclaration'
+                  CallExpression
+                    Identifier: '
+                    getSynthesizedDeepClone'
+                    CallExpression
+                      Identifier: 'declareSynthBindingName'
+                      Identifier: 'variableName'
+                  Identifier: '
+                    /*exclamationToken*/ undefined'
+                  Identifier: '
+                    typeAnnotation'
+                  Identifier: '
+                    rightHandSide'
+              PropertyAccessExpression
+                Identifier: ' NodeFlags'
+                Identifier: 'Const'
+  FunctionDeclaration
+    Identifier: ' maybeAnnotateAndReturn'
+    Parameter
+      Identifier: 'expressionToReturn'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' typeAnnotation'
+      UnionType
+        TypeReference
+          Identifier: ' TypeNode'
+        UndefinedKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' Statement'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'typeAnnotation'
+          AmpersandAmpersandToken
+          Identifier: ' expressionToReturn'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' name'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createUniqueName'
+                  StringLiteral
+                  PropertyAccessExpression
+                    Identifier: ' GeneratedIdentifierFlags'
+                    Identifier: 'Optimistic'
+          ReturnStatement
+            ArrayLiteralExpression
+              SpreadElement
+                CallExpression
+                  Identifier: 'createVariableOrAssignmentOrExpressionStatement'
+                  CallExpression
+                    Identifier: 'createSynthIdentifier'
+                    Identifier: 'name'
+                  Identifier: ' expressionToReturn'
+                  Identifier: ' typeAnnotation'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            factory'
+                  Identifier: 'createReturnStatement'
+                Identifier: 'name'
+      ReturnStatement
+        ArrayLiteralExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'factory'
+              Identifier: 'createReturnStatement'
+            Identifier: 'expressionToReturn'
+  FunctionDeclaration
+    Identifier: ' transformCallbackArgument'
+    Parameter
+      Identifier: 'func'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' hasContinuation'
+      BooleanKeyword
+    Parameter
+      Identifier: ' continuationArgName'
+      UnionType
+        TypeReference
+          Identifier: ' SynthBindingName'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' inputArgName'
+      UnionType
+        TypeReference
+          Identifier: ' SynthBindingName'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' parent'
+      TypeReference
+        Identifier: ' PromiseReturningCallExpression'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' Statement'
+    Block
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'func'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'NullKeyword'
+            BreakStatement
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'PropertyAccessExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'Identifier'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'inputArgName'
+              Block
+                BreakStatement
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' synthCall'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createCallExpression'
+                    CallExpression
+                      Identifier: 'getSynthesizedDeepClone'
+                      AsExpression
+                        Identifier: 'func'
+                        UnionType
+                          TypeReference
+                            Identifier: ' Identifier'
+                          TypeReference
+                            Identifier: ' PropertyAccessExpression'
+                    Identifier: ' /*typeArguments*/ undefined'
+                    ConditionalExpression
+                      CallExpression
+                        Identifier: ' isSynthIdentifier'
+                        Identifier: 'inputArgName'
+                      QuestionToken
+                      ArrayLiteralExpression
+                        CallExpression
+                          Identifier: 'referenceSynthIdentifier'
+                          Identifier: 'inputArgName'
+                      ColonToken
+                      ArrayLiteralExpression
+            IfStatement
+              CallExpression
+                Identifier: 'shouldReturn'
+                Identifier: 'parent'
+                Identifier: ' transformer'
+              Block
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' maybeAnnotateAndReturn'
+                    Identifier: 'synthCall'
+                    CallExpression
+                      Identifier: ' getExplicitPromisedTypeOfPromiseReturningCallExpression'
+                      Identifier: 'parent'
+                      Identifier: ' func'
+                      PropertyAccessExpression
+                        Identifier: ' transformer'
+                        Identifier: 'checker'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' type'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' transformer'
+                        Identifier: 'checker'
+                      Identifier: 'getTypeAtLocation'
+                    Identifier: 'func'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' callSignatures'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' transformer'
+                        Identifier: 'checker'
+                      Identifier: 'getSignaturesOfType'
+                    Identifier: 'type'
+                    PropertyAccessExpression
+                      Identifier: ' SignatureKind'
+                      Identifier: 'Call'
+            IfStatement
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'callSignatures'
+                  Identifier: 'length'
+              Block
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' silentFail'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' returnType'
+                  CallExpression
+                    PropertyAccessExpression
+                      ElementAccessExpression
+                        Identifier: ' callSignatures'
+                        NumericLiteral
+                      Identifier: 'getReturnType'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' varDeclOrAssignment'
+                  CallExpression
+                    Identifier: ' createVariableOrAssignmentOrExpressionStatement'
+                    Identifier: 'continuationArgName'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' factory'
+                        Identifier: 'createAwaitExpression'
+                      Identifier: 'synthCall'
+                    CallExpression
+                      Identifier: ' getExplicitPromisedTypeOfPromiseReturningCallExpression'
+                      Identifier: 'parent'
+                      Identifier: ' func'
+                      PropertyAccessExpression
+                        Identifier: ' transformer'
+                        Identifier: 'checker'
+            IfStatement
+              Identifier: 'continuationArgName'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                continuationArgName'
+                        Identifier: 'types'
+                      Identifier: 'push'
+                    BinaryExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'transformer'
+                            Identifier: 'checker'
+                          Identifier: 'getAwaitedType'
+                        Identifier: 'returnType'
+                      BarBarToken
+                      Identifier: ' returnType'
+            ReturnStatement
+              Identifier: ' varDeclOrAssignment'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'FunctionExpression'
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' SyntaxKind'
+              Identifier: 'ArrowFunction'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' funcBody'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'func'
+                          UnionType
+                            TypeReference
+                              Identifier: ' FunctionExpression'
+                            TypeReference
+                              Identifier: ' ArrowFunction'
+                      Identifier: 'body'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' returnType'
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          Identifier: ' getLastCallSignature'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'transformer'
+                                Identifier: 'checker'
+                              Identifier: 'getTypeAtLocation'
+                            Identifier: 'func'
+                          PropertyAccessExpression
+                            Identifier: ' transformer'
+                            Identifier: 'checker'
+                        QuestionDotToken
+                        Identifier: 'getReturnType'
+              IfStatement
+                CallExpression
+                  Identifier: 'isBlock'
+                  Identifier: 'funcBody'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' refactoredStmts'
+                        ArrayType
+                          TypeReference
+                            Identifier: ' Statement'
+                        ArrayLiteralExpression
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' seenReturnStatement'
+                        FalseKeyword
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' statement'
+                    PropertyAccessExpression
+                      Identifier: ' funcBody'
+                      Identifier: 'statements'
+                    Block
+                      IfStatement
+                        CallExpression
+                          Identifier: 'isReturnStatement'
+                          Identifier: 'statement'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                        seenReturnStatement'
+                              EqualsToken
+                              TrueKeyword
+                          IfStatement
+                            CallExpression
+                              Identifier: 'isReturnStatementWithFixablePromiseHandler'
+                              Identifier: 'statement'
+                              PropertyAccessExpression
+                                Identifier: ' transformer'
+                                Identifier: 'checker'
+                            Block
+                              ExpressionStatement
+                                BinaryExpression
+                                  Identifier: '
+                            refactoredStmts'
+                                  EqualsToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' refactoredStmts'
+                                      Identifier: 'concat'
+                                    CallExpression
+                                      Identifier: 'transformReturnStatementWithFixablePromiseHandler'
+                                      Identifier: 'transformer'
+                                      Identifier: ' statement'
+                                      Identifier: ' hasContinuation'
+                                      Identifier: ' continuationArgName'
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' possiblyAwaitedRightHandSide'
+                                    ConditionalExpression
+                                      BinaryExpression
+                                        Identifier: ' returnType'
+                                        AmpersandAmpersandToken
+                                        PropertyAccessExpression
+                                          Identifier: ' statement'
+                                          Identifier: 'expression'
+                                      QuestionToken
+                                      CallExpression
+                                        Identifier: ' getPossiblyAwaitedRightHandSide'
+                                        PropertyAccessExpression
+                                          Identifier: 'transformer'
+                                          Identifier: 'checker'
+                                        Identifier: ' returnType'
+                                        PropertyAccessExpression
+                                          Identifier: ' statement'
+                                          Identifier: 'expression'
+                                      ColonToken
+                                      PropertyAccessExpression
+                                        Identifier: ' statement'
+                                        Identifier: 'expression'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                            refactoredStmts'
+                                    Identifier: 'push'
+                                  SpreadElement
+                                    CallExpression
+                                      Identifier: 'maybeAnnotateAndReturn'
+                                      Identifier: 'possiblyAwaitedRightHandSide'
+                                      CallExpression
+                                        Identifier: ' getExplicitPromisedTypeOfPromiseReturningCallExpression'
+                                        Identifier: 'parent'
+                                        Identifier: ' func'
+                                        PropertyAccessExpression
+                                          Identifier: ' transformer'
+                                          Identifier: 'checker'
+                        IfStatement
+                          BinaryExpression
+                            Identifier: 'hasContinuation'
+                            AmpersandAmpersandToken
+                            CallExpression
+                              Identifier: ' forEachReturnStatement'
+                              Identifier: 'statement'
+                              Identifier: ' returnTrue'
+                          Block
+                            ReturnStatement
+                              CallExpression
+                                Identifier: ' silentFail'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                        refactoredStmts'
+                                  Identifier: 'push'
+                                Identifier: 'statement'
+                  ReturnStatement
+                    ConditionalExpression
+                      CallExpression
+                        Identifier: ' shouldReturn'
+                        Identifier: 'parent'
+                        Identifier: ' transformer'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' refactoredStmts'
+                          Identifier: 'map'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 's'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            Identifier: ' getSynthesizedDeepClone'
+                            Identifier: 's'
+                      ColonToken
+                      CallExpression
+                        Identifier: ' removeReturns'
+                        Identifier: '
+                        refactoredStmts'
+                        Identifier: '
+                        continuationArgName'
+                        Identifier: '
+                        transformer'
+                        Identifier: '
+                        seenReturnStatement'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' inlinedStatements'
+                        ConditionalExpression
+                          CallExpression
+                            Identifier: ' isFixablePromiseHandler'
+                            Identifier: 'funcBody'
+                            PropertyAccessExpression
+                              Identifier: ' transformer'
+                              Identifier: 'checker'
+                          QuestionToken
+                          CallExpression
+                            Identifier: '
+                    transformReturnStatementWithFixablePromiseHandler'
+                            Identifier: 'transformer'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' factory'
+                                Identifier: 'createReturnStatement'
+                              Identifier: 'funcBody'
+                            Identifier: ' hasContinuation'
+                            Identifier: ' continuationArgName'
+                          ColonToken
+                          Identifier: '
+                    emptyArray'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'inlinedStatements'
+                        Identifier: 'length'
+                      GreaterThanToken
+                      NumericLiteral
+                    Block
+                      ReturnStatement
+                        Identifier: ' inlinedStatements'
+                  IfStatement
+                    Identifier: 'returnType'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' possiblyAwaitedRightHandSide'
+                            CallExpression
+                              Identifier: ' getPossiblyAwaitedRightHandSide'
+                              PropertyAccessExpression
+                                Identifier: 'transformer'
+                                Identifier: 'checker'
+                              Identifier: ' returnType'
+                              Identifier: ' funcBody'
+                      IfStatement
+                        PrefixUnaryExpression
+                          CallExpression
+                            Identifier: 'shouldReturn'
+                            Identifier: 'parent'
+                            Identifier: ' transformer'
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' transformedStatement'
+                                CallExpression
+                                  Identifier: ' createVariableOrAssignmentOrExpressionStatement'
+                                  Identifier: 'continuationArgName'
+                                  Identifier: ' possiblyAwaitedRightHandSide'
+                                  Identifier: ' /*typeAnnotation*/ undefined'
+                          IfStatement
+                            Identifier: 'continuationArgName'
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                            continuationArgName'
+                                      Identifier: 'types'
+                                    Identifier: 'push'
+                                  BinaryExpression
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'transformer'
+                                          Identifier: 'checker'
+                                        Identifier: 'getAwaitedType'
+                                      Identifier: 'returnType'
+                                    BarBarToken
+                                    Identifier: ' returnType'
+                          ReturnStatement
+                            Identifier: ' transformedStatement'
+                        Block
+                          ReturnStatement
+                            CallExpression
+                              Identifier: ' maybeAnnotateAndReturn'
+                              Identifier: 'possiblyAwaitedRightHandSide'
+                              CallExpression
+                                Identifier: ' getExplicitPromisedTypeOfPromiseReturningCallExpression'
+                                Identifier: 'parent'
+                                Identifier: ' func'
+                                PropertyAccessExpression
+                                  Identifier: ' transformer'
+                                  Identifier: 'checker'
+                    Block
+                      ReturnStatement
+                        CallExpression
+                          Identifier: ' silentFail'
+          DefaultClause
+            ReturnStatement
+              CallExpression
+                Identifier: ' silentFail'
+      ReturnStatement
+        Identifier: ' emptyArray'
+  FunctionDeclaration
+    Identifier: ' getPossiblyAwaitedRightHandSide'
+    Parameter
+      Identifier: 'checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' type'
+      TypeReference
+        Identifier: ' Type'
+    Parameter
+      Identifier: ' expr'
+      TypeReference
+        Identifier: ' Expression'
+    UnionType
+      TypeReference
+        Identifier: ' AwaitExpression'
+      TypeReference
+        Identifier: ' Expression'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' rightHandSide'
+            CallExpression
+              Identifier: ' getSynthesizedDeepClone'
+              Identifier: 'expr'
+      ReturnStatement
+        ConditionalExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'checker'
+                  Identifier: 'getPromisedTypeOfPromise'
+                Identifier: 'type'
+          QuestionToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' factory'
+              Identifier: 'createAwaitExpression'
+            Identifier: 'rightHandSide'
+          ColonToken
+          Identifier: ' rightHandSide'
+  FunctionDeclaration
+    Identifier: ' getLastCallSignature'
+    Parameter
+      Identifier: 'type'
+      TypeReference
+        Identifier: ' Type'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    UnionType
+      TypeReference
+        Identifier: ' Signature'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' callSignatures'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getSignaturesOfType'
+              Identifier: 'type'
+              PropertyAccessExpression
+                Identifier: ' SignatureKind'
+                Identifier: 'Call'
+      ReturnStatement
+        CallExpression
+          Identifier: ' lastOrUndefined'
+          Identifier: 'callSignatures'
+  FunctionDeclaration
+    Identifier: ' removeReturns'
+    Parameter
+      Identifier: 'stmts'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Statement'
+    Parameter
+      Identifier: ' prevArgName'
+      UnionType
+        TypeReference
+          Identifier: ' SynthBindingName'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    Parameter
+      Identifier: ' seenReturnStatement'
+      BooleanKeyword
+    TypeOperator
+      ArrayType
+        TypeReference
+          Identifier: ' Statement'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ret'
+            ArrayType
+              TypeReference
+                Identifier: ' Statement'
+            ArrayLiteralExpression
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' stmt'
+        Identifier: ' stmts'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isReturnStatement'
+              Identifier: 'stmt'
+            Block
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'stmt'
+                  Identifier: 'expression'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' possiblyAwaitedExpression'
+                        ConditionalExpression
+                          CallExpression
+                            Identifier: ' isPromiseTypedExpression'
+                            PropertyAccessExpression
+                              Identifier: 'stmt'
+                              Identifier: 'expression'
+                            PropertyAccessExpression
+                              Identifier: ' transformer'
+                              Identifier: 'checker'
+                          QuestionToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' factory'
+                              Identifier: 'createAwaitExpression'
+                            PropertyAccessExpression
+                              Identifier: 'stmt'
+                              Identifier: 'expression'
+                          ColonToken
+                          PropertyAccessExpression
+                            Identifier: ' stmt'
+                            Identifier: 'expression'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'prevArgName'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' undefined'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    ret'
+                            Identifier: 'push'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'factory'
+                              Identifier: 'createExpressionStatement'
+                            Identifier: 'possiblyAwaitedExpression'
+                    IfStatement
+                      BinaryExpression
+                        CallExpression
+                          Identifier: 'isSynthIdentifier'
+                          Identifier: 'prevArgName'
+                        AmpersandAmpersandToken
+                        PropertyAccessExpression
+                          Identifier: ' prevArgName'
+                          Identifier: 'hasBeenDeclared'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    ret'
+                              Identifier: 'push'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'factory'
+                                Identifier: 'createExpressionStatement'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'factory'
+                                  Identifier: 'createAssignment'
+                                CallExpression
+                                  Identifier: 'referenceSynthIdentifier'
+                                  Identifier: 'prevArgName'
+                                Identifier: ' possiblyAwaitedExpression'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    ret'
+                              Identifier: 'push'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'factory'
+                                Identifier: 'createVariableStatement'
+                              Identifier: '/*modifiers*/ undefined'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' factory'
+                                  Identifier: 'createVariableDeclarationList'
+                                ArrayLiteralExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'factory'
+                                      Identifier: 'createVariableDeclaration'
+                                    CallExpression
+                                      Identifier: 'declareSynthBindingName'
+                                      Identifier: 'prevArgName'
+                                    Identifier: ' /*exclamationToken*/ undefined'
+                                    Identifier: ' /*type*/ undefined'
+                                    Identifier: ' possiblyAwaitedExpression'
+                                PropertyAccessExpression
+                                  Identifier: ' NodeFlags'
+                                  Identifier: 'Const'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            ret'
+                    Identifier: 'push'
+                  CallExpression
+                    Identifier: 'getSynthesizedDeepClone'
+                    Identifier: 'stmt'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'seenReturnStatement'
+          AmpersandAmpersandToken
+          BinaryExpression
+            Identifier: ' prevArgName'
+            ExclamationEqualsEqualsToken
+            Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        ret'
+                Identifier: 'push'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'factory'
+                  Identifier: 'createVariableStatement'
+                Identifier: '/*modifiers*/ undefined'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createVariableDeclarationList'
+                  ArrayLiteralExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'factory'
+                        Identifier: 'createVariableDeclaration'
+                      CallExpression
+                        Identifier: 'declareSynthBindingName'
+                        Identifier: 'prevArgName'
+                      Identifier: ' /*exclamationToken*/ undefined'
+                      Identifier: ' /*type*/ undefined'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createIdentifier'
+                        StringLiteral
+                  PropertyAccessExpression
+                    Identifier: ' NodeFlags'
+                    Identifier: 'Const'
+      ReturnStatement
+        Identifier: ' ret'
+  FunctionDeclaration
+    Identifier: ' transformReturnStatementWithFixablePromiseHandler'
+    Parameter
+      Identifier: 'transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    Parameter
+      Identifier: ' innerRetStmt'
+      TypeReference
+        Identifier: ' ReturnStatement'
+    Parameter
+      Identifier: ' hasContinuation'
+      BooleanKeyword
+    Parameter
+      Identifier: ' continuationArgName'
+      QuestionToken
+      TypeReference
+        Identifier: ' SynthBindingName'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' innerCbBody'
+            ArrayType
+              TypeReference
+                Identifier: ' Statement'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEachChild'
+          Identifier: 'innerRetStmt'
+          FunctionExpression
+            Identifier: ' visit'
+            Parameter
+              Identifier: 'node'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'isCallExpression'
+                  Identifier: 'node'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' temp'
+                        CallExpression
+                          Identifier: ' transformExpression'
+                          Identifier: 'node'
+                          Identifier: ' node'
+                          Identifier: ' transformer'
+                          Identifier: ' hasContinuation'
+                          Identifier: ' continuationArgName'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            innerCbBody'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' innerCbBody'
+                          Identifier: 'concat'
+                        Identifier: 'temp'
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'innerCbBody'
+                        Identifier: 'length'
+                      GreaterThanToken
+                      NumericLiteral
+                    Block
+                      ReturnStatement
+                IfStatement
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isFunctionLike'
+                      Identifier: 'node'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+            forEachChild'
+                        Identifier: 'node'
+                        Identifier: ' visit'
+      ReturnStatement
+        Identifier: ' innerCbBody'
+  FunctionDeclaration
+    Identifier: ' getArgBindingName'
+    Parameter
+      Identifier: 'funcNode'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    UnionType
+      TypeReference
+        Identifier: ' SynthBindingName'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' types'
+            ArrayType
+              TypeReference
+                Identifier: ' Type'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' name'
+            UnionType
+              TypeReference
+                Identifier: ' SynthBindingName'
+              UndefinedKeyword
+      IfStatement
+        CallExpression
+          Identifier: 'isFunctionLikeDeclaration'
+          Identifier: 'funcNode'
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'funcNode'
+                  Identifier: 'parameters'
+                Identifier: 'length'
+              GreaterThanToken
+              NumericLiteral
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' param'
+                    PropertyAccessExpression
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' funcNode'
+                          Identifier: 'parameters'
+                        NumericLiteral
+                      Identifier: 'name'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            name'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' getMappedBindingNameOrDefault'
+                    Identifier: 'param'
+        IfStatement
+          CallExpression
+            Identifier: 'isIdentifier'
+            Identifier: 'funcNode'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        name'
+                EqualsToken
+                CallExpression
+                  Identifier: ' getMapEntryOrDefault'
+                  Identifier: 'funcNode'
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isPropertyAccessExpression'
+                Identifier: 'funcNode'
+              AmpersandAmpersandToken
+              CallExpression
+                Identifier: ' isIdentifier'
+                PropertyAccessExpression
+                  Identifier: 'funcNode'
+                  Identifier: 'name'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+        name'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' getMapEntryOrDefault'
+                    PropertyAccessExpression
+                      Identifier: 'funcNode'
+                      Identifier: 'name'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'name'
+          BarBarToken
+          BinaryExpression
+            BinaryExpression
+              StringLiteral
+              InKeyword
+              Identifier: ' name'
+            AmpersandAmpersandToken
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' name'
+                  Identifier: 'identifier'
+                Identifier: 'text'
+              EqualsEqualsEqualsToken
+              StringLiteral
+        Block
+          ReturnStatement
+            Identifier: ' undefined'
+      ReturnStatement
+        Identifier: ' name'
+      FunctionDeclaration
+        Identifier: ' getMappedBindingNameOrDefault'
+        Parameter
+          Identifier: 'bindingName'
+          TypeReference
+            Identifier: ' BindingName'
+        TypeReference
+          Identifier: ' SynthBindingName'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isIdentifier'
+              Identifier: 'bindingName'
+            ReturnStatement
+              CallExpression
+                Identifier: ' getMapEntryOrDefault'
+                Identifier: 'bindingName'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' elements'
+                CallExpression
+                  Identifier: ' flatMap'
+                  PropertyAccessExpression
+                    Identifier: 'bindingName'
+                    Identifier: 'elements'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' element'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        CallExpression
+                          Identifier: 'isOmittedExpression'
+                          Identifier: 'element'
+                        ReturnStatement
+                          ArrayLiteralExpression
+                      ReturnStatement
+                        ArrayLiteralExpression
+                          CallExpression
+                            Identifier: 'getMappedBindingNameOrDefault'
+                            PropertyAccessExpression
+                              Identifier: 'element'
+                              Identifier: 'name'
+          ReturnStatement
+            CallExpression
+              Identifier: ' createSynthBindingPattern'
+              Identifier: 'bindingName'
+              Identifier: ' elements'
+      FunctionDeclaration
+        Identifier: ' getMapEntryOrDefault'
+        Parameter
+          Identifier: 'identifier'
+          TypeReference
+            Identifier: ' Identifier'
+        TypeReference
+          Identifier: ' SynthIdentifier'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' originalNode'
+                CallExpression
+                  Identifier: ' getOriginalNode'
+                  Identifier: 'identifier'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' symbol'
+                CallExpression
+                  Identifier: ' getSymbol'
+                  Identifier: 'originalNode'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'symbol'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' createSynthIdentifier'
+                  Identifier: 'identifier'
+                  Identifier: ' types'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' mapEntry'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' transformer'
+                      Identifier: 'synthNamesMap'
+                    Identifier: 'get'
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        Identifier: 'getSymbolId'
+                        Identifier: 'symbol'
+                      Identifier: 'toString'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' mapEntry'
+              BarBarToken
+              CallExpression
+                Identifier: ' createSynthIdentifier'
+                Identifier: 'identifier'
+                Identifier: ' types'
+      FunctionDeclaration
+        Identifier: ' getSymbol'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        UnionType
+          TypeReference
+            Identifier: ' Symbol'
+          UndefinedKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: ' tryCast'
+                  Identifier: 'node'
+                  Identifier: ' canHaveSymbol'
+                QuestionDotToken
+                Identifier: 'symbol'
+              QuestionQuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' transformer'
+                    Identifier: 'checker'
+                  Identifier: 'getSymbolAtLocation'
+                Identifier: 'node'
+      FunctionDeclaration
+        Identifier: ' getOriginalNode'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypeReference
+          Identifier: ' Node'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'original'
+              QuestionToken
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'original'
+              ColonToken
+              Identifier: ' node'
+  FunctionDeclaration
+    Identifier: ' isEmptyBindingName'
+    Parameter
+      Identifier: 'bindingName'
+      UnionType
+        TypeReference
+          Identifier: ' SynthBindingName'
+        UndefinedKeyword
+    BooleanKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'bindingName'
+        Block
+          ReturnStatement
+            TrueKeyword
+      IfStatement
+        CallExpression
+          Identifier: 'isSynthIdentifier'
+          Identifier: 'bindingName'
+        Block
+          ReturnStatement
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'bindingName'
+                  Identifier: 'identifier'
+                Identifier: 'text'
+      ReturnStatement
+        CallExpression
+          Identifier: ' every'
+          PropertyAccessExpression
+            Identifier: 'bindingName'
+            Identifier: 'elements'
+          Identifier: ' isEmptyBindingName'
+  FunctionDeclaration
+    Identifier: ' createSynthIdentifier'
+    Parameter
+      Identifier: 'identifier'
+      TypeReference
+        Identifier: ' Identifier'
+    Parameter
+      Identifier: ' types'
+      ArrayType
+        TypeReference
+          Identifier: ' Type'
+      ArrayLiteralExpression
+    TypeReference
+      Identifier: ' SynthIdentifier'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' kind'
+            PropertyAccessExpression
+              Identifier: ' SynthBindingNameKind'
+              Identifier: 'Identifier'
+          ShorthandPropertyAssignment
+            Identifier: ' identifier'
+          ShorthandPropertyAssignment
+            Identifier: ' types'
+          PropertyAssignment
+            Identifier: ' hasBeenDeclared'
+            FalseKeyword
+          PropertyAssignment
+            Identifier: ' hasBeenReferenced'
+            FalseKeyword
+  FunctionDeclaration
+    Identifier: ' createSynthBindingPattern'
+    Parameter
+      Identifier: 'bindingPattern'
+      TypeReference
+        Identifier: ' BindingPattern'
+    Parameter
+      Identifier: ' elements'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SynthBindingName'
+      Identifier: ' emptyArray'
+    Parameter
+      Identifier: ' types'
+      ArrayType
+        TypeReference
+          Identifier: ' Type'
+      ArrayLiteralExpression
+    TypeReference
+      Identifier: ' SynthBindingPattern'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' kind'
+            PropertyAccessExpression
+              Identifier: ' SynthBindingNameKind'
+              Identifier: 'BindingPattern'
+          ShorthandPropertyAssignment
+            Identifier: ' bindingPattern'
+          ShorthandPropertyAssignment
+            Identifier: ' elements'
+          ShorthandPropertyAssignment
+            Identifier: ' types'
+  FunctionDeclaration
+    Identifier: ' referenceSynthIdentifier'
+    Parameter
+      Identifier: 'synthId'
+      TypeReference
+        Identifier: ' SynthIdentifier'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    synthId'
+            Identifier: 'hasBeenReferenced'
+          EqualsToken
+          TrueKeyword
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' synthId'
+          Identifier: 'identifier'
+  FunctionDeclaration
+    Identifier: ' declareSynthBindingName'
+    Parameter
+      Identifier: 'synthName'
+      TypeReference
+        Identifier: ' SynthBindingName'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          CallExpression
+            Identifier: ' isSynthIdentifier'
+            Identifier: 'synthName'
+          QuestionToken
+          CallExpression
+            Identifier: ' declareSynthIdentifier'
+            Identifier: 'synthName'
+          ColonToken
+          CallExpression
+            Identifier: ' declareSynthBindingPattern'
+            Identifier: 'synthName'
+  FunctionDeclaration
+    Identifier: ' declareSynthBindingPattern'
+    Parameter
+      Identifier: 'synthPattern'
+      TypeReference
+        Identifier: ' SynthBindingPattern'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' element'
+        PropertyAccessExpression
+          Identifier: ' synthPattern'
+          Identifier: 'elements'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        declareSynthBindingName'
+              Identifier: 'element'
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' synthPattern'
+          Identifier: 'bindingPattern'
+  FunctionDeclaration
+    Identifier: ' declareSynthIdentifier'
+    Parameter
+      Identifier: 'synthId'
+      TypeReference
+        Identifier: ' SynthIdentifier'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    synthId'
+            Identifier: 'hasBeenDeclared'
+          EqualsToken
+          TrueKeyword
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' synthId'
+          Identifier: 'identifier'
+  FunctionDeclaration
+    Identifier: ' isSynthIdentifier'
+    Parameter
+      Identifier: 'bindingName'
+      TypeReference
+        Identifier: ' SynthBindingName'
+    TypePredicate
+      Identifier: ' bindingName'
+      TypeReference
+        Identifier: ' SynthIdentifier'
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' bindingName'
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' SynthBindingNameKind'
+            Identifier: 'Identifier'
+  FunctionDeclaration
+    Identifier: ' isSynthBindingPattern'
+    Parameter
+      Identifier: 'bindingName'
+      TypeReference
+        Identifier: ' SynthBindingName'
+    TypePredicate
+      Identifier: ' bindingName'
+      TypeReference
+        Identifier: ' SynthBindingPattern'
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' bindingName'
+            Identifier: 'kind'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' SynthBindingNameKind'
+            Identifier: 'BindingPattern'
+  FunctionDeclaration
+    Identifier: ' shouldReturn'
+    Parameter
+      Identifier: 'expression'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' transformer'
+      TypeReference
+        Identifier: ' Transformer'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'expression'
+                Identifier: 'original'
+          AmpersandAmpersandToken
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' transformer'
+                Identifier: 'setOfExpressionsToReturn'
+              Identifier: 'has'
+            CallExpression
+              Identifier: 'getNodeId'
+              PropertyAccessExpression
+                Identifier: 'expression'
+                Identifier: 'original'

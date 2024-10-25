@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BooleanKeyword
+        ParenthesizedExpression
+          ConditionalExpression
+            TrueKeyword
+            QuestionToken
+            NumericLiteral
+            ColonToken
+            StringLiteral

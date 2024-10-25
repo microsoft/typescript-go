@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' seq'
+        ArrowFunction
+          Parameter
+            Identifier: ' a'
+          EqualsGreaterThanToken
+          ArrowFunction
+            Parameter
+              Identifier: ' b'
+            EqualsGreaterThanToken
+            Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' text1'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' text2'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' text3'
+        CallExpression
+          CallExpression
+            Identifier: ' seq'
+            Identifier: 'text1'
+          Identifier: 'text2'

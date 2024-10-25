@@ -1,0 +1,112 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' TerrestrialAnimalTypes'
+    EnumMember
+      Identifier: '
+  CAT'
+      StringLiteral
+    EnumMember
+      Identifier: '
+  DOG'
+      StringLiteral
+  EmptyStatement
+  EnumDeclaration
+    Identifier: ' AlienAnimalTypes'
+    EnumMember
+      Identifier: '
+  CAT'
+      StringLiteral
+  EmptyStatement
+  TypeAliasDeclaration
+    Identifier: ' AnimalTypes'
+    UnionType
+      TypeReference
+        Identifier: ' TerrestrialAnimalTypes'
+      TypeReference
+        Identifier: ' AlienAnimalTypes'
+  InterfaceDeclaration
+    Identifier: ' TerrestrialCat'
+    PropertySignature
+      Identifier: '
+  type'
+      TypeReference
+        QualifiedName
+          Identifier: ' TerrestrialAnimalTypes'
+          Identifier: 'CAT'
+    PropertySignature
+      Identifier: '
+  address'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' AlienCat'
+    PropertySignature
+      Identifier: '
+  type'
+      TypeReference
+        QualifiedName
+          Identifier: ' AlienAnimalTypes'
+          Identifier: 'CAT'
+    PropertySignature
+      Identifier: '
+  planet'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Cats'
+    UnionType
+      TypeReference
+        Identifier: ' TerrestrialCat'
+      TypeReference
+        Identifier: ' AlienCat'
+  TypeAliasDeclaration
+    Identifier: ' CatMap'
+    MappedType
+      TypeParameter
+        Identifier: 'V'
+        TypeReference
+          Identifier: ' AnimalTypes'
+      ArrayType
+        TypeReference
+          Identifier: ' Extract'
+          TypeReference
+            Identifier: 'Cats'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' type'
+              TypeReference
+                Identifier: ' V'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' catMap'
+        TypeReference
+          Identifier: ' CatMap'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  cat'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' type'
+                  PropertyAccessExpression
+                    Identifier: ' TerrestrialAnimalTypes'
+                    Identifier: 'CAT'
+                PropertyAssignment
+                  Identifier: ' address'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' type'
+                  PropertyAccessExpression
+                    Identifier: ' AlienAnimalTypes'
+                    Identifier: 'CAT'
+                PropertyAssignment
+                  Identifier: ' planet'
+                  StringLiteral
+          PropertyAssignment
+            Identifier: '
+  dog'
+            AsExpression
+              ArrayLiteralExpression
+              ArrayType
+                NeverKeyword

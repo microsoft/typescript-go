@@ -1,0 +1,79 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Fragment'
+        ImportSpecifier
+          Identifier: ' createElement'
+    StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' CounterProps'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    count'
+        QuestionToken
+        NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Counter'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' count'
+          NumericLiteral
+      TypeReference
+        Identifier: ' CounterProps'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'cnt'
+              BindingElement
+                Identifier: ' setCnt'
+            AsExpression
+              NullKeyword
+              AnyKeyword
+      ReturnStatement
+        JsxFragment
+          JsxOpeningFragment
+          JsxText
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'p'
+              JsxAttributes
+            JsxExpression
+              Identifier: 'cnt'
+            JsxClosingElement
+              Identifier: 'p'
+          JsxText
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'button'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' onClick'
+                  JsxExpression
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' setCnt'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'prev'
+                          EqualsGreaterThanToken
+                          BinaryExpression
+                            Identifier: ' prev'
+                            PlusToken
+                            NumericLiteral
+                JsxAttribute
+                  Identifier: ' type'
+                  StringLiteral
+            JsxText
+            JsxClosingElement
+              Identifier: 'button'
+          JsxText
+          JsxClosingFragment

@@ -1,0 +1,126 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mod'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+mod'
+      Identifier: 'correctVersionApplied'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mod'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+mod'
+      Identifier: 'correctVersionApplied'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' mod'
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+mod'
+      Identifier: 'correctVersionApplied'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noConditionsApplied'
+        TrueKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' importConditionApplied'
+        TrueKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wrongConditionApplied'
+        TrueKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noVersionApplied'
+        TrueKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' correctVersionApplied'
+        TrueKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' futureVersionApplied'
+        TrueKeyword
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        Identifier: ''
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          StringLiteral

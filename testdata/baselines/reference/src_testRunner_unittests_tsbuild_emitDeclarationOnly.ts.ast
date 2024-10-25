@@ -1,0 +1,308 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' getEmitDeclarationOnlySys'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' TestServerHost'
+                    Identifier: 'createWatchedSystem'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      TaggedTemplateExpression
+                        Identifier: ' dedent'
+                        NoSubstitutionTemplateLiteral
+                    PropertyAssignment
+                      StringLiteral
+                      CallExpression
+                        Identifier: ' jsonToReadableText'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                compilerOptions'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    incremental'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    target'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    module'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    declaration'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    declarationMap'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    sourceMap'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    outDir'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    composite'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    strict'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    esModuleInterop'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    alwaysStrict'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    rootDir'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    emitDeclarationOnly'
+                                TrueKeyword
+          FunctionDeclaration
+            Identifier: ' verifyEmitDeclarationOnly'
+            Parameter
+              Identifier: 'disableMap'
+              QuestionToken
+              LiteralType
+                TrueKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        verifyTsc'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            subScenario'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          ConditionalExpression
+                            Identifier: 'disableMap'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            StringLiteral
+                          TemplateTail
+                    PropertyAssignment
+                      Identifier: '
+            sys'
+                      Identifier: ' getEmitDeclarationOnlySys'
+                    PropertyAssignment
+                      Identifier: '
+            scenario'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            commandLineArgs'
+                      ArrayLiteralExpression
+                        StringLiteral
+                        StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            modifySystem'
+                      ConditionalExpression
+                        Identifier: ' disableMap'
+                        QuestionToken
+                        ParenthesizedExpression
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'sys'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' sys'
+                                Identifier: 'replaceFileText'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                              StringLiteral
+                        ColonToken
+                        Identifier: '
+                undefined'
+                    PropertyAssignment
+                      Identifier: '
+            edits'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                caption'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                edit'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' sys'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'replaceFileText'
+                                StringLiteral
+                                StringLiteral
+                                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyEmitDeclarationOnly'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyEmitDeclarationOnly'
+              TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getEmitDeclarationOnlySys'
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        modifySystem'
+                  ArrowFunction
+                    Parameter
+                      Identifier: ' sys'
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'rimrafSync'
+                          StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            sys'
+                            Identifier: 'replaceFileText'
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                          NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    sys'
+                              Identifier: 'replaceFileText'
+                            StringLiteral
+                            StringLiteral
+                            NoSubstitutionTemplateLiteral
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'replaceFileText'
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral

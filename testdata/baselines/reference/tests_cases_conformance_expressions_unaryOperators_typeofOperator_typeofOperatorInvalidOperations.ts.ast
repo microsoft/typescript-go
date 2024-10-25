@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY'
+        Identifier: ' ANY'
+  ExpressionStatement
+    TypeOfExpression
+      Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY1'
+        TypeOfExpression
+          Identifier: ''

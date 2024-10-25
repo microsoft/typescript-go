@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' c'
+            NumericLiteral
+  ExportAssignment
+    Identifier: ' bar'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' a'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+a'

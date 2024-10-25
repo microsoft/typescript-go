@@ -1,0 +1,80 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+//// class Foo {
+////     bar () {
+////         /*1*/
+////         class Foo1 {
+////             bar1 () {
+////                 /*2*/
+////             }
+////             /*3*/
+////         }
+////     }
+////     /*4*/
+//// }
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+        includes'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: '
+            name'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' name'
+                  PropertyAssignment
+                    Identifier: ' sortText'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' completion'
+                        Identifier: 'SortText'
+                      Identifier: 'GlobalsOrKeywords'
+        PropertyAssignment
+          Identifier: '
+        excludes'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          PropertyAccessExpression
+            Identifier: ' completion'
+            Identifier: 'classElementKeywords'
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword

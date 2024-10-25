@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' a'
+          LessThanToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' a'
+        Block

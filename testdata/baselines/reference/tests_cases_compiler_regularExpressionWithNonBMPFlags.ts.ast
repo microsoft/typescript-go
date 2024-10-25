@@ -1,0 +1,6 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' 𝘳𝘦𝘨𝘦𝘹'
+        RegularExpressionLiteral

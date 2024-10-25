@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' base'
+  ClassDeclaration
+    Identifier: ' base'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' n'
+        NumberKeyword
+      Block

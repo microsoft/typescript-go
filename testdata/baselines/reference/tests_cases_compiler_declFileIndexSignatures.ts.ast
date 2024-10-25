@@ -1,0 +1,77 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IStringIndexSignature'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' INumberIndexSignature'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IBothIndexSignature'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      AnyKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IIndexSignatureWithTypeParameter'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' IGlobalStringIndexSignature'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' IGlobalNumberIndexSignature'
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' IGlobalBothIndexSignature'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      AnyKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' IGlobalIndexSignatureWithTypeParameter'
+    TypeParameter
+      Identifier: 'T'
+    IndexSignature
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      TypeReference
+        Identifier: ' T'

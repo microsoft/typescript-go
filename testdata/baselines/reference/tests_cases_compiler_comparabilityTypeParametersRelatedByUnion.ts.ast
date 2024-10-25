@@ -1,0 +1,56 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'
+      Block
+    MethodDeclaration
+      Identifier: '
+
+  good'
+      TypeParameter
+        Identifier: 'U'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: 'y'
+        TypeReference
+          Identifier: ' U'
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'y'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+          Block
+    MethodDeclaration
+      Identifier: '
+
+  bad'
+      TypeParameter
+        Identifier: 'U'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          StringKeyword
+      Parameter
+        Identifier: 'y'
+        TypeReference
+          Identifier: ' U'
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'y'
+            EqualsEqualsEqualsToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+          Block

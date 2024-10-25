@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    x'
+            NumberKeyword
+          CallSignature
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: ''
+  EmptyStatement

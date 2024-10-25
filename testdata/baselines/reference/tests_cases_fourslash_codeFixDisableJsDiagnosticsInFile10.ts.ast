@@ -1,0 +1,40 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowjs: true
+// @checkJs: true
+// @noEmit: true
+
+// @filename: a.js
+////let x = "";
+////[|x|] = 1;
+
+// verify.codeFixAvailable([
+//     { description: ts.Diagnostics.Ignore_this_error_message.message },
+//     { description: ts.Diagnostics.Disable_checking_for_this_file.message }
+// ]);
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Disable_checking_for_this_file'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    index'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

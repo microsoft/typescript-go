@@ -1,0 +1,14 @@
+SourceFile
+  LabeledStatement
+    Identifier: '/*-1*/ foo'
+    SwitchStatement
+      FalseKeyword
+      CaseBlock
+        CaseClause
+          FalseKeyword
+          BreakStatement
+            Identifier: ' /*11*/ foo'
+        DefaultClause
+        CaseClause
+          FalseKeyword
+          Block

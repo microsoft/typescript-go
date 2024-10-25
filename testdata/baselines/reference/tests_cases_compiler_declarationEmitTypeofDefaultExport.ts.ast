@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' C'
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' a'
+    StringLiteral
+  ExportAssignment
+    PropertyAccessExpression
+      Identifier: ' a'
+      Identifier: 'default'

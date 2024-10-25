@@ -1,0 +1,148 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Test'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' IState'
+      InterfaceDeclaration
+        Identifier: ' IToken'
+        PropertySignature
+          Identifier: '
+        startIndex'
+          NumberKeyword
+      InterfaceDeclaration
+        Identifier: ' IStateToken'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' IToken'
+        PropertySignature
+          Identifier: '
+        state'
+          TypeReference
+            Identifier: ' IState'
+      InterfaceDeclaration
+        Identifier: ' ILineTokens'
+        PropertySignature
+          Identifier: '
+        tokens'
+          ArrayType
+            TypeReference
+              Identifier: ' IToken'
+        PropertySignature
+          Identifier: '
+        endState'
+          TypeReference
+            Identifier: ' IState'
+      InterfaceDeclaration
+        Identifier: ' IAction'
+      InterfaceDeclaration
+        Identifier: ' IMode'
+        MethodSignature
+          Identifier: '
+        onEnter'
+          Parameter
+            Identifier: 'line'
+            StringKeyword
+          Parameter
+            Identifier: ' state'
+            TypeReference
+              Identifier: 'IState'
+          Parameter
+            Identifier: ' offset'
+            NumberKeyword
+          TypeReference
+            Identifier: 'IAction'
+        MethodSignature
+          Identifier: '
+        tokenize'
+          Parameter
+            Identifier: 'line'
+            StringKeyword
+          Parameter
+            Identifier: ' state'
+            TypeReference
+              Identifier: 'IState'
+          Parameter
+            Identifier: ' includeStates'
+            BooleanKeyword
+          TypeReference
+            Identifier: 'ILineTokens'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Bug'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' IMode'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' onEnter'
+          Parameter
+            Identifier: 'line'
+            StringKeyword
+          Parameter
+            Identifier: ' state'
+            TypeReference
+              Identifier: 'IState'
+          Parameter
+            Identifier: ' offset'
+            NumberKeyword
+          TypeReference
+            Identifier: 'IAction'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' lineTokens'
+                  TypeReference
+                    Identifier: 'ILineTokens'
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'tokenize'
+                    Identifier: 'line'
+                    Identifier: ' state'
+                    TrueKeyword
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' tokens'
+                  ArrayType
+                    TypeReference
+                      Identifier: 'IStateToken'
+                  PropertyAccessExpression
+                    Identifier: ' lineTokens'
+                    Identifier: 'tokens'
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'tokens'
+                  Identifier: 'length'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'onEnter'
+                    Identifier: 'line'
+                    Identifier: ' tokens'
+                    Identifier: ' offset'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' tokenize'
+          Parameter
+            Identifier: 'line'
+            StringKeyword
+          Parameter
+            Identifier: ' state'
+            TypeReference
+              Identifier: 'IState'
+          Parameter
+            Identifier: ' includeStates'
+            BooleanKeyword
+          TypeReference
+            Identifier: 'ILineTokens'
+          Block
+            ReturnStatement
+              NullKeyword

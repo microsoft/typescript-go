@@ -1,0 +1,250 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' b'
+        StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sa1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            IntersectionType
+              TypeReference
+                Identifier: ' A'
+              TypeReference
+                Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sa2'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' A'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ta1'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'key'
+              StringKeyword
+            IntersectionType
+              TypeReference
+                Identifier: ' A'
+              TypeReference
+                Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ta2'
+        IntersectionType
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'key'
+                StringKeyword
+              TypeReference
+                Identifier: ' A'
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'key'
+                StringKeyword
+              TypeReference
+                Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+ta1'
+      EqualsToken
+      Identifier: ' sa1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ta1'
+      EqualsToken
+      Identifier: ' sa2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ta2'
+      EqualsToken
+      Identifier: ' sa1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ta2'
+      EqualsToken
+      Identifier: ' sa2'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sb1'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' x'
+              TypeReference
+                Identifier: ' A'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' y'
+              TypeReference
+                Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tb1'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'key'
+              StringKeyword
+            TypeReference
+              Identifier: ' A'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+tb1'
+      EqualsToken
+      Identifier: ' sb1'
+  TypeAliasDeclaration
+    Identifier: ' constr'
+    TypeParameter
+      Identifier: 'Source'
+    TypeParameter
+      Identifier: ' Tgt'
+    IntersectionType
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' Source'
+        StringKeyword
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'Tgt'
+        TypeReference
+          Identifier: ' Exclude'
+          TypeOperator
+            TypeReference
+              Identifier: ' Tgt'
+          TypeOperator
+            TypeReference
+              Identifier: ' Source'
+  TypeAliasDeclaration
+    Identifier: ' s'
+    TypeReference
+      Identifier: ' constr'
+      TypeLiteral
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q'
+        TypeReference
+          Identifier: ' s'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          ElementAccessExpression
+            Identifier: '
+q'
+            StringLiteral
+          Identifier: 'a'
+        Identifier: 'substr'
+      NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      ElementAccessExpression
+        Identifier: '
+q'
+        StringLiteral
+      Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'key'
+              StringKeyword
+            TypeLiteral
+              PropertySignature
+                Identifier: 'a'
+                StringKeyword
+              PropertySignature
+                Identifier: ' b'
+                StringKeyword
+        Identifier: ' q'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ss'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tt'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'key'
+              StringKeyword
+            StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+tt'
+      EqualsToken
+      Identifier: ' ss'

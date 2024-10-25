@@ -1,0 +1,13 @@
+SourceFile
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' b'
+        StringKeyword
+        StringLiteral
+    Identifier: ' X'
+    Block

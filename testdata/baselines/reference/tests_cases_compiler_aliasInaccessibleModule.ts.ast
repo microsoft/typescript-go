@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' N'
+        ModuleBlock
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' X'
+        Identifier: ' N'

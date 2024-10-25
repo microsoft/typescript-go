@@ -1,0 +1,48 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' CONFIG'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    foo'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    setFoo'
+            FunctionExpression
+              Parameter
+                Identifier: 'foo'
+                StringKeyword
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        CONFIG'
+                      Identifier: 'foo'
+                    EqualsToken
+                    Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' helper'
+        FunctionExpression
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 't'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+    helper'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 't'
+                    Identifier: 'slice'
+                  NumericLiteral

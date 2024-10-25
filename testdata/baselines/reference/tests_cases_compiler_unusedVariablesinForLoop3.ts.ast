@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' elem'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+        Block

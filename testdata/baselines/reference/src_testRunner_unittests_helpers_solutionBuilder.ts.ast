@@ -1,0 +1,601 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CommandLineCallbacks'
+        ImportSpecifier
+          Identifier: '
+    commandLineCallbacks'
+        ImportSpecifier
+          Identifier: '
+    patchHostForBuildInfoReadWrite'
+        ImportSpecifier
+          Identifier: '
+    patchHostForBuildInfoWrite'
+        ImportSpecifier
+          Identifier: '
+    TscWatchSystem'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    verifyTsc'
+        ImportSpecifier
+          Identifier: '
+    VerifyTscWithEditsInput'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    changeToHostTrackingWrittenFiles'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SolutionBuilderHostWithGetPrograms'
+    IntersectionType
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'SolutionBuilderHost'
+        TypeReference
+          QualifiedName
+            Identifier: 'ts'
+            Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' getPrograms'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' CommandLineCallbacks'
+            LiteralType
+              StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createSolutionBuilderHostForBaseline'
+    Parameter
+      Identifier: '
+    sys'
+      TypeReference
+        Identifier: ' TscWatchSystem'
+    Parameter
+      Identifier: '
+    originalRead'
+      QuestionToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' TestServerHost'
+        LiteralType
+          StringLiteral
+    IntersectionType
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'SolutionBuilderHost'
+        TypeReference
+          QualifiedName
+            Identifier: 'ts'
+            Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' getPrograms'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' CommandLineCallbacks'
+            LiteralType
+              StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' cb'
+              BindingElement
+                Identifier: ' getPrograms'
+            CallExpression
+              Identifier: ' commandLineCallbacks'
+              Identifier: 'sys'
+              Identifier: ' originalRead'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            AsExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'createSolutionBuilderHost'
+                Identifier: '
+        sys'
+                Identifier: '
+        /*createProgram*/ undefined'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        ts'
+                    Identifier: 'createDiagnosticReporter'
+                  Identifier: 'sys'
+                  TrueKeyword
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        ts'
+                    Identifier: 'createBuilderStatusReporter'
+                  Identifier: 'sys'
+                  TrueKeyword
+              TypeReference
+                Identifier: ' SolutionBuilderHostWithGetPrograms'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'afterProgramEmitAndDiagnostics'
+          EqualsToken
+          Identifier: ' cb'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    host'
+            Identifier: 'getPrograms'
+          EqualsToken
+          Identifier: ' getPrograms'
+      ReturnStatement
+        Identifier: ' host'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createSolutionBuilder'
+    Parameter
+      Identifier: '
+    system'
+      TypeReference
+        Identifier: ' TscWatchSystem'
+    Parameter
+      Identifier: '
+    rootNames'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: '
+    buildOptions'
+      QuestionToken
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuildOptions'
+    Parameter
+      Identifier: '
+    originalRead'
+      QuestionToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' TestServerHost'
+        LiteralType
+          StringLiteral
+    TypeReference
+      QualifiedName
+        Identifier: ' ts'
+        Identifier: 'SolutionBuilder'
+      TypeReference
+        QualifiedName
+          Identifier: 'ts'
+          Identifier: 'EmitAndSemanticDiagnosticsBuilderProgram'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' host'
+            CallExpression
+              Identifier: ' createSolutionBuilderHostForBaseline'
+              Identifier: 'system'
+              Identifier: ' originalRead'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'createSolutionBuilder'
+          Identifier: 'host'
+          Identifier: ' rootNames'
+          BinaryExpression
+            Identifier: ' buildOptions'
+            QuestionQuestionToken
+            ObjectLiteralExpression
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' ensureErrorFreeBuild'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' TestServerHost'
+    Parameter
+      Identifier: ' rootNames'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    // ts build should succeed
+    solutionBuildWithBaseline'
+          Identifier: 'host'
+          Identifier: ' rootNames'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    assert'
+            Identifier: 'equal'
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'host'
+                Identifier: 'getOutput'
+            Identifier: 'length'
+          NumericLiteral
+          CallExpression
+            Identifier: ' jsonToReadableText'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'host'
+                Identifier: 'getOutput'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' solutionBuildWithBaseline'
+    Parameter
+      Identifier: '
+    sys'
+      TypeReference
+        Identifier: ' TestServerHost'
+    Parameter
+      Identifier: '
+    solutionRoots'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    Parameter
+      Identifier: '
+    buildOptions'
+      QuestionToken
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'BuildOptions'
+    Parameter
+      Identifier: '
+    versionToWrite'
+      QuestionToken
+      StringKeyword
+    Parameter
+      Identifier: '
+    originalRead'
+      QuestionToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' TestServerHost'
+        LiteralType
+          StringLiteral
+    TypeReference
+      Identifier: ' TestServerHost'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'sys'
+            Identifier: 'writtenFiles'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' originalReadFile'
+                PropertyAccessExpression
+                  Identifier: ' sys'
+                  Identifier: 'readFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' originalWrite'
+                PropertyAccessExpression
+                  Identifier: ' sys'
+                  Identifier: 'write'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' originalWriteFile'
+                PropertyAccessExpression
+                  Identifier: ' sys'
+                  Identifier: 'writeFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' solutionBuilder'
+                CallExpression
+                  Identifier: ' createSolutionBuilder'
+                  CallExpression
+                    Identifier: '
+            changeToHostTrackingWrittenFiles'
+                    ConditionalExpression
+                      Identifier: '
+                versionToWrite'
+                      QuestionToken
+                      CallExpression
+                        Identifier: '
+                    patchHostForBuildInfoWrite'
+                        Identifier: 'sys'
+                        Identifier: ' versionToWrite'
+                      ColonToken
+                      CallExpression
+                        Identifier: '
+                    patchHostForBuildInfoReadWrite'
+                        Identifier: 'sys'
+                  Identifier: '
+            solutionRoots'
+                  Identifier: '
+            buildOptions'
+                  Identifier: '
+            originalRead'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        solutionBuilder'
+                Identifier: 'build'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        sys'
+                Identifier: 'readFile'
+              EqualsToken
+              Identifier: ' originalReadFile'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        sys'
+                Identifier: 'write'
+              EqualsToken
+              Identifier: ' originalWrite'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        sys'
+                Identifier: 'writeFile'
+              EqualsToken
+              Identifier: ' originalWriteFile'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        sys'
+                Identifier: 'writtenFiles'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sys'
+                Identifier: 'clearOutput'
+          ReturnStatement
+            Identifier: ' sys'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' solutionBuilder'
+                CallExpression
+                  Identifier: ' createSolutionBuilder'
+                  AsExpression
+                    Identifier: 'sys'
+                    TypeReference
+                      Identifier: ' TscWatchSystem'
+                  Identifier: ' solutionRoots'
+                  Identifier: ' buildOptions'
+                  Identifier: ' originalRead'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        solutionBuilder'
+                Identifier: 'build'
+          ReturnStatement
+            Identifier: ' sys'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' verifySolutionBuilderWithDifferentTsVersion'
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' VerifyTscWithEditsInput'
+    Parameter
+      Identifier: ' rootNames'
+      TypeOperator
+        ArrayType
+          StringKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    describe'
+          PropertyAccessExpression
+            Identifier: 'input'
+            Identifier: 'subScenario'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' originalReadFile'
+                    IndexedAccessType
+                      TypeReference
+                        Identifier: ' TscWatchSystem'
+                      LiteralType
+                        StringLiteral
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' originalWriteFile'
+                    IndexedAccessType
+                      TypeReference
+                        Identifier: ' TscWatchSystem'
+                      LiteralType
+                        StringLiteral
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        verifyTsc'
+                  ObjectLiteralExpression
+                    SpreadAssignment
+                      Identifier: 'input'
+                    PropertyAssignment
+                      Identifier: '
+            sys'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' sys'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' input'
+                                    Identifier: 'sys'
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                originalReadFile'
+                              EqualsToken
+                              PropertyAccessExpression
+                                Identifier: ' sys'
+                                Identifier: 'readFile'
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                originalWriteFile'
+                              EqualsToken
+                              PropertyAccessExpression
+                                Identifier: ' sys'
+                                Identifier: 'writeFile'
+                          ReturnStatement
+                            Identifier: ' sys'
+                    PropertyAssignment
+                      Identifier: '
+            compile'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' sys'
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                sys'
+                                Identifier: 'readFile'
+                              EqualsToken
+                              Identifier: ' originalReadFile'
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                sys'
+                                Identifier: 'writeFile'
+                              EqualsToken
+                              Identifier: ' originalWriteFile'
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                originalReadFile'
+                              EqualsToken
+                              NonNullExpression
+                                Identifier: ' undefined'
+                          ExpressionStatement
+                            BinaryExpression
+                              Identifier: '
+                originalWriteFile'
+                              EqualsToken
+                              NonNullExpression
+                                Identifier: ' undefined'
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                sys'
+                                Identifier: 'writtenFiles'
+                              EqualsToken
+                              NonNullExpression
+                                Identifier: ' undefined'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+                // Buildinfo will have version which does not match with current ts version
+                changeToHostTrackingWrittenFiles'
+                              CallExpression
+                                Identifier: 'patchHostForBuildInfoWrite'
+                                Identifier: 'sys'
+                                StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' buildHost'
+                                CallExpression
+                                  Identifier: ' createSolutionBuilderHostForBaseline'
+                                  Identifier: 'sys'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' builder'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSolutionBuilder'
+                                  Identifier: 'buildHost'
+                                  Identifier: ' rootNames'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' verbose'
+                                      TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                sys'
+                                Identifier: 'exit'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'builder'
+                                  Identifier: 'build'
+                          ReturnStatement
+                            PropertyAccessExpression
+                              Identifier: ' buildHost'
+                              Identifier: 'getPrograms'

@@ -1,0 +1,314 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    noChangeRun'
+        ImportSpecifier
+          Identifier: '
+    verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    extends'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    extends'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        composite'
+                                    TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    references'
+                                ArrayLiteralExpression
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' path'
+                                      StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' verify'
+            Parameter
+              Identifier: 'outFile'
+              QuestionToken
+              ObjectKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        verifyTsc'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            scenario'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            subScenario'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          ConditionalExpression
+                            Identifier: 'outFile'
+                            QuestionToken
+                            StringLiteral
+                            ColonToken
+                            StringLiteral
+                          TemplateTail
+                    PropertyAssignment
+                      Identifier: '
+            sys'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                TestServerHost'
+                            Identifier: 'createWatchedSystem'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              StringLiteral
+                              StringLiteral
+                            PropertyAssignment
+                              StringLiteral
+                              StringLiteral
+                            PropertyAssignment
+                              StringLiteral
+                              TaggedTemplateExpression
+                                Identifier: ' dedent'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    ConditionalExpression
+                                      Identifier: 'outFile'
+                                      QuestionToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          CallExpression
+                                            Identifier: ' jsonToReadableText'
+                                            Identifier: 'outFile'
+                                          Identifier: 'replace'
+                                        RegularExpressionLiteral
+                                        StringLiteral
+                                      ColonToken
+                                      StringLiteral
+                                    TemplateTail
+                    PropertyAssignment
+                      Identifier: '
+            commandLineArgs'
+                      ArrayLiteralExpression
+                        StringLiteral
+                    PropertyAssignment
+                      Identifier: '
+            edits'
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    edit'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' sys'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                        sys'
+                                  Identifier: 'replaceFileText'
+                                StringLiteral
+                                StringLiteral
+                                NoSubstitutionTemplateLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    caption'
+                            StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    discrepancyExplanation'
+                            ArrowFunction
+                              EqualsGreaterThanToken
+                              ArrayLiteralExpression
+                                StringLiteral
+                                StringLiteral
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    edit'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' sys'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' sys'
+                                  Identifier: 'appendFile'
+                                StringLiteral
+                                StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    caption'
+                            StringLiteral
+                        Identifier: '
+                noChangeRun'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+                    edit'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' sys'
+                              EqualsGreaterThanToken
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                        sys'
+                                  Identifier: 'writeFile'
+                                StringLiteral
+                                CallExpression
+                                  Identifier: '
+                            jsonToReadableText'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                                compilerOptions'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' composite'
+                                          TrueKeyword
+                                        PropertyAssignment
+                                          Identifier: ' declaration'
+                                          TrueKeyword
+                                        SpreadAssignment
+                                          Identifier: 'outFile'
+                                    PropertyAssignment
+                                      Identifier: '
+                                files'
+                                      ArrayLiteralExpression
+                                        StringLiteral
+                                        StringLiteral
+                          PropertyAssignment
+                            Identifier: '
+                    caption'
+                            StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verify'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verify'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' outFile'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' module'
+                  StringLiteral

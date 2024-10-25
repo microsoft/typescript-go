@@ -1,0 +1,443 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' BaseNodeFactory'
+        ImportSpecifier
+          Identifier: ' Diagnostic'
+        ImportSpecifier
+          Identifier: ' DiagnosticMessage'
+        ImportSpecifier
+          Identifier: ' EntityName'
+        ImportSpecifier
+          Identifier: ' JSDoc'
+        ImportSpecifier
+          Identifier: ' JSDocParsingMode'
+        ImportSpecifier
+          Identifier: ' JSDocTypeExpression'
+        ImportSpecifier
+          Identifier: ' JsonSourceFile'
+        ImportSpecifier
+          Identifier: ' JsxTagNameExpression'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' NodeArray'
+        ImportSpecifier
+          Identifier: ' NodeFactory'
+        ImportSpecifier
+          Identifier: ' PackageJsonInfo'
+        ImportSpecifier
+          Identifier: ' PragmaContext'
+        ImportSpecifier
+          Identifier: ' ResolutionMode'
+        ImportSpecifier
+          Identifier: ' ScriptKind'
+        ImportSpecifier
+          Identifier: ' ScriptTarget'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' TextChangeRange'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' parseBaseNodeFactory'
+        TypeReference
+          Identifier: ' BaseNodeFactory'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' parseNodeFactory'
+        TypeReference
+          Identifier: ' NodeFactory'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isJSDocLikeText'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' start'
+      NumberKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isFileProbablyExternalModule'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    UnionType
+      TypeReference
+        Identifier: ' Node'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachChild'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' cbNode'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    Parameter
+      Identifier: ' cbNodes'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'nodes'
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' forEachChildRecursively'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'rootNode'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' cbNode'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' Node'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            StringLiteral
+          UndefinedKeyword
+    Parameter
+      Identifier: ' cbNodes'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'nodes'
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' Node'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            StringLiteral
+          UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CreateSourceFileOptions'
+    PropertySignature
+      Identifier: '
+    languageVersion'
+      TypeReference
+        Identifier: ' ScriptTarget'
+    PropertySignature
+      Identifier: '
+    /**
+     * Controls the format the file is detected as - this can be derived from only the path
+     * and files on disk, but needs to be done with a module resolution cache in scope to be performant.
+     * This is usually `undefined` for compilations that do not have `moduleResolution` values of `node16` or `nodenext`.
+     */
+    impliedNodeFormat'
+      QuestionToken
+      TypeReference
+        Identifier: ' ResolutionMode'
+    PropertySignature
+      Identifier: '
+    /**
+     * Controls how module-y-ness is set for the given file. Usually the result of calling
+     * `getSetExternalModuleIndicator` on a valid `CompilerOptions` object. If not present, the default
+     * check specified by `isFileProbablyExternalModule` will be used to set the field.
+     */
+    setExternalModuleIndicator'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'file'
+          TypeReference
+            Identifier: ' SourceFile'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ packageJsonLocations'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          StringKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ packageJsonScope'
+      QuestionToken
+      TypeReference
+        Identifier: ' PackageJsonInfo'
+    PropertySignature
+      Identifier: '
+    jsDocParsingMode'
+      QuestionToken
+      TypeReference
+        Identifier: ' JSDocParsingMode'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createSourceFile'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' sourceText'
+      StringKeyword
+    Parameter
+      Identifier: ' languageVersionOrOptions'
+      UnionType
+        TypeReference
+          Identifier: ' ScriptTarget'
+        TypeReference
+          Identifier: ' CreateSourceFileOptions'
+    Parameter
+      Identifier: ' setParentNodes'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: ' scriptKind'
+      QuestionToken
+      TypeReference
+        Identifier: ' ScriptKind'
+    TypeReference
+      Identifier: ' SourceFile'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' parseIsolatedEntityName'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' languageVersion'
+      TypeReference
+        Identifier: ' ScriptTarget'
+    UnionType
+      TypeReference
+        Identifier: ' EntityName'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' parseJsonText'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    Parameter
+      Identifier: ' sourceText'
+      StringKeyword
+    TypeReference
+      Identifier: ' JsonSourceFile'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isExternalModule'
+    Parameter
+      Identifier: 'file'
+      TypeReference
+        Identifier: ' SourceFile'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' updateSourceFile'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' newText'
+      StringKeyword
+    Parameter
+      Identifier: ' textChangeRange'
+      TypeReference
+        Identifier: ' TextChangeRange'
+    Parameter
+      Identifier: ' aggressiveChecks'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' SourceFile'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' JsDocWithDiagnostics'
+    PropertySignature
+      Identifier: '
+    jsDoc'
+      TypeReference
+        Identifier: ' JSDoc'
+    PropertySignature
+      Identifier: '
+    diagnostics'
+      ArrayType
+        TypeReference
+          Identifier: ' Diagnostic'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' parseIsolatedJSDocComment'
+    Parameter
+      Identifier: 'content'
+      StringKeyword
+    Parameter
+      Identifier: ' start'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' length'
+      QuestionToken
+      NumberKeyword
+    UnionType
+      TypeReference
+        Identifier: ' JsDocWithDiagnostics'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' parseJSDocTypeExpressionForTests'
+    Parameter
+      Identifier: 'content'
+      StringKeyword
+    Parameter
+      Identifier: ' start'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' length'
+      QuestionToken
+      NumberKeyword
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    jsDocTypeExpression'
+          TypeReference
+            Identifier: ' JSDocTypeExpression'
+        PropertySignature
+          Identifier: '
+    diagnostics'
+          ArrayType
+            TypeReference
+              Identifier: ' Diagnostic'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isDeclarationFileName'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDeclarationFileExtension'
+    Parameter
+      Identifier: 'fileName'
+      StringKeyword
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' processCommentPragmas'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' PragmaContext'
+    Parameter
+      Identifier: ' sourceText'
+      StringKeyword
+    VoidKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' PragmaDiagnosticReporter'
+    FunctionType
+      Parameter
+        Identifier: 'pos'
+        NumberKeyword
+      Parameter
+        Identifier: ' length'
+        NumberKeyword
+      Parameter
+        Identifier: ' message'
+        TypeReference
+          Identifier: ' DiagnosticMessage'
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' processPragmasIntoFields'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' PragmaContext'
+    Parameter
+      Identifier: ' reportDiagnostic'
+      TypeReference
+        Identifier: ' PragmaDiagnosticReporter'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' tagNamesAreEquivalent'
+    Parameter
+      Identifier: 'lhs'
+      TypeReference
+        Identifier: ' JsxTagNameExpression'
+    Parameter
+      Identifier: ' rhs'
+      TypeReference
+        Identifier: ' JsxTagNameExpression'
+    BooleanKeyword

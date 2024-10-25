@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' EventAggregator'
+    MethodDeclaration
+      Identifier: '
+    publish'
+      Parameter
+        Identifier: 'event'
+        StringKeyword
+      Parameter
+        Identifier: ' data'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    publish'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'event'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ea'
+        TypeReference
+          Identifier: ' EventAggregator'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+ea'
+        Identifier: 'publish'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral

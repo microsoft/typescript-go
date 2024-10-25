@@ -1,0 +1,186 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' OneThing'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' OneThing'
+    Parameter
+      Identifier: 'l'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'yy'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' yy1'
+          StringKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    yy'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    yy1'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    yy'
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    yy'
+            NumericLiteral
+          PropertyAssignment
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' defaultObj'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj1'
+            JsxAttribute
+              Identifier: 'obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj1'
+            JsxAttribute
+              Identifier: ' yy'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'yy1'
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c6'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj1'
+            JsxAttribute
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'yy'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' yy1'
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c7'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'defaultObj'
+            JsxAttribute
+              Identifier: ' yy'
+            JsxAttribute
+              Identifier: 'obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c8'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' ignore-prop'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c9'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c10'
+        JsxSelfClosingElement
+          Identifier: 'OneThing'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj2'
+            JsxAttribute
+              Identifier: ' yy1'
+              StringLiteral

@@ -1,0 +1,129 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' esmy'
+    VoidKeyword
+  ExportAssignment
+    Identifier: ' esmy'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' funciton'
+    VoidKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' _default'
+            NumberKeyword
+      ExportAssignment
+        Identifier: ' _default'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' esmy'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' esmy2'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' funciton'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' funciton'
+          Identifier: ' funciton2'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      ImportKeyword
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T'
+    ImportType
+      LiteralType
+        StringLiteral
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' T'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' JustTypes'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' T'
+        NumberKeyword
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Values'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Default'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I'
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' x'
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' ns'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+  ExportAssignment
+    Identifier: ' ns'
+  ExportAssignment
+    NumericLiteral
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' C'
+  InterfaceDeclaration
+    Identifier: ' I'
+  ExportAssignment
+    Identifier: ' I'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' esmy'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' esmy'

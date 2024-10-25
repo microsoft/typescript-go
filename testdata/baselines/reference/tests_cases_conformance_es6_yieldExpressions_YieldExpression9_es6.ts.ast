@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        FunctionExpression
+          AsteriskToken
+          Block
+            ExpressionStatement
+              YieldExpression
+                ParenthesizedExpression
+                  Identifier: 'foo'

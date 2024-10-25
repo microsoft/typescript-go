@@ -1,0 +1,59 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' nullWidenFunction'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' undefinedWidenFunction'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    nullWidenFuncOfC'
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+
+    underfinedWidenFuncOfC'
+      Block
+        ReturnStatement
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' foo1'
+    AnyKeyword
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' bar1'
+    AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' fooBar'
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' fooFoo'
+    Block
+      ReturnStatement
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// this should not be an error as the error is raised by expr above
+nullWidenFunction'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+undefinedWidenFunction'

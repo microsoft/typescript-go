@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          NumericLiteral
+      ExpressionStatement
+        AwaitExpression
+          NumericLiteral
+      ExpressionStatement
+        AwaitExpression
+          NumericLiteral

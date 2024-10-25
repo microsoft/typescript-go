@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' deco'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'deco'
+    ExportKeyword
+    Identifier: ' Example'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Example'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Example'
+        Identifier: 'foo'

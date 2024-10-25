@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @noUnusedLocals: true
+// @noUnusedParameters: true
+////class greeter {
+////    public function1() {
+////        [| var x, y; |]
+////        use(y);
+////    }
+////}
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      StringLiteral
+      Identifier: ' /*includeWhiteSpace*/ undefined'
+      Identifier: ' /*errorCode*/ undefined'
+      NumericLiteral

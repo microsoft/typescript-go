@@ -1,0 +1,906 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        AsExpression
+          StringLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        AsExpression
+          NoSubstitutionTemplateLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        AsExpression
+          NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        AsExpression
+          PrefixUnaryExpression
+            NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v5'
+        AsExpression
+          PrefixUnaryExpression
+            NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v6'
+        AsExpression
+          BigintLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v7'
+        AsExpression
+          PrefixUnaryExpression
+            BigintLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v8'
+        AsExpression
+          TrueKeyword
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v9'
+        AsExpression
+          FalseKeyword
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        AsExpression
+          StringLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        AsExpression
+          NoSubstitutionTemplateLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        AsExpression
+          NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        AsExpression
+          PrefixUnaryExpression
+            NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c5'
+        AsExpression
+          PrefixUnaryExpression
+            NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c6'
+        AsExpression
+          BigintLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c7'
+        AsExpression
+          PrefixUnaryExpression
+            BigintLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c8'
+        AsExpression
+          TrueKeyword
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c9'
+        AsExpression
+          FalseKeyword
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vv1'
+        Identifier: ' v1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vc1'
+        Identifier: ' c1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        AsExpression
+          ArrayLiteralExpression
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        AsExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+            NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        AsExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+            TrueKeyword
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        AsExpression
+          ArrayLiteralExpression
+            SpreadElement
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+                NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        AsExpression
+          ArrayLiteralExpression
+            SpreadElement
+              Identifier: 'a5'
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a7'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'a6'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a8'
+        AsExpression
+          ArrayLiteralExpression
+            StringLiteral
+            SpreadElement
+              Identifier: 'a7'
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'a8'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              StringLiteral
+              NumericLiteral
+            PropertyAssignment
+              ComputedPropertyName
+                StringLiteral
+              NumericLiteral
+            MethodDeclaration
+              Identifier: ' d'
+              Block
+            PropertyAssignment
+              ComputedPropertyName
+                BinaryExpression
+                  StringLiteral
+                  PlusToken
+                  StringLiteral
+              NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        AsExpression
+          ObjectLiteralExpression
+            SpreadAssignment
+              Identifier: 'o1'
+            SpreadAssignment
+              Identifier: 'o2'
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o4'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o5'
+        AsExpression
+          ObjectLiteralExpression
+            SpreadAssignment
+              Identifier: 'o4'
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o6'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'o5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o7'
+        AsExpression
+          ObjectLiteralExpression
+            SpreadAssignment
+              Identifier: 'd'
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o8'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'o7'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o9'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            MethodDeclaration
+              Identifier: ' foo'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'x'
+                    EqualsToken
+                    NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        AsExpression
+          ParenthesizedExpression
+            NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        AsExpression
+          ParenthesizedExpression
+            ParenthesizedExpression
+              PrefixUnaryExpression
+                NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p3'
+        AsExpression
+          ParenthesizedExpression
+            ArrayLiteralExpression
+              ParenthesizedExpression
+                NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p4'
+        AsExpression
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              ArrayLiteralExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              ArrayLiteralExpression
+                NumericLiteral
+                NumericLiteral
+            PropertyAssignment
+              Identifier: ' z'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' a'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' b'
+                      NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q1'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'const'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q2'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'const'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q3'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'const'
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q4'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'const'
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q5'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'const'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' id'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e1'
+        AsExpression
+          Identifier: ' v1'
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e2'
+        AsExpression
+          ParenthesizedExpression
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              NumericLiteral
+              ColonToken
+              NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e3'
+        AsExpression
+          CallExpression
+            Identifier: ' id'
+            NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        AsExpression
+          StringLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        AsExpression
+          StringLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        AsExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 't1'
+              TemplateMiddle
+            TemplateSpan
+              Identifier: 't2'
+              TemplateTail
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        AsExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 't1'
+                  TemplateTail
+              TemplateMiddle
+            TemplateSpan
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 't2'
+                  TemplateTail
+              TemplateTail
+          TypeReference
+            Identifier: ' const'
+  FunctionDeclaration
+    Identifier: ' ff1'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: ' y'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    Block
+      ReturnStatement
+        AsExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'x'
+              TemplateMiddle
+            TemplateSpan
+              Identifier: 'y'
+              TemplateTail
+          TypeReference
+            Identifier: ' const'
+  FunctionDeclaration
+    Identifier: ' ff2'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeParameter
+      Identifier: ' U'
+      StringKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ReturnStatement
+        AsExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'x'
+              TemplateMiddle
+            TemplateSpan
+              Identifier: 'y'
+              TemplateTail
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ts1'
+        CallExpression
+          Identifier: ' ff2'
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ts2'
+        CallExpression
+          Identifier: ' ff2'
+          StringLiteral
+          ConditionalExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                TrueKeyword
+            QuestionToken
+            StringLiteral
+            ColonToken
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ts3'
+        CallExpression
+          Identifier: ' ff2'
+          ConditionalExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                TrueKeyword
+            QuestionToken
+            StringLiteral
+            ColonToken
+            StringLiteral
+          ConditionalExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                TrueKeyword
+            QuestionToken
+            StringLiteral
+            ColonToken
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' ff3'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: ' y'
+      ObjectKeyword
+    Block
+      ReturnStatement
+        AsExpression
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'x'
+              TemplateMiddle
+            TemplateSpan
+              Identifier: 'y'
+              TemplateTail
+          TypeReference
+            Identifier: ' const'
+  TypeAliasDeclaration
+    Identifier: ' Action'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' ContentMatch'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Outcome'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Action'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'ContentMatch'
+        TemplateTail
+  FunctionDeclaration
+    Identifier: ' ff4'
+    Parameter
+      Identifier: 'verify'
+      BooleanKeyword
+    Parameter
+      Identifier: ' contentMatches'
+      BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' action'
+            TypeReference
+              Identifier: ' Action'
+            ConditionalExpression
+              Identifier: ' verify'
+              QuestionToken
+              NoSubstitutionTemplateLiteral
+              ColonToken
+              NoSubstitutionTemplateLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' contentMatch'
+            TypeReference
+              Identifier: ' ContentMatch'
+            ConditionalExpression
+              Identifier: ' contentMatches'
+              QuestionToken
+              NoSubstitutionTemplateLiteral
+              ColonToken
+              NoSubstitutionTemplateLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' outcome'
+            TypeReference
+              Identifier: ' Outcome'
+            AsExpression
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'action'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'contentMatch'
+                  TemplateTail
+              TypeReference
+                Identifier: ' const'
+      ReturnStatement
+        Identifier: ' outcome'
+  FunctionDeclaration
+    Identifier: ' ff5'
+    Parameter
+      Identifier: 'verify'
+      BooleanKeyword
+    Parameter
+      Identifier: ' contentMatches'
+      BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' action'
+            ConditionalExpression
+              Identifier: ' verify'
+              QuestionToken
+              NoSubstitutionTemplateLiteral
+              ColonToken
+              NoSubstitutionTemplateLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' contentMatch'
+            ConditionalExpression
+              Identifier: ' contentMatches'
+              QuestionToken
+              NoSubstitutionTemplateLiteral
+              ColonToken
+              NoSubstitutionTemplateLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' outcome'
+            AsExpression
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'action'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'contentMatch'
+                  TemplateTail
+              TypeReference
+                Identifier: ' const'
+      ReturnStatement
+        Identifier: ' outcome'
+  FunctionDeclaration
+    Identifier: ' accessorNames'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    Parameter
+      Identifier: 'propName'
+      TypeReference
+        Identifier: ' S'
+    Block
+      ReturnStatement
+        AsExpression
+          ArrayLiteralExpression
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'propName'
+                TemplateTail
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'propName'
+                TemplateTail
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ns1'
+        CallExpression
+          Identifier: ' accessorNames'
+          StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Foo54374'
+    PropertySignature
+      Identifier: '
+  a'
+      LiteralType
+        NumericLiteral
+    PropertySignature
+      Identifier: '
+  b'
+      LiteralType
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fooConst54374'
+        TypeReference
+          Identifier: ' Foo54374'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: '
+  b'
+              NumericLiteral
+          TypeReference
+            Identifier: ' const'

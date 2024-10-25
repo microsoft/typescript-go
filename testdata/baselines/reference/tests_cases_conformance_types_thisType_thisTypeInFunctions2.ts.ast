@@ -1,0 +1,191 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IndexedWithThis'
+    PropertySignature
+      Identifier: '
+    // this is a workaround for React
+    init'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'this'
+          ThisType
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    willDestroy'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'this'
+          AnyKeyword
+        VoidKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'propName'
+        StringKeyword
+      UnionType
+        NumberKeyword
+        StringKeyword
+        BooleanKeyword
+        SymbolKeyword
+        UndefinedKeyword
+        LiteralType
+          NullKeyword
+        TypeLiteral
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'this'
+              AnyKeyword
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              ArrayType
+                AnyKeyword
+            AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' IndexedWithoutThis'
+    PropertySignature
+      Identifier: '
+    // this is what React would like to write (and what they write today)
+    init'
+      QuestionToken
+      FunctionType
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    willDestroy'
+      QuestionToken
+      FunctionType
+        VoidKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'propName'
+        StringKeyword
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' SimpleInterface'
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'n'
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    bar'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' extend1'
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' IndexedWithThis'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' extend2'
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' IndexedWithoutThis'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' simple'
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' SimpleInterface'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+extend1'
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    init'
+          Block
+            ExpressionStatement
+              ThisKeyword
+            ExpressionStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'willDestroy'
+        PropertyAssignment
+          Identifier: '
+    mine'
+          NumericLiteral
+        MethodDeclaration
+          Identifier: '
+    foo'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'url'
+            ExpressionStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'willDestroy'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+extend2'
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    init'
+          Block
+            ExpressionStatement
+              ThisKeyword
+            ExpressionStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'mine'
+        PropertyAssignment
+          Identifier: '
+    mine'
+          NumericLiteral
+        MethodDeclaration
+          Identifier: '
+    foo'
+          Block
+            ExpressionStatement
+              ThisKeyword
+            ExpressionStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'mine'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+simple'
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: '
+    foo'
+          Parameter
+            Identifier: 'n'
+          Block
+            ReturnStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' n'
+                  Identifier: 'length'
+                PlusToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'bar'
+        MethodDeclaration
+          Identifier: '
+    bar'
+          Block
+            ReturnStatement
+              NumericLiteral

@@ -1,0 +1,137 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    S1'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    S2'
+      StringLiteral
+    EnumMember
+      Identifier: '
+
+    N1'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    N2'
+      NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someNumber'
+        NumberKeyword
+  IfStatement
+    BinaryExpression
+      Identifier: 'someNumber'
+      GreaterThanToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'N2'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someNumber'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'N2'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfEnum'
+        UnionType
+          TypeReference
+            QualifiedName
+              Identifier: ' E'
+              Identifier: 'N1'
+          TypeReference
+            QualifiedName
+              Identifier: ' E'
+              Identifier: 'N2'
+  IfStatement
+    BinaryExpression
+      Identifier: 'someNumber'
+      GreaterThanToken
+      Identifier: ' unionOfEnum'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someNumber'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'N2'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someString'
+        StringKeyword
+  IfStatement
+    BinaryExpression
+      Identifier: 'someString'
+      GreaterThanToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'S1'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    someString'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' E'
+            Identifier: 'S2'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' someValue'
+    NumberKeyword
+  EnumDeclaration
+    Identifier: ' E2'
+    EnumMember
+      Identifier: '
+    S1'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    N1'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    C1'
+      CallExpression
+        Identifier: ' someValue'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+someString'
+      GreaterThanToken
+      PropertyAccessExpression
+        Identifier: ' E2'
+        Identifier: 'S1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+someNumber'
+      GreaterThanToken
+      PropertyAccessExpression
+        Identifier: ' E2'
+        Identifier: 'N1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+someNumber'
+      GreaterThanToken
+      PropertyAccessExpression
+        Identifier: ' E2'
+        Identifier: 'C1'

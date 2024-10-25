@@ -1,0 +1,53 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' N'
+        ModuleBlock
+          EnumDeclaration
+            ExportKeyword
+            Identifier: ' E1'
+            EnumMember
+              Identifier: '
+      a'
+              NumericLiteral
+            EnumMember
+              Identifier: '
+      b'
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'a'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' N'
+        ModuleBlock
+          EnumDeclaration
+            ExportKeyword
+            Identifier: ' E2'
+            EnumMember
+              Identifier: '
+      b'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' M'
+                    Identifier: 'N'
+                  Identifier: 'E1'
+                Identifier: 'a'
+            EnumMember
+              Identifier: '
+      c'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' M'
+                      Identifier: 'N'
+                    Identifier: 'E1'
+                  Identifier: 'a'
+                Identifier: 'a'

@@ -1,0 +1,44 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Mover'
+    MethodSignature
+      Identifier: '
+    move'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getStatus'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' speed'
+          NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Shaker'
+    MethodSignature
+      Identifier: '
+    shake'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getStatus'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' frequency'
+          NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' MoverShaker'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Mover'
+      ExpressionWithTypeArguments
+        Identifier: ' Shaker'
+    MethodSignature
+      Identifier: '
+    getStatus'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' speed'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' frequency'
+          NumberKeyword

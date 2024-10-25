@@ -1,0 +1,6 @@
+SourceFile
+  ExpressionStatement
+    PrefixUnaryExpression
+      TypeAssertionExpression
+        TypeLiteral
+        Identifier: ''

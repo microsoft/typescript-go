@@ -1,0 +1,1124 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' __Awaited'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      UnionType
+        LiteralType
+          NullKeyword
+        UndefinedKeyword
+      TypeReference
+        Identifier: ' T'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        TypeReference
+          Identifier: ' PromiseLike'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+        TypeReference
+          Identifier: ' __Awaited'
+          TypeReference
+            Identifier: 'U'
+        TypeReference
+          Identifier: '
+    T'
+  TypeAliasDeclaration
+    Identifier: ' MyPromise'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+    then'
+        TypeParameter
+          Identifier: 'U'
+        Parameter
+          Identifier: 'f'
+          UnionType
+            ParenthesizedType
+              FunctionType
+                Parameter
+                  Identifier: 'value'
+                  TypeReference
+                    Identifier: ' T'
+                UnionType
+                  TypeReference
+                    Identifier: ' U'
+                  TypeReference
+                    Identifier: ' PromiseLike'
+                    TypeReference
+                      Identifier: 'U'
+            LiteralType
+              NullKeyword
+            UndefinedKeyword
+        TypeReference
+          Identifier: ' MyPromise'
+          TypeReference
+            Identifier: 'U'
+  TypeAliasDeclaration
+    Identifier: ' InfinitePromise'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Promise'
+      TypeReference
+        Identifier: 'InfinitePromise'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' P0'
+    TypeReference
+      Identifier: ' __Awaited'
+      TypeReference
+        Identifier: 'Promise'
+        UnionType
+          StringKeyword
+          TypeReference
+            Identifier: ' Promise'
+            UnionType
+              TypeReference
+                Identifier: 'MyPromise'
+                NumberKeyword
+              LiteralType
+                NullKeyword
+          UndefinedKeyword
+  TypeAliasDeclaration
+    Identifier: ' P1'
+    TypeReference
+      Identifier: ' __Awaited'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' P2'
+    TypeReference
+      Identifier: ' __Awaited'
+      TypeReference
+        Identifier: 'InfinitePromise'
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f11'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 'tx'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' ta'
+      TypeReference
+        Identifier: ' __Awaited'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' ux'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' ua'
+      TypeReference
+        Identifier: ' __Awaited'
+        TypeReference
+          Identifier: 'U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    ta'
+          EqualsToken
+          Identifier: ' ua'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    ua'
+          EqualsToken
+          Identifier: ' ta'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    ta'
+          EqualsToken
+          Identifier: ' tx'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    tx'
+          EqualsToken
+          Identifier: ' ta'
+  TypeAliasDeclaration
+    Identifier: ' Flatten'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        ArrayType
+          UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      ArrayType
+        UnknownKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' _Flatten'
+          TypeReference
+            Identifier: 'T'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' _Flatten'
+            TypeReference
+              Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' _Flatten'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeOperator
+        ArrayType
+          ParenthesizedType
+            InferType
+              TypeParameter
+                Identifier: ' U'
+      TypeReference
+        Identifier: ' _Flatten'
+        TypeReference
+          Identifier: 'U'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' InfiniteArray'
+    TypeParameter
+      Identifier: 'T'
+    ArrayType
+      TypeReference
+        Identifier: ' InfiniteArray'
+        TypeReference
+          Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' B0'
+    TypeReference
+      Identifier: ' Flatten'
+      ArrayType
+        ArrayType
+          ArrayType
+            StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B1'
+    TypeReference
+      Identifier: ' Flatten'
+      UnionType
+        ArrayType
+          ArrayType
+            StringKeyword
+        TypeOperator
+          ArrayType
+            ParenthesizedType
+              UnionType
+                ArrayType
+                  NumberKeyword
+                ArrayType
+                  ArrayType
+                    BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' B2'
+    TypeReference
+      Identifier: ' Flatten'
+      TypeReference
+        Identifier: 'InfiniteArray'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B3'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' B2'
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TupleOf'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' N'
+      NumberKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' N'
+      TypeReference
+        Identifier: ' N'
+      ConditionalType
+        NumberKeyword
+        TypeReference
+          Identifier: ' N'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' _TupleOf'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' N'
+          TupleType
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' _TupleOf'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' N'
+      NumberKeyword
+    TypeParameter
+      Identifier: ' R'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      IndexedAccessType
+        TypeReference
+          Identifier: ' R'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' N'
+      TypeReference
+        Identifier: ' R'
+      TypeReference
+        Identifier: ' _TupleOf'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' N'
+        TupleType
+          TypeReference
+            Identifier: 'T'
+          RestType
+            TypeReference
+              Identifier: 'R'
+  TypeAliasDeclaration
+    Identifier: ' TT0'
+    TypeReference
+      Identifier: ' TupleOf'
+      StringKeyword
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TT1'
+    TypeReference
+      Identifier: ' TupleOf'
+      NumberKeyword
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TT2'
+    TypeReference
+      Identifier: ' TupleOf'
+      NumberKeyword
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' TT3'
+    TypeReference
+      Identifier: ' TupleOf'
+      NumberKeyword
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' TT4'
+    TypeReference
+      Identifier: ' TupleOf'
+      NumberKeyword
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' TT5'
+    TypeReference
+      Identifier: ' TupleOf'
+      NumberKeyword
+      LiteralType
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f22'
+    TypeParameter
+      Identifier: 'N'
+      NumberKeyword
+    TypeParameter
+      Identifier: ' M'
+      TypeReference
+        Identifier: ' N'
+    Parameter
+      Identifier: 'tn'
+      TypeReference
+        Identifier: ' TupleOf'
+        NumberKeyword
+        TypeReference
+          Identifier: ' N'
+    Parameter
+      Identifier: ' tm'
+      TypeReference
+        Identifier: ' TupleOf'
+        NumberKeyword
+        TypeReference
+          Identifier: ' M'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tn'
+          EqualsToken
+          Identifier: ' tm'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    tm'
+          EqualsToken
+          Identifier: ' tn'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f23'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' TupleOf'
+        TypeReference
+          Identifier: 'T'
+        LiteralType
+          NumericLiteral
+    TypeReference
+      Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f23'
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+        StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Box'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' T'
+  EmptyStatement
+  TypeAliasDeclaration
+    Identifier: ' RecBox'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' Box'
+        TypeReference
+          Identifier: 'RecBox'
+          TypeReference
+            Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' InfBox'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Box'
+      TypeReference
+        Identifier: 'InfBox'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' unbox'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'box'
+      TypeReference
+        Identifier: ' RecBox'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeReference
+      Identifier: ' Box'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeReference
+      Identifier: ' Box'
+      TypeReference
+        Identifier: 'T1'
+  TypeAliasDeclaration
+    Identifier: ' T3'
+    TypeReference
+      Identifier: ' Box'
+      TypeReference
+        Identifier: 'T2'
+  TypeAliasDeclaration
+    Identifier: ' T4'
+    TypeReference
+      Identifier: ' Box'
+      TypeReference
+        Identifier: 'T3'
+  TypeAliasDeclaration
+    Identifier: ' T5'
+    TypeReference
+      Identifier: ' Box'
+      TypeReference
+        Identifier: 'T4'
+  TypeAliasDeclaration
+    Identifier: ' T6'
+    TypeReference
+      Identifier: ' Box'
+      TypeReference
+        Identifier: 'T5'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        TypeReference
+          Identifier: ' Box'
+          TypeReference
+            Identifier: 'Box'
+            TypeReference
+              Identifier: 'Box'
+              TypeReference
+                Identifier: 'Box'
+                TypeReference
+                  Identifier: 'Box'
+                  TypeReference
+                    Identifier: 'Box'
+                    StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        TypeReference
+          Identifier: ' T6'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        TypeReference
+          Identifier: ' InfBox'
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' value'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' value'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' value'
+                    TypeQuery
+                      Identifier: ' b4'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+unbox'
+      Identifier: 'b1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // string
+unbox'
+      Identifier: 'b2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // string
+unbox'
+      Identifier: 'b3'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // InfBox<string>
+unbox'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' value'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' value'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' value'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' value'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' value'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' value'
+                              NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // number
+unbox'
+      Identifier: 'b4'
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // { value: { value: typeof b4 }}
+unbox'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' value'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' value'
+              ObjectLiteralExpression
+                GetAccessor
+                  Identifier: ' value'
+                  Block
+                    ReturnStatement
+                      ThisKeyword
+  TypeAliasDeclaration
+    Identifier: ' Box1'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Box2'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Box1'
+        TypeReference
+          Identifier: 'Box1'
+          TypeReference
+            Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' Box2'
+          TypeReference
+            Identifier: 'Box2'
+            StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      Identifier: 'z'
+  TypeAliasDeclaration
+    Identifier: ' Intersect'
+    TypeParameter
+      Identifier: 'U'
+      ArrayType
+        AnyKeyword
+    TypeParameter
+      Identifier: ' R'
+      UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' U'
+      TupleType
+        InferType
+          TypeParameter
+            Identifier: ' H'
+        RestType
+          InferType
+            TypeParameter
+              Identifier: ' T'
+      TypeReference
+        Identifier: ' Intersect'
+        TypeReference
+          Identifier: 'T'
+        IntersectionType
+          TypeReference
+            Identifier: ' R'
+          TypeReference
+            Identifier: ' H'
+      TypeReference
+        Identifier: ' R'
+  TypeAliasDeclaration
+    Identifier: ' QQ'
+    TypeReference
+      Identifier: ' Intersect'
+      TupleType
+        ArrayType
+          StringKeyword
+        ArrayType
+          NumberKeyword
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Unpack1'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      ArrayType
+        ParenthesizedType
+          InferType
+            TypeParameter
+              Identifier: ' U'
+      TypeReference
+        Identifier: ' Unpack1'
+        TypeReference
+          Identifier: 'U'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Unpack2'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      ArrayType
+        ParenthesizedType
+          InferType
+            TypeParameter
+              Identifier: ' U'
+      TypeReference
+        Identifier: ' Unpack2'
+        TypeReference
+          Identifier: 'U'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' f20'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Unpack1'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Unpack2'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f20'
+          Identifier: 'y'
+          Identifier: ' x'
+  TypeAliasDeclaration
+    Identifier: ' Grow1'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    TypeParameter
+      Identifier: ' N'
+      NumberKeyword
+    ConditionalType
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' N'
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' Grow1'
+        TupleType
+          NumberKeyword
+          RestType
+            TypeReference
+              Identifier: 'T'
+        TypeReference
+          Identifier: ' N'
+  TypeAliasDeclaration
+    Identifier: ' Grow2'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    TypeParameter
+      Identifier: ' N'
+      NumberKeyword
+    ConditionalType
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' N'
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' Grow2'
+        TupleType
+          StringKeyword
+          RestType
+            TypeReference
+              Identifier: 'T'
+        TypeReference
+          Identifier: ' N'
+  FunctionDeclaration
+    Identifier: ' f21'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Grow1'
+        TupleType
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Grow2'
+        TupleType
+        TypeReference
+          Identifier: ' T'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f21'
+          Identifier: 'y'
+          Identifier: ' x'
+  TypeAliasDeclaration
+    Identifier: ' ParseSuccess'
+    TypeParameter
+      Identifier: 'R'
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: ' rest'
+        TypeReference
+          Identifier: ' R'
+  TypeAliasDeclaration
+    Identifier: ' ParseManyWhitespace'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    S'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' R0'
+          TemplateTail
+      ConditionalType
+        TypeReference
+          Identifier: '
+        ParseManyWhitespace'
+          TypeReference
+            Identifier: 'R0'
+        TypeReference
+          Identifier: ' ParseSuccess'
+          InferType
+            TypeParameter
+              Identifier: ' R1'
+        TypeReference
+          Identifier: ' ParseSuccess'
+          TypeReference
+            Identifier: 'R1'
+        LiteralType
+          NullKeyword
+      TypeReference
+        Identifier: '
+        ParseSuccess'
+        TypeReference
+          Identifier: 'S'
+  TypeAliasDeclaration
+    Identifier: ' TP1'
+    TypeReference
+      Identifier: ' ParseManyWhitespace'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' ParseManyWhitespace2'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    S'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' R0'
+          TemplateTail
+      TypeReference
+        Identifier: '
+        Helper'
+        TypeReference
+          Identifier: 'ParseManyWhitespace2'
+          TypeReference
+            Identifier: 'R0'
+      TypeReference
+        Identifier: '
+        ParseSuccess'
+        TypeReference
+          Identifier: 'S'
+  TypeAliasDeclaration
+    Identifier: ' Helper'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' ParseSuccess'
+        InferType
+          TypeParameter
+            Identifier: ' R'
+      TypeReference
+        Identifier: ' ParseSuccess'
+        TypeReference
+          Identifier: 'R'
+      LiteralType
+        NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' TP2'
+    TypeReference
+      Identifier: ' ParseManyWhitespace2'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' NTuple'
+    TypeParameter
+      Identifier: 'N'
+      NumberKeyword
+    TypeParameter
+      Identifier: ' Tup'
+      ArrayType
+        UnknownKeyword
+      TupleType
+    ConditionalType
+      IndexedAccessType
+        TypeReference
+          Identifier: '
+    Tup'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' N'
+      TypeReference
+        Identifier: ' Tup'
+      TypeReference
+        Identifier: ' NTuple'
+        TypeReference
+          Identifier: 'N'
+        TupleType
+          RestType
+            TypeReference
+              Identifier: 'Tup'
+          UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' Add'
+    TypeParameter
+      Identifier: 'A'
+      NumberKeyword
+    TypeParameter
+      Identifier: ' B'
+      NumberKeyword
+    IndexedAccessType
+      TupleType
+        RestType
+          TypeReference
+            Identifier: 'NTuple'
+            TypeReference
+              Identifier: 'A'
+        RestType
+          TypeReference
+            Identifier: 'NTuple'
+            TypeReference
+              Identifier: 'B'
+      LiteralType
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' five'
+        TypeReference
+          Identifier: ' Add'
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' _PrependNextNum'
+    TypeParameter
+      Identifier: 'A'
+      TypeReference
+        Identifier: ' Array'
+        UnknownKeyword
+    ConditionalType
+      IndexedAccessType
+        TypeReference
+          Identifier: ' A'
+        LiteralType
+          StringLiteral
+      InferType
+        TypeParameter
+          Identifier: ' T'
+      ConditionalType
+        TupleType
+          TypeReference
+            Identifier: 'T'
+          RestType
+            TypeReference
+              Identifier: 'A'
+        TupleType
+          RestType
+            InferType
+              TypeParameter
+                Identifier: ' X'
+        TypeReference
+          Identifier: ' X'
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' _Enumerate'
+    TypeParameter
+      Identifier: 'A'
+      TypeReference
+        Identifier: ' Array'
+        UnknownKeyword
+    TypeParameter
+      Identifier: ' N'
+      NumberKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' N'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' A'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' A'
+      IntersectionType
+        TypeReference
+          Identifier: ' _Enumerate'
+          TypeReference
+            Identifier: '_PrependNextNum'
+            TypeReference
+              Identifier: 'A'
+          TypeReference
+            Identifier: ' N'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' Enumerate'
+    TypeParameter
+      Identifier: 'N'
+      NumberKeyword
+    ConditionalType
+      NumberKeyword
+      TypeReference
+        Identifier: ' N'
+      NumberKeyword
+      ConditionalType
+        TypeReference
+          Identifier: ' _Enumerate'
+          TupleType
+          TypeReference
+            Identifier: ' N'
+        ArrayType
+          ParenthesizedType
+            InferType
+              TypeParameter
+                Identifier: ' E'
+        TypeReference
+          Identifier: ' E'
+        NeverKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Enumerate'
+      IndexedAccessType
+        TypeReference
+          Identifier: 'T'
+        LiteralType
+          StringLiteral
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' value'
+          Identifier: 'length'

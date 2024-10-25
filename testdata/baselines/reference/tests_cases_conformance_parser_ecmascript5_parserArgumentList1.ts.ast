@@ -1,0 +1,55 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' removeClass'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: 'HTMLElement'
+    Parameter
+      Identifier: ' className'
+      StringKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+	node'
+            Identifier: 'className'
+          EqualsToken
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'className'
+              Identifier: 'replace'
+            CallExpression
+              Identifier: '_classNameRegexp'
+              Identifier: 'className'
+            FunctionExpression
+              Parameter
+                Identifier: 'everything'
+              Parameter
+                Identifier: ' leftDelimiter'
+              Parameter
+                Identifier: ' name'
+              Parameter
+                Identifier: ' rightDelimiter'
+              Block
+                ReturnStatement
+                  ConditionalExpression
+                    BinaryExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' leftDelimiter'
+                          Identifier: 'length'
+                        PlusToken
+                        PropertyAccessExpression
+                          Identifier: ' rightDelimiter'
+                          Identifier: 'length'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    QuestionToken
+                    StringLiteral
+                    ColonToken
+                    StringLiteral

@@ -1,0 +1,26 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T0'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      ParenthesizedType
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+      ParenthesizedType
+        MappedType
+          TypeParameter
+            Identifier: 'key'
+            TypeReference
+              Identifier: ' K'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'K'
+      NumberKeyword
+      NeverKeyword

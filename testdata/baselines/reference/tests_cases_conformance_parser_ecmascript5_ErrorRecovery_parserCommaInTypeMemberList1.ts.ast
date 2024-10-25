@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' workItem'
+            AnyKeyword
+          PropertySignature
+            Identifier: ' width'
+            StringKeyword

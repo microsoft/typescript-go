@@ -1,0 +1,338 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A1'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            QuestionToken
+            StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B1'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' C1'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' c'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab1'
+        IntersectionType
+          TypeReference
+            Identifier: ' A1'
+          TypeReference
+            Identifier: ' B1'
+        AsExpression
+          ObjectLiteralExpression
+          TypeReference
+            Identifier: ' C1'
+  TypeAliasDeclaration
+    Identifier: ' A2'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        QuestionToken
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B2'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' b'
+        QuestionToken
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' C2'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' c'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ab2'
+        IntersectionType
+          TypeReference
+            Identifier: ' A2'
+          TypeReference
+            Identifier: ' B2'
+        AsExpression
+          ObjectLiteralExpression
+          TypeReference
+            Identifier: ' C2'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' nope'
+            QuestionToken
+            AnyKeyword
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' nope'
+            QuestionToken
+            AnyKeyword
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' OverridesInput'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    someProp'
+        QuestionToken
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo1'
+        IntersectionType
+          TypeReference
+            Identifier: ' Partial'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' something'
+                AnyKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' variables'
+              IntersectionType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: '
+    overrides'
+                    QuestionToken
+                    TypeReference
+                      Identifier: ' OverridesInput'
+                TypeReference
+                  Identifier: ' Partial'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: '
+    overrides'
+                      QuestionToken
+                      TypeReference
+                        Identifier: ' OverridesInput'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' variables'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' overrides'
+                FalseKeyword
+  InterfaceDeclaration
+    Identifier: ' Unrelated'
+    PropertySignature
+      Identifier: ' _'
+      QuestionToken
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' VariablesA'
+    PropertySignature
+      Identifier: ' overrides'
+      QuestionToken
+      TypeReference
+        Identifier: ' OverridesInput'
+  InterfaceDeclaration
+    Identifier: ' VariablesB'
+    PropertySignature
+      Identifier: ' overrides'
+      QuestionToken
+      TypeReference
+        Identifier: ' OverridesInput'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo2'
+        IntersectionType
+          TypeReference
+            Identifier: ' Unrelated'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' variables'
+              IntersectionType
+                TypeReference
+                  Identifier: ' VariablesA'
+                TypeReference
+                  Identifier: ' VariablesB'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    variables'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        overrides'
+                FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    primary'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' __typename'
+              QuestionToken
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' colors'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' light'
+                  NumberKeyword
+                PropertySignature
+                  Identifier: ' dark'
+                  NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    primary'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' __typename'
+              QuestionToken
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' colors'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' light'
+                  NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' Query'
+    IntersectionType
+      TypeReference
+        Identifier: ' T1'
+      TypeReference
+        Identifier: ' T2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' response'
+        TypeReference
+          Identifier: ' Query'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    primary'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        colors'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            light'
+                    NumericLiteral
+                  PropertyAssignment
+                    Identifier: '
+            dark'
+                    NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' BaseItem'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    id'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' ExtendedItem'
+    IntersectionType
+      TypeReference
+        Identifier: ' BaseItem'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    description'
+          UnionType
+            StringKeyword
+            LiteralType
+              NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' BaseValue'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    // there are other fields
+    items'
+        ArrayType
+          TypeReference
+            Identifier: ' BaseItem'
+  TypeAliasDeclaration
+    Identifier: ' ExtendedValue'
+    IntersectionType
+      TypeReference
+        Identifier: ' BaseValue'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    // there are other fields
+    items'
+          ArrayType
+            TypeReference
+              Identifier: ' ExtendedItem'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' TEST_VALUE'
+        TypeReference
+          Identifier: ' ExtendedValue'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    items'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'id'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' description'
+                  NullKeyword
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'id'
+                  NumericLiteral
+                PropertyAssignment
+                  Identifier: ' description'
+                  StringLiteral

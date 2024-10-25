@@ -1,0 +1,7 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' abstract'
+    MethodSignature
+      Identifier: '
+    abstract'
+      VoidKeyword

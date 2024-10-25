@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MySet'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Set'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' MyWeakSet'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' WeakSet'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' MyMap'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Map'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' MyWeakMap'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' WeakMap'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

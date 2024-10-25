@@ -1,0 +1,18 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' handler1'
+    FunctionType
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' handler2'
+        FunctionType
+          VoidKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+  ExportDeclaration
+    NamedExports

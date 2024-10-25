@@ -1,0 +1,74 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    baz'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        UndefinedKeyword
+        LiteralType
+          StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' A'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'a'
+          Identifier: 'baz'
+      AmpersandAmpersandEqualsToken
+      PropertyAccessExpression
+        Identifier: ' result'
+        Identifier: 'baz'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'b'
+          Identifier: 'baz'
+      BarBarEqualsToken
+      PropertyAccessExpression
+        Identifier: ' result'
+        Identifier: 'baz'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        PropertyAccessExpression
+          Identifier: 'c'
+          Identifier: 'baz'
+      QuestionQuestionEqualsToken
+      PropertyAccessExpression
+        Identifier: ' result'
+        Identifier: 'baz'

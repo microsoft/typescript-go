@@ -1,0 +1,35 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      FunctionDeclaration
+        Identifier: ' g'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' _arguments'
+                NumericLiteral
+          FunctionDeclaration
+            Identifier: ' h'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' capture'
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      Identifier: ' arguments'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '  // Should trigger an '_arguments' capture into function 'h'
+            foo'
+                  Identifier: '_arguments'
+      FunctionDeclaration
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'x'
+          AnyKeyword
+        Block
+          ReturnStatement
+            NumericLiteral

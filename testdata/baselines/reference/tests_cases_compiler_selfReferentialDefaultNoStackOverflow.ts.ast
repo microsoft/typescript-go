@@ -1,0 +1,16 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' DefaultSpinner'
+    StringLiteral
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: '
+  mixins'
+        ArrayLiteralExpression
+          Identifier: 'DefaultSpinner'
+      PropertyAssignment
+        Identifier: '
+  name'
+        StringLiteral

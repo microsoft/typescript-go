@@ -1,0 +1,93 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' define'
+    TypeParameter
+      Identifier: 'T'
+      UnknownKeyword
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' modules'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' ready'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'modules'
+          ArrayType
+            UnknownKeyword
+        TypeReference
+          Identifier: ' T'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' BaseClass'
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' extends'
+          TypeParameter
+            Identifier: 'A'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' A'
+          ConstructorType
+            IntersectionType
+              TypeReference
+                Identifier: ' A'
+              TypeReference
+                Identifier: ' BaseClass'
+      ExportAssignment
+        Identifier: ' BaseClass'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// @filename: ExtendedClass.js
+define'
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'BaseClass'
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' ExtendedClass'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' BaseClass'
+                    Identifier: 'extends'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+        f'
+                      FunctionExpression
+                        Block
+                          ReturnStatement
+                            StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' module'
+                ObjectLiteralExpression
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+    module'
+                Identifier: 'exports'
+              EqualsToken
+              Identifier: ' ExtendedClass'
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' module'
+              Identifier: 'exports'

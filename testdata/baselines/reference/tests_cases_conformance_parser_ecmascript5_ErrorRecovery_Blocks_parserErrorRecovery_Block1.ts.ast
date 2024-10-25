@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          NumericLiteral
+          PlusToken
+          Identifier: ''
+      ReturnStatement

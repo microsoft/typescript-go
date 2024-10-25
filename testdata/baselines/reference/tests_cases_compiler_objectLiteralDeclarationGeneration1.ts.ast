@@ -1,0 +1,6 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' y'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral

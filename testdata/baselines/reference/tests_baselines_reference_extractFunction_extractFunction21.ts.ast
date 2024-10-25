@@ -1,0 +1,62 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    /*[#|*/x'
+      ReturnStatement
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ReturnStatement
+        CallExpression
+          Identifier: ' /*RENAME*/newFunction'
+      FunctionDeclaration
+        Identifier: ' newFunction'
+        Block
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+        x'
+          ReturnStatement
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          CallExpression
+            Identifier: ' /*RENAME*/newFunction'
+            Identifier: 'x'
+      ReturnStatement
+  FunctionDeclaration
+    Identifier: ' newFunction'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    x'
+      ReturnStatement
+        Identifier: ' x'

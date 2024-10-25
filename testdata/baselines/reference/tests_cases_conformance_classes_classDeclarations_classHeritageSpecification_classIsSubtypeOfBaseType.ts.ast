@@ -1,0 +1,48 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' bar'
+            StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        bar'
+          StringKeyword
+        PropertySignature
+          Identifier: ' baz'
+          NumberKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' bar'
+            StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        bar'
+          QuestionToken
+          StringKeyword

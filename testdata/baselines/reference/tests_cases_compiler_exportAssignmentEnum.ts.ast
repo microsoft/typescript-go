@@ -1,0 +1,39 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+	A'
+    EnumMember
+      Identifier: '
+	B'
+    EnumMember
+      Identifier: '
+	C'
+  ExportAssignment
+    Identifier: ' E'
+  ImportEqualsDeclaration
+    Identifier: ' EnumE'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        PropertyAccessExpression
+          Identifier: ' EnumE'
+          Identifier: 'A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        PropertyAccessExpression
+          Identifier: ' EnumE'
+          Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        PropertyAccessExpression
+          Identifier: ' EnumE'
+          Identifier: 'C'

@@ -1,0 +1,54 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Base'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    known'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' sknown'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'known'
+      Identifier: 'length'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: ' // error, 'known' has no 'length' property
+C'
+        Identifier: 'sknown'
+      Identifier: 'length'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: ' // error, 'sknown' has no 'length' property
+c'
+        Identifier: 'unknown'
+      Identifier: 'length'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: ' // ok, unknown: any
+C'
+        Identifier: 'sunknown'
+      Identifier: 'length'

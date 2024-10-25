@@ -1,0 +1,92 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I2'
+    PropertySignature
+      Identifier: '
+    value'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    doStuff'
+      FunctionType
+        Parameter
+          Identifier: 't'
+          StringKeyword
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' I2'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' hello'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' 
+f2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' value'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' value'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' what'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' 
+f2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' toString'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            Identifier: ' s'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' 
+f2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' toString'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            EqualsGreaterThanToken
+            Identifier: ' s'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' 
+f2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' value'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' toString'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' s'
+              Identifier: 'uhhh'

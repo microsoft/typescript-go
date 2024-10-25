@@ -1,0 +1,122 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      StaticKeyword
+      AsyncKeyword
+      PrivateIdentifier
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    MethodDeclaration
+      StaticKeyword
+      AsyncKeyword
+      AsteriskToken
+      PrivateIdentifier
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumberKeyword
+    GetAccessor
+      StaticKeyword
+      PrivateIdentifier
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            PrivateIdentifier
+    SetAccessor
+      StaticKeyword
+      PrivateIdentifier
+      Parameter
+        Identifier: 'val'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier
+            EqualsToken
+            Identifier: ' val'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        A'
+              PrivateIdentifier
+            NumericLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        A'
+              PrivateIdentifier
+            NumericLiteral
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        A'
+              PrivateIdentifier
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        A'
+              PrivateIdentifier
+            EqualsToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' A'
+                PrivateIdentifier
+              PlusToken
+              NumericLiteral
+        ExpressionStatement
+          PostfixUnaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        A'
+              PrivateIdentifier
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    MethodDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Block
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        B'
+              PrivateIdentifier
+            StringLiteral

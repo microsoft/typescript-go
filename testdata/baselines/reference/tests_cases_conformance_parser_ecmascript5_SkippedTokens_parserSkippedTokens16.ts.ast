@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: 'foo'
+  ExpressionStatement
+    Identifier: ' Bar'
+  Block
+  FunctionDeclaration
+    Identifier: ' Foo'
+    Block
+  Block
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      PlusToken
+      Identifier: ''
+  ExpressionStatement
+    NumericLiteral
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' a'
+        Parameter
+          Identifier: ' T'
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        Identifier: ''

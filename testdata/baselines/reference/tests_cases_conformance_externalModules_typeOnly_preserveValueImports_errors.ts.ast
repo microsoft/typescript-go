@@ -1,0 +1,138 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+        Identifier: ' default'
+  ClassDeclaration
+    Identifier: ' B'
+  EmptyStatement
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' B'
+      ExportSpecifier
+        Identifier: ' B'
+        Identifier: ' default'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' DefaultA'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' DefaultB'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' B'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' DefaultA'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' DefaultB'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' B'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+        Identifier: ' AA'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' B'
+        Identifier: ' BB'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+        Identifier: ' AA'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' B'
+        Identifier: ' BB'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' AA'
+        ImportSpecifier
+          Identifier: ' BB'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' AA'
+        ImportSpecifier
+          Identifier: ' BB'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' B'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+      ExportSpecifier
+        Identifier: ' B'
+        Identifier: ' BB'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' B'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+      ExportSpecifier
+        Identifier: ' B'
+        Identifier: ' BB'

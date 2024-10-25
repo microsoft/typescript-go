@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' toString'
+        NumericLiteral
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' toFixed'
+          NumericLiteral

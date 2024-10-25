@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Promise'
+          BooleanKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' func'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      ExpressionStatement
+        StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            BinaryExpression
+              AwaitExpression
+                Identifier: ' p'
+              BarBarToken
+              Identifier: ' a'

@@ -1,0 +1,236 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' fooBack'
+      StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' barBack'
+      StringKeyword
+      StringLiteral
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' bazBack'
+      StringLiteral
+    GetAccessor
+      PublicKeyword
+      Identifier: ' Foo'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'fooBack'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' Foo'
+      Parameter
+        Identifier: 'foo'
+        StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'fooBack'
+            EqualsToken
+            Identifier: ' foo'
+    GetAccessor
+      StaticKeyword
+      Identifier: ' Bar'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' C'
+            Identifier: 'barBack'
+    SetAccessor
+      StaticKeyword
+      Identifier: ' Bar'
+      Parameter
+        Identifier: 'bar'
+        StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'C'
+              Identifier: 'barBack'
+            EqualsToken
+            Identifier: ' bar'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' get'
+      FunctionExpression
+        Block
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' set'
+      FunctionExpression
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        PropertyAccessExpression
+          Identifier: ' c'
+          Identifier: 'Foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'Foo'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        PropertyAccessExpression
+          Identifier: ' C'
+          Identifier: 'Bar'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+C'
+        Identifier: 'Bar'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' baz'
+        PropertyAccessExpression
+          Identifier: ' c'
+          Identifier: 'Baz'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'Baz'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'Foo'
+            NumberKeyword
+        ObjectLiteralExpression
+          GetAccessor
+            Identifier: ' Foo'
+            Block
+              ReturnStatement
+                NumericLiteral
+          SetAccessor
+            Identifier: ' Foo'
+            Parameter
+              Identifier: 'val'
+              NumberKeyword
+            Block
+              ExpressionStatement
+                Identifier: 'val'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ofg'
+        PropertyAccessExpression
+          Identifier: ' o'
+          Identifier: 'Foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+o'
+        Identifier: 'Foo'
+      EqualsToken
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' I1'
+    CallSignature
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: 'I1'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+          Block
+            ReturnStatement
+              Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          StringKeyword
+          NumberKeyword
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Math'
+                Identifier: 'random'
+            LessThanToken
+            NumericLiteral
+          QuestionToken
+          StringLiteral
+          ColonToken
+          NumericLiteral
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' x'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            ObjectLiteralExpression
+              SetAccessor
+                Identifier: ' prop'
+                Parameter
+                  Identifier: '_'
+                  AnyKeyword
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'toUpperCase'
+              GetAccessor
+                Identifier: ' prop'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'toUpperCase'
+              MethodDeclaration
+                Identifier: '
+    method'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'toUpperCase'

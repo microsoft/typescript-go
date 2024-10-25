@@ -1,0 +1,102 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exact'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' completion'
+            Identifier: 'globalsPlus'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exact'
+              Identifier: 'filter'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' name'
+                ExclamationEqualsEqualsToken
+                StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exact'
+              Identifier: 'filter'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' name'
+                ExclamationEqualsEqualsToken
+                StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exact'
+              Identifier: 'filter'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' name'
+                ExclamationEqualsEqualsToken
+                StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exact'
+              Identifier: 'filter'
+            ArrowFunction
+              Parameter
+                Identifier: 'name'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' name'
+                ExclamationEqualsEqualsToken
+                StringLiteral

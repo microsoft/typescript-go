@@ -1,0 +1,37 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' I'
+        MethodSignature
+          Identifier: '
+	f'
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          BooleanKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: 'I'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' f'
+                FunctionExpression
+                  Parameter
+                    Identifier: 'n'
+                  Block
+                    ReturnStatement
+                      TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    x'
+            Identifier: 'f'
+          EqualsToken
+          StringLiteral

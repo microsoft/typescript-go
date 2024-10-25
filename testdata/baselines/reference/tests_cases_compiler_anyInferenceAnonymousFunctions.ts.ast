@@ -1,0 +1,95 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' paired'
+        ArrayType
+          AnyKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+paired'
+        Identifier: 'reduce'
+      FunctionExpression
+        Parameter
+          Identifier: 'a1'
+        Parameter
+          Identifier: ' a2'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' a1'
+                Identifier: 'concat'
+              ObjectLiteralExpression
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+paired'
+        Identifier: 'reduce'
+      ArrowFunction
+        Parameter
+          Identifier: 'b1'
+        Parameter
+          Identifier: ' b2'
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' b1'
+                Identifier: 'concat'
+              ObjectLiteralExpression
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+paired'
+        Identifier: 'reduce'
+      ArrowFunction
+        Parameter
+          Identifier: 'b3'
+        Parameter
+          Identifier: ' b4'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' b3'
+            Identifier: 'concat'
+          ObjectLiteralExpression
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+paired'
+        Identifier: 'map'
+      ArrowFunction
+        Parameter
+          Identifier: 'c1'
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          Identifier: ' c1'
+          Identifier: 'count'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+paired'
+        Identifier: 'map'
+      FunctionExpression
+        Parameter
+          Identifier: 'c2'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' c2'
+              Identifier: 'count'

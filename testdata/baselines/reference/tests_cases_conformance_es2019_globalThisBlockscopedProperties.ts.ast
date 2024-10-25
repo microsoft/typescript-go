@@ -1,0 +1,97 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+globalThis'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // ok
+globalThis'
+      Identifier: 'y'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // should error, no property 'y'
+globalThis'
+      Identifier: 'z'
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: ' // should error, no property 'z'
+globalThis'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: ' // ok
+globalThis'
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: ' // should error, no property 'y'
+globalThis'
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // should error, no property 'z'
+globalThis'
+      Identifier: 'Float64Array'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' // ok
+globalThis'
+      Identifier: 'Infinity'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test1'
+        IndexedAccessType
+          ParenthesizedType
+            TypeQuery
+              Identifier: ' globalThis'
+          LiteralType
+            StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test2'
+        IndexedAccessType
+          ParenthesizedType
+            TypeQuery
+              Identifier: ' globalThis'
+          LiteralType
+            StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test3'
+        IndexedAccessType
+          ParenthesizedType
+            TypeQuery
+              Identifier: ' globalThis'
+          LiteralType
+            StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' themAll'
+        TypeOperator
+          TypeQuery
+            Identifier: ' globalThis'

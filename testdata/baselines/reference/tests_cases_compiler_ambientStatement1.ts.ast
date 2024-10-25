@@ -1,0 +1,16 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M1'
+    ModuleBlock
+      WhileStatement
+        TrueKeyword
+        EmptyStatement
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v1'
+            ArrowFunction
+              EqualsGreaterThanToken
+              FalseKeyword

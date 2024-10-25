@@ -1,0 +1,369 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    cast'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isPropertySignature'
+        ImportSpecifier
+          Identifier: '
+    isTypeLiteralNode'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TypeLiteralNode'
+        ImportSpecifier
+          Identifier: '
+    TypeNode'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: '_0_only_refers_to_a_type_but_is_being_used_as_a_value_here_Did_you_mean_to_use_1_in_0'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToConvertLiteralTypeToMappedType'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' sourceFile'
+                      BindingElement
+                        Identifier: ' span'
+                    Identifier: ' context'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' info'
+                    CallExpression
+                      Identifier: ' getInfo'
+                      Identifier: 'sourceFile'
+                      PropertyAccessExpression
+                        Identifier: ' span'
+                        Identifier: 'start'
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'info'
+                Block
+                  ReturnStatement
+                    Identifier: ' undefined'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' name'
+                      BindingElement
+                        Identifier: ' constraint'
+                    Identifier: ' info'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' changes'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'ChangeTracker'
+                        Identifier: 'with'
+                      Identifier: 'context'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' t'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' doChange'
+                          Identifier: 't'
+                          Identifier: ' sourceFile'
+                          Identifier: ' info'
+              ReturnStatement
+                ArrayLiteralExpression
+                  CallExpression
+                    Identifier: 'createCodeFixAction'
+                    Identifier: 'fixId'
+                    Identifier: ' changes'
+                    ArrayLiteralExpression
+                      PropertyAccessExpression
+                        Identifier: 'Diagnostics'
+                        Identifier: 'Convert_0_to_1_in_0'
+                      Identifier: ' constraint'
+                      Identifier: ' name'
+                    Identifier: ' fixId'
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'Convert_all_type_literals_to_mapped_type'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' info'
+                        CallExpression
+                          Identifier: ' getInfo'
+                          PropertyAccessExpression
+                            Identifier: 'diag'
+                            Identifier: 'file'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'start'
+                  IfStatement
+                    Identifier: 'info'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                doChange'
+                          Identifier: 'changes'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'file'
+                          Identifier: ' info'
+  InterfaceDeclaration
+    Identifier: ' Info'
+    PropertySignature
+      Identifier: '
+    container'
+      TypeReference
+        Identifier: ' TypeLiteralNode'
+    PropertySignature
+      Identifier: '
+    typeNode'
+      UnionType
+        TypeReference
+          Identifier: ' TypeNode'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    constraint'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' getInfo'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Info'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      IfStatement
+        CallExpression
+          Identifier: 'isIdentifier'
+          Identifier: 'token'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' propertySignature'
+                CallExpression
+                  Identifier: ' cast'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'token'
+                      Identifier: 'parent'
+                    Identifier: 'parent'
+                  Identifier: ' isPropertySignature'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' propertyName'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' token'
+                    Identifier: 'getText'
+                  Identifier: 'sourceFile'
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            container'
+                CallExpression
+                  Identifier: ' cast'
+                  PropertyAccessExpression
+                    Identifier: 'propertySignature'
+                    Identifier: 'parent'
+                  Identifier: ' isTypeLiteralNode'
+              PropertyAssignment
+                Identifier: '
+            typeNode'
+                PropertyAccessExpression
+                  Identifier: ' propertySignature'
+                  Identifier: 'type'
+              PropertyAssignment
+                Identifier: '
+            constraint'
+                Identifier: ' propertyName'
+              PropertyAssignment
+                Identifier: '
+            name'
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' propertyName'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  QuestionToken
+                  StringLiteral
+                  ColonToken
+                  StringLiteral
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' container'
+        BindingElement
+          Identifier: ' typeNode'
+        BindingElement
+          Identifier: ' constraint'
+        BindingElement
+          Identifier: ' name'
+      TypeReference
+        Identifier: ' Info'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          Identifier: '
+        sourceFile'
+          Identifier: '
+        container'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        factory'
+              Identifier: 'createMappedTypeNode'
+            Identifier: '
+            /*readonlyToken*/ undefined'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+            factory'
+                Identifier: 'createTypeParameterDeclaration'
+              Identifier: '/*modifiers*/ undefined'
+              Identifier: ' name'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createTypeReferenceNode'
+                Identifier: 'constraint'
+            Identifier: '
+            /*nameType*/ undefined'
+            Identifier: '
+            /*questionToken*/ undefined'
+            Identifier: '
+            typeNode'
+            Identifier: '
+            /*members*/ undefined'

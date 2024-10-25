@@ -1,0 +1,35 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'b'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              TrueKeyword
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              ArrayLiteralExpression
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              ObjectLiteralExpression
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'undefined'
+            Identifier: ' undefined'
+          PropertyAssignment
+            ComputedPropertyName
+              NullKeyword
+            NullKeyword

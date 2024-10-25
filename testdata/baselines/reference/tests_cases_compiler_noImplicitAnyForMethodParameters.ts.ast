@@ -1,0 +1,33 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' A'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'a'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'a'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'a'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'a'
+      Block

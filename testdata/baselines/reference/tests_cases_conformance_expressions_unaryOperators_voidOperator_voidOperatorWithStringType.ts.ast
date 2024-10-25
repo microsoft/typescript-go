@@ -1,0 +1,199 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' STRING'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' STRING1'
+        ArrayType
+          StringKeyword
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    StringKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      StringKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          StringLiteral
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objA'
+        NewExpression
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny1'
+        VoidExpression
+          Identifier: ' STRING'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny2'
+        VoidExpression
+          Identifier: ' STRING1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny3'
+        VoidExpression
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny4'
+        VoidExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny5'
+        VoidExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              ArrowFunction
+                Parameter
+                  Identifier: 's'
+                  StringKeyword
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    Identifier: ' s'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny6'
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' objA'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny7'
+        VoidExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny8'
+        VoidExpression
+          ElementAccessExpression
+            Identifier: ' STRING1'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny9'
+        VoidExpression
+          CallExpression
+            Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny10'
+        VoidExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' A'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny11'
+        VoidExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'STRING'
+              PlusToken
+              Identifier: ' STRING'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny12'
+        VoidExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' STRING'
+              Identifier: 'charAt'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny13'
+        VoidExpression
+          VoidExpression
+            Identifier: ' STRING'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsAny14'
+        VoidExpression
+          VoidExpression
+            VoidExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'STRING'
+                  PlusToken
+                  Identifier: ' STRING'
+  ExpressionStatement
+    VoidExpression
+      StringLiteral
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' STRING'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' STRING1'
+  ExpressionStatement
+    VoidExpression
+      CallExpression
+        Identifier: ' foo'
+  ExpressionStatement
+    BinaryExpression
+      VoidExpression
+        PropertyAccessExpression
+          Identifier: ' objA'
+          Identifier: 'a'
+      CommaToken
+      PropertyAccessExpression
+        Identifier: 'M'
+        Identifier: 'n'

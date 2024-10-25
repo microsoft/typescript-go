@@ -1,0 +1,71 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' one'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'index'
+              StringKeyword
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'index'
+              NumberKeyword
+            AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+y'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok because index signature type is any
+x'
+      EqualsToken
+      Identifier: ' z'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+z'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok because index signature type is any
+y'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // Error
+z'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // OK, string has numeric indexer
+z'
+      EqualsToken
+      FalseKeyword

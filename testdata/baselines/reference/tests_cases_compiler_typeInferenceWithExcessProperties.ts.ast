@@ -1,0 +1,76 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Named'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' parrot'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Named'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' obj'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+
+parrot'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+parrot'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    age'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+parrot'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    age'
+          FunctionExpression
+            Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+parrot'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    name'
+          StringLiteral
+        MethodDeclaration
+          Identifier: '
+    sayHello'
+          Block

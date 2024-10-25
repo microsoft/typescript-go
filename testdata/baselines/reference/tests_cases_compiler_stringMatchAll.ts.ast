@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' matches'
+        CallExpression
+          PropertyAccessExpression
+            StringLiteral
+            Identifier: 'matchAll'
+          RegularExpressionLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'matches'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' index'
+          BindingElement
+            Identifier: ' input'
+        ElementAccessExpression
+          Identifier: ' array'
+          NumericLiteral

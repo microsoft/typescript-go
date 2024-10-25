@@ -1,0 +1,40 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nestedArray'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+nestedArray'
+        Identifier: 'forEach'
+      ArrowFunction
+        Parameter
+          ArrayBindingPattern
+            BindingElement
+              ArrayBindingPattern
+                BindingElement
+                  Identifier: 'a'
+                BindingElement
+                  Identifier: ' b'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+  console'
+                Identifier: 'log'
+              Identifier: 'a'
+              Identifier: ' b'

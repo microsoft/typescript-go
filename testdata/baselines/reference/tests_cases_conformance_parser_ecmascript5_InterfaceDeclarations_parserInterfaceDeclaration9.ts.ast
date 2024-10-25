@@ -1,0 +1,31 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    GetAccessor
+      Identifier: ' foo'
+      NumberKeyword
+    SetAccessor
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    GetAccessor
+      Identifier: ' foo'
+      NumberKeyword
+    SetAccessor
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I3'
+    GetAccessor
+      Identifier: ' foo'
+      NumberKeyword
+    SetAccessor
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword

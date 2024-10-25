@@ -1,0 +1,123 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'v'
+      NumberKeyword
+    Block
+      LabeledStatement
+        Identifier: '
+    label'
+        WhileStatement
+          Identifier: 'v'
+          Block
+            ClassDeclaration
+              Identifier: ' C'
+              ClassStaticBlockDeclaration
+                Block
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'v'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    Block
+                      BreakStatement
+                        Identifier: ' label'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'v'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    Block
+                      ContinueStatement
+                        Identifier: ' label'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'v'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    Block
+                      BreakStatement
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'v'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    Block
+                      ContinueStatement
+            IfStatement
+              BinaryExpression
+                Identifier: 'v'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              Block
+                BreakStatement
+                  Identifier: ' label'
+            IfStatement
+              BinaryExpression
+                Identifier: 'v'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              Block
+                ContinueStatement
+                  Identifier: ' label'
+            IfStatement
+              BinaryExpression
+                Identifier: 'v'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              Block
+                BreakStatement
+            IfStatement
+              BinaryExpression
+                Identifier: 'v'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              Block
+                ContinueStatement
+      ClassDeclaration
+        Identifier: ' C'
+        ClassStaticBlockDeclaration
+          Block
+            LabeledStatement
+              Identifier: '
+            outer'
+              BreakStatement
+                Identifier: ' outer'
+            LabeledStatement
+              Identifier: ' // valid
+            loop'
+              WhileStatement
+                Identifier: 'v'
+                Block
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'v'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    BreakStatement
+                      Identifier: ' loop'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'v'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    ContinueStatement
+                      Identifier: ' loop'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'v'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    BreakStatement
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'v'
+                      EqualsEqualsEqualsToken
+                      NumericLiteral
+                    ContinueStatement
+            SwitchStatement
+              Identifier: 'v'
+              CaseBlock
+                DefaultClause
+                  BreakStatement

@@ -1,0 +1,34 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+/////*0*/
+////function f1(x: number, y: number) {
+////    return 1;
+////}
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      NoSubstitutionTemplateLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' generateReturnInDocTemplate'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      NumericLiteral
+      NoSubstitutionTemplateLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' generateReturnInDocTemplate'
+          FalseKeyword

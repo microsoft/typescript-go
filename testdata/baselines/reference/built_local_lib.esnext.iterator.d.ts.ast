@@ -1,0 +1,494 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  ClassDeclaration
+    DeclareKeyword
+    AbstractKeyword
+    Identifier: ' Iterator'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' TResult'
+      UndefinedKeyword
+    TypeParameter
+      Identifier: ' TNext'
+      UnknownKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' next'
+      Parameter
+        Identifier: 'value'
+        QuestionToken
+        TypeReference
+          Identifier: ' TNext'
+      TypeReference
+        Identifier: ' IteratorResult'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' TResult'
+  InterfaceDeclaration
+    Identifier: ' Iterator'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' TResult'
+    TypeParameter
+      Identifier: ' TNext'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' globalThis'
+          Identifier: 'IteratorObject'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' TResult'
+        TypeReference
+          Identifier: ' TNext'
+  TypeAliasDeclaration
+    Identifier: ' IteratorObjectConstructor'
+    TypeQuery
+      Identifier: ' Iterator'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' IteratorObject'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' TReturn'
+        TypeParameter
+          Identifier: ' TNext'
+        MethodSignature
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+          TypeReference
+            Identifier: ' IteratorObject'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' TReturn'
+            TypeReference
+              Identifier: ' TNext'
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Creates an iterator whose values are the result of applying the callback to the values from this iterator.
+         * @param callbackfn A function that accepts up to two arguments to be used to transform values from the underlying iterator.
+         */
+        map'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'callbackfn'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' index'
+                NumberKeyword
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' IteratorObject'
+            TypeReference
+              Identifier: 'U'
+            UndefinedKeyword
+            UnknownKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Creates an iterator whose values are those from this iterator for which the provided predicate returns true.
+         * @param predicate A function that accepts up to two arguments to be used to test values from the underlying iterator.
+         */
+        filter'
+          TypeParameter
+            Identifier: 'S'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: 'predicate'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' index'
+                NumberKeyword
+              TypePredicate
+                Identifier: ' value'
+                TypeReference
+                  Identifier: ' S'
+          TypeReference
+            Identifier: ' IteratorObject'
+            TypeReference
+              Identifier: 'S'
+            UndefinedKeyword
+            UnknownKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Creates an iterator whose values are those from this iterator for which the provided predicate returns true.
+         * @param predicate A function that accepts up to two arguments to be used to test values from the underlying iterator.
+         */
+        filter'
+          Parameter
+            Identifier: 'predicate'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' index'
+                NumberKeyword
+              UnknownKeyword
+          TypeReference
+            Identifier: ' IteratorObject'
+            TypeReference
+              Identifier: 'T'
+            UndefinedKeyword
+            UnknownKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Creates an iterator whose values are the values from this iterator, stopping once the provided limit is reached.
+         * @param limit The maximum number of values to yield.
+         */
+        take'
+          Parameter
+            Identifier: 'limit'
+            NumberKeyword
+          TypeReference
+            Identifier: ' IteratorObject'
+            TypeReference
+              Identifier: 'T'
+            UndefinedKeyword
+            UnknownKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Creates an iterator whose values are the values from this iterator after skipping the provided count.
+         * @param count The number of values to drop.
+         */
+        drop'
+          Parameter
+            Identifier: 'count'
+            NumberKeyword
+          TypeReference
+            Identifier: ' IteratorObject'
+            TypeReference
+              Identifier: 'T'
+            UndefinedKeyword
+            UnknownKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Creates an iterator whose values are the result of applying the callback to the values from this iterator and then flattening the resulting iterators or iterables.
+         * @param callback A function that accepts up to two arguments to be used to transform values from the underlying iterator into new iterators or iterables to be flattened into the result.
+         */
+        flatMap'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'callback'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' index'
+                NumberKeyword
+              UnionType
+                TypeReference
+                  Identifier: ' Iterator'
+                  TypeReference
+                    Identifier: 'U'
+                  UnknownKeyword
+                  UndefinedKeyword
+                TypeReference
+                  Identifier: ' Iterable'
+                  TypeReference
+                    Identifier: 'U'
+                  UnknownKeyword
+                  UndefinedKeyword
+          TypeReference
+            Identifier: ' IteratorObject'
+            TypeReference
+              Identifier: 'U'
+            UndefinedKeyword
+            UnknownKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Calls the specified callback function for all the elements in this iterator. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+         * @param callbackfn A function that accepts up to three arguments. The reduce method calls the callbackfn function one time for each element in the iterator.
+         * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of a value from the iterator.
+         */
+        reduce'
+          Parameter
+            Identifier: 'callbackfn'
+            FunctionType
+              Parameter
+                Identifier: 'previousValue'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' currentValue'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' currentIndex'
+                NumberKeyword
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        reduce'
+          Parameter
+            Identifier: 'callbackfn'
+            FunctionType
+              Parameter
+                Identifier: 'previousValue'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' currentValue'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' currentIndex'
+                NumberKeyword
+              TypeReference
+                Identifier: ' T'
+          Parameter
+            Identifier: ' initialValue'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Calls the specified callback function for all the elements in this iterator. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+         * @param callbackfn A function that accepts up to three arguments. The reduce method calls the callbackfn function one time for each element in the iterator.
+         * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of a value from the iterator.
+         */
+        reduce'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'callbackfn'
+            FunctionType
+              Parameter
+                Identifier: 'previousValue'
+                TypeReference
+                  Identifier: ' U'
+              Parameter
+                Identifier: ' currentValue'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' currentIndex'
+                NumberKeyword
+              TypeReference
+                Identifier: ' U'
+          Parameter
+            Identifier: ' initialValue'
+            TypeReference
+              Identifier: ' U'
+          TypeReference
+            Identifier: ' U'
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Creates a new array from the values yielded by this iterator.
+         */
+        toArray'
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Performs the specified action for each element in the iterator.
+         * @param callbackfn  A function that accepts up to two arguments. forEach calls the callbackfn function one time for each element in the iterator.
+         */
+        forEach'
+          Parameter
+            Identifier: 'callbackfn'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' index'
+                NumberKeyword
+              VoidKeyword
+          VoidKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Determines whether the specified callback function returns true for any element of this iterator.
+         * @param predicate A function that accepts up to two arguments. The some method calls
+         * the predicate function for each element in this iterator until the predicate returns a value
+         * true, or until the end of the iterator.
+         */
+        some'
+          Parameter
+            Identifier: 'predicate'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' index'
+                NumberKeyword
+              UnknownKeyword
+          BooleanKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Determines whether all the members of this iterator satisfy the specified test.
+         * @param predicate A function that accepts up to two arguments. The every method calls
+         * the predicate function for each element in this iterator until the predicate returns
+         * false, or until the end of this iterator.
+         */
+        every'
+          Parameter
+            Identifier: 'predicate'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' index'
+                NumberKeyword
+              UnknownKeyword
+          BooleanKeyword
+        MethodSignature
+          Identifier: '
+
+        /**
+         * Returns the value of the first element in this iterator where predicate is true, and undefined
+         * otherwise.
+         * @param predicate find calls predicate once for each element of this iterator, in
+         * order, until it finds one where predicate returns true. If such an element is found, find
+         * immediately returns that element value. Otherwise, find returns undefined.
+         */
+        find'
+          TypeParameter
+            Identifier: 'S'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: 'predicate'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' index'
+                NumberKeyword
+              TypePredicate
+                Identifier: ' value'
+                TypeReference
+                  Identifier: ' S'
+          UnionType
+            TypeReference
+              Identifier: ' S'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        find'
+          Parameter
+            Identifier: 'predicate'
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' index'
+                NumberKeyword
+              UnknownKeyword
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+        PropertySignature
+          ReadonlyKeyword
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'toStringTag'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' IteratorConstructor'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' IteratorObjectConstructor'
+        MethodSignature
+          Identifier: '
+        /**
+         * Creates a native iterator from an iterator or iterable object.
+         * Returns its input if the input already inherits from the built-in Iterator class.
+         * @param value An iterator or iterable object to convert a native iterator.
+         */
+        from'
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'value'
+            UnionType
+              TypeReference
+                Identifier: ' Iterator'
+                TypeReference
+                  Identifier: 'T'
+                UnknownKeyword
+                UndefinedKeyword
+              TypeReference
+                Identifier: ' Iterable'
+                TypeReference
+                  Identifier: 'T'
+                UnknownKeyword
+                UndefinedKeyword
+          TypeReference
+            Identifier: ' IteratorObject'
+            TypeReference
+              Identifier: 'T'
+            UndefinedKeyword
+            UnknownKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Iterator'
+            TypeReference
+              Identifier: ' IteratorConstructor'

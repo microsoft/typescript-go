@@ -1,0 +1,32 @@
+SourceFile
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    C'
+      BinaryExpression
+        Identifier: ' A'
+        BarToken
+        Identifier: ' B'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' E2'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+    EnumMember
+      Identifier: '
+    C'

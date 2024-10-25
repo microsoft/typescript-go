@@ -1,0 +1,38 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' F'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' w'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            BinaryExpression
+              Identifier: ' /*[#|*/w'
+              PlusToken
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' F'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' w'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' newLocal'
+            BinaryExpression
+              Identifier: ' w'
+              PlusToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            Identifier: ' /*RENAME*/newLocal'

@@ -1,0 +1,32 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' F1'
+        ImportSpecifier
+          Identifier: ' F2'
+        ImportSpecifier
+          Identifier: ' class'
+        ImportSpecifier
+          Identifier: ' class'
+        ImportSpecifier
+          Identifier: ' class'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' NS'
+    StringLiteral
+  ClassDeclaration
+  ClassDeclaration
+  ClassDeclaration
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      Identifier: ' D'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+
+D'

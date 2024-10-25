@@ -1,0 +1,19 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        NumericLiteral
+  ExportAssignment
+    Identifier: ' foo'
+  ImportEqualsDeclaration
+    Identifier: ' fooFunc'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+        CallExpression
+          Identifier: ' fooFunc'

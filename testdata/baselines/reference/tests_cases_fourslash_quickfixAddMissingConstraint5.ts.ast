@@ -1,0 +1,51 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @strict: true
+// @filename: /foo.ts
+////export interface RendererElement {
+////    [key: string]: any
+////}
+////
+////export interface VNode<HostElement extends RendererElement> {
+////    target: HostElement | null;
+////}
+////
+////export function cloneVNode<U>(vnode: VNode<U>): VNode<U> {
+////    const cloned: VNode<RendererElement> = {
+////        target: vnode.target,
+////    }
+////    return cloned;
+////}
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFixAll'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    fixId'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    fixAllDescription'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_extends_constraint_to_all_type_parameters'
+            Identifier: 'message'
+        PropertyAssignment
+          Identifier: '
+    newFileContent'
+          NoSubstitutionTemplateLiteral

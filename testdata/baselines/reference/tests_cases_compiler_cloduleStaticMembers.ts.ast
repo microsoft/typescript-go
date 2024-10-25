@@ -1,0 +1,40 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Clod'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' x'
+      NumericLiteral
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' y'
+      NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Clod'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p'
+            PropertyAccessExpression
+              Identifier: ' Clod'
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' q'
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            PropertyAccessExpression
+              Identifier: ' Clod'
+              Identifier: 'y'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            Identifier: ' y'

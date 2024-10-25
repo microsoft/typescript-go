@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionType
+          NumberKeyword
+        ArrowFunction
+          EqualsGreaterThanToken
+          YieldExpression
+            Identifier: ' s'

@@ -1,0 +1,268 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Bacon'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Event'
+        TypeParameter
+          Identifier: 'T'
+      InterfaceDeclaration
+        Identifier: ' Error'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Event'
+            TypeReference
+              Identifier: 'T'
+      InterfaceDeclaration
+        Identifier: ' Observable'
+        TypeParameter
+          Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        zip'
+          TypeParameter
+            Identifier: 'U'
+          TypeParameter
+            Identifier: ' V'
+          Parameter
+            Identifier: 'other'
+            TypeReference
+              Identifier: ' EventStream'
+              TypeReference
+                Identifier: 'U'
+          Parameter
+            Identifier: ' f'
+            FunctionType
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' U'
+              TypeReference
+                Identifier: ' V'
+          TypeReference
+            Identifier: ' EventStream'
+            TypeReference
+              Identifier: 'V'
+        MethodSignature
+          Identifier: '
+        slidingWindow'
+          Parameter
+            Identifier: 'max'
+            NumberKeyword
+          Parameter
+            Identifier: ' min'
+            QuestionToken
+            NumberKeyword
+          TypeReference
+            Identifier: ' Property'
+            ArrayType
+              TypeReference
+                Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        log'
+          TypeReference
+            Identifier: ' Observable'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        combine'
+          TypeParameter
+            Identifier: 'U'
+          TypeParameter
+            Identifier: ' V'
+          Parameter
+            Identifier: 'other'
+            TypeReference
+              Identifier: ' Observable'
+              TypeReference
+                Identifier: 'U'
+          Parameter
+            Identifier: ' f'
+            FunctionType
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              Parameter
+                Identifier: ' b'
+                TypeReference
+                  Identifier: ' U'
+              TypeReference
+                Identifier: ' V'
+          TypeReference
+            Identifier: ' Property'
+            TypeReference
+              Identifier: 'V'
+        MethodSignature
+          Identifier: '
+        withStateMachine'
+          TypeParameter
+            Identifier: 'U'
+          TypeParameter
+            Identifier: ' V'
+          Parameter
+            Identifier: 'initState'
+            TypeReference
+              Identifier: ' U'
+          Parameter
+            Identifier: ' f'
+            FunctionType
+              Parameter
+                Identifier: 'state'
+                TypeReference
+                  Identifier: ' U'
+              Parameter
+                Identifier: ' event'
+                TypeReference
+                  Identifier: ' Event'
+                  TypeReference
+                    Identifier: 'T'
+              TypeReference
+                Identifier: ' StateValue'
+                TypeReference
+                  Identifier: 'U'
+                TypeReference
+                  Identifier: ' V'
+          TypeReference
+            Identifier: ' EventStream'
+            TypeReference
+              Identifier: 'V'
+        MethodSignature
+          Identifier: '
+        decode'
+          Parameter
+            Identifier: 'mapping'
+            TypeReference
+              Identifier: ' Object'
+          TypeReference
+            Identifier: ' Property'
+            AnyKeyword
+        MethodSignature
+          Identifier: '
+        awaiting'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'other'
+            TypeReference
+              Identifier: ' Observable'
+              TypeReference
+                Identifier: 'U'
+          TypeReference
+            Identifier: ' Property'
+            BooleanKeyword
+        MethodSignature
+          Identifier: '
+        endOnError'
+          Parameter
+            Identifier: 'f'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'value'
+                TypeReference
+                  Identifier: ' T'
+              BooleanKeyword
+          TypeReference
+            Identifier: ' Observable'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        withHandler'
+          Parameter
+            Identifier: 'f'
+            FunctionType
+              Parameter
+                Identifier: 'event'
+                TypeReference
+                  Identifier: ' Event'
+                  TypeReference
+                    Identifier: 'T'
+              AnyKeyword
+          TypeReference
+            Identifier: ' Observable'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        name'
+          Parameter
+            Identifier: 'name'
+            StringKeyword
+          TypeReference
+            Identifier: ' Observable'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        withDescription'
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          TypeReference
+            Identifier: ' Observable'
+            TypeReference
+              Identifier: 'T'
+      InterfaceDeclaration
+        Identifier: ' Property'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Observable'
+            TypeReference
+              Identifier: 'T'
+      InterfaceDeclaration
+        Identifier: ' EventStream'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Observable'
+            TypeReference
+              Identifier: 'T'
+      InterfaceDeclaration
+        Identifier: ' Bus'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' EventStream'
+            TypeReference
+              Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Bus'
+            ConstructorType
+              TypeParameter
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' Bus'
+                TypeReference
+                  Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' stuck'
+        TypeReference
+          QualifiedName
+            Identifier: ' Bacon'
+            Identifier: 'Bus'
+          NumberKeyword
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Bacon'
+            Identifier: 'Bus'

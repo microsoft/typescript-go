@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts"/>
+
+// @Filename: /index.ts
+//// function foo() {
+////     for (let x = 0; x < 10; x++) [||]{
+////         console.log("hello");
+////         console.log("you");
+////     }
+////     return 1;
+//// }
+////
+
+verify'
+        Identifier: 'baselineMapCode'
+      ArrayLiteralExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'test'
+            Identifier: 'ranges'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral

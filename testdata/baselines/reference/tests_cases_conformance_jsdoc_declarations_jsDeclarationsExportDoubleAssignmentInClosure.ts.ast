@@ -1,0 +1,50 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    module'
+            Identifier: 'exports'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' exports'
+            EqualsToken
+            FunctionExpression
+              Parameter
+                Identifier: 'o'
+              Block
+                ReturnStatement
+                  ConditionalExpression
+                    ParenthesizedExpression
+                      BinaryExpression
+                        Identifier: 'o'
+                        EqualsEqualsToken
+                        NullKeyword
+                    QuestionToken
+                    CallExpression
+                      Identifier: ' create'
+                      Identifier: 'base'
+                    ColonToken
+                    CallExpression
+                      Identifier: ' defineProperties'
+                      CallExpression
+                        Identifier: 'Object'
+                        Identifier: 'o'
+                      Identifier: ' descriptors'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' m'
+            FunctionExpression
+              Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    exports'
+            Identifier: 'methods'
+          EqualsToken
+          Identifier: ' m'

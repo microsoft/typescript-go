@@ -1,0 +1,43 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' data'
+        ObjectLiteralExpression
+          PropertyAssignment
+            PublicKeyword
+            Identifier: ' foo'
+            StringLiteral
+          PropertyAssignment
+            PrivateKeyword
+            Identifier: ' bar'
+            StringLiteral
+          PropertyAssignment
+            ProtectedKeyword
+            Identifier: ' baz'
+            StringLiteral
+          PropertyAssignment
+            AbstractKeyword
+            Identifier: ' noWay'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+data'
+            Identifier: 'foo'
+          PlusToken
+          PropertyAccessExpression
+            Identifier: ' data'
+            Identifier: 'bar'
+        PlusToken
+        PropertyAccessExpression
+          Identifier: ' data'
+          Identifier: 'baz'
+      PlusToken
+      PropertyAccessExpression
+        Identifier: ' data'
+        Identifier: 'noWay'

@@ -1,0 +1,2178 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' documents'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Compiler'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Utils'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' SourceMapSpanWithDecodeErrors'
+    PropertySignature
+      Identifier: '
+    sourceMapSpan'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Mapping'
+    PropertySignature
+      Identifier: '
+    decodeErrors'
+      UnionType
+        ArrayType
+          StringKeyword
+        UndefinedKeyword
+  ModuleDeclaration
+    Identifier: ' SourceMapDecoder'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceMapMappings'
+            StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' decodingIndex'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mappings'
+            UnionType
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'MappingsDecoder'
+              UndefinedKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' DecodedMapping'
+        PropertySignature
+          Identifier: '
+        sourceMapSpan'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Mapping'
+        PropertySignature
+          Identifier: '
+        error'
+          QuestionToken
+          StringKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' initializeSourceMapDecoding'
+        Parameter
+          Identifier: 'sourceMap'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'RawSourceMap'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        decodingIndex'
+              EqualsToken
+              NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        sourceMapMappings'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' sourceMap'
+                Identifier: 'mappings'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        mappings'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'decodeMappings'
+                PropertyAccessExpression
+                  Identifier: 'sourceMap'
+                  Identifier: 'mappings'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' decodeNextEncodedSourceMapSpan'
+        TypeReference
+          Identifier: ' DecodedMapping'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'mappings'
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'Debug'
+                  Identifier: 'fail'
+                StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' mappings'
+                    Identifier: 'next'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'result'
+              Identifier: 'done'
+            ReturnStatement
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' error'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' mappings'
+                      Identifier: 'error'
+                    BarBarToken
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: ' sourceMapSpan'
+                  PropertyAccessExpression
+                    Identifier: ' mappings'
+                    Identifier: 'state'
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' sourceMapSpan'
+                PropertyAccessExpression
+                  Identifier: ' result'
+                  Identifier: 'value'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' hasCompletedDecoding'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'mappings'
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'Debug'
+                  Identifier: 'fail'
+                StringLiteral
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' mappings'
+                Identifier: 'pos'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' sourceMapMappings'
+                Identifier: 'length'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' getRemainingDecodeString'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' sourceMapMappings'
+                Identifier: 'substr'
+              Identifier: 'decodingIndex'
+  ModuleDeclaration
+    Identifier: ' SourceMapSpanWriter'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceMapRecorder'
+            TypeReference
+              QualifiedName
+                Identifier: ' Compiler'
+                Identifier: 'WriterAggregator'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceMapSources'
+            ArrayType
+              StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceMapNames'
+            UnionType
+              ArrayType
+                StringKeyword
+              LiteralType
+                NullKeyword
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' jsFile'
+            TypeReference
+              QualifiedName
+                Identifier: ' documents'
+                Identifier: 'TextDocument'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' jsLineMap'
+            TypeOperator
+              ArrayType
+                NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tsCode'
+            StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' tsLineMap'
+            ArrayType
+              NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' spansOnSingleLine'
+            ArrayType
+              TypeReference
+                Identifier: ' SourceMapSpanWithDecodeErrors'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' prevWrittenSourcePos'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' nextJsLineToWrite'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' spanMarkerContinues'
+            BooleanKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' initializeSourceMapSpanWriter'
+        Parameter
+          Identifier: 'sourceMapRecordWriter'
+          TypeReference
+            QualifiedName
+              Identifier: ' Compiler'
+              Identifier: 'WriterAggregator'
+        Parameter
+          Identifier: ' sourceMap'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'RawSourceMap'
+        Parameter
+          Identifier: ' currentJsFile'
+          TypeReference
+            QualifiedName
+              Identifier: ' documents'
+              Identifier: 'TextDocument'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        sourceMapRecorder'
+              EqualsToken
+              Identifier: ' sourceMapRecordWriter'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        sourceMapSources'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' sourceMap'
+                Identifier: 'sources'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        sourceMapNames'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' sourceMap'
+                Identifier: 'names'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+        jsFile'
+              EqualsToken
+              Identifier: ' currentJsFile'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        jsLineMap'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' jsFile'
+                Identifier: 'lineStarts'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+        spansOnSingleLine'
+              EqualsToken
+              ArrayLiteralExpression
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        prevWrittenSourcePos'
+              EqualsToken
+              NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        nextJsLineToWrite'
+              EqualsToken
+              NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        spanMarkerContinues'
+              EqualsToken
+              FalseKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        SourceMapDecoder'
+                Identifier: 'initializeSourceMapDecoding'
+              Identifier: 'sourceMap'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sourceMapRecorder'
+                Identifier: 'WriteLine'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sourceMapRecorder'
+                Identifier: 'WriteLine'
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                PropertyAccessExpression
+                  Identifier: ' sourceMap'
+                  Identifier: 'file'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sourceMapRecorder'
+                Identifier: 'WriteLine'
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'tryGetSourceMappingURL'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'ts'
+                      Identifier: 'getLineInfo'
+                    PropertyAccessExpression
+                      Identifier: 'jsFile'
+                      Identifier: 'text'
+                    Identifier: ' jsLineMap'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sourceMapRecorder'
+                Identifier: 'WriteLine'
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                PropertyAccessExpression
+                  Identifier: ' sourceMap'
+                  Identifier: 'sourceRoot'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sourceMapRecorder'
+                Identifier: 'WriteLine'
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                PropertyAccessExpression
+                  Identifier: ' sourceMap'
+                  Identifier: 'sources'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'sourceMap'
+              Identifier: 'sourcesContent'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            sourceMapRecorder'
+                    Identifier: 'WriteLine'
+                  BinaryExpression
+                    StringLiteral
+                    PlusToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' JSON'
+                        Identifier: 'stringify'
+                      PropertyAccessExpression
+                        Identifier: 'sourceMap'
+                        Identifier: 'sourcesContent'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sourceMapRecorder'
+                Identifier: 'WriteLine'
+              StringLiteral
+      FunctionDeclaration
+        Identifier: ' getSourceMapSpanString'
+        Parameter
+          Identifier: 'mapEntry'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Mapping'
+        Parameter
+          Identifier: ' getAbsentNameIndex'
+          QuestionToken
+          BooleanKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' mapString'
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        StringLiteral
+                        PlusToken
+                        ParenthesizedExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'mapEntry'
+                              Identifier: 'generatedLine'
+                            PlusToken
+                            NumericLiteral
+                      PlusToken
+                      StringLiteral
+                    PlusToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'mapEntry'
+                          Identifier: 'generatedCharacter'
+                        PlusToken
+                        NumericLiteral
+                  PlusToken
+                  StringLiteral
+          IfStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'isSourceMapping'
+              Identifier: 'mapEntry'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            mapString'
+                  PlusEqualsToken
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        BinaryExpression
+                          BinaryExpression
+                            BinaryExpression
+                              StringLiteral
+                              PlusToken
+                              ParenthesizedExpression
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'mapEntry'
+                                    Identifier: 'sourceLine'
+                                  PlusToken
+                                  NumericLiteral
+                            PlusToken
+                            StringLiteral
+                          PlusToken
+                          ParenthesizedExpression
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: 'mapEntry'
+                                Identifier: 'sourceCharacter'
+                              PlusToken
+                              NumericLiteral
+                        PlusToken
+                        StringLiteral
+                      PlusToken
+                      PropertyAccessExpression
+                        Identifier: ' mapEntry'
+                        Identifier: 'sourceIndex'
+                    PlusToken
+                    StringLiteral
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        Identifier: 'mapEntry'
+                        Identifier: 'nameIndex'
+                    GreaterThanEqualsToken
+                    NumericLiteral
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        Identifier: ' mapEntry'
+                        Identifier: 'nameIndex'
+                    LessThanToken
+                    PropertyAccessExpression
+                      NonNullExpression
+                        Identifier: ' sourceMapNames'
+                      Identifier: 'length'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                mapString'
+                      PlusEqualsToken
+                      BinaryExpression
+                        BinaryExpression
+                          StringLiteral
+                          PlusToken
+                          ElementAccessExpression
+                            NonNullExpression
+                              Identifier: ' sourceMapNames'
+                            NonNullExpression
+                              PropertyAccessExpression
+                                Identifier: 'mapEntry'
+                                Identifier: 'nameIndex'
+                        PlusToken
+                        StringLiteral
+                Block
+                  IfStatement
+                    BinaryExpression
+                      ParenthesizedExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'mapEntry'
+                            Identifier: 'nameIndex'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' mapEntry'
+                              Identifier: 'nameIndex'
+                            ExclamationEqualsEqualsToken
+                            PrefixUnaryExpression
+                              NumericLiteral
+                      BarBarToken
+                      Identifier: ' getAbsentNameIndex'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    mapString'
+                          PlusEqualsToken
+                          BinaryExpression
+                            BinaryExpression
+                              StringLiteral
+                              PlusToken
+                              PropertyAccessExpression
+                                Identifier: ' mapEntry'
+                                Identifier: 'nameIndex'
+                            PlusToken
+                            StringLiteral
+          ReturnStatement
+            Identifier: ' mapString'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' recordSourceMapSpan'
+        Parameter
+          Identifier: 'sourceMapSpan'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Mapping'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' decodeResult'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' SourceMapDecoder'
+                    Identifier: 'decodeNextEncodedSourceMapSpan'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' decodeErrors'
+                UnionType
+                  ArrayType
+                    StringKeyword
+                  UndefinedKeyword
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    Identifier: ' decodeResult'
+                    Identifier: 'error'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              BarBarToken
+              PrefixUnaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'sameMapping'
+                  PropertyAccessExpression
+                    Identifier: 'decodeResult'
+                    Identifier: 'sourceMapSpan'
+                  Identifier: ' sourceMapSpan'
+            Block
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'decodeResult'
+                  Identifier: 'error'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                decodeErrors'
+                      EqualsToken
+                      ArrayLiteralExpression
+                        BinaryExpression
+                          StringLiteral
+                          PlusToken
+                          PropertyAccessExpression
+                            Identifier: ' decodeResult'
+                            Identifier: 'error'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                decodeErrors'
+                      EqualsToken
+                      ArrayLiteralExpression
+                        StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            decodeErrors'
+                    Identifier: 'push'
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        StringLiteral
+                        PlusToken
+                        CallExpression
+                          Identifier: ' getSourceMapSpanString'
+                          PropertyAccessExpression
+                            Identifier: 'decodeResult'
+                            Identifier: 'sourceMapSpan'
+                          TrueKeyword
+                      PlusToken
+                      StringLiteral
+                    PlusToken
+                    CallExpression
+                      Identifier: ' getSourceMapSpanString'
+                      Identifier: 'sourceMapSpan'
+                      TrueKeyword
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'spansOnSingleLine'
+                Identifier: 'length'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: ' spansOnSingleLine'
+                      NumericLiteral
+                    Identifier: 'sourceMapSpan'
+                  Identifier: 'generatedLine'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' sourceMapSpan'
+                  Identifier: 'generatedLine'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            // On different line from the one that we have been recording till now,
+            writeRecordedSpans'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            spansOnSingleLine'
+                  EqualsToken
+                  ArrayLiteralExpression
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        spansOnSingleLine'
+                Identifier: 'push'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' sourceMapSpan'
+                ShorthandPropertyAssignment
+                  Identifier: ' decodeErrors'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' recordNewSourceFileSpan'
+        Parameter
+          Identifier: 'sourceMapSpan'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Mapping'
+        Parameter
+          Identifier: ' newSourceFileCode'
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' continuesLine'
+                FalseKeyword
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'spansOnSingleLine'
+                  Identifier: 'length'
+                GreaterThanToken
+                NumericLiteral
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: ' spansOnSingleLine'
+                      NumericLiteral
+                    Identifier: 'sourceMapSpan'
+                  Identifier: 'generatedCharacter'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' sourceMapSpan'
+                  Identifier: 'generatedLine'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            writeRecordedSpans'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            spansOnSingleLine'
+                  EqualsToken
+                  ArrayLiteralExpression
+              ExpressionStatement
+                PostfixUnaryExpression
+                  Identifier: '
+            nextJsLineToWrite'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: ' // walk back one line to reprint the line
+            continuesLine'
+                  EqualsToken
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        recordSourceMapSpan'
+              Identifier: 'sourceMapSpan'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        assert'
+                Identifier: 'isTrue'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'spansOnSingleLine'
+                  Identifier: 'length'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sourceMapRecorder'
+                Identifier: 'WriteLine'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sourceMapRecorder'
+                Identifier: 'WriteLine'
+              BinaryExpression
+                BinaryExpression
+                  StringLiteral
+                  PlusToken
+                  PropertyAccessExpression
+                    Identifier: ' jsFile'
+                    Identifier: 'file'
+                PlusToken
+                ParenthesizedExpression
+                  ConditionalExpression
+                    Identifier: 'continuesLine'
+                    QuestionToken
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'sourceMapSpan'
+                            Identifier: 'generatedLine'
+                          PlusToken
+                          NumericLiteral
+                        TemplateMiddle
+                      TemplateSpan
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'sourceMapSpan'
+                            Identifier: 'generatedCharacter'
+                          PlusToken
+                          NumericLiteral
+                        TemplateTail
+                    ColonToken
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sourceMapRecorder'
+                Identifier: 'WriteLine'
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                ElementAccessExpression
+                  Identifier: ' sourceMapSources'
+                  NonNullExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: 'spansOnSingleLine'
+                          NumericLiteral
+                        Identifier: 'sourceMapSpan'
+                      Identifier: 'sourceIndex'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        sourceMapRecorder'
+                Identifier: 'WriteLine'
+              StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+        tsLineMap'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'computeLineStarts'
+                Identifier: 'newSourceFileCode'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        tsCode'
+              EqualsToken
+              Identifier: ' newSourceFileCode'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        prevWrittenSourcePos'
+              EqualsToken
+              NumericLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' close'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        // Write the lines pending on the single line
+        writeRecordedSpans'
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'SourceMapDecoder'
+                  Identifier: 'hasCompletedDecoding'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            sourceMapRecorder'
+                    Identifier: 'WriteLine'
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            sourceMapRecorder'
+                    Identifier: 'WriteLine'
+                  BinaryExpression
+                    StringLiteral
+                    PlusToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' SourceMapDecoder'
+                        Identifier: 'getRemainingDecodeString'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        // write remaining js lines
+        writeJsFileLines'
+              PropertyAccessExpression
+                Identifier: 'jsLineMap'
+                Identifier: 'length'
+      FunctionDeclaration
+        Identifier: ' getTextOfLine'
+        Parameter
+          Identifier: 'line'
+          NumberKeyword
+        Parameter
+          Identifier: ' lineMap'
+          TypeOperator
+            ArrayType
+              NumberKeyword
+        Parameter
+          Identifier: ' code'
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' startPos'
+                ElementAccessExpression
+                  Identifier: ' lineMap'
+                  Identifier: 'line'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' endPos'
+                ElementAccessExpression
+                  Identifier: ' lineMap'
+                  BinaryExpression
+                    Identifier: 'line'
+                    PlusToken
+                    NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' text'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' code'
+                    Identifier: 'substring'
+                  Identifier: 'startPos'
+                  Identifier: ' endPos'
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' line'
+                EqualsEqualsEqualsToken
+                NumericLiteral
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Utils'
+                  Identifier: 'removeByteOrderMark'
+                Identifier: 'text'
+              ColonToken
+              Identifier: ' text'
+      FunctionDeclaration
+        Identifier: ' writeJsFileLines'
+        Parameter
+          Identifier: 'endJsLine'
+          NumberKeyword
+        Block
+          ForStatement
+            BinaryExpression
+              Identifier: ' nextJsLineToWrite'
+              LessThanToken
+              Identifier: ' endJsLine'
+            PostfixUnaryExpression
+              Identifier: ' nextJsLineToWrite'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            sourceMapRecorder'
+                    Identifier: 'Write'
+                  BinaryExpression
+                    StringLiteral
+                    PlusToken
+                    CallExpression
+                      Identifier: ' getTextOfLine'
+                      Identifier: 'nextJsLineToWrite'
+                      Identifier: ' jsLineMap'
+                      PropertyAccessExpression
+                        Identifier: ' jsFile'
+                        Identifier: 'text'
+      FunctionDeclaration
+        Identifier: ' writeRecordedSpans'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' markerIds'
+                ArrayType
+                  StringKeyword
+                ArrayLiteralExpression
+          FunctionDeclaration
+            Identifier: ' getMarkerId'
+            Parameter
+              Identifier: 'markerIndex'
+              NumberKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' markerId'
+                    StringLiteral
+              IfStatement
+                Identifier: 'spanMarkerContinues'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                assert'
+                        Identifier: 'isTrue'
+                      BinaryExpression
+                        Identifier: 'markerIndex'
+                        EqualsEqualsEqualsToken
+                        NumericLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                markerId'
+                      EqualsToken
+                      StringLiteral
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                markerId'
+                      EqualsToken
+                      BinaryExpression
+                        StringLiteral
+                        PlusToken
+                        ParenthesizedExpression
+                          BinaryExpression
+                            Identifier: 'markerIndex'
+                            PlusToken
+                            NumericLiteral
+                  IfStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'markerId'
+                        Identifier: 'length'
+                      LessThanToken
+                      NumericLiteral
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    markerId'
+                          EqualsToken
+                          BinaryExpression
+                            Identifier: ' markerId'
+                            PlusToken
+                            StringLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                markerId'
+                      PlusEqualsToken
+                      StringLiteral
+              ReturnStatement
+                Identifier: ' markerId'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' prevEmittedCol'
+                ExclamationToken
+                NumberKeyword
+          FunctionDeclaration
+            Identifier: ' iterateSpans'
+            Parameter
+              Identifier: 'fn'
+              FunctionType
+                Parameter
+                  Identifier: 'currentSpan'
+                  TypeReference
+                    Identifier: ' SourceMapSpanWithDecodeErrors'
+                Parameter
+                  Identifier: ' index'
+                  NumberKeyword
+                VoidKeyword
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            prevEmittedCol'
+                  EqualsToken
+                  NumericLiteral
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' i'
+                    NumericLiteral
+                BinaryExpression
+                  Identifier: ' i'
+                  LessThanToken
+                  PropertyAccessExpression
+                    Identifier: ' spansOnSingleLine'
+                    Identifier: 'length'
+                PostfixUnaryExpression
+                  Identifier: ' i'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                fn'
+                      ElementAccessExpression
+                        Identifier: 'spansOnSingleLine'
+                        Identifier: 'i'
+                      Identifier: ' i'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                prevEmittedCol'
+                      EqualsToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: ' spansOnSingleLine'
+                            Identifier: 'i'
+                          Identifier: 'sourceMapSpan'
+                        Identifier: 'generatedCharacter'
+          FunctionDeclaration
+            Identifier: ' writeSourceMapIndent'
+            Parameter
+              Identifier: 'indentLength'
+              NumberKeyword
+            Parameter
+              Identifier: ' indentPrefix'
+              StringKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            sourceMapRecorder'
+                    Identifier: 'Write'
+                  Identifier: 'indentPrefix'
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' i'
+                    NumericLiteral
+                BinaryExpression
+                  Identifier: ' i'
+                  LessThanToken
+                  Identifier: ' indentLength'
+                PostfixUnaryExpression
+                  Identifier: ' i'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                sourceMapRecorder'
+                        Identifier: 'Write'
+                      StringLiteral
+          FunctionDeclaration
+            Identifier: ' writeSourceMapMarker'
+            Parameter
+              Identifier: 'currentSpan'
+              TypeReference
+                Identifier: ' SourceMapSpanWithDecodeErrors'
+            Parameter
+              Identifier: ' index'
+              NumberKeyword
+            Parameter
+              Identifier: ' endColumn'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' currentSpan'
+                  Identifier: 'sourceMapSpan'
+                Identifier: 'generatedCharacter'
+            Parameter
+              Identifier: ' endContinues'
+              FalseKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' markerId'
+                    CallExpression
+                      Identifier: ' getMarkerId'
+                      Identifier: 'index'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            markerIds'
+                    Identifier: 'push'
+                  Identifier: 'markerId'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+            writeSourceMapIndent'
+                  Identifier: 'prevEmittedCol'
+                  Identifier: ' markerId'
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' i'
+                    Identifier: ' prevEmittedCol'
+                BinaryExpression
+                  Identifier: ' i'
+                  LessThanToken
+                  Identifier: ' endColumn'
+                PostfixUnaryExpression
+                  Identifier: ' i'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                sourceMapRecorder'
+                        Identifier: 'Write'
+                      StringLiteral
+              IfStatement
+                Identifier: 'endContinues'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                sourceMapRecorder'
+                        Identifier: 'Write'
+                      StringLiteral
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            sourceMapRecorder'
+                    Identifier: 'WriteLine'
+                  StringLiteral
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            spanMarkerContinues'
+                  EqualsToken
+                  Identifier: ' endContinues'
+          FunctionDeclaration
+            Identifier: ' writeSourceMapSourceText'
+            Parameter
+              Identifier: 'currentSpan'
+              TypeReference
+                Identifier: ' SourceMapSpanWithDecodeErrors'
+            Parameter
+              Identifier: ' index'
+              NumberKeyword
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sourcePos'
+                    BinaryExpression
+                      ElementAccessExpression
+                        Identifier: ' tsLineMap'
+                        NonNullExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'currentSpan'
+                              Identifier: 'sourceMapSpan'
+                            Identifier: 'sourceLine'
+                      PlusToken
+                      ParenthesizedExpression
+                        NonNullExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'currentSpan'
+                              Identifier: 'sourceMapSpan'
+                            Identifier: 'sourceCharacter'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' sourceText'
+                    StringLiteral
+              IfStatement
+                BinaryExpression
+                  Identifier: 'prevWrittenSourcePos'
+                  LessThanToken
+                  Identifier: ' sourcePos'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                // Position that goes forward, get text
+                sourceText'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' tsCode'
+                          Identifier: 'substring'
+                        Identifier: 'prevWrittenSourcePos'
+                        Identifier: ' sourcePos'
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'currentSpan'
+                  Identifier: 'decodeErrors'
+                Block
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' decodeError'
+                    PropertyAccessExpression
+                      Identifier: ' currentSpan'
+                      Identifier: 'decodeErrors'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                    writeSourceMapIndent'
+                          Identifier: 'prevEmittedCol'
+                          ElementAccessExpression
+                            Identifier: ' markerIds'
+                            Identifier: 'index'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    sourceMapRecorder'
+                            Identifier: 'WriteLine'
+                          Identifier: 'decodeError'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' tsCodeLineMap'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'computeLineStarts'
+                      Identifier: 'sourceText'
+              ForStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' i'
+                    NumericLiteral
+                BinaryExpression
+                  Identifier: ' i'
+                  LessThanToken
+                  PropertyAccessExpression
+                    Identifier: ' tsCodeLineMap'
+                    Identifier: 'length'
+                PostfixUnaryExpression
+                  Identifier: ' i'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                writeSourceMapIndent'
+                      Identifier: 'prevEmittedCol'
+                      ConditionalExpression
+                        BinaryExpression
+                          Identifier: ' i'
+                          EqualsEqualsEqualsToken
+                          NumericLiteral
+                        QuestionToken
+                        ElementAccessExpression
+                          Identifier: ' markerIds'
+                          Identifier: 'index'
+                        ColonToken
+                        StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                sourceMapRecorder'
+                        Identifier: 'Write'
+                      CallExpression
+                        Identifier: 'getTextOfLine'
+                        Identifier: 'i'
+                        Identifier: ' tsCodeLineMap'
+                        Identifier: ' sourceText'
+                  IfStatement
+                    BinaryExpression
+                      Identifier: 'i'
+                      EqualsEqualsEqualsToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' tsCodeLineMap'
+                          Identifier: 'length'
+                        MinusToken
+                        NumericLiteral
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    sourceMapRecorder'
+                            Identifier: 'WriteLine'
+                          StringLiteral
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            prevWrittenSourcePos'
+                  EqualsToken
+                  Identifier: ' sourcePos'
+          FunctionDeclaration
+            Identifier: ' writeSpanDetails'
+            Parameter
+              Identifier: 'currentSpan'
+              TypeReference
+                Identifier: ' SourceMapSpanWithDecodeErrors'
+            Parameter
+              Identifier: ' index'
+              NumberKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            sourceMapRecorder'
+                    Identifier: 'WriteLine'
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: 'markerIds'
+                      Identifier: 'index'
+                    PlusToken
+                    CallExpression
+                      Identifier: ' getSourceMapSpanString'
+                      PropertyAccessExpression
+                        Identifier: 'currentSpan'
+                        Identifier: 'sourceMapSpan'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'spansOnSingleLine'
+              Identifier: 'length'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' currentJsLine'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: ' spansOnSingleLine'
+                          NumericLiteral
+                        Identifier: 'sourceMapSpan'
+                      Identifier: 'generatedLine'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+            // Write js line
+            writeJsFileLines'
+                  BinaryExpression
+                    Identifier: 'currentJsLine'
+                    PlusToken
+                    NumericLiteral
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+            // Emit markers
+            iterateSpans'
+                  Identifier: 'writeSourceMapMarker'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' jsFileText'
+                    CallExpression
+                      Identifier: ' getTextOfLine'
+                      BinaryExpression
+                        Identifier: 'currentJsLine'
+                        PlusToken
+                        NumericLiteral
+                      Identifier: ' jsLineMap'
+                      PropertyAccessExpression
+                        Identifier: ' jsFile'
+                        Identifier: 'text'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'prevEmittedCol'
+                  LessThanToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' jsFileText'
+                      Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                // There is remaining text on this line that will be part of next source span so write marker that continues
+                writeSourceMapMarker'
+                      NonNullExpression
+                        Identifier: '/*currentSpan*/ undefined'
+                      PropertyAccessExpression
+                        Identifier: ' spansOnSingleLine'
+                        Identifier: 'length'
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' /*endColumn*/ jsFileText'
+                          Identifier: 'length'
+                        MinusToken
+                        NumericLiteral
+                      TrueKeyword
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+            // Emit Source text
+            iterateSpans'
+                  Identifier: 'writeSourceMapSourceText'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+
+            // Emit column number etc
+            iterateSpans'
+                  Identifier: 'writeSpanDetails'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            sourceMapRecorder'
+                    Identifier: 'WriteLine'
+                  StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getSourceMapRecord'
+    Parameter
+      Identifier: 'sourceMapDataList'
+      TypeOperator
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'SourceMapEmitResult'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Program'
+    Parameter
+      Identifier: ' jsFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' documents'
+              Identifier: 'TextDocument'
+    Parameter
+      Identifier: ' declarationFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' documents'
+              Identifier: 'TextDocument'
+    StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceMapRecorder'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Compiler'
+                Identifier: 'WriterAggregator'
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          PropertyAccessExpression
+            Identifier: ' sourceMapDataList'
+            Identifier: 'length'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sourceMapData'
+                ElementAccessExpression
+                  Identifier: ' sourceMapDataList'
+                  Identifier: 'i'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' prevSourceFile'
+                UnionType
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'SourceFile'
+                  UndefinedKeyword
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' currentFile'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' documents'
+                    Identifier: 'TextDocument'
+          IfStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'isDeclarationFileName'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'sourceMapData'
+                  Identifier: 'sourceMap'
+                Identifier: 'file'
+            Block
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'sourceMapDataList'
+                    Identifier: 'length'
+                  GreaterThanToken
+                  PropertyAccessExpression
+                    Identifier: ' jsFiles'
+                    Identifier: 'length'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                currentFile'
+                      EqualsToken
+                      ElementAccessExpression
+                        Identifier: ' declarationFiles'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'Math'
+                            Identifier: 'floor'
+                          BinaryExpression
+                            Identifier: 'i'
+                            SlashToken
+                            NumericLiteral
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                currentFile'
+                      EqualsToken
+                      ElementAccessExpression
+                        Identifier: ' declarationFiles'
+                        Identifier: 'i'
+            Block
+              IfStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'sourceMapDataList'
+                    Identifier: 'length'
+                  GreaterThanToken
+                  PropertyAccessExpression
+                    Identifier: ' jsFiles'
+                    Identifier: 'length'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                currentFile'
+                      EqualsToken
+                      ElementAccessExpression
+                        Identifier: ' jsFiles'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'Math'
+                            Identifier: 'floor'
+                          BinaryExpression
+                            Identifier: 'i'
+                            SlashToken
+                            NumericLiteral
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                currentFile'
+                      EqualsToken
+                      ElementAccessExpression
+                        Identifier: ' jsFiles'
+                        Identifier: 'i'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        SourceMapSpanWriter'
+                Identifier: 'initializeSourceMapSpanWriter'
+              Identifier: 'sourceMapRecorder'
+              PropertyAccessExpression
+                Identifier: ' sourceMapData'
+                Identifier: 'sourceMap'
+              Identifier: ' currentFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' mapper'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'decodeMappings'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'sourceMapData'
+                      Identifier: 'sourceMap'
+                    Identifier: 'mappings'
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' iterResult'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' mapper'
+                    Identifier: 'next'
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'iterResult'
+                Identifier: 'done'
+            BinaryExpression
+              Identifier: ' iterResult'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' mapper'
+                  Identifier: 'next'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' decodedSourceMapping'
+                    PropertyAccessExpression
+                      Identifier: ' iterResult'
+                      Identifier: 'value'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' currentSourceFile'
+                    ConditionalExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'isSourceMapping'
+                        Identifier: 'decodedSourceMapping'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' program'
+                          Identifier: 'getSourceFile'
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'sourceMapData'
+                            Identifier: 'inputSourceFileNames'
+                          PropertyAccessExpression
+                            Identifier: 'decodedSourceMapping'
+                            Identifier: 'sourceIndex'
+                      ColonToken
+                      Identifier: ' undefined'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'currentSourceFile'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' prevSourceFile'
+                Block
+                  IfStatement
+                    Identifier: 'currentSourceFile'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    SourceMapSpanWriter'
+                            Identifier: 'recordNewSourceFileSpan'
+                          Identifier: 'decodedSourceMapping'
+                          PropertyAccessExpression
+                            Identifier: ' currentSourceFile'
+                            Identifier: 'text'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                prevSourceFile'
+                      EqualsToken
+                      Identifier: ' currentSourceFile'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                SourceMapSpanWriter'
+                        Identifier: 'recordSourceMapSpan'
+                      Identifier: 'decodedSourceMapping'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        SourceMapSpanWriter'
+                Identifier: 'close'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    sourceMapRecorder'
+            Identifier: 'Close'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' sourceMapRecorder'
+              Identifier: 'lines'
+            Identifier: 'join'
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getSourceMapRecordWithSystem'
+    Parameter
+      Identifier: 'sys'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'System'
+    Parameter
+      Identifier: ' sourceMapFile'
+      StringKeyword
+    StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceMapRecorder'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Compiler'
+                Identifier: 'WriterAggregator'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' prevSourceFile'
+            UnionType
+              TypeReference
+                QualifiedName
+                  Identifier: ' documents'
+                  Identifier: 'TextDocument'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' files'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              TypeReference
+                QualifiedName
+                  Identifier: ' documents'
+                  Identifier: 'TextDocument'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' sourceMap'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'tryParseRawSourceMap'
+              NonNullExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'sys'
+                    Identifier: 'readFile'
+                  Identifier: 'sourceMapFile'
+                  StringLiteral
+      IfStatement
+        Identifier: 'sourceMap'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' mapDirectory'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'getDirectoryPath'
+                  Identifier: 'sourceMapFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sourceRoot'
+                ConditionalExpression
+                  PropertyAccessExpression
+                    Identifier: ' sourceMap'
+                    Identifier: 'sourceRoot'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'getNormalizedAbsolutePath'
+                    PropertyAccessExpression
+                      Identifier: 'sourceMap'
+                      Identifier: 'sourceRoot'
+                    Identifier: ' mapDirectory'
+                  ColonToken
+                  Identifier: ' mapDirectory'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' generatedAbsoluteFilePath'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'getNormalizedAbsolutePath'
+                  PropertyAccessExpression
+                    Identifier: 'sourceMap'
+                    Identifier: 'file'
+                  Identifier: ' mapDirectory'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' sourceFileAbsolutePaths'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' sourceMap'
+                      Identifier: 'sources'
+                    Identifier: 'map'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'source'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getNormalizedAbsolutePath'
+                      Identifier: 'source'
+                      Identifier: ' sourceRoot'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' currentFile'
+                CallExpression
+                  Identifier: ' getFile'
+                  Identifier: 'generatedAbsoluteFilePath'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        SourceMapSpanWriter'
+                Identifier: 'initializeSourceMapSpanWriter'
+              Identifier: 'sourceMapRecorder'
+              Identifier: ' sourceMap'
+              Identifier: ' currentFile'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' mapper'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'decodeMappings'
+                  PropertyAccessExpression
+                    Identifier: 'sourceMap'
+                    Identifier: 'mappings'
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' iterResult'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' mapper'
+                    Identifier: 'next'
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'iterResult'
+                Identifier: 'done'
+            BinaryExpression
+              Identifier: ' iterResult'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' mapper'
+                  Identifier: 'next'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' decodedSourceMapping'
+                    PropertyAccessExpression
+                      Identifier: ' iterResult'
+                      Identifier: 'value'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' currentSourceFile'
+                    ConditionalExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'isSourceMapping'
+                        Identifier: 'decodedSourceMapping'
+                      QuestionToken
+                      CallExpression
+                        Identifier: ' getFile'
+                        ElementAccessExpression
+                          Identifier: 'sourceFileAbsolutePaths'
+                          PropertyAccessExpression
+                            Identifier: 'decodedSourceMapping'
+                            Identifier: 'sourceIndex'
+                      ColonToken
+                      Identifier: ' undefined'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'currentSourceFile'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' prevSourceFile'
+                Block
+                  IfStatement
+                    Identifier: 'currentSourceFile'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    SourceMapSpanWriter'
+                            Identifier: 'recordNewSourceFileSpan'
+                          Identifier: 'decodedSourceMapping'
+                          PropertyAccessExpression
+                            Identifier: ' currentSourceFile'
+                            Identifier: 'text'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                prevSourceFile'
+                      EqualsToken
+                      Identifier: ' currentSourceFile'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                SourceMapSpanWriter'
+                        Identifier: 'recordSourceMapSpan'
+                      Identifier: 'decodedSourceMapping'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        SourceMapSpanWriter'
+                Identifier: 'close'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    sourceMapRecorder'
+            Identifier: 'Close'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' sourceMapRecorder'
+              Identifier: 'lines'
+            Identifier: 'join'
+          StringLiteral
+      FunctionDeclaration
+        Identifier: ' getFile'
+        Parameter
+          Identifier: 'path'
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' existing'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' files'
+                    Identifier: 'get'
+                  Identifier: 'path'
+          IfStatement
+            Identifier: 'existing'
+            ReturnStatement
+              Identifier: ' existing'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' value'
+                NewExpression
+                  PropertyAccessExpression
+                    Identifier: ' documents'
+                    Identifier: 'TextDocument'
+                  Identifier: 'path'
+                  NonNullExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' sys'
+                        Identifier: 'readFile'
+                      Identifier: 'path'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        files'
+                Identifier: 'set'
+              Identifier: 'path'
+              Identifier: ' value'
+          ReturnStatement
+            Identifier: ' value'

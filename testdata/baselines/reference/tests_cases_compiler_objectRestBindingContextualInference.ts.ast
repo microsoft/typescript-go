@@ -1,0 +1,102 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' ImageHolder'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' SetupImageRefs'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeReference
+          Identifier: ' K'
+      TypeReference
+        Identifier: ' File'
+  TypeAliasDeclaration
+    Identifier: ' SetupImages'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    IntersectionType
+      TypeReference
+        Identifier: ' SetupImageRefs'
+        TypeReference
+          Identifier: 'K'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+  prepare'
+          FunctionType
+            TypeLiteral
+              PropertySignature
+                Identifier: ' type'
+                TypeReference
+                  Identifier: ' K'
+  InterfaceDeclaration
+    Identifier: ' TestInterface'
+    PropertySignature
+      Identifier: '
+  name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  image'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' setupImages'
+    TypeParameter
+      Identifier: 'R'
+      TypeReference
+        Identifier: ' ImageHolder'
+        TypeReference
+          Identifier: 'K'
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    Parameter
+      Identifier: '
+  item'
+      TypeReference
+        Identifier: ' R'
+    Parameter
+      Identifier: '
+  keys'
+      ArrayType
+        TypeReference
+          Identifier: ' K'
+    TypeReference
+      Identifier: ' SetupImages'
+      TypeReference
+        Identifier: 'K'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        TypeReference
+          Identifier: ' TestInterface'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' prepare'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest'
+        CallExpression
+          Identifier: ' setupImages'
+          Identifier: 'test'
+          ArrayLiteralExpression
+            StringLiteral

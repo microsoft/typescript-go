@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'x'
+            Identifier: ' a'
+          BindingElement
+            Identifier: ' y'
+            Identifier: ' b'
+    Identifier: ' array'
+    Block
+      ExpressionStatement
+        Identifier: '
+    a'
+      ExpressionStatement
+        Identifier: '
+    b'

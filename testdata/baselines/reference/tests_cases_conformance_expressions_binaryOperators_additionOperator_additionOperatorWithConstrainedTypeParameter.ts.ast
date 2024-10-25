@@ -1,0 +1,94 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' sum'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'K'
+        NumberKeyword
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' n'
+            PlusToken
+            ElementAccessExpression
+              Identifier: ' v'
+              Identifier: 'k'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    n'
+          PlusEqualsToken
+          ElementAccessExpression
+            Identifier: ' v'
+            Identifier: 'k'
+  FunctionDeclaration
+    Identifier: ' realSum'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'K'
+        NumberKeyword
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    Parameter
+      Identifier: ' vs'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    Block
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+        Identifier: ' vs'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        n'
+              EqualsToken
+              BinaryExpression
+                Identifier: ' n'
+                PlusToken
+                ElementAccessExpression
+                  Identifier: ' v'
+                  Identifier: 'k'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        n'
+              PlusEqualsToken
+              ElementAccessExpression
+                Identifier: ' v'
+                Identifier: 'k'

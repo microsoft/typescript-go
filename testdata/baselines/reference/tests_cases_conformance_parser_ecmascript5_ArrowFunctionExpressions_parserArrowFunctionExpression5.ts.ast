@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    ParenthesizedExpression
+      CallExpression
+        Identifier: 'bar'
+        Identifier: 'x'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block

@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'defaultParam'
+        BooleanKeyword
+        FalseKeyword
+      Block
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'defaultParam'
+      NumericLiteral
+    Block

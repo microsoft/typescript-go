@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' hello'
+    ModuleDeclaration
+      Identifier: 'hi'
+      ModuleDeclaration
+        Identifier: 'world'
+        ModuleBlock
+          FunctionDeclaration
+            Identifier: ' foo'
+            Block

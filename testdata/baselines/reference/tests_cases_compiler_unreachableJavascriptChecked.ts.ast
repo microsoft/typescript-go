@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' unreachable'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' f'
+      ReturnStatement
+        NumericLiteral
+      ReturnStatement
+        NumericLiteral
+      FunctionDeclaration
+        Identifier: ' f'
+        Block
+      ReturnStatement
+        NumericLiteral

@@ -1,0 +1,60 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumberKeyword
+      NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' method'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' Derived'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        Derived'
+            PrivateIdentifier
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' // error
+        Base'
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumberKeyword
+      NumericLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' method'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' Derived'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        Derived'
+            PrivateIdentifier
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: '
+        Base'
+              PrivateIdentifier
+            EqualsToken
+            NumericLiteral

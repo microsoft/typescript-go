@@ -1,0 +1,16 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' I'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Block

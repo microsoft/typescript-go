@@ -1,0 +1,30 @@
+SourceFile
+  NamespaceExportDeclaration
+    Identifier: ' UMD'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Thing'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    a'
+        NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' makeThing'
+    TypeReference
+      Identifier: ' Thing'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' makeThing'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' thing'
+        CallExpression
+          Identifier: ' makeThing'

@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    setFoo'
+      Parameter
+        Identifier: '#foo'
+        StringKeyword
+      Block

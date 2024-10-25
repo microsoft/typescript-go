@@ -1,0 +1,24 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z7'
+        FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z8'
+        NumberKeyword
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z9'
+        NumericLiteral
+      VariableDeclaration
+        Identifier: ' z10'
+        StringKeyword
+        StringLiteral
+      VariableDeclaration
+        Identifier: ' z11'
+        NullKeyword

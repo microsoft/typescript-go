@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////let x = {
+////    [|f/*1*/oo|]
+////}
+
+verify'
+        Identifier: 'baselineGoToDefinition'
+      StringLiteral

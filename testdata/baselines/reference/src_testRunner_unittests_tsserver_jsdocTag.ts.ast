@@ -1,0 +1,1022 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    baselineTsserverLogs'
+        ImportSpecifier
+          Identifier: '
+    openFilesForSession'
+        ImportSpecifier
+          Identifier: '
+    TestSession'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' config'
+                TypeReference
+                  Identifier: ' File'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        path'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        content'
+                    NoSubstitutionTemplateLiteral
+          FunctionDeclaration
+            Identifier: ' assertQuickInfoJSDoc'
+            Parameter
+              Identifier: 'subScenario'
+              StringKeyword
+            Parameter
+              Identifier: ' file'
+              TypeReference
+                Identifier: ' File'
+            Parameter
+              Identifier: ' options'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+        displayPartsForJSDoc'
+                  BooleanKeyword
+                PropertySignature
+                  Identifier: '
+        command'
+                  TypeReference
+                    QualifiedName
+                      QualifiedName
+                        QualifiedName
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        it'
+                  Identifier: 'subScenario'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' command'
+                              BindingElement
+                                Identifier: ' displayPartsForJSDoc'
+                            Identifier: ' options'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' host'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' TestServerHost'
+                                Identifier: 'createServerHost'
+                              ArrayLiteralExpression
+                                Identifier: 'file'
+                                Identifier: ' config'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' session'
+                            NewExpression
+                              Identifier: ' TestSession'
+                              Identifier: 'host'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'ConfigureRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'CommandTypes'
+                                Identifier: 'Configure'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' preferences'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: ' displayPartsForJSDoc'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            openFilesForSession'
+                          ArrayLiteralExpression
+                            Identifier: 'file'
+                          Identifier: ' session'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' indexOfX'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' file'
+                                  Identifier: 'content'
+                                Identifier: 'indexOf'
+                              StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'QuickInfoRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              AsExpression
+                                Identifier: ' command'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        QualifiedName
+                                          Identifier: ' ts'
+                                          Identifier: 'server'
+                                        Identifier: 'protocol'
+                                      Identifier: 'CommandTypes'
+                                    Identifier: 'Quickinfo'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              AsExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    file'
+                                    PropertyAccessExpression
+                                      Identifier: ' file'
+                                      Identifier: 'path'
+                                  PropertyAssignment
+                                    Identifier: '
+                    position'
+                                    Identifier: ' indexOfX'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'FileLocationRequestArgs'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            baselineTsserverLogs'
+                          StringLiteral
+                          Identifier: ' subScenario'
+                          Identifier: ' session'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' linkInTag'
+                TypeReference
+                  Identifier: ' File'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        path'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        content'
+                    NoSubstitutionTemplateLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' linkInComment'
+                TypeReference
+                  Identifier: ' File'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+        path'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+        content'
+                    NoSubstitutionTemplateLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertQuickInfoJSDoc'
+              StringLiteral
+              Identifier: ' linkInTag'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'Quickinfo'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertQuickInfoJSDoc'
+              StringLiteral
+              Identifier: ' linkInTag'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'Quickinfo'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  FalseKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertQuickInfoJSDoc'
+              StringLiteral
+              Identifier: ' linkInComment'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'Quickinfo'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertQuickInfoJSDoc'
+              StringLiteral
+              Identifier: ' linkInComment'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'Quickinfo'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  FalseKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertQuickInfoJSDoc'
+              StringLiteral
+              Identifier: ' linkInTag'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'QuickinfoFull'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertQuickInfoJSDoc'
+              StringLiteral
+              Identifier: ' linkInTag'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'QuickinfoFull'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  FalseKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertQuickInfoJSDoc'
+              StringLiteral
+              Identifier: ' linkInComment'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'QuickinfoFull'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertQuickInfoJSDoc'
+              StringLiteral
+              Identifier: ' linkInComment'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'QuickinfoFull'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  FalseKeyword
+          FunctionDeclaration
+            Identifier: ' assertSignatureHelpJSDoc'
+            Parameter
+              Identifier: 'subScenario'
+              StringKeyword
+            Parameter
+              Identifier: ' options'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+        displayPartsForJSDoc'
+                  BooleanKeyword
+                PropertySignature
+                  Identifier: '
+        command'
+                  TypeReference
+                    QualifiedName
+                      QualifiedName
+                        QualifiedName
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        it'
+                  Identifier: 'subScenario'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' linkInParamTag'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                NoSubstitutionTemplateLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' command'
+                              BindingElement
+                                Identifier: ' displayPartsForJSDoc'
+                            Identifier: ' options'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' host'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' TestServerHost'
+                                Identifier: 'createServerHost'
+                              ArrayLiteralExpression
+                                Identifier: 'linkInParamTag'
+                                Identifier: ' config'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' session'
+                            NewExpression
+                              Identifier: ' TestSession'
+                              Identifier: 'host'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'ConfigureRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'CommandTypes'
+                                Identifier: 'Configure'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' preferences'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: ' displayPartsForJSDoc'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            openFilesForSession'
+                          ArrayLiteralExpression
+                            Identifier: 'linkInParamTag'
+                          Identifier: ' session'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' indexOfX'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' linkInParamTag'
+                                  Identifier: 'content'
+                                Identifier: 'lastIndexOf'
+                              StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'SignatureHelpRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              AsExpression
+                                Identifier: ' command'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        QualifiedName
+                                          Identifier: ' ts'
+                                          Identifier: 'server'
+                                        Identifier: 'protocol'
+                                      Identifier: 'CommandTypes'
+                                    Identifier: 'SignatureHelp'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              AsExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    triggerReason'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                        kind'
+                                        StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                    file'
+                                    PropertyAccessExpression
+                                      Identifier: ' linkInParamTag'
+                                      Identifier: 'path'
+                                  PropertyAssignment
+                                    Identifier: '
+                    position'
+                                    Identifier: ' indexOfX'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'SignatureHelpRequestArgs'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            baselineTsserverLogs'
+                          StringLiteral
+                          Identifier: ' subScenario'
+                          Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertSignatureHelpJSDoc'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'SignatureHelp'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  FalseKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertSignatureHelpJSDoc'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'SignatureHelp'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertSignatureHelpJSDoc'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'SignatureHelpFull'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  FalseKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertSignatureHelpJSDoc'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'SignatureHelpFull'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  TrueKeyword
+          FunctionDeclaration
+            Identifier: ' assertCompletionsJSDoc'
+            Parameter
+              Identifier: 'subScenario'
+              StringKeyword
+            Parameter
+              Identifier: ' options'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+        displayPartsForJSDoc'
+                  BooleanKeyword
+                PropertySignature
+                  Identifier: '
+        command'
+                  TypeReference
+                    QualifiedName
+                      QualifiedName
+                        QualifiedName
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        it'
+                  Identifier: 'subScenario'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' linkInParamJSDoc'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                NoSubstitutionTemplateLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' command'
+                              BindingElement
+                                Identifier: ' displayPartsForJSDoc'
+                            Identifier: ' options'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' host'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' TestServerHost'
+                                Identifier: 'createServerHost'
+                              ArrayLiteralExpression
+                                Identifier: 'linkInParamJSDoc'
+                                Identifier: ' config'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' session'
+                            NewExpression
+                              Identifier: ' TestSession'
+                              Identifier: 'host'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'ConfigureRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'server'
+                                    Identifier: 'protocol'
+                                  Identifier: 'CommandTypes'
+                                Identifier: 'Configure'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' preferences'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: ' displayPartsForJSDoc'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            openFilesForSession'
+                          ArrayLiteralExpression
+                            Identifier: 'linkInParamJSDoc'
+                          Identifier: ' session'
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' indexOfFoo'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' linkInParamJSDoc'
+                                  Identifier: 'content'
+                                Identifier: 'lastIndexOf'
+                              StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            session'
+                            Identifier: 'executeCommandSeq'
+                          TypeReference
+                            QualifiedName
+                              QualifiedName
+                                QualifiedName
+                                  Identifier: 'ts'
+                                  Identifier: 'server'
+                                Identifier: 'protocol'
+                              Identifier: 'CompletionDetailsRequest'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                command'
+                              AsExpression
+                                Identifier: ' command'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        QualifiedName
+                                          Identifier: ' ts'
+                                          Identifier: 'server'
+                                        Identifier: 'protocol'
+                                      Identifier: 'CommandTypes'
+                                    Identifier: 'CompletionDetails'
+                            PropertyAssignment
+                              Identifier: '
+                arguments'
+                              AsExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                    entryNames'
+                                    ArrayLiteralExpression
+                                      StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                    file'
+                                    PropertyAccessExpression
+                                      Identifier: ' linkInParamJSDoc'
+                                      Identifier: 'path'
+                                  PropertyAssignment
+                                    Identifier: '
+                    position'
+                                    Identifier: ' indexOfFoo'
+                                TypeReference
+                                  QualifiedName
+                                    QualifiedName
+                                      QualifiedName
+                                        Identifier: ' ts'
+                                        Identifier: 'server'
+                                      Identifier: 'protocol'
+                                    Identifier: 'CompletionDetailsRequestArgs'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            baselineTsserverLogs'
+                          StringLiteral
+                          Identifier: ' subScenario'
+                          Identifier: ' session'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    assertCompletionsJSDoc'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'CompletionDetails'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertCompletionsJSDoc'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'CompletionDetails'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  FalseKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertCompletionsJSDoc'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'CompletionDetailsFull'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    assertCompletionsJSDoc'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        command'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'server'
+                        Identifier: 'protocol'
+                      Identifier: 'CommandTypes'
+                    Identifier: 'CompletionDetailsFull'
+                PropertyAssignment
+                  Identifier: '
+        displayPartsForJSDoc'
+                  FalseKeyword

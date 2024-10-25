@@ -1,0 +1,35 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' D'
+    PropertySignature
+      Identifier: ' a'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' E'
+    PropertySignature
+      Identifier: ' a'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' F'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' E'
+      ExpressionWithTypeArguments
+        Identifier: ' D'
+  ClassDeclaration
+    Identifier: ' D2'
+    PropertyDeclaration
+      Identifier: ' a'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' E2'
+    PropertyDeclaration
+      Identifier: ' a'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' F2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' E2'
+      ExpressionWithTypeArguments
+        Identifier: ' D2'

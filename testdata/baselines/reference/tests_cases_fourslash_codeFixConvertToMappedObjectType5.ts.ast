@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '/// <reference path='fourslash.ts' />
+
+//// type K = "foo" | "bar";
+//// class SomeType {
+////     [prop: K]: any;
+//// }
+
+verify'
+          Identifier: 'not'
+        Identifier: 'codeFixAvailable'

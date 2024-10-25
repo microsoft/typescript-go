@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Foo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    BANANA'
+            AsExpression
+              StringLiteral
+              LiteralType
+                StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Baa'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Foo'
+                Identifier: 'BANANA'
+            NumericLiteral

@@ -1,0 +1,89 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleDeclaration
+      Identifier: 'B'
+      ModuleBlock
+        VariableStatement
+          ExportKeyword
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumberKeyword
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' B'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' A'
+            Identifier: 'B'
+          Identifier: 'x'
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleDeclaration
+      Identifier: 'Y'
+      ModuleDeclaration
+        Identifier: 'Z'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' Line'
+            PropertyDeclaration
+              Identifier: '
+        length'
+              NumberKeyword
+  ModuleDeclaration
+    Identifier: ' X'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Y'
+        ModuleBlock
+          ModuleDeclaration
+            Identifier: ' Z'
+            ModuleBlock
+              ClassDeclaration
+                ExportKeyword
+                Identifier: ' Line'
+                PropertyDeclaration
+                  Identifier: '
+                name'
+                  StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' length'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' l'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              QualifiedName
+                Identifier: ' X'
+                Identifier: 'Y'
+              Identifier: 'Z'
+            Identifier: 'Line'

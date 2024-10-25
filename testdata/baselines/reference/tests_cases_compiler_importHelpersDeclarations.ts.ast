@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' D'
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' E'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' D'

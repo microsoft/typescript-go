@@ -1,0 +1,107 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        StringLiteral
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' ImportInterface'
+        PropertySignature
+          Identifier: ' _i'
+          AnyKeyword
+      FunctionDeclaration
+        Identifier: ' getInterI'
+        TypeReference
+          Identifier: ' ImportInterface'
+  ExportDeclaration
+    NamedExports
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' RequireInterface'
+        PropertySignature
+          Identifier: ' _r'
+          AnyKeyword
+      FunctionDeclaration
+        Identifier: ' getInterR'
+        TypeReference
+          Identifier: ' RequireInterface'
+  ExportAssignment
+    CallExpression
+      Identifier: ' getInterI'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ExportAssignment
+    CallExpression
+      Identifier: ' getInterR'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' obj1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' obj2'
+    StringLiteral
+  ExportAssignment
+    AsExpression
+      ArrayLiteralExpression
+        Identifier: 'obj1'
+        PropertyAccessExpression
+          Identifier: ' obj2'
+          Identifier: 'default'
+      TypeReference
+        Identifier: ' const'

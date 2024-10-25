@@ -1,0 +1,117 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Mixin'
+    MethodSignature
+      Identifier: '
+    mixinMethod'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' Mixin'
+    TypeParameter
+      Identifier: 'TBaseClass'
+      ConstructorType
+        AbstractKeyword
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          AnyKeyword
+        AnyKeyword
+    Parameter
+      Identifier: 'baseClass'
+      TypeReference
+        Identifier: ' TBaseClass'
+    IntersectionType
+      TypeReference
+        Identifier: ' TBaseClass'
+      ParenthesizedType
+        ConstructorType
+          AbstractKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            AnyKeyword
+          TypeReference
+            Identifier: ' Mixin'
+    Block
+      ClassDeclaration
+        AbstractKeyword
+        Identifier: ' MixinClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' baseClass'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Mixin'
+        MethodDeclaration
+          Identifier: '
+        mixinMethod'
+          Block
+      ReturnStatement
+        Identifier: ' MixinClass'
+  ClassDeclaration
+    Identifier: ' ConcreteBase'
+    MethodDeclaration
+      Identifier: '
+    baseMethod'
+      Block
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AbstractBase'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' abstractBaseMethod'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' DerivedFromConcrete'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' Mixin'
+          Identifier: 'ConcreteBase'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wasConcrete'
+        NewExpression
+          Identifier: ' DerivedFromConcrete'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+wasConcrete'
+        Identifier: 'baseMethod'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+wasConcrete'
+        Identifier: 'mixinMethod'
+  ClassDeclaration
+    Identifier: ' DerivedFromAbstract'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' Mixin'
+          Identifier: 'AbstractBase'
+    MethodDeclaration
+      Identifier: '
+    abstractBaseMethod'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wasAbstract'
+        NewExpression
+          Identifier: ' DerivedFromAbstract'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+wasAbstract'
+        Identifier: 'abstractBaseMethod'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+wasAbstract'
+        Identifier: 'mixinMethod'

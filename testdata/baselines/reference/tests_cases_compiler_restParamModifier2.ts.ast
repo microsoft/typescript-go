@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        PublicKeyword
+        DotDotDotToken
+        Identifier: 'rest'
+        ArrayType
+          StringKeyword
+      Block

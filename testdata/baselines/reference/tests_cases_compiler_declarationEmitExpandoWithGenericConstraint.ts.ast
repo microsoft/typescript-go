@@ -1,0 +1,95 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Point'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' x'
+      NumberKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' y'
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Rect'
+    TypeParameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' Point'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' a'
+      TypeReference
+        Identifier: ' p'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' p'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Point'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Point'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' x'
+              ShorthandPropertyAssignment
+                Identifier: ' y'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Rect'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'p'
+            TypeReference
+              Identifier: ' Point'
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' p'
+          Parameter
+            Identifier: ' b'
+            TypeReference
+              Identifier: ' p'
+          TypeReference
+            Identifier: ' Rect'
+            TypeReference
+              Identifier: 'p'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' a'
+              ShorthandPropertyAssignment
+                Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Point'
+        Identifier: 'zero'
+      EqualsToken
+      ArrowFunction
+        TypeReference
+          Identifier: ' Point'
+        EqualsGreaterThanToken
+        CallExpression
+          Identifier: ' Point'
+          NumericLiteral
+          NumericLiteral

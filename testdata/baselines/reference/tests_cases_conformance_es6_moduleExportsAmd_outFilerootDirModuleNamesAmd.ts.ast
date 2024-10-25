@@ -1,0 +1,29 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' foo'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Foo'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        NewExpression
+          Identifier: ' Foo'
+  ExpressionStatement
+    CallExpression
+      ImportKeyword
+      StringLiteral

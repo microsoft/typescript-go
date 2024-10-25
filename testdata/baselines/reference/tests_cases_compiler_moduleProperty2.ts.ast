@@ -1,0 +1,47 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' f'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' test1'
+            Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' test2'
+            Identifier: 'y'
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' test3'
+            PropertyAccessExpression
+              Identifier: 'M'
+              Identifier: 'y'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' test4'
+            PropertyAccessExpression
+              Identifier: 'M'
+              Identifier: 'z'

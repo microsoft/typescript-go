@@ -1,0 +1,49 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: ' // instead of B does see this
+    foo'
+      VoidKeyword
+    MethodSignature
+      Identifier: ' // instead of B does see this
+ 
+    foo2'
+      TypeReference
+        Identifier: ' B'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    bar'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+          NumberKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'foo'

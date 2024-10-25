@@ -1,0 +1,221 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vNumberLiteral'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vStringLiteral'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vLiteral'
+        AsExpression
+          NonNullExpression
+            NullKeyword
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' R'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' foo'
+        StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    // under !strictNullChecks all types can be reused from the assertion
+    // under strictNullChecks we need to add undefined, and we can't always know we can
+    // Can't know if references contain undefined, fall back to inference
+    tsResolve'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          TypeReference
+            Identifier: ' R'
+          TypeReference
+            Identifier: ' R'
+    PropertyDeclaration
+      Identifier: '
+    tsResolve2'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          TypeReference
+            Identifier: ' R'
+          TypeReference
+            Identifier: ' R'
+          StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    // Simple type. we can add undefined
+    reuseType'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'p'
+                TypeReference
+                  Identifier: ' R'
+              VoidKeyword
+          StringKeyword
+          StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    reuseType2'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          ParenthesizedType
+            ConstructorType
+              Parameter
+                Identifier: 'p'
+                TypeReference
+                  Identifier: ' R'
+              TypeReference
+                Identifier: ' R'
+          StringKeyword
+          StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    reuseType3'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BigIntKeyword
+          SymbolKeyword
+          UnknownKeyword
+          AnyKeyword
+          NeverKeyword
+          SymbolKeyword
+    PropertyDeclaration
+      Identifier: '
+    reuseType4'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          TupleType
+            TypeReference
+              Identifier: 'R'
+            TypeReference
+              Identifier: ' R'
+            TypeReference
+              Identifier: ' R'
+          TupleType
+            TypeReference
+              Identifier: 'R'
+            TypeReference
+              Identifier: ' R'
+            TypeReference
+              Identifier: ' R'
+    PropertyDeclaration
+      Identifier: '
+    reuseType5'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          ArrayType
+            TypeReference
+              Identifier: ' R'
+          ArrayType
+            TypeReference
+              Identifier: ' R'
+    PropertyDeclaration
+      Identifier: '
+    reuseType6'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            BigintLiteral
+          LiteralType
+            BigintLiteral
+    PropertyDeclaration
+      Identifier: '
+    reuseType7'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          LiteralType
+            NoSubstitutionTemplateLiteral
+          LiteralType
+            NoSubstitutionTemplateLiteral
+    PropertyDeclaration
+      Identifier: '
+    reuseType8'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              StringKeyword
+              TemplateTail
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              StringKeyword
+              TemplateTail
+    PropertyDeclaration
+      Identifier: '
+    reuseType9'
+      QuestionToken
+      AsExpression
+        NonNullExpression
+          NullKeyword
+        UnionType
+          ThisType
+          ThisType

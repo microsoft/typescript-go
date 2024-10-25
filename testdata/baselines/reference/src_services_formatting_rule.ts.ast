@@ -1,0 +1,166 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' FormattingContext'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Rule'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' debugName'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' context'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ContextPredicate'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' action'
+      TypeReference
+        Identifier: ' RuleAction'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' flags'
+      TypeReference
+        Identifier: ' RuleFlags'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ContextPredicate'
+    FunctionType
+      Parameter
+        Identifier: 'context'
+        TypeReference
+          Identifier: ' FormattingContext'
+      BooleanKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyContext'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' ContextPredicate'
+        Identifier: ' emptyArray'
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' RuleAction'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StopProcessingSpaceActions'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    StopProcessingTokenActions'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    InsertSpace'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    InsertNewLine'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    DeleteSpace'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    DeleteToken'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    InsertTrailingSemicolon'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+
+    StopAction'
+      BinaryExpression
+        Identifier: ' StopProcessingSpaceActions'
+        BarToken
+        Identifier: ' StopProcessingTokenActions'
+    EnumMember
+      Identifier: '
+    ModifySpaceAction'
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' InsertSpace'
+          BarToken
+          Identifier: ' InsertNewLine'
+        BarToken
+        Identifier: ' DeleteSpace'
+    EnumMember
+      Identifier: '
+    ModifyTokenAction'
+      BinaryExpression
+        Identifier: ' DeleteToken'
+        BarToken
+        Identifier: ' InsertTrailingSemicolon'
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' RuleFlags'
+    EnumMember
+      Identifier: '
+    None'
+    EnumMember
+      Identifier: '
+    CanDeleteNewLines'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TokenRange'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' tokens'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SyntaxKind'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' isSpecific'
+      BooleanKeyword

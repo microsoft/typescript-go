@@ -1,0 +1,115 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' invariant'
+    Parameter
+      Identifier: 'condition'
+      BooleanKeyword
+    TypePredicate
+      AssertsKeyword
+      Identifier: ' condition'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        StringKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    invariant'
+          BinaryExpression
+            StringLiteral
+            InKeyword
+            Identifier: ' obj'
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' obj'
+          Identifier: 'test'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' obj'
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              Identifier: ' obj'
+              Identifier: 'test'
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        StringKeyword
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    obj'
+          Identifier: 'test'
+      IfStatement
+        BinaryExpression
+          StringLiteral
+          InKeyword
+          Identifier: ' obj'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'test'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'test'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        StringKeyword
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    obj'
+          Identifier: 'test'
+      IfStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'obj'
+            Identifier: 'hasOwnProperty'
+          StringLiteral
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'test'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+        obj'
+              Identifier: 'test'

@@ -1,0 +1,47 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @noEmit: true
+// @allowJs: true
+// @checkJs: true
+// @Filename: mod1.js
+/** @callback Con - some kind of continuation
+ * @param {object | undefined} error
+ * @return {any} I don't even know what this should return
+ */
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' C'
+  FunctionDeclaration
+    Identifier: ' C'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'p'
+          EqualsToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'k'
+    Block
+      IfStatement
+        BinaryExpression
+          NumericLiteral
+          EqualsEqualsEqualsToken
+          BinaryExpression
+            NumericLiteral
+            MinusToken
+            NumericLiteral
+        Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' k'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' ok'
+              TrueKeyword

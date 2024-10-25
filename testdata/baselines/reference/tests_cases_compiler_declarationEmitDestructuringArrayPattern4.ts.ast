@@ -1,0 +1,113 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'a5'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x14'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'a6'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x15'
+          BindingElement
+            Identifier: ' y15'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'a7'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x16'
+          BindingElement
+            Identifier: ' y16'
+          BindingElement
+            Identifier: ' z16'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'a8'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            DotDotDotToken
+            Identifier: 'a9'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x17'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'a10'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x18'
+          BindingElement
+            Identifier: ' y18'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'a12'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x19'
+          BindingElement
+            Identifier: ' y19'
+          BindingElement
+            Identifier: ' z19'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'a13'
+        ArrayLiteralExpression
+          NumericLiteral
+          StringLiteral
+          TrueKeyword

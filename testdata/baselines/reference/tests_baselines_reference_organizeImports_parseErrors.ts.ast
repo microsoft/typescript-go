@@ -1,0 +1,78 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      TypeAliasDeclaration
+        DeclareKeyword
+        ExportKeyword
+        Identifier: ' P'
+        UnionType
+          TypeLiteral
+          TypeReference
+            Identifier: ''
+          TypeReference
+            Identifier: ''
+  EmptyStatement
+  TypeAliasDeclaration
+    DeclareKeyword
+    ExportKeyword
+    Identifier: ' F'
+    UnionType
+      TypeLiteral
+      TypeReference
+        Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        ExpressionWithTypeArguments
+          Identifier: '$Exact'
+          TypeReference
+            Identifier: 'Node'
+        CommaToken
+        ConditionalExpression
+          Identifier: '
+        await'
+          QuestionToken
+          Identifier: ''
+          ColonToken
+          Identifier: ' Span'
+      CommaToken
+      BinaryExpression
+        Identifier: ''
+        BarToken
+        Identifier: ''
+  EmptyStatement
+  TypeAliasDeclaration
+    DeclareKeyword
+    ExportKeyword
+    Identifier: ' S'
+    UnionType
+      TypeLiteral
+      TypeReference
+        Identifier: ''
+      TypeReference
+        Identifier: ''
+  EmptyStatement
+  TypeAliasDeclaration
+    DeclareKeyword
+    ExportKeyword
+    Identifier: ' C'
+    UnionType
+      TypeLiteral
+      TypeReference
+        Identifier: ''
+      TypeReference
+        Identifier: ''
+  EmptyStatement
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportDeclaration
+        ImportClause
+          NamedImports
+            ImportSpecifier
+              Identifier: '
+        U'
+        StringLiteral

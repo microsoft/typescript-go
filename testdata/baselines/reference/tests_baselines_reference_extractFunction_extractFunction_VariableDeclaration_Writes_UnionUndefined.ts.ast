@@ -1,0 +1,226 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            UnionType
+              UndefinedKeyword
+              NumberKeyword
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            ParenthesizedType
+              UnionType
+                UndefinedKeyword
+                NumberKeyword
+            NumericLiteral
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    a'
+      ExpressionStatement
+        Identifier: '/*|]*/
+    a'
+      ExpressionStatement
+        Identifier: ' x'
+      ExpressionStatement
+        Identifier: ' y'
+      ExpressionStatement
+        Identifier: ' z'
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+              BindingElement
+                Identifier: ' y'
+              BindingElement
+                Identifier: ' z'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' y'
+                NumberKeyword
+              PropertySignature
+                Identifier: ' z'
+                NumberKeyword
+            CallExpression
+              Identifier: ' /*RENAME*/newFunction'
+      ExpressionStatement
+        Identifier: '
+    a'
+      ExpressionStatement
+        Identifier: ' x'
+      ExpressionStatement
+        Identifier: ' y'
+      ExpressionStatement
+        Identifier: ' z'
+      FunctionDeclaration
+        Identifier: ' newFunction'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                UnionType
+                  NumberKeyword
+                  UndefinedKeyword
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                UnionType
+                  UndefinedKeyword
+                  NumberKeyword
+                NumericLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+                ParenthesizedType
+                  UnionType
+                    UndefinedKeyword
+                    NumberKeyword
+                NumericLiteral
+          ExpressionStatement
+            PostfixUnaryExpression
+              Identifier: '
+        a'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' x'
+              ShorthandPropertyAssignment
+                Identifier: ' y'
+              ShorthandPropertyAssignment
+                Identifier: ' z'
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            UnionType
+              UndefinedKeyword
+              NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            ParenthesizedType
+              UnionType
+                UndefinedKeyword
+                NumberKeyword
+      ExpressionStatement
+        ParenthesizedExpression
+          BinaryExpression
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' x'
+              ShorthandPropertyAssignment
+                Identifier: ' y'
+              ShorthandPropertyAssignment
+                Identifier: ' z'
+              ShorthandPropertyAssignment
+                Identifier: ' a'
+            EqualsToken
+            CallExpression
+              Identifier: ' /*RENAME*/newFunction'
+              Identifier: 'a'
+      ExpressionStatement
+        Identifier: '
+    a'
+      ExpressionStatement
+        Identifier: ' x'
+      ExpressionStatement
+        Identifier: ' y'
+      ExpressionStatement
+        Identifier: ' z'
+  FunctionDeclaration
+    Identifier: ' newFunction'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            UnionType
+              UndefinedKeyword
+              NumberKeyword
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+            ParenthesizedType
+              UnionType
+                UndefinedKeyword
+                NumberKeyword
+            NumericLiteral
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    a'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: ' x'
+          ShorthandPropertyAssignment
+            Identifier: ' y'
+          ShorthandPropertyAssignment
+            Identifier: ' z'
+          ShorthandPropertyAssignment
+            Identifier: ' a'

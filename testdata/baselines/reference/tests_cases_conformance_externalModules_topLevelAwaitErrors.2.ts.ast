@@ -1,0 +1,8 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' await'
+        NumericLiteral

@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+//// var s = "foo"./*1*/
+
+verify'
+        Identifier: 'baselineCompletions'

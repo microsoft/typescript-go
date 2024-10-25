@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'x'
+      NeverKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+fn'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral

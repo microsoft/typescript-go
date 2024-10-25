@@ -1,0 +1,164 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' FooNode'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: '
+    children'
+        ArrayType
+          TypeReference
+            Identifier: ' Node'
+  TypeAliasDeclaration
+    Identifier: ' BarNode'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    kind'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Node'
+    UnionType
+      TypeReference
+        Identifier: ' FooNode'
+      TypeReference
+        Identifier: ' BarNode'
+  TypeAliasDeclaration
+    Identifier: ' Document'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: '
+    children'
+        ArrayType
+          TypeReference
+            Identifier: ' Node'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isNode'
+    Parameter
+      Identifier: 'node'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isBar'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' BarNode'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' visitNodes'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' Document'
+        TypeReference
+          Identifier: ' Node'
+    Parameter
+      Identifier: ' predicate'
+      FunctionType
+        Parameter
+          Identifier: 'testNode'
+          TypeReference
+            Identifier: ' Node'
+        TypePredicate
+          Identifier: ' testNode'
+          TypeReference
+            Identifier: ' T'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          CallExpression
+            Identifier: '
+    isNode'
+            Identifier: 'node'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' predicate'
+            Identifier: 'node'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isNode'
+              Identifier: 'node'
+          BarBarToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isBar'
+              Identifier: 'node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' nodes'
+                ArrayType
+                  TypeReference
+                    Identifier: ' Node'
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'children'
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' b'
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' x'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayLiteralExpression
+              Identifier: 't'
+              Identifier: ' x'

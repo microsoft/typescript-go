@@ -1,0 +1,4 @@
+SourceFile
+  ExpressionStatement
+    NewExpression
+      Identifier: ' Symbol'

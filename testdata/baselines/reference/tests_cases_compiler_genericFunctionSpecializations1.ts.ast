@@ -1,0 +1,35 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'test'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'test'
+      TypeReference
+        Identifier: ' T'
+    Block
+  FunctionDeclaration
+    Identifier: ' foo4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'test'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo4'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' String'
+    Parameter
+      Identifier: 'test'
+      TypeReference
+        Identifier: ' T'
+    Block

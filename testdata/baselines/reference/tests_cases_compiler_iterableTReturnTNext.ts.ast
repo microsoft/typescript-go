@@ -1,0 +1,257 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' map'
+        TypeReference
+          Identifier: ' Map'
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' set'
+        TypeReference
+          Identifier: ' Set'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        NumberKeyword
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' map'
+                  Identifier: 'values'
+              Identifier: 'next'
+          Identifier: 'value'
+  InterfaceDeclaration
+    Identifier: ' Next'
+    TypeParameter
+      Identifier: 'A'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' done'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        TypeReference
+          Identifier: ' Next'
+          NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' map'
+                Identifier: 'values'
+            Identifier: 'next'
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' source'
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' doubles'
+        CallExpression
+          Identifier: ' source'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+doubles'
+        Identifier: 'return'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' set'
+                  Identifier: 'values'
+              Identifier: 'next'
+          Identifier: 'value'
+  ClassDeclaration
+    Identifier: ' MyMap'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Map'
+        StringKeyword
+        NumberKeyword
+    PropertyDeclaration
+      DeclareKeyword
+      PrivateKeyword
+      Identifier: ' _keys'
+      ArrayType
+        StringKeyword
+    PropertyDeclaration
+      DeclareKeyword
+      PrivateKeyword
+      Identifier: ' _values'
+      ArrayType
+        NumberKeyword
+    PropertyDeclaration
+      DeclareKeyword
+      Identifier: ' size'
+      NumberKeyword
+    PropertyDeclaration
+      DeclareKeyword
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+
+    clear'
+      VoidKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    delete'
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      BooleanKeyword
+      Block
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      Identifier: '
+    forEach'
+      Parameter
+        Identifier: 'callbackfn'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            NumberKeyword
+          Parameter
+            Identifier: ' key'
+            StringKeyword
+          Parameter
+            Identifier: ' map'
+            TypeReference
+              Identifier: ' Map'
+              StringKeyword
+              NumberKeyword
+          VoidKeyword
+      Parameter
+        Identifier: ' thisArg'
+        QuestionToken
+        AnyKeyword
+      VoidKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    get'
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+      Block
+        ReturnStatement
+          Identifier: ' undefined'
+    MethodDeclaration
+      Identifier: '
+    has'
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      BooleanKeyword
+      Block
+        ReturnStatement
+          FalseKeyword
+    MethodDeclaration
+      Identifier: '
+    set'
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      Parameter
+        Identifier: ' value'
+        NumberKeyword
+      ThisType
+      Block
+        ReturnStatement
+          ThisKeyword
+    MethodDeclaration
+      Identifier: '
+    entries'
+      TypeReference
+        Identifier: ' MapIterator'
+        TupleType
+          StringKeyword
+          NumberKeyword
+      Block
+        ThrowStatement
+          NewExpression
+            Identifier: ' Error'
+            StringLiteral
+    MethodDeclaration
+      Identifier: '
+    keys'
+      TypeReference
+        Identifier: ' MapIterator'
+        StringKeyword
+      Block
+        ThrowStatement
+          NewExpression
+            Identifier: ' Error'
+            StringLiteral
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      TypeReference
+        Identifier: ' MapIterator'
+        TupleType
+          StringKeyword
+          NumberKeyword
+      Block
+        ThrowStatement
+          NewExpression
+            Identifier: ' Error'
+            StringLiteral
+    MethodDeclaration
+      AsteriskToken
+      Identifier: ' values'
+      Block
+        ExpressionStatement
+          YieldExpression
+            AsteriskToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_values'

@@ -1,0 +1,80 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Enum'
+    EnumMember
+      Identifier: ' None'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' enumType'
+        TypeReference
+          Identifier: ' Enum'
+        PropertyAccessExpression
+          Identifier: ' Enum'
+          Identifier: 'None'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberType'
+        NumberKeyword
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyType'
+        AnyKeyword
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ 
+enumType'
+      CaretToken
+      Identifier: ' numberType'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+numberType'
+      CaretToken
+      Identifier: ' anyType'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ 
+enumType'
+      AmpersandToken
+      Identifier: ' anyType'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+enumType'
+      BarToken
+      Identifier: ' anyType'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+enumType'
+      CaretToken
+      Identifier: ' anyType'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'anyType'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+enumType'
+      LessThanLessThanToken
+      Identifier: 'anyType'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+enumType'
+      GreaterThanGreaterThanToken
+      Identifier: 'anyType'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+enumType'
+      GreaterThanGreaterThanGreaterThanToken
+      Identifier: 'anyType'

@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' $'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' foo'
+            VoidKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+// @filename: /src/consumer.ts
+/// <reference types="jquery" />
+$'
+        Identifier: 'foo'

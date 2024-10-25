@@ -1,0 +1,508 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' t1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: '_a1'
+              BindingElement
+                Identifier: ' b1'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'b1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'a2'
+              BindingElement
+                Identifier: ' _b2'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'a2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: '_a3'
+              BindingElement
+                Identifier: ' _b3'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' t2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: '_a1'
+              BindingElement
+                Identifier: ' b1'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'a2'
+              BindingElement
+                Identifier: ' _b2'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'a3'
+              BindingElement
+                Identifier: ' b3'
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' t3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: '_a1'
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    ArrayBindingPattern
+                      BindingElement
+                        Identifier: '_b1'
+                      BindingElement
+                        Identifier: ' c1'
+              BindingElement
+                Identifier: ' d1'
+              BindingElement
+                Identifier: ' _e1'
+            ArrayLiteralExpression
+              NumericLiteral
+              ArrayLiteralExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  NumericLiteral
+              NumericLiteral
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'c1'
+          Identifier: ' d1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: '_a2'
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    ArrayBindingPattern
+                      BindingElement
+                        Identifier: '_b2'
+                      BindingElement
+                        Identifier: ' _c2'
+              BindingElement
+                Identifier: ' _d2'
+              BindingElement
+                Identifier: ' _e2'
+            ArrayLiteralExpression
+              NumericLiteral
+              ArrayLiteralExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  NumericLiteral
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'a3'
+              BindingElement
+                ArrayBindingPattern
+                  BindingElement
+                    ArrayBindingPattern
+                      BindingElement
+                        Identifier: 'b3'
+                      BindingElement
+                        Identifier: ' c3'
+              BindingElement
+                Identifier: ' d3'
+              BindingElement
+                Identifier: ' e3'
+            ArrayLiteralExpression
+              NumericLiteral
+              ArrayLiteralExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  NumericLiteral
+              NumericLiteral
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' t4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' a1'
+                Identifier: ' _a1'
+              BindingElement
+                Identifier: ' b1'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a1'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b1'
+                NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'b1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' a2'
+              BindingElement
+                Identifier: ' b2'
+                Identifier: ' _b2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a2'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b2'
+                NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'a2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' a3'
+                Identifier: ' _a3'
+              BindingElement
+                Identifier: ' b3'
+                Identifier: ' _b3'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a3'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b3'
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' t5'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' a1'
+                Identifier: ' _a1'
+              BindingElement
+                Identifier: ' b1'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a1'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b1'
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' a2'
+              BindingElement
+                Identifier: ' b2'
+                Identifier: ' _b2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a2'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b2'
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' a3'
+              BindingElement
+                Identifier: ' b3'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a3'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b3'
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' t6'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: '
+        a1'
+                Identifier: ' _a1'
+              BindingElement
+                Identifier: '
+        b1'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: '
+            b11'
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: '
+                b111'
+                        Identifier: ' _b111'
+                      BindingElement
+                        Identifier: '
+                b112'
+              BindingElement
+                Identifier: '
+        c1'
+              BindingElement
+                Identifier: '
+        d1'
+                Identifier: ' _d1'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a1'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b1'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' b11'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' b111'
+                        NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' b112'
+                        NumericLiteral
+              PropertyAssignment
+                Identifier: ' c1'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' d1'
+                NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          Identifier: 'b112'
+          Identifier: ' c1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: '
+        a2'
+                Identifier: ' _a2'
+              BindingElement
+                Identifier: '
+        b2'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: '
+            b21'
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: '
+                b211'
+                        Identifier: ' _b211'
+                      BindingElement
+                        Identifier: ' b212'
+                        Identifier: ' _b212'
+              BindingElement
+                Identifier: '
+        c2'
+                Identifier: ' _c2'
+              BindingElement
+                Identifier: '
+        d2'
+                Identifier: ' _d2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a2'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b2'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' b21'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' b211'
+                        NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' b212'
+                        NumericLiteral
+              PropertyAssignment
+                Identifier: ' c2'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' d2'
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: '
+        a3'
+              BindingElement
+                Identifier: '
+        b3'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: '
+            b31'
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: '
+                b311'
+                      BindingElement
+                        Identifier: ' b312'
+              BindingElement
+                Identifier: '
+        c3'
+              BindingElement
+                Identifier: '
+        d3'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a3'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b3'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' b31'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: ' b311'
+                        NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' b312'
+                        NumericLiteral
+              PropertyAssignment
+                Identifier: ' c3'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' d3'
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' t7'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' _a1'
+              BindingElement
+                Identifier: ' _b1'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' _a1'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' _b1'
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' a2'
+                Identifier: ' _a2'
+              BindingElement
+                Identifier: ' b2'
+                Identifier: ' _b2'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a2'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b2'
+                NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' _a3'
+                Identifier: ' _ignoreA3'
+              BindingElement
+                Identifier: ' _b3'
+                Identifier: ' _ignoreB3'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' _a3'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' _b3'
+                NumericLiteral

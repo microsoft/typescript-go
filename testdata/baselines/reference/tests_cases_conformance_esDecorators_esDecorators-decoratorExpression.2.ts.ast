@@ -1,0 +1,293 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            AnyKeyword
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        FunctionType
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              AnyKeyword
+            AnyKeyword
+  Block
+    ClassDeclaration
+      Decorator
+        NonNullExpression
+          Identifier: 'x'
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        NonNullExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'y'
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        PropertyAccessExpression
+          NonNullExpression
+            Identifier: 'x'
+          Identifier: 'y'
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'g'
+          NumberKeyword
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        ParenthesizedExpression
+          ExpressionWithTypeArguments
+            Identifier: 'g'
+            NumberKeyword
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        ParenthesizedExpression
+          ExpressionWithTypeArguments
+            CallExpression
+              Identifier: 'h'
+            NumberKeyword
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        ParenthesizedExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: 'x'
+            Identifier: 'y'
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        ParenthesizedExpression
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                Identifier: 'x'
+              Identifier: 'y'
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        ParenthesizedExpression
+          TaggedTemplateExpression
+            Identifier: 'x'
+            NoSubstitutionTemplateLiteral
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        ParenthesizedExpression
+          TaggedTemplateExpression
+            PropertyAccessExpression
+              Identifier: 'x'
+              Identifier: 'y'
+            NoSubstitutionTemplateLiteral
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        ParenthesizedExpression
+          NonNullExpression
+            PropertyAccessExpression
+              Identifier: 'x'
+              QuestionDotToken
+              Identifier: 'y'
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        ParenthesizedExpression
+          ElementAccessExpression
+            Identifier: 'x'
+            StringLiteral
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Decorator
+        ParenthesizedExpression
+          ElementAccessExpression
+            Identifier: 'x'
+            QuestionDotToken
+            StringLiteral
+      Identifier: ' C'
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          NonNullExpression
+            Identifier: 'x'
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          NonNullExpression
+            PropertyAccessExpression
+              Identifier: 'x'
+              Identifier: 'y'
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          PropertyAccessExpression
+            NonNullExpression
+              Identifier: 'x'
+            Identifier: 'y'
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          CallExpression
+            Identifier: 'g'
+            NumberKeyword
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          ParenthesizedExpression
+            ExpressionWithTypeArguments
+              Identifier: 'g'
+              NumberKeyword
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          ParenthesizedExpression
+            ExpressionWithTypeArguments
+              CallExpression
+                Identifier: 'h'
+              NumberKeyword
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          ParenthesizedExpression
+            PropertyAccessExpression
+              CallExpression
+                Identifier: 'x'
+              Identifier: 'y'
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          ParenthesizedExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  Identifier: 'x'
+                Identifier: 'y'
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          ParenthesizedExpression
+            TaggedTemplateExpression
+              Identifier: 'x'
+              NoSubstitutionTemplateLiteral
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          ParenthesizedExpression
+            TaggedTemplateExpression
+              PropertyAccessExpression
+                Identifier: 'x'
+                Identifier: 'y'
+              NoSubstitutionTemplateLiteral
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          ParenthesizedExpression
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: 'x'
+                QuestionDotToken
+                Identifier: 'y'
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          ParenthesizedExpression
+            ElementAccessExpression
+              Identifier: 'x'
+              StringLiteral
+        Identifier: ' m'
+        Block
+  Block
+    ClassDeclaration
+      Identifier: ' C'
+      MethodDeclaration
+        Decorator
+          ParenthesizedExpression
+            ElementAccessExpression
+              Identifier: 'x'
+              QuestionDotToken
+              StringLiteral
+        Identifier: ' m'
+        Block

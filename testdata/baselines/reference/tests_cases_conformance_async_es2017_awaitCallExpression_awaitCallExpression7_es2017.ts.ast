@@ -1,0 +1,120 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BooleanKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Promise'
+          BooleanKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'arg0'
+      BooleanKeyword
+    Parameter
+      Identifier: ' arg1'
+      BooleanKeyword
+    Parameter
+      Identifier: ' arg2'
+      BooleanKeyword
+    VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' fn'
+            Parameter
+              Identifier: 'arg0'
+              BooleanKeyword
+            Parameter
+              Identifier: ' arg1'
+              BooleanKeyword
+            Parameter
+              Identifier: ' arg2'
+              BooleanKeyword
+            VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pfn'
+        TypeReference
+          Identifier: ' Promise'
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'arg0'
+                BooleanKeyword
+              Parameter
+                Identifier: ' arg1'
+                BooleanKeyword
+              Parameter
+                Identifier: ' arg2'
+                BooleanKeyword
+              VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' po'
+        TypeReference
+          Identifier: ' Promise'
+          TypeLiteral
+            MethodSignature
+              Identifier: ' fn'
+              Parameter
+                Identifier: 'arg0'
+                BooleanKeyword
+              Parameter
+                Identifier: ' arg1'
+                BooleanKeyword
+              Parameter
+                Identifier: ' arg2'
+                BooleanKeyword
+              VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' before'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' after'
+    VoidKeyword
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' func'
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    before'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' o'
+                Identifier: 'fn'
+              Identifier: 'a'
+              AwaitExpression
+                Identifier: ' p'
+              Identifier: ' a'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    after'

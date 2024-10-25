@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'for'
+            NumericLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      Identifier: '
+
+obj'
+      PropertyAccessExpression
+        Identifier: 'Symbol'
+        Identifier: 'for'

@@ -1,0 +1,40 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' log'
+            Parameter
+              Identifier: 'msg'
+              AnyKeyword
+            VoidKeyword
+  ClassDeclaration
+    Identifier: ' Animal'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' species'
+        StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+
+    printSpecies'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' species'
+              ThisKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        console'
+              Identifier: 'log'
+            Identifier: 'species'

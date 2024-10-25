@@ -1,0 +1,167 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' private1'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' public1'
+      ModuleDeclaration
+        Identifier: ' m2'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' public2'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c'
+        GetAccessor
+          Identifier: ' foo1'
+          TypeReference
+            Identifier: ' private1'
+          Block
+            ReturnStatement
+        GetAccessor
+          Identifier: ' foo2'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' private1'
+        SetAccessor
+          Identifier: ' foo3'
+          Parameter
+            Identifier: 'param'
+            TypeReference
+              Identifier: ' private1'
+          Block
+        GetAccessor
+          Identifier: ' foo4'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' private1'
+        SetAccessor
+          Identifier: ' foo4'
+          Parameter
+            Identifier: 'param'
+            TypeReference
+              Identifier: ' private1'
+          Block
+        GetAccessor
+          Identifier: ' foo5'
+          TypeReference
+            Identifier: ' private1'
+          Block
+            ReturnStatement
+        SetAccessor
+          Identifier: ' foo5'
+          Parameter
+            Identifier: 'param'
+            TypeReference
+              Identifier: ' private1'
+          Block
+        GetAccessor
+          Identifier: ' foo11'
+          TypeReference
+            Identifier: ' public1'
+          Block
+            ReturnStatement
+        GetAccessor
+          Identifier: ' foo12'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' public1'
+        SetAccessor
+          Identifier: ' foo13'
+          Parameter
+            Identifier: 'param'
+            TypeReference
+              Identifier: ' public1'
+          Block
+        GetAccessor
+          Identifier: ' foo14'
+          Block
+            ReturnStatement
+              NewExpression
+                Identifier: ' public1'
+        SetAccessor
+          Identifier: ' foo14'
+          Parameter
+            Identifier: 'param'
+            TypeReference
+              Identifier: ' public1'
+          Block
+        GetAccessor
+          Identifier: ' foo15'
+          TypeReference
+            Identifier: ' public1'
+          Block
+            ReturnStatement
+        SetAccessor
+          Identifier: ' foo15'
+          Parameter
+            Identifier: 'param'
+            TypeReference
+              Identifier: ' public1'
+          Block
+        GetAccessor
+          Identifier: ' foo111'
+          TypeReference
+            QualifiedName
+              Identifier: ' m2'
+              Identifier: 'public2'
+          Block
+            ReturnStatement
+        GetAccessor
+          Identifier: ' foo112'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' m2'
+                  Identifier: 'public2'
+        SetAccessor
+          Identifier: ' foo113'
+          Parameter
+            Identifier: 'param'
+            TypeReference
+              QualifiedName
+                Identifier: ' m2'
+                Identifier: 'public2'
+          Block
+        GetAccessor
+          Identifier: ' foo114'
+          Block
+            ReturnStatement
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' m2'
+                  Identifier: 'public2'
+        SetAccessor
+          Identifier: ' foo114'
+          Parameter
+            Identifier: 'param'
+            TypeReference
+              QualifiedName
+                Identifier: ' m2'
+                Identifier: 'public2'
+          Block
+        GetAccessor
+          Identifier: ' foo115'
+          TypeReference
+            QualifiedName
+              Identifier: ' m2'
+              Identifier: 'public2'
+          Block
+            ReturnStatement
+        SetAccessor
+          Identifier: ' foo115'
+          Parameter
+            Identifier: 'param'
+            TypeReference
+              QualifiedName
+                Identifier: ' m2'
+                Identifier: 'public2'
+          Block

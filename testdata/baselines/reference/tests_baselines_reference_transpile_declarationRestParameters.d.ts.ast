@@ -1,0 +1,277 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            TupleType
+              NamedTupleMember
+                Identifier: 'n'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' a'
+                LiteralType
+                  StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    /** r rest param */
+    a'
+              TypeQuery
+                Identifier: ' a'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NonNullExpression
+                NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            TupleType
+              NamedTupleMember
+                Identifier: 'n'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' a'
+                LiteralType
+                  StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    /** r rest param */
+    a'
+              TypeQuery
+                Identifier: ' a'
+            PropertySignature
+              Identifier: '
+    /** module var */
+    n'
+              TypeQuery
+                Identifier: ' n'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NonNullExpression
+                NullKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            LiteralType
+              StringLiteral
+          Parameter
+            Identifier: ' a'
+            LiteralType
+              StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    /** r rest param */
+    a'
+              TupleType
+                NamedTupleMember
+                  Identifier: 'n'
+                  LiteralType
+                    StringLiteral
+                NamedTupleMember
+                  Identifier: ' a'
+                  LiteralType
+                    StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            LiteralType
+              StringLiteral
+          Parameter
+            Identifier: ' a'
+            LiteralType
+              StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    /** r rest param */
+    a'
+              TupleType
+                NamedTupleMember
+                  Identifier: 'n'
+                  LiteralType
+                    StringLiteral
+                NamedTupleMember
+                  Identifier: ' a'
+                  LiteralType
+                    StringLiteral
+            PropertySignature
+              Identifier: '
+    /** module var */
+    n'
+              TypeOperator
+                SymbolKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+//// [Diagnostics reported]
+v2'
+        Identifier: 'ts'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS2527'
+    ExpressionStatement
+      Identifier: ' The'
+  ExpressionStatement
+    Identifier: ' inferred'
+  TypeAliasDeclaration
+    Identifier: ' of'
+    LiteralType
+      StringLiteral
+  ExpressionStatement
+    Identifier: ' references'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' inaccessible'
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' type'
+      Identifier: ' A'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' is'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' necessary'
+        Identifier: ''
+      EqualsEqualsEqualsToken
+      Identifier: ''
+  ExpressionStatement
+    BinaryExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' v2'
+          Identifier: 'ts'
+        NumericLiteral
+        Identifier: ' errors'
+      EqualsEqualsEqualsToken
+      Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'a'
+            TupleType
+              NamedTupleMember
+                Identifier: 'n'
+                LiteralType
+                  StringLiteral
+              NamedTupleMember
+                Identifier: ' a'
+                LiteralType
+                  StringLiteral
+          TypeLiteral
+          EqualsGreaterThanToken
+          Identifier: ''
+  ExpressionStatement
+    PrefixUnaryExpression
+      PrefixUnaryExpression
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            PrefixUnaryExpression
+              Identifier: ' error'
+  LabeledStatement
+    Identifier: ' TS2527'
+    ExpressionStatement
+      Identifier: ' The'
+  ExpressionStatement
+    Identifier: ' inferred'
+  TypeAliasDeclaration
+    Identifier: ' of'
+    LiteralType
+      StringLiteral
+  ExpressionStatement
+    Identifier: ' references'
+  ExpressionStatement
+    Identifier: ' an'
+  ExpressionStatement
+    Identifier: ' inaccessible'
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' type'
+      Identifier: ' A'
+  TypeAliasDeclaration
+    Identifier: ' annotation'
+    TypeReference
+      Identifier: ' is'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: ' necessary'
+      Identifier: '
+        /** r rest param */
+        a'
+  ExpressionStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' a'
+      CommaToken
+      Identifier: '
+        /** module var */
+        n'
+  ExpressionStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' n'
+      CommaToken
+      Identifier: ''
+  Block
+    ReturnStatement
+      NonNullExpression
+        NullKeyword

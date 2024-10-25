@@ -1,0 +1,8 @@
+SourceFile
+  ExportAssignment
+    Identifier: ' undefined'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' __esModule'

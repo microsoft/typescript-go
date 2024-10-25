@@ -1,0 +1,10 @@
+SourceFile
+  ExpressionStatement
+    TemplateExpression
+      TemplateHead
+      TemplateSpan
+        NumericLiteral
+        TemplateMiddle
+      TemplateSpan
+        NumericLiteral
+        TemplateTail

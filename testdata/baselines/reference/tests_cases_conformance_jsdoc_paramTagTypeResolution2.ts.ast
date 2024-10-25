@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' x'
+          NumericLiteral
+      ObjectLiteralExpression
+        MethodDeclaration
+          Identifier: ' x'
+          Parameter
+            Identifier: 'param'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' param'
+                  Identifier: 'toFixed'

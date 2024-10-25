@@ -1,0 +1,31 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' A1'
+        Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          QualifiedName
+            QualifiedName
+              Identifier: ' B'
+              Identifier: 'A1'
+            Identifier: 'I'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral

@@ -1,0 +1,36 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'N'
+      NumberKeyword
+    Parameter
+      Identifier: 'singletons'
+      ArrayType
+        TupleType
+          LiteralType
+            StringLiteral
+    Parameter
+      Identifier: ' i'
+      TypeReference
+        Identifier: ' N'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' singleton'
+            ElementAccessExpression
+              Identifier: ' singletons'
+              Identifier: 'i'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              OmittedExpression
+              BindingElement
+                DotDotDotToken
+                Identifier: 'rest'
+            Identifier: ' singleton'
+      ReturnStatement
+        Identifier: ' rest'

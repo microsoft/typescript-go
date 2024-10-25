@@ -1,0 +1,437 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addToSeen'
+        ImportSpecifier
+          Identifier: '
+    CallExpression'
+        ImportSpecifier
+          Identifier: '
+    ConstructorDeclaration'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    ExpressionStatement'
+        ImportSpecifier
+          Identifier: '
+    forEachChild'
+        ImportSpecifier
+          Identifier: '
+    getContainingFunction'
+        ImportSpecifier
+          Identifier: '
+    getNodeId'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isExpressionStatement'
+        ImportSpecifier
+          Identifier: '
+    isFunctionLike'
+        ImportSpecifier
+          Identifier: '
+    isPropertyAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    isSuperCall'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'super_must_be_called_before_accessing_this_in_the_constructor_of_a_derived_class'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                    BindingElement
+                      Identifier: ' span'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' nodes'
+                  CallExpression
+                    Identifier: ' getNodes'
+                    Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      Identifier: ' span'
+                      Identifier: 'start'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'nodes'
+              ReturnStatement
+                Identifier: ' undefined'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' constructor'
+                    BindingElement
+                      Identifier: ' superCall'
+                  Identifier: ' nodes'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' t'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' doChange'
+                        Identifier: 't'
+                        Identifier: ' sourceFile'
+                        Identifier: ' constructor'
+                        Identifier: ' superCall'
+            ReturnStatement
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'createCodeFixAction'
+                  Identifier: 'fixId'
+                  Identifier: ' changes'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Make_super_call_the_first_statement_in_the_constructor'
+                  Identifier: ' fixId'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Make_all_super_calls_the_first_statement_in_their_constructor'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        MethodDeclaration
+          Identifier: '
+    getAllCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' seenClasses'
+                  NewExpression
+                    Identifier: ' Map'
+                    NumberKeyword
+                    LiteralType
+                      TrueKeyword
+            ReturnStatement
+              CallExpression
+                Identifier: ' codeFixAll'
+                Identifier: 'context'
+                Identifier: ' errorCodes'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'changes'
+                  Parameter
+                    Identifier: ' diag'
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' nodes'
+                          CallExpression
+                            Identifier: ' getNodes'
+                            PropertyAccessExpression
+                              Identifier: 'diag'
+                              Identifier: 'file'
+                            PropertyAccessExpression
+                              Identifier: ' diag'
+                              Identifier: 'start'
+                    IfStatement
+                      PrefixUnaryExpression
+                        Identifier: 'nodes'
+                      ReturnStatement
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          ObjectBindingPattern
+                            BindingElement
+                              Identifier: ' constructor'
+                            BindingElement
+                              Identifier: ' superCall'
+                          Identifier: ' nodes'
+                    IfStatement
+                      CallExpression
+                        Identifier: 'addToSeen'
+                        Identifier: 'seenClasses'
+                        CallExpression
+                          Identifier: ' getNodeId'
+                          PropertyAccessExpression
+                            Identifier: 'constructor'
+                            Identifier: 'parent'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                doChange'
+                            Identifier: 'changes'
+                            Identifier: ' sourceFile'
+                            Identifier: ' constructor'
+                            Identifier: ' superCall'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' constructor'
+      TypeReference
+        Identifier: ' ConstructorDeclaration'
+    Parameter
+      Identifier: ' superCall'
+      TypeReference
+        Identifier: ' ExpressionStatement'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'insertNodeAtConstructorStart'
+          Identifier: 'sourceFile'
+          Identifier: ' constructor'
+          Identifier: ' superCall'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'delete'
+          Identifier: 'sourceFile'
+          Identifier: ' superCall'
+  FunctionDeclaration
+    Identifier: ' getNodes'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    UnionType
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' constructor'
+          TypeReference
+            Identifier: ' ConstructorDeclaration'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' superCall'
+          TypeReference
+            Identifier: ' ExpressionStatement'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'token'
+            Identifier: 'kind'
+          ExclamationEqualsEqualsToken
+          PropertyAccessExpression
+            Identifier: ' SyntaxKind'
+            Identifier: 'ThisKeyword'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' constructor'
+            AsExpression
+              CallExpression
+                Identifier: ' getContainingFunction'
+                Identifier: 'token'
+              TypeReference
+                Identifier: ' ConstructorDeclaration'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' superCall'
+            CallExpression
+              Identifier: ' findSuperCall'
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: 'constructor'
+                  Identifier: 'body'
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            Identifier: ' superCall'
+            AmpersandAmpersandToken
+            PrefixUnaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: 'superCall'
+                      Identifier: 'expression'
+                    Identifier: 'arguments'
+                  Identifier: 'some'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'arg'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    CallExpression
+                      Identifier: ' isPropertyAccessExpression'
+                      Identifier: 'arg'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' arg'
+                        Identifier: 'expression'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' token'
+          QuestionToken
+          ObjectLiteralExpression
+            ShorthandPropertyAssignment
+              Identifier: ' constructor'
+            ShorthandPropertyAssignment
+              Identifier: ' superCall'
+          ColonToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' findSuperCall'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' Node'
+    UnionType
+      IntersectionType
+        TypeReference
+          Identifier: ' ExpressionStatement'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' expression'
+            TypeReference
+              Identifier: ' CallExpression'
+      UndefinedKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              Identifier: ' isExpressionStatement'
+              Identifier: 'n'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isSuperCall'
+              PropertyAccessExpression
+                Identifier: 'n'
+                Identifier: 'expression'
+          QuestionToken
+          AsExpression
+            Identifier: ' n'
+            IntersectionType
+              TypeReference
+                Identifier: ' ExpressionStatement'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' expression'
+                  TypeReference
+                    Identifier: ' CallExpression'
+          ColonToken
+          ConditionalExpression
+            CallExpression
+              Identifier: ' isFunctionLike'
+              Identifier: 'n'
+            QuestionToken
+            Identifier: ' undefined'
+            ColonToken
+            CallExpression
+              Identifier: ' forEachChild'
+              Identifier: 'n'
+              Identifier: ' findSuperCall'

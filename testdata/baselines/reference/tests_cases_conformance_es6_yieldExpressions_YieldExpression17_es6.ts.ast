@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          GetAccessor
+            Identifier: ' foo'
+            Block
+              ExpressionStatement
+                YieldExpression
+                  Identifier: ' foo'

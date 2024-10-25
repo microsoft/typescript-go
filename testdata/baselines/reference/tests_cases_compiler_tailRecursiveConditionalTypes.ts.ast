@@ -1,0 +1,326 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Trim'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    S'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' T'
+          TemplateTail
+      TypeReference
+        Identifier: ' Trim'
+        TypeReference
+          Identifier: 'T'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    S'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' T'
+            TemplateTail
+        TypeReference
+          Identifier: ' Trim'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: '
+    S'
+  TypeAliasDeclaration
+    Identifier: ' T10'
+    TypeReference
+      Identifier: ' Trim'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T11'
+    TypeReference
+      Identifier: ' Trim'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' GetChars'
+    TypeParameter
+      Identifier: 'S'
+    TypeReference
+      Identifier: ' GetCharsRec'
+      TypeReference
+        Identifier: 'S'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' GetCharsRec'
+    TypeParameter
+      Identifier: 'S'
+    TypeParameter
+      Identifier: ' Acc'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    S'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' Char'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' Rest'
+          TemplateTail
+      TypeReference
+        Identifier: ' GetCharsRec'
+        TypeReference
+          Identifier: 'Rest'
+        UnionType
+          TypeReference
+            Identifier: ' Char'
+          TypeReference
+            Identifier: ' Acc'
+      TypeReference
+        Identifier: ' Acc'
+  TypeAliasDeclaration
+    Identifier: ' T20'
+    TypeReference
+      Identifier: ' GetChars'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Reverse'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      ArrayType
+        AnyKeyword
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' ReverseRec'
+        TypeReference
+          Identifier: 'T'
+        TupleType
+  TypeAliasDeclaration
+    Identifier: ' ReverseRec'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' Acc'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TupleType
+        InferType
+          TypeParameter
+            Identifier: ' Head'
+        RestType
+          InferType
+            TypeParameter
+              Identifier: ' Tail'
+      TypeReference
+        Identifier: ' ReverseRec'
+        TypeReference
+          Identifier: 'Tail'
+        TupleType
+          TypeReference
+            Identifier: 'Head'
+          RestType
+            TypeReference
+              Identifier: 'Acc'
+      TypeReference
+        Identifier: ' Acc'
+  TypeAliasDeclaration
+    Identifier: ' T30'
+    TypeReference
+      Identifier: ' Reverse'
+      TupleType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T31'
+    TypeReference
+      Identifier: ' Reverse'
+      ArrayType
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TupleOf'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' N'
+      NumberKeyword
+    ConditionalType
+      NumberKeyword
+      TypeReference
+        Identifier: ' N'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' TupleOfRec'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' N'
+        TupleType
+  TypeAliasDeclaration
+    Identifier: ' TupleOfRec'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' N'
+      NumberKeyword
+    TypeParameter
+      Identifier: ' Acc'
+      ArrayType
+        UnknownKeyword
+    ConditionalType
+      IndexedAccessType
+        TypeReference
+          Identifier: '
+    Acc'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' N'
+      TypeReference
+        Identifier: ' Acc'
+      TypeReference
+        Identifier: ' TupleOfRec'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' N'
+        TupleType
+          TypeReference
+            Identifier: 'T'
+          RestType
+            TypeReference
+              Identifier: 'Acc'
+  TypeAliasDeclaration
+    Identifier: ' T40'
+    TypeReference
+      Identifier: ' TupleOf'
+      AnyKeyword
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T41'
+    TypeReference
+      Identifier: ' TupleOf'
+      AnyKeyword
+      NumberKeyword

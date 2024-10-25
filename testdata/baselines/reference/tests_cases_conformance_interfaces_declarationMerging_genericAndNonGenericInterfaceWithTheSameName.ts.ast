@@ -1,0 +1,78 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: '
+    foo'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: ' // error
+    bar'
+      TypeReference
+        Identifier: ' T'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: ' 
+        bar'
+          TypeReference
+            Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' A'
+        PropertySignature
+          Identifier: ' // error
+        foo'
+          StringKeyword
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        PropertySignature
+          Identifier: '
+        foo'
+          StringKeyword
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' A'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: ' // ok, different declaration space than other M2
+        bar'
+          TypeReference
+            Identifier: ' T'
+  ModuleDeclaration
+    Identifier: ' M3'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        PropertySignature
+          Identifier: '
+        foo'
+          StringKeyword
+  ModuleDeclaration
+    Identifier: ' M3'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: ' // error
+        bar'
+          TypeReference
+            Identifier: ' T'

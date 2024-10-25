@@ -1,0 +1,327 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' fn1'
+    Parameter
+      Identifier: 'x'
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' fn1'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn2a'
+  FunctionDeclaration
+    Identifier: ' fn2a'
+  FunctionDeclaration
+    Identifier: ' fn2a'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn2b'
+    Parameter
+      Identifier: 'n'
+      ArrayType
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' fn2b'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' Array'
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' fn2b'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn3'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' fn3'
+    Parameter
+      Identifier: 'y'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' fn3'
+    AnyKeyword
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' fn6'
+    Parameter
+      DotDotDotToken
+      Identifier: 't'
+      ArrayType
+        AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fn6'
+    Parameter
+      Identifier: 'x'
+      QuestionToken
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fn6'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn7'
+    Parameter
+      DotDotDotToken
+      Identifier: 't'
+      ArrayType
+        AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fn7'
+    Parameter
+      Identifier: 'x'
+      QuestionToken
+      AnyKeyword
+    Parameter
+      Identifier: ' y'
+      QuestionToken
+      AnyKeyword
+    Parameter
+      Identifier: ' z'
+      QuestionToken
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fn7'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn8'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'n'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' fn8'
+    TypeParameter
+      Identifier: 'S'
+    Parameter
+      Identifier: 'n'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' fn8'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn9'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' fn9'
+    TypeParameter
+      Identifier: 'S'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' S'
+  FunctionDeclaration
+    Identifier: ' fn9'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn10'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Window'
+  FunctionDeclaration
+    Identifier: ' fn10'
+    TypeParameter
+      Identifier: 'S'
+      TypeReference
+        Identifier: ' Date'
+  FunctionDeclaration
+    Identifier: ' fn10'
+    Block
+  FunctionDeclaration
+    Identifier: ' fn11'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Window'
+  FunctionDeclaration
+    Identifier: ' fn11'
+    TypeParameter
+      Identifier: 'S'
+      TypeQuery
+        Identifier: ' window'
+  FunctionDeclaration
+    Identifier: ' fn11'
+    Block
+  InterfaceDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    parents'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'List'
+          TypeReference
+            Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' fn12'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'List'
+          AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fn12'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' List'
+        AnyKeyword
+  FunctionDeclaration
+    Identifier: ' fn12'
+    Block
+  ClassDeclaration
+    Identifier: ' cls'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' f'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    f'
+      Block
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' g'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' g'
+    MethodDeclaration
+      Identifier: '
+    g'
+      Block
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fn1'
+      FunctionDeclaration
+        Identifier: ' fn1'
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+      FunctionDeclaration
+        Identifier: ' fn1'
+        Block
+      FunctionDeclaration
+        Identifier: ' fn2'
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fn2'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' fn2'
+        Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dfn1'
+  FunctionDeclaration
+    Identifier: ' dfn1'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' dfn1'
+    Block
+  FunctionDeclaration
+    Identifier: ' dfn2'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dfn2'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' dfn2'
+    Block
+  FunctionDeclaration
+    Identifier: ' fewerParams'
+  FunctionDeclaration
+    Identifier: ' fewerParams'
+    Parameter
+      Identifier: 'n'
+      StringKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' fn13'
+    Parameter
+      Identifier: 'n'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' fn13'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' fn14'
+    Parameter
+      Identifier: 'n'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' fn14'
+    Block
+      ReturnStatement
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' fn15'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'List'
+          AnyKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' fn15'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' List'
+        AnyKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' fn15'
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' initExpr'
+    Parameter
+      Identifier: 'n'
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' initExpr'
+    Block

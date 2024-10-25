@@ -1,0 +1,263 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      QuestionToken
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    f'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    g'
+      QuestionToken
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' test1'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Foo'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'a'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'b'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'f'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'g'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f1'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'f'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g1'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'g'
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'g'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g2'
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'g'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'g'
+              ColonToken
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' Bar'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    b'
+      QuestionToken
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    c'
+      QuestionToken
+      NumericLiteral
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' d'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' e'
+        NumericLiteral
+      Block
+    MethodDeclaration
+      Identifier: '
+    f'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    g'
+      QuestionToken
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '  // Body of optional method can be omitted
+    h'
+      QuestionToken
+      Block
+        ReturnStatement
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' test2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Bar'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'a'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'b'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'c'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'd'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'e'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'f'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'g'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f1'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'f'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g1'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'g'
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'g'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g2'
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'g'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'g'
+              ColonToken
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' h1'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'h'
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'h'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' h2'
+            ConditionalExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'h'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'h'
+              ColonToken
+              NumericLiteral
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      QuestionToken
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    f'
+      QuestionToken
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    f'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral

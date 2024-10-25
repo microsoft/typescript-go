@@ -1,0 +1,17 @@
+SourceFile
+  LabeledStatement
+    Identifier: 'label1'
+    ForStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' i'
+          NumericLiteral
+      BinaryExpression
+        Identifier: ' i'
+        LessThanToken
+        NumericLiteral
+      PostfixUnaryExpression
+        Identifier: ' i'
+      Block
+        ContinueStatement
+          Identifier: ' label1'

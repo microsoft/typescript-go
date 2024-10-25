@@ -1,0 +1,170 @@
+SourceFile
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' mExported'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' mExported'
+              Identifier: 'me'
+            Identifier: 'class1'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f1'
+    Block
+      ReturnStatement
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' mExported'
+              Identifier: 'me'
+            Identifier: 'class1'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' mExported'
+            Identifier: 'me'
+          Identifier: 'x'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' class1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' mExported'
+            Identifier: 'me'
+          Identifier: 'class1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' mExported'
+              Identifier: 'me'
+            Identifier: 'class1'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      ReturnStatement
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' mExported'
+              Identifier: 'me'
+            Identifier: 'class1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' mExported'
+            Identifier: 'me'
+          Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' class2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' mExported'
+            Identifier: 'me'
+          Identifier: 'class1'
+  ImportEqualsDeclaration
+    Identifier: ' mNonExported'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' mNonExported'
+              Identifier: 'mne'
+            Identifier: 'class1'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f3'
+    Block
+      ReturnStatement
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' mNonExported'
+              Identifier: 'mne'
+            Identifier: 'class1'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' mNonExported'
+            Identifier: 'mne'
+          Identifier: 'x'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' class3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' mNonExported'
+            Identifier: 'mne'
+          Identifier: 'class1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' mNonExported'
+              Identifier: 'mne'
+            Identifier: 'class1'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      ReturnStatement
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' mNonExported'
+              Identifier: 'mne'
+            Identifier: 'class1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' mNonExported'
+            Identifier: 'mne'
+          Identifier: 'x'
+  ClassDeclaration
+    Identifier: ' class4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' mNonExported'
+            Identifier: 'mne'
+          Identifier: 'class1'

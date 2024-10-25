@@ -1,0 +1,233 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' ObjectType'
+    TypeParameter
+      Identifier: 'Source'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  kind'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: '
+  __source'
+        FunctionType
+          Parameter
+            Identifier: 'source'
+            TypeReference
+              Identifier: ' Source'
+          VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Field'
+    TypeParameter
+      Identifier: 'Source'
+    TypeParameter
+      Identifier: ' Key'
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  __key'
+        FunctionType
+          Parameter
+            Identifier: 'key'
+            TypeReference
+              Identifier: ' Key'
+          VoidKeyword
+      PropertySignature
+        Identifier: '
+  __source'
+        FunctionType
+          Parameter
+            Identifier: 'source'
+            TypeReference
+              Identifier: ' Source'
+          VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' object'
+        FunctionType
+          TypeParameter
+            Identifier: 'Source'
+          FunctionType
+            TypeParameter
+              Identifier: '
+  Fields'
+              MappedType
+                TypeParameter
+                  Identifier: 'Key'
+                  TypeOperator
+                    TypeReference
+                      Identifier: ' Fields'
+                TypeReference
+                  Identifier: ' Field'
+                  TypeReference
+                    Identifier: 'Source'
+                  IntersectionType
+                    TypeReference
+                      Identifier: ' Key'
+                    StringKeyword
+            Parameter
+              Identifier: 'config'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+  name'
+                  StringKeyword
+                PropertySignature
+                  Identifier: '
+  fields'
+                  UnionType
+                    TypeReference
+                      Identifier: ' Fields'
+                    ParenthesizedType
+                      FunctionType
+                        TypeReference
+                          Identifier: ' Fields'
+            TypeReference
+              Identifier: ' ObjectType'
+              TypeReference
+                Identifier: 'Source'
+  TypeAliasDeclaration
+    Identifier: ' InferValueFromObjectType'
+    TypeParameter
+      Identifier: 'Type'
+      TypeReference
+        Identifier: ' ObjectType'
+        AnyKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+  Type'
+      TypeReference
+        Identifier: ' ObjectType'
+        InferType
+          TypeParameter
+            Identifier: ' Source'
+      TypeReference
+        Identifier: ' Source'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' FieldResolver'
+    TypeParameter
+      Identifier: 'Source'
+    TypeParameter
+      Identifier: ' TType'
+      TypeReference
+        Identifier: ' ObjectType'
+        AnyKeyword
+    FunctionType
+      Parameter
+        Identifier: '
+  source'
+        TypeReference
+          Identifier: ' Source'
+      TypeReference
+        Identifier: ' InferValueFromObjectType'
+        TypeReference
+          Identifier: 'TType'
+  TypeAliasDeclaration
+    Identifier: ' FieldFuncArgs'
+    TypeParameter
+      Identifier: 'Source'
+    TypeParameter
+      Identifier: ' Type'
+      TypeReference
+        Identifier: ' ObjectType'
+        AnyKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  type'
+        TypeReference
+          Identifier: ' Type'
+      PropertySignature
+        Identifier: '
+  resolve'
+        TypeReference
+          Identifier: ' FieldResolver'
+          TypeReference
+            Identifier: 'Source'
+          TypeReference
+            Identifier: ' Type'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' field'
+        FunctionType
+          TypeParameter
+            Identifier: 'Source'
+          TypeParameter
+            Identifier: ' Type'
+            TypeReference
+              Identifier: ' ObjectType'
+              AnyKeyword
+          TypeParameter
+            Identifier: ' Key'
+            StringKeyword
+          Parameter
+            Identifier: '
+  field'
+            TypeReference
+              Identifier: ' FieldFuncArgs'
+              TypeReference
+                Identifier: 'Source'
+              TypeReference
+                Identifier: ' Type'
+          TypeReference
+            Identifier: ' Field'
+            TypeReference
+              Identifier: 'Source'
+            TypeReference
+              Identifier: ' Key'
+  TypeAliasDeclaration
+    Identifier: ' Something'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' foo'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' A'
+        CallExpression
+          CallExpression
+            Identifier: ' object'
+            TypeReference
+              Identifier: 'Something'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+  name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+  fields'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+    a'
+                      CallExpression
+                        Identifier: ' field'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+      type'
+                            Identifier: ' A'
+                          MethodDeclaration
+                            Identifier: '
+      resolve'
+                            Block
+                              ReturnStatement
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+          foo'
+                                    NumericLiteral

@@ -1,0 +1,260 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        Parameter
+          Identifier: 'v'
+          BooleanKeyword
+        UnionType
+          TupleType
+            LiteralType
+              NumericLiteral
+          TypeReference
+            Identifier: ' PromiseLike'
+            TupleType
+              LiteralType
+                NumericLiteral
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      ArrowFunction
+        Parameter
+          Identifier: 'v'
+        EqualsGreaterThanToken
+        ConditionalExpression
+          Identifier: ' v'
+          QuestionToken
+          ArrayLiteralExpression
+            NumericLiteral
+          ColonToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'reject'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      ArrowFunction
+        AsyncKeyword
+        Parameter
+          Identifier: ' v'
+        EqualsGreaterThanToken
+        ConditionalExpression
+          Identifier: ' v'
+          QuestionToken
+          ArrayLiteralExpression
+            NumericLiteral
+          ColonToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'reject'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        Parameter
+          Identifier: 'v'
+          BooleanKeyword
+        UnionType
+          LiteralType
+            StringLiteral
+          TypeReference
+            Identifier: ' PromiseLike'
+            LiteralType
+              StringLiteral
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g'
+      ArrowFunction
+        Parameter
+          Identifier: 'v'
+        EqualsGreaterThanToken
+        ConditionalExpression
+          Identifier: ' v'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'reject'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+g'
+      ArrowFunction
+        AsyncKeyword
+        Parameter
+          Identifier: ' v'
+        EqualsGreaterThanToken
+        ConditionalExpression
+          Identifier: ' v'
+          QuestionToken
+          StringLiteral
+          ColonToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'reject'
+  TypeAliasDeclaration
+    Identifier: ' MyCallback'
+    FunctionType
+      Parameter
+        Identifier: 'thing'
+        StringKeyword
+      VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' h'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        Parameter
+          Identifier: 'v'
+          BooleanKeyword
+        UnionType
+          TypeReference
+            Identifier: ' MyCallback'
+          TypeReference
+            Identifier: ' PromiseLike'
+            TypeReference
+              Identifier: 'MyCallback'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+h'
+      ArrowFunction
+        Parameter
+          Identifier: 'v'
+        EqualsGreaterThanToken
+        ConditionalExpression
+          Identifier: ' v'
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'abc'
+            EqualsGreaterThanToken
+            Block
+          ColonToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'reject'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+h'
+      ArrowFunction
+        AsyncKeyword
+        Parameter
+          Identifier: ' v'
+        EqualsGreaterThanToken
+        ConditionalExpression
+          Identifier: ' v'
+          QuestionToken
+          ArrowFunction
+            Parameter
+              Identifier: 'def'
+            EqualsGreaterThanToken
+            Block
+          ColonToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Promise'
+              Identifier: 'reject'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' increment'
+        FunctionType
+          Parameter
+            Identifier: '
+  num'
+            NumberKeyword
+          Parameter
+            Identifier: '
+  str'
+            StringKeyword
+          UnionType
+            TypeReference
+              Identifier: ' Promise'
+              UnionType
+                ParenthesizedType
+                  FunctionType
+                    Parameter
+                      Identifier: 's'
+                      StringKeyword
+                    AnyKeyword
+                StringKeyword
+            StringKeyword
+        ArrowFunction
+          AsyncKeyword
+          Parameter
+            Identifier: 'num'
+          Parameter
+            Identifier: ' str'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ArrowFunction
+                Parameter
+                  Identifier: ' a'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    PropertyAccessExpression
+                      Identifier: ' a'
+                      Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' increment2'
+        FunctionType
+          Parameter
+            Identifier: '
+  num'
+            NumberKeyword
+          Parameter
+            Identifier: '
+  str'
+            StringKeyword
+          TypeReference
+            Identifier: ' Promise'
+            UnionType
+              ParenthesizedType
+                FunctionType
+                  Parameter
+                    Identifier: 's'
+                    StringKeyword
+                  AnyKeyword
+              StringKeyword
+        ArrowFunction
+          AsyncKeyword
+          Parameter
+            Identifier: 'num'
+          Parameter
+            Identifier: ' str'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ArrowFunction
+                Parameter
+                  Identifier: ' a'
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    PropertyAccessExpression
+                      Identifier: ' a'
+                      Identifier: 'length'

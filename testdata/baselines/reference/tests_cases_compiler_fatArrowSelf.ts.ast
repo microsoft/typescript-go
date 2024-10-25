@@ -1,0 +1,66 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Events'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ListenerCallback'
+        CallSignature
+          Parameter
+            Identifier: 'value'
+            AnyKeyword
+          VoidKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' EventEmitter'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' addListener'
+          Parameter
+            Identifier: 'type'
+            StringKeyword
+          Parameter
+            Identifier: ' listener'
+            TypeReference
+              Identifier: 'ListenerCallback'
+          Block
+  ModuleDeclaration
+    Identifier: ' Consumer'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' EventEmitterConsummer'
+        Constructor
+          Parameter
+            PrivateKeyword
+            Identifier: ' emitter'
+            TypeReference
+              QualifiedName
+                Identifier: ' Events'
+                Identifier: 'EventEmitter'
+          Block
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' register'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'emitter'
+                  Identifier: 'addListener'
+                StringLiteral
+                ArrowFunction
+                  Parameter
+                    Identifier: 'e'
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'changed'
+        MethodDeclaration
+          PrivateKeyword
+          Identifier: ' changed'
+          Block

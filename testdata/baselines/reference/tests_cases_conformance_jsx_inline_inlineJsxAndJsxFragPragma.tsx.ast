@@ -1,0 +1,144 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' JSX'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' IntrinsicElements'
+            IndexSignature
+              Parameter
+                Identifier: 'e'
+                StringKeyword
+              AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' h'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' jsx'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Fragment'
+    VoidKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'h'
+        ImportSpecifier
+          Identifier: ' Fragment'
+    StringLiteral
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'div'
+          JsxAttributes
+        JsxClosingElement
+          Identifier: 'div'
+      JsxClosingFragment
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'jsx'
+    StringLiteral
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'span'
+          JsxAttributes
+        JsxClosingElement
+          Identifier: 'span'
+      JsxClosingFragment
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'h'
+        ImportSpecifier
+          Identifier: ' Fragment'
+    StringLiteral
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxClosingFragment
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'jsx'
+    StringLiteral
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxClosingFragment
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Fragment'
+    StringLiteral
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxClosingFragment
+  ImportDeclaration
+    ImportClause
+      NamedImports
+    StringLiteral
+  ExpressionStatement
+    JsxFragment
+      JsxOpeningFragment
+      JsxClosingFragment
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'h'
+        ImportSpecifier
+          Identifier: ' Fragment'
+    StringLiteral
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: 'div'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'jsx'
+    StringLiteral
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'div'
+        JsxAttributes
+      JsxClosingElement
+        Identifier: 'div'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'h'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' Component'
+    Block
+      ReturnStatement
+        NullKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'Component'
+      JsxAttributes

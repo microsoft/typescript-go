@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' declare'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' module'
+        StringKeyword
+  ModuleDeclaration
+    Identifier: ' container'
+    ModuleBlock
+      ExpressionStatement
+        Identifier: '
+    declare'
+      ExpressionStatement
+        Identifier: '                // this is the identifier 'declare'
+    module'
+      ExpressionStatement
+        StringLiteral
+      Block

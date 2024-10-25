@@ -1,0 +1,125 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'A'
+      AnyKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    TypeParameter
+      Identifier: ' D'
+      AnyKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      NumberKeyword
+      NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f1'
+      NumberKeyword
+      NumberKeyword
+      NumberKeyword
+      NumberKeyword
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'A'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      NumberKeyword
+      NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f2'
+      NumberKeyword
+      NumberKeyword
+      NumberKeyword
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'a'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f3'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+      AnyKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f4'
+      NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f4'
+      NumberKeyword
+      NumberKeyword
+      NumberKeyword
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f5'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f5'
+      NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f5'
+      NumberKeyword
+      NumberKeyword
+      NumberKeyword

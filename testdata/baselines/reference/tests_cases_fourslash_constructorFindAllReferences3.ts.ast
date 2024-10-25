@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////export class C {
+////    /**/constructor() { }
+////    public foo() { }
+////}
+////
+////new C().foo();
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral

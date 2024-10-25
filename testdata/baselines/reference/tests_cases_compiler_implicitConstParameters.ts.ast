@@ -1,0 +1,193 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' doSomething'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    cb'
+  FunctionDeclaration
+    Identifier: ' fn'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+      doSomething'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' x'
+                    Identifier: 'toFixed'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'x'
+        Block
+          ReturnStatement
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    doSomething'
+          ArrowFunction
+            EqualsGreaterThanToken
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        doSomething'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            doSomething'
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        PropertyAccessExpression
+                          Identifier: ' x'
+                          Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    inner'
+      FunctionDeclaration
+        Identifier: ' inner'
+        Block
+          IfStatement
+            Identifier: 'x'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            doSomething'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    PropertyAccessExpression
+                      Identifier: ' x'
+                      Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        doSomething'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        doSomething'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' x'
+                  Identifier: 'length'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            BinaryExpression
+              Identifier: ' x'
+              BarBarToken
+              StringLiteral
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        doSomething'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' y'
+                  Identifier: 'length'

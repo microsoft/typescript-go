@@ -1,0 +1,138 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        Identifier: ' undefined'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' d'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        Identifier: ' undefined'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' e'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' b'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    c'
+      QuestionToken
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        CallExpression
+          Identifier: ' Symbol'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Bar'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    b'
+      QuestionToken
+      StringKeyword
+    PropertyDeclaration
+      DeclareKeyword
+      Identifier: ' c'
+      StringKeyword
+    PropertyDeclaration
+      PrivateIdentifier
+      StringKeyword
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' e'
+      StringKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' f'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' g'
+      StringKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      StringKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'i'
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    AbstractKeyword
+    Identifier: ' Baz'
+    PropertyDeclaration
+      AbstractKeyword
+      Identifier: ' a'
+      StringKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' method'
+      VoidKeyword
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' ns'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' internal'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' Foo'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' nested'
+        ModuleBlock
+          ImportEqualsDeclaration
+            ExportKeyword
+            Identifier: ' inner'
+            Identifier: ' internal'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'

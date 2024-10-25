@@ -1,0 +1,414 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' NumberOrUndefined'
+    PropertyDeclaration
+      Identifier: '
+    _x'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+    GetAccessor
+      Identifier: ' x'
+      NumberKeyword
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_x'
+            QuestionQuestionToken
+            NumericLiteral
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'value'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_x'
+            EqualsToken
+            Identifier: ' value'
+    MethodDeclaration
+      Identifier: '
+
+    additionAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            PlusEqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    subtractionAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            MinusEqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    multiplicationAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            AsteriskEqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    divisionAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            SlashEqualsToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberOrUndefined'
+        NewExpression
+          Identifier: ' NumberOrUndefined'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrUndefined'
+        Identifier: 'x'
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrUndefined'
+        Identifier: 'x'
+      MinusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrUndefined'
+        Identifier: 'x'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrUndefined'
+        Identifier: 'x'
+      SlashEqualsToken
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' NumberOrString'
+    PropertyDeclaration
+      Identifier: '
+    _x'
+      UnionType
+        NumberKeyword
+        StringKeyword
+      NumericLiteral
+    GetAccessor
+      Identifier: ' x'
+      NumberKeyword
+      Block
+        ReturnStatement
+          ConditionalExpression
+            BinaryExpression
+              TypeOfExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_x'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            QuestionToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_x'
+            ColonToken
+            CallExpression
+              Identifier: ' Number'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: '_x'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'value'
+        UnionType
+          NumberKeyword
+          StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_x'
+            EqualsToken
+            Identifier: ' value'
+    MethodDeclaration
+      Identifier: '
+
+    additionAssignmentNumber'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            PlusEqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    additionAssignmentString'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            PlusEqualsToken
+            StringLiteral
+    MethodDeclaration
+      Identifier: '
+
+    subtractionAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            MinusEqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    multiplicationAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            AsteriskEqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    divisionAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            SlashEqualsToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberOrString'
+        NewExpression
+          Identifier: ' NumberOrString'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrString'
+        Identifier: 'x'
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrString'
+        Identifier: 'x'
+      PlusEqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrString'
+        Identifier: 'x'
+      MinusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrString'
+        Identifier: 'x'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrString'
+        Identifier: 'x'
+      SlashEqualsToken
+      NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' bar'
+        NumberKeyword
+  ClassDeclaration
+    Identifier: ' NumberOrObject'
+    PropertyDeclaration
+      Identifier: '
+    _x'
+      UnionType
+        NumberKeyword
+        TypeReference
+          Identifier: ' Foo'
+      NumericLiteral
+    GetAccessor
+      Identifier: ' x'
+      NumberKeyword
+      Block
+        ReturnStatement
+          ConditionalExpression
+            BinaryExpression
+              TypeOfExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_x'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            QuestionToken
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_x'
+            ColonToken
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: '_x'
+              Identifier: 'bar'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'value'
+        UnionType
+          NumberKeyword
+          TypeReference
+            Identifier: ' Foo'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_x'
+            EqualsToken
+            Identifier: ' value'
+    MethodDeclaration
+      Identifier: '
+
+    additionAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            PlusEqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    subtractionAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            MinusEqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    multiplicationAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            AsteriskEqualsToken
+            NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    divisionAssignment'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            SlashEqualsToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberOrObject'
+        NewExpression
+          Identifier: ' NumberOrObject'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrObject'
+        Identifier: 'x'
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrObject'
+        Identifier: 'x'
+      MinusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrObject'
+        Identifier: 'x'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+numberOrObject'
+        Identifier: 'x'
+      SlashEqualsToken
+      NumericLiteral

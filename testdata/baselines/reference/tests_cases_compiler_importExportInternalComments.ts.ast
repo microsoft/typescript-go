@@ -1,0 +1,43 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+  ExportAssignment
+    Identifier: ' /*3*/ Array'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' /*2*/ D'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' /*5*/ A'
+        ImportSpecifier
+          Identifier: ' /*7*/ B'
+          Identifier: ' /*9*/ C'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' /*4*/ foo'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          VoidExpression
+            Identifier: ' D'
+          CommaToken
+          Identifier: ' A'
+        CommaToken
+        Identifier: ' C'
+      CommaToken
+      Identifier: ' foo'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' /*3*/ A'
+      ExportSpecifier
+        Identifier: ' /*5*/ B'
+        Identifier: ' /*7*/ C'
+    StringLiteral
+  ExportDeclaration
+    StringLiteral

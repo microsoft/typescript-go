@@ -1,0 +1,46 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' $'
+    Parameter
+      Identifier: 'selector'
+      StringKeyword
+    TypeReference
+      Identifier: ' $'
+  InterfaceDeclaration
+    Identifier: ' $'
+    MethodSignature
+      Identifier: '
+      addClass'
+      Parameter
+        Identifier: 'className'
+        StringKeyword
+      TypeReference
+        Identifier: ' $'
+  ModuleDeclaration
+    Identifier: ' $'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' AjaxSettings'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' ajax'
+        Parameter
+          Identifier: 'options'
+          TypeReference
+            Identifier: ' AjaxSettings'
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' it'
+        TypeReference
+          Identifier: ' $'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              Identifier: ' $'
+              StringLiteral
+            Identifier: 'addClass'
+          StringLiteral

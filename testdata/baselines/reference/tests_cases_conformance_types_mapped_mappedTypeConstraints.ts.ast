@@ -1,0 +1,233 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f0'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' Extract'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+          LiteralType
+            StringLiteral
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    obj'
+          Identifier: 'b'
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Pick'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' Exclude'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+          LiteralType
+            StringLiteral
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    obj'
+          Identifier: 'b'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+    TypeParameter
+      Identifier: ' U'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+        PropertySignature
+          Identifier: ' c'
+          StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Pick'
+        UnionType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' U'
+        TypeOperator
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' U'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    obj'
+          Identifier: 'b'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+    TypeParameter
+      Identifier: ' U'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+        PropertySignature
+          Identifier: ' c'
+          StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Pick'
+        IntersectionType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' U'
+        TypeOperator
+          ParenthesizedType
+            IntersectionType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' U'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    obj'
+          Identifier: 'a'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    obj'
+          Identifier: 'b'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    obj'
+          Identifier: 'c'
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Record'
+        UnionType
+          TypeReference
+            Identifier: 'Exclude'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+            LiteralType
+              StringLiteral
+          LiteralType
+            StringLiteral
+        StringKeyword
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    obj'
+          Identifier: 'a'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    obj'
+          Identifier: 'c'
+  TypeAliasDeclaration
+    Identifier: ' TargetProps'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    foo'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    bar'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' modifier'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' TargetProps'
+          Parameter
+            Identifier: 'targetProps'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: 'bar'
+                    BindingElement
+                      DotDotDotToken
+                      Identifier: 'rest'
+                  Identifier: ' targetProps'
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+    rest'
+                Identifier: 'foo'

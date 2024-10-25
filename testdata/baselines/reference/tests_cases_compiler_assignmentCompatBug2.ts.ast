@@ -1,0 +1,232 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            NumberKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+b2'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+b2'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'b'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' f'
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            NumberKeyword
+          MethodSignature
+            Identifier: ' g'
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            NumberKeyword
+          PropertySignature
+            Identifier: ' m'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' n'
+            QuestionToken
+            NumberKeyword
+          MethodSignature
+            Identifier: ' k'
+            QuestionToken
+            Parameter
+              Identifier: 'a'
+              AnyKeyword
+            AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+b3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    f'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    g'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    m'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+
+b3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    f'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    g'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+b3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    f'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    m'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+
+b3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    f'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    g'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    m'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    n'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    k'
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+
+b3'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    f'
+          ArrowFunction
+            Parameter
+              Identifier: 'n'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    g'
+          ArrowFunction
+            Parameter
+              Identifier: 's'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    n'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    k'
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                NullKeyword

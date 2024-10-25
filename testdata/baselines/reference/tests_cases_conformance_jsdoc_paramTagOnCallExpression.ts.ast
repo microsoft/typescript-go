@@ -1,0 +1,22 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' factory'
+    Parameter
+      Identifier: 'type'
+      StringKeyword
+    TypeLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+// @Filename: a.js
+
+// from util
+/** @param {function} ctor - A big long explanation follows */
+exports'
+        Identifier: 'inherits'
+      EqualsToken
+      CallExpression
+        Identifier: ' factory'
+        StringLiteral

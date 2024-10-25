@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' f1'
+      TypeParameter
+        Identifier: 'X'
+      Block

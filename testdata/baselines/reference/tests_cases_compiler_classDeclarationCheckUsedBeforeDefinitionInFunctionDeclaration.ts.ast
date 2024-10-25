@@ -1,0 +1,9 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      ExpressionStatement
+        NewExpression
+          Identifier: ' C2'
+  ClassDeclaration
+    Identifier: ' C2'

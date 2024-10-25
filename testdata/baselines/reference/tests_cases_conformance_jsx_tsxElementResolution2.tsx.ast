@@ -1,0 +1,22 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          AnyKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'div'
+      JsxAttributes
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'span'
+      JsxAttributes

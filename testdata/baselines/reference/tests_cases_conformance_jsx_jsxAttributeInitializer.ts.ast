@@ -1,0 +1,65 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  ExpressionStatement
+    TypeAssertionExpression
+      TypeReference
+        Identifier: 'div'
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'div'
+        Identifier: ' attr'
+  ExpressionStatement
+    BinaryExpression
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'div'
+        RegularExpressionLiteral
+      GreaterThanToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'div'
+        Identifier: ' attr'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'div'
+          Identifier: 'foo'
+        LessThanToken
+        RegularExpressionLiteral
+      GreaterThanToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'div'
+        Identifier: ' attr'
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        BinaryExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: ''
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'div'
+              Identifier: 'foo'
+          LessThanToken
+          RegularExpressionLiteral
+        GreaterThanToken
+        RegularExpressionLiteral
+      LessThanToken
+      Identifier: 'div'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' attr'
+      EqualsToken
+      BinaryExpression
+        RegularExpressionLiteral
+        LessThanToken
+        RegularExpressionLiteral

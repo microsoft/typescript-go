@@ -1,0 +1,43 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'A'
+      ArrayType
+        AnyKeyword
+    Parameter
+      Identifier: '
+    arg'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+        Parameter
+          Identifier: 't'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          DotDotDotToken
+          Identifier: 'rest'
+          TypeReference
+            Identifier: ' A'
+        NumberKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ArrowFunction
+        Parameter
+          Identifier: 't'
+        Parameter
+          Identifier: ' u'
+          NumberKeyword
+        EqualsGreaterThanToken
+        PropertyAccessExpression
+          Identifier: ' t'
+          Identifier: 'a'

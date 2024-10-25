@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  InterfaceDeclaration
+    Identifier: ' Class'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ParenthesizedExpression
+          TypeOfExpression
+            Identifier: ' A'

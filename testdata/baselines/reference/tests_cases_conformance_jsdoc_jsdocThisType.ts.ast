@@ -1,0 +1,81 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    foo'
+      FunctionType
+        VoidKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' M'
+    FunctionType
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' Foo'
+      VoidKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f1'
+        FunctionExpression
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'test'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f2'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'test'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        FunctionExpression
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'test'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f4'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'test'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f5'
+        FunctionExpression
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'test'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f6'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'test'

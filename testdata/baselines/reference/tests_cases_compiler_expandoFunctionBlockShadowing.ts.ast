@@ -1,0 +1,89 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' X'
+    Block
+  IfStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'Math'
+        Identifier: 'random'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' X'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' test'
+                QuestionToken
+                AnyKeyword
+            ObjectLiteralExpression
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+  X'
+            Identifier: 'test'
+          EqualsToken
+          NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Y'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+Y'
+        Identifier: 'test'
+      EqualsToken
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aliasTopY'
+        Identifier: ' Y'
+  IfStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: 'Math'
+        Identifier: 'random'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Y'
+            FunctionExpression
+              Identifier: ' Y'
+              Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+  Y'
+            Identifier: 'test'
+          EqualsToken
+          NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' topYcheck'
+            TypeLiteral
+              CallSignature
+                VoidKeyword
+              PropertySignature
+                Identifier: ' test'
+                StringKeyword
+            Identifier: ' aliasTopY'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' blockYcheck'
+            TypeLiteral
+              CallSignature
+                VoidKeyword
+              PropertySignature
+                Identifier: ' test'
+                NumberKeyword
+            Identifier: ' Y'

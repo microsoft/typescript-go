@@ -1,0 +1,839 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' NoParams'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noParams'
+        TypeReference
+          Identifier: ' NoParams'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' noParams'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' noParams'
+      StringKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' noParams'
+      TypeLiteral
+  InterfaceDeclaration
+    Identifier: ' noGenericParams'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'n'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noGenericParams'
+        TypeReference
+          Identifier: ' noGenericParams'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' noGenericParams'
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' noGenericParams'
+      NumberKeyword
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' noGenericParams'
+      TypeLiteral
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' someGenerics1'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'n'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' m'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someGenerics1'
+        TypeReference
+          Identifier: ' someGenerics1'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics1'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics1'
+      StringKeyword
+      NumberKeyword
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics1'
+      NumberKeyword
+      TypeLiteral
+      NumericLiteral
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' someGenerics2a'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'n'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someGenerics2a'
+        TypeReference
+          Identifier: ' someGenerics2a'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics2a'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics2a'
+      StringKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics2a'
+      StringKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' n'
+            Identifier: 'substr'
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' someGenerics2b'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'n'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' U'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someGenerics2b'
+        TypeReference
+          Identifier: ' someGenerics2b'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics2b'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        Parameter
+          Identifier: ' x'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics2b'
+      StringKeyword
+      NumberKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        Parameter
+          Identifier: ' t'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics2b'
+      StringKeyword
+      NumberKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        Parameter
+          Identifier: ' t'
+        EqualsGreaterThanToken
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' n'
+            Identifier: 'substr'
+          BinaryExpression
+            Identifier: 't'
+            AsteriskToken
+            Identifier: ' t'
+  InterfaceDeclaration
+    Identifier: ' someGenerics3'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'producer'
+        FunctionType
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someGenerics3'
+        TypeReference
+          Identifier: ' someGenerics3'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics3'
+      ArrowFunction
+        EqualsGreaterThanToken
+        StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics3'
+      TypeReference
+        Identifier: 'Window'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Identifier: ' undefined'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics3'
+      NumberKeyword
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' someGenerics4'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      TypeParameter
+        Identifier: ' U'
+      Parameter
+        Identifier: 'n'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' U'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someGenerics4'
+        TypeReference
+          Identifier: ' someGenerics4'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics4'
+      NumericLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        NullKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics4'
+      StringKeyword
+      NumberKeyword
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics4'
+      StringKeyword
+      NumberKeyword
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics4'
+      StringKeyword
+      NumberKeyword
+      NullKeyword
+      NullKeyword
+  InterfaceDeclaration
+    Identifier: ' someGenerics5'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'U'
+      TypeParameter
+        Identifier: ' T'
+      Parameter
+        Identifier: 'n'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' f'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' U'
+          VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someGenerics5'
+        TypeReference
+          Identifier: ' someGenerics5'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics5'
+      NumericLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        NullKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics5'
+      NumberKeyword
+      StringKeyword
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        NumericLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics5'
+      NumberKeyword
+      StringKeyword
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics5'
+      StringKeyword
+      NumberKeyword
+      NullKeyword
+      NullKeyword
+  InterfaceDeclaration
+    Identifier: ' someGenerics6'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'A'
+      Parameter
+        Identifier: 'a'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' A'
+          TypeReference
+            Identifier: ' A'
+      Parameter
+        Identifier: ' b'
+        FunctionType
+          Parameter
+            Identifier: 'b'
+            TypeReference
+              Identifier: ' A'
+          TypeReference
+            Identifier: ' A'
+      Parameter
+        Identifier: ' c'
+        FunctionType
+          Parameter
+            Identifier: 'c'
+            TypeReference
+              Identifier: ' A'
+          TypeReference
+            Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someGenerics6'
+        TypeReference
+          Identifier: ' someGenerics6'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics6'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics6'
+      NumberKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics6'
+      NumberKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics6'
+      NumberKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  InterfaceDeclaration
+    Identifier: ' someGenerics7'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'A'
+      TypeParameter
+        Identifier: ' B'
+      TypeParameter
+        Identifier: ' C'
+      Parameter
+        Identifier: 'a'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' A'
+          TypeReference
+            Identifier: ' A'
+      Parameter
+        Identifier: ' b'
+        FunctionType
+          Parameter
+            Identifier: 'b'
+            TypeReference
+              Identifier: ' B'
+          TypeReference
+            Identifier: ' B'
+      Parameter
+        Identifier: ' c'
+        FunctionType
+          Parameter
+            Identifier: 'c'
+            TypeReference
+              Identifier: ' C'
+          TypeReference
+            Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someGenerics7'
+        TypeReference
+          Identifier: ' someGenerics7'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics7'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics7'
+      NumberKeyword
+      StringKeyword
+      NumberKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: ' n'
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' someGenerics7'
+      NumberKeyword
+      StringKeyword
+      NumberKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+  InterfaceDeclaration
+    Identifier: ' someGenerics8'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'n'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someGenerics8'
+        TypeReference
+          Identifier: ' someGenerics8'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' someGenerics8'
+          Identifier: 'someGenerics7'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' x'
+      StringKeyword
+      StringKeyword
+      StringKeyword
+      NullKeyword
+      NullKeyword
+      NullKeyword
+  InterfaceDeclaration
+    Identifier: ' someGenerics9'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someGenerics9'
+        TypeReference
+          Identifier: ' someGenerics9'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9a'
+        NewExpression
+          Identifier: ' someGenerics9'
+          StringLiteral
+          NumericLiteral
+          ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9a'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9b'
+        NewExpression
+          Identifier: ' someGenerics9'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              QuestionToken
+              NumberKeyword
+            PropertySignature
+              Identifier: ' b'
+              QuestionToken
+              StringKeyword
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' b'
+              StringLiteral
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            QuestionToken
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            StringKeyword
+  InterfaceDeclaration
+    Identifier: ' A91'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    y'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' A92'
+    PropertySignature
+      Identifier: '
+    x'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    z'
+      QuestionToken
+      TypeReference
+        Identifier: ' Window'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9e'
+        NewExpression
+          Identifier: ' someGenerics9'
+          Identifier: 'undefined'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' z'
+              Identifier: ' window'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9e'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9f'
+        NewExpression
+          Identifier: ' someGenerics9'
+          TypeReference
+            Identifier: 'A92'
+          Identifier: 'undefined'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' z'
+              Identifier: ' window'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9f'
+        TypeReference
+          Identifier: ' A92'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9d'
+        NewExpression
+          Identifier: ' someGenerics9'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9d'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anyVar'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' someGenerics9'
+          NumericLiteral
+          Identifier: ' anyVar'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        NewExpression
+          Identifier: ' someGenerics9'
+          ArrayLiteralExpression
+          NullKeyword
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayType
+          AnyKeyword

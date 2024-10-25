@@ -1,0 +1,47 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+      InterfaceDeclaration
+        Identifier: ' ElementAttributesProperty'
+        PropertySignature
+          Identifier: '
+		props'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicAttributes'
+        PropertySignature
+          Identifier: '
+		ref'
+          QuestionToken
+          StringKeyword
+  ClassDeclaration
+    Identifier: ' MyComponent'
+    MethodDeclaration
+      Identifier: '  
+  render'
+      Block
+    PropertyDeclaration
+      Identifier: '
+
+  props'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+	  ref'
+          QuestionToken
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        JsxSelfClosingElement
+          Identifier: 'MyComponent'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' bar'
+              StringLiteral

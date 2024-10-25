@@ -1,0 +1,9 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Validation'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' i1'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' i2'

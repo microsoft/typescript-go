@@ -1,0 +1,110 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  C'
+        TupleType
+          StringKeyword
+      PropertySignature
+        Identifier: '
+  D'
+        TupleType
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' map'
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            UnionType
+              TypeReference
+                Identifier: ' T1'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T2'
+          FunctionType
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              ConditionalType
+                TypeReference
+                  Identifier: ' K'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' T2'
+                IndexedAccessType
+                  TypeReference
+                    Identifier: ' T2'
+                  TypeReference
+                    Identifier: 'K'
+                TupleType
+            UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' args'
+        AnyKeyword
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'key'
+          BindingElement
+            Identifier: ' fn'
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' Object'
+        Identifier: 'entries'
+      Identifier: 'map'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  fn'
+          SpreadElement
+            Identifier: 'args'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test2'
+        IntersectionType
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'a'
+                NumberKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                TupleType
+              VoidKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'b'
+                StringKeyword
+              VoidKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'c'
+                BooleanKeyword
+              VoidKeyword
+        ArrowFunction
+          Parameter
+            Identifier: 'arg'
+          EqualsGreaterThanToken
+          Block

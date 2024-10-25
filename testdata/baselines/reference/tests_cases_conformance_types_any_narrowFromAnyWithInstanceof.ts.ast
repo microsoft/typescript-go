@@ -1,0 +1,84 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      InstanceOfKeyword
+      Identifier: ' Function'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // 'any' is not narrowed when target type is 'Function'
+    x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    x'
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    x'
+          StringLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'prop'
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      InstanceOfKeyword
+      Identifier: ' Object'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' // 'any' is not narrowed when target type is 'Object'
+    x'
+            Identifier: 'method'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    x'
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      InstanceOfKeyword
+      Identifier: ' Error'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: ' // 'any' is narrowed to types other than 'Function'/'Object'
+    x'
+          Identifier: 'message'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'mesage'
+  IfStatement
+    BinaryExpression
+      Identifier: 'x'
+      InstanceOfKeyword
+      Identifier: ' Date'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'getDate'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'getHuors'

@@ -1,0 +1,11 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' z'
+      VariableDeclaration
+        Identifier: ' is'
+      VariableDeclaration
+        Identifier: ' number'

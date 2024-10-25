@@ -1,0 +1,186 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f1'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' await'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' yield'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'await'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'yield'
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'a'
+      AwaitExpression
+        NumericLiteral
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f7'
+    Parameter
+      Identifier: 'a'
+      YieldExpression
+    Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f8'
+    Block
+      FunctionDeclaration
+        AsyncKeyword
+        AsteriskToken
+        Identifier: ' g'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f9'
+    Block
+      FunctionDeclaration
+        Identifier: ' yield'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f10'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            FunctionExpression
+              Identifier: ' yield'
+              Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f11'
+    Block
+      FunctionDeclaration
+        Identifier: ' await'
+        Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f12'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            FunctionExpression
+              Identifier: ' yield'
+              Block
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f13'
+    Block
+      ExpressionStatement
+        YieldExpression
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f14'
+    Block
+      ExpressionStatement
+        YieldExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f15'
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          Identifier: ''
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f16'
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          ArrayLiteralExpression
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f17'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f18'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          Identifier: ''
+  InterfaceDeclaration
+    Identifier: ' await'
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f19'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' await'
+  InterfaceDeclaration
+    Identifier: ' yield'
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f20'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' yield'
+  FunctionDeclaration
+    AsyncKeyword
+    AsteriskToken
+    Identifier: ' f21'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ObjectLiteralExpression
+              PropertyAssignment
+                ComputedPropertyName
+                  YieldExpression
+                NumericLiteral

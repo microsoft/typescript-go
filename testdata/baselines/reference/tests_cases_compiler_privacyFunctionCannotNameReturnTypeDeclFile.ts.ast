@@ -1,0 +1,426 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Widget3'
+        PropertyDeclaration
+          Identifier: '
+        name'
+          StringKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' createWidget3'
+        TypeReference
+          Identifier: ' Widget3'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' SpecializedGlobalWidget'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' Widget4'
+            PropertyDeclaration
+              Identifier: '
+            name'
+              StringKeyword
+          FunctionDeclaration
+            Identifier: ' createWidget4'
+            TypeReference
+              Identifier: ' Widget4'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Widget1'
+    PropertyDeclaration
+      Identifier: '
+    name'
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createWidget1'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' Widget1'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' SpecializedWidget'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Widget2'
+        PropertyDeclaration
+          Identifier: '
+        name'
+          StringLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' createWidget2'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' Widget2'
+  ImportEqualsDeclaration
+    Identifier: ' Widgets'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' Widgets1'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createExportedWidget1'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Widgets'
+            Identifier: 'createWidget1'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createExportedWidget2'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' Widgets'
+              Identifier: 'SpecializedWidget'
+            Identifier: 'createWidget2'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createExportedWidget3'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Widgets1'
+            Identifier: 'createWidget3'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createExportedWidget4'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' Widgets1'
+              Identifier: 'SpecializedGlobalWidget'
+            Identifier: 'createWidget4'
+  ImportEqualsDeclaration
+    Identifier: ' exporter'
+    ExternalModuleReference
+      StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithWithPrivateParmeterTypes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget1'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget1'
+        EmptyStatement
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget1'
+        EmptyStatement
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget1'
+        EmptyStatement
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget3'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget3'
+        EmptyStatement
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget3'
+        EmptyStatement
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget3'
+        EmptyStatement
+  ClassDeclaration
+    Identifier: ' privateClassWithWithPrivateParmeterTypes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget1'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget1'
+        EmptyStatement
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget1'
+        EmptyStatement
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget1'
+        EmptyStatement
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget3'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' myPrivateStaticMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget3'
+        EmptyStatement
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget3'
+        EmptyStatement
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' myPrivateMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget3'
+        EmptyStatement
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPrivateParmeterTypes'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' exporter'
+            Identifier: 'createExportedWidget1'
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPrivateParmeterTypes'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' exporter'
+            Identifier: 'createExportedWidget1'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPrivateParmeterTypes1'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' exporter'
+            Identifier: 'createExportedWidget3'
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPrivateParmeterTypes1'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' exporter'
+            Identifier: 'createExportedWidget3'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' publicClassWithPrivateModuleReturnTypes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget2'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget2'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget4'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget4'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPrivateModuleReturnTypes'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' exporter'
+            Identifier: 'createExportedWidget2'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' publicFunctionWithPrivateModuleReturnTypes1'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' exporter'
+            Identifier: 'createExportedWidget4'
+  ClassDeclaration
+    Identifier: ' privateClassWithPrivateModuleReturnTypes'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget2'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget2'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' myPublicStaticMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget4'
+    MethodDeclaration
+      Identifier: '
+    myPublicMethod1'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' exporter'
+              Identifier: 'createExportedWidget4'
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPrivateModuleReturnTypes'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' exporter'
+            Identifier: 'createExportedWidget2'
+  FunctionDeclaration
+    Identifier: ' privateFunctionWithPrivateModuleReturnTypes1'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' exporter'
+            Identifier: 'createExportedWidget4'

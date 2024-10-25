@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' foo'
+            StringKeyword
+          PropertySignature
+            Identifier: ' bar'
+            StringKeyword
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' a'
+      TypeQuery
+        Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' Derived1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      TypeQuery
+        Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived1'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' a'
+      TypeQuery
+        Identifier: ' x'

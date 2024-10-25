@@ -1,0 +1,32 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          Identifier: '
+		div'
+          AnyKeyword
+        PropertySignature
+          Identifier: '
+		h1'
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' CustomTag'
+        LiteralType
+          StringLiteral
+        StringLiteral
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'CustomTag'
+        JsxAttributes
+      JsxText
+      JsxClosingElement
+        Identifier: 'CustomTag'

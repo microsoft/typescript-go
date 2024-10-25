@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Based'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'arg'
+      Block
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Based'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'

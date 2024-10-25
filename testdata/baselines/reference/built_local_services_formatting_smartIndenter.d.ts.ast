@@ -1,0 +1,255 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TextRangeWithKind'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' EditorSettings'
+        ImportSpecifier
+          Identifier: ' FormatCodeSettings'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' NodeArray'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' SourceFileLike'
+        ImportSpecifier
+          Identifier: ' TextRange'
+    StringLiteral
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' SmartIndenter'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' getIndentation'
+        Parameter
+          Identifier: 'position'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        Parameter
+          Identifier: ' assumeNewLineBeforeCloseBrace'
+          QuestionToken
+          BooleanKeyword
+        NumberKeyword
+      FunctionDeclaration
+        Identifier: ' getIndentationForNode'
+        Parameter
+          Identifier: 'n'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' ignoreActualIndentationRange'
+          TypeReference
+            Identifier: ' TextRange'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+      FunctionDeclaration
+        Identifier: ' getBaseIndentation'
+        Parameter
+          Identifier: 'options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+      FunctionDeclaration
+        Identifier: ' isArgumentAndStartLineOverlapsExpressionBeingCalled'
+        Parameter
+          Identifier: 'parent'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' child'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' childStartLine'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        BooleanKeyword
+      FunctionDeclaration
+        Identifier: ' childStartsOnTheSameLineWithElseInIfStatement'
+        Parameter
+          Identifier: 'parent'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' child'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Parameter
+          Identifier: ' childStartLine'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        BooleanKeyword
+      FunctionDeclaration
+        Identifier: ' childIsUnindentedBranchOfConditionalExpression'
+        Parameter
+          Identifier: 'parent'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' child'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Parameter
+          Identifier: ' childStartLine'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        BooleanKeyword
+      FunctionDeclaration
+        Identifier: ' argumentStartsOnSameLineAsPreviousArgument'
+        Parameter
+          Identifier: 'parent'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' child'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Parameter
+          Identifier: ' childStartLine'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        BooleanKeyword
+      FunctionDeclaration
+        Identifier: ' getContainingList'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        UnionType
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+          UndefinedKeyword
+      FunctionDeclaration
+        Identifier: ' findFirstNonWhitespaceCharacterAndColumn'
+        Parameter
+          Identifier: 'startPos'
+          NumberKeyword
+        Parameter
+          Identifier: ' endPos'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        column'
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+        character'
+            NumberKeyword
+      FunctionDeclaration
+        Identifier: ' findFirstNonWhitespaceColumn'
+        Parameter
+          Identifier: 'startPos'
+          NumberKeyword
+        Parameter
+          Identifier: ' endPos'
+          NumberKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFileLike'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' EditorSettings'
+        NumberKeyword
+      FunctionDeclaration
+        Identifier: ' nodeWillIndentChild'
+        Parameter
+          Identifier: 'settings'
+          TypeReference
+            Identifier: ' FormatCodeSettings'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Parameter
+          Identifier: ' child'
+          UnionType
+            TypeReference
+              Identifier: ' TextRangeWithKind'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          UnionType
+            TypeReference
+              Identifier: ' SourceFileLike'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' indentByDefault'
+          BooleanKeyword
+        BooleanKeyword
+      FunctionDeclaration
+        Identifier: ' shouldIndentChildNode'
+        Parameter
+          Identifier: 'settings'
+          TypeReference
+            Identifier: ' FormatCodeSettings'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        Parameter
+          Identifier: ' child'
+          QuestionToken
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' sourceFile'
+          QuestionToken
+          TypeReference
+            Identifier: ' SourceFileLike'
+        Parameter
+          Identifier: ' isNextChild'
+          QuestionToken
+          BooleanKeyword
+        BooleanKeyword

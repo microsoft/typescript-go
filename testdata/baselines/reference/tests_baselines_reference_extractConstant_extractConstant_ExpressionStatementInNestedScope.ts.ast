@@ -1,0 +1,41 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' F'
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    /*[#|*/i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' F'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' /*RENAME*/newLocal'
+            PostfixUnaryExpression
+              Identifier: ' i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' /*RENAME*/newLocal'
+        PostfixUnaryExpression
+          Identifier: ' i'
+  FunctionDeclaration
+    Identifier: ' F'
+    Block

@@ -1,0 +1,76 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Path'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' _pathBrand'
+          AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' path'
+        TypeReference
+          Identifier: ' Path'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' options1'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' prop'
+              NumberKeyword
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'k'
+                StringKeyword
+              BooleanKeyword
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+options1'
+        NoSubstitutionTemplateLiteral
+      EqualsToken
+      FalseKeyword
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+options1'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            Identifier: 'path'
+            TemplateTail
+      EqualsToken
+      FalseKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lowercasePath'
+        TypeReference
+          Identifier: ' Lowercase'
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              TypeReference
+                Identifier: 'Path'
+              TemplateTail
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+options1'
+        Identifier: 'lowercasePath'
+      EqualsToken
+      FalseKeyword

@@ -1,0 +1,11 @@
+SourceFile
+  LabeledStatement
+    Identifier: '// @allowUnusedLabels: true
+
+target'
+    LabeledStatement
+      Identifier: '
+target'
+      WhileStatement
+        TrueKeyword
+        Block

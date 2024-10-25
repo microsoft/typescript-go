@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' testGenerator'
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          GreaterThanToken
+          NumericLiteral
+        Block
+          ReturnStatement
+      ExpressionStatement
+        YieldExpression
+          StringLiteral

@@ -1,0 +1,38 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          CallExpression
+            Identifier: ' require'
+            StringLiteral
+          Identifier: 'x'
+  ExpressionStatement
+    Identifier: '
+x'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+x'
+      Identifier: 'grey'
+  ExpressionStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        Identifier: '
+x'
+        Identifier: 'x'
+      Identifier: 'grey'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  grey'
+            ObjectLiteralExpression
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' x'

@@ -1,0 +1,366 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' X'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    value'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    method'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Y'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    value'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    MethodSignature
+      Identifier: '
+    method'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      UnionType
+        TypeReference
+          Identifier: ' X'
+        TypeReference
+          Identifier: ' Y'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    type'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    value'
+          StringLiteral
+        MethodDeclaration
+          Identifier: '
+    method'
+          Block
+            ExpressionStatement
+              ThisKeyword
+            ExpressionStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'type'
+            ExpressionStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'value'
+  InterfaceDeclaration
+    Identifier: ' X2'
+    PropertySignature
+      Identifier: '
+    type1'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    value'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    method'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Y2'
+    PropertySignature
+      Identifier: '
+    type2'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    value'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    MethodSignature
+      Identifier: '
+    method'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'bar'
+      UnionType
+        TypeReference
+          Identifier: ' X2'
+        TypeReference
+          Identifier: ' Y2'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    type2'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    value'
+          StringLiteral
+        MethodDeclaration
+          Identifier: '
+    method'
+          Block
+            ExpressionStatement
+              ThisKeyword
+            ExpressionStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'value'
+  InterfaceDeclaration
+    Identifier: ' X3'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    value'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    PropertySignature
+      Identifier: '
+    xtra'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Y3'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    value'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    PropertySignature
+      Identifier: '
+    ytra'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xy'
+        UnionType
+          TypeReference
+            Identifier: ' X3'
+          TypeReference
+            Identifier: ' Y3'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    type'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    value'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    ytra'
+            NumericLiteral
+  ExpressionStatement
+    Identifier: '
+
+xy'
+  InterfaceDeclaration
+    Identifier: ' LikeA'
+    PropertySignature
+      Identifier: '
+    x'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    y'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    value'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    method'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' LikeB'
+    PropertySignature
+      Identifier: '
+    x'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    y'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    value'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    method'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xyz'
+        UnionType
+          TypeReference
+            Identifier: ' LikeA'
+          TypeReference
+            Identifier: ' LikeB'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    x'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    y'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    value'
+            StringLiteral
+          MethodDeclaration
+            Identifier: '
+    method'
+            Block
+              ExpressionStatement
+                ThisKeyword
+              ExpressionStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+              ExpressionStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+              ExpressionStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'value'
+  ExpressionStatement
+    Identifier: '
+
+xyz'
+  InterfaceDeclaration
+    Identifier: ' TestObject'
+    PropertySignature
+      Identifier: '
+  type'
+      QuestionToken
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+  items'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'k'
+            StringKeyword
+          TypeReference
+            Identifier: ' TestGeneric'
+  InterfaceDeclaration
+    Identifier: ' TestString'
+    PropertySignature
+      Identifier: '
+  type'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TestGeneric'
+    IntersectionType
+      ParenthesizedType
+        UnionType
+          TypeReference
+            Identifier: 'TestString'
+          TypeReference
+            Identifier: ' TestObject'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'k'
+            StringKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        TypeReference
+          Identifier: ' TestGeneric'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  items'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    hello'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' type'
+                    StringLiteral
+              PropertyAssignment
+                Identifier: '
+    world'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+      items'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+        nested'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' type'
+                            StringLiteral

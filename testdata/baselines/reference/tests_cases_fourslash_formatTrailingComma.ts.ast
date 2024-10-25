@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////foo
+////    .bar(
+////        x,
+////    );
+
+verify'
+        Identifier: 'formatDocumentChangesNothing'

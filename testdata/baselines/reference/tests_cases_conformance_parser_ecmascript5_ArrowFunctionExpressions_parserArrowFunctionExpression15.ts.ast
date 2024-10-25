@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    ConditionalExpression
+      FalseKeyword
+      QuestionToken
+      ArrowFunction
+        Parameter
+          Identifier: 'param'
+        StringKeyword
+        EqualsGreaterThanToken
+        Identifier: ' param'
+      ColonToken
+      NullKeyword
+  ExpressionStatement
+    ConditionalExpression
+      FalseKeyword
+      QuestionToken
+      ArrowFunction
+        Parameter
+          Identifier: 'param'
+        StringKeyword
+        EqualsGreaterThanToken
+        Identifier: ' param'
+      ColonToken
+      NullKeyword

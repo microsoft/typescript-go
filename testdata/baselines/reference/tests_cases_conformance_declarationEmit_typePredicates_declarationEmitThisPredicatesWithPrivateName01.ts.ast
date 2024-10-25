@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    m'
+      TypePredicate
+        ThisType
+        TypeReference
+          Identifier: ' D'
+      Block
+        ReturnStatement
+          BinaryExpression
+            ThisKeyword
+            InstanceOfKeyword
+            Identifier: ' D'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'

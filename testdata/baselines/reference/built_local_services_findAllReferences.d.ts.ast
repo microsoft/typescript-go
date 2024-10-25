@@ -1,0 +1,907 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' BinaryExpression'
+        ImportSpecifier
+          Identifier: ' CallExpression'
+        ImportSpecifier
+          Identifier: ' CancellationToken'
+        ImportSpecifier
+          Identifier: ' FileReference'
+        ImportSpecifier
+          Identifier: ' ForInOrOfStatement'
+        ImportSpecifier
+          Identifier: ' HighlightSpan'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' ImplementationLocation'
+        ImportSpecifier
+          Identifier: ' ModuleExportName'
+        ImportSpecifier
+          Identifier: ' NamedDeclaration'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' QuotePreference'
+        ImportSpecifier
+          Identifier: ' ReferencedSymbol'
+        ImportSpecifier
+          Identifier: ' ReferenceEntry'
+        ImportSpecifier
+          Identifier: ' RenameLocation'
+        ImportSpecifier
+          Identifier: ' SemanticMeaning'
+        ImportSpecifier
+          Identifier: ' SignatureDeclaration'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' StringLiteralLike'
+        ImportSpecifier
+          Identifier: ' SwitchStatement'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' TextSpan'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SymbolAndEntries'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' definition'
+      UnionType
+        TypeReference
+          Identifier: ' Definition'
+        UndefinedKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' references'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Entry'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' DefinitionKind'
+    EnumMember
+      Identifier: '
+    Symbol'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Label'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Keyword'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    This'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    String'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    TripleSlashReference'
+      NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Definition'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' type'
+          TypeReference
+            QualifiedName
+              Identifier: ' DefinitionKind'
+              Identifier: 'Symbol'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' symbol'
+          TypeReference
+            Identifier: ' Symbol'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' type'
+          TypeReference
+            QualifiedName
+              Identifier: ' DefinitionKind'
+              Identifier: 'Label'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Identifier'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' type'
+          TypeReference
+            QualifiedName
+              Identifier: ' DefinitionKind'
+              Identifier: 'Keyword'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' type'
+          TypeReference
+            QualifiedName
+              Identifier: ' DefinitionKind'
+              Identifier: 'This'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' type'
+          TypeReference
+            QualifiedName
+              Identifier: ' DefinitionKind'
+              Identifier: 'String'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' StringLiteralLike'
+      TypeLiteral
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' type'
+          TypeReference
+            QualifiedName
+              Identifier: ' DefinitionKind'
+              Identifier: 'TripleSlashReference'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' reference'
+          TypeReference
+            Identifier: ' FileReference'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' file'
+          TypeReference
+            Identifier: ' SourceFile'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' EntryKind'
+    EnumMember
+      Identifier: '
+    Span'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Node'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StringLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    SearchedLocalFoundProperty'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    SearchedPropertyFoundLocal'
+      NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' NodeEntryKind'
+    UnionType
+      TypeReference
+        QualifiedName
+          Identifier: ' EntryKind'
+          Identifier: 'Node'
+      TypeReference
+        QualifiedName
+          Identifier: ' EntryKind'
+          Identifier: 'StringLiteral'
+      TypeReference
+        QualifiedName
+          Identifier: ' EntryKind'
+          Identifier: 'SearchedLocalFoundProperty'
+      TypeReference
+        QualifiedName
+          Identifier: ' EntryKind'
+          Identifier: 'SearchedPropertyFoundLocal'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Entry'
+    UnionType
+      TypeReference
+        Identifier: ' NodeEntry'
+      TypeReference
+        Identifier: ' SpanEntry'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ContextWithStartAndEndNode'
+    PropertySignature
+      Identifier: '
+    start'
+      TypeReference
+        Identifier: ' Node'
+    PropertySignature
+      Identifier: '
+    end'
+      TypeReference
+        Identifier: ' Node'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ContextNode'
+    UnionType
+      TypeReference
+        Identifier: ' Node'
+      TypeReference
+        Identifier: ' ContextWithStartAndEndNode'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' NodeEntry'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' NodeEntryKind'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' context'
+      QuestionToken
+      TypeReference
+        Identifier: ' ContextNode'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SpanEntry'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' kind'
+      TypeReference
+        QualifiedName
+          Identifier: ' EntryKind'
+          Identifier: 'Span'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' fileName'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isContextWithStartAndEndNode'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' ContextNode'
+    TypePredicate
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' ContextWithStartAndEndNode'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getContextNode'
+    Parameter
+      Identifier: 'node'
+      UnionType
+        TypeReference
+          Identifier: ' NamedDeclaration'
+        TypeReference
+          Identifier: ' BinaryExpression'
+        TypeReference
+          Identifier: ' ForInOrOfStatement'
+        TypeReference
+          Identifier: ' SwitchStatement'
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' ContextNode'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' toContextSpan'
+    Parameter
+      Identifier: 'textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' context'
+      UnionType
+        TypeReference
+          Identifier: ' ContextNode'
+        UndefinedKeyword
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    contextSpan'
+          TypeReference
+            Identifier: ' TextSpan'
+      UndefinedKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' FindReferencesUse'
+    EnumMember
+      Identifier: '
+    /**
+     * When searching for references to a symbol, the location will not be adjusted (this is the default behavior when not specified).
+     */
+    Other'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * When searching for references to a symbol, the location will be adjusted if the cursor was on a keyword.
+     */
+    References'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * When searching for references to a symbol, the location will be adjusted if the cursor was on a keyword.
+     * Unlike `References`, the location will only be adjusted keyword belonged to a declaration with a valid name.
+     * If set, we will find fewer references -- if it is referenced by several different names, we still only find references for the original name.
+     */
+    Rename'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Options'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' findInStrings'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' findInComments'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' use'
+      QuestionToken
+      TypeReference
+        Identifier: ' FindReferencesUse'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' implementations'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' providePrefixAndSuffixTextForRename'
+      QuestionToken
+      BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' findReferencedSymbols'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: ' sourceFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' ReferencedSymbol'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getImplementationsAtPosition'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: ' sourceFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' ImplementationLocation'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' findReferenceOrRenameEntries'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: ' sourceFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' position'
+      NumberKeyword
+    Parameter
+      Identifier: ' options'
+      UnionType
+        TypeReference
+          Identifier: ' Options'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' convertEntry'
+      TypeReference
+        Identifier: ' ToReferenceOrRenameEntry'
+        TypeReference
+          Identifier: 'T'
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+      UndefinedKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' ToReferenceOrRenameEntry'
+    TypeParameter
+      Identifier: 'T'
+    FunctionType
+      Parameter
+        Identifier: 'entry'
+        TypeReference
+          Identifier: ' Entry'
+      Parameter
+        Identifier: ' originalNode'
+        TypeReference
+          Identifier: ' Node'
+      Parameter
+        Identifier: ' checker'
+        TypeReference
+          Identifier: ' TypeChecker'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getReferenceEntriesForNode'
+    Parameter
+      Identifier: 'position'
+      NumberKeyword
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' sourceFiles'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' Options'
+    Parameter
+      Identifier: ' sourceFilesSet'
+      QuestionToken
+      TypeReference
+        Identifier: ' ReadonlySet'
+        StringKeyword
+    UnionType
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Entry'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' toRenameLocation'
+    Parameter
+      Identifier: 'entry'
+      TypeReference
+        Identifier: ' Entry'
+    Parameter
+      Identifier: ' originalNode'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' providePrefixAndSuffixText'
+      BooleanKeyword
+    Parameter
+      Identifier: ' quotePreference'
+      TypeReference
+        Identifier: ' QuotePreference'
+    TypeReference
+      Identifier: ' RenameLocation'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' toReferenceEntry'
+    Parameter
+      Identifier: 'entry'
+      TypeReference
+        Identifier: ' Entry'
+    TypeReference
+      Identifier: ' ReferenceEntry'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' toHighlightSpan'
+    Parameter
+      Identifier: 'entry'
+      TypeReference
+        Identifier: ' Entry'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    fileName'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+    span'
+        TypeReference
+          Identifier: ' HighlightSpan'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isWriteAccessForReference'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isDeclarationOfSymbol'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' target'
+      UnionType
+        TypeReference
+          Identifier: ' Symbol'
+        UndefinedKeyword
+    BooleanKeyword
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Core'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' getReferencedSymbolsForNode'
+        Parameter
+          Identifier: 'position'
+          NumberKeyword
+        Parameter
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' program'
+          TypeReference
+            Identifier: ' Program'
+        Parameter
+          Identifier: ' sourceFiles'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' cancellationToken'
+          TypeReference
+            Identifier: ' CancellationToken'
+        Parameter
+          Identifier: ' options'
+          QuestionToken
+          TypeReference
+            Identifier: ' Options'
+        Parameter
+          Identifier: ' sourceFilesSet'
+          QuestionToken
+          TypeReference
+            Identifier: ' ReadonlySet'
+            StringKeyword
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' SymbolAndEntries'
+          UndefinedKeyword
+      FunctionDeclaration
+        Identifier: ' getAdjustedNode'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' options'
+          TypeReference
+            Identifier: ' Options'
+        TypeReference
+          Identifier: ' Node'
+      FunctionDeclaration
+        Identifier: ' getReferencesForFileName'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Parameter
+          Identifier: ' program'
+          TypeReference
+            Identifier: ' Program'
+        Parameter
+          Identifier: ' sourceFiles'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' sourceFilesSet'
+          QuestionToken
+          TypeReference
+            Identifier: ' ReadonlySet'
+            StringKeyword
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Entry'
+      FunctionDeclaration
+        Identifier: ' eachExportReference'
+        Parameter
+          Identifier: 'sourceFiles'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' checker'
+          TypeReference
+            Identifier: ' TypeChecker'
+        Parameter
+          Identifier: ' cancellationToken'
+          UnionType
+            TypeReference
+              Identifier: ' CancellationToken'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' exportSymbol'
+          TypeReference
+            Identifier: ' Symbol'
+        Parameter
+          Identifier: ' exportingModuleSymbol'
+          TypeReference
+            Identifier: ' Symbol'
+        Parameter
+          Identifier: ' exportName'
+          StringKeyword
+        Parameter
+          Identifier: ' isDefaultExport'
+          BooleanKeyword
+        Parameter
+          Identifier: ' cb'
+          FunctionType
+            Parameter
+              Identifier: 'ref'
+              TypeReference
+                Identifier: ' ModuleExportName'
+            VoidKeyword
+        VoidKeyword
+      FunctionDeclaration
+        Identifier: ' isSymbolReferencedInFile'
+        Parameter
+          Identifier: 'definition'
+          TypeReference
+            Identifier: ' Identifier'
+        Parameter
+          Identifier: ' checker'
+          TypeReference
+            Identifier: ' TypeChecker'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' searchContainer'
+          QuestionToken
+          TypeReference
+            Identifier: ' Node'
+        BooleanKeyword
+      FunctionDeclaration
+        Identifier: ' eachSymbolReferenceInFile'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'definition'
+          TypeReference
+            Identifier: ' Identifier'
+        Parameter
+          Identifier: ' checker'
+          TypeReference
+            Identifier: ' TypeChecker'
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' cb'
+          FunctionType
+            Parameter
+              Identifier: 'token'
+              TypeReference
+                Identifier: ' Identifier'
+            TypeReference
+              Identifier: ' T'
+        Parameter
+          Identifier: ' searchContainer'
+          QuestionToken
+          TypeReference
+            Identifier: ' Node'
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+      FunctionDeclaration
+        Identifier: ' getTopMostDeclarationNamesInFile'
+        Parameter
+          Identifier: 'declarationName'
+          StringKeyword
+        Parameter
+          Identifier: ' sourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Node'
+      FunctionDeclaration
+        Identifier: ' someSignatureUsage'
+        Parameter
+          Identifier: 'signature'
+          TypeReference
+            Identifier: ' SignatureDeclaration'
+        Parameter
+          Identifier: ' sourceFiles'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' SourceFile'
+        Parameter
+          Identifier: ' checker'
+          TypeReference
+            Identifier: ' TypeChecker'
+        Parameter
+          Identifier: ' cb'
+          FunctionType
+            Parameter
+              Identifier: 'name'
+              TypeReference
+                Identifier: ' Identifier'
+            Parameter
+              Identifier: ' call'
+              QuestionToken
+              TypeReference
+                Identifier: ' CallExpression'
+            BooleanKeyword
+        BooleanKeyword
+      FunctionDeclaration
+        Identifier: ' getIntersectingMeaningFromDeclarations'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' symbol'
+          TypeReference
+            Identifier: ' Symbol'
+        TypeReference
+          Identifier: ' SemanticMeaning'
+      FunctionDeclaration
+        Identifier: ' getReferenceEntriesForShorthandPropertyAssignment'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' checker'
+          TypeReference
+            Identifier: ' TypeChecker'
+        Parameter
+          Identifier: ' addReference'
+          FunctionType
+            Parameter
+              Identifier: 'node'
+              TypeReference
+                Identifier: ' Node'
+            VoidKeyword
+        VoidKeyword

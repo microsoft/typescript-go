@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          DeleteExpression
+            PropertyAccessExpression
+              ThisKeyword
+              PrivateIdentifier

@@ -1,0 +1,22 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' c'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'x'
+              BindingElement
+                Identifier: ' y'
+              BindingElement
+                Identifier: ' z'
+            ArrayLiteralExpression
+              NumericLiteral
+              NewExpression
+                Identifier: ' c'
+              NumericLiteral

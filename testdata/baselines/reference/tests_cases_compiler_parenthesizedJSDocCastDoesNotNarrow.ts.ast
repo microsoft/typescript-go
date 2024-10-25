@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        StringLiteral
+  SwitchStatement
+    ParenthesizedExpression
+      Identifier: 'value'
+    CaseBlock
+      CaseClause
+        StringLiteral
+        ExpressionStatement
+          Identifier: '
+    value'
+        BreakStatement
+      CaseClause
+        StringLiteral
+        ExpressionStatement
+          Identifier: '
+    value'
+        BreakStatement
+      CaseClause
+        StringLiteral
+        ExpressionStatement
+          Identifier: '
+    value'
+        BreakStatement

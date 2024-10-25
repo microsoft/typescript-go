@@ -1,0 +1,118 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Store'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Cleaner'
+    FunctionType
+      TypeParameter
+        Identifier: 'W'
+        TypeReference
+          Identifier: ' Store'
+      Parameter
+        Identifier: 'runner'
+        TypeReference
+          Identifier: ' FeatureRunner'
+          TypeReference
+            Identifier: 'W'
+      TypeReference
+        Identifier: ' Promise'
+        AnyKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' FeatureRunner'
+    TypeParameter
+      Identifier: 'W'
+      TypeReference
+        Identifier: ' Store'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' cleaners'
+      ArrayType
+        TypeReference
+          Identifier: ' Cleaner'
+      ArrayLiteralExpression
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' runFeature'
+      TypeReference
+        Identifier: ' Promise'
+        AnyKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' objectWhichShouldBeConst'
+              AsExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            flags'
+                    ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            settings'
+                    ObjectLiteralExpression
+                TypeReference
+                  Identifier: ' const'
+        ReturnStatement
+          Identifier: ' objectWhichShouldBeConst'
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' run'
+      TypeReference
+        Identifier: ' Promise'
+        AnyKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' result'
+              ObjectLiteralExpression
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'cleaners'
+              Identifier: 'forEach'
+            ArrowFunction
+              Parameter
+                Identifier: 'c'
+              EqualsGreaterThanToken
+              CallExpression
+                Identifier: ' c'
+                ThisKeyword
+        ReturnStatement
+          Identifier: ' result'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    f'
+      VoidKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' one'
+              AsExpression
+                NumericLiteral
+                TypeReference
+                  Identifier: ' const'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' C'
+          StringKeyword
+        Identifier: 'f'

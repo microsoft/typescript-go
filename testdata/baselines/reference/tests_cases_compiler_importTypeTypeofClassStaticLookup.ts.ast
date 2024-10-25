@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' A'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      VoidKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ImportType
+          LiteralType
+            StringLiteral
+          QualifiedName
+            Identifier: 'A'
+            Identifier: 'foo'

@@ -1,0 +1,73 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' createCacheReducer'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'N'
+            StringKeyword
+          TypeParameter
+            Identifier: ' QR'
+          Parameter
+            Identifier: '
+    queries'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' Cache'
+                TypeReference
+                  Identifier: 'N'
+                TypeReference
+                  Identifier: ' QR'
+              LiteralType
+                StringLiteral
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' queriesMap'
+                  AsExpression
+                    ObjectLiteralExpression
+                    TypeReference
+                      Identifier: ' QR'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' initialState'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+        queries'
+                      Identifier: ' queriesMap'
+            ReturnStatement
+              ArrowFunction
+                Parameter
+                  Identifier: 'state'
+                  Identifier: ' initialState'
+                EqualsGreaterThanToken
+                Identifier: ' state'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Cache'
+    TypeParameter
+      Identifier: 'N'
+      StringKeyword
+    TypeParameter
+      Identifier: ' QR'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    queries'
+        MappedType
+          TypeParameter
+            Identifier: 'QK'
+            TypeOperator
+              TypeReference
+                Identifier: ' QR'
+          TypeReference
+            Identifier: ' ReturnType'
+            TypeQuery
+              Identifier: ' createCacheReducer'
+              TypeReference
+                Identifier: 'QR'

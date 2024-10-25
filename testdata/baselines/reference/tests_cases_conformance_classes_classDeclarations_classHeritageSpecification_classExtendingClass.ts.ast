@@ -1,0 +1,139 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    thing'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' other'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        PropertyAccessExpression
+          Identifier: ' d'
+          Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        PropertyAccessExpression
+          Identifier: ' d'
+          Identifier: 'bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' d'
+            Identifier: 'thing'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' D'
+            Identifier: 'other'
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+    MethodDeclaration
+      Identifier: '
+    thing'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' other'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+  ClassDeclaration
+    Identifier: ' D2'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C2'
+        TypeReference
+          Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        TypeReference
+          Identifier: ' D2'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        PropertyAccessExpression
+          Identifier: ' d2'
+          Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        PropertyAccessExpression
+          Identifier: ' d2'
+          Identifier: 'bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' d2'
+            Identifier: 'thing'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' D2'
+            Identifier: 'other'
+          NumericLiteral

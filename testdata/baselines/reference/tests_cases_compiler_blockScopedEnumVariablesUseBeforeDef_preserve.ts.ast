@@ -1,0 +1,42 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'A'
+      EnumDeclaration
+        Identifier: ' E'
+        EnumMember
+          Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'A'
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' E'
+        EnumMember
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' config'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            PropertyAccessExpression
+              Identifier: ' AfterObject'
+              Identifier: 'A'
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' AfterObject'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral

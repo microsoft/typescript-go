@@ -1,0 +1,19 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ObjectConstructor'
+    MethodSignature
+      Identifier: '
+    /**
+     * Determines whether an object has a property with the specified name.
+     * @param o An object.
+     * @param v A property name.
+     */
+    hasOwn'
+      Parameter
+        Identifier: 'o'
+        ObjectKeyword
+      Parameter
+        Identifier: ' v'
+        TypeReference
+          Identifier: ' PropertyKey'
+      BooleanKeyword

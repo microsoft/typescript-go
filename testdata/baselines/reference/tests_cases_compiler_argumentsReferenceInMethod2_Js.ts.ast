@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+	/**
+	 * @param {object} [foo={}]
+	 */
+	m'
+      Parameter
+        Identifier: 'foo'
+        ObjectLiteralExpression
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              ThisKeyword
+              StringLiteral
+            EqualsToken
+            Identifier: ' foo'

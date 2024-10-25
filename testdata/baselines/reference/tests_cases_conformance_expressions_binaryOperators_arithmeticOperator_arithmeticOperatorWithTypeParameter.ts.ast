@@ -1,0 +1,915 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            AnyKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            BooleanKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            TypeLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a1'
+            BinaryExpression
+              Identifier: ' a'
+              AsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a2'
+            BinaryExpression
+              Identifier: ' a'
+              SlashToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a3'
+            BinaryExpression
+              Identifier: ' a'
+              PercentToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a4'
+            BinaryExpression
+              Identifier: ' a'
+              MinusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a5'
+            BinaryExpression
+              Identifier: ' a'
+              LessThanLessThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a6'
+            BinaryExpression
+              Identifier: ' a'
+              GreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a7'
+            BinaryExpression
+              Identifier: ' a'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a8'
+            BinaryExpression
+              Identifier: ' a'
+              AmpersandToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a9'
+            BinaryExpression
+              Identifier: ' a'
+              CaretToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1a10'
+            BinaryExpression
+              Identifier: ' a'
+              BarToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a2'
+            BinaryExpression
+              Identifier: ' t'
+              SlashToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a3'
+            BinaryExpression
+              Identifier: ' t'
+              PercentToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a4'
+            BinaryExpression
+              Identifier: ' t'
+              MinusToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a5'
+            BinaryExpression
+              Identifier: ' t'
+              LessThanLessThanToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a6'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a7'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a8'
+            BinaryExpression
+              Identifier: ' t'
+              AmpersandToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a9'
+            BinaryExpression
+              Identifier: ' t'
+              CaretToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2a10'
+            BinaryExpression
+              Identifier: ' t'
+              BarToken
+              Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b1'
+            BinaryExpression
+              Identifier: ' b'
+              AsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b2'
+            BinaryExpression
+              Identifier: ' b'
+              SlashToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b3'
+            BinaryExpression
+              Identifier: ' b'
+              PercentToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b4'
+            BinaryExpression
+              Identifier: ' b'
+              MinusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b5'
+            BinaryExpression
+              Identifier: ' b'
+              LessThanLessThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b6'
+            BinaryExpression
+              Identifier: ' b'
+              GreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b7'
+            BinaryExpression
+              Identifier: ' b'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b8'
+            BinaryExpression
+              Identifier: ' b'
+              AmpersandToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b9'
+            BinaryExpression
+              Identifier: ' b'
+              CaretToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1b10'
+            BinaryExpression
+              Identifier: ' b'
+              BarToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b2'
+            BinaryExpression
+              Identifier: ' t'
+              SlashToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b3'
+            BinaryExpression
+              Identifier: ' t'
+              PercentToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b4'
+            BinaryExpression
+              Identifier: ' t'
+              MinusToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b5'
+            BinaryExpression
+              Identifier: ' t'
+              LessThanLessThanToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b6'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b7'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b8'
+            BinaryExpression
+              Identifier: ' t'
+              AmpersandToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b9'
+            BinaryExpression
+              Identifier: ' t'
+              CaretToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2b10'
+            BinaryExpression
+              Identifier: ' t'
+              BarToken
+              Identifier: ' b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c1'
+            BinaryExpression
+              Identifier: ' c'
+              AsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c2'
+            BinaryExpression
+              Identifier: ' c'
+              SlashToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c3'
+            BinaryExpression
+              Identifier: ' c'
+              PercentToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c4'
+            BinaryExpression
+              Identifier: ' c'
+              MinusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c5'
+            BinaryExpression
+              Identifier: ' c'
+              LessThanLessThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c6'
+            BinaryExpression
+              Identifier: ' c'
+              GreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c7'
+            BinaryExpression
+              Identifier: ' c'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c8'
+            BinaryExpression
+              Identifier: ' c'
+              AmpersandToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c9'
+            BinaryExpression
+              Identifier: ' c'
+              CaretToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1c10'
+            BinaryExpression
+              Identifier: ' c'
+              BarToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c2'
+            BinaryExpression
+              Identifier: ' t'
+              SlashToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c3'
+            BinaryExpression
+              Identifier: ' t'
+              PercentToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c4'
+            BinaryExpression
+              Identifier: ' t'
+              MinusToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c5'
+            BinaryExpression
+              Identifier: ' t'
+              LessThanLessThanToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c6'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c7'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c8'
+            BinaryExpression
+              Identifier: ' t'
+              AmpersandToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c9'
+            BinaryExpression
+              Identifier: ' t'
+              CaretToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2c10'
+            BinaryExpression
+              Identifier: ' t'
+              BarToken
+              Identifier: ' c'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d1'
+            BinaryExpression
+              Identifier: ' d'
+              AsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d2'
+            BinaryExpression
+              Identifier: ' d'
+              SlashToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d3'
+            BinaryExpression
+              Identifier: ' d'
+              PercentToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d4'
+            BinaryExpression
+              Identifier: ' d'
+              MinusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d5'
+            BinaryExpression
+              Identifier: ' d'
+              LessThanLessThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d6'
+            BinaryExpression
+              Identifier: ' d'
+              GreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d7'
+            BinaryExpression
+              Identifier: ' d'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d8'
+            BinaryExpression
+              Identifier: ' d'
+              AmpersandToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d9'
+            BinaryExpression
+              Identifier: ' d'
+              CaretToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1d10'
+            BinaryExpression
+              Identifier: ' d'
+              BarToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d2'
+            BinaryExpression
+              Identifier: ' t'
+              SlashToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d3'
+            BinaryExpression
+              Identifier: ' t'
+              PercentToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d4'
+            BinaryExpression
+              Identifier: ' t'
+              MinusToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d5'
+            BinaryExpression
+              Identifier: ' t'
+              LessThanLessThanToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d6'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d7'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d8'
+            BinaryExpression
+              Identifier: ' t'
+              AmpersandToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d9'
+            BinaryExpression
+              Identifier: ' t'
+              CaretToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2d10'
+            BinaryExpression
+              Identifier: ' t'
+              BarToken
+              Identifier: ' d'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e1'
+            BinaryExpression
+              Identifier: ' e'
+              AsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e2'
+            BinaryExpression
+              Identifier: ' e'
+              SlashToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e3'
+            BinaryExpression
+              Identifier: ' e'
+              PercentToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e4'
+            BinaryExpression
+              Identifier: ' e'
+              MinusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e5'
+            BinaryExpression
+              Identifier: ' e'
+              LessThanLessThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e6'
+            BinaryExpression
+              Identifier: ' e'
+              GreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e7'
+            BinaryExpression
+              Identifier: ' e'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e8'
+            BinaryExpression
+              Identifier: ' e'
+              AmpersandToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e9'
+            BinaryExpression
+              Identifier: ' e'
+              CaretToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1e10'
+            BinaryExpression
+              Identifier: ' e'
+              BarToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e2'
+            BinaryExpression
+              Identifier: ' t'
+              SlashToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e3'
+            BinaryExpression
+              Identifier: ' t'
+              PercentToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e4'
+            BinaryExpression
+              Identifier: ' t'
+              MinusToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e5'
+            BinaryExpression
+              Identifier: ' t'
+              LessThanLessThanToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e6'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e7'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e8'
+            BinaryExpression
+              Identifier: ' t'
+              AmpersandToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e9'
+            BinaryExpression
+              Identifier: ' t'
+              CaretToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2e10'
+            BinaryExpression
+              Identifier: ' t'
+              BarToken
+              Identifier: ' e'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f1'
+            BinaryExpression
+              Identifier: ' t'
+              AsteriskToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f2'
+            BinaryExpression
+              Identifier: ' t'
+              SlashToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f3'
+            BinaryExpression
+              Identifier: ' t'
+              PercentToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f4'
+            BinaryExpression
+              Identifier: ' t'
+              MinusToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f5'
+            BinaryExpression
+              Identifier: ' t'
+              LessThanLessThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f6'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f7'
+            BinaryExpression
+              Identifier: ' t'
+              GreaterThanGreaterThanGreaterThanToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f8'
+            BinaryExpression
+              Identifier: ' t'
+              AmpersandToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f9'
+            BinaryExpression
+              Identifier: ' t'
+              CaretToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1f10'
+            BinaryExpression
+              Identifier: ' t'
+              BarToken
+              Identifier: ' t'

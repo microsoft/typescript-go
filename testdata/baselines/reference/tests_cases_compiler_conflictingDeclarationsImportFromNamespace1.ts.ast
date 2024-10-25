@@ -1,0 +1,81 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' _'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' LoDashStatic'
+        MethodSignature
+          Identifier: '
+      pick'
+          TypeParameter
+            Identifier: 'T'
+            ObjectKeyword
+          TypeParameter
+            Identifier: ' U'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          Parameter
+            Identifier: '
+        object'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            DotDotDotToken
+            Identifier: 'props'
+            TypeReference
+              Identifier: ' Array'
+              TypeReference
+                Identifier: 'U'
+          TypeReference
+            Identifier: ' Pick'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' U'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' pick'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' pick'
+  ExportAssignment
+    Identifier: ' _'
+  NamespaceExportDeclaration
+    Identifier: ' _'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _'
+        TypeReference
+          QualifiedName
+            Identifier: ' _'
+            Identifier: 'LoDashStatic'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' _'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' LoDashStatic'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' pick'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pick'
+        ArrowFunction
+          EqualsGreaterThanToken
+          CallExpression
+            Identifier: ' pick'

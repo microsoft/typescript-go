@@ -1,0 +1,288 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' DeepObject'
+    IndexSignature
+      Parameter
+        Identifier: 'k1'
+        StringKeyword
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'k2'
+            StringKeyword
+          AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' keys2broken'
+    TypeParameter
+      Identifier: '
+  O'
+      TypeReference
+        Identifier: ' DeepObject'
+    TypeParameter
+      Identifier: '
+  K1'
+      TypeOperator
+        TypeReference
+          Identifier: ' O'
+    ConditionalType
+      IndexedAccessType
+        TypeReference
+          Identifier: ' O'
+        TypeReference
+          Identifier: 'K1'
+      ObjectKeyword
+      TypeReference
+        Identifier: ' Extract'
+        TypeOperator
+          IndexedAccessType
+            TypeReference
+              Identifier: ' O'
+            TypeReference
+              Identifier: 'K1'
+        StringKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' keys2working'
+    TypeParameter
+      Identifier: '
+  O'
+      TypeReference
+        Identifier: ' DeepObject'
+    TypeParameter
+      Identifier: '
+  K1'
+      TypeOperator
+        TypeReference
+          Identifier: ' O'
+    ConditionalType
+      IndexedAccessType
+        TypeReference
+          Identifier: ' O'
+        TypeReference
+          Identifier: 'K1'
+      ObjectKeyword
+      TypeOperator
+        IndexedAccessType
+          TypeReference
+            Identifier: ' O'
+          TypeReference
+            Identifier: 'K1'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' keys2workaround'
+    TypeParameter
+      Identifier: 'O'
+      TypeReference
+        Identifier: ' DeepObject'
+    TypeParameter
+      Identifier: ' K1'
+      TypeOperator
+        TypeReference
+          Identifier: ' O'
+    TypeReference
+      Identifier: ' Extract'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: '
+  O'
+          TypeReference
+            Identifier: 'K1'
+        ObjectKeyword
+        TypeOperator
+          IndexedAccessType
+            TypeReference
+              Identifier: ' O'
+            TypeReference
+              Identifier: 'K1'
+        NeverKeyword
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' DeepObject'
+    PropertySignature
+      Identifier: '
+  a'
+      TypeLiteral
+        PropertySignature
+          StringLiteral
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          StringLiteral
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          BooleanKeyword
+  ClassDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'O'
+      TypeReference
+        Identifier: ' DeepObject'
+    MethodDeclaration
+      Identifier: '
+  broken'
+      TypeParameter
+        Identifier: '
+    K1'
+        TypeOperator
+          TypeReference
+            Identifier: ' O'
+      TypeParameter
+        Identifier: '
+    K2'
+        TypeReference
+          Identifier: ' keys2broken'
+          TypeReference
+            Identifier: 'O'
+          TypeReference
+            Identifier: ' K1'
+      TypeParameter
+        Identifier: '
+    V'
+        IndexedAccessType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' O'
+            TypeReference
+              Identifier: 'K1'
+          TypeReference
+            Identifier: 'K2'
+      Parameter
+        Identifier: 'k1'
+        TypeReference
+          Identifier: ' K1'
+      Parameter
+        Identifier: ' k2'
+        TypeReference
+          Identifier: ' K2'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' V'
+      Block
+    MethodDeclaration
+      Identifier: '
+
+  working'
+      TypeParameter
+        Identifier: '
+    K1'
+        TypeOperator
+          TypeReference
+            Identifier: ' O'
+      TypeParameter
+        Identifier: '
+    K2'
+        TypeReference
+          Identifier: ' keys2working'
+          TypeReference
+            Identifier: 'O'
+          TypeReference
+            Identifier: ' K1'
+      TypeParameter
+        Identifier: '
+    V'
+        IndexedAccessType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' O'
+            TypeReference
+              Identifier: 'K1'
+          TypeReference
+            Identifier: 'K2'
+      Parameter
+        Identifier: 'k1'
+        TypeReference
+          Identifier: ' K1'
+      Parameter
+        Identifier: ' k2'
+        TypeReference
+          Identifier: ' K2'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' V'
+      Block
+    MethodDeclaration
+      Identifier: '
+
+  workaround'
+      TypeParameter
+        Identifier: '
+    K1'
+        TypeOperator
+          TypeReference
+            Identifier: ' O'
+      TypeParameter
+        Identifier: '
+    K2'
+        TypeReference
+          Identifier: ' keys2workaround'
+          TypeReference
+            Identifier: 'O'
+          TypeReference
+            Identifier: ' K1'
+      TypeParameter
+        Identifier: '
+    V'
+        IndexedAccessType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' O'
+            TypeReference
+              Identifier: 'K1'
+          TypeReference
+            Identifier: 'K2'
+      Parameter
+        Identifier: 'k1'
+        TypeReference
+          Identifier: ' K1'
+      Parameter
+        Identifier: ' k2'
+        TypeReference
+          Identifier: ' K2'
+      Parameter
+        Identifier: ' value'
+        TypeReference
+          Identifier: ' V'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        NewExpression
+          Identifier: ' Bar'
+          TypeReference
+            Identifier: 'Foo'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+// all 3 of the below should error on passing `true` for `"1"`
+bar'
+        Identifier: 'broken'
+      StringLiteral
+      StringLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // was broken in the past - with 2nd argument incorrectly of type "1" | "2" | "3".
+bar'
+        Identifier: 'working'
+      StringLiteral
+      StringLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // ok - true is not allowed
+bar'
+        Identifier: 'workaround'
+      StringLiteral
+      StringLiteral
+      TrueKeyword

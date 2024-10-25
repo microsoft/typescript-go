@@ -1,0 +1,65 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Test'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TupleType
+        TypeReference
+          Identifier: 'T'
+      TupleType
+        ArrayType
+          AnyKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' array'
+          TypeReference
+            Identifier: ' Test'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'T'
+              LiteralType
+                NumericLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' notArray'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Test'
+          ArrayType
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' array'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' notArray'
+                NumberKeyword
+        Identifier: ' x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' Test'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' notArray'
+            NumberKeyword
+        Identifier: ' a'

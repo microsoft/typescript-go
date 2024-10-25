@@ -1,0 +1,153 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' of'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Observable'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' from'
+    TypeParameter
+      Identifier: 'O'
+      TypeReference
+        Identifier: ' ObservableInput'
+        AnyKeyword
+    Parameter
+      Identifier: 'input'
+      TypeReference
+        Identifier: ' O'
+    TypeReference
+      Identifier: ' Observable'
+      TypeReference
+        Identifier: 'ObservedValueOf'
+        TypeReference
+          Identifier: 'O'
+  TypeAliasDeclaration
+    Identifier: ' ObservedValueOf'
+    TypeParameter
+      Identifier: 'O'
+    ConditionalType
+      TypeReference
+        Identifier: ' O'
+      TypeReference
+        Identifier: ' ObservableInput'
+        InferType
+          TypeParameter
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      NeverKeyword
+  InterfaceDeclaration
+    Identifier: ' Subscribable'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    subscribe'
+      Parameter
+        Identifier: 'next'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          VoidKeyword
+      Parameter
+        Identifier: ' complete'
+        QuestionToken
+        FunctionType
+          VoidKeyword
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' ObservableInput'
+    TypeParameter
+      Identifier: 'T'
+    UnionType
+      TypeReference
+        Identifier: ' Subscribable'
+        TypeReference
+          Identifier: 'T'
+      TypeReference
+        Identifier: ' Subscribable'
+        NeverKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Observable'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Subscribable'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    subscribe'
+      Parameter
+        Identifier: 'next'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+      Parameter
+        Identifier: ' error'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'error'
+            AnyKeyword
+          VoidKeyword
+      Parameter
+        Identifier: ' complete'
+        QuestionToken
+        FunctionType
+          VoidKeyword
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' asObservable'
+    Parameter
+      Identifier: 'input'
+      UnionType
+        StringKeyword
+        TypeReference
+          Identifier: ' ObservableInput'
+          StringKeyword
+    TypeReference
+      Identifier: ' Observable'
+      StringKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' input'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          QuestionToken
+          CallExpression
+            Identifier: ' of'
+            Identifier: 'input'
+          ColonToken
+          CallExpression
+            Identifier: ' from'
+            Identifier: 'input'

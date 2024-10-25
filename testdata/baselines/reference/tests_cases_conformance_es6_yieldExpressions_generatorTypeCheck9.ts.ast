@@ -1,0 +1,6 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g3'
+    VoidKeyword
+    Block

@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    Identifier: '//@target: ES6
+v'
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+    ArrayLiteralExpression
+      NumericLiteral
+    Block

@@ -1,0 +1,116 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Props'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' renderNumber'
+          QuestionToken
+          LiteralType
+            FalseKeyword
+        PropertySignature
+          Identifier: ' children'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              StringKeyword
+            VoidKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+      renderNumber'
+          LiteralType
+            TrueKeyword
+        PropertySignature
+          Identifier: '
+      children'
+          FunctionType
+            Parameter
+              Identifier: 'arg'
+              NumberKeyword
+            VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Foo'
+    Parameter
+      Identifier: 'props'
+      TypeReference
+        Identifier: ' Props'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Test'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ParenthesizedExpression
+                JsxFragment
+                  JsxOpeningFragment
+                  JsxText
+                  JsxElement
+                    JsxOpeningElement
+                      Identifier: 'Foo'
+                      JsxAttributes
+                    JsxExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'value'
+                        EqualsGreaterThanToken
+                        Block
+                    JsxClosingElement
+                      Identifier: 'Foo'
+                  JsxText
+                  JsxElement
+                    JsxOpeningElement
+                      Identifier: 'Foo'
+                      JsxAttributes
+                        JsxAttribute
+                          Identifier: ' renderNumber'
+                    JsxExpression
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'value'
+                        EqualsGreaterThanToken
+                        Block
+                    JsxClosingElement
+                      Identifier: 'Foo'
+                  JsxText
+                  JsxSelfClosingElement
+                    Identifier: 'Foo'
+                    JsxAttributes
+                      JsxAttribute
+                        Identifier: ' children'
+                        JsxExpression
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'value'
+                            EqualsGreaterThanToken
+                            Block
+                  JsxText
+                  JsxSelfClosingElement
+                    Identifier: 'Foo'
+                    JsxAttributes
+                      JsxAttribute
+                        Identifier: ' renderNumber'
+                      JsxAttribute
+                        Identifier: ' children'
+                        JsxExpression
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'value'
+                            EqualsGreaterThanToken
+                            Block
+                  JsxText
+                  JsxClosingFragment

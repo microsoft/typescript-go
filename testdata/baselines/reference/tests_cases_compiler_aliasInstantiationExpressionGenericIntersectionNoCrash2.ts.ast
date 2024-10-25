@@ -1,0 +1,62 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Class'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+  x'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' ClassAlias'
+    TypeParameter
+      Identifier: 'T'
+    TypeQuery
+      Identifier: ' Class'
+      TypeReference
+        Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' FnAlias'
+    TypeParameter
+      Identifier: 'T'
+    TypeQuery
+      Identifier: ' fn'
+      TypeReference
+        Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' Wat'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      TypeReference
+        Identifier: ' ClassAlias'
+        TypeReference
+          Identifier: 'T'
+      TypeReference
+        Identifier: ' FnAlias'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' wat'
+        TypeReference
+          Identifier: ' Wat'
+          NumberKeyword
+  ExpressionStatement
+    AsExpression
+      Identifier: '
+wat'
+      TypeReference
+        Identifier: ' Wat'
+        StringKeyword

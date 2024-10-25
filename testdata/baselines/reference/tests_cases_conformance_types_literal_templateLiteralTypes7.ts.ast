@@ -1,0 +1,143 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' NMap'
+    PropertySignature
+      NumericLiteral
+      LiteralType
+        StringLiteral
+    PropertySignature
+      NumericLiteral
+      LiteralType
+        StringLiteral
+    PropertySignature
+      NumericLiteral
+      LiteralType
+        StringLiteral
+    PropertySignature
+      NumericLiteral
+      LiteralType
+        StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+            UnionType
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+          Parameter
+            Identifier: 'x'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                TypeReference
+                  Identifier: 'T'
+                TemplateTail
+          IndexedAccessType
+            TypeReference
+              Identifier: ' NMap'
+            TypeReference
+              Identifier: 'T'
+  TypeAliasDeclaration
+    Identifier: ' G1'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+        UnionType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+      Parameter
+        Identifier: 'x'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'T'
+            TemplateTail
+      IndexedAccessType
+        TypeReference
+          Identifier: ' NMap'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g1'
+        TypeReference
+          Identifier: ' G1'
+        Identifier: ' g'
+  TypeAliasDeclaration
+    Identifier: ' G2'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+        UnionType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+      Parameter
+        Identifier: 'x'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'T'
+            TemplateTail
+      IndexedAccessType
+        TypeReference
+          Identifier: ' NMap'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g2'
+        TypeReference
+          Identifier: ' G2'
+        Identifier: ' g'
+  TypeAliasDeclaration
+    Identifier: ' G3'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+        UnionType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+      Parameter
+        Identifier: 'x'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'T'
+            TemplateTail
+      IndexedAccessType
+        TypeReference
+          Identifier: ' NMap'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g3'
+        TypeReference
+          Identifier: ' G3'
+        Identifier: ' g'

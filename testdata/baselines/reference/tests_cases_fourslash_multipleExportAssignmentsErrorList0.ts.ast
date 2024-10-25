@@ -1,0 +1,56 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// interface connectModule {
+////     (res, req, next): void;
+//// }
+//// interface connectExport {
+////     use: (mod: connectModule) => connectExport;
+////     listen: (port: number) => void;
+//// }
+//// var server: {
+////     (): connectExport;
+////     test1: connectModule;
+////     test2(): connectModule;
+//// };
+//// export = server;
+//// /*1*/export = connectExport;
+////  
+//// 
+
+edit'
+        Identifier: 'disableFormatting'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'deleteAtCaret'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'insert'
+      StringLiteral

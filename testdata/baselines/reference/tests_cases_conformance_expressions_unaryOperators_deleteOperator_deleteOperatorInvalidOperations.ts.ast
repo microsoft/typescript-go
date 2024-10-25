@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BOOLEAN1'
+        Identifier: ' ANY'
+  ExpressionStatement
+    DeleteExpression
+      Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' BOOLEAN2'
+        DeleteExpression
+          Identifier: ''
+  ClassDeclaration
+    Identifier: ' testADelx'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' s'
+        FunctionType
+          TypeLiteral
+      Block
+        ExpressionStatement
+          DeleteExpression
+            Identifier: ' s'

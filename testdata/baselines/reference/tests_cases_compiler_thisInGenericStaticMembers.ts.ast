@@ -1,0 +1,75 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' one'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'source'
+        TypeReference
+          Identifier: 'T'
+      Parameter
+        Identifier: ' value'
+        NumberKeyword
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' source'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' two'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'source'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'one'
+            TypeReference
+              Identifier: 'T'
+            Identifier: 'source'
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' one'
+      Parameter
+        Identifier: 'source'
+        TypeReference
+          Identifier: ' B'
+      Parameter
+        Identifier: ' value'
+        NumberKeyword
+      TypeReference
+        Identifier: ' B'
+      Block
+        ReturnStatement
+          Identifier: ' source'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' two'
+      Parameter
+        Identifier: 'source'
+        TypeReference
+          Identifier: ' B'
+      TypeReference
+        Identifier: ' B'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'one'
+            Identifier: 'source'
+            NumericLiteral

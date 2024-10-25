@@ -1,0 +1,143 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' as'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' type'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' something'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' type'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' as'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+type'
+  ExpressionStatement
+    Identifier: '
+as'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' type'
+          Identifier: ' as'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+type'
+  ExpressionStatement
+    Identifier: ' // Error (cannot resolve name)
+as'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' as'
+          Identifier: ' as'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+type'
+  ExpressionStatement
+    Identifier: ' // Error (cannot resolve name)
+as'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' as'
+          Identifier: ' as'
+        ImportSpecifier
+          Identifier: ' as'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' type'
+          Identifier: ' as'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' type'
+          Identifier: ' type'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+type'
+  ExpressionStatement
+    Identifier: '
+as'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' import'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' type'
+          Identifier: ' export'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' as'
+          Identifier: ' export'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' something'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' something'
+          Identifier: ' s'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+type'
+  ExpressionStatement
+    Identifier: ' // Error (cannot resolve name)
+as'
+  ExpressionStatement
+    Identifier: ' // Error (cannot resolve name)
+something'
+  ExpressionStatement
+    Identifier: ' // Error (used in emitting position)
+s'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' something'
+    StringLiteral

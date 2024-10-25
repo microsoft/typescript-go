@@ -1,0 +1,11 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    a'
+      Parameter
+        Identifier: 'completed'
+        FunctionType
+          AnyKeyword
+      VoidKeyword

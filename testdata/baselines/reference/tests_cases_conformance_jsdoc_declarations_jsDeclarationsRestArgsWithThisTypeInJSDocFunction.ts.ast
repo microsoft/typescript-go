@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Clazz'
+    MethodDeclaration
+      Identifier: '
+  /**
+   * @param {function(this:Object, ...*):*} functionDeclaration
+   */
+  method'
+      Parameter
+        Identifier: 'functionDeclaration'
+      Block

@@ -1,0 +1,8 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        StringLiteral

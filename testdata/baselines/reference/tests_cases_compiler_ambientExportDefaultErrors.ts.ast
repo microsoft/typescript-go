@@ -1,0 +1,39 @@
+SourceFile
+  ExportAssignment
+    BinaryExpression
+      NumericLiteral
+      PlusToken
+      NumericLiteral
+  NamespaceExportDeclaration
+    Identifier: ' Foo'
+  ExportAssignment
+    BinaryExpression
+      NumericLiteral
+      PlusToken
+      NumericLiteral
+  NamespaceExportDeclaration
+    Identifier: ' Foo2'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ExportAssignment
+        TypeOfExpression
+          PropertyAccessExpression
+            Identifier: ' Foo'
+            Identifier: 'default'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ExportAssignment
+        TypeOfExpression
+          Identifier: ' Foo2'
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  ImportDeclaration
+    StringLiteral

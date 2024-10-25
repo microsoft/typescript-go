@@ -1,0 +1,76 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    _name'
+      StringKeyword
+    GetAccessor
+      Identifier: ' name'
+      StringKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: '_name'
+    GetAccessor
+      StaticKeyword
+      Identifier: ' name2'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    GetAccessor
+      StaticKeyword
+      ComputedPropertyName
+        StringLiteral
+      Block
+        ReturnStatement
+          StringLiteral
+    GetAccessor
+      ComputedPropertyName
+        StringLiteral
+      Block
+        ReturnStatement
+          StringLiteral
+    GetAccessor
+      ComputedPropertyName
+        StringLiteral
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      ComputedPropertyName
+        StringLiteral
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      Block
+    SetAccessor
+      ComputedPropertyName
+        StringLiteral
+      Parameter
+        Identifier: 'y'
+        StringKeyword
+      Block
+    SetAccessor
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Block
+    SetAccessor
+      StaticKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'b'
+        NumberKeyword
+      Block
+    SetAccessor
+      StaticKeyword
+      ComputedPropertyName
+        StringLiteral
+      Parameter
+        Identifier: 'b'
+        StringKeyword
+      Block

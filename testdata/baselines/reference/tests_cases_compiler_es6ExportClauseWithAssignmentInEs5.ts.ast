@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+foo'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' baz'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+baz'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' buzz'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+buzz'
+      PlusEqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bizz'
+        NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+bizz'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: ' // compiles to exports.bizz = (bizz++, bizz)
+bizz'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'bizz'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' foo'
+      ExportSpecifier
+        Identifier: ' baz'
+      ExportSpecifier
+        Identifier: ' baz'
+        Identifier: ' quux'
+      ExportSpecifier
+        Identifier: ' buzz'
+      ExportSpecifier
+        Identifier: ' bizz'

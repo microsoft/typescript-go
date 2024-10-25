@@ -1,0 +1,58 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Observable'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Cls'
+        PropertyDeclaration
+          Identifier: ' x'
+          NumberKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportDeclaration
+        ImportClause
+          NamedImports
+            ImportSpecifier
+              Identifier: ' Cls'
+        StringLiteral
+      ModuleDeclaration
+        StringLiteral
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' Observable'
+            MethodSignature
+              Identifier: '
+            foo'
+              TypeReference
+                Identifier: ' Cls'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Observable'
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Observable'
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+x'
+          Identifier: 'foo'
+      Identifier: 'x'

@@ -1,0 +1,166 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    Parameter
+      Identifier: '
+  data'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+  handlers'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        TypeReference
+          Identifier: ' P'
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeReference
+                Identifier: 'P'
+          Parameter
+            Identifier: ' prop'
+            TypeReference
+              Identifier: ' P'
+          VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    foo'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    bar'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    foo'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            Parameter
+              Identifier: ' key'
+            EqualsGreaterThanToken
+            Block
+        PropertyAssignment
+          Identifier: '
+    bar'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            Parameter
+              Identifier: ' key'
+            EqualsGreaterThanToken
+            Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    Parameter
+      Identifier: '
+  data'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+  handlers'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        ConditionalType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P'
+          StringKeyword
+          TypeReference
+            Identifier: ' P'
+          NeverKeyword
+        FunctionType
+          Parameter
+            Identifier: 'value'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeReference
+                Identifier: 'P'
+          Parameter
+            Identifier: ' prop'
+            TypeReference
+              Identifier: ' P'
+          VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    foo'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    bar'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    bar'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            Parameter
+              Identifier: ' key'
+            EqualsGreaterThanToken
+            Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    foo'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    bar'
+          StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    foo'
+          ArrowFunction
+            Parameter
+              Identifier: 'value'
+            Parameter
+              Identifier: ' key'
+            EqualsGreaterThanToken
+            Block

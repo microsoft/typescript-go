@@ -1,0 +1,41 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Outer'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Outer'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        ConstKeyword
+        Identifier: ' A'
+        EnumMember
+          Identifier: ' X'
+  ModuleDeclaration
+    Identifier: ' B'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' O'
+        Identifier: ' Outer'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' O'
+                Identifier: 'A'
+              Identifier: 'X'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            PropertyAccessExpression
+              Identifier: ' O'
+              Identifier: 'x'

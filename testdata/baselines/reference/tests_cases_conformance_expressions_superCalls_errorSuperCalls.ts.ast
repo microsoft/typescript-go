@@ -1,0 +1,137 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' NoBase'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    MethodDeclaration
+      Identifier: '
+
+    //super call in class member function with no base type
+    fn'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    GetAccessor
+      Identifier: ' foo'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ReturnStatement
+          NullKeyword
+    SetAccessor
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'v'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    //super call in class member initializer with no base type
+    p'
+      CallExpression
+        SuperKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fn'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' k'
+      CallExpression
+        SuperKeyword
+    GetAccessor
+      StaticKeyword
+      Identifier: ' q'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ReturnStatement
+          NullKeyword
+    SetAccessor
+      StaticKeyword
+      Identifier: ' q'
+      Parameter
+        Identifier: 'n'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' Base'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' n'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' Derived'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+        TypeReference
+          Identifier: 'T'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' OtherBase'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' n'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' OtherDerived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' OtherBase'
+    PropertyDeclaration
+      Identifier: '
+    //super call in class member initializer of derived type
+    t'
+      CallExpression
+        SuperKeyword
+    MethodDeclaration
+      Identifier: '
+
+    fn'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+    GetAccessor
+      Identifier: ' foo'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ReturnStatement
+          NullKeyword
+    SetAccessor
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'n'
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

@@ -1,0 +1,78 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' y'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    z'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' y'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C4'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    z'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C5'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' y'
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    z'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C6'
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C7'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' y'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' z'
+      NumericLiteral

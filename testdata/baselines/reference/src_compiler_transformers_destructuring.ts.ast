@@ -1,0 +1,2812 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    __String'
+        ImportSpecifier
+          Identifier: '
+    addRange'
+        ImportSpecifier
+          Identifier: '
+    append'
+        ImportSpecifier
+          Identifier: '
+    ArrayBindingOrAssignmentPattern'
+        ImportSpecifier
+          Identifier: '
+    BindingName'
+        ImportSpecifier
+          Identifier: '
+    BindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    BindingOrAssignmentElementTarget'
+        ImportSpecifier
+          Identifier: '
+    BindingOrAssignmentPattern'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    DestructuringAssignment'
+        ImportSpecifier
+          Identifier: '
+    ElementAccessExpression'
+        ImportSpecifier
+          Identifier: '
+    every'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    forEach'
+        ImportSpecifier
+          Identifier: '
+    getElementsOfBindingOrAssignmentPattern'
+        ImportSpecifier
+          Identifier: '
+    getInitializerOfBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    getPropertyNameOfBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    getRestIndicatorOfBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    getTargetOfBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    idText'
+        ImportSpecifier
+          Identifier: '
+    isArrayBindingElement'
+        ImportSpecifier
+          Identifier: '
+    isArrayBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    isArrayBindingOrAssignmentPattern'
+        ImportSpecifier
+          Identifier: '
+    isBigIntLiteral'
+        ImportSpecifier
+          Identifier: '
+    isBindingElement'
+        ImportSpecifier
+          Identifier: '
+    isBindingName'
+        ImportSpecifier
+          Identifier: '
+    isBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    isBindingOrAssignmentPattern'
+        ImportSpecifier
+          Identifier: '
+    isComputedPropertyName'
+        ImportSpecifier
+          Identifier: '
+    isDeclarationBindingElement'
+        ImportSpecifier
+          Identifier: '
+    isDestructuringAssignment'
+        ImportSpecifier
+          Identifier: '
+    isEmptyArrayLiteral'
+        ImportSpecifier
+          Identifier: '
+    isEmptyObjectLiteral'
+        ImportSpecifier
+          Identifier: '
+    isExpression'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isLiteralExpression'
+        ImportSpecifier
+          Identifier: '
+    isObjectBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    isObjectBindingOrAssignmentPattern'
+        ImportSpecifier
+          Identifier: '
+    isOmittedExpression'
+        ImportSpecifier
+          Identifier: '
+    isPropertyNameLiteral'
+        ImportSpecifier
+          Identifier: '
+    isSimpleInlineableExpression'
+        ImportSpecifier
+          Identifier: '
+    isStringOrNumericLiteralLike'
+        ImportSpecifier
+          Identifier: '
+    isVariableDeclaration'
+        ImportSpecifier
+          Identifier: '
+    last'
+        ImportSpecifier
+          Identifier: '
+    LeftHandSideExpression'
+        ImportSpecifier
+          Identifier: '
+    map'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeFactory'
+        ImportSpecifier
+          Identifier: '
+    nodeIsSynthesized'
+        ImportSpecifier
+          Identifier: '
+    ObjectBindingOrAssignmentPattern'
+        ImportSpecifier
+          Identifier: '
+    ParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    PropertyName'
+        ImportSpecifier
+          Identifier: '
+    setTextRange'
+        ImportSpecifier
+          Identifier: '
+    some'
+        ImportSpecifier
+          Identifier: '
+    TextRange'
+        ImportSpecifier
+          Identifier: '
+    TransformationContext'
+        ImportSpecifier
+          Identifier: '
+    TransformFlags'
+        ImportSpecifier
+          Identifier: '
+    tryGetPropertyNameOfBindingOrAssignmentElement'
+        ImportSpecifier
+          Identifier: '
+    VariableDeclaration'
+        ImportSpecifier
+          Identifier: '
+    visitNode'
+        ImportSpecifier
+          Identifier: '
+    VisitResult'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' FlattenContext'
+    PropertySignature
+      Identifier: '
+    context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    PropertySignature
+      Identifier: '
+    level'
+      TypeReference
+        Identifier: ' FlattenLevel'
+    PropertySignature
+      Identifier: '
+    downlevelIteration'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    hoistTempVariables'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    hasTransformedPriorElement'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: ' // indicates whether we've transformed a prior declaration
+    emitExpression'
+      FunctionType
+        Parameter
+          Identifier: 'value'
+          TypeReference
+            Identifier: ' Expression'
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    emitBindingOrAssignment'
+      FunctionType
+        Parameter
+          Identifier: 'target'
+          TypeReference
+            Identifier: ' BindingOrAssignmentElementTarget'
+        Parameter
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' location'
+          TypeReference
+            Identifier: ' TextRange'
+        Parameter
+          Identifier: ' original'
+          UnionType
+            TypeReference
+              Identifier: ' Node'
+            UndefinedKeyword
+        VoidKeyword
+    PropertySignature
+      Identifier: '
+    createArrayBindingOrAssignmentPattern'
+      FunctionType
+        Parameter
+          Identifier: 'elements'
+          ArrayType
+            TypeReference
+              Identifier: ' BindingOrAssignmentElement'
+        TypeReference
+          Identifier: ' ArrayBindingOrAssignmentPattern'
+    PropertySignature
+      Identifier: '
+    createObjectBindingOrAssignmentPattern'
+      FunctionType
+        Parameter
+          Identifier: 'elements'
+          ArrayType
+            TypeReference
+              Identifier: ' BindingOrAssignmentElement'
+        TypeReference
+          Identifier: ' ObjectBindingOrAssignmentPattern'
+    PropertySignature
+      Identifier: '
+    createArrayBindingOrAssignmentElement'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Identifier'
+        TypeReference
+          Identifier: ' BindingOrAssignmentElement'
+    PropertySignature
+      Identifier: '
+    visitor'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypeReference
+          Identifier: ' VisitResult'
+          UnionType
+            TypeReference
+              Identifier: 'Node'
+            UndefinedKeyword
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' FlattenLevel'
+    EnumMember
+      Identifier: '
+    All'
+    EnumMember
+      Identifier: '
+    ObjectRest'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' flattenDestructuringAssignment'
+    Parameter
+      Identifier: '
+    node'
+      UnionType
+        TypeReference
+          Identifier: ' VariableDeclaration'
+        TypeReference
+          Identifier: ' DestructuringAssignment'
+    Parameter
+      Identifier: '
+    visitor'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypeReference
+          Identifier: ' VisitResult'
+          UnionType
+            TypeReference
+              Identifier: 'Node'
+            UndefinedKeyword
+    Parameter
+      Identifier: '
+    context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: '
+    level'
+      TypeReference
+        Identifier: ' FlattenLevel'
+    Parameter
+      Identifier: '
+    needsValue'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: '
+    createAssignmentCallback'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'name'
+          TypeReference
+            Identifier: ' Identifier'
+        Parameter
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' location'
+          QuestionToken
+          TypeReference
+            Identifier: ' TextRange'
+        TypeReference
+          Identifier: ' Expression'
+    TypeReference
+      Identifier: ' Expression'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' location'
+            TypeReference
+              Identifier: ' TextRange'
+            Identifier: ' node'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            UnionType
+              TypeReference
+                Identifier: ' Expression'
+              UndefinedKeyword
+      IfStatement
+        CallExpression
+          Identifier: 'isDestructuringAssignment'
+          Identifier: 'node'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        value'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' node'
+                Identifier: 'right'
+          WhileStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isEmptyArrayLiteral'
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'left'
+              BarBarToken
+              CallExpression
+                Identifier: ' isEmptyObjectLiteral'
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'left'
+            Block
+              IfStatement
+                CallExpression
+                  Identifier: 'isDestructuringAssignment'
+                  Identifier: 'value'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                location'
+                      EqualsToken
+                      BinaryExpression
+                        Identifier: ' node'
+                        EqualsToken
+                        Identifier: ' value'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                value'
+                      EqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' node'
+                        Identifier: 'right'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Debug'
+                        Identifier: 'checkDefined'
+                      CallExpression
+                        Identifier: 'visitNode'
+                        Identifier: 'value'
+                        Identifier: ' visitor'
+                        Identifier: ' isExpression'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expressions'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Expression'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' flattenContext'
+            TypeReference
+              Identifier: ' FlattenContext'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+        context'
+              ShorthandPropertyAssignment
+                Identifier: '
+        level'
+              PropertyAssignment
+                Identifier: '
+        downlevelIteration'
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'context'
+                          Identifier: 'getCompilerOptions'
+                      Identifier: 'downlevelIteration'
+              PropertyAssignment
+                Identifier: '
+        hoistTempVariables'
+                TrueKeyword
+              ShorthandPropertyAssignment
+                Identifier: '
+        emitExpression'
+              ShorthandPropertyAssignment
+                Identifier: '
+        emitBindingOrAssignment'
+              PropertyAssignment
+                Identifier: '
+        createArrayBindingOrAssignmentPattern'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' elements'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' makeArrayAssignmentPattern'
+                    PropertyAccessExpression
+                      Identifier: 'context'
+                      Identifier: 'factory'
+                    Identifier: ' elements'
+              PropertyAssignment
+                Identifier: '
+        createObjectBindingOrAssignmentPattern'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' elements'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' makeObjectAssignmentPattern'
+                    PropertyAccessExpression
+                      Identifier: 'context'
+                      Identifier: 'factory'
+                    Identifier: ' elements'
+              PropertyAssignment
+                Identifier: '
+        createArrayBindingOrAssignmentElement'
+                Identifier: ' makeAssignmentElement'
+              ShorthandPropertyAssignment
+                Identifier: '
+        visitor'
+      IfStatement
+        Identifier: 'value'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        value'
+              EqualsToken
+              CallExpression
+                Identifier: ' visitNode'
+                Identifier: 'value'
+                Identifier: ' visitor'
+                Identifier: ' isExpression'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              Identifier: 'value'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: '
+            isIdentifier'
+                  Identifier: 'value'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' bindingOrAssignmentElementAssignsToName'
+                  Identifier: 'node'
+                  PropertyAccessExpression
+                    Identifier: ' value'
+                    Identifier: 'escapedText'
+              BarBarToken
+              CallExpression
+                Identifier: '
+            bindingOrAssignmentElementContainsNonLiteralComputedName'
+                Identifier: 'node'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            // If the right-hand value of the assignment is also an assignment target then
+            // we need to cache the right-hand value.
+            value'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' ensureIdentifier'
+                    Identifier: 'flattenContext'
+                    Identifier: ' value'
+                    FalseKeyword
+                    Identifier: ' location'
+            IfStatement
+              Identifier: 'needsValue'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            // If the right-hand value of the destructuring assignment needs to be preserved (as
+            // is the case when the destructuring assignment is part of a larger expression),
+            // then we need to cache the right-hand value.
+            //
+            // The source map location for the assignment should point to the entire binary
+            // expression.
+            value'
+                    EqualsToken
+                    CallExpression
+                      Identifier: ' ensureIdentifier'
+                      Identifier: 'flattenContext'
+                      Identifier: ' value'
+                      TrueKeyword
+                      Identifier: ' location'
+              IfStatement
+                CallExpression
+                  Identifier: 'nodeIsSynthesized'
+                  Identifier: 'node'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            // Generally, the source map location for a destructuring assignment is the root
+            // expression.
+            //
+            // However, if the root expression is synthesized (as in the case
+            // of the initializer when transforming a ForOfStatement), then the source map
+            // location should point to the right-hand value of the expression.
+            location'
+                      EqualsToken
+                      Identifier: ' value'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    flattenBindingOrAssignmentElement'
+          Identifier: 'flattenContext'
+          Identifier: ' node'
+          Identifier: ' value'
+          Identifier: ' location'
+          CallExpression
+            Identifier: ' /*skipInitializer*/ isDestructuringAssignment'
+            Identifier: 'node'
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          AmpersandAmpersandToken
+          Identifier: ' needsValue'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'some'
+                Identifier: 'expressions'
+            Block
+              ReturnStatement
+                Identifier: ' value'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        expressions'
+                Identifier: 'push'
+              Identifier: 'value'
+      ReturnStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' context'
+                Identifier: 'factory'
+              Identifier: 'inlineExpressions'
+            NonNullExpression
+              Identifier: 'expressions'
+          BarBarToken
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' context'
+                Identifier: 'factory'
+              Identifier: 'createOmittedExpression'
+      FunctionDeclaration
+        Identifier: ' emitExpression'
+        Parameter
+          Identifier: 'expression'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        expressions'
+              EqualsToken
+              CallExpression
+                Identifier: ' append'
+                Identifier: 'expressions'
+                Identifier: ' expression'
+      FunctionDeclaration
+        Identifier: ' emitBindingOrAssignment'
+        Parameter
+          Identifier: 'target'
+          TypeReference
+            Identifier: ' BindingOrAssignmentElementTarget'
+        Parameter
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' location'
+          TypeReference
+            Identifier: ' TextRange'
+        Parameter
+          Identifier: ' original'
+          UnionType
+            TypeReference
+              Identifier: ' Node'
+            UndefinedKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assertNode'
+              Identifier: 'target'
+              ConditionalExpression
+                Identifier: ' createAssignmentCallback'
+                QuestionToken
+                Identifier: ' isIdentifier'
+                ColonToken
+                Identifier: ' isExpression'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' expression'
+                ConditionalExpression
+                  Identifier: ' createAssignmentCallback'
+                  QuestionToken
+                  CallExpression
+                    Identifier: ' createAssignmentCallback'
+                    AsExpression
+                      Identifier: 'target'
+                      TypeReference
+                        Identifier: ' Identifier'
+                    Identifier: ' value'
+                    Identifier: ' location'
+                  ColonToken
+                  CallExpression
+                    Identifier: ' setTextRange'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                context'
+                          Identifier: 'factory'
+                        Identifier: 'createAssignment'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'Debug'
+                          Identifier: 'checkDefined'
+                        CallExpression
+                          Identifier: 'visitNode'
+                          AsExpression
+                            Identifier: 'target'
+                            TypeReference
+                              Identifier: ' Expression'
+                          Identifier: ' visitor'
+                          Identifier: ' isExpression'
+                      Identifier: ' value'
+                    Identifier: '
+                location'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        expression'
+                Identifier: 'original'
+              EqualsToken
+              Identifier: ' original'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        emitExpression'
+              Identifier: 'expression'
+  FunctionDeclaration
+    Identifier: ' bindingOrAssignmentElementAssignsToName'
+    Parameter
+      Identifier: 'element'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElement'
+    Parameter
+      Identifier: ' escapedName'
+      TypeReference
+        Identifier: ' __String'
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' target'
+            NonNullExpression
+              CallExpression
+                Identifier: ' getTargetOfBindingOrAssignmentElement'
+                Identifier: 'element'
+      IfStatement
+        CallExpression
+          Identifier: 'isBindingOrAssignmentPattern'
+          Identifier: 'target'
+        Block
+          ReturnStatement
+            CallExpression
+              Identifier: ' bindingOrAssignmentPatternAssignsToName'
+              Identifier: 'target'
+              Identifier: ' escapedName'
+        IfStatement
+          CallExpression
+            Identifier: 'isIdentifier'
+            Identifier: 'target'
+          Block
+            ReturnStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' target'
+                  Identifier: 'escapedText'
+                EqualsEqualsEqualsToken
+                Identifier: ' escapedName'
+      ReturnStatement
+        FalseKeyword
+  FunctionDeclaration
+    Identifier: ' bindingOrAssignmentPatternAssignsToName'
+    Parameter
+      Identifier: 'pattern'
+      TypeReference
+        Identifier: ' BindingOrAssignmentPattern'
+    Parameter
+      Identifier: ' escapedName'
+      TypeReference
+        Identifier: ' __String'
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' elements'
+            CallExpression
+              Identifier: ' getElementsOfBindingOrAssignmentPattern'
+              Identifier: 'pattern'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' element'
+        Identifier: ' elements'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'bindingOrAssignmentElementAssignsToName'
+              Identifier: 'element'
+              Identifier: ' escapedName'
+            Block
+              ReturnStatement
+                TrueKeyword
+      ReturnStatement
+        FalseKeyword
+  FunctionDeclaration
+    Identifier: ' bindingOrAssignmentElementContainsNonLiteralComputedName'
+    Parameter
+      Identifier: 'element'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElement'
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' propertyName'
+            CallExpression
+              Identifier: ' tryGetPropertyNameOfBindingOrAssignmentElement'
+              Identifier: 'element'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'propertyName'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isComputedPropertyName'
+              Identifier: 'propertyName'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isLiteralExpression'
+              PropertyAccessExpression
+                Identifier: 'propertyName'
+                Identifier: 'expression'
+        Block
+          ReturnStatement
+            TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' target'
+            CallExpression
+              Identifier: ' getTargetOfBindingOrAssignmentElement'
+              Identifier: 'element'
+      ReturnStatement
+        BinaryExpression
+          BinaryExpression
+            PrefixUnaryExpression
+              PrefixUnaryExpression
+                Identifier: 'target'
+            AmpersandAmpersandToken
+            CallExpression
+              Identifier: ' isBindingOrAssignmentPattern'
+              Identifier: 'target'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' bindingOrAssignmentPatternContainsNonLiteralComputedName'
+            Identifier: 'target'
+  FunctionDeclaration
+    Identifier: ' bindingOrAssignmentPatternContainsNonLiteralComputedName'
+    Parameter
+      Identifier: 'pattern'
+      TypeReference
+        Identifier: ' BindingOrAssignmentPattern'
+    BooleanKeyword
+    Block
+      ReturnStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'forEach'
+              CallExpression
+                Identifier: 'getElementsOfBindingOrAssignmentPattern'
+                Identifier: 'pattern'
+              Identifier: ' bindingOrAssignmentElementContainsNonLiteralComputedName'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' flattenDestructuringBinding'
+    Parameter
+      Identifier: '
+    node'
+      UnionType
+        TypeReference
+          Identifier: ' VariableDeclaration'
+        TypeReference
+          Identifier: ' ParameterDeclaration'
+    Parameter
+      Identifier: '
+    visitor'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        TypeReference
+          Identifier: ' VisitResult'
+          UnionType
+            TypeReference
+              Identifier: 'Node'
+            UndefinedKeyword
+    Parameter
+      Identifier: '
+    context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    Parameter
+      Identifier: '
+    level'
+      TypeReference
+        Identifier: ' FlattenLevel'
+    Parameter
+      Identifier: '
+    rval'
+      QuestionToken
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: '
+    hoistTempVariables'
+      FalseKeyword
+    Parameter
+      Identifier: '
+    skipInitializer'
+      QuestionToken
+      BooleanKeyword
+    ArrayType
+      TypeReference
+        Identifier: ' VariableDeclaration'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' pendingExpressions'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Expression'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' pendingDeclarations'
+            ArrayType
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' pendingExpressions'
+                  QuestionToken
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Expression'
+                PropertySignature
+                  Identifier: ' name'
+                  TypeReference
+                    Identifier: ' BindingName'
+                PropertySignature
+                  Identifier: ' value'
+                  TypeReference
+                    Identifier: ' Expression'
+                PropertySignature
+                  Identifier: ' location'
+                  QuestionToken
+                  TypeReference
+                    Identifier: ' TextRange'
+                PropertySignature
+                  Identifier: ' original'
+                  QuestionToken
+                  TypeReference
+                    Identifier: ' Node'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' declarations'
+            ArrayType
+              TypeReference
+                Identifier: ' VariableDeclaration'
+            ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' flattenContext'
+            TypeReference
+              Identifier: ' FlattenContext'
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: '
+        context'
+              ShorthandPropertyAssignment
+                Identifier: '
+        level'
+              PropertyAssignment
+                Identifier: '
+        downlevelIteration'
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'context'
+                          Identifier: 'getCompilerOptions'
+                      Identifier: 'downlevelIteration'
+              ShorthandPropertyAssignment
+                Identifier: '
+        hoistTempVariables'
+              ShorthandPropertyAssignment
+                Identifier: '
+        emitExpression'
+              ShorthandPropertyAssignment
+                Identifier: '
+        emitBindingOrAssignment'
+              PropertyAssignment
+                Identifier: '
+        createArrayBindingOrAssignmentPattern'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' elements'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' makeArrayBindingPattern'
+                    PropertyAccessExpression
+                      Identifier: 'context'
+                      Identifier: 'factory'
+                    Identifier: ' elements'
+              PropertyAssignment
+                Identifier: '
+        createObjectBindingOrAssignmentPattern'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' elements'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' makeObjectBindingPattern'
+                    PropertyAccessExpression
+                      Identifier: 'context'
+                      Identifier: 'factory'
+                    Identifier: ' elements'
+              PropertyAssignment
+                Identifier: '
+        createArrayBindingOrAssignmentElement'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' name'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    Identifier: ' makeBindingElement'
+                    PropertyAccessExpression
+                      Identifier: 'context'
+                      Identifier: 'factory'
+                    Identifier: ' name'
+              ShorthandPropertyAssignment
+                Identifier: '
+        visitor'
+      IfStatement
+        CallExpression
+          Identifier: 'isVariableDeclaration'
+          Identifier: 'node'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' initializer'
+                CallExpression
+                  Identifier: ' getInitializerOfBindingOrAssignmentElement'
+                  Identifier: 'node'
+          IfStatement
+            BinaryExpression
+              Identifier: '
+            initializer'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  BinaryExpression
+                    CallExpression
+                      Identifier: 'isIdentifier'
+                      Identifier: 'initializer'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      Identifier: ' bindingOrAssignmentElementAssignsToName'
+                      Identifier: 'node'
+                      PropertyAccessExpression
+                        Identifier: ' initializer'
+                        Identifier: 'escapedText'
+                  BarBarToken
+                  CallExpression
+                    Identifier: '
+                bindingOrAssignmentElementContainsNonLiteralComputedName'
+                    Identifier: 'node'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            // If the right-hand value of the assignment is also an assignment target then
+            // we need to cache the right-hand value.
+            initializer'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' ensureIdentifier'
+                    Identifier: 'flattenContext'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' Debug'
+                        Identifier: 'checkDefined'
+                      CallExpression
+                        Identifier: 'visitNode'
+                        Identifier: 'initializer'
+                        PropertyAccessExpression
+                          Identifier: ' flattenContext'
+                          Identifier: 'visitor'
+                        Identifier: ' isExpression'
+                    FalseKeyword
+                    Identifier: ' initializer'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            node'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'factory'
+                      Identifier: 'updateVariableDeclaration'
+                    Identifier: 'node'
+                    PropertyAccessExpression
+                      Identifier: ' node'
+                      Identifier: 'name'
+                    Identifier: ' /*exclamationToken*/ undefined'
+                    Identifier: ' /*type*/ undefined'
+                    Identifier: ' initializer'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    flattenBindingOrAssignmentElement'
+          Identifier: 'flattenContext'
+          Identifier: ' node'
+          Identifier: ' rval'
+          Identifier: ' node'
+          Identifier: ' skipInitializer'
+      IfStatement
+        Identifier: 'pendingExpressions'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' temp'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'factory'
+                    Identifier: 'createTempVariable'
+                  Identifier: '/*recordTempVariable*/ undefined'
+          IfStatement
+            Identifier: 'hoistTempVariables'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' value'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'factory'
+                        Identifier: 'inlineExpressions'
+                      Identifier: 'pendingExpressions'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            pendingExpressions'
+                  EqualsToken
+                  Identifier: ' undefined'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            emitBindingOrAssignment'
+                  Identifier: 'temp'
+                  Identifier: ' value'
+                  Identifier: ' /*location*/ undefined'
+                  Identifier: ' /*original*/ undefined'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            context'
+                    Identifier: 'hoistVariableDeclaration'
+                  Identifier: 'temp'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' pendingDeclaration'
+                    CallExpression
+                      Identifier: ' last'
+                      Identifier: 'pendingDeclarations'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            pendingDeclaration'
+                    Identifier: 'pendingExpressions'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' append'
+                    PropertyAccessExpression
+                      Identifier: '
+                pendingDeclaration'
+                      Identifier: 'pendingExpressions'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                context'
+                          Identifier: 'factory'
+                        Identifier: 'createAssignment'
+                      Identifier: 'temp'
+                      PropertyAccessExpression
+                        Identifier: ' pendingDeclaration'
+                        Identifier: 'value'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            addRange'
+                  PropertyAccessExpression
+                    Identifier: 'pendingDeclaration'
+                    Identifier: 'pendingExpressions'
+                  Identifier: ' pendingExpressions'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            pendingDeclaration'
+                    Identifier: 'value'
+                  EqualsToken
+                  Identifier: ' temp'
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' pendingExpressions'
+              BindingElement
+                Identifier: ' name'
+              BindingElement
+                Identifier: ' value'
+              BindingElement
+                Identifier: ' location'
+              BindingElement
+                Identifier: ' original'
+        Identifier: ' pendingDeclarations'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' variable'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'factory'
+                    Identifier: 'createVariableDeclaration'
+                  Identifier: '
+            name'
+                  Identifier: '
+            /*exclamationToken*/ undefined'
+                  Identifier: '
+            /*type*/ undefined'
+                  ConditionalExpression
+                    Identifier: '
+            pendingExpressions'
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'factory'
+                        Identifier: 'inlineExpressions'
+                      CallExpression
+                        Identifier: 'append'
+                        Identifier: 'pendingExpressions'
+                        Identifier: ' value'
+                    ColonToken
+                    Identifier: ' value'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        variable'
+                Identifier: 'original'
+              EqualsToken
+              Identifier: ' original'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        setTextRange'
+              Identifier: 'variable'
+              Identifier: ' location'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        declarations'
+                Identifier: 'push'
+              Identifier: 'variable'
+      ReturnStatement
+        Identifier: ' declarations'
+      FunctionDeclaration
+        Identifier: ' emitExpression'
+        Parameter
+          Identifier: 'value'
+          TypeReference
+            Identifier: ' Expression'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        pendingExpressions'
+              EqualsToken
+              CallExpression
+                Identifier: ' append'
+                Identifier: 'pendingExpressions'
+                Identifier: ' value'
+      FunctionDeclaration
+        Identifier: ' emitBindingOrAssignment'
+        Parameter
+          Identifier: 'target'
+          TypeReference
+            Identifier: ' BindingOrAssignmentElementTarget'
+        Parameter
+          Identifier: ' value'
+          TypeReference
+            Identifier: ' Expression'
+        Parameter
+          Identifier: ' location'
+          UnionType
+            TypeReference
+              Identifier: ' TextRange'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' original'
+          UnionType
+            TypeReference
+              Identifier: ' Node'
+            UndefinedKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assertNode'
+              Identifier: 'target'
+              Identifier: ' isBindingName'
+          IfStatement
+            Identifier: 'pendingExpressions'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            value'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'factory'
+                      Identifier: 'inlineExpressions'
+                    CallExpression
+                      Identifier: 'append'
+                      Identifier: 'pendingExpressions'
+                      Identifier: ' value'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            pendingExpressions'
+                  EqualsToken
+                  Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        pendingDeclarations'
+                Identifier: 'push'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' pendingExpressions'
+                PropertyAssignment
+                  Identifier: ' name'
+                  Identifier: ' target'
+                ShorthandPropertyAssignment
+                  Identifier: ' value'
+                ShorthandPropertyAssignment
+                  Identifier: ' location'
+                ShorthandPropertyAssignment
+                  Identifier: ' original'
+  FunctionDeclaration
+    Identifier: ' flattenBindingOrAssignmentElement'
+    Parameter
+      Identifier: '
+    flattenContext'
+      TypeReference
+        Identifier: ' FlattenContext'
+    Parameter
+      Identifier: '
+    element'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElement'
+    Parameter
+      Identifier: '
+    value'
+      UnionType
+        TypeReference
+          Identifier: ' Expression'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    location'
+      TypeReference
+        Identifier: ' TextRange'
+    Parameter
+      Identifier: '
+    skipInitializer'
+      QuestionToken
+      BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bindingTarget'
+            NonNullExpression
+              CallExpression
+                Identifier: ' getTargetOfBindingOrAssignmentElement'
+                Identifier: 'element'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'skipInitializer'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' initializer'
+                CallExpression
+                  Identifier: ' visitNode'
+                  CallExpression
+                    Identifier: 'getInitializerOfBindingOrAssignmentElement'
+                    Identifier: 'element'
+                  PropertyAccessExpression
+                    Identifier: ' flattenContext'
+                    Identifier: 'visitor'
+                  Identifier: ' isExpression'
+          IfStatement
+            Identifier: 'initializer'
+            Block
+              IfStatement
+                Identifier: 'value'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                value'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' createDefaultValueCheck'
+                        Identifier: 'flattenContext'
+                        Identifier: ' value'
+                        Identifier: ' initializer'
+                        Identifier: ' location'
+                  IfStatement
+                    BinaryExpression
+                      PrefixUnaryExpression
+                        CallExpression
+                          Identifier: 'isSimpleInlineableExpression'
+                          Identifier: 'initializer'
+                      AmpersandAmpersandToken
+                      CallExpression
+                        Identifier: ' isBindingOrAssignmentPattern'
+                        Identifier: 'bindingTarget'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    value'
+                          EqualsToken
+                          CallExpression
+                            Identifier: ' ensureIdentifier'
+                            Identifier: 'flattenContext'
+                            Identifier: ' value'
+                            TrueKeyword
+                            Identifier: ' location'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                value'
+                      EqualsToken
+                      Identifier: ' initializer'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'value'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            // Use 'void 0' in absence of value and initializer
+            value'
+                    EqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' flattenContext'
+                            Identifier: 'context'
+                          Identifier: 'factory'
+                        Identifier: 'createVoidZero'
+      IfStatement
+        CallExpression
+          Identifier: 'isObjectBindingOrAssignmentPattern'
+          Identifier: 'bindingTarget'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        flattenObjectBindingOrAssignmentPattern'
+              Identifier: 'flattenContext'
+              Identifier: ' element'
+              Identifier: ' bindingTarget'
+              NonNullExpression
+                Identifier: ' value'
+              Identifier: ' location'
+        IfStatement
+          CallExpression
+            Identifier: 'isArrayBindingOrAssignmentPattern'
+            Identifier: 'bindingTarget'
+          Block
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+        flattenArrayBindingOrAssignmentPattern'
+                Identifier: 'flattenContext'
+                Identifier: ' element'
+                Identifier: ' bindingTarget'
+                NonNullExpression
+                  Identifier: ' value'
+                Identifier: ' location'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        flattenContext'
+                  Identifier: 'emitBindingOrAssignment'
+                Identifier: 'bindingTarget'
+                NonNullExpression
+                  Identifier: ' value'
+                Identifier: ' location'
+                Identifier: ' /*original*/ element'
+  FunctionDeclaration
+    Identifier: ' flattenObjectBindingOrAssignmentPattern'
+    Parameter
+      Identifier: 'flattenContext'
+      TypeReference
+        Identifier: ' FlattenContext'
+    Parameter
+      Identifier: ' parent'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElement'
+    Parameter
+      Identifier: ' pattern'
+      TypeReference
+        Identifier: ' ObjectBindingOrAssignmentPattern'
+    Parameter
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' location'
+      TypeReference
+        Identifier: ' TextRange'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' elements'
+            CallExpression
+              Identifier: ' getElementsOfBindingOrAssignmentPattern'
+              Identifier: 'pattern'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' numElements'
+            PropertyAccessExpression
+              Identifier: ' elements'
+              Identifier: 'length'
+      IfStatement
+        BinaryExpression
+          Identifier: 'numElements'
+          ExclamationEqualsEqualsToken
+          NumericLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' reuseIdentifierExpressions'
+                BinaryExpression
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isDeclarationBindingElement'
+                      Identifier: 'parent'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' numElements'
+                    ExclamationEqualsEqualsToken
+                    NumericLiteral
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        value'
+              EqualsToken
+              CallExpression
+                Identifier: ' ensureIdentifier'
+                Identifier: 'flattenContext'
+                Identifier: ' value'
+                Identifier: ' reuseIdentifierExpressions'
+                Identifier: ' location'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bindingElements'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' BindingOrAssignmentElement'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' computedTempVariables'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' Expression'
+              UndefinedKeyword
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          Identifier: ' numElements'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' element'
+                ElementAccessExpression
+                  Identifier: ' elements'
+                  Identifier: 'i'
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'getRestIndicatorOfBindingOrAssignmentElement'
+                Identifier: 'element'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' propertyName'
+                    NonNullExpression
+                      CallExpression
+                        Identifier: ' getPropertyNameOfBindingOrAssignmentElement'
+                        Identifier: 'element'
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                flattenContext'
+                          Identifier: 'level'
+                        GreaterThanEqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' FlattenLevel'
+                          Identifier: 'ObjectRest'
+                      AmpersandAmpersandToken
+                      PrefixUnaryExpression
+                        ParenthesizedExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'element'
+                              Identifier: 'transformFlags'
+                            AmpersandToken
+                            ParenthesizedExpression
+                              BinaryExpression
+                                PropertyAccessExpression
+                                  Identifier: 'TransformFlags'
+                                  Identifier: 'ContainsRestOrSpread'
+                                BarToken
+                                PropertyAccessExpression
+                                  Identifier: ' TransformFlags'
+                                  Identifier: 'ContainsObjectRestOrSpread'
+                    AmpersandAmpersandToken
+                    PrefixUnaryExpression
+                      ParenthesizedExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            NonNullExpression
+                              CallExpression
+                                Identifier: 'getTargetOfBindingOrAssignmentElement'
+                                Identifier: 'element'
+                            Identifier: 'transformFlags'
+                          AmpersandToken
+                          ParenthesizedExpression
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: 'TransformFlags'
+                                Identifier: 'ContainsRestOrSpread'
+                              BarToken
+                              PropertyAccessExpression
+                                Identifier: ' TransformFlags'
+                                Identifier: 'ContainsObjectRestOrSpread'
+                  AmpersandAmpersandToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      Identifier: 'isComputedPropertyName'
+                      Identifier: 'propertyName'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                bindingElements'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' append'
+                        Identifier: 'bindingElements'
+                        CallExpression
+                          Identifier: ' visitNode'
+                          Identifier: 'element'
+                          PropertyAccessExpression
+                            Identifier: ' flattenContext'
+                            Identifier: 'visitor'
+                          Identifier: ' isBindingOrAssignmentElement'
+                Block
+                  IfStatement
+                    Identifier: 'bindingElements'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    flattenContext'
+                            Identifier: 'emitBindingOrAssignment'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'flattenContext'
+                              Identifier: 'createObjectBindingOrAssignmentPattern'
+                            Identifier: 'bindingElements'
+                          Identifier: ' value'
+                          Identifier: ' location'
+                          Identifier: ' pattern'
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    bindingElements'
+                          EqualsToken
+                          Identifier: ' undefined'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' rhsValue'
+                        CallExpression
+                          Identifier: ' createDestructuringPropertyAccess'
+                          Identifier: 'flattenContext'
+                          Identifier: ' value'
+                          Identifier: ' propertyName'
+                  IfStatement
+                    CallExpression
+                      Identifier: 'isComputedPropertyName'
+                      Identifier: 'propertyName'
+                    Block
+                      ExpressionStatement
+                        BinaryExpression
+                          Identifier: '
+                    computedTempVariables'
+                          EqualsToken
+                          CallExpression
+                            Identifier: ' append'
+                            TypeReference
+                              Identifier: 'Expression'
+                            Identifier: 'computedTempVariables'
+                            PropertyAccessExpression
+                              ParenthesizedExpression
+                                AsExpression
+                                  Identifier: 'rhsValue'
+                                  TypeReference
+                                    Identifier: ' ElementAccessExpression'
+                              Identifier: 'argumentExpression'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                flattenBindingOrAssignmentElement'
+                      Identifier: 'flattenContext'
+                      Identifier: ' element'
+                      Identifier: ' rhsValue'
+                      Identifier: ' /*location*/ element'
+            IfStatement
+              BinaryExpression
+                Identifier: 'i'
+                EqualsEqualsEqualsToken
+                BinaryExpression
+                  Identifier: ' numElements'
+                  MinusToken
+                  NumericLiteral
+              Block
+                IfStatement
+                  Identifier: 'bindingElements'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                flattenContext'
+                          Identifier: 'emitBindingOrAssignment'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'flattenContext'
+                            Identifier: 'createObjectBindingOrAssignmentPattern'
+                          Identifier: 'bindingElements'
+                        Identifier: ' value'
+                        Identifier: ' location'
+                        Identifier: ' pattern'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                bindingElements'
+                        EqualsToken
+                        Identifier: ' undefined'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' rhsValue'
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' flattenContext'
+                                Identifier: 'context'
+                              Identifier: 'getEmitHelperFactory'
+                          Identifier: 'createRestHelper'
+                        Identifier: 'value'
+                        Identifier: ' elements'
+                        Identifier: ' computedTempVariables'
+                        Identifier: ' pattern'
+                ExpressionStatement
+                  CallExpression
+                    Identifier: '
+            flattenBindingOrAssignmentElement'
+                    Identifier: 'flattenContext'
+                    Identifier: ' element'
+                    Identifier: ' rhsValue'
+                    Identifier: ' element'
+      IfStatement
+        Identifier: 'bindingElements'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        flattenContext'
+                Identifier: 'emitBindingOrAssignment'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'flattenContext'
+                  Identifier: 'createObjectBindingOrAssignmentPattern'
+                Identifier: 'bindingElements'
+              Identifier: ' value'
+              Identifier: ' location'
+              Identifier: ' pattern'
+  FunctionDeclaration
+    Identifier: ' flattenArrayBindingOrAssignmentPattern'
+    Parameter
+      Identifier: 'flattenContext'
+      TypeReference
+        Identifier: ' FlattenContext'
+    Parameter
+      Identifier: ' parent'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElement'
+    Parameter
+      Identifier: ' pattern'
+      TypeReference
+        Identifier: ' ArrayBindingOrAssignmentPattern'
+    Parameter
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' location'
+      TypeReference
+        Identifier: ' TextRange'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' elements'
+            CallExpression
+              Identifier: ' getElementsOfBindingOrAssignmentPattern'
+              Identifier: 'pattern'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' numElements'
+            PropertyAccessExpression
+              Identifier: ' elements'
+              Identifier: 'length'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'flattenContext'
+              Identifier: 'level'
+            LessThanToken
+            PropertyAccessExpression
+              Identifier: ' FlattenLevel'
+              Identifier: 'ObjectRest'
+          AmpersandAmpersandToken
+          PropertyAccessExpression
+            Identifier: ' flattenContext'
+            Identifier: 'downlevelIteration'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        // Read the elements of the iterable into an array
+        value'
+              EqualsToken
+              CallExpression
+                Identifier: ' ensureIdentifier'
+                Identifier: '
+            flattenContext'
+                CallExpression
+                  Identifier: '
+            setTextRange'
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                flattenContext'
+                            Identifier: 'context'
+                          Identifier: 'getEmitHelperFactory'
+                      Identifier: 'createReadHelper'
+                    Identifier: '
+                    value'
+                    ConditionalExpression
+                      BinaryExpression
+                        BinaryExpression
+                          Identifier: '
+                    numElements'
+                          GreaterThanToken
+                          NumericLiteral
+                        AmpersandAmpersandToken
+                        CallExpression
+                          Identifier: ' getRestIndicatorOfBindingOrAssignmentElement'
+                          ElementAccessExpression
+                            Identifier: 'elements'
+                            BinaryExpression
+                              Identifier: 'numElements'
+                              MinusToken
+                              NumericLiteral
+                      QuestionToken
+                      Identifier: ' undefined'
+                      ColonToken
+                      Identifier: ' numElements'
+                  Identifier: '
+                location'
+                FalseKeyword
+                Identifier: '
+            location'
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                Identifier: '
+        numElements'
+                ExclamationEqualsEqualsToken
+                NumericLiteral
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'flattenContext'
+                      Identifier: 'level'
+                    LessThanToken
+                    PropertyAccessExpression
+                      Identifier: ' FlattenLevel'
+                      Identifier: 'ObjectRest'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' numElements'
+                    EqualsEqualsEqualsToken
+                    NumericLiteral
+            BarBarToken
+            CallExpression
+              Identifier: ' every'
+              Identifier: 'elements'
+              Identifier: ' isOmittedExpression'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' reuseIdentifierExpressions'
+                  BinaryExpression
+                    PrefixUnaryExpression
+                      CallExpression
+                        Identifier: 'isDeclarationBindingElement'
+                        Identifier: 'parent'
+                    BarBarToken
+                    BinaryExpression
+                      Identifier: ' numElements'
+                      ExclamationEqualsEqualsToken
+                      NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+        value'
+                EqualsToken
+                CallExpression
+                  Identifier: ' ensureIdentifier'
+                  Identifier: 'flattenContext'
+                  Identifier: ' value'
+                  Identifier: ' reuseIdentifierExpressions'
+                  Identifier: ' location'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bindingElements'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' BindingOrAssignmentElement'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' restContainingElements'
+            UnionType
+              ArrayType
+                TupleType
+                  TypeReference
+                    Identifier: 'Identifier'
+                  TypeReference
+                    Identifier: ' BindingOrAssignmentElement'
+              UndefinedKeyword
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          Identifier: ' numElements'
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' element'
+                ElementAccessExpression
+                  Identifier: ' elements'
+                  Identifier: 'i'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'flattenContext'
+                Identifier: 'level'
+              GreaterThanEqualsToken
+              PropertyAccessExpression
+                Identifier: ' FlattenLevel'
+                Identifier: 'ObjectRest'
+            Block
+              IfStatement
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'element'
+                      Identifier: 'transformFlags'
+                    AmpersandToken
+                    PropertyAccessExpression
+                      Identifier: ' TransformFlags'
+                      Identifier: 'ContainsObjectRestOrSpread'
+                  BarBarToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' flattenContext'
+                      Identifier: 'hasTransformedPriorElement'
+                    AmpersandAmpersandToken
+                    PrefixUnaryExpression
+                      CallExpression
+                        Identifier: 'isSimpleBindingOrAssignmentElement'
+                        Identifier: 'element'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                flattenContext'
+                        Identifier: 'hasTransformedPriorElement'
+                      EqualsToken
+                      TrueKeyword
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' temp'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' flattenContext'
+                                Identifier: 'context'
+                              Identifier: 'factory'
+                            Identifier: 'createTempVariable'
+                          Identifier: '/*recordTempVariable*/ undefined'
+                  IfStatement
+                    PropertyAccessExpression
+                      Identifier: 'flattenContext'
+                      Identifier: 'hoistTempVariables'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    flattenContext'
+                              Identifier: 'context'
+                            Identifier: 'hoistVariableDeclaration'
+                          Identifier: 'temp'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+
+                restContainingElements'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' append'
+                        Identifier: 'restContainingElements'
+                        AsExpression
+                          ArrayLiteralExpression
+                            Identifier: 'temp'
+                            Identifier: ' element'
+                          TupleType
+                            TypeReference
+                              Identifier: 'Identifier'
+                            TypeReference
+                              Identifier: ' BindingOrAssignmentElement'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                bindingElements'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' append'
+                        Identifier: 'bindingElements'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' flattenContext'
+                            Identifier: 'createArrayBindingOrAssignmentElement'
+                          Identifier: 'temp'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                bindingElements'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' append'
+                        Identifier: 'bindingElements'
+                        Identifier: ' element'
+            IfStatement
+              CallExpression
+                Identifier: 'isOmittedExpression'
+                Identifier: 'element'
+              Block
+                ContinueStatement
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'getRestIndicatorOfBindingOrAssignmentElement'
+                    Identifier: 'element'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' rhsValue'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' flattenContext'
+                                Identifier: 'context'
+                              Identifier: 'factory'
+                            Identifier: 'createElementAccessExpression'
+                          Identifier: 'value'
+                          Identifier: ' i'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            flattenBindingOrAssignmentElement'
+                      Identifier: 'flattenContext'
+                      Identifier: ' element'
+                      Identifier: ' rhsValue'
+                      Identifier: ' /*location*/ element'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'i'
+                    EqualsEqualsEqualsToken
+                    BinaryExpression
+                      Identifier: ' numElements'
+                      MinusToken
+                      NumericLiteral
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' rhsValue'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' flattenContext'
+                                  Identifier: 'context'
+                                Identifier: 'factory'
+                              Identifier: 'createArraySliceCall'
+                            Identifier: 'value'
+                            Identifier: ' i'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+            flattenBindingOrAssignmentElement'
+                        Identifier: 'flattenContext'
+                        Identifier: ' element'
+                        Identifier: ' rhsValue'
+                        Identifier: ' /*location*/ element'
+      IfStatement
+        Identifier: 'bindingElements'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        flattenContext'
+                Identifier: 'emitBindingOrAssignment'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'flattenContext'
+                  Identifier: 'createArrayBindingOrAssignmentPattern'
+                Identifier: 'bindingElements'
+              Identifier: ' value'
+              Identifier: ' location'
+              Identifier: ' pattern'
+      IfStatement
+        Identifier: 'restContainingElements'
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                ArrayBindingPattern
+                  BindingElement
+                    Identifier: 'id'
+                  BindingElement
+                    Identifier: ' element'
+            Identifier: ' restContainingElements'
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            flattenBindingOrAssignmentElement'
+                  Identifier: 'flattenContext'
+                  Identifier: ' element'
+                  Identifier: ' id'
+                  Identifier: ' element'
+  FunctionDeclaration
+    Identifier: ' isSimpleBindingOrAssignmentElement'
+    Parameter
+      Identifier: 'element'
+      TypeReference
+        Identifier: ' BindingOrAssignmentElement'
+    BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' target'
+            CallExpression
+              Identifier: ' getTargetOfBindingOrAssignmentElement'
+              Identifier: 'element'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'target'
+          BarBarToken
+          CallExpression
+            Identifier: ' isOmittedExpression'
+            Identifier: 'target'
+        ReturnStatement
+          TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' propertyName'
+            CallExpression
+              Identifier: ' tryGetPropertyNameOfBindingOrAssignmentElement'
+              Identifier: 'element'
+      IfStatement
+        BinaryExpression
+          Identifier: 'propertyName'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isPropertyNameLiteral'
+              Identifier: 'propertyName'
+        ReturnStatement
+          FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' initializer'
+            CallExpression
+              Identifier: ' getInitializerOfBindingOrAssignmentElement'
+              Identifier: 'element'
+      IfStatement
+        BinaryExpression
+          Identifier: 'initializer'
+          AmpersandAmpersandToken
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isSimpleInlineableExpression'
+              Identifier: 'initializer'
+        ReturnStatement
+          FalseKeyword
+      IfStatement
+        CallExpression
+          Identifier: 'isBindingOrAssignmentPattern'
+          Identifier: 'target'
+        ReturnStatement
+          CallExpression
+            Identifier: ' every'
+            CallExpression
+              Identifier: 'getElementsOfBindingOrAssignmentPattern'
+              Identifier: 'target'
+            Identifier: ' isSimpleBindingOrAssignmentElement'
+      ReturnStatement
+        CallExpression
+          Identifier: ' isIdentifier'
+          Identifier: 'target'
+  FunctionDeclaration
+    Identifier: ' createDefaultValueCheck'
+    Parameter
+      Identifier: 'flattenContext'
+      TypeReference
+        Identifier: ' FlattenContext'
+    Parameter
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' defaultValue'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' location'
+      TypeReference
+        Identifier: ' TextRange'
+    TypeReference
+      Identifier: ' Expression'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    value'
+          EqualsToken
+          CallExpression
+            Identifier: ' ensureIdentifier'
+            Identifier: 'flattenContext'
+            Identifier: ' value'
+            TrueKeyword
+            Identifier: ' location'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' flattenContext'
+                Identifier: 'context'
+              Identifier: 'factory'
+            Identifier: 'createConditionalExpression'
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'flattenContext'
+                  Identifier: 'context'
+                Identifier: 'factory'
+              Identifier: 'createTypeCheck'
+            Identifier: 'value'
+            StringLiteral
+          Identifier: ' /*questionToken*/ undefined'
+          Identifier: ' defaultValue'
+          Identifier: ' /*colonToken*/ undefined'
+          Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' createDestructuringPropertyAccess'
+    Parameter
+      Identifier: 'flattenContext'
+      TypeReference
+        Identifier: ' FlattenContext'
+    Parameter
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' propertyName'
+      TypeReference
+        Identifier: ' PropertyName'
+    TypeReference
+      Identifier: ' LeftHandSideExpression'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' factory'
+            PropertyAccessExpression
+              Identifier: ' flattenContext'
+              Identifier: 'context'
+      IfStatement
+        CallExpression
+          Identifier: 'isComputedPropertyName'
+          Identifier: 'propertyName'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' argumentExpression'
+                CallExpression
+                  Identifier: ' ensureIdentifier'
+                  Identifier: 'flattenContext'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Debug'
+                      Identifier: 'checkDefined'
+                    CallExpression
+                      Identifier: 'visitNode'
+                      PropertyAccessExpression
+                        Identifier: 'propertyName'
+                        Identifier: 'expression'
+                      PropertyAccessExpression
+                        Identifier: ' flattenContext'
+                        Identifier: 'visitor'
+                      Identifier: ' isExpression'
+                  FalseKeyword
+                  Identifier: ' /*location*/ propertyName'
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' flattenContext'
+                    Identifier: 'context'
+                  Identifier: 'factory'
+                Identifier: 'createElementAccessExpression'
+              Identifier: 'value'
+              Identifier: ' argumentExpression'
+        IfStatement
+          BinaryExpression
+            CallExpression
+              Identifier: 'isStringOrNumericLiteralLike'
+              Identifier: 'propertyName'
+            BarBarToken
+            CallExpression
+              Identifier: ' isBigIntLiteral'
+              Identifier: 'propertyName'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' argumentExpression'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'cloneNode'
+                    Identifier: 'propertyName'
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' flattenContext'
+                      Identifier: 'context'
+                    Identifier: 'factory'
+                  Identifier: 'createElementAccessExpression'
+                Identifier: 'value'
+                Identifier: ' argumentExpression'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' name'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' flattenContext'
+                          Identifier: 'context'
+                        Identifier: 'factory'
+                      Identifier: 'createIdentifier'
+                    CallExpression
+                      Identifier: 'idText'
+                      Identifier: 'propertyName'
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' flattenContext'
+                      Identifier: 'context'
+                    Identifier: 'factory'
+                  Identifier: 'createPropertyAccessExpression'
+                Identifier: 'value'
+                Identifier: ' name'
+  FunctionDeclaration
+    Identifier: ' ensureIdentifier'
+    Parameter
+      Identifier: 'flattenContext'
+      TypeReference
+        Identifier: ' FlattenContext'
+    Parameter
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Expression'
+    Parameter
+      Identifier: ' reuseIdentifierExpressions'
+      BooleanKeyword
+    Parameter
+      Identifier: ' location'
+      TypeReference
+        Identifier: ' TextRange'
+    Block
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isIdentifier'
+            Identifier: 'value'
+          AmpersandAmpersandToken
+          Identifier: ' reuseIdentifierExpressions'
+        Block
+          ReturnStatement
+            Identifier: ' value'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' temp'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' flattenContext'
+                        Identifier: 'context'
+                      Identifier: 'factory'
+                    Identifier: 'createTempVariable'
+                  Identifier: '/*recordTempVariable*/ undefined'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'flattenContext'
+              Identifier: 'hoistTempVariables'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            flattenContext'
+                      Identifier: 'context'
+                    Identifier: 'hoistVariableDeclaration'
+                  Identifier: 'temp'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            flattenContext'
+                    Identifier: 'emitExpression'
+                  CallExpression
+                    Identifier: 'setTextRange'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'flattenContext'
+                            Identifier: 'context'
+                          Identifier: 'factory'
+                        Identifier: 'createAssignment'
+                      Identifier: 'temp'
+                      Identifier: ' value'
+                    Identifier: ' location'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            flattenContext'
+                    Identifier: 'emitBindingOrAssignment'
+                  Identifier: 'temp'
+                  Identifier: ' value'
+                  Identifier: ' location'
+                  Identifier: ' /*original*/ undefined'
+          ReturnStatement
+            Identifier: ' temp'
+  FunctionDeclaration
+    Identifier: ' makeArrayBindingPattern'
+    Parameter
+      Identifier: 'factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    Parameter
+      Identifier: ' elements'
+      ArrayType
+        TypeReference
+          Identifier: ' BindingOrAssignmentElement'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assertEachNode'
+          Identifier: 'elements'
+          Identifier: ' isArrayBindingElement'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createArrayBindingPattern'
+          Identifier: 'elements'
+  FunctionDeclaration
+    Identifier: ' makeArrayAssignmentPattern'
+    Parameter
+      Identifier: 'factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    Parameter
+      Identifier: ' elements'
+      ArrayType
+        TypeReference
+          Identifier: ' BindingOrAssignmentElement'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assertEachNode'
+          Identifier: 'elements'
+          Identifier: ' isArrayBindingOrAssignmentElement'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createArrayLiteralExpression'
+          CallExpression
+            Identifier: 'map'
+            Identifier: 'elements'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'converters'
+              Identifier: 'convertToArrayAssignmentElement'
+  FunctionDeclaration
+    Identifier: ' makeObjectBindingPattern'
+    Parameter
+      Identifier: 'factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    Parameter
+      Identifier: ' elements'
+      ArrayType
+        TypeReference
+          Identifier: ' BindingOrAssignmentElement'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assertEachNode'
+          Identifier: 'elements'
+          Identifier: ' isBindingElement'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createObjectBindingPattern'
+          Identifier: 'elements'
+  FunctionDeclaration
+    Identifier: ' makeObjectAssignmentPattern'
+    Parameter
+      Identifier: 'factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    Parameter
+      Identifier: ' elements'
+      ArrayType
+        TypeReference
+          Identifier: ' BindingOrAssignmentElement'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    Debug'
+            Identifier: 'assertEachNode'
+          Identifier: 'elements'
+          Identifier: ' isObjectBindingOrAssignmentElement'
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createObjectLiteralExpression'
+          CallExpression
+            Identifier: 'map'
+            Identifier: 'elements'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'converters'
+              Identifier: 'convertToObjectAssignmentElement'
+  FunctionDeclaration
+    Identifier: ' makeBindingElement'
+    Parameter
+      Identifier: 'factory'
+      TypeReference
+        Identifier: ' NodeFactory'
+    Parameter
+      Identifier: ' name'
+      TypeReference
+        Identifier: ' Identifier'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' factory'
+            Identifier: 'createBindingElement'
+          Identifier: '/*dotDotDotToken*/ undefined'
+          Identifier: ' /*propertyName*/ undefined'
+          Identifier: ' name'
+  FunctionDeclaration
+    Identifier: ' makeAssignmentElement'
+    Parameter
+      Identifier: 'name'
+      TypeReference
+        Identifier: ' Identifier'
+    Block
+      ReturnStatement
+        Identifier: ' name'

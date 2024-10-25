@@ -1,0 +1,100 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        PropertySignature
+          Identifier: '
+		test1'
+          TypeReference
+            Identifier: ' Attribs1'
+        PropertySignature
+          Identifier: '
+		test2'
+          TypeReference
+            Identifier: ' Attribs2'
+  InterfaceDeclaration
+    Identifier: ' Attribs1'
+    PropertySignature
+      Identifier: '
+	x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Attribs2'
+    MethodSignature
+      Identifier: '
+	toString'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' make1'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'x'
+          StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        JsxSelfClosingElement
+          Identifier: 'test1'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj'
+  FunctionDeclaration
+    Identifier: ' make2'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'x'
+          NumberKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        JsxSelfClosingElement
+          Identifier: 'test1'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj'
+  FunctionDeclaration
+    Identifier: ' make3'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'y'
+          StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        JsxSelfClosingElement
+          Identifier: 'test1'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj'
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'test1'
+      JsxAttributes
+        JsxAttribute
+          ObjectLiteralExpression
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'test2'
+      JsxAttributes
+        JsxAttribute
+          ObjectLiteralExpression

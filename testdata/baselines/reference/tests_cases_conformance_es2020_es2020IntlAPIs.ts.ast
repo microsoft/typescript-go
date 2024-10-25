@@ -1,0 +1,343 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' count'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' date'
+        NewExpression
+          Identifier: ' Date'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' log'
+    Parameter
+      Identifier: 'locale'
+      StringKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+  console'
+            Identifier: 'log'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              CallExpression
+                PropertyAccessExpression
+                  NewExpression
+                    PropertyAccessExpression
+                      Identifier: ' Intl'
+                      Identifier: 'DateTimeFormat'
+                    Identifier: 'locale'
+                  Identifier: 'format'
+                Identifier: 'date'
+              TemplateMiddle
+            TemplateSpan
+              CallExpression
+                PropertyAccessExpression
+                  NewExpression
+                    PropertyAccessExpression
+                      Identifier: ' Intl'
+                      Identifier: 'NumberFormat'
+                    Identifier: 'locale'
+                  Identifier: 'format'
+                Identifier: 'count'
+              TemplateTail
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+log'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// expected output: 5/24/2012 26,254.39
+
+log'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rtf1'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'RelativeTimeFormat'
+          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' style'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'rtf1'
+          Identifier: 'format'
+        NumericLiteral
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+//expected output: "in 3 qtrs."
+
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'rtf1'
+          Identifier: 'format'
+        PrefixUnaryExpression
+          NumericLiteral
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rtf2'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'RelativeTimeFormat'
+          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' numeric'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'rtf2'
+          Identifier: 'format'
+        NumericLiteral
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' regionNamesInEnglish'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'DisplayNames'
+          ArrayLiteralExpression
+            StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' type'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' regionNamesInTraditionalChinese'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'DisplayNames'
+          ArrayLiteralExpression
+            StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' type'
+              StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'regionNamesInEnglish'
+          Identifier: 'of'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+// expected output: "United States"
+
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'regionNamesInTraditionalChinese'
+          Identifier: 'of'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' locales1'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' options1'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' localeMatcher'
+              StringLiteral
+          TypeReference
+            Identifier: ' const'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'Intl'
+                Identifier: 'DisplayNames'
+              Identifier: 'supportedLocalesOf'
+            Identifier: 'locales1'
+            Identifier: ' options1'
+          Identifier: 'join'
+        StringLiteral
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'Locale'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'Locale'
+      NewExpression
+        PropertyAccessExpression
+          Identifier: ' Intl'
+          Identifier: 'Locale'
+        StringLiteral
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'DisplayNames'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'DisplayNames'
+      StringLiteral
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'DisplayNames'
+      StringLiteral
+      ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // TypeError: invalid_argument
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          ParenthesizedExpression
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'DisplayNames'
+              Identifier: 'undefined'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'type'
+                  StringLiteral
+          Identifier: 'of'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' localesArg'
+        ArrayLiteralExpression
+          StringLiteral
+          NewExpression
+            PropertyAccessExpression
+              Identifier: ' Intl'
+              Identifier: 'Locale'
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                PropertyAccessExpression
+                  Identifier: ' Intl'
+                  Identifier: 'DisplayNames'
+                Identifier: 'localesArg'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: 'type'
+                    StringLiteral
+            Identifier: 'resolvedOptions'
+        Identifier: 'locale'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // "es-ES"
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'Intl'
+            Identifier: 'DisplayNames'
+          Identifier: 'supportedLocalesOf'
+        Identifier: 'localesArg'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // ["es-ES", "en-US"]
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'Intl'
+            Identifier: 'DisplayNames'
+          Identifier: 'supportedLocalesOf'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // []
+console'
+        Identifier: 'log'
+      CallExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'Intl'
+            Identifier: 'DisplayNames'
+          Identifier: 'supportedLocalesOf'
+        Identifier: 'localesArg'
+        ObjectLiteralExpression

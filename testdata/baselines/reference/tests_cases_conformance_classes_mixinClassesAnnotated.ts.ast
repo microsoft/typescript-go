@@ -1,0 +1,265 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'T'
+    ConstructorType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' y'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        NumberKeyword
+      Parameter
+        PublicKeyword
+        Identifier: ' z'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            Identifier: 'x'
+            Identifier: ' y'
+  InterfaceDeclaration
+    Identifier: ' Printable'
+    MethodSignature
+      Identifier: '
+    print'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Printable'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            TypeReference
+              Identifier: ' Constructor'
+              TypeReference
+                Identifier: 'Base'
+          Parameter
+            Identifier: 'superClass'
+            TypeReference
+              Identifier: ' T'
+          IntersectionType
+            TypeReference
+              Identifier: ' Constructor'
+              TypeReference
+                Identifier: 'Printable'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' message'
+                StringKeyword
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          ClassExpression
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' superClass'
+            PropertyDeclaration
+              StaticKeyword
+              Identifier: ' message'
+              StringLiteral
+            MethodDeclaration
+              Identifier: '
+        print'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' output'
+                      BinaryExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'x'
+                          PlusToken
+                          StringLiteral
+                        PlusToken
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'y'
+  InterfaceDeclaration
+    Identifier: ' Tagged'
+    PropertySignature
+      Identifier: '
+    _tag'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' Tagged'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Constructor'
+        TypeLiteral
+    Parameter
+      Identifier: 'superClass'
+      TypeReference
+        Identifier: ' T'
+    IntersectionType
+      TypeReference
+        Identifier: ' Constructor'
+        TypeReference
+          Identifier: 'Tagged'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' superClass'
+        PropertyDeclaration
+          Identifier: '
+        _tag'
+          StringKeyword
+        Constructor
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                SpreadElement
+                  Identifier: 'args'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: '_tag'
+                EqualsToken
+                StringLiteral
+      ReturnStatement
+        Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Thing1'
+        CallExpression
+          Identifier: ' Tagged'
+          Identifier: 'Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Thing2'
+        CallExpression
+          Identifier: ' Tagged'
+          CallExpression
+            Identifier: 'Printable'
+            Identifier: 'Derived'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+Thing2'
+      Identifier: 'message'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' thing'
+            NewExpression
+              Identifier: ' Thing1'
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    thing'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    thing'
+          Identifier: '_tag'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' thing'
+            NewExpression
+              Identifier: ' Thing2'
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    thing'
+          Identifier: 'x'
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    thing'
+          Identifier: '_tag'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    thing'
+            Identifier: 'print'
+  ClassDeclaration
+    Identifier: ' Thing3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Thing2'
+    Constructor
+      Parameter
+        Identifier: 'tag'
+        StringKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            NumericLiteral
+            NumericLiteral
+            NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_tag'
+            EqualsToken
+            Identifier: ' tag'
+    MethodDeclaration
+      Identifier: '
+    test'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'print'

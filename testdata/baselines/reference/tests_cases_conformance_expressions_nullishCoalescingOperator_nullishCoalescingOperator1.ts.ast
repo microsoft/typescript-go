@@ -1,0 +1,361 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b3'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b4'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        UnionType
+          BooleanKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        UnionType
+          BooleanKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        UnionType
+          BooleanKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c4'
+        UnionType
+          BooleanKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: ' a'
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        UnionType
+          TypeReference
+            Identifier: ' I'
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        UnionType
+          TypeReference
+            Identifier: ' I'
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d3'
+        UnionType
+          TypeReference
+            Identifier: ' I'
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d4'
+        UnionType
+          TypeReference
+            Identifier: ' I'
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa1'
+        BinaryExpression
+          Identifier: ' a1'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa2'
+        BinaryExpression
+          Identifier: ' a2'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa3'
+        BinaryExpression
+          Identifier: ' a3'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa4'
+        BinaryExpression
+          Identifier: ' a4'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bb1'
+        BinaryExpression
+          Identifier: ' b1'
+          QuestionQuestionToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bb2'
+        BinaryExpression
+          Identifier: ' b2'
+          QuestionQuestionToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bb3'
+        BinaryExpression
+          Identifier: ' b3'
+          QuestionQuestionToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bb4'
+        BinaryExpression
+          Identifier: ' b4'
+          QuestionQuestionToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cc1'
+        BinaryExpression
+          Identifier: ' c1'
+          QuestionQuestionToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cc2'
+        BinaryExpression
+          Identifier: ' c2'
+          QuestionQuestionToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cc3'
+        BinaryExpression
+          Identifier: ' c3'
+          QuestionQuestionToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cc4'
+        BinaryExpression
+          Identifier: ' c4'
+          QuestionQuestionToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dd1'
+        BinaryExpression
+          Identifier: ' d1'
+          QuestionQuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dd2'
+        BinaryExpression
+          Identifier: ' d2'
+          QuestionQuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dd3'
+        BinaryExpression
+          Identifier: ' d3'
+          QuestionQuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dd4'
+        BinaryExpression
+          Identifier: ' d4'
+          QuestionQuestionToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' maybeBool'
+        FalseKeyword
+  IfStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: 'maybeBool'
+          QuestionQuestionToken
+          TrueKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+  IfStatement
+    BinaryExpression
+      Identifier: 'maybeBool'
+      QuestionQuestionToken
+      TrueKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+  IfStatement
+    BinaryExpression
+      FalseKeyword
+      QuestionQuestionToken
+      TrueKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'

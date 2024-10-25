@@ -1,0 +1,27 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////declare module "extmod" {
+////  module IntMod {
+////    class Customer {
+////      constructor(name: string);
+////    }
+////  }
+////}
+////import ext = require('extmod');
+////import int = ext.IntMod;
+////var x = new int/*0*/
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral

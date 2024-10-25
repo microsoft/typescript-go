@@ -1,0 +1,36 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' someOtherFunction'
+    Parameter
+      Identifier: 'i'
+      AnyKeyword
+    TypeReference
+      Identifier: ' Promise'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrowFunction
+          AsyncKeyword
+          Parameter
+            Identifier: ' i'
+          EqualsGreaterThanToken
+          AwaitExpression
+            CallExpression
+              Identifier: ' someOtherFunction'
+              Identifier: 'i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        ArrowFunction
+          AsyncKeyword
+          Parameter
+            Identifier: 'i'
+          EqualsGreaterThanToken
+          AwaitExpression
+            CallExpression
+              Identifier: ' someOtherFunction'
+              Identifier: 'i'

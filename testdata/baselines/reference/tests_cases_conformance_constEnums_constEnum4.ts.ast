@@ -1,0 +1,14 @@
+SourceFile
+  IfStatement
+    NumericLiteral
+    EnumDeclaration
+      ConstKeyword
+      Identifier: ' A'
+    IfStatement
+      NumericLiteral
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' B'
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' C'

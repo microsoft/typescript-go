@@ -1,0 +1,88 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Point'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertyDeclaration
+          Identifier: '
+        y'
+          NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Origin'
+            TypeReference
+              Identifier: ' Point'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Point3d'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Point'
+        PropertyDeclaration
+          Identifier: '
+        z'
+          NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Origin3d'
+            TypeReference
+              Identifier: ' Point3d'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' z'
+                NumericLiteral
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Line'
+        TypeParameter
+          Identifier: 'TPoint'
+          TypeReference
+            Identifier: ' Point'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' start'
+            TypeReference
+              Identifier: ' TPoint'
+          Parameter
+            PublicKeyword
+            Identifier: ' end'
+            TypeReference
+              Identifier: ' TPoint'
+          Block
+        MethodDeclaration
+          StaticKeyword
+          Identifier: ' fromorigin2d'
+          Parameter
+            Identifier: 'p'
+            TypeReference
+              Identifier: ' Point'
+          TypeReference
+            Identifier: ' Line'
+            TypeReference
+              Identifier: 'Point'
+          Block
+            ReturnStatement
+              NullKeyword

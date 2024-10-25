@@ -1,0 +1,7 @@
+SourceFile
+  LabeledStatement
+    Identifier: 'foo'
+    ExpressionStatement
+      CallExpression
+        Identifier: '
+  bar'

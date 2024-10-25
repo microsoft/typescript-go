@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _default'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: '_default'
+        Identifier: ' d'
+  ExportAssignment
+    BinaryExpression
+      NumericLiteral
+      PlusToken
+      NumericLiteral

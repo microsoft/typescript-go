@@ -1,0 +1,33 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      GetAccessor
+        Identifier: ' foo'
+        Block
+          ReturnStatement
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      SetAccessor
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'v'
+          AnyKeyword
+        Block
+  InterfaceDeclaration
+    Identifier: ' X'
+    GetAccessor
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' Y'
+    SetAccessor
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'v'
+        AnyKeyword
+      Block

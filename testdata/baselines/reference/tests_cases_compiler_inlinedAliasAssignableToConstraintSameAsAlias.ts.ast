@@ -1,0 +1,128 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' RelationFields'
+    PropertySignature
+      Identifier: '
+  x'
+      TypeReference
+        Identifier: ' A'
+    PropertySignature
+      Identifier: '
+  y'
+      ArrayType
+        TypeReference
+          Identifier: ' A'
+    PropertySignature
+      Identifier: '
+  z'
+      ArrayType
+        TypeReference
+          Identifier: ' A'
+  TypeAliasDeclaration
+    Identifier: ' Name'
+    TypeOperator
+      TypeReference
+        Identifier: ' RelationFields'
+  TypeAliasDeclaration
+    Identifier: ' ShouldA'
+    TypeParameter
+      Identifier: 'RF'
+      TypeReference
+        Identifier: ' RelationFields'
+    TypeParameter
+      Identifier: ' N'
+      TypeReference
+        Identifier: ' Name'
+    ConditionalType
+      IndexedAccessType
+        TypeReference
+          Identifier: ' RF'
+        TypeReference
+          Identifier: 'N'
+      ArrayType
+        TypeReference
+          Identifier: ' A'
+      IndexedAccessType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' RF'
+          TypeReference
+            Identifier: 'N'
+        LiteralType
+          NumericLiteral
+      NeverKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+  x'
+      TypeReference
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+  y'
+      ArrayType
+        TypeReference
+          Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+  z'
+      ArrayType
+        TypeReference
+          Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+
+  whereRelated'
+      TypeParameter
+        Identifier: ' // Works // Type is same as A1, but is not assignable to type A
+    RF'
+        TypeReference
+          Identifier: ' RelationFields'
+        TypeReference
+          Identifier: ' RelationFields'
+      TypeParameter
+        Identifier: '
+    N'
+        TypeReference
+          Identifier: ' Name'
+        TypeReference
+          Identifier: ' Name'
+      TypeParameter
+        Identifier: '
+    A1'
+        TypeReference
+          Identifier: ' A'
+        ConditionalType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' RF'
+            TypeReference
+              Identifier: 'N'
+          ArrayType
+            TypeReference
+              Identifier: ' A'
+          IndexedAccessType
+            IndexedAccessType
+              TypeReference
+                Identifier: ' RF'
+              TypeReference
+                Identifier: 'N'
+            LiteralType
+              NumericLiteral
+          NeverKeyword
+      TypeParameter
+        Identifier: '
+    A2'
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' ShouldA'
+          TypeReference
+            Identifier: 'RF'
+          TypeReference
+            Identifier: ' N'
+      NumberKeyword
+      Block
+        ReturnStatement
+          NumericLiteral

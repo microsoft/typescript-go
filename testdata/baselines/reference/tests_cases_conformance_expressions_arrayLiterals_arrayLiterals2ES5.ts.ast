@@ -1,0 +1,259 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a0'
+        ArrayLiteralExpression
+          OmittedExpression
+          OmittedExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        ArrayLiteralExpression
+          OmittedExpression
+          OmittedExpression
+          OmittedExpression
+          SpreadElement
+            Identifier: 'a0'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        ArrayLiteralExpression
+          OmittedExpression
+          OmittedExpression
+          SpreadElement
+            Identifier: 'a0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        ArrayLiteralExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'a0'
+          OmittedExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b0'
+        TupleType
+          AnyKeyword
+          AnyKeyword
+          AnyKeyword
+        ArrayLiteralExpression
+          Identifier: 'undefined'
+          NullKeyword
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b1'
+        TupleType
+          ArrayType
+            NumberKeyword
+          ArrayType
+            StringKeyword
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+            NumericLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'c0'
+          BindingElement
+            Identifier: ' c1'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'c2'
+          BindingElement
+            Identifier: ' c3'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' temp'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' temp1'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' temp2'
+        TupleType
+          ArrayType
+            NumberKeyword
+          ArrayType
+            StringKeyword
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+            NumericLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' temp3'
+        ArrayLiteralExpression
+          Identifier: 'undefined'
+          NullKeyword
+          Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' temp4'
+        ArrayLiteralExpression
+  InterfaceDeclaration
+    Identifier: ' myArray'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'Number'
+  InterfaceDeclaration
+    Identifier: ' myArray2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Array'
+        UnionType
+          TypeReference
+            Identifier: 'Number'
+          TypeReference
+            Identifier: 'String'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d0'
+        ArrayLiteralExpression
+          NumericLiteral
+          TrueKeyword
+          SpreadElement
+            Identifier: 'temp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d1'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'temp'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'temp1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d3'
+        TypeReference
+          Identifier: ' myArray'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'temp1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d4'
+        TypeReference
+          Identifier: ' myArray2'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'temp'
+          SpreadElement
+            Identifier: 'temp1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d5'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'temp3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d6'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'temp4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d7'
+        ArrayLiteralExpression
+          SpreadElement
+            ArrayLiteralExpression
+              SpreadElement
+                Identifier: 'temp1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d8'
+        ArrayType
+          ArrayType
+            NumberKeyword
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            SpreadElement
+              Identifier: 'temp1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d9'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            SpreadElement
+              Identifier: 'temp1'
+          SpreadElement
+            ArrayLiteralExpression
+              StringLiteral

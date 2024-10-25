@@ -1,0 +1,27 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'target'
+        AnyKeyword
+      Parameter
+        Identifier: ' propertyKey'
+        StringKeyword
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Decorator
+        CallExpression
+          Identifier: 'dec'
+      Identifier: '
+    foo'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          StringKeyword
+          TemplateTail

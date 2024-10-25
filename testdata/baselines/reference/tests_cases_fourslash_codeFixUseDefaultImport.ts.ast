@@ -1,0 +1,91 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' file'
+    ArrayLiteralExpression
+      StringLiteral
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'file'
+          Identifier: 'file'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    verify'
+            Identifier: 'getSuggestionDiagnostics'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        message'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        range'
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' test'
+                        Identifier: 'ranges'
+                    Identifier: 'find'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'r'
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' r'
+                        Identifier: 'fileName'
+                      EqualsEqualsEqualsToken
+                      Identifier: ' file'
+              PropertyAssignment
+                Identifier: '
+        code'
+                NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    verify'
+            Identifier: 'codeFix'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        description'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        newFileContent'
+              NoSubstitutionTemplateLiteral
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' file'
+    ArrayLiteralExpression
+      StringLiteral
+      StringLiteral
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    goTo'
+            Identifier: 'file'
+          Identifier: 'file'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    verify'
+            Identifier: 'getSuggestionDiagnostics'
+          ArrayLiteralExpression

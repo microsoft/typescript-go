@@ -1,0 +1,264 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' EmptyPropSFC'
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'div'
+  FunctionDeclaration
+    Identifier: ' Greet'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'name'
+          StringKeyword
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxExpression
+            Identifier: 'x'
+          JsxClosingElement
+            Identifier: 'div'
+  FunctionDeclaration
+    Identifier: ' Meet'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: 'name'
+          StringLiteral
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxExpression
+            Identifier: 'name'
+          JsxClosingElement
+            Identifier: 'div'
+  FunctionDeclaration
+    Identifier: ' MeetAndGreet'
+    Parameter
+      Identifier: 'k'
+      TypeLiteral
+        PropertySignature
+          StringLiteral
+          StringKeyword
+    Block
+      ReturnStatement
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+          JsxText
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxSelfClosingElement
+          Identifier: 'Greet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' name'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        JsxSelfClosingElement
+          Identifier: 'Greet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' name'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' extra-prop'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        JsxSelfClosingElement
+          Identifier: 'Greet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' naaame'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        JsxSelfClosingElement
+          Identifier: 'Meet'
+          JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        JsxSelfClosingElement
+          Identifier: 'Meet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' extra-prop'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        JsxSelfClosingElement
+          Identifier: 'Meet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' name'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        JsxSelfClosingElement
+          Identifier: 'Meet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' name'
+              JsxExpression
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        JsxSelfClosingElement
+          Identifier: 'Meet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' naaaaaaame'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        JsxSelfClosingElement
+          Identifier: 'MeetAndGreet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' prop-name'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' h'
+        JsxSelfClosingElement
+          Identifier: 'MeetAndGreet'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' extra-prop-name'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        JsxSelfClosingElement
+          Identifier: 'EmptyPropSFC'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' prop1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i1'
+        JsxSelfClosingElement
+          Identifier: 'EmptyPropSFC'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' ref'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'x'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'greeting'
+                      Identifier: 'substr'
+                    NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    prop1'
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        JsxSelfClosingElement
+          Identifier: 'EmptyPropSFC'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'o'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        JsxSelfClosingElement
+          Identifier: 'EmptyPropSFC'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'o1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j1'
+        JsxSelfClosingElement
+          Identifier: 'EmptyPropSFC'
+          JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j2'
+        JsxSelfClosingElement
+          Identifier: 'EmptyPropSFC'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' data-prop'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j3'
+        JsxSelfClosingElement
+          Identifier: 'EmptyPropSFC'
+          JsxAttributes
+            JsxAttribute
+              ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j4'
+        JsxSelfClosingElement
+          Identifier: 'EmptyPropSFC'
+          JsxAttributes
+            JsxAttribute
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral

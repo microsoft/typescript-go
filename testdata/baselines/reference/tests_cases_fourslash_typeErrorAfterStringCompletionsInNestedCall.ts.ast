@@ -1,0 +1,68 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts"/>
+// @strict: true
+////
+//// type GreetingEvent =
+////   | { type: "MORNING" }
+////   | { type: "LUNCH_TIME" }
+////   | { type: "ALOHA" };
+////
+//// interface RaiseActionObject<TEvent extends { type: string }> {
+////   type: "raise";
+////   event: TEvent;
+//// }
+////
+//// declare function raise<TEvent extends { type: string }>(
+////   ev: TEvent
+//// ): RaiseActionObject<TEvent>;
+////
+//// declare function createMachine<TEvent extends { type: string }>(config: {
+////   actions: RaiseActionObject<TEvent>;
+//// }): void;
+////
+//// createMachine<GreetingEvent>({
+////   [|/*error*/actions|]: raise({ type: "ALOHA/*1*/" }),
+//// });
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'getSemanticDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    code'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    message'
+            NoSubstitutionTemplateLiteral

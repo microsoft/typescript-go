@@ -1,0 +1,23 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' LookAt'
+    LiteralType
+      StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Value'
+    LiteralType
+      StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ImportType
+          ImportType
+            LiteralType
+              StringLiteral
+            Identifier: 'LookAt'
+          Identifier: 'Value'
+        StringLiteral

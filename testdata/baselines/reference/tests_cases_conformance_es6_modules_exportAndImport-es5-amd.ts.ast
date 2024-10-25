@@ -1,0 +1,19 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' f1'
+    Block
+  ImportDeclaration
+    ImportClause
+      Identifier: ' f1'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' f2'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f1'

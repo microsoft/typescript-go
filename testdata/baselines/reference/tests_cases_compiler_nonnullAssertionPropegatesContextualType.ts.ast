@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rect2'
+        TypeReference
+          Identifier: ' SVGRectElement'
+        NonNullExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' document'
+              Identifier: 'querySelector'
+            StringLiteral

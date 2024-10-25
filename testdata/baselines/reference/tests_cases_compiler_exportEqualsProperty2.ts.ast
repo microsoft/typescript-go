@@ -1,0 +1,34 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' B'
+      NumberKeyword
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        PropertySignature
+          Identifier: ' c'
+          NumberKeyword
+  ExportAssignment
+    PropertyAccessExpression
+      Identifier: ' C'
+      Identifier: 'B'
+  ImportEqualsDeclaration
+    Identifier: ' B'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' B'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' c'
+            Identifier: ' B'

@@ -1,0 +1,45 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Control'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' state'
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' SelectableControl'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Control'
+    MethodSignature
+      Identifier: '
+    select'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' Button'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Control'
+    MethodDeclaration
+      Identifier: '
+    select'
+      Block
+  ClassDeclaration
+    Identifier: ' TextBox'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Control'
+    MethodDeclaration
+      Identifier: '
+    select'
+      Block
+  ClassDeclaration
+    Identifier: ' Image'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Control'
+  ClassDeclaration
+    Identifier: ' Location'
+    MethodDeclaration
+      Identifier: '
+    select'
+      Block

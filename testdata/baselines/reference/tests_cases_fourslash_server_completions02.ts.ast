@@ -1,0 +1,136 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' sortedFunctionMembers'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' completion'
+                  Identifier: 'functionMembersWithPrototype'
+                Identifier: 'slice'
+            Identifier: 'sort'
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            Parameter
+              Identifier: ' b'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'name'
+                Identifier: 'localeCompare'
+              PropertyAccessExpression
+                Identifier: 'b'
+                Identifier: 'name'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exact'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntry'
+        ArrayLiteralExpression
+          SpreadElement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'sortedFunctionMembers'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'e'
+                EqualsGreaterThanToken
+                ConditionalExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        e'
+                      Identifier: 'name'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  QuestionToken
+                  ObjectLiteralExpression
+                    SpreadAssignment
+                      Identifier: 'e'
+                    PropertyAssignment
+                      Identifier: ' kind'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' kindModifiers'
+                      StringLiteral
+                    PropertyAssignment
+                      Identifier: ' tags'
+                      ArrayLiteralExpression
+                  ColonToken
+                  ConditionalExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        e'
+                        Identifier: 'name'
+                      EqualsEqualsEqualsToken
+                      StringLiteral
+                    QuestionToken
+                    ObjectLiteralExpression
+                      SpreadAssignment
+                        Identifier: 'e'
+                      PropertyAssignment
+                        Identifier: ' kindModifiers'
+                        Identifier: ' undefined'
+                    ColonToken
+                    Identifier: ' e'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' tags'
+              ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        ShorthandPropertyAssignment
+          Identifier: ' exact'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Make an edit
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'backspace'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Checking for completion details after edit should work too
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: ' exact'

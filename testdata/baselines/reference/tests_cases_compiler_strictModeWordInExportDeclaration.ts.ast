@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' x'
+        Identifier: ' foo'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' x'
+        Identifier: ' implements'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' x'
+        Identifier: ' while'

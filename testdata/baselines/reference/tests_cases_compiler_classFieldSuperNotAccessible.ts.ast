@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    field'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+  ClassDeclaration
+    Identifier: ' T2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' T'
+    MethodDeclaration
+      Identifier: '
+    f'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'field'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          Identifier: ' T2'
+        Identifier: 'f'

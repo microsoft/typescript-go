@@ -1,0 +1,43 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SYMBOL'
+        CallExpression
+          Identifier: ' Symbol'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Interface'
+    PropertySignature
+      ReadonlyKeyword
+      ComputedPropertyName
+        Identifier: 'SYMBOL'
+      StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createInstance'
+    TypeReference
+      Identifier: ' Interface'
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'SYMBOL'
+            StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' createInstance'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spread'
+        ObjectLiteralExpression
+          SpreadAssignment
+            CallExpression
+              Identifier: 'createInstance'

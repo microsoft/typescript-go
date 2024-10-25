@@ -1,0 +1,91 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c'
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' e'
+        EnumMember
+          Identifier: '
+        weekday'
+        EnumMember
+          Identifier: '
+        weekend'
+        EnumMember
+          Identifier: '
+        holiday'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' c'
+            TypeReference
+              QualifiedName
+                Identifier: ' m1'
+                Identifier: 'c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    c'
+            PropertyAccessExpression
+              Identifier: ' m1'
+              Identifier: 'c'
+          PropertyAssignment
+            Identifier: '
+    m1'
+            Identifier: ' m1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' m1'
+            Identifier: ' m1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    m'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' mod'
+                Identifier: ' m1'
+          PropertyAssignment
+            Identifier: '
+    mc'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' cl'
+                PropertyAccessExpression
+                  Identifier: ' m1'
+                  Identifier: 'c'
+          PropertyAssignment
+            Identifier: '
+    me'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' en'
+                PropertyAccessExpression
+                  Identifier: ' m1'
+                  Identifier: 'e'
+          PropertyAssignment
+            Identifier: '
+    mh'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' m1'
+                Identifier: 'e'
+              Identifier: 'holiday'

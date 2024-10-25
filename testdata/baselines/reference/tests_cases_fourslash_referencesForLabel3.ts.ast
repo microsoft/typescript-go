@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// References to unused label
+
+/////*1*/label: while (true) {
+////    var label = "label";
+////}
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral

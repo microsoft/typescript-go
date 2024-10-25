@@ -1,0 +1,172 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' test1'
+    Parameter
+      Identifier: 'arg'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'arg'
+        ThrowStatement
+          NewExpression
+            Identifier: ' Error'
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          CaseClause
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' arg'
+                  Identifier: 'toUpperCase'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ReturnStatement
+              StringLiteral
+          CaseClause
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' arg'
+                  Identifier: 'toUpperCase'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          CaseClause
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' arg'
+                  Identifier: 'toUpperCase'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          CaseClause
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' arg'
+                  Identifier: 'toUpperCase'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ReturnStatement
+              StringLiteral
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' test2'
+    Parameter
+      Identifier: 'arg'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'arg'
+        ThrowStatement
+          NewExpression
+            Identifier: ' Error'
+      SwitchStatement
+        TrueKeyword
+        CaseBlock
+          CaseClause
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' arg'
+                  Identifier: 'toUpperCase'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          CaseClause
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' arg'
+                  Identifier: 'toUpperCase'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          CaseClause
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' arg'
+                  Identifier: 'toUpperCase'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ReturnStatement
+              StringLiteral
+          CaseClause
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' arg'
+                  Identifier: 'toUpperCase'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            ReturnStatement
+              StringLiteral
+      ReturnStatement
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' test3'
+    Parameter
+      Identifier: '
+  foo'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' kind'
+            LiteralType
+              StringLiteral
+          PropertySignature
+            Identifier: ' prop'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' kind'
+            LiteralType
+              StringLiteral
+          PropertySignature
+            Identifier: ' prop'
+            NumberKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' kind'
+            LiteralType
+              StringLiteral
+          PropertySignature
+            Identifier: ' prop'
+            BooleanKeyword
+    Parameter
+      Identifier: '
+  bar'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    type'
+          LiteralType
+            StringLiteral
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'bar'
+        Block
+          ReturnStatement
+      SwitchStatement
+        PropertyAccessExpression
+          Identifier: 'foo'
+          Identifier: 'kind'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+          CaseClause
+            PropertyAccessExpression
+              Identifier: ' bar'
+              Identifier: 'type'
+          CaseClause
+            StringLiteral
+            ReturnStatement

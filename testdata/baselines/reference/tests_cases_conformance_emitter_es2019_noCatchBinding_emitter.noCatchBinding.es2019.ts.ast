@@ -1,0 +1,21 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      TryStatement
+        Block
+        CatchClause
+          Block
+      TryStatement
+        Block
+        CatchClause
+          Block
+            TryStatement
+              Block
+              CatchClause
+                Block
+      TryStatement
+        Block
+        CatchClause
+          Block
+        Block

@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' indexMap'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+indexMap'
+        PrefixUnaryExpression
+          NumericLiteral
+      EqualsToken
+      NumericLiteral

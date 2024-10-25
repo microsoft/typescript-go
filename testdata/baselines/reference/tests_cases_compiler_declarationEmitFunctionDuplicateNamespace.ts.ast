@@ -1,0 +1,38 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+      LiteralType
+        NumericLiteral
+    LiteralType
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+      LiteralType
+        NumericLiteral
+    LiteralType
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    Block
+      ReturnStatement
+        Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+f'
+        Identifier: 'x'
+      EqualsToken
+      NumericLiteral

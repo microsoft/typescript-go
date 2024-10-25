@@ -1,0 +1,82 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Point'
+        PropertySignature
+          Identifier: '
+        x'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        y'
+          NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Origin'
+            TypeReference
+              Identifier: ' Point'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Point3d'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Point'
+        PropertySignature
+          Identifier: '
+        z'
+          NumberKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Origin3d'
+            TypeReference
+              Identifier: ' Point3d'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' z'
+                NumericLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Line'
+        TypeParameter
+          Identifier: 'TPoint'
+          TypeReference
+            Identifier: ' Point'
+        ConstructSignature
+          Parameter
+            Identifier: 'start'
+            TypeReference
+              Identifier: ' TPoint'
+          Parameter
+            Identifier: ' end'
+            TypeReference
+              Identifier: ' TPoint'
+        PropertySignature
+          Identifier: '
+        start'
+          TypeReference
+            Identifier: ' TPoint'
+        PropertySignature
+          Identifier: '
+        end'
+          TypeReference
+            Identifier: ' TPoint'

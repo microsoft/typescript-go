@@ -1,0 +1,39 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @Filename: /a.ts
+////export {};
+////const a = 1 d;
+
+// Only give suggestions for nodes that do NOT have parse errors
+verify'
+        Identifier: 'getSuggestionDiagnostics'
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    message'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    code'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: '
+    range'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        fileName'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+        pos'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: '
+        end'
+                NumericLiteral

@@ -1,0 +1,749 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Choice'
+    EnumMember
+      Identifier: '
+    One'
+    EnumMember
+      Identifier: '
+    Two'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' choice'
+        TypeReference
+          Identifier: ' Choice'
+        PropertyAccessExpression
+          Identifier: ' Choice'
+          Identifier: 'One'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' choiceOne'
+        PropertyAccessExpression
+          Identifier: ' Choice'
+          Identifier: 'One'
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  IfStatement
+    BinaryExpression
+      Identifier: 'choice'
+      EqualsEqualsEqualsToken
+      Identifier: ' choiceOne'
+    Block
+  WhileStatement
+    TrueKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'choice'
+          EqualsEqualsEqualsToken
+          Identifier: ' choiceOne'
+        Block

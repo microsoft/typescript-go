@@ -1,0 +1,26 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' B'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' Hello'
+          StringKeyword
+          Block
+            ReturnStatement
+              StringLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' Hello'
+          StringKeyword
+          Block
+            ReturnStatement
+              StringLiteral

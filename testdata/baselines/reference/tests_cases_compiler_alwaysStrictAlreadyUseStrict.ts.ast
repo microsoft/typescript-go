@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            ArrayLiteralExpression

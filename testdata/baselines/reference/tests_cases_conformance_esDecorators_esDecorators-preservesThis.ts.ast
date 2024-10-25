@@ -1,0 +1,98 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' DecoratorProvider'
+    MethodDeclaration
+      Identifier: '
+    decorate'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' DecoratorProvider'
+      Parameter
+        Identifier: ' v'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' ctx'
+        TypeReference
+          Identifier: ' DecoratorContext'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' instance'
+        TypeReference
+          Identifier: ' DecoratorProvider'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Decorator
+        PropertyAccessExpression
+          Identifier: 'instance'
+          Identifier: 'decorate'
+      Identifier: '
+    method1'
+      Block
+    MethodDeclaration
+      Decorator
+        ParenthesizedExpression
+          ElementAccessExpression
+            Identifier: 'instance'
+            StringLiteral
+      Identifier: '
+    method2'
+      Block
+    MethodDeclaration
+      Decorator
+        ParenthesizedExpression
+          ParenthesizedExpression
+            PropertyAccessExpression
+              Identifier: 'instance'
+              Identifier: 'decorate'
+      Identifier: '
+    method3'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' DecoratorProvider'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ClassDeclaration
+          Identifier: ' C'
+          MethodDeclaration
+            Decorator
+              ParenthesizedExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'decorate'
+            Identifier: '
+            method1'
+            Block
+          MethodDeclaration
+            Decorator
+              ParenthesizedExpression
+                ElementAccessExpression
+                  SuperKeyword
+                  StringLiteral
+            Identifier: '
+            method2'
+            Block
+          MethodDeclaration
+            Decorator
+              ParenthesizedExpression
+                ParenthesizedExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'decorate'
+            Identifier: '
+            method3'
+            Block

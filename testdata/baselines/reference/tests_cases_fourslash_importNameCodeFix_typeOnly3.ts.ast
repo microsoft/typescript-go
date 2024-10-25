@@ -1,0 +1,60 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @module: esnext
+// @verbatimModuleSyntax: true
+
+// @Filename: Presenter.ts
+//// export type DisplayStyle = "normal" | "compact";
+//// 
+//// export default class Presenter {
+////     present(displayStyle: DisplayStyle): Element {
+////         return document.createElement("placeholder");
+////     }
+//// }
+
+// @Filename: index.ts
+//// import type Presenter from "./Presenter";
+//// 
+//// function present(
+////     presenter: Presenter,
+////     displayStyle: DisplayStyle,
+//// ) {}
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  errorCode'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Cannot_find_name_0'
+            Identifier: 'code'
+        PropertyAssignment
+          Identifier: '
+  description'
+          CallExpression
+            Identifier: ' ignoreInterpolations'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'ts'
+                Identifier: 'Diagnostics'
+              Identifier: 'Add_import_from_0'
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

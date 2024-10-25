@@ -1,0 +1,900 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T00'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T01'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      QuestionToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T02'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      PlusToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T03'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      MinusToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T04'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      ReadonlyKeyword
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T05'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      ReadonlyKeyword
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      QuestionToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T06'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      ReadonlyKeyword
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      PlusToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T07'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      ReadonlyKeyword
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      MinusToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T08'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      PlusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T09'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      PlusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      QuestionToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T10'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      PlusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      PlusToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T11'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      PlusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      MinusToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T12'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      MinusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T13'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      MinusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      QuestionToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T14'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      MinusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      PlusToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' T15'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      MinusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      MinusToken
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Required'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    x'
+          EqualsToken
+          Identifier: ' z'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    y'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' z'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    z'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          Identifier: ' z'
+  TypeAliasDeclaration
+    Identifier: ' Denullified'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      MinusToken
+      TypeReference
+        Identifier: ' NonNullable'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'P'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'w'
+      TypeReference
+        Identifier: ' Denullified'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' Required'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    w'
+          EqualsToken
+          Identifier: ' w'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    w'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    w'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    w'
+          EqualsToken
+          Identifier: ' z'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    x'
+          EqualsToken
+          Identifier: ' w'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    x'
+          EqualsToken
+          Identifier: ' z'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    y'
+          EqualsToken
+          Identifier: ' w'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' z'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    z'
+          EqualsToken
+          Identifier: ' w'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          Identifier: ' z'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'w'
+      TypeReference
+        Identifier: ' Denullified'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' Required'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    w'
+          EqualsToken
+          ObjectLiteralExpression
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    x'
+          EqualsToken
+          ObjectLiteralExpression
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    y'
+          EqualsToken
+          ObjectLiteralExpression
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    z'
+          EqualsToken
+          ObjectLiteralExpression
+  TypeAliasDeclaration
+    Identifier: ' Readwrite'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      MinusToken
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P'
+  FunctionDeclaration
+    Identifier: ' f10'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' Readwrite'
+        TypeReference
+          Identifier: 'T'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' z'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' z'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          Identifier: ' z'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    a'
+        NumberKeyword
+      PropertySignature
+        Identifier: '
+    b'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+      PropertySignature
+        Identifier: '
+    c'
+        QuestionToken
+        NumberKeyword
+      PropertySignature
+        Identifier: '
+    d'
+        QuestionToken
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        TypeReference
+          Identifier: ' Foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+x1'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '  // number
+x1'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '  // number | undefined
+x1'
+      Identifier: 'c'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '  // number | undefined
+x1'
+      Identifier: 'd'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // number | undefined
+
+x1'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+x1'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' c'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' c'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' d'
+          NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeReference
+          Identifier: ' Required'
+          TypeReference
+            Identifier: 'Foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+x1'
+      Identifier: 'a'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '  // number
+x1'
+      Identifier: 'b'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '  // number | undefined
+x1'
+      Identifier: 'c'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '  // number
+x1'
+      Identifier: 'd'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // number
+
+x2'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+x2'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+x2'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' c'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+x2'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' a'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' b'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' c'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' d'
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    a'
+        NumberKeyword
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' b'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeReference
+          Identifier: ' Bar'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x3'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x3'
+        Identifier: 'b'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'Bar'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x4'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '  // Error
+x4'
+        Identifier: 'b'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        TypeReference
+          Identifier: ' Readwrite'
+          TypeReference
+            Identifier: 'Bar'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x5'
+        Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+x5'
+        Identifier: 'b'
+      EqualsToken
+      NumericLiteral

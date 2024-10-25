@@ -1,0 +1,90 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        UnionType
+          LiteralType
+            StringLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        UnionType
+          LiteralType
+            StringLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        UnionType
+          LiteralType
+            NumericLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        UnionType
+          LiteralType
+            NumericLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        UnionType
+          LiteralType
+            TrueKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        UnionType
+          LiteralType
+            FalseKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa1'
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: ' a1'
+                    QuestionQuestionToken
+                    Identifier: ' a2'
+                  QuestionQuestionToken
+                  Identifier: ' a3'
+                QuestionQuestionToken
+                Identifier: ' a4'
+              QuestionQuestionToken
+              Identifier: ' a5'
+            QuestionQuestionToken
+            Identifier: ' a6'
+          QuestionQuestionToken
+          StringLiteral

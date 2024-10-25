@@ -1,0 +1,10 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Test'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        TypeReference
+          Identifier: ' TypeNotFound'
+      AnyKeyword

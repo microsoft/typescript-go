@@ -1,0 +1,99 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo2'
+    Constructor
+      Parameter
+        Identifier: '_this'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lambda'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' x'
+                      EqualsGreaterThanToken
+                      ThisKeyword
+  ClassDeclaration
+    Identifier: ' Foo3'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' _this'
+        NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lambda'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' x'
+                      EqualsGreaterThanToken
+                      ThisKeyword
+  ClassDeclaration
+    Identifier: ' Foo4'
+    Constructor
+      Parameter
+        Identifier: '_this'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: '_this'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: '_this'
+        AnyKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lambda'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' x'
+                      EqualsGreaterThanToken
+                      ThisKeyword
+  ClassDeclaration
+    Identifier: ' Foo5'
+    Constructor
+      Parameter
+        Identifier: '_this'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: '_this'
+        StringKeyword
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' _this'
+        AnyKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' lambda'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' x'
+                      EqualsGreaterThanToken
+                      ThisKeyword

@@ -1,0 +1,386 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' ResolvedConfigFileName'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' UpToDateStatusType'
+    EnumMember
+      Identifier: '
+    Unbuildable'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    UpToDate'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * The project appears out of date because its upstream inputs are newer than its outputs,
+     * but all of its outputs are actually newer than the previous identical outputs of its (.d.ts) inputs.
+     * This means we can Pseudo-build (just touch timestamps), as if we had actually built this project.
+     */
+    UpToDateWithUpstreamTypes'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    OutputMissing'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ErrorReadingFile'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    OutOfDateWithSelf'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    OutOfDateWithUpstream'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    OutOfDateBuildInfoWithPendingEmit'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    OutOfDateBuildInfoWithErrors'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    OutOfDateOptions'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    OutOfDateRoots'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    UpstreamOutOfDate'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    UpstreamBlocked'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ComputingUpstream'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    TsVersionOutputOfDate'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    UpToDateWithInputFileText'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * Projects with no outputs (i.e. "solution" files)
+     */
+    ContainerOnly'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ForceBuild'
+      NumericLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' UpToDateStatus'
+    UnionType
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'Unbuildable'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'UpToDate'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'OutputMissing'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'ErrorReadingFile'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'OutOfDateWithSelf'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'OutOfDateWithUpstream'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'OutOfDateBuildInfo'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'OutOfDateRoots'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'UpstreamOutOfDate'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'UpstreamBlocked'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'ComputingUpstream'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'TsVersionOutOfDate'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'ContainerOnly'
+      TypeReference
+        QualifiedName
+          Identifier: ' Status'
+          Identifier: 'ForceBuild'
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Status'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Unbuildable'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'Unbuildable'
+        PropertySignature
+          Identifier: '
+        reason'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' ContainerOnly'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'ContainerOnly'
+      InterfaceDeclaration
+        Identifier: ' UpToDate'
+        PropertySignature
+          Identifier: '
+        type'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' UpToDateStatusType'
+                Identifier: 'UpToDate'
+            TypeReference
+              QualifiedName
+                Identifier: ' UpToDateStatusType'
+                Identifier: 'UpToDateWithUpstreamTypes'
+            TypeReference
+              QualifiedName
+                Identifier: ' UpToDateStatusType'
+                Identifier: 'UpToDateWithInputFileText'
+        PropertySignature
+          Identifier: '
+        newestInputFileTime'
+          QuestionToken
+          TypeReference
+            Identifier: ' Date'
+        PropertySignature
+          Identifier: '
+        newestInputFileName'
+          QuestionToken
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        oldestOutputFileName'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' OutputMissing'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'OutputMissing'
+        PropertySignature
+          Identifier: '
+        /**
+         * The name of the first output file that didn't exist
+         */
+        missingOutputFileName'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' ErrorReadingFile'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'ErrorReadingFile'
+        PropertySignature
+          Identifier: '
+        fileName'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' OutOfDateWithSelf'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'OutOfDateWithSelf'
+        PropertySignature
+          Identifier: '
+        outOfDateOutputFileName'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        newerInputFileName'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' OutOfDateBuildInfo'
+        PropertySignature
+          Identifier: '
+        type'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' UpToDateStatusType'
+                Identifier: 'OutOfDateBuildInfoWithPendingEmit'
+            TypeReference
+              QualifiedName
+                Identifier: ' UpToDateStatusType'
+                Identifier: 'OutOfDateBuildInfoWithErrors'
+            TypeReference
+              QualifiedName
+                Identifier: ' UpToDateStatusType'
+                Identifier: 'OutOfDateOptions'
+        PropertySignature
+          Identifier: '
+        buildInfoFile'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' OutOfDateRoots'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'OutOfDateRoots'
+        PropertySignature
+          Identifier: '
+        buildInfoFile'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        inputFile'
+          TypeReference
+            Identifier: ' Path'
+      InterfaceDeclaration
+        Identifier: ' UpstreamOutOfDate'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'UpstreamOutOfDate'
+        PropertySignature
+          Identifier: '
+        upstreamProjectName'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' UpstreamBlocked'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'UpstreamBlocked'
+        PropertySignature
+          Identifier: '
+        upstreamProjectName'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        upstreamProjectBlocked'
+          BooleanKeyword
+      InterfaceDeclaration
+        Identifier: ' ComputingUpstream'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'ComputingUpstream'
+      InterfaceDeclaration
+        Identifier: ' TsVersionOutOfDate'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'TsVersionOutputOfDate'
+        PropertySignature
+          Identifier: '
+        version'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' OutOfDateWithUpstream'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'OutOfDateWithUpstream'
+        PropertySignature
+          Identifier: '
+        outOfDateOutputFileName'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        newerProjectName'
+          StringKeyword
+      InterfaceDeclaration
+        Identifier: ' ForceBuild'
+        PropertySignature
+          Identifier: '
+        type'
+          TypeReference
+            QualifiedName
+              Identifier: ' UpToDateStatusType'
+              Identifier: 'ForceBuild'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' resolveConfigFileProjectName'
+    Parameter
+      Identifier: 'project'
+      StringKeyword
+    TypeReference
+      Identifier: ' ResolvedConfigFileName'

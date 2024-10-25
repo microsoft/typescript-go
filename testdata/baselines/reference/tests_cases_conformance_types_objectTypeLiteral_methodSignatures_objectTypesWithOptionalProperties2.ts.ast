@@ -1,0 +1,57 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    x'
+          PropertySignature
+            Identifier: ' number'
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    x'
+    PropertySignature
+      Identifier: ' number'
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Identifier: '
+    x'
+      Block
+    PropertyDeclaration
+      Identifier: ' number'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    x'
+    PropertySignature
+      Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    x'
+      Block
+    PropertyDeclaration
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    x'
+            Block
+          PropertyAssignment
+            NumericLiteral
+            Identifier: ''

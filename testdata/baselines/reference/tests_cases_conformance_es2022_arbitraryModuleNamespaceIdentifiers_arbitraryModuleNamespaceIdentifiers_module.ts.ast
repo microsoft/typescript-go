@@ -1,0 +1,151 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someValue'
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' someType'
+    LiteralType
+      StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' someValue'
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          StringLiteral
+          Identifier: ' valueX'
+    StringLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'valueX'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    ThrowStatement
+      StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        StringLiteral
+        StringLiteral
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          StringLiteral
+          Identifier: ' valueY'
+    StringLiteral
+  IfStatement
+    BinaryExpression
+      Identifier: 'valueY'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    ThrowStatement
+      StringLiteral
+  ExportDeclaration
+    NamespaceExport
+      StringLiteral
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          StringLiteral
+          Identifier: ' valueZ'
+    StringLiteral
+  IfStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: 'valueZ'
+        StringLiteral
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    ThrowStatement
+      StringLiteral
+  IfStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: 'valueZ'
+        StringLiteral
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    ThrowStatement
+      StringLiteral
+  IfStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: 'valueZ'
+        StringLiteral
+      ExclamationEqualsEqualsToken
+      Identifier: ' valueZ'
+    ThrowStatement
+      StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' someType'
+        StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          StringLiteral
+          Identifier: ' typeA'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' importTest'
+        TypeReference
+          Identifier: ' typeA'
+        StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        StringLiteral
+        StringLiteral
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          StringLiteral
+          Identifier: ' typeB'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' reimportTest'
+        TypeReference
+          Identifier: ' typeB'
+        StringLiteral
+  ExportDeclaration
+    NamespaceExport
+      StringLiteral
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          StringLiteral
+          Identifier: ' typeC'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' otherType'
+    LiteralType
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' importStarTestA'
+        TypeReference
+          QualifiedName
+            Identifier: ' typeC'
+            Identifier: 'otherType'
+        StringLiteral

@@ -1,0 +1,108 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' OverloadComponent'
+    TypeParameter
+      Identifier: 'U'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' OverloadComponent'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'attr'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b'
+          TypeReference
+            Identifier: ' U'
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+        PropertySignature
+          StringLiteral
+          BooleanKeyword
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' OverloadComponent'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'attr'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b'
+          TypeReference
+            Identifier: ' U'
+        PropertySignature
+          Identifier: ' a'
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      QualifiedName
+        Identifier: ' JSX'
+        Identifier: 'Element'
+  FunctionDeclaration
+    Identifier: ' Baz'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b'
+          NumberKeyword
+    TypeParameter
+      Identifier: ' U'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          BooleanKeyword
+        PropertySignature
+          Identifier: ' b'
+          StringKeyword
+    Parameter
+      Identifier: 'arg1'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' arg2'
+      TypeReference
+        Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a0'
+            JsxSelfClosingElement
+              Identifier: 'OverloadComponent'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: ' a'
+                  JsxExpression
+                    PropertyAccessExpression
+                      Identifier: 'arg1'
+                      Identifier: 'b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a2'
+            JsxSelfClosingElement
+              Identifier: 'OverloadComponent'
+              JsxAttributes
+                JsxAttribute
+                  Identifier: 'arg1'
+                JsxAttribute
+                  Identifier: ' ignore-prop'

@@ -1,0 +1,24 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' C'
+    CallSignature
+      VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+C'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        CallSignature
+          VoidKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+m2'
+        Identifier: 'C'

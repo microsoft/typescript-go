@@ -1,0 +1,61 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'a'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' SomeClass'
+    MethodDeclaration
+      Identifier: '
+    a'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    bar'
+        ShorthandPropertyAssignment
+          Identifier: '
+    SomeClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' SomeClass'
+          BindingElement
+            Identifier: ' SomeClass'
+            Identifier: ' Another'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    SomeClass'
+        ShorthandPropertyAssignment
+          Identifier: '
+    Another'

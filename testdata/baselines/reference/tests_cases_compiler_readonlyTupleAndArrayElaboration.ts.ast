@@ -1,0 +1,376 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' point'
+        AsExpression
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  FunctionDeclaration
+    Identifier: ' distanceFromOrigin'
+    Parameter
+      ArrayBindingPattern
+        BindingElement
+          Identifier: 'x'
+        BindingElement
+          Identifier: ' y'
+      TupleType
+        NumberKeyword
+        NumberKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' Math'
+            Identifier: 'sqrt'
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'x'
+              AsteriskAsteriskToken
+              NumericLiteral
+            PlusToken
+            BinaryExpression
+              Identifier: ' y'
+              AsteriskAsteriskToken
+              NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+distanceFromOrigin'
+      Identifier: 'point'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' arryFn'
+    Parameter
+      Identifier: 'x'
+      ArrayType
+        NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+arryFn'
+      Identifier: 'point'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' arryFn2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Array'
+        NumberKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+arryFn2'
+      Identifier: 'point'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeOperator
+          ArrayType
+            NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' Readonly'
+          ArrayType
+            NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+arryFn2'
+      Identifier: 'a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+arryFn2'
+      Identifier: 'b'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+arryFn2'
+      Identifier: 'c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        TypeOperator
+          TupleType
+            LiteralType
+              NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TypeOperator
+          TupleType
+        Identifier: ' t1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        TypeOperator
+          TupleType
+            LiteralType
+              NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        TupleType
+        Identifier: ' t3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t5'
+        TupleType
+          LiteralType
+            NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t6'
+        TypeOperator
+          TupleType
+        Identifier: ' t5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t7'
+        TupleType
+          LiteralType
+            NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t8'
+        TupleType
+        Identifier: ' t7'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        TypeOperator
+          ArrayType
+            NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        TypeOperator
+          ArrayType
+            BooleanKeyword
+        Identifier: ' a1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        TypeOperator
+          ArrayType
+            NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        ArrayType
+          BooleanKeyword
+        Identifier: ' a3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        TypeOperator
+          ArrayType
+            BooleanKeyword
+        Identifier: ' a5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a7'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a8'
+        ArrayType
+          BooleanKeyword
+        Identifier: ' a7'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ta1'
+        TypeOperator
+          TupleType
+            LiteralType
+              NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ta2'
+        TypeOperator
+          ArrayType
+            BooleanKeyword
+        Identifier: ' ta1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ta3'
+        TypeOperator
+          TupleType
+            LiteralType
+              NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ta4'
+        ArrayType
+          NumberKeyword
+        Identifier: ' ta3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ta5'
+        TupleType
+          LiteralType
+            NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ta6'
+        TypeOperator
+          ArrayType
+            BooleanKeyword
+        Identifier: ' ta5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ta7'
+        TupleType
+          LiteralType
+            NumericLiteral
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ta8'
+        ArrayType
+          BooleanKeyword
+        Identifier: ' ta7'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' at1'
+        TypeOperator
+          ArrayType
+            NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' at2'
+        TypeOperator
+          TupleType
+            LiteralType
+              NumericLiteral
+        Identifier: ' at1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' at3'
+        TypeOperator
+          ArrayType
+            NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' at4'
+        TupleType
+          LiteralType
+            NumericLiteral
+        Identifier: ' at3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' at5'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' at6'
+        TypeOperator
+          TupleType
+            LiteralType
+              NumericLiteral
+        Identifier: ' at5'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' at7'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' at8'
+        TupleType
+          LiteralType
+            NumericLiteral
+        Identifier: ' at7'

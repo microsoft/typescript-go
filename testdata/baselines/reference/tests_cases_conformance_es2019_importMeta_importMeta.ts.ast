@@ -1,0 +1,197 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          AsyncKeyword
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' response'
+                  AwaitExpression
+                    CallExpression
+                      Identifier: ' fetch'
+                      CallExpression
+                        PropertyAccessExpression
+                          NewExpression
+                            Identifier: ' URL'
+                            StringLiteral
+                            PropertyAccessExpression
+                              NewExpression
+                                Identifier: 'meta'
+                              Identifier: 'url'
+                          Identifier: 'toString'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' blob'
+                  AwaitExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' response'
+                        Identifier: 'blob'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' size'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          NewExpression
+                            Identifier: 'meta'
+                          Identifier: 'scriptElement'
+                        Identifier: 'dataset'
+                      Identifier: 'size'
+                    BarBarToken
+                    NumericLiteral
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' image'
+                  NewExpression
+                    Identifier: ' Image'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+  image'
+                  Identifier: 'src'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' URL'
+                    Identifier: 'createObjectURL'
+                  Identifier: 'blob'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+  image'
+                  Identifier: 'width'
+                EqualsToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' image'
+                    Identifier: 'height'
+                  EqualsToken
+                  Identifier: ' size'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+  document'
+                    Identifier: 'body'
+                  Identifier: 'appendChild'
+                Identifier: 'image'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: 'meta'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NewExpression
+          Identifier: 'metal'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            NewExpression
+              Identifier: 'import'
+            Identifier: 'import'
+          Identifier: 'malkovich'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' globalA'
+        NewExpression
+          Identifier: 'meta'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' globalB'
+        NewExpression
+          Identifier: 'metal'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' globalC'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            NewExpression
+              Identifier: 'import'
+            Identifier: 'import'
+          Identifier: 'malkovich'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' ImportMeta'
+        BinaryExpression
+          PropertyAccessExpression
+            NewExpression
+              Identifier: 'meta'
+            Identifier: 'blah'
+          EqualsToken
+          BinaryExpression
+            PropertyAccessExpression
+              NewExpression
+                Identifier: 'meta'
+              Identifier: 'blue'
+            EqualsToken
+            NewExpression
+              Identifier: 'meta'
+  ExpressionStatement
+    BinaryExpression
+      NewExpression
+        Identifier: 'meta'
+      EqualsToken
+      Identifier: ' foo'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' ImportMeta'
+        PropertySignature
+          Identifier: '
+    wellKnownProperty'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+            PropertySignature
+              Identifier: ' c'
+              BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+          BindingElement
+            Identifier: ' b'
+          BindingElement
+            Identifier: ' c'
+        PropertyAccessExpression
+          NewExpression
+            Identifier: 'meta'
+          Identifier: 'wellKnownProperty'

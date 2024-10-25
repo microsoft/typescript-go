@@ -1,0 +1,304 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Test'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' FileSystemObject'
+        PropertyDeclaration
+          Identifier: '
+		isFSO'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' FileSystemObject'
+        GetAccessor
+          Identifier: ' isFile'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' File'
+          Block
+            ReturnStatement
+              BinaryExpression
+                ThisKeyword
+                InstanceOfKeyword
+                Identifier: ' File'
+        SetAccessor
+          Identifier: ' isFile'
+          Parameter
+            Identifier: 'param'
+          Block
+        GetAccessor
+          Identifier: ' isDirectory'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' Directory'
+          Block
+            ReturnStatement
+              BinaryExpression
+                ThisKeyword
+                InstanceOfKeyword
+                Identifier: ' Directory'
+        PropertyDeclaration
+          Identifier: '
+		isNetworked'
+          TypePredicate
+            ThisType
+            ParenthesizedType
+              IntersectionType
+                TypeReference
+                  Identifier: 'Networked'
+                ThisType
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' path'
+            StringKeyword
+          Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' File'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' FileSystemObject'
+        Constructor
+          Parameter
+            Identifier: 'path'
+            StringKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' content'
+            StringKeyword
+          Block
+            ExpressionStatement
+              CallExpression
+                SuperKeyword
+                Identifier: 'path'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Directory'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' FileSystemObject'
+        PropertyDeclaration
+          Identifier: '
+		children'
+          ArrayType
+            TypeReference
+              Identifier: ' FileSystemObject'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Networked'
+        PropertySignature
+          Identifier: '
+		host'
+          StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' file'
+            TypeReference
+              Identifier: ' FileSystemObject'
+            NewExpression
+              Identifier: ' File'
+              StringLiteral
+              StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+	file'
+            Identifier: 'isNetworked'
+          EqualsToken
+          FalseKeyword
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+	file'
+            Identifier: 'isFSO'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' file'
+            Identifier: 'isFile'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+	file'
+            Identifier: 'isFile'
+          EqualsToken
+          TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              Identifier: ' file'
+              Identifier: 'isFile'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'file'
+          Identifier: 'isFile'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              Identifier: '
+		file'
+              Identifier: 'content'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'file'
+              Identifier: 'isNetworked'
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+			file'
+                  Identifier: 'host'
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+			file'
+                  Identifier: 'content'
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'file'
+            Identifier: 'isDirectory'
+          Block
+            ExpressionStatement
+              PropertyAccessExpression
+                Identifier: '
+		file'
+                Identifier: 'children'
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'file'
+              Identifier: 'isNetworked'
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  Identifier: '
+		file'
+                  Identifier: 'host'
+      InterfaceDeclaration
+        Identifier: ' GenericLeadGuard'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' GenericGuard'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+		lead'
+          VoidKeyword
+      InterfaceDeclaration
+        Identifier: ' GenericFollowerGuard'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' GenericGuard'
+            TypeReference
+              Identifier: 'T'
+        MethodSignature
+          Identifier: '
+		follow'
+          VoidKeyword
+      InterfaceDeclaration
+        Identifier: ' GenericGuard'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: '
+		target'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: '
+		isLeader'
+          TypePredicate
+            ThisType
+            ParenthesizedType
+              TypeReference
+                Identifier: 'GenericLeadGuard'
+                TypeReference
+                  Identifier: 'T'
+        PropertySignature
+          Identifier: '
+		isFollower'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' GenericFollowerGuard'
+              TypeReference
+                Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' guard'
+            TypeReference
+              Identifier: ' GenericGuard'
+              TypeReference
+                Identifier: 'File'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'guard'
+          Identifier: 'isLeader'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+		guard'
+                Identifier: 'lead'
+        IfStatement
+          PropertyAccessExpression
+            Identifier: 'guard'
+            Identifier: 'isFollower'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+		guard'
+                  Identifier: 'follow'
+      InterfaceDeclaration
+        Identifier: ' SpecificGuard'
+        PropertySignature
+          Identifier: '
+		isMoreSpecific'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' MoreSpecificGuard'
+      InterfaceDeclaration
+        Identifier: ' MoreSpecificGuard'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' SpecificGuard'
+        MethodSignature
+          Identifier: '
+		do'
+          VoidKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' general'
+            TypeReference
+              Identifier: ' SpecificGuard'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'general'
+          Identifier: 'isMoreSpecific'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+		general'
+                Identifier: 'do'

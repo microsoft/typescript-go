@@ -1,0 +1,5 @@
+SourceFile
+  ForInStatement
+    ObjectLiteralExpression
+    Identifier: ' b'
+    Block

@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' takeFirstTwoEntries'
+    Parameter
+      DotDotDotToken
+      ArrayBindingPattern
+        BindingElement
+          ArrayBindingPattern
+            BindingElement
+              Identifier: 'k1'
+            BindingElement
+              Identifier: ' v1'
+        BindingElement
+          ArrayBindingPattern
+            BindingElement
+              Identifier: 'k2'
+            BindingElement
+              Identifier: ' v2'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+takeFirstTwoEntries'
+      NewExpression
+        Identifier: ' Map'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral
+          ArrayLiteralExpression
+            StringLiteral
+            NumericLiteral

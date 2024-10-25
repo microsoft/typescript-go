@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test'
+    PropertyDeclaration
+      Identifier: '
+  prop'
+      NumericLiteral
+    Constructor

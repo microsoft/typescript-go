@@ -1,0 +1,110 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' kinds'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' kinds'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'k'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' k'
+                PlusToken
+                StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' kinds'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'k'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' k'
+                PlusToken
+                StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' kinds'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'k'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' k'
+                PlusToken
+                StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' kinds'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'k'
+              EqualsGreaterThanToken
+              BinaryExpression
+                Identifier: ' k'
+                PlusToken
+                StringLiteral
+        PropertyAssignment
+          Identifier: ' exact'
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+            StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword

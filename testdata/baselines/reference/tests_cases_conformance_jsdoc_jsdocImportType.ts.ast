@@ -1,0 +1,67 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' require'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exports'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' module'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' exports'
+            AnyKeyword
+  ClassDeclaration
+    Identifier: ' Chunk'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'chunk'
+            EqualsToken
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' Chunk'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+c'
+      Identifier: 'chunk'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' D'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+d'
+      Identifier: 'chunk'

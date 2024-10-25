@@ -1,0 +1,41 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////foo(1, 2); /**a*/
+/////**b*/ function /*a*/foo/*b*/(/**this1*/ this /**this2*/: /**void1*/ void /**void2*/, /**c*/ a /**d*/: /**e*/ number /**f*/, /**g*/ b /**h*/: /**i*/ number /**j*/ = /**k*/ 1 /**l*/) {
+////    // m
+////    /**n*/ return a + b; // o
+////    // p
+////} // q
+/////**r*/ foo(1);
+
+goTo'
+        Identifier: 'select'
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'applyRefactor'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    refactorName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    actionDescription'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newContent'
+          NoSubstitutionTemplateLiteral

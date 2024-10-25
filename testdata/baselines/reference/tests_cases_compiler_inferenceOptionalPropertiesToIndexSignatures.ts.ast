@@ -1,0 +1,168 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'x1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'x2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'x3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        CallExpression
+          Identifier: ' foo'
+          Identifier: 'x4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' param2'
+        ConditionalExpression
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Math'
+                Identifier: 'random'
+            LessThanToken
+            NumericLiteral
+          QuestionToken
+          StringLiteral
+          ColonToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    param1'
+            StringLiteral
+          SpreadAssignment
+            ParenthesizedExpression
+              ConditionalExpression
+                Identifier: 'param2'
+                QuestionToken
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: 'param2'
+                ColonToken
+                ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' query'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Object'
+                    Identifier: 'entries'
+                  Identifier: 'obj'
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  ArrayBindingPattern
+                    BindingElement
+                      Identifier: 'k'
+                    BindingElement
+                      Identifier: ' v'
+                EqualsGreaterThanToken
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'k'
+                    TemplateMiddle
+                  TemplateSpan
+                    CallExpression
+                      Identifier: 'encodeURIComponent'
+                      Identifier: 'v'
+                    TemplateTail
+            Identifier: 'join'
+          StringLiteral

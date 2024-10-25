@@ -1,0 +1,48 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      FunctionDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' f'
+      ClassDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' C'
+      EnumDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' E'
+      ModuleDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' M'
+        ModuleBlock
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      VariableStatement
+        DeclareKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      FunctionDeclaration
+        DeclareKeyword
+        Identifier: ' f'
+      ClassDeclaration
+        DeclareKeyword
+        Identifier: ' C'
+      EnumDeclaration
+        DeclareKeyword
+        Identifier: ' E'
+      ModuleDeclaration
+        DeclareKeyword
+        Identifier: ' M'
+        ModuleBlock

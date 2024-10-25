@@ -1,0 +1,172 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' NonGeneric'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          StringKeyword
+        GetAccessor
+          Identifier: ' y'
+          Block
+            ReturnStatement
+              NumericLiteral
+        SetAccessor
+          Identifier: ' y'
+          Parameter
+            Identifier: 'v'
+          Block
+        MethodDeclaration
+          Identifier: '
+        fn'
+          Block
+            ReturnStatement
+              ThisKeyword
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' a'
+            NumberKeyword
+          Parameter
+            PrivateKeyword
+            Identifier: ' b'
+            NumberKeyword
+          Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NewExpression
+              Identifier: ' C'
+              NumericLiteral
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' c'
+                Identifier: 'fn'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            PropertyAccessExpression
+              Identifier: ' r'
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            PropertyAccessExpression
+              Identifier: ' r'
+              Identifier: 'y'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    r'
+            Identifier: 'y'
+          EqualsToken
+          NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r6'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' c'
+                Identifier: 'y'
+  ModuleDeclaration
+    Identifier: ' Generic'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' C'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: 'U'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          TypeReference
+            Identifier: ' T'
+        GetAccessor
+          Identifier: ' y'
+          Block
+            ReturnStatement
+              NullKeyword
+        SetAccessor
+          Identifier: ' y'
+          Parameter
+            Identifier: 'v'
+            TypeReference
+              Identifier: ' U'
+          Block
+        MethodDeclaration
+          Identifier: '
+        fn'
+          Block
+            ReturnStatement
+              ThisKeyword
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' a'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            PrivateKeyword
+            Identifier: ' b'
+            TypeReference
+              Identifier: ' U'
+          Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            NewExpression
+              Identifier: ' C'
+              NumericLiteral
+              StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' c'
+                Identifier: 'fn'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            PropertyAccessExpression
+              Identifier: ' r'
+              Identifier: 'x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            PropertyAccessExpression
+              Identifier: ' r'
+              Identifier: 'y'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    r'
+            Identifier: 'y'
+          EqualsToken
+          StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r6'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' c'
+                Identifier: 'y'

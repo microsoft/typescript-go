@@ -1,0 +1,86 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        TypeLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+obj1'
+      Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        TypeReference
+          Identifier: ' Object'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+obj2'
+      Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' concat'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        CallExpression
+          Identifier: ' concat'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elementCount'
+        PropertyAccessExpression
+          Identifier: ' result'
+          Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' concat2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' U'
+    Block
+      ReturnStatement
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result2'
+        CallExpression
+          Identifier: ' concat2'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' elementCount2'
+        PropertyAccessExpression
+          Identifier: ' result'
+          Identifier: 'length'

@@ -1,0 +1,140 @@
+SourceFile
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    WScript'
+            Identifier: 'Echo'
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            Identifier: ' i'
+  ForStatement
+    BinaryExpression
+      Identifier: 'i'
+      EqualsToken
+      NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    WScript'
+            Identifier: 'Echo'
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            Identifier: ' i'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' j'
+      LessThanToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    j'
+      IfStatement
+        BinaryExpression
+          Identifier: 'j'
+          EqualsEqualsToken
+          NumericLiteral
+        Block
+          ContinueStatement
+  ForStatement
+    BinaryExpression
+      Identifier: 'j'
+      EqualsToken
+      NumericLiteral
+    BinaryExpression
+      Identifier: ' j'
+      LessThanToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    j'
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' k'
+    Block
+  ForStatement
+    BinaryExpression
+      Identifier: 'k'
+      EqualsToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' k'
+    Block
+  ForStatement
+    BinaryExpression
+      Identifier: ' k'
+      LessThanToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' k'
+    Block
+  ForStatement
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    i'
+  ForStatement
+    Block
+      ExpressionStatement
+        PostfixUnaryExpression
+          Identifier: '
+    i'
+  ForStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: 'i'
+        EqualsToken
+        NumericLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' j'
+        EqualsToken
+        NumericLiteral
+    BinaryExpression
+      BinaryExpression
+        Identifier: ' j'
+        LessThanToken
+        NumericLiteral
+      CommaToken
+      BinaryExpression
+        Identifier: ' i'
+        LessThanToken
+        NumericLiteral
+    PostfixUnaryExpression
+      Identifier: ' j'
+    Block

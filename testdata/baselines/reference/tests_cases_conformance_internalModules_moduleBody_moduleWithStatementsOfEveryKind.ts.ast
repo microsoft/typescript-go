@@ -1,0 +1,246 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' A'
+        PropertyDeclaration
+          Identifier: ' s'
+          StringKeyword
+      ClassDeclaration
+        Identifier: ' AA'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          Identifier: ' s'
+          TypeReference
+            Identifier: ' T'
+      InterfaceDeclaration
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' id'
+          NumberKeyword
+      ClassDeclaration
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' AA'
+            StringKeyword
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' I'
+        PropertyDeclaration
+          Identifier: ' id'
+          NumberKeyword
+      ClassDeclaration
+        Identifier: ' BB'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+        PropertyDeclaration
+          Identifier: '
+        id'
+          NumberKeyword
+      ModuleDeclaration
+        Identifier: ' Module'
+        ModuleBlock
+          ClassDeclaration
+            Identifier: ' A'
+            PropertyDeclaration
+              Identifier: ' s'
+              StringKeyword
+      EnumDeclaration
+        Identifier: ' Color'
+        EnumMember
+          Identifier: ' Blue'
+        EnumMember
+          Identifier: ' Red'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      FunctionDeclaration
+        Identifier: ' F'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' I'
+            NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn'
+            ArrowFunction
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  BinaryExpression
+                    StringLiteral
+                    PlusToken
+                    Identifier: ' s'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ol'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' s'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' id'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' isvalid'
+                TrueKeyword
+      ClassDeclaration
+        DeclareKeyword
+        Identifier: ' DC'
+        PropertyDeclaration
+          StaticKeyword
+          Identifier: ' x'
+          NumberKeyword
+  ModuleDeclaration
+    Identifier: ' Y'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        PropertyDeclaration
+          Identifier: ' s'
+          StringKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' AA'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          Identifier: ' s'
+          TypeReference
+            Identifier: ' T'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        PropertySignature
+          Identifier: ' id'
+          NumberKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' AA'
+            StringKeyword
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' I'
+        PropertyDeclaration
+          Identifier: ' id'
+          NumberKeyword
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' BB'
+        TypeParameter
+          Identifier: 'T'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' A'
+        PropertyDeclaration
+          Identifier: '
+        id'
+          NumberKeyword
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Module'
+        ModuleBlock
+          ClassDeclaration
+            Identifier: ' A'
+            PropertyDeclaration
+              Identifier: ' s'
+              StringKeyword
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' Color'
+        EnumMember
+          Identifier: ' Blue'
+        EnumMember
+          Identifier: ' Red'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' F'
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' array'
+            ArrayType
+              TypeReference
+                Identifier: ' I'
+            NullKeyword
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' fn'
+            ArrowFunction
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  BinaryExpression
+                    StringLiteral
+                    PlusToken
+                    Identifier: ' s'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ol'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' s'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' id'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' isvalid'
+                TrueKeyword
+      ClassDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' DC'
+        PropertyDeclaration
+          StaticKeyword
+          Identifier: ' x'
+          NumberKeyword

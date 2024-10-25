@@ -1,0 +1,55 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' minimalExample1'
+    Block
+      TypeAliasDeclaration
+        Identifier: ' Disc'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              LiteralType
+                StringLiteral
+      FunctionDeclaration
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'x'
+          ArrayType
+            TypeReference
+              Identifier: ' Disc'
+        Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    foo'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' kind'
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ds'
+            ArrayType
+              TypeReference
+                Identifier: ' Disc'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral

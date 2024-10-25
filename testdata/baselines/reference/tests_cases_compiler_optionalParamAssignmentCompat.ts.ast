@@ -1,0 +1,51 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    CallSignature
+      Parameter
+        Identifier: 'p1'
+        NumberKeyword
+      Parameter
+        Identifier: ' p2'
+        StringKeyword
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    PropertySignature
+      Identifier: '
+    p1'
+      TypeReference
+        Identifier: ' I1'
+    MethodSignature
+      Identifier: '
+    m1'
+      Parameter
+        Identifier: 'p1'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' I1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        TypeReference
+          Identifier: ' I2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' I1'
+        PropertyAccessExpression
+          Identifier: ' i2'
+          Identifier: 'p1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' I1'
+        PropertyAccessExpression
+          Identifier: ' i2'
+          Identifier: 'm1'

@@ -1,0 +1,89 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' T'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ModuleDeclaration
+        Identifier: ' x'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' Bar'
+            PropertyDeclaration
+              Identifier: '
+            test'
+              NumberKeyword
+      ModuleDeclaration
+        Identifier: ' z'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' z'
+      ModuleDeclaration
+        Identifier: ' y'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+      ClassDeclaration
+        Identifier: ' y'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' w'
+      ModuleDeclaration
+        Identifier: ' w'
+        ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+      FunctionDeclaration
+        Identifier: ' f'
+        Block
+      FunctionDeclaration
+        Identifier: ' f2'
+        Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+      InterfaceDeclaration
+        Identifier: ' i'
+      ClassDeclaration
+        Identifier: ' C'
+      FunctionDeclaration
+        Identifier: ' C'
+        Block
+      FunctionDeclaration
+        Identifier: ' C2'
+        Block
+      ClassDeclaration
+        Identifier: ' C2'
+      FunctionDeclaration
+        Identifier: ' fi'
+        Block
+      InterfaceDeclaration
+        Identifier: ' fi'
+      ClassDeclaration
+        Identifier: ' cli'
+      InterfaceDeclaration
+        Identifier: ' cli'
+      InterfaceDeclaration
+        Identifier: ' cli2'
+      ClassDeclaration
+        Identifier: ' cli2'

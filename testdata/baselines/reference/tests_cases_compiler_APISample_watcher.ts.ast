@@ -1,0 +1,636 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' process'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fs'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    existsSync'
+            Parameter
+              Identifier: 'path'
+              StringKeyword
+            BooleanKeyword
+          MethodSignature
+            Identifier: '
+    readdirSync'
+            Parameter
+              Identifier: 'path'
+              StringKeyword
+            ArrayType
+              StringKeyword
+          MethodSignature
+            Identifier: '
+    readFileSync'
+            Parameter
+              Identifier: 'filename'
+              StringKeyword
+            Parameter
+              Identifier: ' encoding'
+              QuestionToken
+              StringKeyword
+            StringKeyword
+          MethodSignature
+            Identifier: '
+    writeFileSync'
+            Parameter
+              Identifier: 'filename'
+              StringKeyword
+            Parameter
+              Identifier: ' data'
+              AnyKeyword
+            Parameter
+              Identifier: ' options'
+              QuestionToken
+              UnionType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' encoding'
+                    QuestionToken
+                    StringKeyword
+                  PropertySignature
+                    Identifier: ' mode'
+                    QuestionToken
+                    NumberKeyword
+                  PropertySignature
+                    Identifier: ' flag'
+                    QuestionToken
+                    StringKeyword
+                StringKeyword
+            VoidKeyword
+          MethodSignature
+            Identifier: '
+    watchFile'
+            Parameter
+              Identifier: 'filename'
+              StringKeyword
+            Parameter
+              Identifier: ' options'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' persistent'
+                  QuestionToken
+                  BooleanKeyword
+                PropertySignature
+                  Identifier: ' interval'
+                  QuestionToken
+                  NumberKeyword
+            Parameter
+              Identifier: ' listener'
+              FunctionType
+                Parameter
+                  Identifier: 'curr'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' mtime'
+                      TypeReference
+                        Identifier: ' Date'
+                Parameter
+                  Identifier: ' prev'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' mtime'
+                      TypeReference
+                        Identifier: ' Date'
+                VoidKeyword
+            VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' path'
+        AnyKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' watch'
+    Parameter
+      Identifier: 'rootFileNames'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'CompilerOptions'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' files'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'MapLike'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' version'
+                  NumberKeyword
+            ObjectLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // initialize the list of files
+    rootFileNames'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'fileName'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: '
+        files'
+                    Identifier: 'fileName'
+                  EqualsToken
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' version'
+                      NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' servicesHost'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'LanguageServiceHost'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        getScriptFileNames'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' rootFileNames'
+              PropertyAssignment
+                Identifier: '
+        getScriptVersion'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'fileName'
+                  EqualsGreaterThanToken
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: ' files'
+                      Identifier: 'fileName'
+                    AmpersandAmpersandToken
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: ' files'
+                            Identifier: 'fileName'
+                          Identifier: 'version'
+                        Identifier: 'toString'
+              PropertyAssignment
+                Identifier: '
+        getScriptSnapshot'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'fileName'
+                  EqualsGreaterThanToken
+                  Block
+                    IfStatement
+                      PrefixUnaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'fs'
+                            Identifier: 'existsSync'
+                          Identifier: 'fileName'
+                      Block
+                        ReturnStatement
+                          Identifier: ' undefined'
+                    ReturnStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'ScriptSnapshot'
+                          Identifier: 'fromString'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'fs'
+                                Identifier: 'readFileSync'
+                              Identifier: 'fileName'
+                            Identifier: 'toString'
+              PropertyAssignment
+                Identifier: '
+        getCurrentDirectory'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' process'
+                      Identifier: 'cwd'
+              PropertyAssignment
+                Identifier: '
+        getCompilationSettings'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' options'
+              PropertyAssignment
+                Identifier: '
+        getDefaultLibFileName'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'options'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'getDefaultLibFilePath'
+                    Identifier: 'options'
+              PropertyAssignment
+                Identifier: '
+        fileExists'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' fileName'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' fs'
+                      Identifier: 'existsSync'
+                    Identifier: 'fileName'
+              PropertyAssignment
+                Identifier: '
+        readFile'
+                ArrowFunction
+                  Parameter
+                    Identifier: ' fileName'
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' fs'
+                      Identifier: 'readFileSync'
+                    Identifier: 'fileName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' services'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createLanguageService'
+              Identifier: 'servicesHost'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'createDocumentRegistry'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // Now let's watch the files
+    rootFileNames'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'fileName'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        // First time around, emit all files
+        emitFile'
+                  Identifier: 'fileName'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+        // Add a watch on the file to handle next change
+        fs'
+                    Identifier: 'watchFile'
+                  Identifier: 'fileName'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' persistent'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: ' interval'
+                      NumericLiteral
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'curr'
+                    Parameter
+                      Identifier: ' prev'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        BinaryExpression
+                          PrefixUnaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'curr'
+                              Identifier: 'mtime'
+                          LessThanEqualsToken
+                          PrefixUnaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'prev'
+                              Identifier: 'mtime'
+                        Block
+                          ReturnStatement
+                      ExpressionStatement
+                        PostfixUnaryExpression
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              Identifier: '
+
+                // Update the version to signal a change in the file
+                files'
+                              Identifier: 'fileName'
+                            Identifier: 'version'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+
+                // write the changes to disk
+                emitFile'
+                          Identifier: 'fileName'
+      FunctionDeclaration
+        Identifier: ' emitFile'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' output'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' services'
+                    Identifier: 'getEmitOutput'
+                  Identifier: 'fileName'
+          IfStatement
+            PrefixUnaryExpression
+              PropertyAccessExpression
+                Identifier: 'output'
+                Identifier: 'emitSkipped'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            console'
+                    Identifier: 'log'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'fileName'
+                      TemplateTail
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            console'
+                    Identifier: 'log'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'fileName'
+                      TemplateTail
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+            logErrors'
+                  Identifier: 'fileName'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+
+        output'
+                  Identifier: 'outputFiles'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'o'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            fs'
+                        Identifier: 'writeFileSync'
+                      PropertyAccessExpression
+                        Identifier: 'o'
+                        Identifier: 'name'
+                      PropertyAccessExpression
+                        Identifier: ' o'
+                        Identifier: 'text'
+                      StringLiteral
+      FunctionDeclaration
+        Identifier: ' logErrors'
+        Parameter
+          Identifier: 'fileName'
+          StringKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' allDiagnostics'
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' services'
+                            Identifier: 'getCompilerOptionsDiagnostics'
+                        Identifier: 'concat'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'services'
+                          Identifier: 'getSyntacticDiagnostics'
+                        Identifier: 'fileName'
+                    Identifier: 'concat'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'services'
+                      Identifier: 'getSemanticDiagnostics'
+                    Identifier: 'fileName'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+
+        allDiagnostics'
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'diagnostic'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' message'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'flattenDiagnosticMessageText'
+                          PropertyAccessExpression
+                            Identifier: 'diagnostic'
+                            Identifier: 'messageText'
+                          StringLiteral
+                  IfStatement
+                    PropertyAccessExpression
+                      Identifier: 'diagnostic'
+                      Identifier: 'file'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            ObjectBindingPattern
+                              BindingElement
+                                Identifier: ' line'
+                              BindingElement
+                                Identifier: ' character'
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' diagnostic'
+                                  Identifier: 'file'
+                                Identifier: 'getLineAndCharacterOfPosition'
+                              NonNullExpression
+                                PropertyAccessExpression
+                                  Identifier: 'diagnostic'
+                                  Identifier: 'start'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                console'
+                            Identifier: 'log'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'diagnostic'
+                                  Identifier: 'file'
+                                Identifier: 'fileName'
+                              TemplateMiddle
+                            TemplateSpan
+                              BinaryExpression
+                                Identifier: 'line'
+                                PlusToken
+                                NumericLiteral
+                              TemplateMiddle
+                            TemplateSpan
+                              BinaryExpression
+                                Identifier: 'character'
+                                PlusToken
+                                NumericLiteral
+                              TemplateMiddle
+                            TemplateSpan
+                              Identifier: 'message'
+                              TemplateTail
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                console'
+                            Identifier: 'log'
+                          TemplateExpression
+                            TemplateHead
+                            TemplateSpan
+                              Identifier: 'message'
+                              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' currentDirectoryFiles'
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' fs'
+                Identifier: 'readdirSync'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'process'
+                  Identifier: 'cwd'
+            Identifier: '
+    filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'fileName'
+            EqualsGreaterThanToken
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' fileName'
+                  Identifier: 'length'
+                GreaterThanEqualsToken
+                NumericLiteral
+              AmpersandAmpersandToken
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' fileName'
+                    Identifier: 'substr'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'fileName'
+                      Identifier: 'length'
+                    MinusToken
+                    NumericLiteral
+                  NumericLiteral
+                EqualsEqualsEqualsToken
+                StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// Start the watcher
+watch'
+      Identifier: 'currentDirectoryFiles'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' module'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'ModuleKind'
+            Identifier: 'CommonJS'

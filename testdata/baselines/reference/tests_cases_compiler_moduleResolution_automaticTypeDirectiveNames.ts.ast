@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        StringKeyword
+  ExpressionStatement
+    Identifier: '
+
+// @Filename: /a.ts
+a'

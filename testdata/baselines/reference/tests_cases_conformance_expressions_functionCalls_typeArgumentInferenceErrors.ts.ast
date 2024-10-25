@@ -1,0 +1,142 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' someGenerics1'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' m'
+      NumberKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+someGenerics1'
+      StringKeyword
+      NumberKeyword
+      NumericLiteral
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' someGenerics4'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' U'
+        VoidKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+someGenerics4'
+      StringKeyword
+      NumberKeyword
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' someGenerics5'
+    TypeParameter
+      Identifier: 'U'
+    TypeParameter
+      Identifier: ' T'
+    Parameter
+      Identifier: 'n'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' U'
+        VoidKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+someGenerics5'
+      NumberKeyword
+      StringKeyword
+      StringLiteral
+      ArrowFunction
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        EqualsGreaterThanToken
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' someGenerics6'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      FunctionType
+        Parameter
+          Identifier: 'b'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' A'
+    Parameter
+      Identifier: ' c'
+      FunctionType
+        Parameter
+          Identifier: 'c'
+          TypeReference
+            Identifier: ' A'
+        TypeReference
+          Identifier: ' A'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+someGenerics6'
+      NumberKeyword
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          StringKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'
+      ArrowFunction
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        EqualsGreaterThanToken
+        Identifier: ' n'

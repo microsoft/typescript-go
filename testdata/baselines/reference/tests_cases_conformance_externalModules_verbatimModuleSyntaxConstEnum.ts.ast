@@ -1,0 +1,9 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral

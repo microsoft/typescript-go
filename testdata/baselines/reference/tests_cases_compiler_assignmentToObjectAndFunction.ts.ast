@@ -1,0 +1,96 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errObj'
+        TypeReference
+          Identifier: ' Object'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' toString'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' goodObj'
+        TypeReference
+          Identifier: ' Object'
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    toString'
+            Parameter
+              Identifier: 'x'
+              QuestionToken
+            Block
+              ReturnStatement
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errFun'
+        TypeReference
+          Identifier: ' Function'
+        ObjectLiteralExpression
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' boom'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' goodFundule'
+        TypeReference
+          Identifier: ' Function'
+        Identifier: ' foo'
+  FunctionDeclaration
+    Identifier: ' bar'
+    Block
+  ModuleDeclaration
+    Identifier: ' bar'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' apply'
+        Parameter
+          Identifier: 'thisArg'
+          StringKeyword
+        Parameter
+          Identifier: ' argArray'
+          QuestionToken
+          StringKeyword
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' goodFundule2'
+        TypeReference
+          Identifier: ' Function'
+        Identifier: ' bar'
+  FunctionDeclaration
+    Identifier: ' bad'
+    Block
+  ModuleDeclaration
+    Identifier: ' bad'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' apply'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' badFundule'
+        TypeReference
+          Identifier: ' Function'
+        Identifier: ' bad'

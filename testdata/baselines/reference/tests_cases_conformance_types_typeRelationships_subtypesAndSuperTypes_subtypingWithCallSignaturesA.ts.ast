@@ -1,0 +1,25 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        NumberKeyword
+    TypeQuery
+      Identifier: ' cb'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          Identifier: ' foo3'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+              NumberKeyword
+            EqualsGreaterThanToken
+            StringLiteral

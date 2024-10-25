@@ -1,0 +1,101 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      TypeQuery
+        Identifier: ' a'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    PropertySignature
+      Identifier: '
+    c'
+      TypeQuery
+        Identifier: ' d'
+    PropertySignature
+      Identifier: ' // Should yield error (d is not a value)
+    d'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I3'
+    PropertySignature
+      Identifier: '
+    e'
+      TypeQuery
+        Identifier: ' e'
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    b'
+      TypeQuery
+        Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    c'
+      TypeQuery
+        Identifier: ' d'
+    PropertyDeclaration
+      Identifier: ' // Should yield error (d is not a value)
+    d'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      Identifier: '
+    e'
+      TypeQuery
+        Identifier: ' e'
+  InterfaceDeclaration
+    Identifier: ' ValidInterface'
+    PropertySignature
+      Identifier: '
+    x'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' ValidClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ValidInterface'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' vcInstance'
+        NewExpression
+          Identifier: ' ValidClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' viInstance'
+        Identifier: ' vcInstance'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        TypeQuery
+          QualifiedName
+            Identifier: ' vcInstance'
+            Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeQuery
+          QualifiedName
+            Identifier: ' viInstance'
+            Identifier: 'x'

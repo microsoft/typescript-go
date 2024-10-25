@@ -1,0 +1,45 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      QuestionToken
+      TypeReference
+        Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      QuestionToken
+      TypeReference
+        Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+    getA'
+      TypeReference
+        Identifier: ' A'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' A'
+    Constructor
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            QuestionDotToken
+            PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              QuestionDotToken
+              Identifier: 'a'
+            PrivateIdentifier
+        ExpressionStatement
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                ThisKeyword
+                QuestionDotToken
+                Identifier: 'getA'
+            PrivateIdentifier

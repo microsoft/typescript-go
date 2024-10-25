@@ -1,0 +1,33 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' C1'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C1'
+  ModuleDeclaration
+    Identifier: ' C1'
+    ModuleBlock
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C2'
+  InterfaceDeclaration
+    Identifier: ' C2'
+  ModuleDeclaration
+    Identifier: ' C2'
+    ModuleBlock
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C3'
+  ModuleDeclaration
+    Identifier: ' C3'
+    ModuleBlock
+  InterfaceDeclaration
+    Identifier: ' C3'
+  ModuleDeclaration
+    Identifier: ' C4'
+    ModuleBlock
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C4'
+  InterfaceDeclaration
+    Identifier: ' C4'

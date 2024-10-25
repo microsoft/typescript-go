@@ -1,0 +1,58 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      Identifier: ' x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      PrivateIdentifier
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      StaticKeyword
+      AccessorKeyword
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      AccessorKeyword
+      PrivateIdentifier
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      AccessorKeyword
+      Identifier: ' x'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C4'
+    PropertyDeclaration
+      AccessorKeyword
+      PrivateIdentifier
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C5'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    PropertyDeclaration
+      AccessorKeyword
+      PrivateIdentifier
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C6'
+    PropertyDeclaration
+      AccessorKeyword
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral

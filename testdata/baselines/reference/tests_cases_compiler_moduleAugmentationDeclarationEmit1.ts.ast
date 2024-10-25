@@ -1,0 +1,115 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Observable'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          TypeAssertionExpression
+            AnyKeyword
+            PropertyAccessExpression
+              Identifier: 'Observable'
+              Identifier: 'prototype'
+        Identifier: 'map'
+      EqualsToken
+      FunctionExpression
+        Block
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Observable'
+        TypeParameter
+          Identifier: 'T'
+        MethodSignature
+          Identifier: '
+        map'
+          TypeParameter
+            Identifier: 'U'
+          Parameter
+            Identifier: 'proj'
+            FunctionType
+              Parameter
+                Identifier: 'e'
+                TypeReference
+                  Identifier: 'T'
+              TypeReference
+                Identifier: ' U'
+          TypeReference
+            Identifier: ' Observable'
+            TypeReference
+              Identifier: 'U'
+      ModuleDeclaration
+        Identifier: ' Observable'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' someAnotherValue'
+                NumberKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Observable'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    filter'
+      Parameter
+        Identifier: 'pred'
+        FunctionType
+          Parameter
+            Identifier: 'e'
+            TypeReference
+              Identifier: 'T'
+          BooleanKeyword
+      TypeReference
+        Identifier: ' Observable'
+        TypeReference
+          Identifier: 'T'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Observable'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' someValue'
+            NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Observable'
+    StringLiteral
+  ImportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Observable'
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            BinaryExpression
+              Identifier: ' x'
+              PlusToken
+              NumericLiteral

@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'obj'
+          MethodDeclaration
+            Identifier: '
+    prop'
+            Block
+              ReturnStatement
+                ObjectLiteralExpression
+                  SpreadAssignment
+                    Identifier: 'obj'
+                  PropertyAssignment
+                    Identifier: '
+            metadata'
+                    NumericLiteral

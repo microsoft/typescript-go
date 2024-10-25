@@ -1,0 +1,33 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Event'
+    PropertySignature
+      Identifier: ' title'
+      StringKeyword
+  EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Event'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' Input'
+    Parameter
+      Identifier: 'target'
+      AnyKeyword
+    Parameter
+      Identifier: ' key'
+      StringKeyword
+    VoidKeyword
+    Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' SomeClass'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'Input'
+      Identifier: ' event'
+      TypeReference
+        Identifier: ' Event'

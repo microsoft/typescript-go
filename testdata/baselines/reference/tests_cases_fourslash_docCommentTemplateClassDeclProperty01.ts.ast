@@ -1,0 +1,55 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' singleLineOffset'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multiLineOffset'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+////class C {
+////    /** /*0*/  */
+////    foo = (p0) => {
+////        return p0;
+////    };
+////    /*1*/
+////    bar = (p1) => {
+////        return p1;
+////    }
+////    /*2*/
+////    baz = function (p2, p3) {
+////        return p2;
+////    }
+////}
+
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      Identifier: ' multiLineOffset'
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      Identifier: ' multiLineOffset'
+      NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'docCommentTemplateAt'
+      StringLiteral
+      Identifier: ' multiLineOffset'
+      NoSubstitutionTemplateLiteral

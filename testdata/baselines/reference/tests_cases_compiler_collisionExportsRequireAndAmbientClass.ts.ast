@@ -1,0 +1,58 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' require'
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' exports'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' m1'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' require'
+      ClassDeclaration
+        Identifier: ' exports'
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' require'
+      ClassDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' exports'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' require'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' exports'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' m3'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' require'
+      ClassDeclaration
+        Identifier: ' exports'
+  ModuleDeclaration
+    Identifier: ' m4'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' require'
+      ClassDeclaration
+        ExportKeyword
+        DeclareKeyword
+        Identifier: ' exports'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            NumericLiteral

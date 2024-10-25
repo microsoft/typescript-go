@@ -1,0 +1,109 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              NewExpression
+                Identifier: 'target'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              ArrowFunction
+                EqualsGreaterThanToken
+                NewExpression
+                  Identifier: 'target'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' c'
+      FunctionExpression
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: 'target'
+    PropertyDeclaration
+      Identifier: '
+    d'
+      FunctionExpression
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: 'target'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' e'
+              NewExpression
+                Identifier: 'target'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f'
+              ArrowFunction
+                EqualsGreaterThanToken
+                NewExpression
+                  Identifier: 'target'
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' g'
+            NewExpression
+              Identifier: 'target'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' h'
+            ArrowFunction
+              EqualsGreaterThanToken
+              NewExpression
+                Identifier: 'target'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionExpression
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NewExpression
+                    Identifier: 'target'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' j'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    NewExpression
+                      Identifier: 'target'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' O'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    k'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  NewExpression
+                    Identifier: 'target'

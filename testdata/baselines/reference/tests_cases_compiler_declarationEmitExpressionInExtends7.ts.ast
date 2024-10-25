@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SomeUndefinedFunction'

@@ -1,0 +1,89 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' value'
+              QuestionToken
+              ArrayType
+                NumberKeyword
+          UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'results'
+      UnionType
+        ArrayType
+          NumberKeyword
+        UndefinedKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'results'
+                BarBarEqualsToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' bar'
+                    QuestionDotToken
+                    Identifier: 'value'
+                  QuestionQuestionToken
+                  ArrayLiteralExpression
+            Identifier: 'push'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'results'
+      UnionType
+        ArrayType
+          NumberKeyword
+        UndefinedKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'results'
+                QuestionQuestionEqualsToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' bar'
+                    QuestionDotToken
+                    Identifier: 'value'
+                  QuestionQuestionToken
+                  ArrayLiteralExpression
+            Identifier: 'push'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'results'
+      UnionType
+        ArrayType
+          NumberKeyword
+        UndefinedKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'results'
+                AmpersandAmpersandEqualsToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' bar'
+                    QuestionDotToken
+                    Identifier: 'value'
+                  QuestionQuestionToken
+                  ArrayLiteralExpression
+            Identifier: 'push'
+          NumericLiteral

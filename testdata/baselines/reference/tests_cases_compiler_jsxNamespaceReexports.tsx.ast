@@ -1,0 +1,48 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' createElement'
+    Parameter
+      Identifier: 'element'
+      StringKeyword
+    Parameter
+      Identifier: ' props'
+      AnyKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'children'
+      ArrayType
+        AnyKeyword
+    AnyKeyword
+    Block
+  ModuleDeclaration
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' Record'
+            StringKeyword
+            AnyKeyword
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' createElement'
+      ExportSpecifier
+        Identifier: ' JSX'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' MyLib'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' content'
+        JsxSelfClosingElement
+          Identifier: 'my-element'
+          JsxAttributes

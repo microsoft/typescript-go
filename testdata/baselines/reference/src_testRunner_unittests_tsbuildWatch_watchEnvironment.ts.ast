@@ -1,0 +1,581 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' createBaseline'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createSolutionBuilderWithWatchHostForBaseline'
+        ImportSpecifier
+          Identifier: '
+    runWatchBaseline'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    it'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' project'
+                        NoSubstitutionTemplateLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' maxPkgs'
+                        NumericLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' configPath'
+                        TemplateExpression
+                          TemplateHead
+                          TemplateSpan
+                            Identifier: 'project'
+                            TemplateTail
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' typing'
+                        TypeReference
+                          Identifier: ' File'
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: '
+            path'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'project'
+                                TemplateTail
+                          PropertyAssignment
+                            Identifier: '
+            content'
+                            StringLiteral
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' allPkgFiles'
+                        CallExpression
+                          Identifier: ' pkgs'
+                          Identifier: 'pkgFiles'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' system'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createWatchedSystem'
+                          ArrayLiteralExpression
+                            Identifier: 'typing'
+                            SpreadElement
+                              CallExpression
+                                Identifier: 'flatArray'
+                                Identifier: 'allPkgFiles'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' currentDirectory'
+                              Identifier: ' project'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        writePkgReferences'
+                      Identifier: 'system'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        ObjectBindingPattern
+                          BindingElement
+                            Identifier: ' sys'
+                          BindingElement
+                            Identifier: ' baseline'
+                          BindingElement
+                            Identifier: ' cb'
+                          BindingElement
+                            Identifier: ' getPrograms'
+                        CallExpression
+                          Identifier: ' createBaseline'
+                          Identifier: 'system'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' host'
+                        CallExpression
+                          Identifier: ' createSolutionBuilderWithWatchHostForBaseline'
+                          Identifier: 'sys'
+                          Identifier: ' cb'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' solutionBuilder'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'createSolutionBuilderWithWatch'
+                          Identifier: 'host'
+                          ArrayLiteralExpression
+                            StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' watch'
+                              TrueKeyword
+                            PropertyAssignment
+                              Identifier: ' verbose'
+                              TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        solutionBuilder'
+                        Identifier: 'build'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        runWatchBaseline'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+            scenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            sys'
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            baseline'
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            getPrograms'
+                        PropertyAssignment
+                          Identifier: '
+            edits'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'writeFile'
+                                    PropertyAccessExpression
+                                      Identifier: 'typing'
+                                      Identifier: 'path'
+                                    TemplateExpression
+                                      TemplateHead
+                                      TemplateSpan
+                                        PropertyAccessExpression
+                                          Identifier: 'typing'
+                                          Identifier: 'content'
+                                        TemplateTail
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    // Make change
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      PostfixUnaryExpression
+                                        Identifier: '
+                        maxPkgs'
+                                    ExpressionStatement
+                                      CallExpression
+                                        Identifier: '
+                        writePkgReferences'
+                                        Identifier: 'sys'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'writeFile'
+                                    PropertyAccessExpression
+                                      Identifier: 'typing'
+                                      Identifier: 'path'
+                                    PropertyAccessExpression
+                                      Identifier: ' typing'
+                                      Identifier: 'content'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    // Make change to remove all watches
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                        maxPkgs'
+                                        EqualsToken
+                                        NumericLiteral
+                                    ExpressionStatement
+                                      CallExpression
+                                        Identifier: '
+                        writePkgReferences'
+                                        Identifier: 'sys'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'writeFile'
+                                    PropertyAccessExpression
+                                      Identifier: 'typing'
+                                      Identifier: 'path'
+                                    TemplateExpression
+                                      TemplateHead
+                                      TemplateSpan
+                                        PropertyAccessExpression
+                                          Identifier: 'typing'
+                                          Identifier: 'content'
+                                        TemplateTail
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                        PropertyAssignment
+                          Identifier: '
+            watchOrSolution'
+                          Identifier: ' solutionBuilder'
+                  FunctionDeclaration
+                    Identifier: ' flatArray'
+                    TypeParameter
+                      Identifier: 'T'
+                      TypeLiteral
+                    Parameter
+                      Identifier: 'arr'
+                      ArrayType
+                        ArrayType
+                          TypeReference
+                            Identifier: ' T'
+                    TypeOperator
+                      ArrayType
+                        TypeReference
+                          Identifier: ' T'
+                    Block
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'flatMap'
+                          Identifier: 'arr'
+                          PropertyAccessExpression
+                            Identifier: ' ts'
+                            Identifier: 'identity'
+                  FunctionDeclaration
+                    Identifier: ' pkgs'
+                    TypeParameter
+                      Identifier: 'T'
+                    Parameter
+                      Identifier: 'cb'
+                      FunctionType
+                        Parameter
+                          Identifier: 'index'
+                          NumberKeyword
+                        TypeReference
+                          Identifier: ' T'
+                    ArrayType
+                      TypeReference
+                        Identifier: ' T'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' result'
+                            ArrayType
+                              TypeReference
+                                Identifier: ' T'
+                            ArrayLiteralExpression
+                      ForStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' index'
+                            NumericLiteral
+                        BinaryExpression
+                          Identifier: ' index'
+                          LessThanToken
+                          Identifier: ' maxPkgs'
+                        PostfixUnaryExpression
+                          Identifier: ' index'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                result'
+                                Identifier: 'push'
+                              CallExpression
+                                Identifier: 'cb'
+                                Identifier: 'index'
+                      ReturnStatement
+                        Identifier: ' result'
+                  FunctionDeclaration
+                    Identifier: ' createPkgReference'
+                    Parameter
+                      Identifier: 'index'
+                      NumberKeyword
+                    Block
+                      ReturnStatement
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' path'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'index'
+                                TemplateTail
+                  FunctionDeclaration
+                    Identifier: ' pkgFiles'
+                    Parameter
+                      Identifier: 'index'
+                      NumberKeyword
+                    ArrayType
+                      TypeReference
+                        Identifier: ' File'
+                    Block
+                      ReturnStatement
+                        ArrayLiteralExpression
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    path'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'project'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  Identifier: 'index'
+                                  TemplateTail
+                            PropertyAssignment
+                              Identifier: '
+                    content'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'index'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  Identifier: 'index'
+                                  TemplateTail
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    path'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'project'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  Identifier: 'index'
+                                  TemplateTail
+                            PropertyAssignment
+                              Identifier: '
+                    content'
+                              CallExpression
+                                Identifier: ' jsonToReadableText'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        complerOptions'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' composite'
+                                        TrueKeyword
+                                  PropertyAssignment
+                                    Identifier: '
+                        include'
+                                    ArrayLiteralExpression
+                                      StringLiteral
+                                      StringLiteral
+                  FunctionDeclaration
+                    Identifier: ' writePkgReferences'
+                    Parameter
+                      Identifier: 'system'
+                      TypeReference
+                        Identifier: ' TestServerHost'
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            system'
+                            Identifier: 'writeFile'
+                          Identifier: '
+                configPath'
+                          CallExpression
+                            Identifier: '
+                jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    files'
+                                ArrayLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    include'
+                                ArrayLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    references'
+                                CallExpression
+                                  Identifier: ' pkgs'
+                                  Identifier: 'createPkgReference'

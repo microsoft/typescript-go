@@ -1,0 +1,35 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' a'
+      StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' b'
+      StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' c'
+      StringLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' d'
+      StringLiteral
+    MethodDeclaration
+      Identifier: ' // error unused prop
+
+    getValue'
+      Parameter
+        Identifier: 'key'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      Block
+        ReturnStatement
+          ElementAccessExpression
+            ThisKeyword
+            Identifier: 'key'

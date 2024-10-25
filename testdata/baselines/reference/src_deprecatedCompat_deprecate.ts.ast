@@ -1,0 +1,562 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    DeprecationOptions'
+        ImportSpecifier
+          Identifier: '
+    formatStringFromArgs'
+        ImportSpecifier
+          Identifier: '
+    noop'
+        ImportSpecifier
+          Identifier: '
+    Version'
+        ImportSpecifier
+          Identifier: '
+    version'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' enableDeprecationWarnings'
+        TrueKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' setEnableDeprecationWarnings'
+    Parameter
+      Identifier: 'value'
+      BooleanKeyword
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    enableDeprecationWarnings'
+          EqualsToken
+          Identifier: ' value'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typeScriptVersion'
+        UnionType
+          TypeReference
+            Identifier: ' Version'
+          UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' getTypeScriptVersion'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' typeScriptVersion'
+          QuestionQuestionToken
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'typeScriptVersion'
+              EqualsToken
+              NewExpression
+                Identifier: ' Version'
+                Identifier: 'version'
+  FunctionDeclaration
+    Identifier: ' formatDeprecationMessage'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' error'
+      UnionType
+        BooleanKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: ' errorAfter'
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' since'
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' message'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' deprecationMessage'
+            ConditionalExpression
+              Identifier: ' error'
+              QuestionToken
+              StringLiteral
+              ColonToken
+              StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    deprecationMessage'
+          PlusEqualsToken
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'name'
+              TemplateTail
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    deprecationMessage'
+          PlusEqualsToken
+          ConditionalExpression
+            Identifier: ' since'
+            QuestionToken
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'since'
+                TemplateTail
+            ColonToken
+            StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    deprecationMessage'
+          PlusEqualsToken
+          ConditionalExpression
+            Identifier: ' error'
+            QuestionToken
+            StringLiteral
+            ColonToken
+            ConditionalExpression
+              Identifier: ' errorAfter'
+              QuestionToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'errorAfter'
+                  TemplateTail
+              ColonToken
+              StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    deprecationMessage'
+          PlusEqualsToken
+          ConditionalExpression
+            Identifier: ' message'
+            QuestionToken
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                CallExpression
+                  Identifier: 'formatStringFromArgs'
+                  Identifier: 'message'
+                  ArrayLiteralExpression
+                    Identifier: 'name'
+                TemplateTail
+            ColonToken
+            StringLiteral
+      ReturnStatement
+        Identifier: ' deprecationMessage'
+  FunctionDeclaration
+    Identifier: ' createErrorDeprecation'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' errorAfter'
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' since'
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' message'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' deprecationMessage'
+            CallExpression
+              Identifier: ' formatDeprecationMessage'
+              Identifier: 'name'
+              TrueKeyword
+              Identifier: ' errorAfter'
+              Identifier: ' since'
+              Identifier: ' message'
+      ReturnStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ThrowStatement
+              NewExpression
+                Identifier: ' TypeError'
+                Identifier: 'deprecationMessage'
+  FunctionDeclaration
+    Identifier: ' createWarningDeprecation'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' errorAfter'
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' since'
+      UnionType
+        TypeReference
+          Identifier: ' Version'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' message'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' hasWrittenDeprecation'
+            FalseKeyword
+      ReturnStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              BinaryExpression
+                Identifier: 'enableDeprecationWarnings'
+                AmpersandAmpersandToken
+                PrefixUnaryExpression
+                  Identifier: 'hasWrittenDeprecation'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            Debug'
+                        Identifier: 'log'
+                      Identifier: 'warn'
+                    CallExpression
+                      Identifier: 'formatDeprecationMessage'
+                      Identifier: 'name'
+                      FalseKeyword
+                      Identifier: ' errorAfter'
+                      Identifier: ' since'
+                      Identifier: ' message'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            hasWrittenDeprecation'
+                    EqualsToken
+                    TrueKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createDeprecation'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' options'
+      IntersectionType
+        TypeReference
+          Identifier: ' DeprecationOptions'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' error'
+            LiteralType
+              TrueKeyword
+    FunctionType
+      NeverKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createDeprecation'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' DeprecationOptions'
+    FunctionType
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createDeprecation'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' options'
+      TypeReference
+        Identifier: ' DeprecationOptions'
+      ObjectLiteralExpression
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' version'
+            ConditionalExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    Identifier: ' options'
+                    Identifier: 'typeScriptVersion'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              QuestionToken
+              NewExpression
+                Identifier: ' Version'
+                PropertyAccessExpression
+                  Identifier: 'options'
+                  Identifier: 'typeScriptVersion'
+              ColonToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' options'
+                  Identifier: 'typeScriptVersion'
+                QuestionQuestionToken
+                CallExpression
+                  Identifier: ' getTypeScriptVersion'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' errorAfter'
+            ConditionalExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    Identifier: ' options'
+                    Identifier: 'errorAfter'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              QuestionToken
+              NewExpression
+                Identifier: ' Version'
+                PropertyAccessExpression
+                  Identifier: 'options'
+                  Identifier: 'errorAfter'
+              ColonToken
+              PropertyAccessExpression
+                Identifier: ' options'
+                Identifier: 'errorAfter'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' warnAfter'
+            ConditionalExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    Identifier: ' options'
+                    Identifier: 'warnAfter'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              QuestionToken
+              NewExpression
+                Identifier: ' Version'
+                PropertyAccessExpression
+                  Identifier: 'options'
+                  Identifier: 'warnAfter'
+              ColonToken
+              PropertyAccessExpression
+                Identifier: ' options'
+                Identifier: 'warnAfter'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' since'
+            ConditionalExpression
+              BinaryExpression
+                TypeOfExpression
+                  PropertyAccessExpression
+                    Identifier: ' options'
+                    Identifier: 'since'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              QuestionToken
+              NewExpression
+                Identifier: ' Version'
+                PropertyAccessExpression
+                  Identifier: 'options'
+                  Identifier: 'since'
+              ColonToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' options'
+                  Identifier: 'since'
+                QuestionQuestionToken
+                Identifier: ' warnAfter'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' error'
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' options'
+                Identifier: 'error'
+              BarBarToken
+              BinaryExpression
+                Identifier: ' errorAfter'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' version'
+                      Identifier: 'compareTo'
+                    Identifier: 'errorAfter'
+                  GreaterThanEqualsToken
+                  NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' warn'
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'warnAfter'
+              BarBarToken
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' version'
+                    Identifier: 'compareTo'
+                  Identifier: 'warnAfter'
+                GreaterThanEqualsToken
+                NumericLiteral
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' error'
+          QuestionToken
+          CallExpression
+            Identifier: ' createErrorDeprecation'
+            Identifier: 'name'
+            Identifier: ' errorAfter'
+            Identifier: ' since'
+            PropertyAccessExpression
+              Identifier: ' options'
+              Identifier: 'message'
+          ColonToken
+          ConditionalExpression
+            Identifier: '
+        warn'
+            QuestionToken
+            CallExpression
+              Identifier: ' createWarningDeprecation'
+              Identifier: 'name'
+              Identifier: ' errorAfter'
+              Identifier: ' since'
+              PropertyAccessExpression
+                Identifier: ' options'
+                Identifier: 'message'
+            ColonToken
+            Identifier: '
+        noop'
+  FunctionDeclaration
+    Identifier: ' wrapFunction'
+    TypeParameter
+      Identifier: 'F'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        AnyKeyword
+    Parameter
+      Identifier: 'deprecation'
+      FunctionType
+        VoidKeyword
+    Parameter
+      Identifier: ' func'
+      TypeReference
+        Identifier: ' F'
+    TypeReference
+      Identifier: ' F'
+    Block
+      ReturnStatement
+        AsExpression
+          FunctionExpression
+            Parameter
+              Identifier: 'this'
+              UnknownKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        deprecation'
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' func'
+                    Identifier: 'apply'
+                  ThisKeyword
+                  Identifier: ' arguments'
+          TypeReference
+            Identifier: ' F'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' deprecate'
+    TypeParameter
+      Identifier: 'F'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        AnyKeyword
+    Parameter
+      Identifier: 'func'
+      TypeReference
+        Identifier: ' F'
+    Parameter
+      Identifier: ' options'
+      QuestionToken
+      TypeReference
+        Identifier: ' DeprecationOptions'
+    TypeReference
+      Identifier: ' F'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' deprecation'
+            CallExpression
+              Identifier: ' createDeprecation'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'options'
+                  QuestionDotToken
+                  Identifier: 'name'
+                QuestionQuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Debug'
+                    Identifier: 'getFunctionName'
+                  Identifier: 'func'
+              Identifier: ' options'
+      ReturnStatement
+        CallExpression
+          Identifier: ' wrapFunction'
+          Identifier: 'deprecation'
+          Identifier: ' func'

@@ -1,0 +1,29 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Object'
+  ClassDeclaration
+    Identifier: ' Bar'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' Foo'
+          Identifier: 'Object'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' Baz'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Object'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

@@ -1,0 +1,17 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' indexSig'
+    IndexSignature
+      Parameter
+        Identifier: 'idx'
+        QuestionToken
+        NumberKeyword
+      AnyKeyword
+  ClassDeclaration
+    Identifier: ' indexSig2'
+    IndexSignature
+      Parameter
+        Identifier: 'idx'
+        QuestionToken
+        NumberKeyword
+      AnyKeyword

@@ -1,0 +1,30 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'y'
+      Block
+    SetAccessor
+      StaticKeyword
+      Identifier: ' y'
+      Parameter
+        Identifier: 'z'
+      Block
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' C'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' x'
+        Block

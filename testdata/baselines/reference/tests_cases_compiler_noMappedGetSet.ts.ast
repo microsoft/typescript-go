@@ -1,0 +1,11 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' OH_NO'
+    TypeLiteral
+      GetAccessor
+        ComputedPropertyName
+          BinaryExpression
+            Identifier: 'K'
+            InKeyword
+            Identifier: ' WAT'
+        StringKeyword

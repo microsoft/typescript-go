@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowjs: true
+// @noEmit: true
+// @checkJs: true
+
+// @Filename: a.js
+////[|var x = "";
+////x = 1;|]
+
+// Disable checking for the whole file
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      NoSubstitutionTemplateLiteral
+      FalseKeyword
+      Identifier: ' /*errorCode*/ undefined'
+      NumericLiteral

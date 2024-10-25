@@ -1,0 +1,14 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                ComputedPropertyName
+                  NoSubstitutionTemplateLiteral
+                Identifier: ' renamed'
+          EqualsGreaterThanToken
+          Identifier: ' renamed'

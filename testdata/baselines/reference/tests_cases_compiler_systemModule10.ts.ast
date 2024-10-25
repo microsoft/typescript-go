@@ -1,0 +1,39 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' n'
+      NamedImports
+        ImportSpecifier
+          Identifier: 'x'
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' n2'
+    ExternalModuleReference
+      StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+        Identifier: ' y'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'n'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'n'
+        Identifier: ' n1'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'n2'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'n2'
+        Identifier: ' n3'

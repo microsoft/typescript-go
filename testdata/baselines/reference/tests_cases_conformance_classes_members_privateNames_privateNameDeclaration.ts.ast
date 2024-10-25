@@ -1,0 +1,22 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      StringKeyword
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      Identifier: '
+    baz'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    qux'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+    quux'
+      VoidKeyword
+      Block

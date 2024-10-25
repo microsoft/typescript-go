@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    blub'
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' x'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

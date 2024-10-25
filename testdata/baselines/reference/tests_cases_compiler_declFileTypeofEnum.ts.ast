@@ -1,0 +1,42 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' days'
+    EnumMember
+      Identifier: '
+    monday'
+    EnumMember
+      Identifier: '
+    tuesday'
+    EnumMember
+      Identifier: '
+    wednesday'
+    EnumMember
+      Identifier: '
+    thursday'
+    EnumMember
+      Identifier: '
+    friday'
+    EnumMember
+      Identifier: '
+    saturday'
+    EnumMember
+      Identifier: '
+    sunday'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' weekendDay'
+        PropertyAccessExpression
+          Identifier: ' days'
+          Identifier: 'saturday'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' daysOfMonth'
+        Identifier: ' days'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' daysOfYear'
+        TypeQuery
+          Identifier: ' days'

@@ -1,0 +1,168 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' A'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    EnumMember
+      Identifier: '
+    Member'
+  EnumDeclaration
+    Identifier: ' C'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' C'
+  EnumDeclaration
+    Identifier: ' DD'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' DD'
+        Identifier: ' D'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' E'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' E'
+        Identifier: ' EE'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' F'
+        Identifier: ' FF'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' F'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' G'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+    EnumMember
+      Identifier: '
+    C'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' H'
+    EnumMember
+      Identifier: '
+    A'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    B'
+      StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' I'
+    EnumMember
+      Identifier: '
+    A'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    B'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    C'
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' J'
+    EnumMember
+      Identifier: '
+    A'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+    EnumMember
+      Identifier: '
+    C'
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' K'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    A'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    C'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    Mask'
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' A'
+          BarToken
+          Identifier: ' B'
+        BarToken
+        Identifier: ' C'
+  EnumDeclaration
+    ExportKeyword
+    ConstKeyword
+    Identifier: ' L'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    A'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    C'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    Mask'
+      BinaryExpression
+        BinaryExpression
+          Identifier: ' A'
+          BarToken
+          Identifier: ' B'
+        BarToken
+        Identifier: ' C'

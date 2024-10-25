@@ -1,0 +1,227 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' my'
+        BinaryExpression
+          Identifier: ' my'
+          BarBarToken
+          ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+/** @param {number} n */
+my'
+        Identifier: 'method'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' n'
+              PlusToken
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+my'
+        Identifier: 'number'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+my'
+        Identifier: 'object'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+my'
+        Identifier: 'predicate'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' my'
+          Identifier: 'predicate'
+        BarBarToken
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+my'
+          Identifier: 'predicate'
+        Identifier: 'query'
+      EqualsToken
+      FunctionExpression
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' me'
+                ThisKeyword
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+    me'
+                Identifier: 'property'
+              EqualsToken
+              FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q'
+        NewExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' my'
+              Identifier: 'predicate'
+            Identifier: 'query'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+my'
+            Identifier: 'predicate'
+          Identifier: 'query'
+        Identifier: 'another'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+my'
+            Identifier: 'predicate'
+          Identifier: 'query'
+        Identifier: 'result'
+      EqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+/** @param {number} first
+ *  @param {number} second
+ */
+my'
+          Identifier: 'predicate'
+        Identifier: 'sort'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' my'
+            Identifier: 'predicate'
+          Identifier: 'sort'
+        BarBarToken
+        FunctionExpression
+          Parameter
+            Identifier: 'first'
+          Parameter
+            Identifier: ' second'
+          Block
+            ReturnStatement
+              ConditionalExpression
+                BinaryExpression
+                  Identifier: ' first'
+                  GreaterThanToken
+                  Identifier: ' second'
+                QuestionToken
+                Identifier: ' first'
+                ColonToken
+                Identifier: ' second'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+my'
+          Identifier: 'predicate'
+        Identifier: 'type'
+      EqualsToken
+      ClassExpression
+        MethodDeclaration
+          Identifier: '
+    m'
+          Block
+            ReturnStatement
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' min'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' window'
+            Identifier: 'min'
+          BarBarToken
+          ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+min'
+        Identifier: 'nest'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'min'
+          Identifier: 'nest'
+        BarBarToken
+        FunctionExpression
+          Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+min'
+          Identifier: 'nest'
+        Identifier: 'other'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' self'
+              Identifier: 'min'
+            Identifier: 'nest'
+          Identifier: 'other'
+        BarBarToken
+        ClassExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+min'
+        Identifier: 'property'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' global'
+            Identifier: 'min'
+          Identifier: 'property'
+        BarBarToken
+        ObjectLiteralExpression

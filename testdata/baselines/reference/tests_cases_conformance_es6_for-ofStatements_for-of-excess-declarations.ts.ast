@@ -1,0 +1,14 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            ComputedPropertyName
+              Identifier: 'b'
+            Identifier: ' c'
+    ArrayLiteralExpression
+      NumericLiteral
+    Block

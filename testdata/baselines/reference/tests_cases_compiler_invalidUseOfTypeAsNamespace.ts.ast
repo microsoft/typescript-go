@@ -1,0 +1,12 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' OhNo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          QualifiedName
+            Identifier: ' OhNo'
+            Identifier: 'hello'

@@ -1,0 +1,314 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @Filename: quickInfoJsDocTagsFunctionOverload02.ts
+/////**
+//// * Doc foo
+//// */
+////declare function /*1*/foo(): void;
+////
+/////**
+//// * Doc foo overloaded
+//// */
+////declare function /*2*/foo(x: number): void
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'verifyQuickInfoDisplayParts'
+      StringLiteral
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' start'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' length'
+          NumericLiteral
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' kind'
+            StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'verifyQuickInfoDisplayParts'
+      StringLiteral
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' start'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' length'
+          NumericLiteral
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: 'kind'
+            StringLiteral
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' text'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' kind'
+            StringLiteral

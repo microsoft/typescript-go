@@ -1,0 +1,506 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    first'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    IfStatement'
+        ImportSpecifier
+          Identifier: '
+    isBlock'
+        ImportSpecifier
+          Identifier: '
+    isStatement'
+        ImportSpecifier
+          Identifier: '
+    sliceAfter'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Unreachable_code_detected'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' syntacticDiagnostics'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'program'
+                      Identifier: 'getSyntacticDiagnostics'
+                    PropertyAccessExpression
+                      Identifier: 'context'
+                      Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'cancellationToken'
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'syntacticDiagnostics'
+                Identifier: 'length'
+              ReturnStatement
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' t'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' doChange'
+                        Identifier: 't'
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'sourceFile'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' context'
+                            Identifier: 'span'
+                          Identifier: 'start'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' context'
+                            Identifier: 'span'
+                          Identifier: 'length'
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'errorCode'
+            ReturnStatement
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'createCodeFixAction'
+                  Identifier: 'fixId'
+                  Identifier: ' changes'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Remove_unreachable_code'
+                  Identifier: ' fixId'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Remove_all_unreachable_code'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' doChange'
+                  Identifier: 'changes'
+                  PropertyAccessExpression
+                    Identifier: ' diag'
+                    Identifier: 'file'
+                  PropertyAccessExpression
+                    Identifier: ' diag'
+                    Identifier: 'start'
+                  PropertyAccessExpression
+                    Identifier: ' diag'
+                    Identifier: 'length'
+                  PropertyAccessExpression
+                    Identifier: ' diag'
+                    Identifier: 'code'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' start'
+      NumberKeyword
+    Parameter
+      Identifier: ' length'
+      NumberKeyword
+    Parameter
+      Identifier: ' errorCode'
+      NumberKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' start'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' statement'
+            NonNullExpression
+              CallExpression
+                Identifier: ' findAncestor'
+                Identifier: 'token'
+                Identifier: ' isStatement'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'statement'
+              Identifier: 'getStart'
+            Identifier: 'sourceFile'
+          ExclamationEqualsEqualsToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' token'
+              Identifier: 'getStart'
+            Identifier: 'sourceFile'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' logData'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' JSON'
+                    Identifier: 'stringify'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+            statementKind'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' Debug'
+                          Identifier: 'formatSyntaxKind'
+                        PropertyAccessExpression
+                          Identifier: 'statement'
+                          Identifier: 'kind'
+                    PropertyAssignment
+                      Identifier: '
+            tokenKind'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' Debug'
+                          Identifier: 'formatSyntaxKind'
+                        PropertyAccessExpression
+                          Identifier: 'token'
+                          Identifier: 'kind'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            errorCode'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            start'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+            length'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'fail'
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                Identifier: ' logData'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' container'
+            PropertyAccessExpression
+              ParenthesizedExpression
+                ConditionalExpression
+                  CallExpression
+                    Identifier: 'isBlock'
+                    PropertyAccessExpression
+                      Identifier: 'statement'
+                      Identifier: 'parent'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' statement'
+                    Identifier: 'parent'
+                  ColonToken
+                  Identifier: ' statement'
+              Identifier: 'parent'
+      IfStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'isBlock'
+              PropertyAccessExpression
+                Identifier: 'statement'
+                Identifier: 'parent'
+          BarBarToken
+          BinaryExpression
+            Identifier: ' statement'
+            EqualsEqualsEqualsToken
+            CallExpression
+              Identifier: ' first'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'statement'
+                  Identifier: 'parent'
+                Identifier: 'statements'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'container'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'IfStatement'
+                IfStatement
+                  PropertyAccessExpression
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'container'
+                        TypeReference
+                          Identifier: ' IfStatement'
+                    Identifier: 'elseStatement'
+                  Block
+                    IfStatement
+                      CallExpression
+                        Identifier: 'isBlock'
+                        PropertyAccessExpression
+                          Identifier: 'statement'
+                          Identifier: 'parent'
+                      Block
+                        BreakStatement
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        changes'
+                              Identifier: 'replaceNode'
+                            Identifier: 'sourceFile'
+                            Identifier: ' statement'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' factory'
+                                Identifier: 'createBlock'
+                              Identifier: 'emptyArray'
+                    ReturnStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'WhileStatement'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'ForStatement'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                changes'
+                      Identifier: 'delete'
+                    Identifier: 'sourceFile'
+                    Identifier: ' container'
+                ReturnStatement
+      IfStatement
+        CallExpression
+          Identifier: 'isBlock'
+          PropertyAccessExpression
+            Identifier: 'statement'
+            Identifier: 'parent'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' end'
+                BinaryExpression
+                  Identifier: ' start'
+                  PlusToken
+                  Identifier: ' length'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' lastStatement'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' Debug'
+                    Identifier: 'checkDefined'
+                  CallExpression
+                    Identifier: 'lastWhere'
+                    CallExpression
+                      Identifier: 'sliceAfter'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'statement'
+                          Identifier: 'parent'
+                        Identifier: 'statements'
+                      Identifier: ' statement'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' s'
+                      EqualsGreaterThanToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' s'
+                          Identifier: 'pos'
+                        LessThanToken
+                        Identifier: ' end'
+                  StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changes'
+                Identifier: 'deleteNodeRange'
+              Identifier: 'sourceFile'
+              Identifier: ' statement'
+              Identifier: ' lastStatement'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changes'
+                Identifier: 'delete'
+              Identifier: 'sourceFile'
+              Identifier: ' statement'
+  FunctionDeclaration
+    Identifier: ' lastWhere'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' pred'
+      FunctionType
+        Parameter
+          Identifier: 'value'
+          TypeReference
+            Identifier: ' T'
+        BooleanKeyword
+    UnionType
+      TypeReference
+        Identifier: ' T'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' last'
+            UnionType
+              TypeReference
+                Identifier: ' T'
+              UndefinedKeyword
+      ForOfStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+        Identifier: ' a'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'pred'
+                Identifier: 'value'
+            BreakStatement
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        last'
+              EqualsToken
+              Identifier: ' value'
+      ReturnStatement
+        Identifier: ' last'

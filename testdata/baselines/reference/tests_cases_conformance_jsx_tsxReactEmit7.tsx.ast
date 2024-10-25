@@ -1,0 +1,131 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x-y'
+                StringLiteral
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' xx-y'
+                StringLiteral
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x-yy'
+                StringLiteral
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' xx-yy'
+                StringLiteral
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' x'
+                StringLiteral
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' xx'
+                StringLiteral
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' xxx'
+                StringLiteral
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' xxxx'
+                StringLiteral
+          JsxClosingElement
+            Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'div'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' xxxxx'
+                StringLiteral
+          JsxClosingElement
+            Identifier: 'div'

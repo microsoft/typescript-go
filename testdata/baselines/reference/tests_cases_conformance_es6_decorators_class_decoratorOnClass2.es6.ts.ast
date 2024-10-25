@@ -1,0 +1,23 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    ExportKeyword
+    Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' C'

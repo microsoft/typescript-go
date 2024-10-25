@@ -1,0 +1,106 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: ' B'
+    EnumMember
+      Identifier: ' C'
+  EnumDeclaration
+    Identifier: ' Computed'
+    EnumMember
+      Identifier: '
+    A'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    B'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    C'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        TypeReference
+          Identifier: ' E'
+        Identifier: ' n'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok because it's too inconvenient otherwise
+e'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, in range
+e'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          QualifiedName
+            Identifier: ' E'
+            Identifier: 'A'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok, A === 0
+a'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error, 2 !== 0
+a'
+      EqualsToken
+      Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' Computed'
+        Identifier: ' n'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+c'
+      EqualsToken
+      Identifier: ' n'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // ok
+c'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ca'
+        TypeReference
+          QualifiedName
+            Identifier: ' Computed'
+            Identifier: 'A'
+        NumericLiteral

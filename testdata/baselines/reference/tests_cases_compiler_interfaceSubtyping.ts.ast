@@ -1,0 +1,24 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' iface'
+    MethodSignature
+      Identifier: '
+    foo'
+      VoidKeyword
+  ClassDeclaration
+    Identifier: ' Camera'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' iface'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' str'
+        StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ReturnStatement
+          StringLiteral

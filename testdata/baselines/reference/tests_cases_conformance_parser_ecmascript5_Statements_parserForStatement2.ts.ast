@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+  ForInStatement
+    Identifier: 'a'
+    BinaryExpression
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: ' b'
+          Identifier: 'c'
+        EqualsToken
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: ' b'
+            Identifier: 'c'
+          BarBarToken
+          ArrayLiteralExpression
+      CommaToken
+      Identifier: ' d'
+    Block

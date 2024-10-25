@@ -1,0 +1,186 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    TypeParameter
+      Identifier: ' T'
+    Parameter
+      Identifier: 'obj'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeReference
+            Identifier: ' K'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            BinaryExpression
+              Identifier: ' k'
+              InKeyword
+              Identifier: ' obj'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k1'
+            TypeReference
+              Identifier: ' K'
+      ForInStatement
+        Identifier: 'k1'
+        Identifier: ' obj'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x1'
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  Identifier: 'k1'
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k2'
+        Identifier: ' obj'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x2'
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  Identifier: 'k2'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+    Parameter
+      Identifier: ' k'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            BinaryExpression
+              Identifier: ' k'
+              InKeyword
+              Identifier: ' obj'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k1'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+      ForInStatement
+        Identifier: 'k1'
+        Identifier: ' obj'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x1'
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  Identifier: 'k1'
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k2'
+        Identifier: ' obj'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x2'
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  Identifier: 'k2'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'obj'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeReference
+            Identifier: ' K'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' K'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            BinaryExpression
+              Identifier: ' k'
+              InKeyword
+              Identifier: ' obj'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k1'
+            TypeReference
+              Identifier: ' K'
+      ForInStatement
+        Identifier: 'k1'
+        Identifier: ' obj'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x1'
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  Identifier: 'k1'
+      ForInStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' k2'
+        Identifier: ' obj'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x2'
+                ElementAccessExpression
+                  Identifier: ' obj'
+                  Identifier: 'k2'

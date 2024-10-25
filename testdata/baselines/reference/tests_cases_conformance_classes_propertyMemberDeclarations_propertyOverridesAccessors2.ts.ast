@@ -1,0 +1,47 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    GetAccessor
+      Identifier: ' x'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' x'
+      Parameter
+        Identifier: 'value'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'value'
+                TemplateTail
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+  x'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        NewExpression
+          Identifier: ' Derived'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // prints 'x was set to 1'
+console'
+        Identifier: 'log'
+      PropertyAccessExpression
+        Identifier: 'obj'
+        Identifier: 'x'

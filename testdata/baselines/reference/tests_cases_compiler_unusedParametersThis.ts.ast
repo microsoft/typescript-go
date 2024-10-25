@@ -1,0 +1,114 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' method'
+      Parameter
+        Identifier: 'this'
+        ThisType
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' method2'
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' A'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' method3'
+      Parameter
+        Identifier: 'this'
+        ThisType
+      NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fn'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'a'
+        ReturnStatement
+          CallExpression
+            Identifier: ' fn'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' method4'
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' A'
+      NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' fn'
+              ArrowFunction
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'a'
+        ReturnStatement
+          CallExpression
+            Identifier: ' fn'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' staticMethod'
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' A'
+      NumberKeyword
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'this'
+      TypeReference
+        Identifier: ' A'
+    NumberKeyword
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionExpression
+          Identifier: ' f2'
+          Parameter
+            Identifier: 'this'
+            TypeReference
+              Identifier: ' A'
+          NumberKeyword
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'a'

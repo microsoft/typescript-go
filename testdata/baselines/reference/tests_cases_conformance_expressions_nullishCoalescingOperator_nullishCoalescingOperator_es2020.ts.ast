@@ -1,0 +1,350 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a1'
+        UnionType
+          LiteralType
+            StringLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        UnionType
+          LiteralType
+            StringLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        UnionType
+          LiteralType
+            NumericLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a4'
+        UnionType
+          LiteralType
+            NumericLiteral
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a5'
+        UnionType
+          LiteralType
+            TrueKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a6'
+        UnionType
+          LiteralType
+            FalseKeyword
+          UndefinedKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a7'
+        UnionType
+          UnknownKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a8'
+        UnionType
+          NeverKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a9'
+        UnionType
+          AnyKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa1'
+        BinaryExpression
+          Identifier: ' a1'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa2'
+        BinaryExpression
+          Identifier: ' a2'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa3'
+        BinaryExpression
+          Identifier: ' a3'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa4'
+        BinaryExpression
+          Identifier: ' a4'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa5'
+        BinaryExpression
+          Identifier: ' a5'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa6'
+        BinaryExpression
+          Identifier: ' a6'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa7'
+        BinaryExpression
+          Identifier: ' a7'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa8'
+        BinaryExpression
+          Identifier: ' a8'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aa9'
+        BinaryExpression
+          Identifier: ' a9'
+          QuestionQuestionToken
+          StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' b'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' c'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        BinaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'a'
+              QuestionQuestionToken
+              AsExpression
+                Identifier: ' b'
+                AnyKeyword
+          BarBarToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        BinaryExpression
+          Identifier: ' c'
+          BarBarToken
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'a'
+              QuestionQuestionToken
+              AsExpression
+                Identifier: ' b'
+                AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        BinaryExpression
+          ParenthesizedExpression
+            AsExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'a'
+                  QuestionQuestionToken
+                  Identifier: ' b'
+              AnyKeyword
+          BarBarToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        BinaryExpression
+          Identifier: ' c'
+          BarBarToken
+          ParenthesizedExpression
+            AsExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'a'
+                  QuestionQuestionToken
+                  Identifier: ' b'
+              AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        BinaryExpression
+          AsExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'a'
+                QuestionQuestionToken
+                Identifier: ' b'
+            AnyKeyword
+          BarBarToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        BinaryExpression
+          Identifier: ' c'
+          BarBarToken
+          AsExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'a'
+                QuestionQuestionToken
+                Identifier: ' b'
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y1'
+        BinaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'a'
+              QuestionQuestionToken
+              AsExpression
+                Identifier: ' b'
+                AnyKeyword
+          AmpersandAmpersandToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y2'
+        BinaryExpression
+          Identifier: ' c'
+          AmpersandAmpersandToken
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'a'
+              QuestionQuestionToken
+              AsExpression
+                Identifier: ' b'
+                AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y3'
+        BinaryExpression
+          ParenthesizedExpression
+            AsExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'a'
+                  QuestionQuestionToken
+                  Identifier: ' b'
+              AnyKeyword
+          AmpersandAmpersandToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y4'
+        BinaryExpression
+          Identifier: ' c'
+          AmpersandAmpersandToken
+          ParenthesizedExpression
+            AsExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'a'
+                  QuestionQuestionToken
+                  Identifier: ' b'
+              AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y5'
+        BinaryExpression
+          AsExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'a'
+                QuestionQuestionToken
+                Identifier: ' b'
+            AnyKeyword
+          AmpersandAmpersandToken
+          Identifier: ' c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y6'
+        BinaryExpression
+          Identifier: ' c'
+          AmpersandAmpersandToken
+          AsExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'a'
+                QuestionQuestionToken
+                Identifier: ' b'
+            AnyKeyword

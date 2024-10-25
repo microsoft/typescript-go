@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' as'
+            Identifier: ' as'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' as'
+            NumericLiteral

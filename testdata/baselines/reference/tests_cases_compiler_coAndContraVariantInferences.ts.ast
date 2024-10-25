@@ -1,0 +1,188 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' kind'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fab'
+    Parameter
+      Identifier: 'arg'
+      UnionType
+        TypeReference
+          Identifier: ' A'
+        TypeReference
+          Identifier: ' B'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' kind'
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' f'
+      FunctionType
+        Parameter
+          Identifier: 'arg'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              TypeReference
+                Identifier: ' T'
+        VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+foo'
+      Identifier: 'a'
+      Identifier: ' fab'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+foo'
+      Identifier: 'b'
+      Identifier: ' fab'
+  InterfaceDeclaration
+    Identifier: ' Action'
+    TypeParameter
+      Identifier: 'TName'
+      StringKeyword
+    TypeParameter
+      Identifier: 'TPayload'
+    PropertySignature
+      Identifier: '
+    name'
+      TypeReference
+        Identifier: ' TName'
+    PropertySignature
+      Identifier: '
+    payload'
+      TypeReference
+        Identifier: ' TPayload'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' actionA'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' payload'
+              StringLiteral
+          TypeReference
+            Identifier: ' Action'
+            LiteralType
+              StringLiteral
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' actionB'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' payload'
+              TrueKeyword
+          TypeReference
+            Identifier: ' Action'
+            LiteralType
+              StringLiteral
+            BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' call'
+    TypeParameter
+      Identifier: 'TName'
+      StringKeyword
+    TypeParameter
+      Identifier: 'TPayload'
+    Parameter
+      Identifier: '
+  action'
+      TypeReference
+        Identifier: ' Action'
+        TypeReference
+          Identifier: 'TName'
+        TypeReference
+          Identifier: 'TPayload'
+    Parameter
+      Identifier: '
+  fn'
+      FunctionType
+        Parameter
+          Identifier: 'action'
+          TypeReference
+            Identifier: ' Action'
+            TypeReference
+              Identifier: 'TName'
+            TypeReference
+              Identifier: 'TPayload'
+        AnyKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  fn'
+          Identifier: 'action'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' printFn'
+        ArrowFunction
+          Parameter
+            Identifier: 'action'
+            UnionType
+              TypeQuery
+                Identifier: ' actionA'
+              TypeQuery
+                Identifier: ' actionB'
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            Identifier: 'action'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+call'
+      Identifier: 'actionA'
+      Identifier: ' printFn'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+call'
+      Identifier: 'actionB'
+      Identifier: ' printFn'

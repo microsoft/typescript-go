@@ -1,0 +1,23 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+  ExportAssignment
+    Identifier: ' M'
+  ImportEqualsDeclaration
+    Identifier: ' modM'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' modM'
+          Identifier: 'x'

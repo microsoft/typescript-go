@@ -1,0 +1,10 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        CallExpression
+          ImportKeyword
+          StringLiteral
+  ExportAssignment
+    NumericLiteral

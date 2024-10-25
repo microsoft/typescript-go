@@ -1,0 +1,99 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    b'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C3'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    c'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' C4'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    d'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+        StringKeyword
+      ExpressionWithTypeArguments
+        Identifier: ' C3'
+        StringKeyword
+    PropertySignature
+      Identifier: ' // error
+    y'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+        NumberKeyword
+      ExpressionWithTypeArguments
+        Identifier: ' C4'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    z'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        BooleanKeyword
+    PropertyDeclaration
+      Identifier: '
+    a'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    b'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    c'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    d'
+      StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    y'
+      BooleanKeyword
+    PropertyDeclaration
+      Identifier: '
+    z'
+      BooleanKeyword

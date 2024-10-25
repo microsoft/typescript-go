@@ -1,0 +1,21 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' namespace'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        StringKeyword
+  ModuleDeclaration
+    Identifier: ' container'
+    ModuleBlock
+      ExpressionStatement
+        Identifier: '
+    namespace'
+      ExpressionStatement
+        Identifier: '    // this is the identifier 'namespace'
+    n'
+      Block

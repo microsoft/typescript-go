@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        JsxFragment
+          JsxOpeningFragment
+          JsxText
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'p'
+              JsxAttributes
+            JsxClosingElement
+              Identifier: 'p'
+          JsxText
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxClosingElement
+              Identifier: 'div'
+          JsxText
+          JsxClosingFragment
+  ExportDeclaration
+    NamedExports

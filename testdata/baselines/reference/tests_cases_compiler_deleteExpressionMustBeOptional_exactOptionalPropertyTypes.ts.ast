@@ -1,0 +1,219 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    c'
+      UnionType
+        NumberKeyword
+        LiteralType
+          NullKeyword
+    PropertySignature
+      Identifier: '
+    d'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    e'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+        LiteralType
+          NullKeyword
+    PropertySignature
+      Identifier: '
+    f'
+      QuestionToken
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+        LiteralType
+          NullKeyword
+    PropertySignature
+      Identifier: '
+    g'
+      UnknownKeyword
+    PropertySignature
+      Identifier: '
+    h'
+      AnyKeyword
+    PropertySignature
+      Identifier: '
+    i'
+      NeverKeyword
+  InterfaceDeclaration
+    Identifier: ' AA'
+    IndexSignature
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' BB'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          AnyKeyword
+      NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'Foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' AA'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' BB'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' f'
+        Identifier: 'a'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' f'
+        Identifier: 'b'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' f'
+        Identifier: 'c'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' f'
+        Identifier: 'd'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' f'
+        Identifier: 'e'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' f'
+        Identifier: 'f'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' f'
+        Identifier: 'g'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' f'
+        Identifier: 'h'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' f'
+        Identifier: 'i'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' f'
+        Identifier: 'j'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'a'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'b'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'c'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'd'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'e'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'f'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'g'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'h'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'i'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' g'
+        Identifier: 'j'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' a'
+        Identifier: 'a'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' a'
+        Identifier: 'b'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'b'

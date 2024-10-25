@@ -1,0 +1,35 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      UnionType
+        NumberKeyword
+        UndefinedKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'x'
+        ExpressionStatement
+          ElementAccessExpression
+            ThisKeyword
+            StringLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' key'
+              StringLiteral
+        ExpressionStatement
+          ElementAccessExpression
+            ThisKeyword
+            Identifier: 'key'

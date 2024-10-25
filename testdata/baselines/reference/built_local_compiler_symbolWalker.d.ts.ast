@@ -1,0 +1,144 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' BaseType'
+        ImportSpecifier
+          Identifier: ' EntityNameOrEntityNameExpression'
+        ImportSpecifier
+          Identifier: ' Identifier'
+        ImportSpecifier
+          Identifier: ' InterfaceType'
+        ImportSpecifier
+          Identifier: ' ObjectType'
+        ImportSpecifier
+          Identifier: ' ResolvedType'
+        ImportSpecifier
+          Identifier: ' Signature'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' SymbolWalker'
+        ImportSpecifier
+          Identifier: ' Type'
+        ImportSpecifier
+          Identifier: ' TypeParameter'
+        ImportSpecifier
+          Identifier: ' TypePredicate'
+        ImportSpecifier
+          Identifier: ' TypeReference'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createGetSymbolWalker'
+    Parameter
+      Identifier: 'getRestTypeOfSignature'
+      FunctionType
+        Parameter
+          Identifier: 'sig'
+          TypeReference
+            Identifier: ' Signature'
+        TypeReference
+          Identifier: ' Type'
+    Parameter
+      Identifier: ' getTypePredicateOfSignature'
+      FunctionType
+        Parameter
+          Identifier: 'sig'
+          TypeReference
+            Identifier: ' Signature'
+        UnionType
+          TypeReference
+            Identifier: ' TypePredicate'
+          UndefinedKeyword
+    Parameter
+      Identifier: ' getReturnTypeOfSignature'
+      FunctionType
+        Parameter
+          Identifier: 'sig'
+          TypeReference
+            Identifier: ' Signature'
+        TypeReference
+          Identifier: ' Type'
+    Parameter
+      Identifier: ' getBaseTypes'
+      FunctionType
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' InterfaceType'
+        ArrayType
+          TypeReference
+            Identifier: ' BaseType'
+    Parameter
+      Identifier: ' resolveStructuredTypeMembers'
+      FunctionType
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' ObjectType'
+        TypeReference
+          Identifier: ' ResolvedType'
+    Parameter
+      Identifier: ' getTypeOfSymbol'
+      FunctionType
+        Parameter
+          Identifier: 'sym'
+          TypeReference
+            Identifier: ' Symbol'
+        TypeReference
+          Identifier: ' Type'
+    Parameter
+      Identifier: ' getResolvedSymbol'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Identifier'
+        TypeReference
+          Identifier: ' Symbol'
+    Parameter
+      Identifier: ' getConstraintOfTypeParameter'
+      FunctionType
+        Parameter
+          Identifier: 'typeParameter'
+          TypeReference
+            Identifier: ' TypeParameter'
+        UnionType
+          TypeReference
+            Identifier: ' Type'
+          UndefinedKeyword
+    Parameter
+      Identifier: ' getFirstIdentifier'
+      FunctionType
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' EntityNameOrEntityNameExpression'
+        TypeReference
+          Identifier: ' Identifier'
+    Parameter
+      Identifier: ' getTypeArguments'
+      FunctionType
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' TypeReference'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Type'
+    FunctionType
+      Parameter
+        Identifier: 'accept'
+        QuestionToken
+        FunctionType
+          Parameter
+            Identifier: 'symbol'
+            TypeReference
+              Identifier: ' Symbol'
+          BooleanKeyword
+      TypeReference
+        Identifier: ' SymbolWalker'

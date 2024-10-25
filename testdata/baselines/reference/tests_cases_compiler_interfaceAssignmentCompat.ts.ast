@@ -1,0 +1,237 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      EnumDeclaration
+        ExportKeyword
+        Identifier: ' Color'
+        EnumMember
+          Identifier: '
+        Green'
+        EnumMember
+          Identifier: '
+        Blue'
+        EnumMember
+          Identifier: '
+        Brown'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IEye'
+        PropertySignature
+          Identifier: '
+        color'
+          NumberKeyword
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IFrenchEye'
+        PropertySignature
+          Identifier: '
+        coleur'
+          NumberKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' CompareEyes'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: 'IEye'
+        Parameter
+          Identifier: 'b'
+          TypeReference
+            Identifier: 'IEye'
+        NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'color'
+              MinusToken
+              PropertyAccessExpression
+                Identifier: 'b'
+                Identifier: 'color'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' CompareYeux'
+        Parameter
+          Identifier: 'a'
+          TypeReference
+            Identifier: 'IFrenchEye'
+        Parameter
+          Identifier: 'b'
+          TypeReference
+            Identifier: 'IFrenchEye'
+        NumberKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'coleur'
+              MinusToken
+              PropertyAccessExpression
+                Identifier: 'b'
+                Identifier: 'coleur'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' test'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                ArrayType
+                  TypeReference
+                    Identifier: 'IEye'
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                StringLiteral
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+    
+        x'
+                NumericLiteral
+              EqualsToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' color'
+                  PropertyAccessExpression
+                    Identifier: 'Color'
+                    Identifier: 'Brown'
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+        x'
+                NumericLiteral
+              EqualsToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' color'
+                  PropertyAccessExpression
+                    Identifier: 'Color'
+                    Identifier: 'Blue'
+          ExpressionStatement
+            BinaryExpression
+              ElementAccessExpression
+                Identifier: '
+        x'
+                NumericLiteral
+              EqualsToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' color'
+                  PropertyAccessExpression
+                    Identifier: 'Color'
+                    Identifier: 'Green'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+        x'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'x'
+                  Identifier: 'sort'
+                Identifier: 'CompareYeux'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' z'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'x'
+                    Identifier: 'sort'
+                  Identifier: 'CompareEyes'
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' i'
+                NumericLiteral
+              VariableDeclaration
+                Identifier: 'len'
+                PropertyAccessExpression
+                  Identifier: 'z'
+                  Identifier: 'length'
+            BinaryExpression
+              Identifier: 'i'
+              LessThanToken
+              Identifier: 'len'
+            PostfixUnaryExpression
+              Identifier: 'i'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            result'
+                  PlusEqualsToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      ParenthesizedExpression
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'Color'
+                            Identifier: '_map'
+                          PropertyAccessExpression
+                            ElementAccessExpression
+                              Identifier: 'z'
+                              Identifier: 'i'
+                            Identifier: 'color'
+                      PlusToken
+                      StringLiteral
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' eeks'
+                ArrayType
+                  TypeReference
+                    Identifier: 'IFrenchEye'
+                ArrayLiteralExpression
+          ForStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' j'
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'z'
+                    Identifier: 'length'
+                  EqualsToken
+                  NumericLiteral
+            BinaryExpression
+              Identifier: 'j'
+              GreaterThanEqualsToken
+              NumericLiteral
+            PostfixUnaryExpression
+              Identifier: 'j'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  ElementAccessExpression
+                    Identifier: '
+            eeks'
+                    Identifier: 'j'
+                  EqualsToken
+                  ElementAccessExpression
+                    Identifier: 'z'
+                    Identifier: 'j'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        eeks'
+              EqualsToken
+              Identifier: 'z'
+          ReturnStatement
+            Identifier: ' result'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+M'
+        Identifier: 'test'

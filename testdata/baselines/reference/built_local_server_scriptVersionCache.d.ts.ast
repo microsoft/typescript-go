@@ -1,0 +1,624 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' IScriptSnapshot'
+        ImportSpecifier
+          Identifier: ' TextChangeRange'
+        ImportSpecifier
+          Identifier: ' TextSpan'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' protocol'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' LineCollection'
+    MethodSignature
+      Identifier: '
+    charCount'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    lineCount'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    isLeaf'
+      TypePredicate
+        ThisType
+        TypeReference
+          Identifier: ' LineLeaf'
+    MethodSignature
+      Identifier: '
+    walk'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' walkFns'
+        TypeReference
+          Identifier: ' LineIndexWalker'
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' AbsolutePositionAndLineText'
+    PropertySignature
+      Identifier: '
+    absolutePosition'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    lineText'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' CharRangeSection'
+    EnumMember
+      Identifier: '
+    PreStart'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Start'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Entire'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Mid'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    End'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    PostEnd'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' LineIndexWalker'
+    PropertySignature
+      Identifier: '
+    goSubtree'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    done'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    leaf'
+      Parameter
+        Identifier: 'relativeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' relativeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' lineCollection'
+        TypeReference
+          Identifier: ' LineLeaf'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    pre'
+      QuestionToken
+      Parameter
+        Identifier: 'relativeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' relativeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' lineCollection'
+        TypeReference
+          Identifier: ' LineCollection'
+      Parameter
+        Identifier: ' parent'
+        TypeReference
+          Identifier: ' LineNode'
+      Parameter
+        Identifier: ' nodeType'
+        TypeReference
+          Identifier: ' CharRangeSection'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    post'
+      QuestionToken
+      Parameter
+        Identifier: 'relativeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' relativeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' lineCollection'
+        TypeReference
+          Identifier: ' LineCollection'
+      Parameter
+        Identifier: ' parent'
+        TypeReference
+          Identifier: ' LineNode'
+      Parameter
+        Identifier: ' nodeType'
+        TypeReference
+          Identifier: ' CharRangeSection'
+      VoidKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ScriptVersionCache'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' changeNumberThreshold'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' changeLengthThreshold'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      ReadonlyKeyword
+      Identifier: ' maxVersions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' changes'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' versions'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' minVersion'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' currentVersion'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' versionToIndex'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' currentVersionToIndex'
+    MethodDeclaration
+      Identifier: '
+    edit'
+      Parameter
+        Identifier: 'pos'
+        NumberKeyword
+      Parameter
+        Identifier: ' deleteLen'
+        NumberKeyword
+      Parameter
+        Identifier: ' insertedText'
+        QuestionToken
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    getSnapshot'
+      TypeReference
+        Identifier: ' IScriptSnapshot'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _getSnapshot'
+    MethodDeclaration
+      Identifier: '
+    getSnapshotVersion'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    getAbsolutePositionAndLineText'
+      Parameter
+        Identifier: 'oneBasedLine'
+        NumberKeyword
+      TypeReference
+        Identifier: ' AbsolutePositionAndLineText'
+    MethodDeclaration
+      Identifier: '
+    lineOffsetToPosition'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      Parameter
+        Identifier: ' column'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    positionToLineOffset'
+      Parameter
+        Identifier: 'position'
+        NumberKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Location'
+    MethodDeclaration
+      Identifier: '
+    lineToTextSpan'
+      Parameter
+        Identifier: 'line'
+        NumberKeyword
+      TypeReference
+        Identifier: ' TextSpan'
+    MethodDeclaration
+      Identifier: '
+    getTextChangesBetweenVersions'
+      Parameter
+        Identifier: 'oldVersion'
+        NumberKeyword
+      Parameter
+        Identifier: ' newVersion'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' TextChangeRange'
+        UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    getLineCount'
+      NumberKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fromString'
+      Parameter
+        Identifier: 'script'
+        StringKeyword
+      TypeReference
+        Identifier: ' ScriptVersionCache'
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' LineIndex'
+    PropertyDeclaration
+      Identifier: '
+    root'
+      TypeReference
+        Identifier: ' LineNode'
+    PropertyDeclaration
+      Identifier: '
+    checkEdits'
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    absolutePositionOfStartOfLine'
+      Parameter
+        Identifier: 'oneBasedLine'
+        NumberKeyword
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    positionToLineOffset'
+      Parameter
+        Identifier: 'position'
+        NumberKeyword
+      TypeReference
+        QualifiedName
+          Identifier: ' protocol'
+          Identifier: 'Location'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' positionToColumnAndLineText'
+    MethodDeclaration
+      Identifier: '
+    getLineCount'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    lineNumberToInfo'
+      Parameter
+        Identifier: 'oneBasedLine'
+        NumberKeyword
+      TypeReference
+        Identifier: ' AbsolutePositionAndLineText'
+    MethodDeclaration
+      Identifier: '
+    load'
+      Parameter
+        Identifier: 'lines'
+        ArrayType
+          StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    walk'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' walkFns'
+        TypeReference
+          Identifier: ' LineIndexWalker'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    getText'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    getLength'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    every'
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          Parameter
+            Identifier: 'll'
+            TypeReference
+              Identifier: ' LineLeaf'
+          Parameter
+            Identifier: ' s'
+            NumberKeyword
+          Parameter
+            Identifier: ' len'
+            NumberKeyword
+          BooleanKeyword
+      Parameter
+        Identifier: ' rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeEnd'
+        QuestionToken
+        NumberKeyword
+      BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+    edit'
+      Parameter
+        Identifier: 'pos'
+        NumberKeyword
+      Parameter
+        Identifier: ' deleteLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' newText'
+        QuestionToken
+        StringKeyword
+      TypeReference
+        Identifier: ' LineIndex'
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' buildTreeFromBottom'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' linesFromText'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        lines'
+          ArrayType
+            StringKeyword
+        PropertySignature
+          Identifier: '
+        lineMap'
+          ArrayType
+            NumberKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' LineNode'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' LineCollection'
+    PropertyDeclaration
+      PrivateKeyword
+      ReadonlyKeyword
+      Identifier: ' children'
+    PropertyDeclaration
+      Identifier: '
+    totalChars'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    totalLines'
+      NumberKeyword
+    Constructor
+      Parameter
+        Identifier: 'children'
+        QuestionToken
+        ArrayType
+          TypeReference
+            Identifier: ' LineCollection'
+    MethodDeclaration
+      Identifier: '
+    isLeaf'
+      TypePredicate
+        ThisType
+        TypeReference
+          Identifier: ' LineLeaf'
+    MethodDeclaration
+      Identifier: '
+    updateCounts'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' execWalk'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' skipChild'
+    MethodDeclaration
+      Identifier: '
+    walk'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' walkFns'
+        TypeReference
+          Identifier: ' LineIndexWalker'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    charOffsetToLineInfo'
+      Parameter
+        Identifier: 'lineNumberAccumulator'
+        NumberKeyword
+      Parameter
+        Identifier: ' relativePosition'
+        NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        oneBasedLine'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        zeroBasedColumn'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        lineText'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+    MethodDeclaration
+      Identifier: '
+    /**
+     * Input line number is relative to the start of this node.
+     * Output line number is relative to the child.
+     * positionAccumulator will be an absolute position once relativeLineNumber reaches 0.
+     */
+    lineNumberToInfo'
+      Parameter
+        Identifier: 'relativeOneBasedLine'
+        NumberKeyword
+      Parameter
+        Identifier: ' positionAccumulator'
+        NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        position'
+          NumberKeyword
+        PropertySignature
+          Identifier: '
+        leaf'
+          UnionType
+            TypeReference
+              Identifier: ' LineLeaf'
+            UndefinedKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' splitAfter'
+    MethodDeclaration
+      Identifier: '
+    remove'
+      Parameter
+        Identifier: 'child'
+        TypeReference
+          Identifier: ' LineCollection'
+      VoidKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' findChildIndex'
+    MethodDeclaration
+      Identifier: '
+    insertAt'
+      Parameter
+        Identifier: 'child'
+        TypeReference
+          Identifier: ' LineCollection'
+      Parameter
+        Identifier: ' nodes'
+        ArrayType
+          TypeReference
+            Identifier: ' LineCollection'
+      ArrayType
+        TypeReference
+          Identifier: ' LineNode'
+    MethodDeclaration
+      Identifier: '
+    add'
+      Parameter
+        Identifier: 'collection'
+        TypeReference
+          Identifier: ' LineCollection'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    charCount'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    lineCount'
+      NumberKeyword
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' LineLeaf'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' LineCollection'
+    PropertyDeclaration
+      Identifier: '
+    text'
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+    MethodDeclaration
+      Identifier: '
+    isLeaf'
+      TypePredicate
+        ThisType
+        TypeReference
+          Identifier: ' LineLeaf'
+    MethodDeclaration
+      Identifier: '
+    walk'
+      Parameter
+        Identifier: 'rangeStart'
+        NumberKeyword
+      Parameter
+        Identifier: ' rangeLength'
+        NumberKeyword
+      Parameter
+        Identifier: ' walkFns'
+        TypeReference
+          Identifier: ' LineIndexWalker'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    charCount'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    lineCount'
+      NumberKeyword

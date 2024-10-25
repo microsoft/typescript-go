@@ -1,0 +1,66 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' allRest'
+    Block
+      ExpressionStatement
+        Identifier: ' arguments'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+allRest'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+allRest'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' someRest'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      Identifier: ' y'
+    Block
+      ExpressionStatement
+        Identifier: ' arguments'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+someRest'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // x and y are still optional because they are in a JS file
+someRest'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' jsdocced'
+    Parameter
+      Identifier: 'x'
+    Block
+      ExpressionStatement
+        Identifier: ' arguments'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+jsdocced'
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' dontDoubleRest'
+    Parameter
+      Identifier: 'x'
+    Parameter
+      DotDotDotToken
+      Identifier: 'y'
+    Block
+      ExpressionStatement
+        Identifier: ' arguments'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+dontDoubleRest'
+      NumericLiteral
+      NumericLiteral
+      NumericLiteral

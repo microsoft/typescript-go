@@ -1,0 +1,110 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' foo'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Provide'
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' bar'
+        ModuleBlock
+          ModuleDeclaration
+            ExportKeyword
+            Identifier: ' baz'
+            ModuleBlock
+              ClassDeclaration
+                ExportKeyword
+                Identifier: ' boo'
+  ImportEqualsDeclaration
+    Identifier: ' provide'
+    Identifier: ' foo'
+  ImportEqualsDeclaration
+    Identifier: ' booz'
+    QualifiedName
+      QualifiedName
+        Identifier: ' foo'
+        Identifier: 'bar'
+      Identifier: 'baz'
+  ImportEqualsDeclaration
+    Identifier: ' beez'
+    QualifiedName
+      Identifier: ' foo'
+      Identifier: 'bar'
+  ImportEqualsDeclaration
+    Identifier: ' m'
+    Identifier: ' no'
+  ImportEqualsDeclaration
+    Identifier: ' m2'
+    QualifiedName
+      Identifier: ' no'
+      Identifier: 'mod'
+  ImportEqualsDeclaration
+    Identifier: ' n'
+    Identifier: ''
+  ExpressionStatement
+    NumericLiteral
+  ImportEqualsDeclaration
+    Identifier: ' o'
+    Identifier: ''
+  ExpressionStatement
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' q'
+    Identifier: ''
+  ExpressionStatement
+    NullKeyword
+  ImportEqualsDeclaration
+    Identifier: ' r'
+    Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' provide'
+            Identifier: 'Provide'
+  FunctionDeclaration
+    Identifier: ' use'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+    
+  beez'
+            Identifier: 'baz'
+          Identifier: 'boo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p1'
+            TypeReference
+              QualifiedName
+                Identifier: ' provide'
+                Identifier: 'Provide'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p2'
+            TypeReference
+              QualifiedName
+                Identifier: ' foo'
+                Identifier: 'Provide'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p3'
+            TypeReference
+              QualifiedName
+                Identifier: 'booz'
+                Identifier: 'bar'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' p22'
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' provide'
+                Identifier: 'Provide'

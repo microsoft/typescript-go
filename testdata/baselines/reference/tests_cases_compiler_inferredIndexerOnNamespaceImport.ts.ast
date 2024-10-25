@@ -1,0 +1,35 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' foo'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'map'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'k'
+            StringKeyword
+          NumberKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      Identifier: 'foo'

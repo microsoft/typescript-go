@@ -1,0 +1,17 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrowFunction
+          EqualsGreaterThanToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' res'
+        CallExpression
+          Identifier: ' x'
+          StringLiteral
+          StringLiteral

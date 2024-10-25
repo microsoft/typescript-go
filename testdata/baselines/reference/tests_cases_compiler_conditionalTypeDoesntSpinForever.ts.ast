@@ -1,0 +1,879 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' PubSubRecordIsStoredInRedisAsA'
+    EnumMember
+      Identifier: '
+    redisHash'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    jsonEncodedRedisString'
+      StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PubSubRecord'
+    TypeParameter
+      Identifier: 'NAME'
+      StringKeyword
+    TypeParameter
+      Identifier: ' RECORD'
+    TypeParameter
+      Identifier: ' IDENTIFIER'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'RECORD'
+    PropertySignature
+      Identifier: '
+    name'
+      TypeReference
+        Identifier: ' NAME'
+    PropertySignature
+      Identifier: '
+    record'
+      TypeReference
+        Identifier: ' RECORD'
+    PropertySignature
+      Identifier: '
+    identifier'
+      TypeReference
+        Identifier: ' IDENTIFIER'
+    PropertySignature
+      Identifier: '
+    storedAs'
+      TypeReference
+        Identifier: ' PubSubRecordIsStoredInRedisAsA'
+    PropertySignature
+      Identifier: '
+    maxMsToWaitBeforePublishing'
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' NameFieldConstructor'
+    TypeParameter
+      Identifier: 'SO_FAR'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    SO_FAR'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'name'
+          AnyKeyword
+      TypeLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+      name'
+          FunctionType
+            TypeParameter
+              Identifier: 'TYPE'
+            Parameter
+              Identifier: 't'
+              QuestionToken
+              TypeReference
+                Identifier: ' TYPE'
+            TypeReference
+              Identifier: ' BuildPubSubRecordType'
+              IntersectionType
+                TypeReference
+                  Identifier: 'SO_FAR'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'name'
+                    TypeReference
+                      Identifier: ' TYPE'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' buildNameFieldConstructor'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'SO_FAR'
+          Parameter
+            Identifier: 'soFar'
+            TypeReference
+              Identifier: ' SO_FAR'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                StringLiteral
+                InKeyword
+                Identifier: ' soFar'
+              QuestionToken
+              ObjectLiteralExpression
+              ColonToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+      name'
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'TYPE'
+                    Parameter
+                      Identifier: 'instance'
+                      TypeReference
+                        Identifier: ' TYPE'
+                      Identifier: ' undefined'
+                    EqualsGreaterThanToken
+                    AsExpression
+                      CallExpression
+                        Identifier: '
+        buildPubSubRecordType'
+                        AsExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'Object'
+                              Identifier: 'assign'
+                            ObjectLiteralExpression
+                            Identifier: ' soFar'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: 'name'
+                                AsExpression
+                                  Identifier: ' instance'
+                                  TypeReference
+                                    Identifier: ' TYPE'
+                          IntersectionType
+                            TypeReference
+                              Identifier: ' SO_FAR'
+                            TypeLiteral
+                              PropertySignature
+                                Identifier: 'name'
+                                TypeReference
+                                  Identifier: ' TYPE'
+                      TypeReference
+                        Identifier: ' BuildPubSubRecordType'
+                        IntersectionType
+                          TypeReference
+                            Identifier: 'SO_FAR'
+                          TypeLiteral
+                            PropertySignature
+                              Identifier: 'name'
+                              TypeReference
+                                Identifier: ' TYPE'
+  TypeAliasDeclaration
+    Identifier: ' StoredAsConstructor'
+    TypeParameter
+      Identifier: 'SO_FAR'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    SO_FAR'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'storedAs'
+          AnyKeyword
+      TypeLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+      storedAsJsonEncodedRedisString'
+          FunctionType
+            TypeReference
+              Identifier: ' BuildPubSubRecordType'
+              IntersectionType
+                TypeReference
+                  Identifier: 'SO_FAR'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'storedAs'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' PubSubRecordIsStoredInRedisAsA'
+                        Identifier: 'jsonEncodedRedisString'
+        PropertySignature
+          Identifier: '
+      storedRedisHash'
+          FunctionType
+            TypeReference
+              Identifier: ' BuildPubSubRecordType'
+              IntersectionType
+                TypeReference
+                  Identifier: 'SO_FAR'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'storedAs'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' PubSubRecordIsStoredInRedisAsA'
+                        Identifier: 'redisHash'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' buildStoredAsConstructor'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'SO_FAR'
+          Parameter
+            Identifier: 'soFar'
+            TypeReference
+              Identifier: ' SO_FAR'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                StringLiteral
+                InKeyword
+                Identifier: ' soFar'
+              QuestionToken
+              ObjectLiteralExpression
+              ColonToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+      storedAsJsonEncodedRedisString'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    AsExpression
+                      CallExpression
+                        Identifier: '
+        buildPubSubRecordType'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'Object'
+                            Identifier: 'assign'
+                          ObjectLiteralExpression
+                          Identifier: ' soFar'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: 'storedAs'
+                              PropertyAccessExpression
+                                Identifier: ' PubSubRecordIsStoredInRedisAsA'
+                                Identifier: 'jsonEncodedRedisString'
+                      TypeReference
+                        Identifier: '
+          BuildPubSubRecordType'
+                        IntersectionType
+                          TypeReference
+                            Identifier: 'SO_FAR'
+                          TypeLiteral
+                            PropertySignature
+                              Identifier: 'storedAs'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' PubSubRecordIsStoredInRedisAsA'
+                                  Identifier: 'jsonEncodedRedisString'
+                PropertyAssignment
+                  Identifier: '
+      storedAsRedisHash'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    AsExpression
+                      CallExpression
+                        Identifier: '
+        buildPubSubRecordType'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'Object'
+                            Identifier: 'assign'
+                          ObjectLiteralExpression
+                          Identifier: ' soFar'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: 'storedAs'
+                              PropertyAccessExpression
+                                Identifier: ' PubSubRecordIsStoredInRedisAsA'
+                                Identifier: 'redisHash'
+                      TypeReference
+                        Identifier: '
+          BuildPubSubRecordType'
+                        IntersectionType
+                          TypeReference
+                            Identifier: 'SO_FAR'
+                          TypeLiteral
+                            PropertySignature
+                              Identifier: 'storedAs'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' PubSubRecordIsStoredInRedisAsA'
+                                  Identifier: 'redisHash'
+  TypeAliasDeclaration
+    Identifier: ' IdentifierFieldConstructor'
+    TypeParameter
+      Identifier: 'SO_FAR'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    SO_FAR'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'identifier'
+          AnyKeyword
+      TypeLiteral
+      ConditionalType
+        TypeReference
+          Identifier: '
+    SO_FAR'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'record'
+            AnyKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+      identifier'
+            FunctionType
+              TypeParameter
+                Identifier: 'TYPE'
+                TypeReference
+                  Identifier: ' Partial'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: 'SO_FAR'
+                    LiteralType
+                      StringLiteral
+              Parameter
+                Identifier: 't'
+                QuestionToken
+                TypeReference
+                  Identifier: ' TYPE'
+              TypeReference
+                Identifier: ' BuildPubSubRecordType'
+                IntersectionType
+                  TypeReference
+                    Identifier: 'SO_FAR'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: 'identifier'
+                      TypeReference
+                        Identifier: ' TYPE'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' buildIdentifierFieldConstructor'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'SO_FAR'
+          Parameter
+            Identifier: 'soFar'
+            TypeReference
+              Identifier: ' SO_FAR'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                BinaryExpression
+                  StringLiteral
+                  InKeyword
+                  Identifier: ' soFar'
+                BarBarToken
+                ParenthesizedExpression
+                  PrefixUnaryExpression
+                    ParenthesizedExpression
+                      BinaryExpression
+                        StringLiteral
+                        InKeyword
+                        Identifier: ' soFar'
+              QuestionToken
+              ObjectLiteralExpression
+              ColonToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+      identifier'
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'TYPE'
+                    Parameter
+                      Identifier: 'instance'
+                      TypeReference
+                        Identifier: ' TYPE'
+                      Identifier: ' undefined'
+                    EqualsGreaterThanToken
+                    AsExpression
+                      CallExpression
+                        Identifier: '
+        buildPubSubRecordType'
+                        AsExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'Object'
+                              Identifier: 'assign'
+                            ObjectLiteralExpression
+                            Identifier: ' soFar'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: 'identifier'
+                                AsExpression
+                                  Identifier: ' instance'
+                                  TypeReference
+                                    Identifier: ' TYPE'
+                          IntersectionType
+                            TypeReference
+                              Identifier: ' SO_FAR'
+                            TypeLiteral
+                              PropertySignature
+                                Identifier: 'identifier'
+                                TypeReference
+                                  Identifier: ' TYPE'
+                      TypeReference
+                        Identifier: ' BuildPubSubRecordType'
+                        IntersectionType
+                          TypeReference
+                            Identifier: 'SO_FAR'
+                          TypeLiteral
+                            PropertySignature
+                              Identifier: 'identifier'
+                              TypeReference
+                                Identifier: ' TYPE'
+  TypeAliasDeclaration
+    Identifier: ' RecordFieldConstructor'
+    TypeParameter
+      Identifier: 'SO_FAR'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    SO_FAR'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'record'
+          AnyKeyword
+      TypeLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+      record'
+          FunctionType
+            TypeParameter
+              Identifier: 'TYPE'
+            Parameter
+              Identifier: 't'
+              QuestionToken
+              TypeReference
+                Identifier: ' TYPE'
+            TypeReference
+              Identifier: ' BuildPubSubRecordType'
+              IntersectionType
+                TypeReference
+                  Identifier: 'SO_FAR'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'record'
+                    TypeReference
+                      Identifier: ' TYPE'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' buildRecordFieldConstructor'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'SO_FAR'
+          Parameter
+            Identifier: 'soFar'
+            TypeReference
+              Identifier: ' SO_FAR'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                StringLiteral
+                InKeyword
+                Identifier: ' soFar'
+              QuestionToken
+              ObjectLiteralExpression
+              ColonToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+      record'
+                  ArrowFunction
+                    TypeParameter
+                      Identifier: 'TYPE'
+                    Parameter
+                      Identifier: 'instance'
+                      TypeReference
+                        Identifier: ' TYPE'
+                      Identifier: ' undefined'
+                    EqualsGreaterThanToken
+                    AsExpression
+                      CallExpression
+                        Identifier: '
+        buildPubSubRecordType'
+                        AsExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'Object'
+                              Identifier: 'assign'
+                            ObjectLiteralExpression
+                            Identifier: ' soFar'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: 'record'
+                                AsExpression
+                                  Identifier: ' instance'
+                                  TypeReference
+                                    Identifier: ' TYPE'
+                          IntersectionType
+                            TypeReference
+                              Identifier: ' SO_FAR'
+                            TypeLiteral
+                              PropertySignature
+                                Identifier: 'record'
+                                TypeReference
+                                  Identifier: ' TYPE'
+                      TypeReference
+                        Identifier: ' BuildPubSubRecordType'
+                        IntersectionType
+                          TypeReference
+                            Identifier: 'SO_FAR'
+                          TypeLiteral
+                            PropertySignature
+                              Identifier: 'record'
+                              TypeReference
+                                Identifier: ' TYPE'
+  TypeAliasDeclaration
+    Identifier: ' MaxMsToWaitBeforePublishingFieldConstructor'
+    TypeParameter
+      Identifier: 'SO_FAR'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    SO_FAR'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'maxMsToWaitBeforePublishing'
+          AnyKeyword
+      TypeLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+      maxMsToWaitBeforePublishing'
+          FunctionType
+            Parameter
+              Identifier: 't'
+              NumberKeyword
+            TypeReference
+              Identifier: ' BuildPubSubRecordType'
+              IntersectionType
+                TypeReference
+                  Identifier: 'SO_FAR'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'maxMsToWaitBeforePublishing'
+                    NumberKeyword
+        PropertySignature
+          Identifier: '
+      neverDelayPublishing'
+          FunctionType
+            TypeReference
+              Identifier: ' BuildPubSubRecordType'
+              IntersectionType
+                TypeReference
+                  Identifier: 'SO_FAR'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: 'maxMsToWaitBeforePublishing'
+                    LiteralType
+                      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' buildMaxMsToWaitBeforePublishingFieldConstructor'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'SO_FAR'
+          Parameter
+            Identifier: 'soFar'
+            TypeReference
+              Identifier: ' SO_FAR'
+          TypeReference
+            Identifier: ' MaxMsToWaitBeforePublishingFieldConstructor'
+            TypeReference
+              Identifier: 'SO_FAR'
+          EqualsGreaterThanToken
+          AsExpression
+            ParenthesizedExpression
+              ConditionalExpression
+                BinaryExpression
+                  StringLiteral
+                  InKeyword
+                  Identifier: ' soFar'
+                QuestionToken
+                ObjectLiteralExpression
+                ColonToken
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+      maxMsToWaitBeforePublishing'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'instance'
+                        NumberKeyword
+                        NumericLiteral
+                      EqualsGreaterThanToken
+                      AsExpression
+                        CallExpression
+                          Identifier: '
+        buildPubSubRecordType'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'Object'
+                              Identifier: 'assign'
+                            ObjectLiteralExpression
+                            Identifier: ' soFar'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: 'maxMsToWaitBeforePublishing'
+                                Identifier: ' instance'
+                        TypeReference
+                          Identifier: ' BuildPubSubRecordType'
+                          IntersectionType
+                            TypeReference
+                              Identifier: 'SO_FAR'
+                            TypeLiteral
+                              PropertySignature
+                                Identifier: 'maxMsToWaitBeforePublishing'
+                                NumberKeyword
+                  PropertyAssignment
+                    Identifier: '
+      neverDelayPublishing'
+                    ArrowFunction
+                      EqualsGreaterThanToken
+                      AsExpression
+                        CallExpression
+                          Identifier: '
+        buildPubSubRecordType'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'Object'
+                              Identifier: 'assign'
+                            ObjectLiteralExpression
+                            Identifier: ' soFar'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: 'maxMsToWaitBeforePublishing'
+                                NumericLiteral
+                        TypeReference
+                          Identifier: ' BuildPubSubRecordType'
+                          IntersectionType
+                            TypeReference
+                              Identifier: 'SO_FAR'
+                            TypeLiteral
+                              PropertySignature
+                                Identifier: 'maxMsToWaitBeforePublishing'
+                                LiteralType
+                                  NumericLiteral
+            TypeReference
+              Identifier: ' MaxMsToWaitBeforePublishingFieldConstructor'
+              TypeReference
+                Identifier: 'SO_FAR'
+  TypeAliasDeclaration
+    Identifier: ' TypeConstructor'
+    TypeParameter
+      Identifier: 'SO_FAR'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    SO_FAR'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'identifier'
+          AnyKeyword
+        PropertySignature
+          Identifier: ' record'
+          AnyKeyword
+        PropertySignature
+          Identifier: ' maxMsToWaitBeforePublishing'
+          NumberKeyword
+        PropertySignature
+          Identifier: ' storedAs'
+          TypeReference
+            Identifier: ' PubSubRecordIsStoredInRedisAsA'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+      type'
+          TypeReference
+            Identifier: ' SO_FAR'
+        PropertySignature
+          Identifier: '
+      fields'
+          TypeReference
+            Identifier: ' Set'
+            TypeOperator
+              TypeReference
+                Identifier: ' SO_FAR'
+        PropertySignature
+          Identifier: '
+      hasField'
+          FunctionType
+            Parameter
+              Identifier: 'fieldName'
+              UnionType
+                StringKeyword
+                NumberKeyword
+                SymbolKeyword
+            TypePredicate
+              Identifier: ' fieldName'
+              TypeOperator
+                TypeReference
+                  Identifier: ' SO_FAR'
+      TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' buildType'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'SO_FAR'
+          Parameter
+            Identifier: 'soFar'
+            TypeReference
+              Identifier: ' SO_FAR'
+          EqualsGreaterThanToken
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                BinaryExpression
+                  BinaryExpression
+                    BinaryExpression
+                      StringLiteral
+                      InKeyword
+                      Identifier: ' soFar'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      StringLiteral
+                      InKeyword
+                      Identifier: ' soFar'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    StringLiteral
+                    InKeyword
+                    Identifier: ' soFar'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  StringLiteral
+                  InKeyword
+                  Identifier: ' soFar'
+              QuestionToken
+              ObjectLiteralExpression
+              ColonToken
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+      type'
+                  Identifier: ' soFar'
+                PropertyAssignment
+                  Identifier: '
+      fields'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    NewExpression
+                      Identifier: ' Set'
+                      AsExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'Object'
+                            Identifier: 'keys'
+                          Identifier: 'soFar'
+                        ArrayType
+                          ParenthesizedType
+                            TypeOperator
+                              TypeReference
+                                Identifier: ' SO_FAR'
+                PropertyAssignment
+                  Identifier: '
+      hasField'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'fieldName'
+                      UnionType
+                        StringKeyword
+                        NumberKeyword
+                        SymbolKeyword
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      Identifier: ' fieldName'
+                      InKeyword
+                      Identifier: ' soFar'
+  TypeAliasDeclaration
+    Identifier: ' BuildPubSubRecordType'
+    TypeParameter
+      Identifier: 'SO_FAR'
+    IntersectionType
+      TypeReference
+        Identifier: '
+    NameFieldConstructor'
+        TypeReference
+          Identifier: 'SO_FAR'
+      TypeReference
+        Identifier: '
+    IdentifierFieldConstructor'
+        TypeReference
+          Identifier: 'SO_FAR'
+      TypeReference
+        Identifier: '
+    RecordFieldConstructor'
+        TypeReference
+          Identifier: 'SO_FAR'
+      TypeReference
+        Identifier: '
+    StoredAsConstructor'
+        TypeReference
+          Identifier: 'SO_FAR'
+      TypeReference
+        Identifier: ' // infinite loop goes away when you comment out this line
+    MaxMsToWaitBeforePublishingFieldConstructor'
+        TypeReference
+          Identifier: 'SO_FAR'
+      TypeReference
+        Identifier: '
+    TypeConstructor'
+        TypeReference
+          Identifier: 'SO_FAR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' buildPubSubRecordType'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'SO_FAR'
+          Parameter
+            Identifier: 'soFar'
+            TypeReference
+              Identifier: ' SO_FAR'
+          EqualsGreaterThanToken
+          AsExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Object'
+                Identifier: 'assign'
+              ObjectLiteralExpression
+              CallExpression
+                Identifier: '
+    buildNameFieldConstructor'
+                Identifier: 'soFar'
+              CallExpression
+                Identifier: '
+    buildIdentifierFieldConstructor'
+                Identifier: 'soFar'
+              CallExpression
+                Identifier: '
+    buildRecordFieldConstructor'
+                Identifier: 'soFar'
+              CallExpression
+                Identifier: '
+    buildStoredAsConstructor'
+                Identifier: 'soFar'
+              CallExpression
+                Identifier: '
+    buildMaxMsToWaitBeforePublishingFieldConstructor'
+                Identifier: 'soFar'
+              CallExpression
+                Identifier: '
+    buildType'
+                Identifier: 'soFar'
+            TypeReference
+              Identifier: ' BuildPubSubRecordType'
+              TypeReference
+                Identifier: 'SO_FAR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' PubSubRecordType'
+        CallExpression
+          Identifier: ' buildPubSubRecordType'
+          ObjectLiteralExpression

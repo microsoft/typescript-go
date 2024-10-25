@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ParenthesizedExpression
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'main'
+              JsxAttributes
+            JsxText
+            JsxExpression
+              AsExpression
+                ParenthesizedExpression
+                  JsxSelfClosingElement
+                    Identifier: 'div'
+                    JsxAttributes
+                UnknownKeyword
+            JsxText
+            JsxSelfClosingElement
+              Identifier: 'span'
+              JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'main'

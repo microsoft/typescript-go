@@ -1,0 +1,32 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @resolveJsonModule: true
+
+// @Filename: /a.ts
+////import text from "./message.json";
+
+// @Filename: /message.json
+////{}
+
+verify'
+        Identifier: 'getEditsForFileRename'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    oldPath'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newPath'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              StringLiteral

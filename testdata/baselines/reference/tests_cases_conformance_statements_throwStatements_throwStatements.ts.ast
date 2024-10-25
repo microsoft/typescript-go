@@ -1,0 +1,271 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    id'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    PropertyDeclaration
+      Identifier: '
+    id'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    source'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    recurse'
+      TypeReference
+        Identifier: ' D'
+        TypeReference
+          Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    wrapped'
+      TypeReference
+        Identifier: ' D'
+        TypeReference
+          Identifier: 'D'
+          TypeReference
+            Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' F'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' A'
+        PropertyDeclaration
+          Identifier: '
+        name'
+          StringKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' F2'
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        StringKeyword
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aNumber'
+        NumericLiteral
+  ThrowStatement
+    Identifier: ' aNumber'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aString'
+        StringLiteral
+  ThrowStatement
+    Identifier: ' aString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aDate'
+        NewExpression
+          Identifier: ' Date'
+          NumericLiteral
+  ThrowStatement
+    Identifier: ' aDate'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anObject'
+        NewExpression
+          Identifier: ' Object'
+  ThrowStatement
+    Identifier: ' anObject'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anAny'
+        NullKeyword
+  ThrowStatement
+    Identifier: ' anAny'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anOtherAny'
+        TypeAssertionExpression
+          AnyKeyword
+          NewExpression
+            Identifier: ' C'
+  ThrowStatement
+    Identifier: ' anOtherAny'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anUndefined'
+        Identifier: ' undefined'
+  ThrowStatement
+    Identifier: ' anUndefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aClass'
+        NewExpression
+          Identifier: ' C'
+  ThrowStatement
+    Identifier: ' aClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aGenericClass'
+        NewExpression
+          Identifier: ' D'
+          StringKeyword
+  ThrowStatement
+    Identifier: ' aGenericClass'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anObjectLiteral'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' id'
+            NumericLiteral
+  ThrowStatement
+    Identifier: ' anObjectLiteral'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aFunction'
+        Identifier: ' F'
+  ThrowStatement
+    Identifier: ' aFunction'
+  ThrowStatement
+    CallExpression
+      Identifier: ' aFunction'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aLambda'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          EqualsGreaterThanToken
+          NumericLiteral
+  ThrowStatement
+    Identifier: ' aLambda'
+  ThrowStatement
+    CallExpression
+      Identifier: ' aLambda'
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aModule'
+        Identifier: ' M'
+  ThrowStatement
+    Identifier: ' aModule'
+  ThrowStatement
+    TypeOfExpression
+      Identifier: ' M'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aClassInModule'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'A'
+  ThrowStatement
+    Identifier: ' aClassInModule'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aFunctionInModule'
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'F2'
+  ThrowStatement
+    Identifier: ' aFunctionInModule'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  ThrowStatement
+    Identifier: ' x'
+  ThrowStatement
+    NumericLiteral
+  ThrowStatement
+    FalseKeyword
+  ThrowStatement
+    NullKeyword
+  ThrowStatement
+    Identifier: ' undefined'
+  ThrowStatement
+    StringLiteral
+  ThrowStatement
+    FunctionExpression
+      Block
+        ReturnStatement
+          StringLiteral
+  ThrowStatement
+    ArrowFunction
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: 'T'
+      EqualsGreaterThanToken
+      NumericLiteral
+  ThrowStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' x'
+        NumericLiteral
+      PropertyAssignment
+        Identifier: ' y'
+        NumericLiteral
+  ThrowStatement
+    ArrayLiteralExpression
+  ThrowStatement
+    ArrayLiteralExpression
+      StringLiteral
+      ArrayLiteralExpression
+        StringLiteral
+  ThrowStatement
+    RegularExpressionLiteral
+  ThrowStatement
+    NewExpression
+      Identifier: ' Date'
+  ThrowStatement
+    NewExpression
+      Identifier: ' C'
+  ThrowStatement
+    NewExpression
+      Identifier: ' Object'
+  ThrowStatement
+    NewExpression
+      Identifier: ' D'
+      NumberKeyword

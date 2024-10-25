@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+    MethodDeclaration
+      Identifier: '
+    /**
+     * @param {string} [`foo]
+     */
+    method'
+      Parameter
+        Identifier: 'foo'
+      Block

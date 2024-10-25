@@ -1,0 +1,55 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Numbers1'
+    PropertySignature
+      NumericLiteral
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' Strings1'
+    PropertySignature
+      StringLiteral
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' Numbers1'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+x'
+        NumericLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: ' // error
+x'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' Strings1'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+y'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: ' // should be error
+y'
+        NumericLiteral
+      EqualsToken
+      NumericLiteral

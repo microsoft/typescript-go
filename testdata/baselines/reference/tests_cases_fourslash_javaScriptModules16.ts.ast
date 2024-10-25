@@ -1,0 +1,115 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '///<reference path="fourslash.ts" />
+
+// Assignments to 'exports.p' define a property 'p'
+
+// @allowJs: true
+// @Filename: myMod.js
+//// exports.n = 3;
+//// exports.s = 'foo';
+//// exports.b = true;
+
+// @Filename: consumer.js
+//// var x = require('./myMod');
+//// x/**/;
+
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    unsorted'
+          ArrayLiteralExpression
+            SpreadElement
+              CallExpression
+                PropertyAccessExpression
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                  Identifier: 'map'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'name'
+                  EqualsGreaterThanToken
+                  ParenthesizedExpression
+                    ObjectLiteralExpression
+                      ShorthandPropertyAssignment
+                        Identifier: ' name'
+                      PropertyAssignment
+                        Identifier: ' kind'
+                        StringLiteral
+            SpreadElement
+              CallExpression
+                PropertyAccessExpression
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                  Identifier: 'map'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'name'
+                  EqualsGreaterThanToken
+                  ParenthesizedExpression
+                    ObjectLiteralExpression
+                      ShorthandPropertyAssignment
+                        Identifier: ' name'
+                      PropertyAssignment
+                        Identifier: ' kind'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: ' sortText'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' completion'
+                            Identifier: 'SortText'
+                          Identifier: 'JavascriptIdentifiers'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral

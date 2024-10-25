@@ -1,0 +1,455 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bigintVal'
+        BigIntKeyword
+        CallExpression
+          Identifier: ' BigInt'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigintVal'
+      EqualsToken
+      CallExpression
+        Identifier: ' BigInt'
+        StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' BigInt'
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // should error
+bigintVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' BigInt'
+          Identifier: 'asIntN'
+        NumericLiteral
+        BigintLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigintVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' BigInt'
+          Identifier: 'asUintN'
+        NumericLiteral
+        BigintLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigintVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' bigintVal'
+          Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' stringVal'
+        StringKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' bigintVal'
+            Identifier: 'toString'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+stringVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' bigintVal'
+          Identifier: 'toString'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+stringVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' bigintVal'
+          Identifier: 'toLocaleString'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+stringVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' bigintVal'
+          Identifier: 'toLocaleString'
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+stringVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' bigintVal'
+          Identifier: 'toLocaleString'
+        StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' style'
+            StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+stringVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' bigintVal'
+          Identifier: 'toLocaleString'
+        StringLiteral
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' style'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' currency'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bigIntArray'
+        TypeReference
+          Identifier: ' BigInt64Array'
+        NewExpression
+          Identifier: ' BigInt64Array'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigIntArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigInt64Array'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigIntArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigInt64Array'
+        ArrayLiteralExpression
+          BigintLiteral
+          BigintLiteral
+          BigintLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigIntArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigInt64Array'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // should error
+bigIntArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigInt64Array'
+        NewExpression
+          Identifier: ' ArrayBuffer'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigIntArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigInt64Array'
+        NewExpression
+          Identifier: ' ArrayBuffer'
+          NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigIntArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigInt64Array'
+        NewExpression
+          Identifier: ' ArrayBuffer'
+          NumericLiteral
+        NumericLiteral
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' len'
+        NumberKeyword
+        PropertyAccessExpression
+          Identifier: ' bigIntArray'
+          Identifier: 'length'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+bigIntArray'
+        Identifier: 'length'
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrayBufferLike'
+        TypeReference
+          Identifier: ' ArrayBufferView'
+        Identifier: ' bigIntArray'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bigUintArray'
+        TypeReference
+          Identifier: ' BigUint64Array'
+        NewExpression
+          Identifier: ' BigUint64Array'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigUintArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigUint64Array'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigUintArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigUint64Array'
+        ArrayLiteralExpression
+          BigintLiteral
+          BigintLiteral
+          BigintLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigUintArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigUint64Array'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // should error
+bigUintArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigUint64Array'
+        NewExpression
+          Identifier: ' ArrayBuffer'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigUintArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigUint64Array'
+        NewExpression
+          Identifier: ' ArrayBuffer'
+          NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigUintArray'
+      EqualsToken
+      NewExpression
+        Identifier: ' BigUint64Array'
+        NewExpression
+          Identifier: ' ArrayBuffer'
+          NumericLiteral
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+len'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' bigIntArray'
+        Identifier: 'length'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+bigIntArray'
+        Identifier: 'length'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // should error
+arrayBufferLike'
+      EqualsToken
+      Identifier: ' bigIntArray'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dataView'
+        NewExpression
+          Identifier: ' DataView'
+          NewExpression
+            Identifier: ' ArrayBuffer'
+            NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+dataView'
+        Identifier: 'setBigInt64'
+      NumericLiteral
+      PrefixUnaryExpression
+        BigintLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+dataView'
+        Identifier: 'setBigInt64'
+      NumericLiteral
+      PrefixUnaryExpression
+        BigintLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+dataView'
+        Identifier: 'setBigInt64'
+      NumericLiteral
+      PrefixUnaryExpression
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: ' // should error
+dataView'
+        Identifier: 'setBigUint64'
+      NumericLiteral
+      BigintLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+dataView'
+        Identifier: 'setBigUint64'
+      NumericLiteral
+      BigintLiteral
+      TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+dataView'
+        Identifier: 'setBigUint64'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // should error
+bigintVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' dataView'
+          Identifier: 'getBigInt64'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigintVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' dataView'
+          Identifier: 'getBigInt64'
+        NumericLiteral
+        TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigintVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' dataView'
+          Identifier: 'getBigUint64'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+bigintVal'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' dataView'
+          Identifier: 'getBigUint64'
+        NumericLiteral
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' w'
+        BigintLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PrefixUnaryExpression
+          BigintLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        LiteralType
+          BigintLiteral
+        BigintLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        BigintLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'NumberFormat'
+          StringLiteral
+        Identifier: 'format'
+      BigintLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'NumberFormat'
+          StringLiteral
+        Identifier: 'format'
+      Identifier: 'bigintVal'

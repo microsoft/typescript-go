@@ -1,0 +1,25 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C234'
+    PropertyDeclaration
+      NumericLiteral
+      NumericLiteral
+    PropertyDeclaration
+      NumericLiteral
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C235'
+    PropertyDeclaration
+      NumericLiteral
+      NumericLiteral
+    PropertyDeclaration
+      StringLiteral
+      NumericLiteral
+  ClassDeclaration
+    Identifier: ' C236'
+    PropertyDeclaration
+      StringLiteral
+      NumericLiteral
+    PropertyDeclaration
+      StringLiteral
+      NumericLiteral

@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: 'f'
+      CallExpression
+        Identifier: 'g'
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' B'
+        NumericLiteral

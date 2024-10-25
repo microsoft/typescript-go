@@ -1,0 +1,266 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    TypeParameter
+      Identifier: ' U'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            UnionType
+              StringKeyword
+              NumberKeyword
+            Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        UndefinedKeyword
+    TypeParameter
+      Identifier: ' U'
+      UnionType
+        StringKeyword
+        LiteralType
+          NullKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y1'
+            UnionType
+              StringKeyword
+              NumberKeyword
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y2'
+            UnionType
+              StringKeyword
+              LiteralType
+                NullKeyword
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y3'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y4'
+            UnionType
+              NumberKeyword
+              LiteralType
+                NullKeyword
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y5'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+            Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y6'
+            UnionType
+              LiteralType
+                NullKeyword
+              UndefinedKeyword
+            Identifier: ' x'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    IntersectionType
+      ParenthesizedType
+        UnionType
+          StringKeyword
+          NumberKeyword
+          UndefinedKeyword
+      ParenthesizedType
+        UnionType
+          StringKeyword
+          LiteralType
+            NullKeyword
+          UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        ParenthesizedType
+          UnionType
+            NumberKeyword
+            ObjectKeyword
+            UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+            Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        ParenthesizedType
+          UnionType
+            NumberKeyword
+            ObjectKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumberKeyword
+            Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f5'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            TypeOperator
+              AnyKeyword
+            Identifier: ' x'
+  TypeAliasDeclaration
+    Identifier: ' Example'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      ConditionalType
+        TypeReference
+          Identifier: ' K'
+        TypeOperator
+          TypeReference
+            Identifier: ' U'
+        TypeReference
+          Identifier: ' UnexpectedError'
+          TypeReference
+            Identifier: 'K'
+        TypeReference
+          Identifier: ' NoErrorHere'
+          TypeReference
+            Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' UnexpectedError'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' PropertyKey'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' NoErrorHere'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' PropertyKey'
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' a'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' Array'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+      TypeReference
+        Identifier: ' U'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' b'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        IntersectionType
+          TypeReference
+            Identifier: ' a'
+            TypeReference
+              Identifier: 'T'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+      LiteralType
+        NumericLiteral

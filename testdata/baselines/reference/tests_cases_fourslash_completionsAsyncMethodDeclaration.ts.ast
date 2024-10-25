@@ -1,0 +1,47 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '/// <reference path="fourslash.ts" />
+
+//// const obj = {
+////   a() {},
+////   async b/*1*/
+//// };
+//// const obj2 = {
+////   async /*2*/
+//// };
+//// class Foo {
+////   async b/*3*/
+//// }
+//// class Foo2 {
+////   async /*4*/
+//// }
+//// class Bar {
+////   static async b/*5*/
+//// }
+
+test'
+            Identifier: 'markerNames'
+        Identifier: 'forEach'
+      ArrowFunction
+        Parameter
+          Identifier: 'marker'
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+  verify'
+                Identifier: 'completions'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+    marker'
+                PropertyAssignment
+                  Identifier: '
+    isNewIdentifierLocation'
+                  TrueKeyword

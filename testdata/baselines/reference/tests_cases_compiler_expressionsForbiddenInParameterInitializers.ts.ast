@@ -1,0 +1,25 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' foo'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' foo'
+          AwaitExpression
+            CallExpression
+              ImportKeyword
+              StringLiteral
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    AsteriskToken
+    Identifier: ' foo2'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' foo'
+          YieldExpression
+            StringLiteral
+    Block

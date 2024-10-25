@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        FunctionExpression
+          Parameter
+            Identifier: 'a'
+          Parameter
+            Identifier: ' b'
+          Block

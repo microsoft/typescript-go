@@ -1,0 +1,79 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'A'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' A'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' a2'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a3'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'A'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' A'
+          EqualsGreaterThanToken
+          NewExpression
+            Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' a4'
+    TypeParameter
+      Identifier: 'A'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' A'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' A'
+  InterfaceDeclaration
+    Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'B'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' B'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' b2'
+    TypeParameter
+      Identifier: 'B'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' B'
+    Block
+      ReturnStatement
+        Identifier: ' x'

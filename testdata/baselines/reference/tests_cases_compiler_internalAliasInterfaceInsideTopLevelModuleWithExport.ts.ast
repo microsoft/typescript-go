@@ -1,0 +1,21 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' a'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' b'
+    QualifiedName
+      Identifier: ' a'
+      Identifier: 'I'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' b'

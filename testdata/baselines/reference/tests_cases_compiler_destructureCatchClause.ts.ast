@@ -1,0 +1,282 @@
+SourceFile
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x'
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: ' x'
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            ArrayBindingPattern
+              BindingElement
+                Identifier: ' x'
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: ' x'
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' b'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' c'
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' x'
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: ' x'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            ArrayBindingPattern
+              BindingElement
+                Identifier: ' x'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: ' x'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' b'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' c'
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' x'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x'
+        UnknownKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: ' x'
+        UnknownKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+        UnknownKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            ArrayBindingPattern
+              BindingElement
+                Identifier: ' x'
+        UnknownKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' x'
+        UnknownKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: ' x'
+        UnknownKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'
+  TryStatement
+    Block
+    CatchClause
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' a'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' b'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' c'
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' x'
+        UnknownKeyword
+      Block
+        ExpressionStatement
+          Identifier: ' x'

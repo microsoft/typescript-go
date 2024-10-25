@@ -1,0 +1,13 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      EnumDeclaration
+        Identifier: ' e'
+        EnumMember
+          Identifier: '
+        m1'
+        EnumMember
+          Identifier: ' 
+        m2'
+          Identifier: ' m1'

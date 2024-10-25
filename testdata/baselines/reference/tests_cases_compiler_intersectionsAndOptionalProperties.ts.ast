@@ -1,0 +1,133 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            QuestionToken
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            LiteralType
+              NullKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        IntersectionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              LiteralType
+                NullKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+x'
+      EqualsToken
+      Identifier: ' z'
+  InterfaceDeclaration
+    Identifier: ' To'
+    PropertySignature
+      Identifier: '
+    field'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    anotherField'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' From'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' field'
+          LiteralType
+            NullKeyword
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          Identifier: 'To'
+        LiteralType
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'v'
+      TypeReference
+        Identifier: ' From'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' To'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' v'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '  // Error
+    x'
+            Identifier: 'field'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' v'
+            Identifier: 'field'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' yy'
+        IntersectionType
+          ArrayType
+            NumberKeyword
+          TupleType
+            NumberKeyword
+            RestType
+              ArrayType
+                NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' xx'
+        TupleType
+          NumberKeyword
+          RestType
+            ArrayType
+              NumberKeyword
+        Identifier: ' yy'

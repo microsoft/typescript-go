@@ -1,0 +1,80 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' Result'
+        TypeParameter
+          Identifier: 'E'
+          TypeReference
+            Identifier: ' Error'
+        TypeParameter
+          Identifier: ' T'
+        UnionType
+          ParenthesizedType
+            IntersectionType
+              TypeReference
+                Identifier: 'E'
+              TypeReference
+                Identifier: ' Failure'
+                TypeReference
+                  Identifier: 'E'
+          ParenthesizedType
+            IntersectionType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' Success'
+                TypeReference
+                  Identifier: 'T'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Failure'
+        TypeParameter
+          Identifier: 'E'
+          TypeReference
+            Identifier: ' Error'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Success'
+        TypeParameter
+          Identifier: 'T'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Result'
+    StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' T'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' Result'
+      TypeReference
+        Identifier: 'Error'
+      TypeReference
+        Identifier: ' T'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' DatastoreResult'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' build'
+        ArrowFunction
+          TypeReference
+            QualifiedName
+              Identifier: ' DatastoreResult'
+              Identifier: 'T'
+            StringKeyword
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              NullKeyword

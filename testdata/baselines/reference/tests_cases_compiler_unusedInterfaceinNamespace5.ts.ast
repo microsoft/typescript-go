@@ -1,0 +1,29 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Validation'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' i1'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' i2'
+      InterfaceDeclaration
+        Identifier: ' i3'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' i1'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c1'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' i3'
+      InterfaceDeclaration
+        Identifier: ' i4'
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            TypeReference
+              Identifier: 'i4'

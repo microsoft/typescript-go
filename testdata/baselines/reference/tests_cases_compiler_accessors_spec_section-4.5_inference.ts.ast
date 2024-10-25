@@ -1,0 +1,96 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' LanguageSpec_section_4_5_inference'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' InferredGetterFromSetterAnnotation'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' InferredGetterFromSetterAnnotation'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' B'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' InferredGetterFromSetterAnnotation_GetterFirst'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' B'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' InferredGetterFromSetterAnnotation_GetterFirst'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' A'
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' InferredFromGetter'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' B'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' InferredFromGetter'
+      Parameter
+        Identifier: 'a'
+      Block
+    SetAccessor
+      PublicKeyword
+      Identifier: ' InferredFromGetter_SetterFirst'
+      Parameter
+        Identifier: 'a'
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' InferredFromGetter_SetterFirst'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' B'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' InferredSetterFromGetterAnnotation'
+      Parameter
+        Identifier: 'a'
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' InferredSetterFromGetterAnnotation'
+      TypeReference
+        Identifier: ' A'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' B'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' InferredSetterFromGetterAnnotation_GetterFirst'
+      TypeReference
+        Identifier: ' A'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' B'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' InferredSetterFromGetterAnnotation_GetterFirst'
+      Parameter
+        Identifier: 'a'
+      Block

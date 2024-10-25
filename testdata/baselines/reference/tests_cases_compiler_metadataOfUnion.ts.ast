@@ -1,0 +1,100 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' PropDeco'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' Object'
+    Parameter
+      Identifier: ' propKey'
+      UnionType
+        StringKeyword
+        SymbolKeyword
+    Block
+  ClassDeclaration
+    Identifier: ' A'
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'PropDeco'
+      Identifier: '
+    x'
+      UnionType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' A'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'PropDeco'
+      Identifier: '
+    y'
+      UnionType
+        LiteralType
+          TrueKeyword
+        BooleanKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'PropDeco'
+      Identifier: '
+    z'
+      UnionType
+        LiteralType
+          StringLiteral
+        BooleanKeyword
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+    EnumMember
+      Identifier: '
+    C'
+    EnumMember
+      Identifier: '
+    D'
+  ClassDeclaration
+    Identifier: ' D'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'PropDeco'
+      Identifier: '
+    a'
+      TypeReference
+        QualifiedName
+          Identifier: ' E'
+          Identifier: 'A'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'PropDeco'
+      Identifier: '
+    b'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' E'
+            Identifier: 'B'
+        TypeReference
+          QualifiedName
+            Identifier: ' E'
+            Identifier: 'C'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'PropDeco'
+      Identifier: '
+    c'
+      TypeReference
+        Identifier: ' E'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'PropDeco'
+      Identifier: '
+    d'
+      UnionType
+        TypeReference
+          Identifier: ' E'
+        NumberKeyword

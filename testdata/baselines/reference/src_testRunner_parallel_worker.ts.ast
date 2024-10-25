@@ -1,0 +1,2017 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Mocha'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createRunner'
+        ImportSpecifier
+          Identifier: '
+    globalTimeout'
+        ImportSpecifier
+          Identifier: '
+    RunnerBase'
+        ImportSpecifier
+          Identifier: '
+    runUnitTests'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    ErrorInfo'
+        ImportSpecifier
+          Identifier: '
+    ParallelClientMessage'
+        ImportSpecifier
+          Identifier: '
+    ParallelHostMessage'
+        ImportSpecifier
+          Identifier: '
+    RunnerTask'
+        ImportSpecifier
+          Identifier: '
+    shimNoopTestInterface'
+        ImportSpecifier
+          Identifier: '
+    Task'
+        ImportSpecifier
+          Identifier: '
+    TaskResult'
+        ImportSpecifier
+          Identifier: '
+    TestInfo'
+        ImportSpecifier
+          Identifier: '
+    UnitTestTask'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' start'
+    Parameter
+      Identifier: 'importTests'
+      FunctionType
+        TypeReference
+          Identifier: ' Promise'
+          UnknownKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importTestsPromise'
+            CallExpression
+              Identifier: ' importTests'
+      FunctionDeclaration
+        Identifier: ' hookUncaughtExceptions'
+        Block
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'exceptionsHooked'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            process'
+                    Identifier: 'on'
+                  StringLiteral
+                  Identifier: ' handleUncaughtException'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            process'
+                    Identifier: 'on'
+                  StringLiteral
+                  Identifier: ' handleUncaughtException'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            exceptionsHooked'
+                  EqualsToken
+                  TrueKeyword
+      FunctionDeclaration
+        Identifier: ' unhookUncaughtExceptions'
+        Block
+          IfStatement
+            Identifier: 'exceptionsHooked'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            process'
+                    Identifier: 'removeListener'
+                  StringLiteral
+                  Identifier: ' handleUncaughtException'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            process'
+                    Identifier: 'removeListener'
+                  StringLiteral
+                  Identifier: ' handleUncaughtException'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            exceptionsHooked'
+                  EqualsToken
+                  FalseKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' exceptionsHooked'
+            FalseKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    hookUncaughtExceptions'
+      FunctionDeclaration
+        Identifier: ' mixin'
+        TypeParameter
+          Identifier: 'T'
+          ConstructorType
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              ArrayType
+                AnyKeyword
+            AnyKeyword
+        Parameter
+          Identifier: 'base'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          DotDotDotToken
+          Identifier: 'mixins'
+          ArrayType
+            ParenthesizedType
+              FunctionType
+                Parameter
+                  Identifier: 'klass'
+                  TypeReference
+                    Identifier: ' T'
+                TypeReference
+                  Identifier: ' T'
+        Block
+          ForOfStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' mixin'
+            Identifier: ' mixins'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            base'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' mixin'
+                    Identifier: 'base'
+          ReturnStatement
+            Identifier: ' base'
+      FunctionDeclaration
+        Identifier: ' Timeout'
+        TypeParameter
+          Identifier: 'T'
+          TypeQuery
+            QualifiedName
+              Identifier: ' Mocha'
+              Identifier: 'Runnable'
+        Parameter
+          Identifier: 'base'
+          TypeReference
+            Identifier: ' T'
+        Block
+          ReturnStatement
+            AsExpression
+              ClassExpression
+                HeritageClause
+                  ExpressionWithTypeArguments
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'base'
+                        TypeQuery
+                          QualifiedName
+                            Identifier: ' Mocha'
+                            Identifier: 'Runnable'
+                MethodDeclaration
+                  OverrideKeyword
+                  Identifier: ' resetTimeout'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'clearTimeout'
+                    IfStatement
+                      BinaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'timeout'
+                        GreaterThanToken
+                        NumericLiteral
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                    sendMessage'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' type'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: ' payload'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' duration'
+                                    BinaryExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          ThisKeyword
+                                          Identifier: 'timeout'
+                                      BarBarToken
+                                      NumericLiteral
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'timer'
+                            EqualsToken
+                            TrueKeyword
+                MethodDeclaration
+                  OverrideKeyword
+                  Identifier: ' clearTimeout'
+                  Block
+                    IfStatement
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'timer'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                    sendMessage'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' type'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: ' payload'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' duration'
+                                    StringLiteral
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'timer'
+                            EqualsToken
+                            FalseKeyword
+              TypeReference
+                Identifier: ' T'
+      FunctionDeclaration
+        Identifier: ' Clone'
+        TypeParameter
+          Identifier: 'T'
+          UnionType
+            TypeQuery
+              QualifiedName
+                Identifier: ' Mocha'
+                Identifier: 'Suite'
+            TypeQuery
+              QualifiedName
+                Identifier: ' Mocha'
+                Identifier: 'Test'
+        Parameter
+          Identifier: 'base'
+          TypeReference
+            Identifier: ' T'
+        Block
+          ReturnStatement
+            AsExpression
+              ClassExpression
+                HeritageClause
+                  ExpressionWithTypeArguments
+                    ParenthesizedExpression
+                      AsExpression
+                        Identifier: 'base'
+                        ConstructorType
+                          Parameter
+                            DotDotDotToken
+                            Identifier: 'args'
+                            ArrayType
+                              AnyKeyword
+                          TypeLiteral
+                            MethodSignature
+                              Identifier: ' clone'
+                              AnyKeyword
+                MethodDeclaration
+                  OverrideKeyword
+                  Identifier: ' clone'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' cloned'
+                          CallExpression
+                            PropertyAccessExpression
+                              SuperKeyword
+                              Identifier: 'clone'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                Object'
+                          Identifier: 'setPrototypeOf'
+                        Identifier: 'cloned'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'constructor'
+                          Identifier: 'prototype'
+                    ReturnStatement
+                      Identifier: ' cloned'
+              TypeReference
+                Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' Suite'
+        HeritageClause
+          ExpressionWithTypeArguments
+            CallExpression
+              Identifier: ' mixin'
+              PropertyAccessExpression
+                Identifier: 'Mocha'
+                Identifier: 'Suite'
+              Identifier: ' Clone'
+        MethodDeclaration
+          OverrideKeyword
+          Identifier: ' _createHook'
+          Parameter
+            Identifier: 'title'
+            StringKeyword
+          Parameter
+            Identifier: ' fn'
+            QuestionToken
+            UnionType
+              TypeReference
+                QualifiedName
+                  Identifier: ' Mocha'
+                  Identifier: 'Func'
+              TypeReference
+                QualifiedName
+                  Identifier: ' Mocha'
+                  Identifier: 'AsyncFunc'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' hook'
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: '_createHook'
+                    Identifier: 'title'
+                    Identifier: ' fn'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            Object'
+                  Identifier: 'setPrototypeOf'
+                Identifier: 'hook'
+                PropertyAccessExpression
+                  Identifier: ' Hook'
+                  Identifier: 'prototype'
+            ReturnStatement
+              Identifier: ' hook'
+      ClassDeclaration
+        Identifier: ' Hook'
+        HeritageClause
+          ExpressionWithTypeArguments
+            CallExpression
+              Identifier: ' mixin'
+              PropertyAccessExpression
+                Identifier: 'Mocha'
+                Identifier: 'Hook'
+              Identifier: ' Timeout'
+      ClassDeclaration
+        Identifier: ' Test'
+        HeritageClause
+          ExpressionWithTypeArguments
+            CallExpression
+              Identifier: ' mixin'
+              PropertyAccessExpression
+                Identifier: 'Mocha'
+                Identifier: 'Test'
+              Identifier: ' Timeout'
+              Identifier: ' Clone'
+      FunctionDeclaration
+        Identifier: ' shimTestInterface'
+        Parameter
+          Identifier: 'rootSuite'
+          TypeReference
+            QualifiedName
+              Identifier: ' Mocha'
+              Identifier: 'Suite'
+        Parameter
+          Identifier: ' context'
+          TypeReference
+            QualifiedName
+              Identifier: ' Mocha'
+              Identifier: 'MochaGlobals'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' suites'
+                ArrayLiteralExpression
+                  Identifier: 'rootSuite'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'before'
+              EqualsToken
+              ArrowFunction
+                Parameter
+                  Identifier: 'title'
+                  UnionType
+                    StringKeyword
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Func'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'AsyncFunc'
+                Parameter
+                  Identifier: ' fn'
+                  QuestionToken
+                  UnionType
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Func'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'AsyncFunc'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: ' suites'
+                      NumericLiteral
+                    Identifier: 'beforeAll'
+                  AsExpression
+                    Identifier: 'title'
+                    StringKeyword
+                  Identifier: ' fn'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'after'
+              EqualsToken
+              ArrowFunction
+                Parameter
+                  Identifier: 'title'
+                  UnionType
+                    StringKeyword
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Func'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'AsyncFunc'
+                Parameter
+                  Identifier: ' fn'
+                  QuestionToken
+                  UnionType
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Func'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'AsyncFunc'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: ' suites'
+                      NumericLiteral
+                    Identifier: 'afterAll'
+                  AsExpression
+                    Identifier: 'title'
+                    StringKeyword
+                  Identifier: ' fn'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'beforeEach'
+              EqualsToken
+              ArrowFunction
+                Parameter
+                  Identifier: 'title'
+                  UnionType
+                    StringKeyword
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Func'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'AsyncFunc'
+                Parameter
+                  Identifier: ' fn'
+                  QuestionToken
+                  UnionType
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Func'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'AsyncFunc'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: ' suites'
+                      NumericLiteral
+                    Identifier: 'beforeEach'
+                  AsExpression
+                    Identifier: 'title'
+                    StringKeyword
+                  Identifier: ' fn'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'afterEach'
+              EqualsToken
+              ArrowFunction
+                Parameter
+                  Identifier: 'title'
+                  UnionType
+                    StringKeyword
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Func'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'AsyncFunc'
+                Parameter
+                  Identifier: ' fn'
+                  QuestionToken
+                  UnionType
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Func'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'AsyncFunc'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: ' suites'
+                      NumericLiteral
+                    Identifier: 'afterEach'
+                  AsExpression
+                    Identifier: 'title'
+                    StringKeyword
+                  Identifier: ' fn'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'describe'
+              EqualsToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'context'
+                EqualsToken
+                AsExpression
+                  ParenthesizedExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'title'
+                        StringKeyword
+                      Parameter
+                        Identifier: ' fn'
+                        FunctionType
+                          Parameter
+                            Identifier: 'this'
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' Mocha'
+                                Identifier: 'Suite'
+                          VoidKeyword
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' addSuite'
+                        Identifier: 'title'
+                        Identifier: ' fn'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' Mocha'
+                      Identifier: 'SuiteFunction'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        context'
+                  Identifier: 'describe'
+                Identifier: 'skip'
+              EqualsToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'xdescribe'
+                EqualsToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'xcontext'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'title'
+                      StringKeyword
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' addSuite'
+                      Identifier: 'title'
+                      Identifier: ' /*fn*/ undefined'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        context'
+                  Identifier: 'describe'
+                Identifier: 'only'
+              EqualsToken
+              ArrowFunction
+                Parameter
+                  Identifier: 'title'
+                  StringKeyword
+                Parameter
+                  Identifier: ' fn'
+                  QuestionToken
+                  FunctionType
+                    Parameter
+                      Identifier: 'this'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' Mocha'
+                          Identifier: 'Suite'
+                    VoidKeyword
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' addSuite'
+                  Identifier: 'title'
+                  Identifier: ' fn'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'it'
+              EqualsToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'specify'
+                EqualsToken
+                AsExpression
+                  ParenthesizedExpression
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'title'
+                        UnionType
+                          StringKeyword
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' Mocha'
+                              Identifier: 'Func'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' Mocha'
+                              Identifier: 'AsyncFunc'
+                      Parameter
+                        Identifier: ' fn'
+                        QuestionToken
+                        UnionType
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' Mocha'
+                              Identifier: 'Func'
+                          TypeReference
+                            QualifiedName
+                              Identifier: ' Mocha'
+                              Identifier: 'AsyncFunc'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' addTest'
+                        Identifier: 'title'
+                        Identifier: ' fn'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' Mocha'
+                      Identifier: 'TestFunction'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        context'
+                  Identifier: 'it'
+                Identifier: 'skip'
+              EqualsToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'xit'
+                EqualsToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'xspecify'
+                  EqualsToken
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'title'
+                      UnionType
+                        StringKeyword
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' Mocha'
+                            Identifier: 'Func'
+                        TypeReference
+                          QualifiedName
+                            Identifier: ' Mocha'
+                            Identifier: 'AsyncFunc'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: ' addTest'
+                      ConditionalExpression
+                        BinaryExpression
+                          TypeOfExpression
+                            Identifier: ' title'
+                          EqualsEqualsEqualsToken
+                          StringLiteral
+                        QuestionToken
+                        PropertyAccessExpression
+                          Identifier: ' title'
+                          Identifier: 'name'
+                        ColonToken
+                        Identifier: ' title'
+                      Identifier: ' /*fn*/ undefined'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        context'
+                  Identifier: 'it'
+                Identifier: 'only'
+              EqualsToken
+              ArrowFunction
+                Parameter
+                  Identifier: 'title'
+                  UnionType
+                    StringKeyword
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Func'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'AsyncFunc'
+                Parameter
+                  Identifier: ' fn'
+                  QuestionToken
+                  UnionType
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Func'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'AsyncFunc'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' addTest'
+                  Identifier: 'title'
+                  Identifier: ' fn'
+          FunctionDeclaration
+            Identifier: ' addSuite'
+            Parameter
+              Identifier: 'title'
+              StringKeyword
+            Parameter
+              Identifier: ' fn'
+              UnionType
+                ParenthesizedType
+                  FunctionType
+                    Parameter
+                      Identifier: 'this'
+                      TypeReference
+                        QualifiedName
+                          Identifier: ' Mocha'
+                          Identifier: 'Suite'
+                    VoidKeyword
+                UndefinedKeyword
+            TypeReference
+              QualifiedName
+                Identifier: ' Mocha'
+                Identifier: 'Suite'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' suite'
+                    NewExpression
+                      Identifier: ' Suite'
+                      Identifier: 'title'
+                      PropertyAccessExpression
+                        ElementAccessExpression
+                          Identifier: ' suites'
+                          NumericLiteral
+                        Identifier: 'ctx'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: '
+            suites'
+                      NumericLiteral
+                    Identifier: 'addSuite'
+                  Identifier: 'suite'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            suite'
+                    Identifier: 'pending'
+                  EqualsToken
+                  PrefixUnaryExpression
+                    Identifier: 'fn'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            suites'
+                    Identifier: 'unshift'
+                  Identifier: 'suite'
+              IfStatement
+                Identifier: 'fn'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                fn'
+                        Identifier: 'call'
+                      Identifier: 'suite'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            suites'
+                    Identifier: 'shift'
+              ReturnStatement
+                Identifier: ' suite'
+          FunctionDeclaration
+            Identifier: ' addTest'
+            Parameter
+              Identifier: 'title'
+              UnionType
+                StringKeyword
+                TypeReference
+                  QualifiedName
+                    Identifier: ' Mocha'
+                    Identifier: 'Func'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' Mocha'
+                    Identifier: 'AsyncFunc'
+            Parameter
+              Identifier: ' fn'
+              UnionType
+                TypeReference
+                  QualifiedName
+                    Identifier: ' Mocha'
+                    Identifier: 'Func'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' Mocha'
+                    Identifier: 'AsyncFunc'
+                UndefinedKeyword
+            TypeReference
+              QualifiedName
+                Identifier: ' Mocha'
+                Identifier: 'Test'
+            Block
+              IfStatement
+                BinaryExpression
+                  TypeOfExpression
+                    Identifier: ' title'
+                  EqualsEqualsEqualsToken
+                  StringLiteral
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                fn'
+                      EqualsToken
+                      Identifier: ' title'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                title'
+                      EqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' fn'
+                        Identifier: 'name'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' test'
+                    NewExpression
+                      Identifier: ' Test'
+                      Identifier: 'title'
+                      ConditionalExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            Identifier: ' suites'
+                            NumericLiteral
+                          Identifier: 'pending'
+                        QuestionToken
+                        Identifier: ' undefined'
+                        ColonToken
+                        Identifier: ' fn'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ElementAccessExpression
+                      Identifier: '
+            suites'
+                      NumericLiteral
+                    Identifier: 'addTest'
+                  Identifier: 'test'
+              ReturnStatement
+                Identifier: ' test'
+      FunctionDeclaration
+        Identifier: ' runTests'
+        Parameter
+          Identifier: 'task'
+          TypeReference
+            Identifier: ' Task'
+        Parameter
+          Identifier: ' fn'
+          FunctionType
+            Parameter
+              Identifier: 'payload'
+              TypeReference
+                Identifier: ' TaskResult'
+            VoidKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'task'
+                Identifier: 'runner'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' executeUnitTests'
+                  Identifier: 'task'
+                  Identifier: ' fn'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' runFileTests'
+                  Identifier: 'task'
+                  Identifier: ' fn'
+      FunctionDeclaration
+        Identifier: ' executeUnitTests'
+        Parameter
+          Identifier: 'task'
+          TypeReference
+            Identifier: ' UnitTestTask'
+        Parameter
+          Identifier: ' fn'
+          FunctionType
+            Parameter
+              Identifier: 'payload'
+              TypeReference
+                Identifier: ' TaskResult'
+            VoidKeyword
+        Block
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'unitTestSuiteMap'
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' unitTestSuite'
+                  Identifier: 'suites'
+                Identifier: 'length'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            unitTestSuiteMap'
+                  EqualsToken
+                  NewExpression
+                    Identifier: ' Map'
+                    StringKeyword
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Suite'
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' suite'
+                PropertyAccessExpression
+                  Identifier: ' unitTestSuite'
+                  Identifier: 'suites'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                unitTestSuiteMap'
+                        Identifier: 'set'
+                      PropertyAccessExpression
+                        Identifier: 'suite'
+                        Identifier: 'title'
+                      Identifier: ' suite'
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'unitTestTestMap'
+              AmpersandAmpersandToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' unitTestSuite'
+                  Identifier: 'tests'
+                Identifier: 'length'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            unitTestTestMap'
+                  EqualsToken
+                  NewExpression
+                    Identifier: ' Map'
+                    StringKeyword
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Mocha'
+                        Identifier: 'Test'
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' test'
+                PropertyAccessExpression
+                  Identifier: ' unitTestSuite'
+                  Identifier: 'tests'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                unitTestTestMap'
+                        Identifier: 'set'
+                      PropertyAccessExpression
+                        Identifier: 'test'
+                        Identifier: 'title'
+                      Identifier: ' test'
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'unitTestSuiteMap'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                Identifier: 'unitTestTestMap'
+            Block
+              ThrowStatement
+                NewExpression
+                  Identifier: ' Error'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'task'
+                        Identifier: 'file'
+                      TemplateTail
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' suite'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' unitTestSuiteMap'
+                    Identifier: 'get'
+                  PropertyAccessExpression
+                    Identifier: 'task'
+                    Identifier: 'file'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' test'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' unitTestTestMap'
+                    Identifier: 'get'
+                  PropertyAccessExpression
+                    Identifier: 'task'
+                    Identifier: 'file'
+          IfStatement
+            BinaryExpression
+              PrefixUnaryExpression
+                Identifier: 'suite'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                Identifier: 'test'
+            Block
+              ThrowStatement
+                NewExpression
+                  Identifier: ' Error'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'task'
+                        Identifier: 'file'
+                      TemplateTail
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' root'
+                NewExpression
+                  Identifier: ' Suite'
+                  StringLiteral
+                  NewExpression
+                    PropertyAccessExpression
+                      Identifier: ' Mocha'
+                      Identifier: 'Context'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        root'
+                Identifier: 'timeout'
+              BinaryExpression
+                Identifier: 'globalTimeout'
+                BarBarToken
+                NumericLiteral
+          IfStatement
+            Identifier: 'suite'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            root'
+                    Identifier: 'addSuite'
+                  Identifier: 'suite'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            Object'
+                    Identifier: 'setPrototypeOf'
+                  PropertyAccessExpression
+                    Identifier: 'suite'
+                    Identifier: 'ctx'
+                  PropertyAccessExpression
+                    Identifier: ' root'
+                    Identifier: 'ctx'
+            IfStatement
+              Identifier: 'test'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' newSuite'
+                      NewExpression
+                        Identifier: ' Suite'
+                        StringLiteral
+                        NewExpression
+                          PropertyAccessExpression
+                            Identifier: ' Mocha'
+                            Identifier: 'Context'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            newSuite'
+                      Identifier: 'addTest'
+                    Identifier: 'test'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            root'
+                      Identifier: 'addSuite'
+                    Identifier: 'newSuite'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            Object'
+                      Identifier: 'setPrototypeOf'
+                    PropertyAccessExpression
+                      Identifier: 'newSuite'
+                      Identifier: 'ctx'
+                    PropertyAccessExpression
+                      Identifier: ' root'
+                      Identifier: 'ctx'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            Object'
+                      Identifier: 'setPrototypeOf'
+                    PropertyAccessExpression
+                      Identifier: 'test'
+                      Identifier: 'ctx'
+                    PropertyAccessExpression
+                      Identifier: ' root'
+                      Identifier: 'ctx'
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            test'
+                      Identifier: 'parent'
+                    EqualsToken
+                    Identifier: ' newSuite'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            suite'
+                    EqualsToken
+                    Identifier: ' newSuite'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        runSuite'
+              Identifier: 'task'
+              NonNullExpression
+                Identifier: ' suite'
+              ArrowFunction
+                Parameter
+                  Identifier: ' payload'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          Identifier: '
+            suite'
+                        Identifier: 'parent'
+                      EqualsToken
+                      Identifier: ' unitTestSuite'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            Object'
+                        Identifier: 'setPrototypeOf'
+                      PropertyAccessExpression
+                        NonNullExpression
+                          Identifier: 'suite'
+                        Identifier: 'ctx'
+                      PropertyAccessExpression
+                        Identifier: ' unitTestSuite'
+                        Identifier: 'ctx'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            fn'
+                      Identifier: 'payload'
+      FunctionDeclaration
+        Identifier: ' runFileTests'
+        Parameter
+          Identifier: 'task'
+          TypeReference
+            Identifier: ' RunnerTask'
+        Parameter
+          Identifier: ' fn'
+          FunctionType
+            Parameter
+              Identifier: 'result'
+              TypeReference
+                Identifier: ' TaskResult'
+            VoidKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' instance'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' runners'
+                    Identifier: 'get'
+                  PropertyAccessExpression
+                    Identifier: 'task'
+                    Identifier: 'runner'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'instance'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' runners'
+                  Identifier: 'set'
+                PropertyAccessExpression
+                  Identifier: 'task'
+                  Identifier: 'runner'
+                BinaryExpression
+                  Identifier: ' instance'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' createRunner'
+                    PropertyAccessExpression
+                      Identifier: 'task'
+                      Identifier: 'runner'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        instance'
+                Identifier: 'tests'
+              EqualsToken
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  Identifier: 'task'
+                  Identifier: 'file'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' suite'
+                NewExpression
+                  Identifier: ' Suite'
+                  StringLiteral
+                  NewExpression
+                    PropertyAccessExpression
+                      Identifier: ' Mocha'
+                      Identifier: 'Context'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        suite'
+                Identifier: 'timeout'
+              BinaryExpression
+                Identifier: 'globalTimeout'
+                BarBarToken
+                NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        shimTestInterface'
+              Identifier: 'suite'
+              Identifier: ' global'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        instance'
+                Identifier: 'initializeTests'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+        runSuite'
+              Identifier: 'task'
+              Identifier: ' suite'
+              Identifier: ' fn'
+      FunctionDeclaration
+        Identifier: ' runSuite'
+        Parameter
+          Identifier: 'task'
+          TypeReference
+            Identifier: ' Task'
+        Parameter
+          Identifier: ' suite'
+          TypeReference
+            QualifiedName
+              Identifier: ' Mocha'
+              Identifier: 'Suite'
+        Parameter
+          Identifier: ' fn'
+          FunctionType
+            Parameter
+              Identifier: 'result'
+              TypeReference
+                Identifier: ' TaskResult'
+            VoidKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' errors'
+                ArrayType
+                  TypeReference
+                    Identifier: ' ErrorInfo'
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' passes'
+                ArrayType
+                  TypeReference
+                    Identifier: ' TestInfo'
+                ArrayLiteralExpression
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' start'
+                PrefixUnaryExpression
+                  NewExpression
+                    Identifier: ' Date'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' runner'
+                NewExpression
+                  PropertyAccessExpression
+                    Identifier: ' Mocha'
+                    Identifier: 'Runner'
+                  Identifier: 'suite'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' delay'
+                      FalseKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+        runner'
+                                Identifier: 'on'
+                              StringLiteral
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      Identifier: '
+                unhookUncaughtExceptions'
+                            Identifier: 'on'
+                          StringLiteral
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'test'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' Mocha'
+                                  Identifier: 'Test'
+                            EqualsGreaterThanToken
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                passes'
+                                    Identifier: 'push'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' name'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' test'
+                                          Identifier: 'titlePath'
+                        Identifier: 'on'
+                      StringLiteral
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'test'
+                          UnionType
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' Mocha'
+                                Identifier: 'Test'
+                            TypeReference
+                              QualifiedName
+                                Identifier: ' Mocha'
+                                Identifier: 'Hook'
+                        Parameter
+                          Identifier: ' err'
+                          AnyKeyword
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                errors'
+                                Identifier: 'push'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: ' name'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' test'
+                                      Identifier: 'titlePath'
+                                PropertyAssignment
+                                  Identifier: ' error'
+                                  PropertyAccessExpression
+                                    Identifier: ' err'
+                                    Identifier: 'message'
+                                PropertyAssignment
+                                  Identifier: ' stack'
+                                  PropertyAccessExpression
+                                    Identifier: ' err'
+                                    Identifier: 'stack'
+                    Identifier: 'on'
+                  StringLiteral
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                hookUncaughtExceptions'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                runner'
+                            Identifier: 'dispose'
+                Identifier: 'run'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                fn'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: ' task'
+                        ShorthandPropertyAssignment
+                          Identifier: ' errors'
+                        ShorthandPropertyAssignment
+                          Identifier: ' passes'
+                        PropertyAssignment
+                          Identifier: ' passing'
+                          PropertyAccessExpression
+                            Identifier: ' passes'
+                            Identifier: 'length'
+                        PropertyAssignment
+                          Identifier: ' duration'
+                          BinaryExpression
+                            PrefixUnaryExpression
+                              NewExpression
+                                Identifier: ' Date'
+                            MinusToken
+                            Identifier: ' start'
+      FunctionDeclaration
+        Identifier: ' validateHostMessage'
+        Parameter
+          Identifier: 'message'
+          TypeReference
+            Identifier: ' ParallelHostMessage'
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'message'
+              Identifier: 'type'
+            CaseBlock
+              CaseClause
+                StringLiteral
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' validateTest'
+                    PropertyAccessExpression
+                      Identifier: 'message'
+                      Identifier: 'payload'
+              CaseClause
+                StringLiteral
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' validateBatch'
+                    PropertyAccessExpression
+                      Identifier: 'message'
+                      Identifier: 'payload'
+              CaseClause
+                StringLiteral
+                ReturnStatement
+                  TrueKeyword
+              DefaultClause
+                ReturnStatement
+                  FalseKeyword
+      FunctionDeclaration
+        Identifier: ' validateTest'
+        Parameter
+          Identifier: 'task'
+          TypeReference
+            Identifier: ' Task'
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    Identifier: 'task'
+                AmpersandAmpersandToken
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'task'
+                      Identifier: 'runner'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'task'
+                    Identifier: 'file'
+      FunctionDeclaration
+        Identifier: ' validateBatch'
+        Parameter
+          Identifier: 'tasks'
+          ArrayType
+            TypeReference
+              Identifier: ' Task'
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                BinaryExpression
+                  PrefixUnaryExpression
+                    PrefixUnaryExpression
+                      Identifier: 'tasks'
+                  AmpersandAmpersandToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' Array'
+                      Identifier: 'isArray'
+                    Identifier: 'tasks'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' tasks'
+                    Identifier: 'length'
+                  GreaterThanToken
+                  NumericLiteral
+              AmpersandAmpersandToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' tasks'
+                  Identifier: 'every'
+                Identifier: 'validateTest'
+      FunctionDeclaration
+        AsyncKeyword
+        Identifier: ' processHostMessage'
+        Parameter
+          Identifier: 'message'
+          TypeReference
+            Identifier: ' ParallelHostMessage'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' importTestsPromise'
+          IfStatement
+            PrefixUnaryExpression
+              CallExpression
+                Identifier: 'validateHostMessage'
+                Identifier: 'message'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            console'
+                    Identifier: 'log'
+                  StringLiteral
+                  Identifier: ' message'
+              ReturnStatement
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'message'
+              Identifier: 'type'
+            CaseBlock
+              CaseClause
+                StringLiteral
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' processTest'
+                    PropertyAccessExpression
+                      Identifier: 'message'
+                      Identifier: 'payload'
+                    TrueKeyword
+              CaseClause
+                StringLiteral
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' processBatch'
+                    PropertyAccessExpression
+                      Identifier: 'message'
+                      Identifier: 'payload'
+              CaseClause
+                StringLiteral
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' process'
+                      Identifier: 'exit'
+                    NumericLiteral
+      FunctionDeclaration
+        Identifier: ' processTest'
+        Parameter
+          Identifier: 'task'
+          TypeReference
+            Identifier: ' Task'
+        Parameter
+          Identifier: ' last'
+          BooleanKeyword
+        Parameter
+          Identifier: ' fn'
+          QuestionToken
+          FunctionType
+            VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        runTests'
+              Identifier: 'task'
+              ArrowFunction
+                Parameter
+                  Identifier: ' payload'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            sendMessage'
+                      ConditionalExpression
+                        Identifier: 'last'
+                        QuestionToken
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' type'
+                            StringLiteral
+                          ShorthandPropertyAssignment
+                            Identifier: ' payload'
+                        ColonToken
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' type'
+                            StringLiteral
+                          ShorthandPropertyAssignment
+                            Identifier: ' payload'
+                  IfStatement
+                    Identifier: 'fn'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' fn'
+      FunctionDeclaration
+        Identifier: ' processBatch'
+        Parameter
+          Identifier: 'tasks'
+          ArrayType
+            TypeReference
+              Identifier: ' Task'
+        Parameter
+          Identifier: ' fn'
+          QuestionToken
+          FunctionType
+            VoidKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' next'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' task'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' tasks'
+                              Identifier: 'shift'
+                    IfStatement
+                      Identifier: 'task'
+                      ReturnStatement
+                        CallExpression
+                          Identifier: ' processTest'
+                          Identifier: 'task'
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' tasks'
+                              Identifier: 'length'
+                            EqualsEqualsEqualsToken
+                            NumericLiteral
+                          Identifier: ' next'
+                    IfStatement
+                      Identifier: 'fn'
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: ' fn'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        next'
+      FunctionDeclaration
+        Identifier: ' handleUncaughtException'
+        Parameter
+          Identifier: 'err'
+          AnyKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' error'
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' err'
+                    InstanceOfKeyword
+                    Identifier: ' Error'
+                  QuestionToken
+                  Identifier: ' err'
+                  ColonToken
+                  NewExpression
+                    Identifier: ' Error'
+                    BinaryExpression
+                      StringLiteral
+                      PlusToken
+                      Identifier: ' err'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        sendMessage'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' type'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' payload'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: ' error'
+                      PropertyAccessExpression
+                        Identifier: ' error'
+                        Identifier: 'message'
+                    PropertyAssignment
+                      Identifier: ' stack'
+                      NonNullExpression
+                        PropertyAccessExpression
+                          Identifier: ' error'
+                          Identifier: 'stack'
+      FunctionDeclaration
+        Identifier: ' sendMessage'
+        Parameter
+          Identifier: 'message'
+          TypeReference
+            Identifier: ' ParallelClientMessage'
+        Block
+          ExpressionStatement
+            CallExpression
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: '
+        process'
+                  Identifier: 'send'
+              Identifier: 'message'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' runners'
+            NewExpression
+              Identifier: ' Map'
+              StringKeyword
+              TypeReference
+                Identifier: ' RunnerBase'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unitTestSuite'
+            TypeReference
+              Identifier: ' Suite'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unitTestSuiteMap'
+            TypeReference
+              Identifier: ' Map'
+              StringKeyword
+              TypeReference
+                QualifiedName
+                  Identifier: ' Mocha'
+                  Identifier: 'Suite'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unitTestTestMap'
+            TypeReference
+              Identifier: ' Map'
+              StringKeyword
+              TypeReference
+                QualifiedName
+                  Identifier: ' Mocha'
+                  Identifier: 'Test'
+      IfStatement
+        Identifier: 'runUnitTests'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        unitTestSuite'
+              EqualsToken
+              NewExpression
+                Identifier: ' Suite'
+                StringLiteral
+                NewExpression
+                  PropertyAccessExpression
+                    Identifier: ' Mocha'
+                    Identifier: 'Context'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        unitTestSuite'
+                Identifier: 'timeout'
+              BinaryExpression
+                Identifier: 'globalTimeout'
+                BarBarToken
+                NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        shimTestInterface'
+              Identifier: 'unitTestSuite'
+              Identifier: ' global'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        // ensure unit tests do not get run
+        shimNoopTestInterface'
+              Identifier: 'global'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    process'
+            Identifier: 'on'
+          StringLiteral
+          Identifier: ' processHostMessage'

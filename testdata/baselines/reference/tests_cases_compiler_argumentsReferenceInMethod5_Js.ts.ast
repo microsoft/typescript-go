@@ -1,0 +1,38 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+	arguments'
+            ObjectLiteralExpression
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      Identifier: '
+	/**
+	 * @param {object} [foo={}]
+	 */
+	m'
+      Parameter
+        Identifier: 'foo'
+        ObjectLiteralExpression
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+            EqualsToken
+            Identifier: ' foo'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'bar'
+            EqualsToken
+            PropertyAccessExpression
+              Identifier: ' bar'
+              Identifier: 'arguments'

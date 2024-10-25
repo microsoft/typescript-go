@@ -1,0 +1,48 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' assert'
+    Parameter
+      Identifier: 'value'
+      AnyKeyword
+    TypePredicate
+      AssertsKeyword
+      Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'param'
+      UnionType
+        NumberKeyword
+        LiteralType
+          NullKeyword
+        UndefinedKeyword
+    UnionType
+      NumberKeyword
+      LiteralType
+        NullKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' val'
+            BinaryExpression
+              Identifier: ' param'
+              ExclamationEqualsEqualsToken
+              Identifier: ' undefined'
+      ReturnStatement
+        ConditionalExpression
+          Identifier: ' val'
+          QuestionToken
+          ParenthesizedExpression
+            BinaryExpression
+              CallExpression
+                Identifier: 'assert'
+                BinaryExpression
+                  Identifier: 'param'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' undefined'
+              CommaToken
+              Identifier: ' param'
+          ColonToken
+          NullKeyword

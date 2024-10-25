@@ -1,0 +1,10 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        FunctionExpression
+          Identifier: ' somefn'
+          Block
+            ReturnStatement
+              Identifier: ' somefn'

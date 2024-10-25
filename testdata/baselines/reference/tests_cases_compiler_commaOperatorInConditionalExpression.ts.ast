@@ -1,0 +1,38 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'm'
+      StringKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'i'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ConditionalExpression
+                  TrueKeyword
+                  QuestionToken
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      ComputedPropertyName
+                        Identifier: 'm'
+                      Identifier: ' i'
+                  ColonToken
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      ComputedPropertyName
+                        Identifier: 'm'
+                      BinaryExpression
+                        Identifier: ' i'
+                        PlusToken
+                        NumericLiteral

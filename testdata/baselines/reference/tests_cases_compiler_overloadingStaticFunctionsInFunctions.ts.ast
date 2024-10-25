@@ -1,0 +1,22 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' boo'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: ' test'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' test'
+          Identifier: 'name'
+          Identifier: 'string'
+      ExpressionStatement
+        CallExpression
+          Identifier: ' test'
+          ConditionalExpression
+            Identifier: 'name'
+            QuestionToken
+            Identifier: ''
+            ColonToken
+            Identifier: 'any'
+      Block

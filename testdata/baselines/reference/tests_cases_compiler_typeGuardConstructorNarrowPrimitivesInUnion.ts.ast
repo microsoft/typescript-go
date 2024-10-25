@@ -1,0 +1,63 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' var1'
+        UnionType
+          NumberKeyword
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            TrueKeyword
+          LiteralType
+            FalseKeyword
+          ArrayType
+            NumberKeyword
+          ArrayType
+            StringKeyword
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var1'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' Number'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var1'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var1'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' String'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var1'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var1'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' Boolean'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var1'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'var1'
+        Identifier: 'constructor'
+      EqualsEqualsEqualsToken
+      Identifier: ' Array'
+    Block
+      ExpressionStatement
+        Identifier: '
+    var1'

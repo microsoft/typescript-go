@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            Identifier: ' string'
+  ClassDeclaration
+    Identifier: ' C6'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ArrayLiteralExpression

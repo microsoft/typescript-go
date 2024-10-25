@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+      Block

@@ -1,0 +1,53 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' map'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' f'
+      FunctionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            FunctionType
+              Parameter
+                Identifier: 's'
+                TypeReference
+                  Identifier: ' T'
+              TypeReference
+                Identifier: ' U'
+    TypeReference
+      Identifier: ' U'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' identity'
+    TypeParameter
+      Identifier: 'V'
+    Parameter
+      Identifier: 'y'
+      TypeReference
+        Identifier: ' V'
+    TypeReference
+      Identifier: ' V'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        CallExpression
+          Identifier: ' map'
+          StringLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' x'
+                    Identifier: ' identity'

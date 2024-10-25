@@ -1,0 +1,25 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' E1'
+    EnumMember
+      Identifier: '
+	A'
+    EnumMember
+      Identifier: 'B'
+    EnumMember
+      Identifier: 'C'
+  ImportEqualsDeclaration
+    Identifier: ' foo'
+    ExternalModuleReference
+      StringLiteral
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: 'foo'
+          Identifier: 'E1'
+        Identifier: 'A'
+      EqualsEqualsEqualsToken
+      NumericLiteral
+    Block

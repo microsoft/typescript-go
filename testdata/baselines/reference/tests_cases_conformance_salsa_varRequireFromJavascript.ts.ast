@@ -1,0 +1,54 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Crunch'
+    Constructor
+      Parameter
+        Identifier: 'n'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'n'
+            EqualsToken
+            Identifier: ' n'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ex'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' crunch'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' ex'
+            Identifier: 'Crunch'
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+crunch'
+      Identifier: 'n'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'wrap'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    wrap'
+          Identifier: 'n'

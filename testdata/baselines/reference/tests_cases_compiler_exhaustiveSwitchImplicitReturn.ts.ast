@@ -1,0 +1,129 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'bar'
+      LiteralType
+        StringLiteral
+    NumberKeyword
+    Block
+      SwitchStatement
+        Identifier: 'bar'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'bar'
+      LiteralType
+        StringLiteral
+    NumberKeyword
+    Block
+      SwitchStatement
+        Identifier: 'bar'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              NumericLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unusedVariable'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'bar'
+      LiteralType
+        StringLiteral
+    NumberKeyword
+    Block
+      SwitchStatement
+        Identifier: 'bar'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              NumericLiteral
+      FunctionDeclaration
+        Identifier: ' neverCalled'
+        Block
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'bar'
+      LiteralType
+        StringLiteral
+    NumberKeyword
+    Block
+      SwitchStatement
+        Identifier: 'bar'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    foo3'
+          Identifier: 'bar'
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'bar'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    NumberKeyword
+    Block
+      SwitchStatement
+        Identifier: 'bar'
+        CaseBlock
+          CaseClause
+            StringLiteral
+            ReturnStatement
+              NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'bar'
+      LiteralType
+        StringLiteral
+    Parameter
+      Identifier: ' a'
+      BooleanKeyword
+    Parameter
+      Identifier: ' b'
+      BooleanKeyword
+    NumberKeyword
+    Block
+      IfStatement
+        Identifier: 'a'
+        Block
+          SwitchStatement
+            Identifier: 'bar'
+            CaseBlock
+              CaseClause
+                StringLiteral
+                ReturnStatement
+                  NumericLiteral
+        Block
+          SwitchStatement
+            Identifier: 'b'
+            CaseBlock
+              CaseClause
+                TrueKeyword
+                ReturnStatement
+                  PrefixUnaryExpression
+                    NumericLiteral
+              CaseClause
+                FalseKeyword
+                ReturnStatement
+                  NumericLiteral

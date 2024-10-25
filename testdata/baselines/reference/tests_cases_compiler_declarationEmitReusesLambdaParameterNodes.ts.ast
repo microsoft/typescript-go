@@ -1,0 +1,71 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Whatever'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'x'
+        StringKeyword
+      PropertySignature
+        Identifier: ' y'
+        NumberKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Props'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' TThing'
+      TypeReference
+        Identifier: ' Whatever'
+    IntersectionType
+      TypeReference
+        Identifier: ' Omit'
+        TypeReference
+          Identifier: 'TThing'
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'TThing'
+      TypeReference
+        Identifier: ' T'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Props'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' CustomSelect1'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'Option'
+          Parameter
+            Identifier: 'x'
+            IntersectionType
+              TypeReference
+                Identifier: ' Props'
+                TypeReference
+                  Identifier: 'Option'
+              TypeLiteral
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' CustomSelect2'
+    TypeParameter
+      Identifier: 'Option'
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeReference
+          Identifier: ' Props'
+          TypeReference
+            Identifier: 'Option'
+        TypeLiteral
+    Block

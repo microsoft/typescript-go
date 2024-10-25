@@ -1,0 +1,87 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+      VariableDeclaration
+        Identifier: ' obj'
+        AnyKeyword
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          ArrayBindingPattern
+            BindingElement
+              Identifier: 'x'
+              ClassExpression
+                Decorator
+                  Identifier: 'dec'
+          Identifier: ' obj'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          ArrayBindingPattern
+            BindingElement
+              Identifier: 'x'
+              ClassExpression
+                PropertyDeclaration
+                  Decorator
+                    Identifier: 'dec'
+                  Identifier: ' y'
+                  AnyKeyword
+          Identifier: ' obj'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' x'
+              ClassExpression
+                Decorator
+                  Identifier: 'dec'
+          Identifier: ' obj'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' x'
+              ClassExpression
+                PropertyDeclaration
+                  Decorator
+                    Identifier: 'dec'
+                  Identifier: ' y'
+                  AnyKeyword
+          Identifier: ' obj'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' y'
+              Identifier: ' x'
+              ClassExpression
+                Decorator
+                  Identifier: 'dec'
+          Identifier: ' obj'
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          ObjectBindingPattern
+            BindingElement
+              Identifier: ' y'
+              Identifier: ' x'
+              ClassExpression
+                PropertyDeclaration
+                  Decorator
+                    Identifier: 'dec'
+                  Identifier: ' y'
+                  AnyKeyword
+          Identifier: ' obj'

@@ -1,0 +1,40 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Axios'
+    Constructor
+      Block
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' axios'
+        NewExpression
+          Identifier: ' Axios'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+// none of the 3 references should have a use-before-def error
+axios'
+        Identifier: 'm'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' axios'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'default'
+      EqualsToken
+      Identifier: ' axios'

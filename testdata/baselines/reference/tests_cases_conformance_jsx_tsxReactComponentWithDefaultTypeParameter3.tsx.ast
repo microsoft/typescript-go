@@ -1,0 +1,66 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Prop'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    b'
+      StringKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' MyComp'
+    TypeParameter
+      Identifier: 'P'
+      TypeReference
+        Identifier: ' Prop'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'P'
+        TypeLiteral
+    PropertyDeclaration
+      Identifier: '
+    internalProp'
+      TypeReference
+        Identifier: ' P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        JsxSelfClosingElement
+          Identifier: 'MyComp'
+          JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        JsxSelfClosingElement
+          Identifier: 'MyComp'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              JsxExpression
+                NumericLiteral
+            JsxAttribute
+              Identifier: ' b'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        JsxSelfClosingElement
+          Identifier: 'MyComp'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' a'
+              StringLiteral

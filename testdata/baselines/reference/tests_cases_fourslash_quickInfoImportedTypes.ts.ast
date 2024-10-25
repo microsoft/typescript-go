@@ -1,0 +1,67 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: quickInfoImportedTypes.ts
+//// /** This is an interface */
+//// export interface Foo {
+////     a?: number;
+//// }
+//// /** One or two */
+//// export type Bar = 1 | 2
+//// /** This is a class */
+//// export class Baz<T extends {}> {
+////     public x: T = {} as T
+//// }
+
+// @Filename: two.ts
+//// import { Foo, Bar, Baz } from './quickInfoImportedTypes';
+//// let x: Foo/*1*/;
+//// let y: Bar/*2*/<any>;
+//// let z: Baz/*3*/;
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+          Identifier: 'join'
+        StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+          Identifier: 'join'
+        StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          ArrayLiteralExpression
+            StringLiteral
+            StringLiteral
+          Identifier: 'join'
+        StringLiteral
+      StringLiteral

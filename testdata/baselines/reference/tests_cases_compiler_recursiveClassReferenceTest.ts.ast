@@ -1,0 +1,291 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Sample'
+    ModuleDeclaration
+      Identifier: 'Thing'
+      ModuleBlock
+        InterfaceDeclaration
+          ExportKeyword
+          Identifier: ' IWidget'
+          MethodSignature
+            Identifier: '
+		getDomNode'
+            AnyKeyword
+          MethodSignature
+            Identifier: '
+		destroy'
+          MethodSignature
+            Identifier: '
+		gar'
+            Parameter
+              Identifier: 'runner'
+              FunctionType
+                Parameter
+                  Identifier: 'widget'
+                  TypeReference
+                    QualifiedName
+                      QualifiedName
+                        Identifier: 'Sample'
+                        Identifier: 'Thing'
+                      Identifier: 'IWidget'
+                AnyKeyword
+            AnyKeyword
+        InterfaceDeclaration
+          ExportKeyword
+          Identifier: ' ICodeThing'
+          MethodSignature
+            Identifier: '
+  
+  		getDomNode'
+            TypeReference
+              Identifier: ' Element'
+          MethodSignature
+            Identifier: '
+		
+		addWidget'
+            Parameter
+              Identifier: 'widgetId'
+              StringKeyword
+            Parameter
+              Identifier: ' widget'
+              TypeReference
+                Identifier: 'IWidget'
+          MethodSignature
+            Identifier: '
+
+		
+		focus'
+        InterfaceDeclaration
+          ExportKeyword
+          Identifier: ' IAction'
+          MethodSignature
+            Identifier: '
+		run'
+            Parameter
+              Identifier: 'Thing'
+              TypeReference
+                Identifier: 'ICodeThing'
+            BooleanKeyword
+          MethodSignature
+            Identifier: '
+		getId'
+            StringKeyword
+  ModuleDeclaration
+    Identifier: ' Sample'
+    ModuleDeclaration
+      Identifier: 'Actions'
+      ModuleDeclaration
+        Identifier: 'Thing'
+        ModuleDeclaration
+          Identifier: 'Find'
+          ModuleBlock
+            ClassDeclaration
+              ExportKeyword
+              Identifier: ' StartFindAction'
+              HeritageClause
+                ExpressionWithTypeArguments
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' Sample'
+                      Identifier: 'Thing'
+                    Identifier: 'IAction'
+              MethodDeclaration
+                PublicKeyword
+                Identifier: ' getId'
+                Block
+                  ReturnStatement
+                    StringLiteral
+              MethodDeclaration
+                PublicKeyword
+                Identifier: ' run'
+                Parameter
+                  Identifier: 'Thing'
+                  TypeReference
+                    QualifiedName
+                      QualifiedName
+                        Identifier: 'Sample'
+                        Identifier: 'Thing'
+                      Identifier: 'ICodeThing'
+                BooleanKeyword
+                Block
+                  ReturnStatement
+                    TrueKeyword
+  ModuleDeclaration
+    Identifier: ' Sample'
+    ModuleDeclaration
+      Identifier: 'Thing'
+      ModuleDeclaration
+        Identifier: 'Widgets'
+        ModuleBlock
+          ClassDeclaration
+            ExportKeyword
+            Identifier: ' FindWidget'
+            HeritageClause
+              ExpressionWithTypeArguments
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' Sample'
+                    Identifier: 'Thing'
+                  Identifier: 'IWidget'
+            MethodDeclaration
+              PublicKeyword
+              Identifier: ' gar'
+              Parameter
+                Identifier: 'runner'
+                FunctionType
+                  Parameter
+                    Identifier: 'widget'
+                    TypeReference
+                      QualifiedName
+                        QualifiedName
+                          Identifier: 'Sample'
+                          Identifier: 'Thing'
+                        Identifier: 'IWidget'
+                  AnyKeyword
+              Block
+                IfStatement
+                  TrueKeyword
+                  Block
+                    ReturnStatement
+                      CallExpression
+                        Identifier: ' runner'
+                        ThisKeyword
+            PropertyDeclaration
+              PrivateKeyword
+              Identifier: ' domNode'
+              AnyKeyword
+              NullKeyword
+            Constructor
+              Parameter
+                PrivateKeyword
+                Identifier: ' codeThing'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      Identifier: ' Sample'
+                      Identifier: 'Thing'
+                    Identifier: 'ICodeThing'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+		    // scenario 1
+		    codeThing'
+                      Identifier: 'addWidget'
+                    StringLiteral
+                    ThisKeyword
+            MethodDeclaration
+              PublicKeyword
+              Identifier: ' getDomNode'
+              Block
+                ReturnStatement
+                  Identifier: ' domNode'
+            MethodDeclaration
+              PublicKeyword
+              Identifier: ' destroy'
+              Block
+  InterfaceDeclaration
+    Identifier: ' IMode'
+    MethodSignature
+      Identifier: ' getInitialState'
+      TypeReference
+        Identifier: ' IState'
+  ClassDeclaration
+    Identifier: ' AbstractMode'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' IMode'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' getInitialState'
+      TypeReference
+        Identifier: ' IState'
+      Block
+        ReturnStatement
+          NullKeyword
+  InterfaceDeclaration
+    Identifier: ' IState'
+  InterfaceDeclaration
+    Identifier: ' Window'
+    PropertySignature
+      Identifier: '
+    opener'
+      TypeReference
+        Identifier: ' Window'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' self'
+        TypeReference
+          Identifier: ' Window'
+  ModuleDeclaration
+    Identifier: ' Sample'
+    ModuleDeclaration
+      Identifier: 'Thing'
+      ModuleDeclaration
+        Identifier: 'Languages'
+        ModuleDeclaration
+          Identifier: 'PlainText'
+          ModuleBlock
+            ClassDeclaration
+              ExportKeyword
+              Identifier: ' State'
+              HeritageClause
+                ExpressionWithTypeArguments
+                  Identifier: ' IState'
+              Constructor
+                Parameter
+                  PrivateKeyword
+                  Identifier: ' mode'
+                  TypeReference
+                    Identifier: ' IMode'
+                Block
+              MethodDeclaration
+                PublicKeyword
+                Identifier: ' clone'
+                TypeReference
+                  Identifier: 'IState'
+                Block
+                  ReturnStatement
+                    ThisKeyword
+              MethodDeclaration
+                PublicKeyword
+                Identifier: ' equals'
+                Parameter
+                  Identifier: 'other'
+                  TypeReference
+                    Identifier: 'IState'
+                BooleanKeyword
+                Block
+                  ReturnStatement
+                    BinaryExpression
+                      ThisKeyword
+                      EqualsEqualsEqualsToken
+                      Identifier: ' other'
+              MethodDeclaration
+                PublicKeyword
+                Identifier: ' getMode'
+                TypeReference
+                  Identifier: ' IMode'
+                Block
+                  ReturnStatement
+                    Identifier: ' mode'
+            ClassDeclaration
+              ExportKeyword
+              Identifier: ' Mode'
+              HeritageClause
+                ExpressionWithTypeArguments
+                  Identifier: ' AbstractMode'
+              MethodDeclaration
+                PublicKeyword
+                Identifier: ' getInitialState'
+                TypeReference
+                  Identifier: ' IState'
+                Block
+                  ReturnStatement
+                    NewExpression
+                      Identifier: ' State'
+                      Identifier: 'self'

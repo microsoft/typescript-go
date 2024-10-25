@@ -1,0 +1,22 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' SelectionRange'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getSmartSelectionRange'
+    Parameter
+      Identifier: 'pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    TypeReference
+      Identifier: ' SelectionRange'

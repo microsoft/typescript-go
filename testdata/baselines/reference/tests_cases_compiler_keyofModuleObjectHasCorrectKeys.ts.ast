@@ -1,0 +1,44 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' add'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' b'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' example'
+    StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'object'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' method'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      Identifier: 'example'
+      StringLiteral

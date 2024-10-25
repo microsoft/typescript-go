@@ -1,0 +1,23 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' forEachNoEmitOnErrorScenarioTsc'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    forEachNoEmitOnErrorScenarioTsc'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral

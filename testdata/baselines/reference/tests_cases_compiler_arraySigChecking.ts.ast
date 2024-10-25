@@ -1,0 +1,117 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' iBar'
+        PropertySignature
+          Identifier: ' t'
+          AnyKeyword
+      InterfaceDeclaration
+        Identifier: ' iFoo'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' iBar'
+        PropertySignature
+          Identifier: '
+        s'
+          AnyKeyword
+      ClassDeclaration
+        Identifier: ' cFoo'
+        PropertyDeclaration
+          Identifier: '
+        t'
+          AnyKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            TypeLiteral
+              IndexSignature
+                Parameter
+                  Identifier: 'index'
+                  AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' myInt'
+    MethodSignature
+      Identifier: '
+    voidFn'
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myVar'
+        TypeReference
+          Identifier: ' myInt'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strArray'
+        ArrayType
+          StringKeyword
+        ArrayLiteralExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'myVar'
+              Identifier: 'voidFn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myArray'
+        ArrayType
+          ArrayType
+            ArrayType
+              NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+myArray'
+      EqualsToken
+      ArrayLiteralExpression
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' isEmpty'
+    Parameter
+      Identifier: 'l'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' length'
+          NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' l'
+            Identifier: 'length'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+isEmpty'
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+isEmpty'
+      NewExpression
+        Identifier: ' Array'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+isEmpty'
+      NewExpression
+        Identifier: ' Array'
+        StringKeyword
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+isEmpty'
+      ArrayLiteralExpression
+        StringLiteral

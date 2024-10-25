@@ -1,0 +1,20 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' foo'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' bar'
+    Block
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Entity'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+Entity'

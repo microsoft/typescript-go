@@ -1,0 +1,106 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' a'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' x'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' m'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' a11'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' a12'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' x11'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding1'
+      NamedImports
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding2'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        NewExpression
+          Identifier: ' a'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding3'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a11'
+          Identifier: ' b'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        NewExpression
+          Identifier: ' b'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding4'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' x'
+        ImportSpecifier
+          Identifier: ' a12'
+          Identifier: ' y'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        NewExpression
+          Identifier: ' x'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        NewExpression
+          Identifier: ' y'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding5'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' x11'
+          Identifier: ' z'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        NewExpression
+          Identifier: ' z'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding6'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' m'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        NewExpression
+          Identifier: ' m'

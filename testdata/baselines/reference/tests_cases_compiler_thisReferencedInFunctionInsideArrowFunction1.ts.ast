@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        ArrowFunction
+          Parameter
+            Identifier: 'dummy'
+          EqualsGreaterThanToken
+          Block
+  FunctionDeclaration
+    Identifier: ' test'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    foo'
+          ArrowFunction
+            EqualsGreaterThanToken
+            FunctionExpression
+              Block
+                ReturnStatement
+                  ThisKeyword

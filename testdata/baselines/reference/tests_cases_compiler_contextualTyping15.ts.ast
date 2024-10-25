@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      TypeLiteral
+        CallSignature
+          NumberKeyword
+        CallSignature
+          Parameter
+            Identifier: 'i'
+            NumberKeyword
+          NumberKeyword
+      FunctionExpression
+        Block
+          ReturnStatement
+            NumericLiteral

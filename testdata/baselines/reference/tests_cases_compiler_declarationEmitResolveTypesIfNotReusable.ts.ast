@@ -1,0 +1,113 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' u'
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            LiteralType
+              StringLiteral
+          PropertySignature
+            Identifier: ' notNecessary'
+            TypeQuery
+              Identifier: ' u'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' notNecessary'
+              Identifier: ' u'
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        ArrowFunction
+          Parameter
+            Identifier: 'o'
+            IndexedAccessType
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' A'
+                LiteralType
+                  StringLiteral
+              LiteralType
+                StringLiteral
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        ArrowFunction
+          Parameter
+            Identifier: 'o'
+            IndexedAccessType
+              ParenthesizedType
+                TypeQuery
+                  Identifier: ' a'
+              LiteralType
+                StringLiteral
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        ArrowFunction
+          Parameter
+            Identifier: 'o'
+            IndexedAccessType
+              TypeQuery
+                Identifier: ' a'
+              LiteralType
+                StringLiteral
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o4'
+        ArrowFunction
+          Parameter
+            Identifier: 'o'
+            TypeOperator
+              ParenthesizedType
+                IndexedAccessType
+                  TypeReference
+                    Identifier: 'A'
+                  LiteralType
+                    StringLiteral
+          EqualsGreaterThanToken
+          Block
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' d'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ObjectLiteralExpression
+          SpreadAssignment
+            Identifier: 'd'

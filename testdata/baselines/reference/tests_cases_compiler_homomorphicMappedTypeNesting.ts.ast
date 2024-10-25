@@ -1,0 +1,81 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Box'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: ' v'
+        TypeReference
+          Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Test'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        StringKeyword
+    TypeReference
+      Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' UnboxArray'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      ConditionalType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+        TypeReference
+          Identifier: ' Box'
+          InferType
+            TypeParameter
+              Identifier: ' R'
+        TypeReference
+          Identifier: ' R'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' Identity'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fnBad'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Array'
+        TypeReference
+          Identifier: 'Box'
+          StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Test'
+      TypeReference
+        Identifier: 'Identity'
+        TypeReference
+          Identifier: 'UnboxArray'
+          TypeReference
+            Identifier: 'T'

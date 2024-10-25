@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' typed'
+    Parameter
+      Identifier: 'param'
+    Block
+      ReturnStatement
+        Identifier: ' param'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        CallExpression
+          Identifier: ' typed'
+          NumericLiteral

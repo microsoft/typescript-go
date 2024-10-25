@@ -1,0 +1,21 @@
+SourceFile
+  ExpressionStatement
+    Identifier: 'declare'
+  ExpressionStatement
+    TaggedTemplateExpression
+      Identifier: ' module'
+      NoSubstitutionTemplateLiteral
+  Block
+  ExpressionStatement
+    Identifier: '
+
+declare'
+  ExpressionStatement
+    TaggedTemplateExpression
+      Identifier: ' module'
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          NumericLiteral
+          TemplateTail
+  Block

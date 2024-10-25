@@ -1,0 +1,189 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Magic'
+    TypeParameter
+      Identifier: 'X'
+    ConditionalType
+      TypeReference
+        Identifier: ' X'
+      TupleType
+        TupleType
+          InferType
+            TypeParameter
+              Identifier: ' Y'
+          RestType
+            InferType
+              TypeParameter
+                Identifier: ' _'
+        RestType
+          InferType
+            TypeParameter
+              Identifier: ' __'
+      TypeReference
+        Identifier: ' Y'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' R'
+    TypeReference
+      Identifier: ' Magic'
+      TupleType
+        TupleType
+          NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' Recursive'
+    TypeParameter
+      Identifier: 'Id'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    id'
+        TypeReference
+          Identifier: ' Id'
+      PropertySignature
+        Identifier: '
+    children'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Recursive'
+              TypeReference
+                Identifier: 'Id'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getIds'
+    TypeParameter
+      Identifier: 'Id'
+    Parameter
+      Identifier: 'items'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Recursive'
+            TypeReference
+              Identifier: 'Id'
+    ArrayType
+      TypeReference
+        Identifier: ' Id'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' items'
+        SatisfiesExpression
+          AsExpression
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    id'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    children'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+        id'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+        children'
+                        ArrayLiteralExpression
+            TypeReference
+              Identifier: ' const'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Recursive'
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        CallExpression
+          Identifier: ' getIds'
+          Identifier: 'items'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo2'
+        CallExpression
+          Identifier: ' getIds'
+          AsExpression
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+    id'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+    children'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+        id'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+        children'
+                        ArrayLiteralExpression
+            TypeReference
+              Identifier: ' const'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeParameter
+      Identifier: 'T'
+    TupleType
+      NumberKeyword
+      TypeReference
+        Identifier: ' T1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeParameter
+      Identifier: 'T'
+    TupleType
+      LiteralType
+        NumericLiteral
+      TypeReference
+        Identifier: ' T2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' qq'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T1'
+        TypeReference
+          Identifier: 'U'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' T2'
+        TypeReference
+          Identifier: 'U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' x'

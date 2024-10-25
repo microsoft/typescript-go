@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C2'
+    MethodDeclaration
+      AsteriskToken
+      Identifier: 'constructor'
+      Block

@@ -1,0 +1,210 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TupleType
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        CallExpression
+          Identifier: ' f1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x2'
+        CallExpression
+          Identifier: ' f2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x'
+            Identifier: ' x3'
+        CallExpression
+          Identifier: ' f3'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    TupleType
+      TypeReference
+        Identifier: 'T'
+    Block
+      ReturnStatement
+        ArrayLiteralExpression
+          AsExpression
+            NumericLiteral
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'x'
+        CallExpression
+          Identifier: ' foo'
+  InterfaceDeclaration
+    Identifier: ' SelectProps'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+    PropertySignature
+      Identifier: '
+  selector'
+      QuestionToken
+      FunctionType
+        Parameter
+          Identifier: 'obj'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' SelectResult'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+    TupleType
+      TypeReference
+        Identifier: 'K'
+      TypeReference
+        Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Person'
+    PropertySignature
+      Identifier: '
+  name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  surname'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' selectJohn'
+    TypeParameter
+      Identifier: 'K'
+      TypeReference
+        Identifier: ' Person'
+    Parameter
+      Identifier: 'props'
+      QuestionToken
+      TypeReference
+        Identifier: ' SelectProps'
+        TypeReference
+          Identifier: 'Person'
+        TypeReference
+          Identifier: ' K'
+    TypeReference
+      Identifier: ' SelectResult'
+      TypeReference
+        Identifier: 'Person'
+      TypeReference
+        Identifier: ' K'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'person'
+        CallExpression
+          Identifier: ' selectJohn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'any'
+          BindingElement
+            Identifier: ' whatever'
+        CallExpression
+          Identifier: ' selectJohn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' john'
+        CallExpression
+          Identifier: ' selectJohn'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'personAgain'
+          BindingElement
+            Identifier: ' nufinspecial'
+        Identifier: ' john'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' makeTuple'
+    TypeParameter
+      Identifier: 'T1'
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' T1'
+    TupleType
+      TypeReference
+        Identifier: 'T1'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' stringy'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    Parameter
+      Identifier: 'arg'
+      QuestionToken
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' isStringTuple'
+        CallExpression
+          Identifier: ' makeTuple'
+          CallExpression
+            Identifier: 'stringy'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'isAny'
+        CallExpression
+          Identifier: ' makeTuple'
+          CallExpression
+            Identifier: 'stringy'

@@ -1,0 +1,387 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        UnionType
+          UndefinedKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                ArrayType
+                  AnyKeyword
+              NumberKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+o1'
+      QuestionDotToken
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+o1'
+      QuestionDotToken
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+o1'
+      QuestionDotToken
+      SpreadElement
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+o1'
+      QuestionDotToken
+      NumericLiteral
+      SpreadElement
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+      NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        UnionType
+          UndefinedKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              FunctionType
+                Parameter
+                  DotDotDotToken
+                  Identifier: 'args'
+                  ArrayType
+                    AnyKeyword
+                NumberKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o2'
+        QuestionDotToken
+        Identifier: 'b'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o2'
+        QuestionDotToken
+        Identifier: 'b'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o2'
+        QuestionDotToken
+        Identifier: 'b'
+      SpreadElement
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+o2'
+        QuestionDotToken
+        Identifier: 'b'
+      NumericLiteral
+      SpreadElement
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      ElementAccessExpression
+        Identifier: '
+o2'
+        QuestionDotToken
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      ElementAccessExpression
+        Identifier: '
+o2'
+        QuestionDotToken
+        StringLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      ElementAccessExpression
+        Identifier: '
+o2'
+        QuestionDotToken
+        StringLiteral
+      SpreadElement
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      ElementAccessExpression
+        Identifier: '
+o2'
+        QuestionDotToken
+        StringLiteral
+      NumericLiteral
+      SpreadElement
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+      NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' b'
+            UnionType
+              ParenthesizedType
+                FunctionType
+                  Parameter
+                    DotDotDotToken
+                    Identifier: 'args'
+                    ArrayType
+                      AnyKeyword
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' c'
+                      StringKeyword
+              UndefinedKeyword
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+o3'
+          Identifier: 'b'
+        QuestionDotToken
+      Identifier: 'c'
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+o3'
+          Identifier: 'b'
+        QuestionDotToken
+        NumericLiteral
+      Identifier: 'c'
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+o3'
+          Identifier: 'b'
+        QuestionDotToken
+        SpreadElement
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+      Identifier: 'c'
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+o3'
+          Identifier: 'b'
+        QuestionDotToken
+        NumericLiteral
+        SpreadElement
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+        NumericLiteral
+      Identifier: 'c'
+  ExpressionStatement
+    ElementAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+o3'
+          Identifier: 'b'
+        QuestionDotToken
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+o3'
+          Identifier: 'b'
+        QuestionDotToken
+        NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+o3'
+          Identifier: 'b'
+        QuestionDotToken
+        SpreadElement
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    ElementAccessExpression
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+o3'
+          Identifier: 'b'
+        QuestionDotToken
+        NumericLiteral
+        SpreadElement
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+        NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        ElementAccessExpression
+          Identifier: '
+o3'
+          StringLiteral
+        QuestionDotToken
+      Identifier: 'c'
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        ElementAccessExpression
+          Identifier: '
+o3'
+          StringLiteral
+        QuestionDotToken
+        NumericLiteral
+      Identifier: 'c'
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        ElementAccessExpression
+          Identifier: '
+o3'
+          StringLiteral
+        QuestionDotToken
+        SpreadElement
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+      Identifier: 'c'
+  ExpressionStatement
+    PropertyAccessExpression
+      CallExpression
+        ElementAccessExpression
+          Identifier: '
+o3'
+          StringLiteral
+        QuestionDotToken
+        NumericLiteral
+        SpreadElement
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+        NumericLiteral
+      Identifier: 'c'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o4'
+        UnionType
+          UndefinedKeyword
+          ParenthesizedType
+            FunctionType
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'f'
+                FunctionType
+                  Parameter
+                    Identifier: 'a'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+              TypeReference
+                Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' incr'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        UnionType
+          NumberKeyword
+          UndefinedKeyword
+        CallExpression
+          Identifier: ' o4'
+          QuestionDotToken
+          Identifier: 'incr'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o5'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          UnionType
+            UndefinedKeyword
+            ParenthesizedType
+              FunctionType
+                VoidKeyword
+  ExpressionStatement
+    CallExpression
+      CallExpression
+        Identifier: '
+o5'
+        NumberKeyword
+      QuestionDotToken
+  ExpressionStatement
+    PropertyAccessExpression
+      NonNullExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+// GH#36031
+o2'
+            QuestionDotToken
+            Identifier: 'b'
+      Identifier: 'toString'
+  ExpressionStatement
+    NonNullExpression
+      PropertyAccessExpression
+        NonNullExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+o2'
+              QuestionDotToken
+              Identifier: 'b'
+        Identifier: 'toString'

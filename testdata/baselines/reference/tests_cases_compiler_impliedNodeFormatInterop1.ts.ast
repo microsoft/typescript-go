@@ -1,0 +1,55 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' HighlightAPI'
+        MethodSignature
+          Identifier: '
+    highlight'
+          Parameter
+            Identifier: 'code'
+            StringKeyword
+          StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' hljs'
+            TypeReference
+              Identifier: ' HighlightAPI'
+      ExportAssignment
+        Identifier: ' hljs'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' hljs'
+    StringLiteral
+  ExportAssignment
+    Identifier: ' hljs'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' hljs'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+hljs'
+        Identifier: 'highlight'
+      StringLiteral

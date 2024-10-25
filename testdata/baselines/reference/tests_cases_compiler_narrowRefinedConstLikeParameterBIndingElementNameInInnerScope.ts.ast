@@ -1,0 +1,40 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' ff'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' a'
+        BindingElement
+          Identifier: ' b'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        PropertySignature
+          Identifier: ' b'
+          FunctionType
+            VoidKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'a'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+    b'
+              EqualsToken
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' x'
+                        StringKeyword
+                        Identifier: ' a'

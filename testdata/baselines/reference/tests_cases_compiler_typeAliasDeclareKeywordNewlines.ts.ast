@@ -1,0 +1,59 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' declare'
+        StringKeyword
+      VariableDeclaration
+        Identifier: ' type'
+        NumberKeyword
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' /*unexpected newline*/
+T1'
+    LiteralType
+      NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        TypeReference
+          Identifier: ' T1'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' T'
+        LiteralType
+          NullKeyword
+  ExpressionStatement
+    Identifier: '
+// The following should use a variable named 'declare', use a variable named
+// 'type', and assign to a variable named 'T'.
+declare'
+  ExpressionStatement
+    Identifier: ' /*ASI*/
+type'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' /*ASI*/
+T'
+      EqualsToken
+      NullKeyword
+  ExpressionStatement
+    Identifier: '
+
+// The following should use a variable named 'declare' and declare a type alias
+// named 'T2':
+declare'
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    LiteralType
+      NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        TypeReference
+          Identifier: ' T2'
+        NullKeyword

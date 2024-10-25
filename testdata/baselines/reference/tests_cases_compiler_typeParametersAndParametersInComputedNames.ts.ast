@@ -1,0 +1,29 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' T'
+    StringKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' A'
+    MethodDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+          TypeReference
+            Identifier: 'T'
+          Identifier: 'a'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'a'
+        TypeReference
+          Identifier: ' T'
+      Block

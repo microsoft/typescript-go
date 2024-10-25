@@ -1,0 +1,126 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' E'
+  FunctionDeclaration
+    Identifier: ' foo6'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'x'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'x'
+      VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo7'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block

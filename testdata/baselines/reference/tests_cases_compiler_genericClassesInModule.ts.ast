@@ -1,0 +1,24 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' B'
+        TypeParameter
+          Identifier: 'T'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Foo'
+            Identifier: 'B'
+          TypeReference
+            QualifiedName
+              Identifier: 'Foo'
+              Identifier: 'A'

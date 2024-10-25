@@ -1,0 +1,41 @@
+SourceFile
+  ExportAssignment
+    Identifier: ' foo'
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' T'
+        NumberKeyword
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' foo'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' T'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' foo'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' g'
+        TypeReference
+          QualifiedName
+            Identifier: ' foo'
+            Identifier: 'T'

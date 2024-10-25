@@ -1,0 +1,12 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' X'
+    TypeParameter
+      Identifier: 'I'
+      NumberKeyword
+    IndexedAccessType
+      TupleType
+        LiteralType
+          StringLiteral
+      TypeReference
+        Identifier: 'I'

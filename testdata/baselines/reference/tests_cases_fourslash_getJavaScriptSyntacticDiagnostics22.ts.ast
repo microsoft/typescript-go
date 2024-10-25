@@ -1,0 +1,13 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @allowJs: true
+// @Filename: a.js
+//// function foo(...a) {}
+
+verify'
+        Identifier: 'getSemanticDiagnostics'
+      ArrayLiteralExpression

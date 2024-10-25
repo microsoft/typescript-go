@@ -1,0 +1,138 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        IntersectionType
+          TypeReference
+            Identifier: ' T'
+          StringKeyword
+        IntersectionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        IntersectionType
+          TypeReference
+            Identifier: ' T'
+          StringKeyword
+        IntersectionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        IntersectionType
+          TypeReference
+            Identifier: ' T'
+          StringKeyword
+        IntersectionType
+          TypeReference
+            Identifier: ' T'
+          NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        IntersectionType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            NumericLiteral
+        IntersectionType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            NumericLiteral
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            NumericLiteral
+            ExpressionStatement
+              Identifier: ' x'
+            BreakStatement
+          CaseClause
+            NumericLiteral
+            ExpressionStatement
+              Identifier: ' x'
+            BreakStatement
+          DefaultClause
+            ExpressionStatement
+              Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f5'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    Parameter
+      Identifier: 'x'
+      IntersectionType
+        TypeReference
+          Identifier: ' T'
+        NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t1'
+            BinaryExpression
+              Identifier: ' x'
+              EqualsEqualsEqualsToken
+              StringLiteral

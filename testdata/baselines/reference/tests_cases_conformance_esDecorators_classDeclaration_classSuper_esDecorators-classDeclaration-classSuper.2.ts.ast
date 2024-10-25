@@ -1,0 +1,56 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ClassExpression
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'name'
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ParenthesizedExpression
+          AsExpression
+            FunctionExpression
+              Block
+            AnyKeyword
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'name'
+  ClassDeclaration
+    Decorator
+      Identifier: 'dec'
+    Identifier: ' C3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        ParenthesizedExpression
+          AsExpression
+            ParenthesizedExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+            AnyKeyword
+    ClassStaticBlockDeclaration
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            SuperKeyword
+            Identifier: 'name'

@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ranges'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'pasteEdits'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    args'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        pastedText'
+              ArrayLiteralExpression
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              Identifier: '
+    pasteLocations'
+              ArrayLiteralExpression
+                ElementAccessExpression
+                  Identifier: 'ranges'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: ' ranges'
+                  NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral

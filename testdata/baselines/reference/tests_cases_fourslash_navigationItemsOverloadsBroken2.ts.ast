@@ -1,0 +1,134 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0'
+          BindingElement
+            Identifier: ' r1'
+          BindingElement
+            Identifier: ' r2'
+          BindingElement
+            Identifier: ' r3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' overload1'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedNavigateToItem'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' range'
+              Identifier: ' r0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' overload2'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedNavigateToItem'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' range'
+              Identifier: ' r1'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' range'
+              Identifier: ' r2'
+            PropertyAssignment
+              Identifier: ' containerName'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' containerKind'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' range'
+              Identifier: ' r3'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'navigateTo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' pattern'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' expected'
+          Identifier: ' overload1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        pattern'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        expected'
+          Identifier: ' overload2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        pattern'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+        expected'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'overload1'
+                SpreadElement
+                  Identifier: 'overload2'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'item'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  SpreadAssignment
+                    Identifier: 'item'
+                  PropertyAssignment
+                    Identifier: ' matchKind'
+                    StringLiteral

@@ -1,0 +1,26 @@
+SourceFile
+  Block
+    TypeAliasDeclaration
+      Identifier: ' Data'
+      UnionType
+        StringKeyword
+        BooleanKeyword
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' obj'
+          TypeReference
+            Identifier: ' Data'
+          TrueKeyword
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        BinaryExpression
+          StringLiteral
+          BarBarToken
+          NumericLiteral
+  ExportAssignment
+    Identifier: ' x'

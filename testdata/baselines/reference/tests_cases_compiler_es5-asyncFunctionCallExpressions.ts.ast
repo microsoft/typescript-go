@@ -1,0 +1,273 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' z'
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+      VariableDeclaration
+        Identifier: ' c'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression0'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          CallExpression
+            Identifier: ' x'
+            Identifier: 'y'
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression1'
+    Block
+      ExpressionStatement
+        CallExpression
+          ParenthesizedExpression
+            AwaitExpression
+              Identifier: ' x'
+          Identifier: 'y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression2'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    x'
+          AwaitExpression
+            Identifier: ' y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression3'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    x'
+          Identifier: 'y'
+          AwaitExpression
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression4'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          CallExpression
+            Identifier: ' x'
+            SpreadElement
+              Identifier: 'y'
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression5'
+    Block
+      ExpressionStatement
+        CallExpression
+          ParenthesizedExpression
+            AwaitExpression
+              Identifier: ' x'
+          SpreadElement
+            Identifier: 'y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression6'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    x'
+          SpreadElement
+            ParenthesizedExpression
+              AwaitExpression
+                Identifier: ' y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression7'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    x'
+          SpreadElement
+            Identifier: 'y'
+          AwaitExpression
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression8'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    x'
+          AwaitExpression
+            Identifier: ' y'
+          SpreadElement
+            Identifier: 'z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression9'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    x'
+          Identifier: 'y'
+          SpreadElement
+            ParenthesizedExpression
+              AwaitExpression
+                Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression10'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' x'
+              Identifier: 'a'
+            Identifier: 'y'
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression11'
+    Block
+      ExpressionStatement
+        CallExpression
+          ParenthesizedExpression
+            AwaitExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'a'
+          Identifier: 'y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression12'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              AwaitExpression
+                Identifier: ' x'
+            Identifier: 'a'
+          Identifier: 'y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression13'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'a'
+          AwaitExpression
+            Identifier: ' y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression14'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'a'
+          Identifier: 'y'
+          AwaitExpression
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression15'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          CallExpression
+            ElementAccessExpression
+              Identifier: ' x'
+              Identifier: 'a'
+            Identifier: 'y'
+            Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression16'
+    Block
+      ExpressionStatement
+        CallExpression
+          ParenthesizedExpression
+            AwaitExpression
+              ElementAccessExpression
+                Identifier: ' x'
+                Identifier: 'a'
+          Identifier: 'y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression17'
+    Block
+      ExpressionStatement
+        CallExpression
+          ElementAccessExpression
+            ParenthesizedExpression
+              AwaitExpression
+                Identifier: ' x'
+            Identifier: 'a'
+          Identifier: 'y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression18'
+    Block
+      ExpressionStatement
+        CallExpression
+          ElementAccessExpression
+            Identifier: '
+    x'
+            AwaitExpression
+              Identifier: ' a'
+          Identifier: 'y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression19'
+    Block
+      ExpressionStatement
+        CallExpression
+          ElementAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'a'
+          AwaitExpression
+            Identifier: ' y'
+          Identifier: ' z'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' callExpression20'
+    Block
+      ExpressionStatement
+        CallExpression
+          ElementAccessExpression
+            Identifier: '
+    x'
+            Identifier: 'a'
+          Identifier: 'y'
+          AwaitExpression
+            Identifier: ' z'

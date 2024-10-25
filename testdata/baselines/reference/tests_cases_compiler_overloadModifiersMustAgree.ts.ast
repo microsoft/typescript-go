@@ -1,0 +1,42 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' baz'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'bar'
+        QuestionToken
+        AnyKeyword
+      Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' bar'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' bar'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 's'
+      QuestionToken
+      StringKeyword
+    Block
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    foo'
+      QuestionToken
+    MethodSignature
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 's'
+        StringKeyword

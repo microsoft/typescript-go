@@ -1,0 +1,13 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Nums'
+    EnumMember
+      NumericLiteral
+    EnumMember
+      NumericLiteral
+    EnumMember
+      NumericLiteral
+    EnumMember
+      StringLiteral
+    EnumMember
+      NumericLiteral

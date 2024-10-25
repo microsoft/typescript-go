@@ -1,0 +1,132 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' notation'
+          BindingElement
+            Identifier: ' style'
+          BindingElement
+            Identifier: ' signDisplay'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'NumberFormat'
+              StringLiteral
+            Identifier: 'resolvedOptions'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'NumberFormat'
+      StringLiteral
+      ObjectLiteralExpression
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'NumberFormat'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' numberingSystem'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' currency'
+          BindingElement
+            Identifier: ' currencySign'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'NumberFormat'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' style'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' currency'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' currencySign'
+                  StringLiteral
+            Identifier: 'resolvedOptions'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' unit'
+          BindingElement
+            Identifier: ' unitDisplay'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'NumberFormat'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' style'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' unit'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' unitDisplay'
+                  StringLiteral
+            Identifier: 'resolvedOptions'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' compactDisplay'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              PropertyAccessExpression
+                Identifier: ' Intl'
+                Identifier: 'NumberFormat'
+              StringLiteral
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' notation'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' compactDisplay'
+                  StringLiteral
+            Identifier: 'resolvedOptions'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'NumberFormat'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' signDisplay'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' types'
+        ArrayType
+          TypeReference
+            QualifiedName
+              Identifier: ' Intl'
+              Identifier: 'NumberFormatPartTypes'
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+          StringLiteral

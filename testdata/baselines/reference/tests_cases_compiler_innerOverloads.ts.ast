@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' outer'
+    Block
+      FunctionDeclaration
+        Identifier: ' inner'
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+      FunctionDeclaration
+        Identifier: ' inner'
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+      FunctionDeclaration
+        Identifier: ' inner'
+        Parameter
+          Identifier: 'a'
+          AnyKeyword
+        Block
+          ReturnStatement
+            Identifier: ' a'
+      ReturnStatement
+        CallExpression
+          Identifier: ' inner'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' outer'

@@ -1,0 +1,1475 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createTextRangeWithKind'
+        ImportSpecifier
+          Identifier: '
+    TextRangeWithKind'
+        ImportSpecifier
+          Identifier: '
+    TextRangeWithTriviaKind'
+        ImportSpecifier
+          Identifier: '
+    TokenInfo'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    append'
+        ImportSpecifier
+          Identifier: '
+    createScanner'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    isJsxAttribute'
+        ImportSpecifier
+          Identifier: '
+    isJsxElement'
+        ImportSpecifier
+          Identifier: '
+    isJsxText'
+        ImportSpecifier
+          Identifier: '
+    isKeyword'
+        ImportSpecifier
+          Identifier: '
+    isToken'
+        ImportSpecifier
+          Identifier: '
+    isTrivia'
+        ImportSpecifier
+          Identifier: '
+    LanguageVariant'
+        ImportSpecifier
+          Identifier: '
+    last'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    NodeArray'
+        ImportSpecifier
+          Identifier: '
+    ScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' standardScanner'
+        CallExpression
+          Identifier: ' createScanner'
+          PropertyAccessExpression
+            Identifier: 'ScriptTarget'
+            Identifier: 'Latest'
+          FalseKeyword
+          PropertyAccessExpression
+            Identifier: ' LanguageVariant'
+            Identifier: 'Standard'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' jsxScanner'
+        CallExpression
+          Identifier: ' createScanner'
+          PropertyAccessExpression
+            Identifier: 'ScriptTarget'
+            Identifier: 'Latest'
+          FalseKeyword
+          PropertyAccessExpression
+            Identifier: ' LanguageVariant'
+            Identifier: 'JSX'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FormattingScanner'
+    MethodSignature
+      Identifier: '
+    advance'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getTokenFullStart'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** @deprecated use {@link getTokenFullStart} */
+    getStartPos'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    isOnToken'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    isOnEOF'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    readTokenInfo'
+      Parameter
+        Identifier: 'n'
+        TypeReference
+          Identifier: ' Node'
+      TypeReference
+        Identifier: ' TokenInfo'
+    MethodSignature
+      Identifier: '
+    readEOFTokenRange'
+      TypeReference
+        Identifier: ' TextRangeWithKind'
+    MethodSignature
+      Identifier: '
+    getCurrentLeadingTrivia'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' TextRangeWithKind'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    lastTrailingTriviaWasNewLine'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    skipToEndOf'
+      Parameter
+        Identifier: 'node'
+        UnionType
+          TypeReference
+            Identifier: ' Node'
+          TypeReference
+            Identifier: ' NodeArray'
+            TypeReference
+              Identifier: 'Node'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    skipToStartOf'
+      Parameter
+        Identifier: 'node'
+        TypeReference
+          Identifier: ' Node'
+      VoidKeyword
+  EnumDeclaration
+    ConstKeyword
+    Identifier: ' ScanAction'
+    EnumMember
+      Identifier: '
+    Scan'
+    EnumMember
+      Identifier: '
+    RescanGreaterThanToken'
+    EnumMember
+      Identifier: '
+    RescanSlashToken'
+    EnumMember
+      Identifier: '
+    RescanTemplateToken'
+    EnumMember
+      Identifier: '
+    RescanJsxIdentifier'
+    EnumMember
+      Identifier: '
+    RescanJsxText'
+    EnumMember
+      Identifier: '
+    RescanJsxAttributeValue'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFormattingScanner'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'text'
+      StringKeyword
+    Parameter
+      Identifier: ' languageVariant'
+      TypeReference
+        Identifier: ' LanguageVariant'
+    Parameter
+      Identifier: ' startPos'
+      NumberKeyword
+    Parameter
+      Identifier: ' endPos'
+      NumberKeyword
+    Parameter
+      Identifier: ' cb'
+      FunctionType
+        Parameter
+          Identifier: 'scanner'
+          TypeReference
+            Identifier: ' FormattingScanner'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' scanner'
+            ConditionalExpression
+              BinaryExpression
+                Identifier: ' languageVariant'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' LanguageVariant'
+                  Identifier: 'JSX'
+              QuestionToken
+              Identifier: ' jsxScanner'
+              ColonToken
+              Identifier: ' standardScanner'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    scanner'
+            Identifier: 'setText'
+          Identifier: 'text'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    scanner'
+            Identifier: 'resetTokenState'
+          Identifier: 'startPos'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' wasNewLine'
+            TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' leadingTrivia'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' TextRangeWithTriviaKind'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' trailingTrivia'
+            UnionType
+              ArrayType
+                TypeReference
+                  Identifier: ' TextRangeWithTriviaKind'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' savedPos'
+            NumberKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lastScanAction'
+            UnionType
+              TypeReference
+                Identifier: ' ScanAction'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' lastTokenInfo'
+            UnionType
+              TypeReference
+                Identifier: ' TokenInfo'
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' res'
+            CallExpression
+              Identifier: ' cb'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+        advance'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        readTokenInfo'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        readEOFTokenRange'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        isOnToken'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        isOnEOF'
+                PropertyAssignment
+                  Identifier: '
+        getCurrentLeadingTrivia'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Identifier: ' leadingTrivia'
+                PropertyAssignment
+                  Identifier: '
+        lastTrailingTriviaWasNewLine'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Identifier: ' wasNewLine'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        skipToEndOf'
+                ShorthandPropertyAssignment
+                  Identifier: '
+        skipToStartOf'
+                PropertyAssignment
+                  Identifier: '
+        getTokenFullStart'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' lastTokenInfo'
+                          QuestionDotToken
+                          Identifier: 'token'
+                        Identifier: 'pos'
+                      QuestionQuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' scanner'
+                          Identifier: 'getTokenStart'
+                PropertyAssignment
+                  Identifier: '
+        getStartPos'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' lastTokenInfo'
+                          QuestionDotToken
+                          Identifier: 'token'
+                        Identifier: 'pos'
+                      QuestionQuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' scanner'
+                          Identifier: 'getTokenStart'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    lastTokenInfo'
+          EqualsToken
+          Identifier: ' undefined'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    scanner'
+            Identifier: 'setText'
+          Identifier: 'undefined'
+      ReturnStatement
+        Identifier: ' res'
+      FunctionDeclaration
+        Identifier: ' advance'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lastTokenInfo'
+              EqualsToken
+              Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' isStarted'
+                BinaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' scanner'
+                      Identifier: 'getTokenFullStart'
+                  ExclamationEqualsEqualsToken
+                  Identifier: ' startPos'
+          IfStatement
+            Identifier: 'isStarted'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            wasNewLine'
+                  EqualsToken
+                  BinaryExpression
+                    PrefixUnaryExpression
+                      PrefixUnaryExpression
+                        Identifier: 'trailingTrivia'
+                    AmpersandAmpersandToken
+                    BinaryExpression
+                      PropertyAccessExpression
+                        CallExpression
+                          Identifier: ' last'
+                          Identifier: 'trailingTrivia'
+                        Identifier: 'kind'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' SyntaxKind'
+                        Identifier: 'NewLineTrivia'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            scanner'
+                    Identifier: 'scan'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+        leadingTrivia'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        trailingTrivia'
+              EqualsToken
+              Identifier: ' undefined'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' pos'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' scanner'
+                    Identifier: 'getTokenFullStart'
+          WhileStatement
+            BinaryExpression
+              Identifier: 'pos'
+              LessThanToken
+              Identifier: ' endPos'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' t'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' scanner'
+                        Identifier: 'getToken'
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isTrivia'
+                    Identifier: 't'
+                Block
+                  BreakStatement
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            // consume leading trivia
+            scanner'
+                    Identifier: 'scan'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' item'
+                    TypeReference
+                      Identifier: ' TextRangeWithTriviaKind'
+                    ObjectLiteralExpression
+                      ShorthandPropertyAssignment
+                        Identifier: '
+                pos'
+                      PropertyAssignment
+                        Identifier: '
+                end'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' scanner'
+                            Identifier: 'getTokenFullStart'
+                      PropertyAssignment
+                        Identifier: '
+                kind'
+                        Identifier: ' t'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            pos'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' scanner'
+                      Identifier: 'getTokenFullStart'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+
+            leadingTrivia'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' append'
+                    Identifier: 'leadingTrivia'
+                    Identifier: ' item'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+        savedPos'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' scanner'
+                  Identifier: 'getTokenFullStart'
+      FunctionDeclaration
+        Identifier: ' shouldRescanGreaterThanToken'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        BooleanKeyword
+        Block
+          SwitchStatement
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'kind'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'GreaterThanEqualsToken'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'GreaterThanGreaterThanEqualsToken'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'GreaterThanGreaterThanGreaterThanEqualsToken'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'GreaterThanGreaterThanGreaterThanToken'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'GreaterThanGreaterThanToken'
+                ReturnStatement
+                  TrueKeyword
+          ReturnStatement
+            FalseKeyword
+      FunctionDeclaration
+        Identifier: ' shouldRescanJsxIdentifier'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        BooleanKeyword
+        Block
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'parent'
+            Block
+              SwitchStatement
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'parent'
+                  Identifier: 'kind'
+                CaseBlock
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'JsxAttribute'
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'JsxOpeningElement'
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'JsxClosingElement'
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'JsxSelfClosingElement'
+                    ReturnStatement
+                      BinaryExpression
+                        CallExpression
+                          Identifier: ' isKeyword'
+                          PropertyAccessExpression
+                            Identifier: 'node'
+                            Identifier: 'kind'
+                        BarBarToken
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: ' node'
+                            Identifier: 'kind'
+                          EqualsEqualsEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' SyntaxKind'
+                            Identifier: 'Identifier'
+          ReturnStatement
+            FalseKeyword
+      FunctionDeclaration
+        Identifier: ' shouldRescanJsxText'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        BooleanKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                Identifier: ' isJsxText'
+                Identifier: 'node'
+              BarBarToken
+              BinaryExpression
+                CallExpression
+                  Identifier: ' isJsxElement'
+                  Identifier: 'node'
+                AmpersandAmpersandToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' lastTokenInfo'
+                      QuestionDotToken
+                      Identifier: 'token'
+                    Identifier: 'kind'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'JsxText'
+      FunctionDeclaration
+        Identifier: ' shouldRescanSlashToken'
+        Parameter
+          Identifier: 'container'
+          TypeReference
+            Identifier: ' Node'
+        BooleanKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' container'
+                Identifier: 'kind'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'RegularExpressionLiteral'
+      FunctionDeclaration
+        Identifier: ' shouldRescanTemplateToken'
+        Parameter
+          Identifier: 'container'
+          TypeReference
+            Identifier: ' Node'
+        BooleanKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' container'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TemplateMiddle'
+              BarBarToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            container'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'TemplateTail'
+      FunctionDeclaration
+        Identifier: ' shouldRescanJsxAttributeValue'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        BooleanKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'parent'
+                AmpersandAmpersandToken
+                CallExpression
+                  Identifier: ' isJsxAttribute'
+                  PropertyAccessExpression
+                    Identifier: 'node'
+                    Identifier: 'parent'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' node'
+                    Identifier: 'parent'
+                  Identifier: 'initializer'
+                EqualsEqualsEqualsToken
+                Identifier: ' node'
+      FunctionDeclaration
+        Identifier: ' startsWithSlashToken'
+        Parameter
+          Identifier: 't'
+          TypeReference
+            Identifier: ' SyntaxKind'
+        BooleanKeyword
+        Block
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' t'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SlashToken'
+              BarBarToken
+              BinaryExpression
+                Identifier: ' t'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SlashEqualsToken'
+      FunctionDeclaration
+        Identifier: ' readTokenInfo'
+        Parameter
+          Identifier: 'n'
+          TypeReference
+            Identifier: ' Node'
+        TypeReference
+          Identifier: ' TokenInfo'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              CallExpression
+                Identifier: 'isOnToken'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' expectedScanAction'
+                ConditionalExpression
+                  CallExpression
+                    Identifier: ' shouldRescanGreaterThanToken'
+                    Identifier: 'n'
+                  QuestionToken
+                  PropertyAccessExpression
+                    Identifier: ' ScanAction'
+                    Identifier: 'RescanGreaterThanToken'
+                  ColonToken
+                  ConditionalExpression
+                    CallExpression
+                      Identifier: '
+            shouldRescanSlashToken'
+                      Identifier: 'n'
+                    QuestionToken
+                    PropertyAccessExpression
+                      Identifier: ' ScanAction'
+                      Identifier: 'RescanSlashToken'
+                    ColonToken
+                    ConditionalExpression
+                      CallExpression
+                        Identifier: '
+            shouldRescanTemplateToken'
+                        Identifier: 'n'
+                      QuestionToken
+                      PropertyAccessExpression
+                        Identifier: ' ScanAction'
+                        Identifier: 'RescanTemplateToken'
+                      ColonToken
+                      ConditionalExpression
+                        CallExpression
+                          Identifier: '
+            shouldRescanJsxIdentifier'
+                          Identifier: 'n'
+                        QuestionToken
+                        PropertyAccessExpression
+                          Identifier: ' ScanAction'
+                          Identifier: 'RescanJsxIdentifier'
+                        ColonToken
+                        ConditionalExpression
+                          CallExpression
+                            Identifier: '
+            shouldRescanJsxText'
+                            Identifier: 'n'
+                          QuestionToken
+                          PropertyAccessExpression
+                            Identifier: ' ScanAction'
+                            Identifier: 'RescanJsxText'
+                          ColonToken
+                          ConditionalExpression
+                            CallExpression
+                              Identifier: '
+            shouldRescanJsxAttributeValue'
+                              Identifier: 'n'
+                            QuestionToken
+                            PropertyAccessExpression
+                              Identifier: ' ScanAction'
+                              Identifier: 'RescanJsxAttributeValue'
+                            ColonToken
+                            PropertyAccessExpression
+                              Identifier: '
+            ScanAction'
+                              Identifier: 'Scan'
+          IfStatement
+            BinaryExpression
+              Identifier: 'lastTokenInfo'
+              AmpersandAmpersandToken
+              BinaryExpression
+                Identifier: ' expectedScanAction'
+                EqualsEqualsEqualsToken
+                Identifier: ' lastScanAction'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' fixTokenKind'
+                  Identifier: 'lastTokenInfo'
+                  Identifier: ' n'
+          IfStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'scanner'
+                  Identifier: 'getTokenFullStart'
+              ExclamationEqualsEqualsToken
+              Identifier: ' savedPos'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            Debug'
+                    Identifier: 'assert'
+                  BinaryExpression
+                    Identifier: 'lastTokenInfo'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' undefined'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            // readTokenInfo was called before but scan action differs - rescan text
+            scanner'
+                    Identifier: 'resetTokenState'
+                  Identifier: 'savedPos'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            scanner'
+                    Identifier: 'scan'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' currentToken'
+                CallExpression
+                  Identifier: ' getNextToken'
+                  Identifier: 'n'
+                  Identifier: ' expectedScanAction'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' token'
+                CallExpression
+                  Identifier: ' createTextRangeWithKind'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            scanner'
+                      Identifier: 'getTokenFullStart'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            scanner'
+                      Identifier: 'getTokenEnd'
+                  Identifier: '
+            currentToken'
+          IfStatement
+            Identifier: 'trailingTrivia'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            trailingTrivia'
+                  EqualsToken
+                  Identifier: ' undefined'
+          WhileStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'scanner'
+                  Identifier: 'getTokenFullStart'
+              LessThanToken
+              Identifier: ' endPos'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            currentToken'
+                  EqualsToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' scanner'
+                      Identifier: 'scan'
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    Identifier: 'isTrivia'
+                    Identifier: 'currentToken'
+                Block
+                  BreakStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' trivia'
+                    CallExpression
+                      Identifier: ' createTextRangeWithKind'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                scanner'
+                          Identifier: 'getTokenFullStart'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                scanner'
+                          Identifier: 'getTokenEnd'
+                      Identifier: '
+                currentToken'
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'trailingTrivia'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+                trailingTrivia'
+                      EqualsToken
+                      ArrayLiteralExpression
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+            trailingTrivia'
+                    Identifier: 'push'
+                  Identifier: 'trivia'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'currentToken'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' SyntaxKind'
+                    Identifier: 'NewLineTrivia'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+                // move past new line
+                scanner'
+                        Identifier: 'scan'
+                  BreakStatement
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+        lastTokenInfo'
+              EqualsToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' leadingTrivia'
+                ShorthandPropertyAssignment
+                  Identifier: ' trailingTrivia'
+                ShorthandPropertyAssignment
+                  Identifier: ' token'
+          ReturnStatement
+            CallExpression
+              Identifier: ' fixTokenKind'
+              Identifier: 'lastTokenInfo'
+              Identifier: ' n'
+      FunctionDeclaration
+        Identifier: ' getNextToken'
+        Parameter
+          Identifier: 'n'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' expectedScanAction'
+          TypeReference
+            Identifier: ' ScanAction'
+        TypeReference
+          Identifier: ' SyntaxKind'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' token'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' scanner'
+                    Identifier: 'getToken'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lastScanAction'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' ScanAction'
+                Identifier: 'Scan'
+          SwitchStatement
+            Identifier: 'expectedScanAction'
+            CaseBlock
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScanAction'
+                  Identifier: 'RescanGreaterThanToken'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'token'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'GreaterThanToken'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    lastScanAction'
+                        EqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' ScanAction'
+                          Identifier: 'RescanGreaterThanToken'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' newToken'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' scanner'
+                              Identifier: 'reScanGreaterToken'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    Debug'
+                          Identifier: 'assert'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'n'
+                            Identifier: 'kind'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' newToken'
+                    ReturnStatement
+                      Identifier: ' newToken'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScanAction'
+                  Identifier: 'RescanSlashToken'
+                IfStatement
+                  CallExpression
+                    Identifier: 'startsWithSlashToken'
+                    Identifier: 'token'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    lastScanAction'
+                        EqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' ScanAction'
+                          Identifier: 'RescanSlashToken'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' newToken'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' scanner'
+                              Identifier: 'reScanSlashToken'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    Debug'
+                          Identifier: 'assert'
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'n'
+                            Identifier: 'kind'
+                          EqualsEqualsEqualsToken
+                          Identifier: ' newToken'
+                    ReturnStatement
+                      Identifier: ' newToken'
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScanAction'
+                  Identifier: 'RescanTemplateToken'
+                IfStatement
+                  BinaryExpression
+                    Identifier: 'token'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' SyntaxKind'
+                      Identifier: 'CloseBraceToken'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+                    lastScanAction'
+                        EqualsToken
+                        PropertyAccessExpression
+                          Identifier: ' ScanAction'
+                          Identifier: 'RescanTemplateToken'
+                    ReturnStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' scanner'
+                          Identifier: 'reScanTemplateToken'
+                        FalseKeyword
+                BreakStatement
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScanAction'
+                  Identifier: 'RescanJsxIdentifier'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                lastScanAction'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' ScanAction'
+                      Identifier: 'RescanJsxIdentifier'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' scanner'
+                      Identifier: 'scanJsxIdentifier'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScanAction'
+                  Identifier: 'RescanJsxText'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                lastScanAction'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' ScanAction'
+                      Identifier: 'RescanJsxText'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' scanner'
+                      Identifier: 'reScanJsxToken'
+                    FalseKeyword
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScanAction'
+                  Identifier: 'RescanJsxAttributeValue'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                lastScanAction'
+                    EqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' ScanAction'
+                      Identifier: 'RescanJsxAttributeValue'
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' scanner'
+                      Identifier: 'reScanJsxAttributeValue'
+              CaseClause
+                PropertyAccessExpression
+                  Identifier: ' ScanAction'
+                  Identifier: 'Scan'
+                BreakStatement
+              DefaultClause
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                Debug'
+                      Identifier: 'assertNever'
+                    Identifier: 'expectedScanAction'
+          ReturnStatement
+            Identifier: ' token'
+      FunctionDeclaration
+        Identifier: ' readEOFTokenRange'
+        TypeReference
+          Identifier: ' TextRangeWithKind'
+          TypeReference
+            QualifiedName
+              Identifier: 'SyntaxKind'
+              Identifier: 'EndOfFileToken'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              CallExpression
+                Identifier: 'isOnEOF'
+          ReturnStatement
+            CallExpression
+              Identifier: ' createTextRangeWithKind'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'scanner'
+                  Identifier: 'getTokenFullStart'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' scanner'
+                  Identifier: 'getTokenEnd'
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'EndOfFileToken'
+      FunctionDeclaration
+        Identifier: ' isOnToken'
+        BooleanKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' current'
+                ConditionalExpression
+                  Identifier: ' lastTokenInfo'
+                  QuestionToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' lastTokenInfo'
+                      Identifier: 'token'
+                    Identifier: 'kind'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' scanner'
+                      Identifier: 'getToken'
+          ReturnStatement
+            BinaryExpression
+              BinaryExpression
+                Identifier: ' current'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'EndOfFileToken'
+              AmpersandAmpersandToken
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'isTrivia'
+                  Identifier: 'current'
+      FunctionDeclaration
+        Identifier: ' isOnEOF'
+        BooleanKeyword
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' current'
+                ConditionalExpression
+                  Identifier: ' lastTokenInfo'
+                  QuestionToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' lastTokenInfo'
+                      Identifier: 'token'
+                    Identifier: 'kind'
+                  ColonToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' scanner'
+                      Identifier: 'getToken'
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' current'
+              EqualsEqualsEqualsToken
+              PropertyAccessExpression
+                Identifier: ' SyntaxKind'
+                Identifier: 'EndOfFileToken'
+      FunctionDeclaration
+        Identifier: ' fixTokenKind'
+        Parameter
+          Identifier: 'tokenInfo'
+          TypeReference
+            Identifier: ' TokenInfo'
+        Parameter
+          Identifier: ' container'
+          TypeReference
+            Identifier: ' Node'
+        TypeReference
+          Identifier: ' TokenInfo'
+        Block
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'isToken'
+                Identifier: 'container'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' tokenInfo'
+                    Identifier: 'token'
+                  Identifier: 'kind'
+                ExclamationEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' container'
+                  Identifier: 'kind'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            tokenInfo'
+                      Identifier: 'token'
+                    Identifier: 'kind'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' container'
+                    Identifier: 'kind'
+          ReturnStatement
+            Identifier: ' tokenInfo'
+      FunctionDeclaration
+        Identifier: ' skipToEndOf'
+        Parameter
+          Identifier: 'node'
+          UnionType
+            TypeReference
+              Identifier: ' Node'
+            TypeReference
+              Identifier: ' NodeArray'
+              TypeReference
+                Identifier: 'Node'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        scanner'
+                Identifier: 'resetTokenState'
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'end'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        savedPos'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' scanner'
+                  Identifier: 'getTokenFullStart'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lastScanAction'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lastTokenInfo'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        wasNewLine'
+              EqualsToken
+              FalseKeyword
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        leadingTrivia'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        trailingTrivia'
+              EqualsToken
+              Identifier: ' undefined'
+      FunctionDeclaration
+        Identifier: ' skipToStartOf'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Node'
+        VoidKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        scanner'
+                Identifier: 'resetTokenState'
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'pos'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        savedPos'
+              EqualsToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' scanner'
+                  Identifier: 'getTokenFullStart'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lastScanAction'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        lastTokenInfo'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        wasNewLine'
+              EqualsToken
+              FalseKeyword
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        leadingTrivia'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        trailingTrivia'
+              EqualsToken
+              Identifier: ' undefined'

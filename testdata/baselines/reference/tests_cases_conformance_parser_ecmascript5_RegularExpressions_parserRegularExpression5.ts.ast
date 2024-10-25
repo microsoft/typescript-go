@@ -1,0 +1,11 @@
+SourceFile
+  IfStatement
+    Identifier: 'a'
+    ExpressionStatement
+      CallExpression
+        PropertyAccessExpression
+          RegularExpressionLiteral
+          Identifier: 'test'
+        PropertyAccessExpression
+          Identifier: 'c'
+          Identifier: 'href'

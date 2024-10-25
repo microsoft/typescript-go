@@ -1,0 +1,122 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: ' a'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertySignature
+      Identifier: ' b'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' B'
+    PropertySignature
+      Identifier: ' c'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' G'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' B'
+    PropertySignature
+      Identifier: '
+    x'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    y'
+      TypeReference
+        Identifier: ' U'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    x'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                StringKeyword
+          PropertySignature
+            Identifier: '
+    y'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                StringKeyword
+              PropertySignature
+                Identifier: ' b'
+                StringKeyword
+              PropertySignature
+                Identifier: ' c'
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        TypeReference
+          Identifier: ' G'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeReference
+            Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        TypeReference
+          Identifier: ' G'
+          TypeReference
+            Identifier: 'A'
+          TypeReference
+            Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        TypeReference
+          Identifier: ' G'
+          TypeReference
+            Identifier: 'G'
+            TypeReference
+              Identifier: 'A'
+            TypeReference
+              Identifier: ' B'
+          TypeReference
+            Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v5'
+        TypeReference
+          Identifier: ' G'
+          AnyKeyword
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v6'
+        TypeReference
+          Identifier: ' G'
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v7'
+        TypeReference
+          Identifier: ' G'

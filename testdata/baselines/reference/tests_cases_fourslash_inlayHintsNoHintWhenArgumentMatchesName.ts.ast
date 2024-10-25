@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//// function foo (a: number, b: number) {}
+//// declare const a: 1;
+//// foo(a, 2);
+//// declare const v: any;
+//// foo(v.a, v.a);
+//// foo(v.b, v.b);
+//// foo(v.c, v.c);
+
+verify'
+        Identifier: 'baselineInlayHints'
+      Identifier: 'undefined'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    includeInlayParameterNameHints'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    includeInlayParameterNameHintsWhenArgumentMatchesName'
+          FalseKeyword

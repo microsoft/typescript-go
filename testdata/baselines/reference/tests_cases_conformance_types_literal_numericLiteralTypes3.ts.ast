@@ -1,0 +1,580 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' A'
+    LiteralType
+      NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' B'
+    UnionType
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' C'
+    UnionType
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' D'
+    UnionType
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    Parameter
+      Identifier: ' c'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: ' d'
+      TypeReference
+        Identifier: ' D'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' d'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    Parameter
+      Identifier: ' c'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: ' d'
+      TypeReference
+        Identifier: ' D'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' d'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    Parameter
+      Identifier: ' c'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: ' d'
+      TypeReference
+        Identifier: ' D'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          Identifier: ' d'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    Parameter
+      Identifier: ' c'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: ' d'
+      TypeReference
+        Identifier: ' D'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsToken
+          Identifier: ' d'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    Parameter
+      Identifier: ' c'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: ' d'
+      TypeReference
+        Identifier: ' D'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    Parameter
+      Identifier: ' c'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: ' d'
+      TypeReference
+        Identifier: ' D'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsEqualsEqualsToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f7'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' B'
+    Parameter
+      Identifier: ' c'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: ' d'
+      TypeReference
+        Identifier: ' D'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsEqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsEqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsEqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsEqualsEqualsToken
+          Identifier: ' d'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsEqualsEqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsEqualsEqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsEqualsEqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsEqualsEqualsToken
+          Identifier: ' d'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsEqualsEqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsEqualsEqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsEqualsEqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsEqualsEqualsToken
+          Identifier: ' d'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsEqualsEqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsEqualsEqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsEqualsEqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    d'
+          EqualsEqualsEqualsToken
+          Identifier: ' d'
+  FunctionDeclaration
+    Identifier: ' f8'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            NumericLiteral
+            ReturnStatement
+          CaseClause
+            NumericLiteral
+            ReturnStatement
+          CaseClause
+            NumericLiteral
+            ReturnStatement
+          CaseClause
+            NumericLiteral
+            ReturnStatement
+          CaseClause
+            NumericLiteral
+            ReturnStatement
+          CaseClause
+            NumericLiteral
+            ReturnStatement

@@ -1,0 +1,52 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' S'
+    TypeParameter
+      Identifier: ' S'
+      TypeReference
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' S'
+  InterfaceDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' S'
+    TypeParameter
+      Identifier: ' S'
+      TypeReference
+        Identifier: ' B'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' S'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+        TypeReference
+          Identifier: 'B'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' S'
+        TypeReference
+          Identifier: ' B'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' S'

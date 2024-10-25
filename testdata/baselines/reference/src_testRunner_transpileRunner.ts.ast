@@ -1,0 +1,882 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Baseline'
+        ImportSpecifier
+          Identifier: '
+    Compiler'
+        ImportSpecifier
+          Identifier: '
+    getFileBasedTestConfigurations'
+        ImportSpecifier
+          Identifier: '
+    IO'
+        ImportSpecifier
+          Identifier: '
+    RunnerBase'
+        ImportSpecifier
+          Identifier: '
+    TestCaseParser'
+        ImportSpecifier
+          Identifier: '
+    TestRunnerKind'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' vpath'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' TranspileRunner'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' RunnerBase'
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' basePath'
+      StringLiteral
+    PropertyDeclaration
+      ProtectedKeyword
+      Identifier: ' testSuiteName'
+      TypeReference
+        Identifier: ' TestRunnerKind'
+      StringLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' enumerateTestFiles'
+      ArrayType
+        StringKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'enumerateFiles'
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'basePath'
+            RegularExpressionLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' recursive'
+                TrueKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' kind'
+      TypeReference
+        Identifier: ' TestRunnerKind'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'testSuiteName'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' initializeTests'
+      VoidKeyword
+      Block
+        IfStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'tests'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'tests'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' IO'
+                    Identifier: 'enumerateTestFiles'
+                  ThisKeyword
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+
+        describe'
+            BinaryExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'testSuiteName'
+              PlusToken
+              StringLiteral
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'tests'
+                      Identifier: 'forEach'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'file'
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                file'
+                            EqualsToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' vpath'
+                                Identifier: 'normalizeSeparators'
+                              Identifier: 'file'
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+                describe'
+                            Identifier: 'file'
+                            ArrowFunction
+                              EqualsGreaterThanToken
+                              Block
+                                VariableStatement
+                                  VariableDeclarationList
+                                    VariableDeclaration
+                                      Identifier: ' tests'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' TranspileTestCase'
+                                          Identifier: 'getConfigurations'
+                                        Identifier: 'file'
+                                ForOfStatement
+                                  VariableDeclarationList
+                                    VariableDeclaration
+                                      Identifier: ' test'
+                                  Identifier: ' tests'
+                                  Block
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                        test'
+                                          Identifier: 'run'
+  EnumDeclaration
+    Identifier: ' TranspileKind'
+    EnumMember
+      Identifier: '
+    Module'
+    EnumMember
+      Identifier: '
+    Declaration'
+  ClassDeclaration
+    Identifier: ' TranspileTestCase'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' varyBy'
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+        StringLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' getConfigurations'
+      Parameter
+        Identifier: 'file'
+        StringKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' TranspileTestCase'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' ext'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' vpath'
+                  Identifier: 'extname'
+                Identifier: 'file'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' baseName'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' vpath'
+                  Identifier: 'basename'
+                Identifier: 'file'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' justName'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' baseName'
+                  Identifier: 'slice'
+                NumericLiteral
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' baseName'
+                    Identifier: 'length'
+                  MinusToken
+                  PropertyAccessExpression
+                    Identifier: ' ext'
+                    Identifier: 'length'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' content'
+              NonNullExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' IO'
+                    Identifier: 'readFile'
+                  Identifier: 'file'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' settings'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' TestCaseParser'
+                  Identifier: 'extractCompilerSettings'
+                Identifier: 'content'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' settingConfigurations'
+              CallExpression
+                Identifier: ' getFileBasedTestConfigurations'
+                Identifier: 'settings'
+                PropertyAccessExpression
+                  Identifier: ' TranspileTestCase'
+                  Identifier: 'varyBy'
+        ReturnStatement
+          BinaryExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' settingConfigurations'
+                QuestionDotToken
+                Identifier: 'map'
+              ArrowFunction
+                Parameter
+                  Identifier: 'c'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' desc'
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' Object'
+                                    Identifier: 'entries'
+                                  Identifier: 'c'
+                                Identifier: 'map'
+                              ArrowFunction
+                                Parameter
+                                  ArrayBindingPattern
+                                    BindingElement
+                                      Identifier: 'key'
+                                    BindingElement
+                                      Identifier: ' value'
+                                EqualsGreaterThanToken
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'key'
+                                    TemplateMiddle
+                                  TemplateSpan
+                                    Identifier: 'value'
+                                    TemplateTail
+                            Identifier: 'join'
+                          StringLiteral
+                  ReturnStatement
+                    NewExpression
+                      Identifier: ' TranspileTestCase'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'justName'
+                          TemplateMiddle
+                        TemplateSpan
+                          Identifier: 'desc'
+                          TemplateTail
+                      Identifier: ' ext'
+                      Identifier: ' content'
+                      ObjectLiteralExpression
+                        SpreadAssignment
+                          Identifier: 'settings'
+                        SpreadAssignment
+                          Identifier: 'c'
+            QuestionQuestionToken
+            ArrayLiteralExpression
+              NewExpression
+                Identifier: ' TranspileTestCase'
+                Identifier: 'justName'
+                Identifier: ' ext'
+                Identifier: ' content'
+                Identifier: ' settings'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' jsOutName'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' dtsOutName'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' units'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' justName'
+        StringKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' ext'
+        StringKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' content'
+        StringKeyword
+      Parameter
+        PrivateKeyword
+        Identifier: ' settings'
+        TypeReference
+          QualifiedName
+            Identifier: ' TestCaseParser'
+            Identifier: 'CompilerSettings'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'jsOutName'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' justName'
+              PlusToken
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'getJsOutputExtension'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'justName'
+                    TemplateMiddle
+                  TemplateSpan
+                    Identifier: 'ext'
+                    TemplateTail
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'dtsOutName'
+            EqualsToken
+            BinaryExpression
+              Identifier: ' justName'
+              PlusToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'getDeclarationEmitExtensionForPath'
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 'justName'
+                    TemplateMiddle
+                  TemplateSpan
+                    Identifier: 'ext'
+                    TemplateTail
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'units'
+            EqualsToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' TestCaseParser'
+                Identifier: 'makeUnitsFromTest'
+              Identifier: 'content'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'justName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'ext'
+                  TemplateTail
+              Identifier: ' settings'
+    MethodDeclaration
+      Identifier: '
+
+    getJsOutputExtension'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'getOutputExtension'
+            Identifier: 'name'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' jsx'
+                ConditionalExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'settings'
+                      Identifier: 'jsx'
+                    EqualsEqualsEqualsToken
+                    StringLiteral
+                  QuestionToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'JsxEmit'
+                    Identifier: 'Preserve'
+                  ColonToken
+                  Identifier: ' undefined'
+    MethodDeclaration
+      Identifier: '
+
+    runKind'
+      Parameter
+        Identifier: 'kind'
+        TypeReference
+          Identifier: ' TranspileKind'
+      Block
+        ExpressionStatement
+          CallExpression
+            Identifier: '
+        it'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'justName'
+                TemplateMiddle
+              TemplateSpan
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: 'kind'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' TranspileKind'
+                      Identifier: 'Module'
+                  QuestionToken
+                  StringLiteral
+                  ColonToken
+                  StringLiteral
+                TemplateTail
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' baselineText'
+                      StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'units'
+                        Identifier: 'testUnitData'
+                      Identifier: 'forEach'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'unit'
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                baselineText'
+                            PlusEqualsToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                PropertyAccessExpression
+                                  Identifier: 'unit'
+                                  Identifier: 'name'
+                                TemplateTail
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                baselineText'
+                            PlusEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' unit'
+                              Identifier: 'content'
+                        IfStatement
+                          PrefixUnaryExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'unit'
+                                  Identifier: 'content'
+                                Identifier: 'endsWith'
+                              StringLiteral
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                    baselineText'
+                                PlusEqualsToken
+                                StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'units'
+                        Identifier: 'testUnitData'
+                      Identifier: 'forEach'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'unit'
+                      EqualsGreaterThanToken
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' opts'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'CompilerOptions'
+                              ObjectLiteralExpression
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                Compiler'
+                              Identifier: 'setCompilerOptionsFromHarnessSetting'
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'settings'
+                            Identifier: ' opts'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' result'
+                              CallExpression
+                                ParenthesizedExpression
+                                  ConditionalExpression
+                                    BinaryExpression
+                                      Identifier: 'kind'
+                                      EqualsEqualsEqualsToken
+                                      PropertyAccessExpression
+                                        Identifier: ' TranspileKind'
+                                        Identifier: 'Module'
+                                    QuestionToken
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'transpileModule'
+                                    ColonToken
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'transpileDeclaration'
+                                PropertyAccessExpression
+                                  Identifier: 'unit'
+                                  Identifier: 'content'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' compilerOptions'
+                                    Identifier: ' opts'
+                                  PropertyAssignment
+                                    Identifier: ' fileName'
+                                    PropertyAccessExpression
+                                      Identifier: ' unit'
+                                      Identifier: 'name'
+                                  PropertyAssignment
+                                    Identifier: ' reportDiagnostics'
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          ThisKeyword
+                                          Identifier: 'settings'
+                                        Identifier: 'reportDiagnostics'
+                                      EqualsEqualsEqualsToken
+                                      StringLiteral
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+
+                baselineText'
+                            PlusEqualsToken
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'changeExtension'
+                                  PropertyAccessExpression
+                                    Identifier: 'unit'
+                                    Identifier: 'name'
+                                  ConditionalExpression
+                                    BinaryExpression
+                                      Identifier: ' kind'
+                                      EqualsEqualsEqualsToken
+                                      PropertyAccessExpression
+                                        Identifier: ' TranspileKind'
+                                        Identifier: 'Module'
+                                    QuestionToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        ThisKeyword
+                                        Identifier: 'getJsOutputExtension'
+                                      PropertyAccessExpression
+                                        Identifier: 'unit'
+                                        Identifier: 'name'
+                                    ColonToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'getDeclarationEmitExtensionForPath'
+                                      PropertyAccessExpression
+                                        Identifier: 'unit'
+                                        Identifier: 'name'
+                                TemplateTail
+                        ExpressionStatement
+                          BinaryExpression
+                            Identifier: '
+                baselineText'
+                            PlusEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' result'
+                              Identifier: 'outputText'
+                        IfStatement
+                          PrefixUnaryExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'result'
+                                  Identifier: 'outputText'
+                                Identifier: 'endsWith'
+                              StringLiteral
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                    baselineText'
+                                PlusEqualsToken
+                                StringLiteral
+                        IfStatement
+                          PropertyAccessExpression
+                            Identifier: 'result'
+                            Identifier: 'sourceMapText'
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                    baselineText'
+                                PlusEqualsToken
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'changeExtension'
+                                      PropertyAccessExpression
+                                        Identifier: 'unit'
+                                        Identifier: 'name'
+                                      ConditionalExpression
+                                        BinaryExpression
+                                          Identifier: ' kind'
+                                          EqualsEqualsEqualsToken
+                                          PropertyAccessExpression
+                                            Identifier: ' TranspileKind'
+                                            Identifier: 'Module'
+                                        QuestionToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            ThisKeyword
+                                            Identifier: 'getJsOutputExtension'
+                                          PropertyAccessExpression
+                                            Identifier: 'unit'
+                                            Identifier: 'name'
+                                        ColonToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ts'
+                                            Identifier: 'getDeclarationEmitExtensionForPath'
+                                          PropertyAccessExpression
+                                            Identifier: 'unit'
+                                            Identifier: 'name'
+                                    TemplateTail
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                    baselineText'
+                                PlusEqualsToken
+                                PropertyAccessExpression
+                                  Identifier: ' result'
+                                  Identifier: 'sourceMapText'
+                            IfStatement
+                              PrefixUnaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'result'
+                                      Identifier: 'outputText'
+                                    Identifier: 'endsWith'
+                                  StringLiteral
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    Identifier: '
+                        baselineText'
+                                    PlusEqualsToken
+                                    StringLiteral
+                        IfStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'result'
+                              Identifier: 'diagnostics'
+                            AmpersandAmpersandToken
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' result'
+                                Identifier: 'diagnostics'
+                              Identifier: 'length'
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                    baselineText'
+                                PlusEqualsToken
+                                StringLiteral
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                    baselineText'
+                                PlusEqualsToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' Compiler'
+                                    Identifier: 'getErrorBaseline'
+                                  ArrayLiteralExpression
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' content'
+                                        PropertyAccessExpression
+                                          Identifier: ' unit'
+                                          Identifier: 'content'
+                                      PropertyAssignment
+                                        Identifier: ' unitName'
+                                        PropertyAccessExpression
+                                          Identifier: ' unit'
+                                          Identifier: 'name'
+                                  PropertyAccessExpression
+                                    Identifier: ' result'
+                                    Identifier: 'diagnostics'
+                                  PrefixUnaryExpression
+                                    PrefixUnaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'opts'
+                                        Identifier: 'pretty'
+                            IfStatement
+                              PrefixUnaryExpression
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'baselineText'
+                                    Identifier: 'endsWith'
+                                  StringLiteral
+                              Block
+                                ExpressionStatement
+                                  BinaryExpression
+                                    Identifier: '
+                        baselineText'
+                                    PlusEqualsToken
+                                    StringLiteral
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+
+            Baseline'
+                      Identifier: 'runBaseline'
+                    TemplateExpression
+                      TemplateHead
+                      TemplateSpan
+                        ConditionalExpression
+                          BinaryExpression
+                            Identifier: 'kind'
+                            EqualsEqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' TranspileKind'
+                              Identifier: 'Module'
+                          QuestionToken
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'jsOutName'
+                          ColonToken
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'dtsOutName'
+                        TemplateTail
+                    Identifier: ' baselineText'
+    MethodDeclaration
+      Identifier: '
+
+    run'
+      Block
+        IfStatement
+          PrefixUnaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'settings'
+              Identifier: 'emitDeclarationOnly'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'runKind'
+                PropertyAccessExpression
+                  Identifier: 'TranspileKind'
+                  Identifier: 'Module'
+        IfStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'settings'
+            Identifier: 'declaration'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'runKind'
+                PropertyAccessExpression
+                  Identifier: 'TranspileKind'
+                  Identifier: 'Declaration'

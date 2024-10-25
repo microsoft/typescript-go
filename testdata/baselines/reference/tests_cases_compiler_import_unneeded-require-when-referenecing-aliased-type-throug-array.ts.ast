@@ -1,0 +1,33 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Name'
+        PropertySignature
+          Identifier: '
+        name'
+          StringKeyword
+      ExportAssignment
+        Identifier: ' Name'
+  ImportEqualsDeclaration
+    Identifier: ' ITest'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testData'
+        ArrayType
+          TypeReference
+            Identifier: ' ITest'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        PropertyAccessExpression
+          ElementAccessExpression
+            Identifier: ' testData'
+            NumericLiteral
+          Identifier: 'name'

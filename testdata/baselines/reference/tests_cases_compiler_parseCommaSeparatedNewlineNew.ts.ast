@@ -1,0 +1,8 @@
+SourceFile
+  ExpressionStatement
+    ParenthesizedExpression
+      BinaryExpression
+        Identifier: 'a'
+        CommaToken
+        NewExpression
+          Identifier: ''

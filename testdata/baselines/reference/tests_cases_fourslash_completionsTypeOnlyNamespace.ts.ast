@@ -1,0 +1,46 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @Filename: /a.ts
+////export namespace ns {
+////  export class Box<T> {}
+////  export type Type = {};
+////  export const Value = {};
+////}
+
+// @Filename: /b.ts
+////import type { ns } from './a';
+////let x: ns./**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  exact'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    text'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    text'
+                StringLiteral

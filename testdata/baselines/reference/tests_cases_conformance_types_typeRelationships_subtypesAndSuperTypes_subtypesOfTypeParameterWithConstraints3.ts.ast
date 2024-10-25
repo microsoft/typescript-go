@@ -1,0 +1,84 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' U'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' V'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' V'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' t'
+              ColonToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' u'
+              ColonToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' t'
+              ColonToken
+              Identifier: ' v'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' v'
+              ColonToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' v'
+              ColonToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' u'
+              ColonToken
+              Identifier: ' v'

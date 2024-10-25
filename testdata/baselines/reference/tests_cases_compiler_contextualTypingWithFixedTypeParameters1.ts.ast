@@ -1,0 +1,60 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f10'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' b'
+            FunctionType
+              FunctionType
+                Parameter
+                  Identifier: 'a'
+                  TypeReference
+                    Identifier: ' T'
+                VoidKeyword
+          Parameter
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f10'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrowFunction
+          Parameter
+            Identifier: ' a'
+          EqualsGreaterThanToken
+          PropertyAccessExpression
+            Identifier: ' a'
+            Identifier: 'foo'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r9'
+        CallExpression
+          Identifier: ' f10'
+          StringLiteral
+          ArrowFunction
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ArrowFunction
+                Parameter
+                  Identifier: 'a'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  Identifier: 'foo'
+          NumericLiteral

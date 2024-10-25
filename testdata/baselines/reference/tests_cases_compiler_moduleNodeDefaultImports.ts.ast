@@ -1,0 +1,151 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fun'
+    VoidKeyword
+  ExportAssignment
+    Identifier: ' fun'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' a'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' default'
+          Identifier: ' b'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' c'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' default'
+          Identifier: ' d'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' self'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' default'
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' default'
+        Identifier: ' def'
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsEqualsEqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsEqualsEqualsToken
+      Identifier: ' c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsEqualsEqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+d'
+      EqualsEqualsEqualsToken
+      PropertyAccessExpression
+        Identifier: ' self'
+        Identifier: 'default'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+self'
+        Identifier: 'default'
+      EqualsEqualsEqualsToken
+      PropertyAccessExpression
+        Identifier: ' self'
+        Identifier: 'def'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// should all fail
+a'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+b'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+c'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+d'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+self'
+        Identifier: 'default'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+self'
+        Identifier: 'def'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// should all work
+a'
+        Identifier: 'default'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+b'
+        Identifier: 'default'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'default'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+d'
+        Identifier: 'default'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+self'
+          Identifier: 'default'
+        Identifier: 'default'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+self'
+          Identifier: 'def'
+        Identifier: 'default'

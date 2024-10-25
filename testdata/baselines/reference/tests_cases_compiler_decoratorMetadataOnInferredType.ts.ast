@@ -1,0 +1,44 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'msg'
+              StringKeyword
+            VoidKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' console'
+              Identifier: 'log'
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' decorator'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' Object'
+    Parameter
+      Identifier: ' propertyKey'
+      StringKeyword
+    Block
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'decorator'
+      Identifier: '
+    x'
+      NewExpression
+        Identifier: ' A'

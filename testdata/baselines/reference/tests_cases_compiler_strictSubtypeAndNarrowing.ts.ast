@@ -1,0 +1,957 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x11'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            UnknownKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x12'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a11'
+        ArrayLiteralExpression
+          Identifier: 'x11'
+          Identifier: ' x12'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a12'
+        ArrayLiteralExpression
+          Identifier: 'x12'
+          Identifier: ' x11'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x21'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x22'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a21'
+        ArrayLiteralExpression
+          Identifier: 'x22'
+          Identifier: ' x21'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a22'
+        ArrayLiteralExpression
+          Identifier: 'x21'
+          Identifier: ' x22'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x31'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x32'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            UnknownKeyword
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a31'
+        ArrayLiteralExpression
+          Identifier: 'x31'
+          Identifier: ' x32'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a32'
+        ArrayLiteralExpression
+          Identifier: 'x32'
+          Identifier: ' x31'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x41'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              StringKeyword
+            UnknownKeyword
+          PropertySignature
+            Identifier: ' a'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x42'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a41'
+        ArrayLiteralExpression
+          Identifier: 'x42'
+          Identifier: ' x41'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a42'
+        ArrayLiteralExpression
+          Identifier: 'x41'
+          Identifier: ' x42'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isFunction'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' x'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' A'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        AnyKeyword
+      UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' C'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        NeverKeyword
+      UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' D'
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          NeverKeyword
+      UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' FnTypes'
+    UnionType
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+      TypeReference
+        Identifier: ' C'
+      TypeReference
+        Identifier: ' D'
+  FunctionDeclaration
+    Identifier: ' fx1'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            VoidKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          TypeReference
+            Identifier: 'A'
+          Identifier: 'f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+      ExpressionStatement
+        Identifier: '
+    f'
+  FunctionDeclaration
+    Identifier: ' fx2'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            VoidKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          TypeReference
+            Identifier: 'B'
+          Identifier: 'f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+      ExpressionStatement
+        Identifier: '
+    f'
+  FunctionDeclaration
+    Identifier: ' fx3'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            VoidKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          TypeReference
+            Identifier: 'C'
+          Identifier: 'f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+      ExpressionStatement
+        Identifier: '
+    f'
+  FunctionDeclaration
+    Identifier: ' fx4'
+    Parameter
+      Identifier: 'f'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            VoidKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          TypeReference
+            Identifier: 'D'
+          Identifier: 'f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+      ExpressionStatement
+        Identifier: '
+    f'
+  FunctionDeclaration
+    Identifier: ' checkA'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' FnTypes'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          TypeReference
+            Identifier: 'A'
+          Identifier: 'f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+      ExpressionStatement
+        Identifier: '
+    f'
+  FunctionDeclaration
+    Identifier: ' checkB'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' FnTypes'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          TypeReference
+            Identifier: 'B'
+          Identifier: 'f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+      ExpressionStatement
+        Identifier: '
+    f'
+  FunctionDeclaration
+    Identifier: ' checkC'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' FnTypes'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          TypeReference
+            Identifier: 'C'
+          Identifier: 'f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+      ExpressionStatement
+        Identifier: '
+    f'
+  FunctionDeclaration
+    Identifier: ' checkD'
+    Parameter
+      Identifier: 'f'
+      TypeReference
+        Identifier: ' FnTypes'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          TypeReference
+            Identifier: 'C'
+          Identifier: 'f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+      ExpressionStatement
+        Identifier: '
+    f'
+  FunctionDeclaration
+    Identifier: ' fx10'
+    Parameter
+      Identifier: 'obj1'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          QuestionToken
+          NumberKeyword
+    Parameter
+      Identifier: ' obj2'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          QuestionToken
+          NumberKeyword
+        PropertySignature
+          Identifier: ' y'
+          QuestionToken
+          NumberKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    obj1'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' obj2'
+            EqualsToken
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    obj2'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' obj1'
+            EqualsToken
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' x'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' y'
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' fx11'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' x'
+        QuestionToken
+        NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' obj'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' x'
+                QuestionToken
+                NumberKeyword
+              PropertySignature
+                Identifier: ' y'
+                QuestionToken
+                NumberKeyword
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' obj'
+          EqualsToken
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isArrayLike'
+    Parameter
+      Identifier: 'value'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' value'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' length'
+          NumberKeyword
+  FunctionDeclaration
+    Identifier: ' ff1'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'index'
+              NumberKeyword
+            BooleanKeyword
+          PropertySignature
+            Identifier: ' length'
+            NumberKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isArrayLike'
+          Identifier: 'value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+      ExpressionStatement
+        Identifier: '
+    value'
+  FunctionDeclaration
+    Identifier: ' ff2'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'index'
+              NumberKeyword
+            BooleanKeyword
+          PropertySignature
+            Identifier: ' length'
+            NumberKeyword
+        StringKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isArrayLike'
+          Identifier: 'value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+      ExpressionStatement
+        Identifier: '
+    value'
+  FunctionDeclaration
+    Identifier: ' ff3'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        StringKeyword
+        ArrayType
+          StringKeyword
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'index'
+              NumberKeyword
+            BooleanKeyword
+          PropertySignature
+            Identifier: ' length'
+            NumberKeyword
+        TupleType
+          NumberKeyword
+          BooleanKeyword
+        NumberKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' length'
+            StringKeyword
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+        LiteralType
+          NullKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isArrayLike'
+          Identifier: 'value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+        Block
+          ExpressionStatement
+            Identifier: '
+        value'
+      ExpressionStatement
+        Identifier: '
+    value'
+  TypeAliasDeclaration
+    Identifier: ' DistributedKeyOf'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      UnknownKeyword
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' NarrowByKeyValue'
+    TypeParameter
+      Identifier: 'ObjT'
+    TypeParameter
+      Identifier: ' KeyT'
+      TypeReference
+        Identifier: ' PropertyKey'
+    TypeParameter
+      Identifier: ' ValueT'
+    ConditionalType
+      TypeReference
+        Identifier: ' ObjT'
+      UnknownKeyword
+      ConditionalType
+        TypeReference
+          Identifier: ' KeyT'
+        TypeOperator
+          TypeReference
+            Identifier: ' ObjT'
+        ConditionalType
+          TypeReference
+            Identifier: ' ValueT'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' ObjT'
+            TypeReference
+              Identifier: 'KeyT'
+          IntersectionType
+            TypeReference
+              Identifier: ' ObjT'
+            TypeReference
+              Identifier: ' Readonly'
+              TypeReference
+                Identifier: 'Record'
+                TypeReference
+                  Identifier: 'KeyT'
+                TypeReference
+                  Identifier: ' ValueT'
+          NeverKeyword
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' NarrowByDeepValue'
+    TypeParameter
+      Identifier: 'ObjT'
+    TypeParameter
+      Identifier: ' DeepPathT'
+    TypeParameter
+      Identifier: ' ValueT'
+    ConditionalType
+      TypeReference
+        Identifier: ' DeepPathT'
+      TypeOperator
+        TupleType
+          InferType
+            TypeParameter
+              Identifier: ' Head'
+              TypeReference
+                Identifier: ' DistributedKeyOf'
+                TypeReference
+                  Identifier: 'ObjT'
+      TypeReference
+        Identifier: ' NarrowByKeyValue'
+        TypeReference
+          Identifier: 'ObjT'
+        TypeReference
+          Identifier: ' Head'
+        TypeReference
+          Identifier: ' ValueT'
+      ConditionalType
+        TypeReference
+          Identifier: ' DeepPathT'
+        TypeOperator
+          TupleType
+            InferType
+              TypeParameter
+                Identifier: ' Head'
+                TypeReference
+                  Identifier: ' DistributedKeyOf'
+                  TypeReference
+                    Identifier: 'ObjT'
+            RestType
+              InferType
+                TypeParameter
+                  Identifier: ' Rest'
+        TypeReference
+          Identifier: ' NarrowByKeyValue'
+          TypeReference
+            Identifier: 'ObjT'
+          TypeReference
+            Identifier: ' Head'
+          TypeReference
+            Identifier: ' NarrowByDeepValue'
+            TypeReference
+              Identifier: 'NonNullable'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'ObjT'
+                TypeReference
+                  Identifier: 'Head'
+            TypeReference
+              Identifier: ' Rest'
+            TypeReference
+              Identifier: ' ValueT'
+        NeverKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' doesValueAtDeepPathSatisfy'
+    TypeParameter
+      Identifier: '
+    ObjT'
+      ObjectKeyword
+    TypeParameter
+      ConstKeyword
+      Identifier: ' DeepPathT'
+      TypeReference
+        Identifier: ' ReadonlyArray'
+        UnionType
+          NumberKeyword
+          StringKeyword
+    TypeParameter
+      Identifier: '
+    ValueT'
+    Parameter
+      Identifier: '
+    obj'
+      TypeReference
+        Identifier: ' ObjT'
+    Parameter
+      Identifier: '
+    deepPath'
+      TypeReference
+        Identifier: ' DeepPathT'
+    Parameter
+      Identifier: '
+    predicate'
+      FunctionType
+        Parameter
+          Identifier: 'arg'
+          UnknownKeyword
+        TypePredicate
+          Identifier: ' arg'
+          TypeReference
+            Identifier: ' ValueT'
+    TypePredicate
+      Identifier: ' obj'
+      TypeReference
+        Identifier: ' NarrowByDeepValue'
+        TypeReference
+          Identifier: 'ObjT'
+        TypeReference
+          Identifier: ' DeepPathT'
+        TypeReference
+          Identifier: ' ValueT'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: 'value'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'type'
+              LiteralType
+                StringLiteral
+        PropertySignature
+          Identifier: ' a'
+          QuestionToken
+          NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: 'value'
+          TypeLiteral
+            PropertySignature
+              Identifier: 'type'
+              LiteralType
+                StringLiteral
+        PropertySignature
+          Identifier: ' b'
+          QuestionToken
+          NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isA'
+    Parameter
+      Identifier: 'arg'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' arg'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isB'
+    Parameter
+      Identifier: 'arg'
+      UnknownKeyword
+    TypePredicate
+      Identifier: ' arg'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' assert'
+    Parameter
+      Identifier: 'condition'
+      BooleanKeyword
+    TypePredicate
+      AssertsKeyword
+      Identifier: ' condition'
+  FunctionDeclaration
+    Identifier: ' test1'
+    Parameter
+      Identifier: 'foo'
+      TypeReference
+        Identifier: ' Foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'value'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'type'
+            LiteralType
+              StringLiteral
+      PropertySignature
+        Identifier: ' a'
+        QuestionToken
+        NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    assert'
+          CallExpression
+            Identifier: 'doesValueAtDeepPathSatisfy'
+            Identifier: 'foo'
+            ArrayLiteralExpression
+              StringLiteral
+              StringLiteral
+            Identifier: ' isA'
+      ReturnStatement
+        Identifier: ' foo'
+  FunctionDeclaration
+    Identifier: ' test2'
+    Parameter
+      Identifier: 'foo'
+      TypeReference
+        Identifier: ' Foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'value'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'type'
+            LiteralType
+              StringLiteral
+      PropertySignature
+        Identifier: ' a'
+        QuestionToken
+        NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    assert'
+          PrefixUnaryExpression
+            CallExpression
+              Identifier: 'doesValueAtDeepPathSatisfy'
+              Identifier: 'foo'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+              Identifier: ' isB'
+      ReturnStatement
+        Identifier: ' foo'
+  InterfaceDeclaration
+    Identifier: ' Free'
+    PropertySignature
+      Identifier: '
+    premium'
+      LiteralType
+        FalseKeyword
+  InterfaceDeclaration
+    Identifier: ' Premium'
+    PropertySignature
+      Identifier: '
+    premium'
+      LiteralType
+        TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' Union'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' premium'
+          LiteralType
+            FalseKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' premium'
+          LiteralType
+            TrueKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' checkIsPremium'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' Union'
+          TypePredicate
+            Identifier: ' a'
+            IntersectionType
+              TypeReference
+                Identifier: ' Union'
+              TypeReference
+                Identifier: ' Premium'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        ArrowFunction
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' Union'
+          EqualsGreaterThanToken
+          Block
+            IfStatement
+              PrefixUnaryExpression
+                CallExpression
+                  Identifier: 'checkIsPremium'
+                  Identifier: 'value'
+              Block
+                ExpressionStatement
+                  PropertyAccessExpression
+                    Identifier: '
+        value'
+                    Identifier: 'premium'

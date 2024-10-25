@@ -1,0 +1,7 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+  InterfaceDeclaration
+    Identifier: ' I2'
+  InterfaceDeclaration
+    Identifier: ' I3'

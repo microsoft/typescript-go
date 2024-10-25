@@ -1,0 +1,241 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+      VariableDeclaration
+        Identifier: ' y'
+      VariableDeclaration
+        Identifier: ' z'
+      VariableDeclaration
+        Identifier: ' a'
+      VariableDeclaration
+        Identifier: ' b'
+      VariableDeclaration
+        Identifier: ' c'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement0'
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement1'
+    Block
+      WhileStatement
+        AwaitExpression
+          Identifier: ' x'
+        Block
+          ExpressionStatement
+            Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement2'
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement3'
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+          ContinueStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement4'
+    Block
+      WhileStatement
+        AwaitExpression
+          Identifier: ' x'
+        Block
+          ContinueStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement5'
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' y'
+          ContinueStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement6'
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+          IfStatement
+            NumericLiteral
+            ContinueStatement
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement7'
+    Block
+      LabeledStatement
+        Identifier: '
+    A'
+        WhileStatement
+          Identifier: 'x'
+          Block
+            ContinueStatement
+              Identifier: ' A'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement8'
+    Block
+      LabeledStatement
+        Identifier: '
+    B'
+        WhileStatement
+          AwaitExpression
+            Identifier: ' x'
+          Block
+            ContinueStatement
+              Identifier: ' B'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement9'
+    Block
+      LabeledStatement
+        Identifier: '
+    C'
+        WhileStatement
+          Identifier: 'x'
+          Block
+            ExpressionStatement
+              AwaitExpression
+                Identifier: ' y'
+            ContinueStatement
+              Identifier: ' C'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement10'
+    Block
+      LabeledStatement
+        Identifier: '
+    D'
+        WhileStatement
+          Identifier: 'x'
+          Block
+            IfStatement
+              NumericLiteral
+              ContinueStatement
+                Identifier: ' D'
+            ExpressionStatement
+              AwaitExpression
+                Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement11'
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+          BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement12'
+    Block
+      WhileStatement
+        AwaitExpression
+          Identifier: ' x'
+        Block
+          BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement13'
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' y'
+          BreakStatement
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement14'
+    Block
+      WhileStatement
+        Identifier: 'x'
+        Block
+          IfStatement
+            NumericLiteral
+            BreakStatement
+          ExpressionStatement
+            AwaitExpression
+              Identifier: ' y'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement15'
+    Block
+      LabeledStatement
+        Identifier: '
+    E'
+        WhileStatement
+          Identifier: 'x'
+          Block
+            BreakStatement
+              Identifier: ' E'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement16'
+    Block
+      LabeledStatement
+        Identifier: '
+    F'
+        WhileStatement
+          AwaitExpression
+            Identifier: ' x'
+          Block
+            BreakStatement
+              Identifier: ' F'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement17'
+    Block
+      LabeledStatement
+        Identifier: '
+    G'
+        WhileStatement
+          Identifier: 'x'
+          Block
+            ExpressionStatement
+              AwaitExpression
+                Identifier: ' y'
+            BreakStatement
+              Identifier: ' G'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' whileStatement18'
+    Block
+      LabeledStatement
+        Identifier: '
+    H'
+        WhileStatement
+          Identifier: 'x'
+          Block
+            IfStatement
+              NumericLiteral
+              BreakStatement
+                Identifier: ' H'
+            ExpressionStatement
+              AwaitExpression
+                Identifier: ' y'

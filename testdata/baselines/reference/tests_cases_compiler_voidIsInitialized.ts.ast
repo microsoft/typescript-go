@@ -1,0 +1,33 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        VoidKeyword
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        VoidKeyword
+        Identifier: ' undefined'
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' x'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' y'
+      ExclamationEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        Identifier: '
+    y'

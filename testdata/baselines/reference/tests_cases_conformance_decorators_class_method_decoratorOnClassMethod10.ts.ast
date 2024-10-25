@@ -1,0 +1,19 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' Function'
+    Parameter
+      Identifier: ' paramIndex'
+      NumberKeyword
+    VoidKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      Decorator
+        Identifier: 'dec'
+      Identifier: ' method'
+      Block

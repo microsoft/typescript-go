@@ -1,0 +1,52 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' sequence'
+    Parameter
+      DotDotDotToken
+      Identifier: 'sequences'
+      ArrayType
+        TypeLiteral
+          CallSignature
+            VoidKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' callback'
+    Parameter
+      Identifier: 'clb'
+      FunctionType
+        VoidKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+sequence'
+      FunctionExpression
+        Identifier: ' bar'
+        Block
+      FunctionExpression
+        Identifier: ' foo'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        callback'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      ThisKeyword
+      FunctionExpression
+        Identifier: ' baz'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        callback'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      ThisKeyword

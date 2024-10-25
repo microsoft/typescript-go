@@ -1,0 +1,51 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      Identifier: '
+    x1'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Parameter
+        Identifier: ' callback'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            LiteralType
+              StringLiteral
+          NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+    MethodDeclaration
+      Identifier: '
+    x1'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Parameter
+        Identifier: ' callback'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            LiteralType
+              StringLiteral
+          NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    x1'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Parameter
+        Identifier: ' callback'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            LiteralType
+              StringLiteral
+          NumberKeyword
+      Block

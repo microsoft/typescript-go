@@ -1,0 +1,189 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' SomeBaseClass'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' func'
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' func'
+      Block
+        ReturnStatement
+          NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    returnThis'
+      Block
+        ReturnStatement
+          ThisKeyword
+  ClassDeclaration
+    Identifier: ' SomeDerivedClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SomeBaseClass'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'func'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              StringKeyword
+    MethodDeclaration
+      Identifier: '
+
+    fn'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'func'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              StringKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+              ArrowFunction
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'func'
+    GetAccessor
+      Identifier: ' a'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'func'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              StringKeyword
+        ReturnStatement
+          NullKeyword
+    SetAccessor
+      Identifier: ' a'
+      Parameter
+        Identifier: 'n'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'func'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              StringKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' fn'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'func'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumberKeyword
+    GetAccessor
+      StaticKeyword
+      Identifier: ' a'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'func'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumberKeyword
+        ReturnStatement
+          NullKeyword
+    SetAccessor
+      StaticKeyword
+      Identifier: ' a'
+      Parameter
+        Identifier: 'n'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'func'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumberKeyword
+    MethodDeclaration
+      Identifier: '
+
+    returnThis'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'returnThis'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' instance'
+        NewExpression
+          Identifier: ' SomeDerivedClass'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+instance'
+            Identifier: 'returnThis'
+        Identifier: 'fn'

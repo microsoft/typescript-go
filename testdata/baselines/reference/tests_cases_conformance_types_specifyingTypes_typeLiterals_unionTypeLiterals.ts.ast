@@ -1,0 +1,94 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' simpleUnion'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfUnion'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrayOfUnions'
+        ArrayType
+          ParenthesizedType
+            UnionType
+              StringKeyword
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arrayOfUnions'
+        TypeReference
+          Identifier: ' Array'
+          UnionType
+            StringKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfFunctionType'
+        UnionType
+          ParenthesizedType
+            FunctionType
+              StringKeyword
+          ParenthesizedType
+            FunctionType
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfFunctionType'
+        UnionType
+          TypeLiteral
+            CallSignature
+              StringKeyword
+          TypeLiteral
+            CallSignature
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfFunctionType'
+        FunctionType
+          UnionType
+            StringKeyword
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfConstructorType'
+        UnionType
+          ParenthesizedType
+            ConstructorType
+              StringKeyword
+          ParenthesizedType
+            ConstructorType
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfConstructorType'
+        UnionType
+          TypeLiteral
+            ConstructSignature
+              StringKeyword
+          TypeLiteral
+            ConstructSignature
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionOfConstructorType'
+        ConstructorType
+          UnionType
+            StringKeyword
+            NumberKeyword

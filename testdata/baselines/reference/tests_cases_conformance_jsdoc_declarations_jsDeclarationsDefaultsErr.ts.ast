@@ -1,0 +1,28 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Cls'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y'
+      StringLiteral
+  ExportAssignment
+    Identifier: ' Cls'
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' C'
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: 'x'
+        Identifier: ' default'

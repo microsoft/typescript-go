@@ -1,0 +1,23 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    ConstructSignature
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        TypeReference
+          Identifier: ' Foo'
+          NumberKeyword
+        NewExpression
+          Identifier: ' Foo'
+          NumericLiteral

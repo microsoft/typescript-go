@@ -1,0 +1,495 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidUniqueType'
+        TypeOperator
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+        TypeOperator
+          SymbolKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidLetType'
+        TypeOperator
+          SymbolKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidVarType'
+        TypeOperator
+          SymbolKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' invalidArgType'
+    Parameter
+      Identifier: 'arg'
+      TypeOperator
+        SymbolKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' invalidRestArgType'
+    Parameter
+      DotDotDotToken
+      Identifier: 'arg'
+      ArrayType
+        ParenthesizedType
+          TypeOperator
+            SymbolKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' invalidReturnType'
+    TypeOperator
+      SymbolKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' invalidThisType'
+    Parameter
+      Identifier: 'this'
+      TypeOperator
+        SymbolKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' invalidTypePredicate'
+    Parameter
+      Identifier: 'n'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' n'
+      TypeOperator
+        SymbolKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' invalidTypeParameterConstraint'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        SymbolKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' invalidTypeParameterDefault'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        SymbolKeyword
+    VoidKeyword
+  ClassDeclaration
+    Identifier: ' InvalidClass'
+    Constructor
+      Parameter
+        Identifier: 'invalidConstructorArgType'
+        TypeOperator
+          SymbolKeyword
+      Block
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' invalidReadonlyPropertyType'
+      TypeOperator
+        SymbolKeyword
+    PropertyDeclaration
+      Identifier: '
+    invalidPropertyType'
+      TypeOperator
+        SymbolKeyword
+    MethodDeclaration
+      Identifier: '
+    invalidArgType'
+      Parameter
+        Identifier: 'arg'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      Identifier: '
+    invalidRestArgType'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          ParenthesizedType
+            TypeOperator
+              SymbolKeyword
+      VoidKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      Identifier: '
+    invalidReturnType'
+      TypeOperator
+        SymbolKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      Identifier: '
+    invalidThisType'
+      Parameter
+        Identifier: 'this'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      Identifier: '
+    invalidTypePredicate'
+      Parameter
+        Identifier: 'n'
+        AnyKeyword
+      TypePredicate
+        Identifier: ' n'
+        TypeOperator
+          SymbolKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      Identifier: '
+    invalidTypeParameterConstraint'
+      TypeParameter
+        Identifier: 'T'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      Identifier: '
+    invalidTypeParameterDefault'
+      TypeParameter
+        Identifier: 'T'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+      Block
+        ReturnStatement
+    GetAccessor
+      Identifier: ' invalidGetter'
+      TypeOperator
+        SymbolKeyword
+      Block
+        ReturnStatement
+    SetAccessor
+      Identifier: ' invalidSetter'
+      Parameter
+        Identifier: 'arg'
+        TypeOperator
+          SymbolKeyword
+      Block
+        ReturnStatement
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' invalidStaticPropertyType'
+      TypeOperator
+        SymbolKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' invalidStaticArgType'
+      Parameter
+        Identifier: 'arg'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' invalidStaticRestArgType'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          ParenthesizedType
+            TypeOperator
+              SymbolKeyword
+      VoidKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' invalidStaticReturnType'
+      TypeOperator
+        SymbolKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' invalidStaticThisType'
+      Parameter
+        Identifier: 'this'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' invalidStaticTypePredicate'
+      Parameter
+        Identifier: 'n'
+        AnyKeyword
+      TypePredicate
+        Identifier: ' n'
+        TypeOperator
+          SymbolKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' invalidStaticTypeParameterConstraint'
+      TypeParameter
+        Identifier: 'T'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+      Block
+        ReturnStatement
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' invalidStaticTypeParameterDefault'
+      TypeParameter
+        Identifier: 'T'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+      Block
+        ReturnStatement
+    GetAccessor
+      StaticKeyword
+      Identifier: ' invalidStaticGetter'
+      TypeOperator
+        SymbolKeyword
+      Block
+        ReturnStatement
+    SetAccessor
+      StaticKeyword
+      Identifier: ' invalidStaticSetter'
+      Parameter
+        Identifier: 'arg'
+        TypeOperator
+          SymbolKeyword
+      Block
+        ReturnStatement
+  InterfaceDeclaration
+    Identifier: ' InvalidInterface'
+    PropertySignature
+      Identifier: '
+    invalidPropertyType'
+      TypeOperator
+        SymbolKeyword
+    MethodSignature
+      Identifier: '
+    invalidArgType'
+      Parameter
+        Identifier: 'arg'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    invalidRestArgType'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          ParenthesizedType
+            TypeOperator
+              SymbolKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    invalidReturnType'
+      TypeOperator
+        SymbolKeyword
+    MethodSignature
+      Identifier: '
+    invalidThisType'
+      Parameter
+        Identifier: 'this'
+        TypeOperator
+          SymbolKeyword
+    MethodSignature
+      Identifier: '
+    invalidTypePredicate'
+      Parameter
+        Identifier: 'n'
+        AnyKeyword
+      TypePredicate
+        Identifier: ' n'
+        TypeOperator
+          SymbolKeyword
+    MethodSignature
+      Identifier: '
+    invalidTypeParameterConstraint'
+      TypeParameter
+        Identifier: 'T'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    invalidTypeParameterDefault'
+      TypeParameter
+        Identifier: 'T'
+        TypeOperator
+          SymbolKeyword
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' InvalidTypeLiteral'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    invalidPropertyType'
+        TypeOperator
+          SymbolKeyword
+      MethodSignature
+        Identifier: '
+    invalidArgType'
+        Parameter
+          Identifier: 'arg'
+          TypeOperator
+            SymbolKeyword
+        VoidKeyword
+      MethodSignature
+        Identifier: '
+    invalidRestArgType'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            ParenthesizedType
+              TypeOperator
+                SymbolKeyword
+        VoidKeyword
+      MethodSignature
+        Identifier: '
+    invalidReturnType'
+        TypeOperator
+          SymbolKeyword
+      MethodSignature
+        Identifier: '
+    invalidThisType'
+        Parameter
+          Identifier: 'this'
+          TypeOperator
+            SymbolKeyword
+      MethodSignature
+        Identifier: '
+    invalidTypePredicate'
+        Parameter
+          Identifier: 'n'
+          AnyKeyword
+        TypePredicate
+          Identifier: ' n'
+          TypeOperator
+            SymbolKeyword
+      MethodSignature
+        Identifier: '
+    invalidTypeParameterConstraint'
+        TypeParameter
+          Identifier: 'T'
+          TypeOperator
+            SymbolKeyword
+        VoidKeyword
+      MethodSignature
+        Identifier: '
+    invalidTypeParameterDefault'
+        TypeParameter
+          Identifier: 'T'
+          TypeOperator
+            SymbolKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' InvalidAlias'
+    TypeOperator
+      SymbolKeyword
+  TypeAliasDeclaration
+    Identifier: ' InvalidAliasTypeParameterConstraint'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        SymbolKeyword
+    NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' InvalidAliasTypeParameterDefault'
+    TypeParameter
+      Identifier: 'T'
+      TypeOperator
+        SymbolKeyword
+    NeverKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidTypeArgument'
+        TypeReference
+          Identifier: ' Promise'
+          TypeOperator
+            SymbolKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidArrayType'
+        ArrayType
+          ParenthesizedType
+            TypeOperator
+              SymbolKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidTupleType'
+        TupleType
+          TypeOperator
+            SymbolKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidMappedType'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            StringKeyword
+          TypeOperator
+            SymbolKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidUnion'
+        UnionType
+          TypeOperator
+            SymbolKeyword
+          TypeOperator
+            SymbolKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidIntersection'
+        UnionType
+          TypeOperator
+            SymbolKeyword
+          TypeOperator
+            SymbolKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' shouldNotBeAssignable'
+        StringKeyword
+        CallExpression
+          Identifier: ' Symbol'

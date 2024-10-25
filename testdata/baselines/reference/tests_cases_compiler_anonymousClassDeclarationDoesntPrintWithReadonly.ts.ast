@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' X'
+    Constructor
+      Parameter
+        ReadonlyKeyword
+        Identifier: ' a'
+        NumberKeyword
+      Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' y'
+    Block
+      ReturnStatement
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' X'

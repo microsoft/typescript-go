@@ -1,0 +1,15 @@
+SourceFile
+  LabeledStatement
+    Identifier: 'TWO'
+    WhileStatement
+      TrueKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ContinueStatement
+                    Identifier: ' TWO'

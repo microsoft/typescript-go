@@ -1,0 +1,25 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Animals'
+    EnumMember
+      Identifier: '
+	Cat'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Animals'
+    EnumMember
+      Identifier: '
+	Dog'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Animals'
+    EnumMember
+      Identifier: '
+	CatDog'
+      BinaryExpression
+        Identifier: ' Cat'
+        BarToken
+        Identifier: ' Dog'

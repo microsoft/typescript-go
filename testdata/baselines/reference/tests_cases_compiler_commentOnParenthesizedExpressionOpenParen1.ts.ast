@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        FunctionType
+          AnyKeyword
+  ExpressionStatement
+    TypeAssertionExpression
+      AnyKeyword
+      ParenthesizedExpression
+        BinaryExpression
+          Identifier: ' /* Preserve */ j'
+          EqualsToken
+          CallExpression
+            Identifier: ' f'

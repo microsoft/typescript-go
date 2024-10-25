@@ -1,0 +1,11 @@
+SourceFile
+  LabeledStatement
+    Identifier: '// @allowUnusedLabels: true
+// @sourcemap: true
+
+x'
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' b'
+          NumericLiteral

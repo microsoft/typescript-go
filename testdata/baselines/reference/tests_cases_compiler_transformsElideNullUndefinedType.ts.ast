@@ -1,0 +1,260 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v0'
+        LiteralType
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' f0'
+    LiteralType
+      NullKeyword
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    UndefinedKeyword
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f2'
+        FunctionExpression
+          LiteralType
+            NullKeyword
+          Block
+            ReturnStatement
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f3'
+        FunctionExpression
+          UndefinedKeyword
+          Block
+            ReturnStatement
+              Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        ArrowFunction
+          LiteralType
+            NullKeyword
+          EqualsGreaterThanToken
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f5'
+        ArrowFunction
+          UndefinedKeyword
+          EqualsGreaterThanToken
+          Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Parameter
+      Identifier: 'p0'
+      LiteralType
+        NullKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' f7'
+    Parameter
+      Identifier: 'p1'
+      UndefinedKeyword
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f8'
+        FunctionExpression
+          Parameter
+            Identifier: 'p2'
+            LiteralType
+              NullKeyword
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f9'
+        FunctionExpression
+          Parameter
+            Identifier: 'p3'
+            UndefinedKeyword
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f10'
+        ArrowFunction
+          Parameter
+            Identifier: 'p4'
+            LiteralType
+              NullKeyword
+          EqualsGreaterThanToken
+          Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f11'
+        ArrowFunction
+          Parameter
+            Identifier: 'p5'
+            UndefinedKeyword
+          EqualsGreaterThanToken
+          Block
+  ClassDeclaration
+    Identifier: ' C1'
+    MethodDeclaration
+      Identifier: '
+    m0'
+      LiteralType
+        NullKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+    MethodDeclaration
+      Identifier: '
+    m1'
+      UndefinedKeyword
+      Block
+        ReturnStatement
+          Identifier: ' undefined'
+    MethodDeclaration
+      Identifier: '
+
+    m3'
+      Parameter
+        Identifier: 'p6'
+        LiteralType
+          NullKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    m4'
+      Parameter
+        Identifier: 'p7'
+        UndefinedKeyword
+      Block
+    GetAccessor
+      Identifier: ' a0'
+      LiteralType
+        NullKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+    GetAccessor
+      Identifier: ' a1'
+      UndefinedKeyword
+      Block
+        ReturnStatement
+          Identifier: ' undefined'
+    SetAccessor
+      Identifier: ' a2'
+      Parameter
+        Identifier: 'p8'
+        LiteralType
+          NullKeyword
+      Block
+    SetAccessor
+      Identifier: ' a3'
+      Parameter
+        Identifier: 'p9'
+        UndefinedKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    Constructor
+      Parameter
+        Identifier: 'p10'
+        LiteralType
+          NullKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' C3'
+    Constructor
+      Parameter
+        Identifier: 'p11'
+        UndefinedKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' C4'
+    PropertyDeclaration
+      Identifier: '
+    f1'
+    Constructor
+      Parameter
+        Identifier: 'p12'
+        LiteralType
+          NullKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' C5'
+    PropertyDeclaration
+      Identifier: '
+    f2'
+    Constructor
+      Parameter
+        Identifier: 'p13'
+        UndefinedKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C6'
+        ClassExpression
+          Constructor
+            Parameter
+              Identifier: 'p12'
+              LiteralType
+                NullKeyword
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C7'
+        ClassExpression
+          Constructor
+            Parameter
+              Identifier: 'p13'
+              UndefinedKeyword
+            Block
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fn'
+    TypeParameter
+      Identifier: 'T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      LiteralType
+        NullKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fn'
+      UndefinedKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' D'
+      LiteralType
+        NullKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' D'
+      UndefinedKeyword

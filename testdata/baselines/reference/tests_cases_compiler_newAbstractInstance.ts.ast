@@ -1,0 +1,14 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' b'

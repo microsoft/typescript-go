@@ -1,0 +1,121 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base1'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' Sub1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base1'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' SubSub1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Sub1'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'super'
+            Identifier: 'foo'
+  ClassDeclaration
+    Identifier: ' Base2'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' SubE2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base2'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'prototype'
+              Identifier: 'foo'
+            EqualsToken
+            NullKeyword
+  ClassDeclaration
+    Identifier: ' Base3'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' SubE3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base3'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'bar'
+  ModuleDeclaration
+    Identifier: ' Base4'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Sub4'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' x'
+          Block
+            ReturnStatement
+              StringLiteral
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' SubSub4'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Sub4'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' x'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'x'
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Sub4E'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' x'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  SuperKeyword
+                  Identifier: 'x'

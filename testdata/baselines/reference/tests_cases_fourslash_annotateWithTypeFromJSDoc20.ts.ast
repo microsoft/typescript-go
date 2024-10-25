@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+// @strict: true
+/////**
+//// * @param {number} a
+//// * @param {T} b
+//// */
+////function f<T>(a, b) {
+////}
+
+verify'
+        Identifier: 'codeFix'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    description'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    errorCode'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: ' // ignore 'unused T'
+    newFileContent'
+          NoSubstitutionTemplateLiteral

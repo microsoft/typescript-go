@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'const'
+          Identifier: ' T'
+      ExpressionStatement
+        RegularExpressionLiteral

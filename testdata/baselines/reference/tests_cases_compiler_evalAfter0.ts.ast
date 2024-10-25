@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          CommaToken
+          Identifier: 'eval'
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' eva'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        BinaryExpression
+          NumericLiteral
+          CommaToken
+          Identifier: 'eva'
+      StringLiteral

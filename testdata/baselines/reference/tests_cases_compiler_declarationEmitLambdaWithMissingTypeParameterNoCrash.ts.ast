@@ -1,0 +1,30 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+    preFetch'
+      FunctionType
+        TypeParameter
+          Identifier: 'T1'
+          TypeReference
+            Identifier: ' T2'
+        Parameter
+          Identifier: 'c'
+          TypeReference
+            Identifier: ' T1'
+        VoidKeyword
+    PropertySignature
+      Identifier: ' // Type T2 is not defined
+    preFetcher'
+      ConstructorType
+        TypeParameter
+          Identifier: 'T1'
+          TypeReference
+            Identifier: ' T2'
+        Parameter
+          Identifier: 'c'
+          TypeReference
+            Identifier: ' T1'
+        VoidKeyword

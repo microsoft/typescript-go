@@ -1,0 +1,62 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////declare class ViewJayEss {
+////    constructor(obj: object);
+////}
+////new ViewJayEss({
+////    methods: {
+////        sayHello/**/
+////    }
+////});
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'noSignatureHelpForTriggerReason'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    kind'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    triggerCharacter'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'noSignatureHelpForTriggerReason'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    kind'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    triggerCharacter'
+          StringLiteral

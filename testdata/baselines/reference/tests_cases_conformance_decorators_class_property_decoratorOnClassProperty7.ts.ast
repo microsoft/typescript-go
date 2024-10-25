@@ -1,0 +1,23 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' Function'
+    Parameter
+      Identifier: ' propertyKey'
+      UnionType
+        StringKeyword
+        SymbolKeyword
+    Parameter
+      Identifier: ' paramIndex'
+      NumberKeyword
+    VoidKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      Identifier: ' prop'

@@ -1,0 +1,59 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a'
+          StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+	test'
+      TypeReference
+        Identifier: ' T'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Block
+  ExportAssignment
+    Identifier: ' Foo'
+  ImportEqualsDeclaration
+    Identifier: ' foo'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' foo'
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NewExpression
+          Identifier: ' foo'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'a'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        NumberKeyword
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' y'
+            Identifier: 'test'
+          Identifier: 'b'

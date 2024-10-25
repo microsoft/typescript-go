@@ -1,0 +1,1206 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' TypeScript'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Binder'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' checker'
+            TypeReference
+              Identifier: ' TypeChecker'
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' resolveBaseTypeLinks'
+          Parameter
+            Identifier: 'typeLinks'
+            ArrayType
+              TypeReference
+                Identifier: ' TypeLink'
+          Parameter
+            Identifier: ' scope'
+            TypeReference
+              Identifier: ' SymbolScope'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' extendsList'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' Type'
+                  NullKeyword
+            IfStatement
+              Identifier: 'typeLinks'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+                extendsList'
+                    EqualsToken
+                    NewExpression
+                      ElementAccessExpression
+                        Identifier: ' Type'
+                        Identifier: ''
+                ForStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' i'
+                      NumericLiteral
+                    VariableDeclaration
+                      Identifier: ' len'
+                      PropertyAccessExpression
+                        Identifier: ' typeLinks'
+                        Identifier: 'length'
+                  BinaryExpression
+                    Identifier: ' i'
+                    LessThanToken
+                    Identifier: ' len'
+                  PostfixUnaryExpression
+                    Identifier: ' i'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' typeLink'
+                          ElementAccessExpression
+                            Identifier: ' typeLinks'
+                            Identifier: 'i'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'checker'
+                          Identifier: 'resolvingBases'
+                        EqualsToken
+                        TrueKeyword
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'checker'
+                          Identifier: 'resolveTypeLink'
+                        Identifier: 'scope'
+                        Identifier: ' typeLink'
+                        TrueKeyword
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'checker'
+                          Identifier: 'resolvingBases'
+                        EqualsToken
+                        FalseKeyword
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: 'typeLink'
+                            Identifier: 'type'
+                          Identifier: 'isClass'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            ElementAccessExpression
+                              Identifier: '
+                        extendsList'
+                              Identifier: 'i'
+                            EqualsToken
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' typeLink'
+                                Identifier: 'type'
+                              Identifier: 'instanceType'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            ElementAccessExpression
+                              Identifier: '
+                        extendsList'
+                              Identifier: 'i'
+                            EqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' typeLink'
+                              Identifier: 'type'
+            ReturnStatement
+              Identifier: ' extendsList'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' resolveBases'
+          Parameter
+            Identifier: 'scope'
+            TypeReference
+              Identifier: ' SymbolScope'
+          Parameter
+            Identifier: ' type'
+            TypeReference
+              Identifier: ' Type'
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            type'
+                  Identifier: 'extendsList'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'resolveBaseTypeLinks'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'extendsTypeLinks'
+                  Identifier: ' scope'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+                VariableDeclaration
+                  Identifier: ' len'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' type'
+                      Identifier: 'extendsList'
+                    Identifier: 'length'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' derivedIsClass'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' type'
+                      Identifier: 'isClassInstance'
+            ForStatement
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                Identifier: ' len'
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' baseIsClass'
+                      CallExpression
+                        PropertyAccessExpression
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' type'
+                              Identifier: 'extendsList'
+                            Identifier: 'i'
+                          Identifier: 'isClassInstance'
+                IfStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'type'
+                        Identifier: 'extendsList'
+                      Identifier: 'i'
+                    ExclamationEqualsToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'checker'
+                      Identifier: 'anyType'
+                  Block
+                    IfStatement
+                      Identifier: 'derivedIsClass'
+                      Block
+                        IfStatement
+                          PrefixUnaryExpression
+                            Identifier: 'baseIsClass'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'checker'
+                                    Identifier: 'errorReporter'
+                                  Identifier: 'simpleErrorFromSym'
+                                PropertyAccessExpression
+                                  Identifier: 'type'
+                                  Identifier: 'symbol'
+                                BinaryExpression
+                                  BinaryExpression
+                                    StringLiteral
+                                    PlusToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          ElementAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' type'
+                                              Identifier: 'extendsList'
+                                            Identifier: 'i'
+                                          Identifier: 'symbol'
+                                        Identifier: 'fullName'
+                                  PlusToken
+                                  StringLiteral
+                      Block
+                        IfStatement
+                          Identifier: 'baseIsClass'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'checker'
+                                    Identifier: 'errorReporter'
+                                  Identifier: 'simpleErrorFromSym'
+                                PropertyAccessExpression
+                                  Identifier: 'type'
+                                  Identifier: 'symbol'
+                                BinaryExpression
+                                  BinaryExpression
+                                    StringLiteral
+                                    PlusToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          ElementAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' type'
+                                              Identifier: 'extendsList'
+                                            Identifier: 'i'
+                                          Identifier: 'symbol'
+                                        Identifier: 'fullName'
+                                  PlusToken
+                                  StringLiteral
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+
+            type'
+                  Identifier: 'implementsList'
+                EqualsToken
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'resolveBaseTypeLinks'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'implementsTypeLinks'
+                  Identifier: ' scope'
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'type'
+                Identifier: 'implementsList'
+              Block
+                ForStatement
+                  BinaryExpression
+                    BinaryExpression
+                      Identifier: 'i'
+                      EqualsToken
+                      NumericLiteral
+                    CommaToken
+                    BinaryExpression
+                      Identifier: ' len'
+                      EqualsToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' type'
+                          Identifier: 'implementsList'
+                        Identifier: 'length'
+                  BinaryExpression
+                    Identifier: ' i'
+                    LessThanToken
+                    Identifier: ' len'
+                  PostfixUnaryExpression
+                    Identifier: ' i'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' iface'
+                          ElementAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' type'
+                              Identifier: 'implementsList'
+                            Identifier: 'i'
+                    IfStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'iface'
+                          Identifier: 'isClassInstance'
+                      Block
+                        IfStatement
+                          Identifier: 'derivedIsClass'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'checker'
+                                    Identifier: 'errorReporter'
+                                  Identifier: 'simpleErrorFromSym'
+                                PropertyAccessExpression
+                                  Identifier: 'type'
+                                  Identifier: 'symbol'
+                                BinaryExpression
+                                  BinaryExpression
+                                    StringLiteral
+                                    PlusToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' iface'
+                                          Identifier: 'symbol'
+                                        Identifier: 'fullName'
+                                  PlusToken
+                                  StringLiteral
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' resolveSignatureGroup'
+          Parameter
+            Identifier: 'signatureGroup'
+            TypeReference
+              Identifier: ' SignatureGroup'
+          Parameter
+            Identifier: ' scope'
+            TypeReference
+              Identifier: ' SymbolScope'
+          Parameter
+            Identifier: ' instanceType'
+            TypeReference
+              Identifier: ' Type'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' supplyVar'
+                  PrefixUnaryExpression
+                    ParenthesizedExpression
+                      PropertyAccessExpression
+                        Identifier: 'signatureGroup'
+                        Identifier: 'hasImplementation'
+            ForStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' i'
+                  NumericLiteral
+                VariableDeclaration
+                  Identifier: ' len'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' signatureGroup'
+                      Identifier: 'signatures'
+                    Identifier: 'length'
+              BinaryExpression
+                Identifier: ' i'
+                LessThanToken
+                Identifier: ' len'
+              PostfixUnaryExpression
+                Identifier: ' i'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' signature'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' signatureGroup'
+                          Identifier: 'signatures'
+                        Identifier: 'i'
+                IfStatement
+                  Identifier: 'instanceType'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                    signature'
+                            Identifier: 'returnType'
+                          Identifier: 'type'
+                        EqualsToken
+                        Identifier: ' instanceType'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'checker'
+                          Identifier: 'resolveTypeLink'
+                        Identifier: 'scope'
+                        PropertyAccessExpression
+                          Identifier: ' signature'
+                          Identifier: 'returnType'
+                        Identifier: ' supplyVar'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' paramLen'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' signature'
+                          Identifier: 'parameters'
+                        Identifier: 'length'
+                ForStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' j'
+                      NumericLiteral
+                  BinaryExpression
+                    Identifier: ' j'
+                    LessThanToken
+                    Identifier: ' paramLen'
+                  PostfixUnaryExpression
+                    Identifier: ' j'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'bindSymbol'
+                        Identifier: 'scope'
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' signature'
+                            Identifier: 'parameters'
+                          Identifier: 'j'
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'signature'
+                    Identifier: 'hasVariableArgList'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' lastParam'
+                          TypeAssertionExpression
+                            TypeReference
+                              Identifier: 'ParameterSymbol'
+                            ElementAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'signature'
+                                Identifier: 'parameters'
+                              BinaryExpression
+                                Identifier: 'paramLen'
+                                MinusToken
+                                NumericLiteral
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    lastParam'
+                          Identifier: 'argsOffset'
+                        EqualsToken
+                        BinaryExpression
+                          Identifier: ' paramLen'
+                          MinusToken
+                          NumericLiteral
+                    IfStatement
+                      PrefixUnaryExpression
+                        CallExpression
+                          PropertyAccessExpression
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: 'lastParam'
+                                Identifier: 'getType'
+                            Identifier: 'isArray'
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'checker'
+                                Identifier: 'errorReporter'
+                              Identifier: 'simpleErrorFromSym'
+                            Identifier: 'lastParam'
+                            StringLiteral
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                        lastParam'
+                                  Identifier: 'parameter'
+                                Identifier: 'typeLink'
+                              Identifier: 'type'
+                            EqualsToken
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  ThisKeyword
+                                  Identifier: 'checker'
+                                Identifier: 'makeArrayType'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'lastParam'
+                                    Identifier: 'parameter'
+                                  Identifier: 'typeLink'
+                                Identifier: 'type'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' bindType'
+          Parameter
+            Identifier: 'scope'
+            TypeReference
+              Identifier: ' SymbolScope'
+          Parameter
+            Identifier: ' type'
+            TypeReference
+              Identifier: ' Type'
+          Parameter
+            Identifier: ' instanceType'
+            TypeReference
+              Identifier: ' Type'
+          VoidKeyword
+          Block
+            IfStatement
+              Identifier: 'instanceType'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'bindType'
+                    Identifier: 'scope'
+                    Identifier: ' instanceType'
+                    NullKeyword
+            IfStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'type'
+                  Identifier: 'hasMembers'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' members'
+                      PropertyAccessExpression
+                        Identifier: ' type'
+                        Identifier: 'members'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' ambientMembers'
+                      PropertyAccessExpression
+                        Identifier: ' type'
+                        Identifier: 'ambientMembers'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' typeMembers'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' type'
+                          Identifier: 'getAllEnclosedTypes'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' ambientTypeMembers'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' type'
+                          Identifier: 'getAllAmbientEnclosedTypes'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' memberScope'
+                      NewExpression
+                        Identifier: ' SymbolTableScope'
+                        Identifier: 'members'
+                        Identifier: ' ambientMembers'
+                        Identifier: ' typeMembers'
+                        Identifier: ' ambientTypeMembers'
+                        PropertyAccessExpression
+                          Identifier: ' type'
+                          Identifier: 'symbol'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' agg'
+                      NewExpression
+                        Identifier: ' SymbolAggregateScope'
+                        PropertyAccessExpression
+                          Identifier: 'type'
+                          Identifier: 'symbol'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' prevCurrentModDecl'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'checker'
+                        Identifier: 'currentModDecl'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' prevBindStatus'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'checker'
+                        Identifier: 'inBind'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                agg'
+                      Identifier: 'addParentScope'
+                    Identifier: 'memberScope'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                agg'
+                      Identifier: 'addParentScope'
+                    Identifier: 'scope'
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'type'
+                      Identifier: 'isModuleType'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'checker'
+                          Identifier: 'currentModDecl'
+                        EqualsToken
+                        TypeAssertionExpression
+                          TypeReference
+                            Identifier: 'ModuleDeclaration'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'type'
+                              Identifier: 'symbol'
+                            Identifier: 'declAST'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'checker'
+                          Identifier: 'inBind'
+                        EqualsToken
+                        TrueKeyword
+                IfStatement
+                  Identifier: 'members'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'bind'
+                        Identifier: 'agg'
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' type'
+                            Identifier: 'members'
+                          Identifier: 'allMembers'
+                IfStatement
+                  Identifier: 'typeMembers'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'bind'
+                        Identifier: 'agg'
+                        PropertyAccessExpression
+                          Identifier: ' typeMembers'
+                          Identifier: 'allMembers'
+                IfStatement
+                  Identifier: 'ambientMembers'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'bind'
+                        Identifier: 'agg'
+                        PropertyAccessExpression
+                          Identifier: ' ambientMembers'
+                          Identifier: 'allMembers'
+                IfStatement
+                  Identifier: 'ambientTypeMembers'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'bind'
+                        Identifier: 'agg'
+                        PropertyAccessExpression
+                          Identifier: ' ambientTypeMembers'
+                          Identifier: 'allMembers'
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'checker'
+                      Identifier: 'currentModDecl'
+                    EqualsToken
+                    Identifier: ' prevCurrentModDecl'
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'checker'
+                      Identifier: 'inBind'
+                    EqualsToken
+                    Identifier: ' prevBindStatus'
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'type'
+                Identifier: 'extendsTypeLinks'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'resolveBases'
+                    Identifier: 'scope'
+                    Identifier: ' type'
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'type'
+                Identifier: 'construct'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'resolveSignatureGroup'
+                    PropertyAccessExpression
+                      Identifier: 'type'
+                      Identifier: 'construct'
+                    Identifier: ' scope'
+                    Identifier: ' instanceType'
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'type'
+                Identifier: 'call'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'resolveSignatureGroup'
+                    PropertyAccessExpression
+                      Identifier: 'type'
+                      Identifier: 'call'
+                    Identifier: ' scope'
+                    NullKeyword
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'type'
+                Identifier: 'index'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'resolveSignatureGroup'
+                    PropertyAccessExpression
+                      Identifier: 'type'
+                      Identifier: 'index'
+                    Identifier: ' scope'
+                    NullKeyword
+            IfStatement
+              PropertyAccessExpression
+                Identifier: 'type'
+                Identifier: 'elementType'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'bindType'
+                    Identifier: 'scope'
+                    PropertyAccessExpression
+                      Identifier: ' type'
+                      Identifier: 'elementType'
+                    NullKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' bindSymbol'
+          Parameter
+            Identifier: 'scope'
+            TypeReference
+              Identifier: ' SymbolScope'
+          Parameter
+            Identifier: ' symbol'
+            TypeReference
+              Identifier: ' Symbol'
+          Block
+            IfStatement
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  Identifier: 'symbol'
+                  Identifier: 'bound'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' prevLocationInfo'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'checker'
+                        Identifier: 'locationInfo'
+                IfStatement
+                  BinaryExpression
+                    BinaryExpression
+                      ParenthesizedExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'checker'
+                          Identifier: 'units'
+                      AmpersandAmpersandToken
+                      ParenthesizedExpression
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'symbol'
+                            Identifier: 'unitIndex'
+                          GreaterThanEqualsToken
+                          NumericLiteral
+                    AmpersandAmpersandToken
+                    ParenthesizedExpression
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: 'symbol'
+                          Identifier: 'unitIndex'
+                        LessThanToken
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'checker'
+                            Identifier: 'units'
+                          Identifier: 'length'
+                  Block
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'checker'
+                          Identifier: 'locationInfo'
+                        EqualsToken
+                        ElementAccessExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'checker'
+                            Identifier: 'units'
+                          PropertyAccessExpression
+                            Identifier: 'symbol'
+                            Identifier: 'unitIndex'
+                SwitchStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'symbol'
+                      Identifier: 'kind'
+                  CaseBlock
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SymbolKind'
+                        Identifier: 'Type'
+                      IfStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'symbol'
+                            Identifier: 'flags'
+                          AmpersandToken
+                          PropertyAccessExpression
+                            Identifier: ' SymbolFlags'
+                            Identifier: 'Bound'
+                        Block
+                          BreakStatement
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' typeSymbol'
+                            TypeAssertionExpression
+                              TypeReference
+                                Identifier: 'TypeSymbol'
+                              Identifier: 'symbol'
+                      ExpressionStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                        typeSymbol'
+                            Identifier: 'flags'
+                          BarEqualsToken
+                          PropertyAccessExpression
+                            Identifier: ' SymbolFlags'
+                            Identifier: 'Bound'
+                      IfStatement
+                        BinaryExpression
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: 'typeSymbol'
+                              Identifier: 'aliasLink'
+                            AmpersandAmpersandToken
+                            PrefixUnaryExpression
+                              PropertyAccessExpression
+                                Identifier: 'typeSymbol'
+                                Identifier: 'type'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' typeSymbol'
+                                  Identifier: 'aliasLink'
+                                Identifier: 'alias'
+                              Identifier: 'nodeType'
+                            EqualsEqualsToken
+                            PropertyAccessExpression
+                              Identifier: ' NodeType'
+                              Identifier: 'Name'
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' modPath'
+                                PropertyAccessExpression
+                                  ParenthesizedExpression
+                                    TypeAssertionExpression
+                                      TypeReference
+                                        Identifier: 'Identifier'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'typeSymbol'
+                                          Identifier: 'aliasLink'
+                                        Identifier: 'alias'
+                                  Identifier: 'text'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' modSym'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      ThisKeyword
+                                      Identifier: 'checker'
+                                    Identifier: 'findSymbolForDynamicModule'
+                                  Identifier: 'modPath'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        ThisKeyword
+                                        Identifier: 'checker'
+                                      Identifier: 'locationInfo'
+                                    Identifier: 'filename'
+                                  ArrowFunction
+                                    Parameter
+                                      Identifier: 'id'
+                                    EqualsGreaterThanToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' scope'
+                                        Identifier: 'find'
+                                      Identifier: 'id'
+                                      FalseKeyword
+                                      TrueKeyword
+                          IfStatement
+                            Identifier: 'modSym'
+                            Block
+                              ExpressionStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                                typeSymbol'
+                                    Identifier: 'type'
+                                  EqualsToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' modSym'
+                                      Identifier: 'getType'
+                      IfStatement
+                        BinaryExpression
+                          PropertyAccessExpression
+                            Identifier: 'typeSymbol'
+                            Identifier: 'type'
+                          AmpersandAmpersandToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: ' typeSymbol'
+                              Identifier: 'type'
+                            ExclamationEqualsToken
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'checker'
+                              Identifier: 'gloModType'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                ThisKeyword
+                                Identifier: 'bindType'
+                              Identifier: 'scope'
+                              PropertyAccessExpression
+                                Identifier: ' typeSymbol'
+                                Identifier: 'type'
+                              PropertyAccessExpression
+                                Identifier: ' typeSymbol'
+                                Identifier: 'instanceType'
+                          IfStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: 'typeSymbol'
+                                  Identifier: 'type'
+                                Identifier: 'isModuleType'
+                            Block
+                              ForStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' i'
+                                    NumericLiteral
+                                BinaryExpression
+                                  Identifier: ' i'
+                                  LessThanToken
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' typeSymbol'
+                                      Identifier: 'expansions'
+                                    Identifier: 'length'
+                                PostfixUnaryExpression
+                                  Identifier: ' i'
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        ThisKeyword
+                                        Identifier: 'bindType'
+                                      Identifier: 'scope'
+                                      ElementAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' typeSymbol'
+                                          Identifier: 'expansions'
+                                        Identifier: 'i'
+                                      PropertyAccessExpression
+                                        Identifier: ' typeSymbol'
+                                        Identifier: 'instanceType'
+                      BreakStatement
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SymbolKind'
+                        Identifier: 'Field'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'checker'
+                            Identifier: 'resolveTypeLink'
+                          Identifier: 'scope'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ParenthesizedExpression
+                                TypeAssertionExpression
+                                  TypeReference
+                                    Identifier: 'FieldSymbol'
+                                  Identifier: 'symbol'
+                              Identifier: 'field'
+                            Identifier: 'typeLink'
+                          FalseKeyword
+                      BreakStatement
+                    CaseClause
+                      PropertyAccessExpression
+                        Identifier: ' SymbolKind'
+                        Identifier: 'Parameter'
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'checker'
+                            Identifier: 'resolveTypeLink'
+                          Identifier: 'scope'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              ParenthesizedExpression
+                                TypeAssertionExpression
+                                  TypeReference
+                                    Identifier: 'ParameterSymbol'
+                                  Identifier: 'symbol'
+                              Identifier: 'parameter'
+                            Identifier: 'typeLink'
+                          TrueKeyword
+                      BreakStatement
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'checker'
+                      Identifier: 'locationInfo'
+                    EqualsToken
+                    Identifier: ' prevLocationInfo'
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            symbol'
+                  Identifier: 'bound'
+                EqualsToken
+                TrueKeyword
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' bind'
+          Parameter
+            Identifier: 'scope'
+            TypeReference
+              Identifier: ' SymbolScope'
+          Parameter
+            Identifier: ' table'
+            TypeReference
+              Identifier: ' IHashTable'
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            table'
+                  Identifier: 'map'
+                ArrowFunction
+                  Parameter
+                    Identifier: 'key'
+                  Parameter
+                    Identifier: ' sym'
+                  Parameter
+                    Identifier: ' binder'
+                  EqualsGreaterThanToken
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    binder'
+                          Identifier: 'bindSymbol'
+                        Identifier: 'scope'
+                        Identifier: ' sym'
+                ThisKeyword

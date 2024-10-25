@@ -1,0 +1,764 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Tools'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' Head'
+        TypeParameter
+          Identifier: 'T'
+          ArrayType
+            AnyKeyword
+        ConditionalType
+          TypeReference
+            Identifier: '
+        T'
+          TupleType
+            AnyKeyword
+            RestType
+              ArrayType
+                AnyKeyword
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            LiteralType
+              NumericLiteral
+          NeverKeyword
+      TypeAliasDeclaration
+        Identifier: ' Tail'
+        TypeParameter
+          Identifier: 'T'
+          ArrayType
+            AnyKeyword
+        ConditionalType
+          ParenthesizedType
+            FunctionType
+              Parameter
+                DotDotDotToken
+                Identifier: 't'
+                TypeReference
+                  Identifier: ' T'
+              AnyKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: '_'
+                AnyKeyword
+              Parameter
+                DotDotDotToken
+                Identifier: 'tail'
+                InferType
+                  TypeParameter
+                    Identifier: ' TT'
+              AnyKeyword
+          TypeReference
+            Identifier: ' TT'
+          TupleType
+      TypeAliasDeclaration
+        Identifier: ' HasTail'
+        TypeParameter
+          Identifier: 'T'
+          ArrayType
+            AnyKeyword
+        ConditionalType
+          TypeReference
+            Identifier: '
+        T'
+          ParenthesizedType
+            UnionType
+              TupleType
+              TupleType
+                AnyKeyword
+          LiteralType
+            FalseKeyword
+          LiteralType
+            TrueKeyword
+      TypeAliasDeclaration
+        Identifier: ' Last'
+        TypeParameter
+          Identifier: 'T'
+          ArrayType
+            AnyKeyword
+        IndexedAccessType
+          TypeLiteral
+            PropertySignature
+              NumericLiteral
+              TypeReference
+                Identifier: ' Last'
+                TypeReference
+                  Identifier: 'Tail'
+                  TypeReference
+                    Identifier: 'T'
+            PropertySignature
+              NumericLiteral
+              TypeReference
+                Identifier: ' Head'
+                TypeReference
+                  Identifier: 'T'
+          ConditionalType
+            TypeReference
+              Identifier: '
+        HasTail'
+              TypeReference
+                Identifier: 'T'
+            LiteralType
+              TrueKeyword
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' Length'
+        TypeParameter
+          Identifier: 'T'
+          ArrayType
+            AnyKeyword
+        IndexedAccessType
+          TypeReference
+            Identifier: '
+        T'
+          LiteralType
+            StringLiteral
+      TypeAliasDeclaration
+        Identifier: ' Prepend'
+        TypeParameter
+          Identifier: 'E'
+        TypeParameter
+          Identifier: ' T'
+          ArrayType
+            AnyKeyword
+        ConditionalType
+          ParenthesizedType
+            FunctionType
+              Parameter
+                Identifier: 'head'
+                TypeReference
+                  Identifier: ' E'
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                TypeReference
+                  Identifier: ' T'
+              AnyKeyword
+          ParenthesizedType
+            FunctionType
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                InferType
+                  TypeParameter
+                    Identifier: ' U'
+              AnyKeyword
+          TypeReference
+            Identifier: ' U'
+          TypeReference
+            Identifier: ' T'
+      TypeAliasDeclaration
+        Identifier: ' Drop'
+        TypeParameter
+          Identifier: 'N'
+          NumberKeyword
+        TypeParameter
+          Identifier: ' T'
+          ArrayType
+            AnyKeyword
+        TypeParameter
+          Identifier: ' I'
+          ArrayType
+            AnyKeyword
+          TupleType
+        IndexedAccessType
+          TypeLiteral
+            PropertySignature
+              NumericLiteral
+              TypeReference
+                Identifier: ' Drop'
+                TypeReference
+                  Identifier: 'N'
+                TypeReference
+                  Identifier: ' Tail'
+                  TypeReference
+                    Identifier: 'T'
+                TypeReference
+                  Identifier: ' Prepend'
+                  AnyKeyword
+                  TypeReference
+                    Identifier: ' I'
+            PropertySignature
+              NumericLiteral
+              TypeReference
+                Identifier: ' T'
+          ConditionalType
+            TypeReference
+              Identifier: '
+        Length'
+              TypeReference
+                Identifier: 'I'
+            TypeReference
+              Identifier: ' N'
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' Cast'
+        TypeParameter
+          Identifier: 'X'
+        TypeParameter
+          Identifier: ' Y'
+        ConditionalType
+          TypeReference
+            Identifier: ' X'
+          TypeReference
+            Identifier: ' Y'
+          TypeReference
+            Identifier: ' X'
+          TypeReference
+            Identifier: ' Y'
+      TypeAliasDeclaration
+        Identifier: ' Pos'
+        TypeParameter
+          Identifier: 'I'
+          ArrayType
+            AnyKeyword
+        TypeReference
+          Identifier: '
+        Length'
+          TypeReference
+            Identifier: 'I'
+      TypeAliasDeclaration
+        Identifier: ' Next'
+        TypeParameter
+          Identifier: 'I'
+          ArrayType
+            AnyKeyword
+        TypeReference
+          Identifier: '
+        Prepend'
+          AnyKeyword
+          TypeReference
+            Identifier: ' I'
+      TypeAliasDeclaration
+        Identifier: ' Prev'
+        TypeParameter
+          Identifier: 'I'
+          ArrayType
+            AnyKeyword
+        TypeReference
+          Identifier: '
+        Tail'
+          TypeReference
+            Identifier: 'I'
+      TypeAliasDeclaration
+        Identifier: ' Iterator'
+        TypeParameter
+          Identifier: 'Index'
+          NumberKeyword
+          LiteralType
+            NumericLiteral
+        TypeParameter
+          Identifier: ' From'
+          ArrayType
+            AnyKeyword
+          TupleType
+        TypeParameter
+          Identifier: ' I'
+          ArrayType
+            AnyKeyword
+          TupleType
+        IndexedAccessType
+          TypeLiteral
+            PropertySignature
+              NumericLiteral
+              TypeReference
+                Identifier: ' Iterator'
+                TypeReference
+                  Identifier: 'Index'
+                TypeReference
+                  Identifier: ' Next'
+                  TypeReference
+                    Identifier: 'From'
+                TypeReference
+                  Identifier: ' Next'
+                  TypeReference
+                    Identifier: 'I'
+            PropertySignature
+              NumericLiteral
+              TypeReference
+                Identifier: ' From'
+          ConditionalType
+            TypeReference
+              Identifier: '
+        Pos'
+              TypeReference
+                Identifier: 'I'
+            TypeReference
+              Identifier: ' Index'
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' Reverse'
+        TypeParameter
+          Identifier: 'T'
+          ArrayType
+            AnyKeyword
+        TypeParameter
+          Identifier: ' R'
+          ArrayType
+            AnyKeyword
+          TupleType
+        TypeParameter
+          Identifier: ' I'
+          ArrayType
+            AnyKeyword
+          TupleType
+        IndexedAccessType
+          TypeLiteral
+            PropertySignature
+              NumericLiteral
+              TypeReference
+                Identifier: ' Reverse'
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: ' Prepend'
+                  IndexedAccessType
+                    TypeReference
+                      Identifier: 'T'
+                    TypeReference
+                      Identifier: 'Pos'
+                      TypeReference
+                        Identifier: 'I'
+                  TypeReference
+                    Identifier: ' R'
+                TypeReference
+                  Identifier: ' Next'
+                  TypeReference
+                    Identifier: 'I'
+            PropertySignature
+              NumericLiteral
+              TypeReference
+                Identifier: ' R'
+          ConditionalType
+            TypeReference
+              Identifier: '
+        Pos'
+              TypeReference
+                Identifier: 'I'
+            TypeReference
+              Identifier: ' Length'
+              TypeReference
+                Identifier: 'T'
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' Concat'
+        TypeParameter
+          Identifier: 'T1'
+          ArrayType
+            AnyKeyword
+        TypeParameter
+          Identifier: ' T2'
+          ArrayType
+            AnyKeyword
+        TypeReference
+          Identifier: '
+        Reverse'
+          ConditionalType
+            TypeReference
+              Identifier: 'Reverse'
+              TypeReference
+                Identifier: 'T1'
+            InferType
+              TypeParameter
+                Identifier: ' R'
+            TypeReference
+              Identifier: ' Cast'
+              TypeReference
+                Identifier: 'R'
+              ArrayType
+                AnyKeyword
+            NeverKeyword
+          TypeReference
+            Identifier: ' T2'
+      TypeAliasDeclaration
+        Identifier: ' Append'
+        TypeParameter
+          Identifier: 'E'
+        TypeParameter
+          Identifier: ' T'
+          ArrayType
+            AnyKeyword
+        TypeReference
+          Identifier: '
+        Concat'
+          TypeReference
+            Identifier: 'T'
+          TupleType
+            TypeReference
+              Identifier: 'E'
+      TypeAliasDeclaration
+        Identifier: ' ValueOfRecord'
+        TypeParameter
+          Identifier: 'R'
+        ConditionalType
+          TypeReference
+            Identifier: ' R'
+          TypeReference
+            Identifier: ' Record'
+            AnyKeyword
+            InferType
+              TypeParameter
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+          NeverKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' R'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' Placeholder'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' __placeholder'
+            VoidKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Curry'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' GapOf'
+        TypeParameter
+          Identifier: 'T1'
+          ArrayType
+            AnyKeyword
+        TypeParameter
+          Identifier: ' T2'
+          ArrayType
+            AnyKeyword
+        TypeParameter
+          Identifier: ' TN'
+          ArrayType
+            AnyKeyword
+        TypeParameter
+          Identifier: ' I'
+          ArrayType
+            AnyKeyword
+        ConditionalType
+          IndexedAccessType
+            TypeReference
+              Identifier: '
+        T1'
+            TypeReference
+              QualifiedName
+                Identifier: 'Tools'
+                Identifier: 'Pos'
+              TypeReference
+                Identifier: 'I'
+          TypeReference
+            QualifiedName
+              Identifier: ' R'
+              Identifier: 'Placeholder'
+          TypeReference
+            QualifiedName
+              Identifier: ' Tools'
+              Identifier: 'Append'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'T2'
+              TypeReference
+                QualifiedName
+                  Identifier: 'Tools'
+                  Identifier: 'Pos'
+                TypeReference
+                  Identifier: 'I'
+            TypeReference
+              Identifier: ' TN'
+          TypeReference
+            Identifier: ' TN'
+      InterfaceDeclaration
+        Identifier: ' GapsOfWorker'
+        TypeParameter
+          Identifier: 'T1'
+          ArrayType
+            AnyKeyword
+        TypeParameter
+          Identifier: ' T2'
+          ArrayType
+            AnyKeyword
+        TypeParameter
+          Identifier: ' TN'
+          ArrayType
+            AnyKeyword
+          TupleType
+        TypeParameter
+          Identifier: ' I'
+          ArrayType
+            AnyKeyword
+          TupleType
+        PropertySignature
+          NumericLiteral
+          TypeReference
+            Identifier: ' GapsOf'
+            TypeReference
+              Identifier: 'T1'
+            TypeReference
+              Identifier: ' T2'
+            ConditionalType
+              TypeReference
+                Identifier: ' GapOf'
+                TypeReference
+                  Identifier: 'T1'
+                TypeReference
+                  Identifier: ' T2'
+                TypeReference
+                  Identifier: ' TN'
+                TypeReference
+                  Identifier: ' I'
+              InferType
+                TypeParameter
+                  Identifier: ' G'
+              TypeReference
+                QualifiedName
+                  Identifier: ' Tools'
+                  Identifier: 'Cast'
+                TypeReference
+                  Identifier: 'G'
+                ArrayType
+                  AnyKeyword
+              NeverKeyword
+            TypeReference
+              QualifiedName
+                Identifier: ' Tools'
+                Identifier: 'Next'
+              TypeReference
+                Identifier: 'I'
+        PropertySignature
+          NumericLiteral
+          TypeReference
+            QualifiedName
+              Identifier: ' Tools'
+              Identifier: 'Concat'
+            TypeReference
+              Identifier: 'TN'
+            ConditionalType
+              TypeReference
+                QualifiedName
+                  Identifier: ' Tools'
+                  Identifier: 'Drop'
+                TypeReference
+                  QualifiedName
+                    Identifier: 'Tools'
+                    Identifier: 'Pos'
+                  TypeReference
+                    Identifier: 'I'
+                TypeReference
+                  Identifier: ' T2'
+              InferType
+                TypeParameter
+                  Identifier: ' D'
+              TypeReference
+                QualifiedName
+                  Identifier: ' Tools'
+                  Identifier: 'Cast'
+                TypeReference
+                  Identifier: 'D'
+                ArrayType
+                  AnyKeyword
+              NeverKeyword
+      TypeAliasDeclaration
+        Identifier: ' GapsOf'
+        TypeParameter
+          Identifier: 'T1'
+          ArrayType
+            AnyKeyword
+        TypeParameter
+          Identifier: ' T2'
+          ArrayType
+            AnyKeyword
+        TypeParameter
+          Identifier: ' TN'
+          ArrayType
+            AnyKeyword
+          TupleType
+        TypeParameter
+          Identifier: ' I'
+          ArrayType
+            AnyKeyword
+          TupleType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' GapsOfWorker'
+            TypeReference
+              Identifier: 'T1'
+            TypeReference
+              Identifier: ' T2'
+            TypeReference
+              Identifier: ' TN'
+            TypeReference
+              Identifier: ' I'
+          ConditionalType
+            TypeReference
+              QualifiedName
+                Identifier: '
+        Tools'
+                Identifier: 'Pos'
+              TypeReference
+                Identifier: 'I'
+            TypeReference
+              QualifiedName
+                Identifier: ' Tools'
+                Identifier: 'Length'
+              TypeReference
+                Identifier: 'T1'
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+      TypeAliasDeclaration
+        Identifier: ' PartialGaps'
+        TypeParameter
+          Identifier: 'T'
+          ArrayType
+            AnyKeyword
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          QuestionToken
+          UnionType
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeReference
+                Identifier: 'K'
+            TypeReference
+              QualifiedName
+                Identifier: ' R'
+                Identifier: 'Placeholder'
+      TypeAliasDeclaration
+        Identifier: ' CleanedGaps'
+        TypeParameter
+          Identifier: 'T'
+          ArrayType
+            AnyKeyword
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' NonNullable'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: 'K'
+      TypeAliasDeclaration
+        Identifier: ' Gaps'
+        TypeParameter
+          Identifier: 'T'
+          ArrayType
+            AnyKeyword
+        TypeReference
+          Identifier: ' CleanedGaps'
+          TypeReference
+            Identifier: 'PartialGaps'
+            TypeReference
+              Identifier: 'T'
+      TypeAliasDeclaration
+        Identifier: ' Curry'
+        TypeParameter
+          Identifier: 'F'
+          ParenthesizedType
+            FunctionType
+              Parameter
+                DotDotDotToken
+                Identifier: 'args'
+                AnyKeyword
+              AnyKeyword
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+            ArrayType
+              AnyKeyword
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            TypeReference
+              QualifiedName
+                Identifier: ' Tools'
+                Identifier: 'Cast'
+              TypeReference
+                QualifiedName
+                  Identifier: 'Tools'
+                  Identifier: 'Cast'
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: ' Gaps'
+                  TypeReference
+                    Identifier: 'Parameters'
+                    TypeReference
+                      Identifier: 'F'
+              ArrayType
+                AnyKeyword
+          ConditionalType
+            TypeReference
+              Identifier: '
+            GapsOf'
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' Parameters'
+                TypeReference
+                  Identifier: 'F'
+            TupleType
+              AnyKeyword
+              RestType
+                ArrayType
+                  AnyKeyword
+            TypeReference
+              Identifier: ' Curry'
+              FunctionType
+                Parameter
+                  DotDotDotToken
+                  Identifier: 'args'
+                  ConditionalType
+                    TypeReference
+                      Identifier: ' GapsOf'
+                      TypeReference
+                        Identifier: 'T'
+                      TypeReference
+                        Identifier: ' Parameters'
+                        TypeReference
+                          Identifier: 'F'
+                    InferType
+                      TypeParameter
+                        Identifier: ' G'
+                    TypeReference
+                      QualifiedName
+                        Identifier: ' Tools'
+                        Identifier: 'Cast'
+                      TypeReference
+                        Identifier: 'G'
+                      ArrayType
+                        AnyKeyword
+                    NeverKeyword
+                TypeReference
+                  Identifier: ' ReturnType'
+                  TypeReference
+                    Identifier: 'F'
+            TypeReference
+              Identifier: ' ReturnType'
+              TypeReference
+                Identifier: 'F'

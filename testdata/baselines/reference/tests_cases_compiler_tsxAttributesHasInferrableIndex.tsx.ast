@@ -1,0 +1,69 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' AttributeValue'
+    UnionType
+      NumberKeyword
+      StringKeyword
+      TypeReference
+        Identifier: ' Date'
+      BooleanKeyword
+  InterfaceDeclaration
+    Identifier: ' Attributes'
+    IndexSignature
+      Parameter
+        Identifier: 'key'
+        StringKeyword
+      TypeReference
+        Identifier: ' AttributeValue'
+  FunctionDeclaration
+    Identifier: ' createElement'
+    Parameter
+      Identifier: 'name'
+      StringKeyword
+    Parameter
+      Identifier: ' attributes'
+      UnionType
+        TypeReference
+          Identifier: ' Attributes'
+        UndefinedKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'contents'
+      ArrayType
+        StringKeyword
+    Block
+      ReturnStatement
+        Identifier: ' name'
+  ModuleDeclaration
+    Identifier: ' createElement'
+    ModuleDeclaration
+      Identifier: 'JSX'
+      ModuleBlock
+        TypeAliasDeclaration
+          Identifier: ' Element'
+          StringKeyword
+  FunctionDeclaration
+    Identifier: ' Button'
+    Parameter
+      Identifier: 'attributes'
+      UnionType
+        TypeReference
+          Identifier: ' Attributes'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' contents'
+      ArrayType
+        StringKeyword
+    Block
+      ReturnStatement
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Button'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'Button'

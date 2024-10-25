@@ -1,0 +1,110 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        IntersectionType
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  LiteralType
+                    NumericLiteral
+          TypeLiteral
+            IndexSignature
+              Parameter
+                Identifier: 'x'
+                StringKeyword
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' b'
+                  LiteralType
+                    NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Error
+x'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' y'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' c'
+              NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' b'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' yy'
+        IntersectionType
+          TypeReference
+            Identifier: ' Record'
+            StringKeyword
+            TypeReference
+              Identifier: ' A'
+          TypeReference
+            Identifier: ' Record'
+            StringKeyword
+            TypeReference
+              Identifier: ' B'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    foo'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                StringLiteral

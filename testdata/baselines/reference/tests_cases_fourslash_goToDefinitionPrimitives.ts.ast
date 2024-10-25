@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////var x: st/*primitive*/ring;
+
+verify'
+        Identifier: 'baselineGoToDefinition'
+      StringLiteral

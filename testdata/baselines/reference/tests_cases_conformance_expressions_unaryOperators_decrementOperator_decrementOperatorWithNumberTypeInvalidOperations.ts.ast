@@ -1,0 +1,208 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NUMBER'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' NUMBER1'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    NumberKeyword
+    Block
+      ReturnStatement
+        NumericLiteral
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      NumberKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objA'
+        NewExpression
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber1'
+        PrefixUnaryExpression
+          Identifier: 'NUMBER1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber2'
+        PostfixUnaryExpression
+          Identifier: ' NUMBER1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber3'
+        PrefixUnaryExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber4'
+        PrefixUnaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber5'
+        PrefixUnaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              ArrowFunction
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber6'
+        PostfixUnaryExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber7'
+        PostfixUnaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber8'
+        PostfixUnaryExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' y'
+              ArrowFunction
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                EqualsGreaterThanToken
+                Block
+                  ReturnStatement
+                    Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber9'
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber10'
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'A'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber11'
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'NUMBER'
+              PlusToken
+              Identifier: ' NUMBER'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber12'
+        PostfixUnaryExpression
+          CallExpression
+            Identifier: ' foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber13'
+        PostfixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' A'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber14'
+        PostfixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'NUMBER'
+              PlusToken
+              Identifier: ' NUMBER'
+  ExpressionStatement
+    PrefixUnaryExpression
+      NumericLiteral
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'NUMBER1'
+  ExpressionStatement
+    PrefixUnaryExpression
+      CallExpression
+        Identifier: 'foo'
+  ExpressionStatement
+    PostfixUnaryExpression
+      NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+NUMBER1'
+  ExpressionStatement
+    PostfixUnaryExpression
+      CallExpression
+        Identifier: '
+foo'

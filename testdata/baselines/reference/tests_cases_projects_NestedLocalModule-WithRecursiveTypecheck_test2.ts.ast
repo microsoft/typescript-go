@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' $'
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' Yo'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' test'
+        ExternalModuleReference
+          StringLiteral
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    test'
+          Identifier: 'x'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' y'
+        Block
+          ReturnStatement
+            NumericLiteral

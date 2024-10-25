@@ -1,0 +1,53 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      BreakStatement
+      ContinueStatement
+      DebuggerStatement
+      DoStatement
+        Block
+        TrueKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+      ForInStatement
+        Identifier: 'x'
+        NullKeyword
+        Block
+      IfStatement
+        TrueKeyword
+        Block
+        Block
+      ExpressionStatement
+        NumericLiteral
+      LabeledStatement
+        Identifier: '
+    L'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' y'
+      ReturnStatement
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            NumericLiteral
+            BreakStatement
+          DefaultClause
+            BreakStatement
+      ThrowStatement
+        StringLiteral
+      TryStatement
+        Block
+        CatchClause
+          VariableDeclaration
+            Identifier: 'e'
+          Block
+        Block
+      WithStatement
+        Identifier: 'x'
+        Block

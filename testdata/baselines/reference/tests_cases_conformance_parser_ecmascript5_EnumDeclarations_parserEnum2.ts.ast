@@ -1,0 +1,26 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' SignatureFlags'
+    EnumMember
+      Identifier: '
+        None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+        IsIndexer'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+        IsStringIndexer'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+        IsNumberIndexer'
+      BinaryExpression
+        NumericLiteral
+        LessThanLessThanToken
+        NumericLiteral

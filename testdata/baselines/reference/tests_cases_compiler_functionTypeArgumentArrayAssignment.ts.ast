@@ -1,0 +1,30 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' test'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Array'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' T'
+        PropertySignature
+          Identifier: '
+        length'
+          NumberKeyword
+      FunctionDeclaration
+        Identifier: ' map'
+        TypeParameter
+          Identifier: 'U'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' ys'
+                ArrayType
+                  TypeReference
+                    Identifier: ' U'
+                ArrayLiteralExpression

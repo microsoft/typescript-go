@@ -1,0 +1,188 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Bug'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' name'
+      StringKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' func'
+      ArrayType
+        TypeReference
+          Identifier: ' Function'
+      ArrayLiteralExpression
+        ArrowFunction
+          Parameter
+            Identifier: 'that'
+            TypeReference
+              Identifier: ' Bug'
+          Parameter
+            Identifier: ' name'
+            StringKeyword
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+         that'
+                  Identifier: 'foo'
+                Identifier: 'name'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'name'
+            EqualsToken
+            Identifier: ' name'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    prop1'
+      FunctionExpression
+        Block
+          ExpressionStatement
+            ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    prop2'
+      FunctionExpression
+        Block
+          FunctionDeclaration
+            Identifier: ' inner'
+            Block
+              ExpressionStatement
+                ThisKeyword
+          ExpressionStatement
+            ArrowFunction
+              EqualsGreaterThanToken
+              ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    prop3'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' inner'
+            Block
+              ExpressionStatement
+                ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    prop4'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        a'
+          FunctionExpression
+            Block
+              ReturnStatement
+                ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    prop5'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            a'
+                FunctionExpression
+                  Block
+                    ReturnStatement
+                      ThisKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    prop1'
+      ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    prop2'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    prop3'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrowFunction
+              EqualsGreaterThanToken
+              ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    prop4'
+      BinaryExpression
+        BinaryExpression
+          BinaryExpression
+            StringLiteral
+            PlusToken
+            FunctionExpression
+              Block
+          PlusToken
+          StringLiteral
+        PlusToken
+        ParenthesizedExpression
+          ArrowFunction
+            EqualsGreaterThanToken
+            ArrowFunction
+              EqualsGreaterThanToken
+              ArrowFunction
+                EqualsGreaterThanToken
+                ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    prop5'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+        a'
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ThisKeyword
+    PropertyDeclaration
+      Identifier: '
+
+    prop6'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            a'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Block
+                    ReturnStatement
+                      ThisKeyword

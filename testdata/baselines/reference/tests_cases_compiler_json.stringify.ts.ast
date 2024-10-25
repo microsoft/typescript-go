@@ -1,0 +1,57 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        NullKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+JSON'
+        Identifier: 'stringify'
+      Identifier: 'value'
+      Identifier: ' undefined'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+JSON'
+        Identifier: 'stringify'
+      Identifier: 'value'
+      NullKeyword
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+JSON'
+        Identifier: 'stringify'
+      Identifier: 'value'
+      ArrayLiteralExpression
+        StringLiteral
+        NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+JSON'
+        Identifier: 'stringify'
+      Identifier: 'value'
+      ArrowFunction
+        Parameter
+          Identifier: 'k'
+        EqualsGreaterThanToken
+        Identifier: ' undefined'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+JSON'
+        Identifier: 'stringify'
+      Identifier: 'value'
+      Identifier: ' undefined'
+      NumericLiteral

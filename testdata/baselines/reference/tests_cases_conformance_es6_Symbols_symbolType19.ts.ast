@@ -1,0 +1,29 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          SymbolKeyword
+          TypeReference
+            Identifier: ' E'
+  ExpressionStatement
+    Identifier: '
+
+x'
+  IfStatement
+    BinaryExpression
+      TypeOfExpression
+        Identifier: ' x'
+      EqualsEqualsEqualsToken
+      StringLiteral
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'
+    Block
+      ExpressionStatement
+        Identifier: '
+    x'

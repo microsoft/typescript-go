@@ -1,0 +1,13 @@
+SourceFile
+  IfStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'module'
+        Identifier: 'exports'
+    ExpressionStatement
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' module'
+          Identifier: 'exports'
+        EqualsToken
+        StringLiteral

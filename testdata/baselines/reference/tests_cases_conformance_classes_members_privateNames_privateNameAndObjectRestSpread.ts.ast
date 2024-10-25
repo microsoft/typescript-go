@@ -1,0 +1,69 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    method'
+      Parameter
+        Identifier: 'other'
+        TypeReference
+          Identifier: ' C'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' obj'
+              ObjectLiteralExpression
+                SpreadAssignment
+                  Identifier: 'other'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        obj'
+            PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  DotDotDotToken
+                  Identifier: 'rest'
+              Identifier: ' other'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        rest'
+            PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' statics'
+              ObjectLiteralExpression
+                SpreadAssignment
+                  Identifier: ' C'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        statics'
+            PrivateIdentifier
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              ObjectBindingPattern
+                BindingElement
+                  DotDotDotToken
+                  Identifier: 'sRest'
+              Identifier: ' C'
+        ExpressionStatement
+          PropertyAccessExpression
+            Identifier: '
+        sRest'
+            PrivateIdentifier

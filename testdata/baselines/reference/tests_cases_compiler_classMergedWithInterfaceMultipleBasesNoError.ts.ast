@@ -1,0 +1,34 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Bar'
+  InterfaceDeclaration
+    Identifier: ' Baz'
+  InterfaceDeclaration
+    Identifier: ' Q'
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Bar'
+      ExpressionWithTypeArguments
+        Identifier: ' Baz'
+  ClassDeclaration
+    Identifier: ' Foo'
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Foo'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' observer'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: 'handleIntersection'
+    PropertyDeclaration
+      ReadonlyKeyword
+      Identifier: ' handleIntersection'
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block

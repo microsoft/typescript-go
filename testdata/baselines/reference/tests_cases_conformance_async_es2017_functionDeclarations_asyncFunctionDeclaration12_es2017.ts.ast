@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        FunctionExpression
+          AsyncKeyword
+          Identifier: ' await'
+          TypeReference
+            Identifier: ' Promise'
+            VoidKeyword
+          Block

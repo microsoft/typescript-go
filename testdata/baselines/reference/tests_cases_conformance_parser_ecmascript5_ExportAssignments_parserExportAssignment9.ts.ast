@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      ExportAssignment
+        Identifier: ' foo'
+  ModuleDeclaration
+    Identifier: ' Bar'
+    ModuleBlock
+      ExportAssignment
+        Identifier: ' bar'

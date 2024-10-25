@@ -1,0 +1,9 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'nosuch'
+    StringLiteral

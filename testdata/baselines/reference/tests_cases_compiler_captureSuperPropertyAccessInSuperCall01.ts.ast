@@ -1,0 +1,34 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          StringKeyword
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' blah'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: 'blah'

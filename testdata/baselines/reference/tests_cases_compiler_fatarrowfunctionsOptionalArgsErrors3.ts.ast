@@ -1,0 +1,8 @@
+SourceFile
+  ExpressionStatement
+    ArrowFunction
+      Parameter
+        DotDotDotToken
+        Identifier: ''
+      EqualsGreaterThanToken
+      NumericLiteral

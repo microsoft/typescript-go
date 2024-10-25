@@ -1,0 +1,1010 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: ' foo'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'U'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'T'
+    TypeParameter
+      Identifier: ' V'
+      TypeReference
+        Identifier: ' Foo'
+        TypeReference
+          Identifier: 'V'
+    Parameter
+      Identifier: 't'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' u'
+      TypeReference
+        Identifier: ' U'
+    Parameter
+      Identifier: ' v'
+      TypeReference
+        Identifier: ' V'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' t'
+              ColonToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r1'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' u'
+              ColonToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' t'
+              ColonToken
+              Identifier: ' v'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' v'
+              ColonToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' v'
+              ColonToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r3'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' u'
+              ColonToken
+              Identifier: ' v'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r4'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' t'
+              ColonToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r4'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'T'
+              ColonToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r5'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' u'
+              ColonToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r5'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'T'
+              ColonToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r6'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' v'
+              ColonToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'T'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r6'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'T'
+              ColonToken
+              Identifier: ' v'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r7'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' t'
+              ColonToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'U'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r7'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'U'
+              ColonToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r8'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' u'
+              ColonToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'U'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r8'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'U'
+              ColonToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r9'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' v'
+              ColonToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'U'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r9'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'U'
+              ColonToken
+              Identifier: ' v'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r10'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' t'
+              ColonToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'V'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r10'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'V'
+              ColonToken
+              Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r11'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' u'
+              ColonToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'V'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r11'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'V'
+              ColonToken
+              Identifier: ' u'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r12'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              Identifier: ' v'
+              ColonToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'V'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r12'
+            ConditionalExpression
+              TrueKeyword
+              QuestionToken
+              NewExpression
+                Identifier: ' Foo'
+                TypeReference
+                  Identifier: 'V'
+              ColonToken
+              Identifier: ' v'
+  ModuleDeclaration
+    Identifier: ' M1'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Base'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' D1'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' D2'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' U'
+      ClassDeclaration
+        Identifier: ' D3'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' V'
+      ClassDeclaration
+        Identifier: ' D4'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'U'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' U'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' D5'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'U'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' U'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' U'
+      ClassDeclaration
+        Identifier: ' D6'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'U'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' U'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' V'
+      ClassDeclaration
+        Identifier: ' D7'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'V'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' V'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' D8'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'V'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' V'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' U'
+      ClassDeclaration
+        Identifier: ' D9'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base'
+            TypeReference
+              Identifier: 'V'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' V'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' V'
+  ModuleDeclaration
+    Identifier: ' M2'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Base2'
+        TypeParameter
+          Identifier: 'T'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+      ClassDeclaration
+        Identifier: ' D1'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' D2'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' U'
+      ClassDeclaration
+        Identifier: ' D3'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+            TypeReference
+              Identifier: 'T'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' V'
+      ClassDeclaration
+        Identifier: ' D4'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+            TypeReference
+              Identifier: 'U'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' U'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' D5'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+            TypeReference
+              Identifier: 'U'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' U'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' U'
+      ClassDeclaration
+        Identifier: ' D6'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+            TypeReference
+              Identifier: 'U'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' U'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' V'
+      ClassDeclaration
+        Identifier: ' D7'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+            TypeReference
+              Identifier: 'V'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' V'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' T'
+      ClassDeclaration
+        Identifier: ' D8'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+            TypeReference
+              Identifier: 'V'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' V'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' U'
+      ClassDeclaration
+        Identifier: ' D9'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'U'
+        TypeParameter
+          Identifier: ' U'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'T'
+        TypeParameter
+          Identifier: ' V'
+          TypeReference
+            Identifier: ' Foo'
+            TypeReference
+              Identifier: 'V'
+        HeritageClause
+          ExpressionWithTypeArguments
+            Identifier: ' Base2'
+            TypeReference
+              Identifier: 'V'
+        IndexSignature
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          TypeReference
+            Identifier: ' V'
+        PropertyDeclaration
+          Identifier: '
+        foo'
+          TypeReference
+            Identifier: ' V'

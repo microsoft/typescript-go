@@ -1,0 +1,50 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' x'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    m'
+      NumberKeyword
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              NumberKeyword
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' x'
+              EqualsToken
+              ThisKeyword
+        ReturnStatement
+          Identifier: ' x'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' f'
+      TypeReference
+        Identifier: ' Function'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' f'
+              TypeReference
+                Identifier: ' Function'
+        ExpressionStatement
+          ParenthesizedExpression
+            BinaryExpression
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: ' f'
+              EqualsToken
+              ThisKeyword
+        ReturnStatement
+          Identifier: ' f'
